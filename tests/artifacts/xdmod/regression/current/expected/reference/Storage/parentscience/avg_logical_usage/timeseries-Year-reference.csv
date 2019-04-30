@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Unknown] Logical Usage (Bytes)","[Molecular Biosciences] Logical Usage (Bytes)","[Earth Sciences] Logical Usage (Bytes)","[Mechanical and Structural Systems] Logical Usage (Bytes)","[Astronomical Sciences] Logical Usage (Bytes)","[Mathematical Sciences] Logical Usage (Bytes)","[Chemistry] Logical Usage (Bytes)","[Electrical and Communication Systems] Logical Usage (Bytes)","[Polar Programs] Logical Usage (Bytes)","[Environmental Biology] Logical Usage (Bytes)","[Social and Economic Science] Logical Usage (Bytes)","[Materials Research] Logical Usage (Bytes)","[Physics] Logical Usage (Bytes)","[Arts] Logical Usage (Bytes)","[Atmospheric Sciences] Logical Usage (Bytes)","[Chemical, Thermal Systems] Logical Usage (Bytes)","[Microelectronic Information Processing Systems] Logical Usage (Bytes)"
+2018-01-01,532741548168533,167142852736000,53698420505600,15161571020800,13735480192000,8972668518400,8820439065600,639109273600,129089126400,89994854400,2506240000,1642112000,8576000,128000,0,0,0
+2019-01-01,535099205939200,151223844480000,52415078604800,14514164326400,7658552780800,8985936076800,8746815488000,635631641600,129169177600,92123571200,2546048000,1408000,8576000,128000,0,0,0
+---------

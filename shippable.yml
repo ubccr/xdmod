@@ -8,29 +8,28 @@ build:
         - /root/.composer
         - /root/.npm
     pre_ci:
-        - docker build -t pseudo_repo/xdmod-open-751:latest .
+        - docker build -t pseudo_repo/openxdmod:latest .
     pre_ci_boot:
-        image_name: pseudo_repo/xdmod-open-751
+        image_name: pseudo_repo/openxdmod
         image_tag: latest
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
-        - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh
-        - ./open_xdmod/modules/xdmod/integration_tests/scripts/validate.sh
+        - ./tests/ci/bootstrap.sh
+        - ./tests/ci/validate.sh
         - composer install --no-progress
-        - cp ~/assets/secrets.json open_xdmod/modules/xdmod/integration_tests/.secrets.json
-        - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
+        - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
-        - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
-        - ./open_xdmod/modules/xdmod/regression_tests/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults/
-        - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml
-        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
-        - ./open_xdmod/modules/xdmod/integration_tests/scripts/samlSetup.sh
-        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
-        - ./vendor/phpunit/phpunit/phpunit -c ./open_xdmod/modules/xdmod/integration_tests/phpunit.xml.dist --testsuite sso --log-junit `pwd`/shippable/testresults/xdmod-sso-integration.xml
+        - ./tests/integration/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
+        - ./tests/regression/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults/
+        - ./tests/component/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml
+        - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults
+        - ./tests/ci/samlSetup.sh
+        - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
+        - ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit `pwd`/shippable/testresults/xdmod-sso-integration.xml
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - if [ -s /var/log/xdmod/apache-error.log ]; then cat /var/log/xdmod/apache-error.log; false; fi
     on_failure:

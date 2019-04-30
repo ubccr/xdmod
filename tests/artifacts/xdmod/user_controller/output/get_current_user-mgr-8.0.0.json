@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "results": {
+    "first_name": "Admin",
+    "last_name": "User",
+    "email_address": "admin@localhost",
+    "is_sso_user": false,
+    "first_time_login": false,
+    "autoload_suppression": false,
+    "field_of_science": "0",
+    "active_role": "User",
+    "most_privileged_role": "User"
+  }
+}

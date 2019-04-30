@@ -297,7 +297,7 @@ function main()
             }
 
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {
-                $dwi->aggregateStorageData();
+                $dwi->aggregateStorageData($lastModifiedStartDate);
             }
         } catch (Exception $e) {
             $logger->crit(array(

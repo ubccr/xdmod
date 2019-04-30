@@ -1,0 +1,25 @@
+title
+"File Count (Number of files): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+"System Username","File Count (Number of files)"
+swath,160124.5000
+ovenb,55523.0000
+parcr,7042.0000
+savsp,678.0000
+sante,97.0000
+phivi,11.0000
+lanwa,10.0000
+egyni,5.0000
+palsw,5.0000
+blaca,2.0000
+rocdo,2.0000
+crcco,1.0000
+frahata,1.0000
+gresh,1.0000
+razor,1.0000
+---------

@@ -1,0 +1,142 @@
+[
+  [
+    {
+      "user": "cd",
+      "username": "centerdirector",
+      "difference": 1,
+      "data": {
+        "timeframe": "year",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "username": "centerstaff",
+      "difference": 1,
+      "data": {
+        "timeframe": "year",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "username": "principal",
+      "difference": 1,
+      "data": {
+        "timeframe": "year",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "username": "normaluser",
+      "difference": 1,
+      "data": {
+        "timeframe": "year",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "mgr",
+      "username": "admin",
+      "difference": 2,
+      "data": {
+        "timeframe": "year",
+        "user_types": "2"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "username": "centerdirector",
+      "difference": 1,
+      "data": {
+        "timeframe": "month",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "username": "centerstaff",
+      "difference": 1,
+      "data": {
+        "timeframe": "month",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "username": "principal",
+      "difference": 1,
+      "data": {
+        "timeframe": "month",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "username": "normaluser",
+      "difference": 1,
+      "data": {
+        "timeframe": "month",
+        "user_types": "1"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "user": "mgr",
+      "username": "admin",
+      "difference": 2,
+      "data": {
+        "timeframe": "month",
+        "user_types": "2"
+      },
+      "expected": {
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ]
+]

@@ -2,451 +2,539 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
-<h2> Version 8.0.0 (2018-10-30) </h2>
+<h2> Version 8.1.0 (2019-04-23) </h2>
 
-<div>
-    <strong>Features</strong>
-    <ul>
+<h3 id="documentation">Documentation</h3>
+<ul>
+    <li>ETL
+        <ul>
+            <li>Improve storage aggregation (PR #882)</li>
+            <li>Processor Buckets documentation update (PR #881)</li>
+        </ul></li>
         <li>General
             <ul>
-                <li>Added a <b>beta</b> version of the Cloud realm to provide metrics relevant to
-                    cloud computing resources.</li>
-                <li>Added a <b>beta</b> version of the Storage realm to provide metrics relevant to
-                    storage systems installed at a center.</li>
-                <li>Federated XDMoD has been released for production. Federated XDMoD allows
-                    individual, locally managed, XDMoD instances to report all or a subset of their
-                    accounting data to a central Hub which provides a global view of the federation.
-                </li>
-                <li>All XDMoD user profiles are now associated with an organization. Previously, this
-                    was only required for Campus Champions.</li>
-                <li>Added support for automatically detecting / assigning a new SSO User's
-                    organization.</li>
-                <li>Added support for automatically detecting if a user's organization has changed
-                    and updating their accounts accordingly. This may include, but is not limited to,
-                    the removal of elevated privileges.</li>
-                <li>Hardened the login and password reset process as a result of a security audit by
-                    University of Cambridge.</li>
-                <li>Improved support for resource manager job arrays.</li>
-                <li>Many improvements to the documentation.</li>
-            </ul>
-        </li>
-        <li>ETL
+                <li>Update broken url and change wording of supported software (PR #876)</li>
+                <li>Add Federated XDMoD to About page (PR #873)</li>
+                <li>Update with some of the options that are avalbile (PR #804)</li>
+                <li>Improve storage documentation (PR #771)</li>
+            </ul></li>
+            <li>Cloud
+                <ul>
+                    <li>Updated Cloud Documentation for 8.1 Release (PR #875)</li>
+                </ul></li>
+</ul>
+<h3 id="new-features">New Features</h3>
+<ul>
+    <li>Cloud
+        <ul>
+            <li>Add cloud user and system account group by (PR #797)</li>
+            <li>Add support for cloud data to xdmod-shredder and xdmod-ingestor (PR #739)</li>
+        </ul></li>
+</ul>
+<h3 id="enhancements">Enhancements</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Add support for configurable email subject prefix (PR #872)</li>
+            <li>Add node_modules to the RPM. (PR #835)</li>
+            <li>Update config read order (PR #818)</li>
+            <li>Add initial summary charts for the cloud realm (PR #803)</li>
+            <li>Support simplesaml’s internal session naming (PR #757)</li>
+            <li>Support asynchronous loading of Usage tab thumbnail charts (PR #750)</li>
+            <li>Update Job Viewer API to support multiple realms (PR #733)</li>
+            <li>Support non-numeric values for Usage chart filter parameters (PR #716)</li>
+            <li>Make “Show raw data” for multiple realms configurable (PR #706)</li>
+            <li>Update Sign On Panel to collapse local login if SSO is enabled (PR #701)</li>
+        </ul></li>
+        <li>Cloud
             <ul>
-                <li>Reorganized several ETL pipelines.</li>
-                <li>Improved data sanitization for tighter checks present in MySQL 5.7.</li>
-                <li>Refactored Jobs realm ingestion to utilize ETLv2.</li>
-                <li>Standardize action names to follow the format module.pipeline.action. For
-                    example, xdmod.acls.manage-tables.</li>
-                <li>Added character set and coalition to table definitions.</li>
-                <li>Added support for foreign key constraints.</li>
-                <li>Added support for the definition of ETL variables on the command line using -d
-                    variable=value.</li>
-                <li>Add ingestion of node hostname data from SGE logs.</li>
-                <li>Various ETL performance improvements.</li>
-            </ul>
-        </li>
-    </ul>
-</div>
+                <li>Do not truncate aggregate tables on each ingest (PR #841)</li>
+                <li>Truncate staging tables after ingestion (PR #778)</li>
+                <li>Update events that are used to determine VM session starts and stops (PR #732)</li>
+            </ul></li>
+            <li>ETL
+                <ul>
+                    <li>Improve resiliency of ETLv2 manage tables (PR #807)</li>
+                    <li>Add storage shredder/ingestor support (PR #786)</li>
+                    <li>Support ETL ‘$include’ directive (PR #785)</li>
+                    <li>Update Configuration class to support merging objects in local config files (PR #782)</li>
+                    <li>DirectoryScanner support for last modified time based on filename and/or directory (PR #780)</li>
+                    <li>Move the job performance postprocessing SQL to the aggregation pipeline (PR #770)</li>
+                    <li>Implement dynamic fact tables via ETLv2 for job performance ETL (PR #742)</li>
+                    <li>Add exception code to logAndThrowException (PR #719)</li>
+                    <li>Skip only records that fail verificaiton instead of rest of file (PR #714)</li>
+                </ul></li>
+</ul>
+<h3 id="bug-fixes">Bug Fixes</h3>
+<ul>
+    <li>Cloud
+        <ul>
+            <li>Fix roles file comparison to use object and not string (PR #878)</li>
+            <li>Update session_records timestamps to non-nullable for MySQL 5.7 support (PR #877)</li>
+            <li>Add cloud raw tables to cloud manage tables action (PR #874)</li>
+            <li>Change staging table to use 1 as unknown id instead of -1 (PR #866)</li>
+            <li>Update GroupBys In Cloud Aggregate Table (PR #863)</li>
+            <li>Change cloud person username fields to be not null (PR #860)</li>
+            <li>Change where staging action gets user id from for cloud data (PR #845)</li>
+            <li>Remove event_id from the event table primary key (PR #844)</li>
+            <li>Prevent null usernames being added when ingesting cloud data (PR #838)</li>
+            <li>Remove duplicate join statement that was causing 1066 Not unique table/alias error (PR #837)</li>
+            <li>Fix for generic cloud datetime, and openstack instance type datetime (PR #820)</li>
+            <li>Update cloud realm to not throw away event precision (PR #811)</li>
+            <li>Guarantees a deterministic order for events received by the event reconstructor (PR #805)</li>
+        </ul></li>
+        <li>General
+            <ul>
+                <li>Add proper namespace in VerifyDatabase (PR #819)</li>
+                <li>Fix path to Exception in TimeAggregationUnit::factory (PR #810)</li>
+                <li>Explictly check for stdClass in VariableStore initializer (PR #802)</li>
+                <li>Make lastLogin time be floored to the second instead of microtime (PR #755)</li>
+                <li>Make logrotate.d file not override global settings (PR #749)</li>
+                <li>Fix security vulnerabities in job performance (PR #738)</li>
+                <li>Allow search panel scroll bars on small displays (PR #702)</li>
+            </ul></li>
+            <li>ETL
+                <ul>
+                    <li>Update primary key on resourcefact table to improve cloud ingestion (PR #795)</li>
+                    <li>Throw Exception if lockfile could not be obtained (PR #793)</li>
+                    <li>Improve debugging messages when executing SQL (PR #783)</li>
+                    <li>Don’t automatically rewind DirectoryScanner file handle (PR #768)</li>
+                    <li>Explicitly cast potentiall nulls to array for array_merge() (PR #756)</li>
+                    <li>Improve verification of resource codes (PR #720)</li>
+                    <li>Fix uncaught ETL exception in PdoIngestor (PR #718)</li>
+                </ul></li>
+                <li>Metric Explorer
+                    <ul>
+                        <li>Fix refesh button for Metric Explorer (PR #740)</li>
+                    </ul></li>
+</ul>
+<h3 id="qa-testing">QA / Testing</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Speedup integration tests (PR #850)</li>
+            <li>Clean up linker.php (PR #847)</li>
+            <li>Add environment variable to force regression test harness to generate expected results (PR #848)</li>
+            <li>Enforce javascript unit tests (PR #766)</li>
+            <li>Robustness improvements for integration tests (PR #726)</li>
+        </ul></li>
+        <li>Cloud
+            <ul>
+                <li>Update cloud reference data (PR #827)</li>
+            </ul></li>
+</ul>
 
-<div>
-    <strong> Bug Fixes </strong>
-    <ul>
-        <li>User Interface
-            <ul>
-                <li>Deep linking when logged in using SSO has been restored.</li>
-                <li>Update the logrotate configuration to use the su and create options.</li>
-            </ul>
-        </li>
-        <li>ETL
-            <ul>
-                <li>Add primary keys to select ETL source queries.</li>
-                <li>When modifying an existing table, preserve the order of the columns in the
-                    definition file.</li>
-                <li>Ensure that file handles are flushed before inserting the final chunk of
-                    data.</li>
-            </ul>
-        </li>
-        <li>Misc
-            <ul>
-                <li>Fixed several exceptions that were outside of a namespace.</li>
-                <li>Fixed an issue where ACLs were not properly created on upgrade.</li>
-                <li>Several minor bugfixes</li>
-            </ul>
-        </li>
-    </ul>
-</div>
+<h2> Version 8.0.0 (2018-10-30) </h2>
+
+<h3>Features</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Added a <b>beta</b> version of the Cloud realm to provide metrics relevant to
+                cloud computing resources.</li>
+            <li>Added a <b>beta</b> version of the Storage realm to provide metrics relevant to
+                storage systems installed at a center.</li>
+            <li>Federated XDMoD has been released for production. Federated XDMoD allows
+                individual, locally managed, XDMoD instances to report all or a subset of their
+                accounting data to a central Hub which provides a global view of the federation.
+            </li>
+            <li>All XDMoD user profiles are now associated with an organization. Previously, this
+                was only required for Campus Champions.</li>
+            <li>Added support for automatically detecting / assigning a new SSO User's
+                organization.</li>
+            <li>Added support for automatically detecting if a user's organization has changed
+                and updating their accounts accordingly. This may include, but is not limited to,
+                the removal of elevated privileges.</li>
+            <li>Hardened the login and password reset process as a result of a security audit by
+                University of Cambridge.</li>
+            <li>Improved support for resource manager job arrays.</li>
+            <li>Many improvements to the documentation.</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Reorganized several ETL pipelines.</li>
+            <li>Improved data sanitization for tighter checks present in MySQL 5.7.</li>
+            <li>Refactored Jobs realm ingestion to utilize ETLv2.</li>
+            <li>Standardize action names to follow the format module.pipeline.action. For
+                example, xdmod.acls.manage-tables.</li>
+            <li>Added character set and coalition to table definitions.</li>
+            <li>Added support for foreign key constraints.</li>
+            <li>Added support for the definition of ETL variables on the command line using -d
+                variable=value.</li>
+            <li>Add ingestion of node hostname data from SGE logs.</li>
+            <li>Various ETL performance improvements.</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>Bug Fixes</h3>
+<ul>
+    <li>User Interface
+        <ul>
+            <li>Deep linking when logged in using SSO has been restored.</li>
+            <li>Update the logrotate configuration to use the su and create options.</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Add primary keys to select ETL source queries.</li>
+            <li>When modifying an existing table, preserve the order of the columns in the
+                definition file.</li>
+            <li>Ensure that file handles are flushed before inserting the final chunk of
+                data.</li>
+        </ul>
+    </li>
+    <li>Misc
+        <ul>
+            <li>Fixed several exceptions that were outside of a namespace.</li>
+            <li>Fixed an issue where ACLs were not properly created on upgrade.</li>
+            <li>Several minor bugfixes</li>
+        </ul>
+    </li>
+</ul>
 
 <h2> Version 7.5.1 (2018-05-23) </h2>
 
-<div>
-    <strong>Bug Fixes</strong>
-    <ul>
-        <li> Properly implement data access for non-feature ACLs (e.g., ACLs that provide access to
+<h3>Bug Fixes</h3>
+<ul>
+    <li> Properly implement data access for non-feature ACLs (e.g., ACLs that provide access to
         data but not a feature such as a tab) that are not part of the hierarchy.  For example,
         the Value Analytics ACL.</li>
-    </ul>
-</div>
+</ul>
 
 <h2> Version 7.5.0 (2018-03-01) </h2>
 
-<div>
-    <strong>Features</strong>
-    <ul>
-        <li>General
-            <ul>
-                <li>Improve performance of Utilization statistic</li>
-                <li>Do not embed JavaScript in chart objects returned by the back end, instead
+<h3>Features</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Improve performance of Utilization statistic</li>
+            <li>Do not embed JavaScript in chart objects returned by the back end, instead
                 include this code directly in the user interface code</li>
-                <li>General improvements to the performance of the REST stack</li>
-                <li>Updated Google Captcha to v2 (v1 is now discontinued)</li>
-                <li>Added numerous component and unit tests</li>
-                <li>Removed unused code paths</li>
-                <li>Update greenlion/PHP-SQL-Parser to newer release that does not autoload itself</li>
-            </ul>
-        </li>
-        <li>User Interface
-            <ul>
-                <li>Legend item edit box is now displayed next to the legend item that is being
+            <li>General improvements to the performance of the REST stack</li>
+            <li>Updated Google Captcha to v2 (v1 is now discontinued)</li>
+            <li>Added numerous component and unit tests</li>
+            <li>Removed unused code paths</li>
+            <li>Update greenlion/PHP-SQL-Parser to newer release that does not autoload itself</li>
+        </ul>
+    </li>
+    <li>User Interface
+        <ul>
+            <li>Legend item edit box is now displayed next to the legend item that is being
                 edited and is larger to accommodate longer strings</li>
-                <li>Added a "Select All" button to the filter dialog</li>
-                <li>Added PDF export capability, which greatly improves the quality of
+            <li>Added a "Select All" button to the filter dialog</li>
+            <li>Added PDF export capability, which greatly improves the quality of
                 images included in LATEX documents</li>
-            </ul>
-        </li>
-        <li>ETL
-            <ul>
-                <li>When ingesting Slurm data, return duplicate jobs such as those that were
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>When ingesting Slurm data, return duplicate jobs such as those that were
                 resubmitted due to node fail conditions</li>
-                <li>Improve performance of filter list generation</li>
-            </ul>
-        </li>
-        <li>Application Kernels
-            <ul>
-                <li>Several minor bug fixes and UI improvements</li>
-            </ul>
-        </li>
-    </ul>
-</div>
+            <li>Improve performance of filter list generation</li>
+        </ul>
+    </li>
+    <li>Application Kernels
+        <ul>
+            <li>Several minor bug fixes and UI improvements</li>
+        </ul>
+    </li>
+</ul>
 
-<div>
-    <strong>Bug Fixes</strong>
-    <ul>
-        <li>General
-            <ul>
-                <li>Fix the Show Guidelines button in the Usage tab</li>
-                <li>Fixed an issue with data filtering when an unprivileged user tries to view
+<h3>Bug Fixes</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Fix the Show Guidelines button in the Usage tab</li>
+            <li>Fixed an issue with data filtering when an unprivileged user tries to view
                 timeseries data for a restricted realm or statistic</li>
-            </ul>
-        </li>
-        <li>User Interface
-            <ul>
-                <li>Fix the "TypeError: element is undefined" error when plotting Pie chart in
+        </ul>
+    </li>
+    <li>User Interface
+        <ul>
+            <li>Fix the "TypeError: element is undefined" error when plotting Pie chart in
                 metric explorer</li>
-            </ul>
-        </li>
-    </ul>
-</div>
+        </ul>
+    </li>
+</ul>
 
 <h2> Version 7.1.0 (2018-02-09) </h2>
 
-<div>
-    <strong>Features</strong>
-    <ul>
-        <li>General
-            <ul>
-                <li>Added support for Globus as a federated authentication provider</li>
-                <li>Improvements to the user login dialog and matching of users to institutions</li>
-                <li>Added the ability to use fine-grained ACLs for controlling access to features such
+<h3>Features</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Added support for Globus as a federated authentication provider</li>
+            <li>Improvements to the user login dialog and matching of users to institutions</li>
+            <li>Added the ability to use fine-grained ACLs for controlling access to features such
                 as tabs and realms as well as data</li>
-                <li>Code pertaining to creating/sending emails has been moved to a central location.</li>
-                <li>Improved online documentation for installations and upgrades</li>
-            </ul>
-        </li>
-        <li>Internal Admin Dashboard
-            <ul>
-                <li>Updated user management functionality in the administrative dashboard to support
+            <li>Code pertaining to creating/sending emails has been moved to a central location.</li>
+            <li>Improved online documentation for installations and upgrades</li>
+        </ul>
+    </li>
+    <li>Internal Admin Dashboard
+        <ul>
+            <li>Updated user management functionality in the administrative dashboard to support
                 fine-grained ACLs for individual users</li>
-                <li>Many stability improvements to the administrator dashboard, especially for
+            <li>Many stability improvements to the administrator dashboard, especially for
                 managing users</li>
-            </ul>
-        </li>
-        <li>Storage Realm
-            <ul>
-                <li>Added alpha version of the Storage realm to track resource storage utilization</li>
-            </ul>
-        </li>
-        <li>ETL
-            <ul>
-                <li>Added an ETL pipeline for ingesting log files generated by Eucalyptus clouds</li>
-                <li>Added support for PBS/Torque logs where the host of a job is not included in the job's
+        </ul>
+    </li>
+    <li>Storage Realm
+        <ul>
+            <li>Added alpha version of the Storage realm to track resource storage utilization</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Added an ETL pipeline for ingesting log files generated by Eucalyptus clouds</li>
+            <li>Added support for PBS/Torque logs where the host of a job is not included in the job's
                 ID string</li>
-                <li>Support references into complex source records such as JSON objects</li>
-            </ul>
-        </li>
-    </ul>
-</div>
+            <li>Support references into complex source records such as JSON objects</li>
+        </ul>
+    </li>
+</ul>
 
-<div>
-    <strong>Bug Fixes</strong>
-    <ul>
-        <li>General
-            <ul>
-                <li>Improved error reporting</li>
-                <li>Fixed several issues where JSON was not properly encoded</li>
-                <li>For end dates that fall on the current date or in the future, do not
+<h3>Bug Fixes</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Improved error reporting</li>
+            <li>Fixed several issues where JSON was not properly encoded</li>
+            <li>For end dates that fall on the current date or in the future, do not
                 automatically adjust the date to the end of the aggregation period that it falls
                 into.</li>
-            </ul>
-        </li>
-        <li>Report Generator
-            <ul>
-                <li>Make timeframes editable for individual charts</li>
-            </ul>
-        </li>
-        <li> ETL
-            <ul>
-                <li>Ignore duplicate hosts found in LSF accounting log files</li>
-                <li>Don't verify data endpoints associated with disbaled actions</li>
-                <li>Always regenerate source data queries prior to execution to ensure that any
+        </ul>
+    </li>
+    <li>Report Generator
+        <ul>
+            <li>Make timeframes editable for individual charts</li>
+        </ul>
+    </li>
+    <li> ETL
+        <ul>
+            <li>Ignore duplicate hosts found in LSF accounting log files</li>
+            <li>Don't verify data endpoints associated with disbaled actions</li>
+            <li>Always regenerate source data queries prior to execution to ensure that any
                 modified ETL variables are properly applied</li>
-                <li>Update host list parser to ensure that empty host names are not returned</li>
-                <li>Remove PHP memory limit when running ETL pipelines</li>
-            </ul>
-        </li>
-    </ul>
-</div>
+            <li>Update host list parser to ensure that empty host names are not returned</li>
+            <li>Remove PHP memory limit when running ETL pipelines</li>
+        </ul>
+    </li>
+</ul>
 
 <h2>Version 7.0.1 (2017-09-27)</h2>
 
-<div>
-  <strong>Bug Fixes</strong>
-  <ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Fixed compatibility with PHP 5.3.3</li>
-      </ul>
+        <ul>
+            <li>Fixed compatibility with PHP 5.3.3</li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
 <h2>Version 7.0.0 (2017-09-21)</h2>
 
-<div>
-  <strong>Features</strong>
-  <ul>
+<h3>Features</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Improved login prompt to automatically appear when an
-        unauthenticated user attempts to access any private tab</li>
-        <li>Improved design of Metric Explorer Load Chart menu</li>
-        <li>Re-enabled aggregate mode for "Wall Hours: Per Job" metric</li>
-        <li>Added quarterly report template for center directors</li>
-      </ul>
+        <ul>
+            <li>Improved login prompt to automatically appear when an
+                unauthenticated user attempts to access any private tab</li>
+            <li>Improved design of Metric Explorer Load Chart menu</li>
+            <li>Re-enabled aggregate mode for "Wall Hours: Per Job" metric</li>
+            <li>Added quarterly report template for center directors</li>
+        </ul>
     </li>
     <li>Job Viewer
-      <ul>
-        <li>Added Gantt chart view of job peers</li>
-        <li>Added ability to link directly to jobs</li>
-      </ul>
+        <ul>
+            <li>Added Gantt chart view of job peers</li>
+            <li>Added ability to link directly to jobs</li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Enabled dataflow diagram for Open XDMoD administrators</li>
-      </ul>
+        <ul>
+            <li>Enabled dataflow diagram for Open XDMoD administrators</li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Bug Fixes</strong>
-  <ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Fixed handling of "%" characters in Metric Explorer options when
-        using Firefox</li>
-        <li>Improved handling of invalid start and end dates</li>
-        <li>Fixed validation of length of names in contact forms</li>
-        <li>Improved handling of jobs with "0" start or end time</li>
-        <li>Fixed case where About tab would display a blank page when loaded
-        using Chrome</li>
-      </ul>
+        <ul>
+            <li>Fixed handling of "%" characters in Metric Explorer options when
+                using Firefox</li>
+            <li>Improved handling of invalid start and end dates</li>
+            <li>Fixed validation of length of names in contact forms</li>
+            <li>Improved handling of jobs with "0" start or end time</li>
+            <li>Fixed case where About tab would display a blank page when loaded
+                using Chrome</li>
+        </ul>
     </li>
     <li>Job Viewer
-      <ul>
-        <li>Fixed directions not always appearing when all jobs are
-        closed</li>
-        <li>Fixed duplicate search nodes being created when opening jobs from
-        Metric Explorer charts with "#" in the title</li>
-      </ul>
+        <ul>
+            <li>Fixed directions not always appearing when all jobs are
+                closed</li>
+            <li>Fixed duplicate search nodes being created when opening jobs from
+                Metric Explorer charts with "#" in the title</li>
+        </ul>
     </li>
     <li>Usage
-      <ul>
-        <li>Fixed error bars option being enabled when error bars are not
-        available</li>
-        <li>Fixed metrics appearing to be available to users that do not have
-        access</li>
-      </ul>
+        <ul>
+            <li>Fixed error bars option being enabled when error bars are not
+                available</li>
+            <li>Fixed metrics appearing to be available to users that do not have
+                access</li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Miscellaneous</strong>
-  <ul>
+<h3>Miscellaneous</h3>
+<ul>
     <li>Performed work in anticipation of federated instances</li>
-  </ul>
-</div>
+</ul>
 
 <h2>Version 6.6.0 (2017-05-11)</h2>
 
-<div>
-  <strong>Features</strong>
-  <ul>
+<h3>Features</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Replaced realms with categories.
-          <ul>
-            <li>Categories behave similarly to realms but, unlike realms, can
-            contain metrics based on different underlying data sets.</li>
-          </ul>
-        </li>
-        <li>Enhanced new PHP-based ETL system with a variety of features.</li>
-      </ul>
+        <ul>
+            <li>Replaced realms with categories.
+                <ul>
+                    <li>Categories behave similarly to realms but, unlike realms, can
+                        contain metrics based on different underlying data sets.</li>
+                </ul>
+            </li>
+            <li>Enhanced new PHP-based ETL system with a variety of features.</li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Improved application classification code.</li>
-      </ul>
+        <ul>
+            <li>Improved application classification code.</li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Bug Fixes</strong>
-  <ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Fixed warning that could appear when using federated authentication.
-        </li>
-        <li>Fixed unnecessary rounding in processor count metrics.</li>
-        <li>Fixed errors when attempting to preview an unsaved report.</li>
-        <li>Fixed aggregators excluding data on certain time boundaries.</li>
-        <li>Fixed non-aggregate metrics being allowed in aggregate datasets.
-        </li>
-        <li>Fixed display error with password reset form that occurred when
-        using federated authentication.</li>
-        <li>Fixed "Show chart title" option in Usage tab not always working
-        as expected.</li>
-      </ul>
+        <ul>
+            <li>Fixed warning that could appear when using federated authentication.
+            </li>
+            <li>Fixed unnecessary rounding in processor count metrics.</li>
+            <li>Fixed errors when attempting to preview an unsaved report.</li>
+            <li>Fixed aggregators excluding data on certain time boundaries.</li>
+            <li>Fixed non-aggregate metrics being allowed in aggregate datasets.
+            </li>
+            <li>Fixed display error with password reset form that occurred when
+                using federated authentication.</li>
+            <li>Fixed "Show chart title" option in Usage tab not always working
+                as expected.</li>
+        </ul>
     </li>
     <li>Metric Explorer
-      <ul>
-        <li>Fixed Y-axis context menu disappearing after
-        changing between linear and logarithmic scales.</li>
-        <li>Fixed chart last modified time not updating.</li>
-        <li>Fixed typing certain characters causing chart options menu to close
-        when using Firefox.</li>
-        <li>Fixed chart errors not displaying if help graphic is active.</li>
-      </ul>
+        <ul>
+            <li>Fixed Y-axis context menu disappearing after
+                changing between linear and logarithmic scales.</li>
+            <li>Fixed chart last modified time not updating.</li>
+            <li>Fixed typing certain characters causing chart options menu to close
+                when using Firefox.</li>
+            <li>Fixed chart errors not displaying if help graphic is active.</li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Miscellaneous</strong>
-  <ul>
+<h3>Miscellaneous</h3>
+<ul>
     <li>Performed work in anticipation of allocations, accounts, and cloud
-    data in Open XDMoD.</li>
-  </ul>
-</div>
+        data in Open XDMoD.</li>
+</ul>
 
 <h2>Version 6.5.0 (2017-01-10)</h2>
 
-<div>
-  <strong>Features</strong>
-  <ul>
+<h3>Features</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Modified the Summary tab to reload automatically after its charts
-        are modified in Metric Explorer.</li>
-        <li>Added a new PHP-based ETL system to Open XDMoD.
-          <ul>
-            <li>This ETL provides many predefined actions to support flexible
-            ingestion of data from multiple sources and is configured via JSON
-            files to support flexibility at customer installations with minimal
-            changes to source code.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Modified the Summary tab to reload automatically after its charts
+                are modified in Metric Explorer.</li>
+            <li>Added a new PHP-based ETL system to Open XDMoD.
+                <ul>
+                    <li>This ETL provides many predefined actions to support flexible
+                        ingestion of data from multiple sources and is configured via JSON
+                        files to support flexibility at customer installations with minimal
+                        changes to source code.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Added peak memory usage metric.</li>
-        <li>Improved application identification data.</li>
-        <li>Added a count column to the Job Viewer's detailed metrics pane to
-        show how many data points were used to calculate the metrics.</li>
-      </ul>
+        <ul>
+            <li>Added peak memory usage metric.</li>
+            <li>Improved application identification data.</li>
+            <li>Added a count column to the Job Viewer's detailed metrics pane to
+                show how many data points were used to calculate the metrics.</li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Bug Fixes</strong>
-  <ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Fixed stacked area charts not handling empty data points correctly.</li>
-        <li>Stopped inaccurate warning about Adobe Flash content in browsers
-        that block Flash. (XDMoD does not make use of Flash.)</li>
-        <li>Fixed incorrectly-oriented subpanel titles in Internet Explorer 10.</li>
-        <li>Fixed inconsistency between labels used for users and PIs on a job.</li>
-        <li>Fixed automatic aggregation unit selection for charts not working
-        correctly for some installations of Open XDMoD.</li>
-        <li>Fixed UGE shredder</li>
-        <li>Fixed Slurm job array index parsing.</li>
-      </ul>
+        <ul>
+            <li>Fixed stacked area charts not handling empty data points correctly.</li>
+            <li>Stopped inaccurate warning about Adobe Flash content in browsers
+                that block Flash. (XDMoD does not make use of Flash.)</li>
+            <li>Fixed incorrectly-oriented subpanel titles in Internet Explorer 10.</li>
+            <li>Fixed inconsistency between labels used for users and PIs on a job.</li>
+            <li>Fixed automatic aggregation unit selection for charts not working
+                correctly for some installations of Open XDMoD.</li>
+            <li>Fixed UGE shredder</li>
+            <li>Fixed Slurm job array index parsing.</li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Job Viewer
-          <ul>
-            <li>Fixed "Show Raw Data" button in Metric Explorer not filtering
-            results correctly when using some combinations of drilldowns and
-            filters.</li>
-            <li>Fixed single-point datasets not appearing in exported charts.</li>
-            <li>Fixed Search History tree sorting nodes that should not be
-            sorted.</li>
-            <li>Fixed "Show Raw Data" window in Metric Explorer staying active
-            after the chart underneath it changes (for example, when a new chart
-            is imported from Usage).</li>
-            <li>Improved handling of raw data specified in kilobytes and
-            megabytes in Detailed Metrics pane.</li>
-            <li>Fixed handling of Search History entries that have numeric
-            names.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Job Viewer
+                <ul>
+                    <li>Fixed "Show Raw Data" button in Metric Explorer not filtering
+                        results correctly when using some combinations of drilldowns and
+                        filters.</li>
+                    <li>Fixed single-point datasets not appearing in exported charts.</li>
+                    <li>Fixed Search History tree sorting nodes that should not be
+                        sorted.</li>
+                    <li>Fixed "Show Raw Data" window in Metric Explorer staying active
+                        after the chart underneath it changes (for example, when a new chart
+                        is imported from Usage).</li>
+                    <li>Improved handling of raw data specified in kilobytes and
+                        megabytes in Detailed Metrics pane.</li>
+                    <li>Fixed handling of Search History entries that have numeric
+                        names.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Miscellaneous</strong>
-  <ul>
+<h3>Miscellaneous</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Added documentation for using LDAP for federated authentication.</li>
-        <li>Moved development of Open XDMoD into public GitHub repositories.
-          <ul>
-            <li>If you would like to help us improve and expand upon Open XDMoD,
-            please visit <a href="https://github.com/ubccr/xdmod">the
-            Open XDMoD repository</a>.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Added documentation for using LDAP for federated authentication.</li>
+            <li>Moved development of Open XDMoD into public GitHub repositories.
+                <ul>
+                    <li>If you would like to help us improve and expand upon Open XDMoD,
+                        please visit <a href="https://github.com/ubccr/xdmod">the
+                            Open XDMoD repository</a>.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
 <h2>Version 6.0.0 (2016-09-21)</h2>
 
@@ -455,415 +543,409 @@ v3.0.9 to v4.2.5. If you are a commercial user as defined by the
 Highcharts license terms and your Highcharts license does not cover the
 new version, you will need to acquire a new license.</p>
 
-<div>
-  <strong>Features</strong>
-  <ul>
+<h3>Features</h3>
+<ul>
     <li>Added demo user type.</li>
     <li>Added roadmap link to feature request dialog.</li>
     <li>Shredders
-      <ul>
-        <li>Fixed calculation of missing end times from the start time and wall
-        time.</li>
-        <li>LSF
-          <ul>
-            <li>Now storing the node list, exit code and exit status for SUPReMM
-            support.</li>
-          </ul>
-        </li>
-        <li>Slurm
-          <ul>
-            <li>Now allowing null eligible times.</li>
-            <li>Failed parsing of datetimes are no longer a fatal error.</li>
-          </ul>
-        </li>
-        <li>SGE
-          <ul>
-            <li>Now supporting older versions of SGE that contain only 43 fields
-            in their accounting logs.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Fixed calculation of missing end times from the start time and wall
+                time.</li>
+            <li>LSF
+                <ul>
+                    <li>Now storing the node list, exit code and exit status for SUPReMM
+                        support.</li>
+                </ul>
+            </li>
+            <li>Slurm
+                <ul>
+                    <li>Now allowing null eligible times.</li>
+                    <li>Failed parsing of datetimes are no longer a fatal error.</li>
+                </ul>
+            </li>
+            <li>SGE
+                <ul>
+                    <li>Now supporting older versions of SGE that contain only 43 fields
+                        in their accounting logs.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Job Viewer
-          <ul>
-            <li>Added sort options to search history panel.</li>
-            <li>Organized advanced search filters into categories.</li>
-            <li>Modified timeseries charts to use the timezone of a job's
-            resource instead of the timezone used by the web browser.</li>
-            <li>Modified analytics pane to always be present and explain why
-            missing data is missing.</li>
-            <li>Modified byte units to use IEC prefixes instead of SI ones.</li>
-            <li>Allowed some metrics to be displayed in multiple tabs.</li>
-            <li>Added tooltips to advanced search filters.</li>
-            <li>Added tooltips to detailed metrics.</li>
-            <li>Added help sections to tabs that didn't have any previously.</li>
-            <li>Added a help button to the at-a-glance analytics.</li>
-            <li>Added a loading message to charts that are loading.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Job Viewer
+                <ul>
+                    <li>Added sort options to search history panel.</li>
+                    <li>Organized advanced search filters into categories.</li>
+                    <li>Modified timeseries charts to use the timezone of a job's
+                        resource instead of the timezone used by the web browser.</li>
+                    <li>Modified analytics pane to always be present and explain why
+                        missing data is missing.</li>
+                    <li>Modified byte units to use IEC prefixes instead of SI ones.</li>
+                    <li>Allowed some metrics to be displayed in multiple tabs.</li>
+                    <li>Added tooltips to advanced search filters.</li>
+                    <li>Added tooltips to detailed metrics.</li>
+                    <li>Added help sections to tabs that didn't have any previously.</li>
+                    <li>Added a help button to the at-a-glance analytics.</li>
+                    <li>Added a loading message to charts that are loading.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Bug Fixes</strong>
-  <ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Fixed some charts not rendering if more than 1000 points were
-        plotted.</li>
-        <li>Improved consistency of chart aesthetics across tabs.</li>
-        <li>Fixed report generator not cleaning up old report files.</li>
-      </ul>
+        <ul>
+            <li>Fixed some charts not rendering if more than 1000 points were
+                plotted.</li>
+            <li>Improved consistency of chart aesthetics across tabs.</li>
+            <li>Fixed report generator not cleaning up old report files.</li>
+        </ul>
     </li>
     <li>Metric Explorer
-      <ul>
-        <li>Fixed Add Filter list only including filter types applicable to the
-        realm of the first data series on a chart.</li>
-      </ul>
+        <ul>
+            <li>Fixed Add Filter list only including filter types applicable to the
+                realm of the first data series on a chart.</li>
+        </ul>
     </li>
     <li>Shredders
-      <ul>
-        <li>PBS
-          <ul>
-            <li>Fixed parsing of newer <code>exec_host</code> formats
-            (e.g. <code>host/0-3</code>, <code>host/0*8</code>).</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>PBS
+                <ul>
+                    <li>Fixed parsing of newer <code>exec_host</code> formats
+                        (e.g. <code>host/0-3</code>, <code>host/0*8</code>).</li>
+                </ul>
+            </li>
+        </ul>
     </li>
     <li><code>xdmod-import</code>
-      <ul>
-        <li>Fixed importing of hierarchy and group-to-hierarchy files.</li>
-      </ul>
+        <ul>
+            <li>Fixed importing of hierarchy and group-to-hierarchy files.</li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Job Viewer
-          <ul>
-            <li>Fixed a number of cases where editing a search did not work as
-            expected.</li>
-            <li>Fixed various edge cases where timeseries chart drilldowns
-            did not work as expected.</li>
-            <li>Fixed case where a top-level timeseries chart was exported
-            instead of the current, drilled-down chart.</li>
-            <li>Fixed case where timeseries chart drilldowns performed on a
-            chart were not reflected in the navigation tree.</li>
-            <li>Fixed case where selecting a low-level timeseries chart in the
-            navigation tree opened a top-level chart instead.</li>
-            <li>Fixed basic search resource list loading immediately on page
-            load.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Job Viewer
+                <ul>
+                    <li>Fixed a number of cases where editing a search did not work as
+                        expected.</li>
+                    <li>Fixed various edge cases where timeseries chart drilldowns
+                        did not work as expected.</li>
+                    <li>Fixed case where a top-level timeseries chart was exported
+                        instead of the current, drilled-down chart.</li>
+                    <li>Fixed case where timeseries chart drilldowns performed on a
+                        chart were not reflected in the navigation tree.</li>
+                    <li>Fixed case where selecting a low-level timeseries chart in the
+                        navigation tree opened a top-level chart instead.</li>
+                    <li>Fixed basic search resource list loading immediately on page
+                        load.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
-  </ul>
-</div>
+</ul>
 
-<div>
-  <strong>Under the Hood</strong>
-  <ul>
+<h3>Under the Hood</h3>
+<ul>
     <li>Reorganized code to enable easier sharing of development efforts across
-    XDMoD and Open XDMoD.</li>
+        XDMoD and Open XDMoD.</li>
     <li>Updated various third-party components used by Open XDMoD.</li>
     <li>Made numerous other internal improvements to prepare for future features
-    and ease development efforts.</li>
-  </ul>
-</div>
+        and ease development efforts.</li>
+</ul>
 
-<h3>Version 5.6.0 (2016-05-24)</h3>
-<div>
-  <strong>New Features</strong>
-  <ul>
+<h2>Version 5.6.0 (2016-05-24)</h2>
+
+<h3>New Features</h3>
+<ul>
     <li>Federated Authentication
-      <ul>
-        <li>Open XDMoD can now use any authentication system supported by
-        <a href="https://simplesamlphp.org/" target="_blank">SimpleSAMLphp</a>.
-        </li>
-        <li>For more information, please view the
-        <a href="http://open.xdmod.org/simpleSAMLphp.html" target="_blank">
-        Federated Authentication guide</a>.</li>
-      </ul>
+        <ul>
+            <li>Open XDMoD can now use any authentication system supported by
+                <a href="https://simplesamlphp.org/" target="_blank">SimpleSAMLphp</a>.
+            </li>
+            <li>For more information, please view the
+                <a href="http://open.xdmod.org/simpleSAMLphp.html" target="_blank">
+                    Federated Authentication guide</a>.</li>
+        </ul>
     </li>
     <li>Roadmap
-      <ul>
-        <li>Added interactive roadmap for XDMoD development to About tab.</li>
-      </ul>
+        <ul>
+            <li>Added interactive roadmap for XDMoD development to About tab.</li>
+        </ul>
     </li>
     <li>Contact Us
-      <ul>
-        <li>Added option to contact developers for technical support.</li>
-      </ul>
+        <ul>
+            <li>Added option to contact developers for technical support.</li>
+        </ul>
     </li>
     <li>Data Warehouse
-      <ul>
-        <li>Improved speed of filter (dimension value) lists by precomputing
-        available values.</li>
-      </ul>
+        <ul>
+            <li>Improved speed of filter (dimension value) lists by precomputing
+                available values.</li>
+        </ul>
     </li>
     <li>Metric Explorer
-      <ul>
-        <li>Added redo button.</li>
-      </ul>
+        <ul>
+            <li>Added redo button.</li>
+        </ul>
     </li>
     <li>Shredders
-      <ul>
-        <li>Added support for PBS Pro.</li>
-        <li>Added additional input validation to the Slurm helper script.</li>
-      </ul>
+        <ul>
+            <li>Added support for PBS Pro.</li>
+            <li>Added additional input validation to the Slurm helper script.</li>
+        </ul>
     </li>
     <li>Upgrade Process
-      <ul>
-        <li>Added warning to upgrade addon modules before migrating.</li>
-      </ul>
+        <ul>
+            <li>Added warning to upgrade addon modules before migrating.</li>
+        </ul>
     </li>
     <li>Database
-      <ul>
-        <li>Changed column types and added indexes to the logging table.</li>
-      </ul>
+        <ul>
+            <li>Changed column types and added indexes to the logging table.</li>
+        </ul>
     </li>
     <li>Documentation
-      <ul>
-        <li>User manual now available.</li>
-        <li>Improved installation and configuration documentation.</li>
-      </ul>
+        <ul>
+            <li>User manual now available.</li>
+            <li>Improved installation and configuration documentation.</li>
+        </ul>
     </li>
     <li>Application Kernels
-      <ul>
-        <li>Added ability to select the 29th-31st of a month as a monthly report
-        delivery day.
-          <ul>
-            <li>For months that don't have these days, reports scheduled for
-            those days will be delivered on the last day of the month.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Added ability to select the 29th-31st of a month as a monthly report
+                delivery day.
+                <ul>
+                    <li>For months that don't have these days, reports scheduled for
+                        those days will be delivered on the last day of the month.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Configuration
-          <ul>
-            <li>Switched to URL-based method for specifying Mongo databases.
-              <ul>
-                <li>This adds support for Mongo databases that require
-                authentication.</li>
-              </ul>
+        <ul>
+            <li>Configuration
+                <ul>
+                    <li>Switched to URL-based method for specifying Mongo databases.
+                        <ul>
+                            <li>This adds support for Mongo databases that require
+                                authentication.</li>
+                        </ul>
+                    </li>
+                    <li>Improved setup process to be more user-friendly.
+                        <ul>
+                            <li>The interactive setup script now generates the required
+                                configuration files.</li>
+                        </ul>
+                    </li>
+                    <li>Improved configuration file structure.</li>
+                </ul>
             </li>
-            <li>Improved setup process to be more user-friendly.
-              <ul>
-                <li>The interactive setup script now generates the required
-                configuration files.</li>
-              </ul>
+            <li>Data Processing
+                <ul>
+                    <li>Added ability to transfer ingested/aggregated data between
+                        databases.
+                        <ul>
+                            <li>This allows SUPReMM data to be reprocessed in a secondary
+                                database before deploying a new version of the SUPReMM ingestor
+                                in the main XDMoD instance.</li>
+                        </ul>
+                    </li>
+                    <li>Improved logging for ingestion and aggregation scripts.</li>
+                </ul>
             </li>
-            <li>Improved configuration file structure.</li>
-          </ul>
-        </li>
-        <li>Data Processing
-          <ul>
-            <li>Added ability to transfer ingested/aggregated data between
-            databases.
-              <ul>
-                <li>This allows SUPReMM data to be reprocessed in a secondary
-                database before deploying a new version of the SUPReMM ingestor
-                in the main XDMoD instance.</li>
-              </ul>
+            <li>Job Viewer
+                <ul>
+                    <li>Added ability to edit searches.</li>
+                    <li>Improved layout of search window.</li>
+                    <li>Added ability to export timeseries plots as images or CSV
+                        data.</li>
+                </ul>
             </li>
-            <li>Improved logging for ingestion and aggregation scripts.</li>
-          </ul>
-        </li>
-        <li>Job Viewer
-          <ul>
-            <li>Added ability to edit searches.</li>
-            <li>Improved layout of search window.</li>
-            <li>Added ability to export timeseries plots as images or CSV
-            data.</li>
-          </ul>
-        </li>
-      </ul>
+        </ul>
     </li>
-  </ul>
-  <strong>Bug Fixes</strong>
-  <ul>
+</ul>
+
+<h3>Bug Fixes</h3>
+<ul>
     <li>General
-      <ul>
-        <li>Enabled toolbar scrolling when window is too small.</li>
-        <li>Fixed trend line R<sup>2</sup> values sometimes not being
-        calculated.</li>
-        <li>Removed redundant warnings about role-based restrictions.</li>
-        <li>Fixed the About tab not being able to be the default tab.</li>
-        <li>Improved chart loading speed by removing most animations.</li>
-        <li>Fixed incorrect trend line calculation and display for
-        discontinuous data series.</li>
-        <li>Fixed security vulnerability in Report Generator's image
-        generator.</li>
-        <li>Fixed extra slashes in URLs in password reset emails (including
-        account creation emails).</li>
-        <li>Fixed email template paths.</li>
-        <li>The About tab can now be set as the default module.</li>
-      </ul>
+        <ul>
+            <li>Enabled toolbar scrolling when window is too small.</li>
+            <li>Fixed trend line R<sup>2</sup> values sometimes not being
+                calculated.</li>
+            <li>Removed redundant warnings about role-based restrictions.</li>
+            <li>Fixed the About tab not being able to be the default tab.</li>
+            <li>Improved chart loading speed by removing most animations.</li>
+            <li>Fixed incorrect trend line calculation and display for
+                discontinuous data series.</li>
+            <li>Fixed security vulnerability in Report Generator's image
+                generator.</li>
+            <li>Fixed extra slashes in URLs in password reset emails (including
+                account creation emails).</li>
+            <li>Fixed email template paths.</li>
+            <li>The About tab can now be set as the default module.</li>
+        </ul>
     </li>
     <li>Data Warehouse
-      <ul>
-        <li>Fixed cases where current time period would not be aggregated.
-          <ul>
-            <li>Now that this is resolved, code that can work by scanning any
-            aggregate table now uses the year tables, as those are smallest.</li>
-          </ul>
-        </li>
-        <li>Improved consistency of time period tables and removed unused ones.</li>
-      </ul>
+        <ul>
+            <li>Fixed cases where current time period would not be aggregated.
+                <ul>
+                    <li>Now that this is resolved, code that can work by scanning any
+                        aggregate table now uses the year tables, as those are smallest.</li>
+                </ul>
+            </li>
+            <li>Improved consistency of time period tables and removed unused ones.</li>
+        </ul>
     </li>
     <li>Metric Explorer
-      <ul>
-        <li>Fixed handling of HTML characters in chart titles.</li>
-        <li>Fixed issues with axis renames not persisting.</li>
-        <li>Fixed Load Chart search not working.</li>
-        <li>Modified chart options menu label to be a fixed length.
-          <ul>
-            <li>This prevents the button from being placed in the toolbar's
-            overflow area when it shouldn't be.</li>
-          </ul>
-        </li>
-        <li>Fixed changes to y-axes not being undoable.</li>
-        <li>Modified "Show Trend Line" button in chart options to be disabled
-        when trend lines aren't available.</li>
-        <li>Fixed case where duration selectors in main toolbar and on x-axis
-        popup could desynchronize.</li>
-      </ul>
+        <ul>
+            <li>Fixed handling of HTML characters in chart titles.</li>
+            <li>Fixed issues with axis renames not persisting.</li>
+            <li>Fixed Load Chart search not working.</li>
+            <li>Modified chart options menu label to be a fixed length.
+                <ul>
+                    <li>This prevents the button from being placed in the toolbar's
+                        overflow area when it shouldn't be.</li>
+                </ul>
+            </li>
+            <li>Fixed changes to y-axes not being undoable.</li>
+            <li>Modified "Show Trend Line" button in chart options to be disabled
+                when trend lines aren't available.</li>
+            <li>Fixed case where duration selectors in main toolbar and on x-axis
+                popup could desynchronize.</li>
+        </ul>
     </li>
     <li>Shredders
-      <ul>
-        <li>Fixed handling of "NONE" in SGE's pe_taskid field.</li>
-        <li>Now allowing all values that were previously resulting in fatal
-        errors in Slurm fields that represent lengths of time.</li>
-      </ul>
+        <ul>
+            <li>Fixed handling of "NONE" in SGE's pe_taskid field.</li>
+            <li>Now allowing all values that were previously resulting in fatal
+                errors in Slurm fields that represent lengths of time.</li>
+        </ul>
     </li>
     <li>Upgrade Process
-      <ul>
-        <li>Fixed broken error for when portal_settings.ini is not writable.</li>
-      </ul>
+        <ul>
+            <li>Fixed broken error for when portal_settings.ini is not writable.</li>
+        </ul>
     </li>
     <li>Usage
-      <ul>
-        <li>Fixed bad default settings for dimensions that default to pie
-        charts.</li>
-        <li>Fixed long initial load time by starting on a single-chart page.</li>
-      </ul>
+        <ul>
+            <li>Fixed bad default settings for dimensions that default to pie
+                charts.</li>
+            <li>Fixed long initial load time by starting on a single-chart page.</li>
+        </ul>
     </li>
     <li>Application Kernels
-      <ul>
-        <li>Fixed Reports tab not appearing for some authorized users.</li>
-        <li>Reduced user authorization requirements for showing certain data.</li>
-        <li>Removed "." from tab labels.</li>
-        <li>Removed non-functional x-y swap from tabs.</li>
-      </ul>
+        <ul>
+            <li>Fixed Reports tab not appearing for some authorized users.</li>
+            <li>Reduced user authorization requirements for showing certain data.</li>
+            <li>Removed "." from tab labels.</li>
+            <li>Removed non-functional x-y swap from tabs.</li>
+        </ul>
     </li>
     <li>SUPReMM
-      <ul>
-        <li>Job Viewer
-          <ul>
-            <li>Added error dialog box for if Quick Job Lookup's resource list
-            fails to load instead of silently failing.</li>
-            <li>Fixed existing searches breaking after performing a re-ingest of
-            SUPReMM data.</li>
-            <li>Fixed charts sometimes not resizing properly.</li>
-            <li>Fixed memory leak in search history right-click menu.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Job Viewer
+                <ul>
+                    <li>Added error dialog box for if Quick Job Lookup's resource list
+                        fails to load instead of silently failing.</li>
+                    <li>Fixed existing searches breaking after performing a re-ingest of
+                        SUPReMM data.</li>
+                    <li>Fixed charts sometimes not resizing properly.</li>
+                    <li>Fixed memory leak in search history right-click menu.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
-  </ul>
-  <strong>Known Issues</strong>
-  <ul>
-    <li>Some text boxes will not allow ampersands to be typed into them in
-    Firefox.
-      <ul>
-        <li>To work around this, ampersands can be copied and pasted into these
-        boxes.</li>
-      </ul>
-    </li>
-  </ul>
-</div>
+</ul>
 
-<h3>Version 5.5.0 (2015-12-18)</h3>
-<div>
-  <strong>New Features</strong>
-  <ul>
+<h3>Known Issues</h3>
+<ul>
+    <li>Some text boxes will not allow ampersands to be typed into them in
+        Firefox.
+        <ul>
+            <li>To work around this, ampersands can be copied and pasted into these
+                boxes.</li>
+        </ul>
+    </li>
+</ul>
+
+<h2>Version 5.5.0 (2015-12-18)</h2>
+
+<h3>New Features</h3>
+<ul>
     <li>SUPReMM support</li>
     <li>Metric Explorer Changes
-      <ul>
-        <li>Improved management of charts
-          <ul>
-            <li>Charts are no longer automatically saved after each
-            operation. A manual Save button has been added that will
-            indicate whether or not a chart needs to be saved.</li>
-            <li>When displaying pie charts, only a single dataset is
-            allowed.</li>
-            <li>Added ability to rename saved charts.</li>
-            <li>Added undo capability.</li>
-          </ul>
-        </li>
-        <li>Improved UI for data filtering
-          <ul>
-            <li>Added Quick Filters for quickly restricting data. This
-              replaces the Role selector.</li>
-          </ul>
-        </li>
-        <li>Improved data access controls
-          <ul>
-            <li>Non-public metrics and dimensions are now restricted
-            according to users' roles.</li>
-            <li>Improved filter lists to only include values for which
-            the user can view the underlying data.</li>
-            <li>Added the ability to include a remainder data series.</li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+            <li>Improved management of charts
+                <ul>
+                    <li>Charts are no longer automatically saved after each
+                        operation. A manual Save button has been added that will
+                        indicate whether or not a chart needs to be saved.</li>
+                    <li>When displaying pie charts, only a single dataset is
+                        allowed.</li>
+                    <li>Added ability to rename saved charts.</li>
+                    <li>Added undo capability.</li>
+                </ul>
+            </li>
+            <li>Improved UI for data filtering
+                <ul>
+                    <li>Added Quick Filters for quickly restricting data. This
+                        replaces the Role selector.</li>
+                </ul>
+            </li>
+            <li>Improved data access controls
+                <ul>
+                    <li>Non-public metrics and dimensions are now restricted
+                        according to users' roles.</li>
+                    <li>Improved filter lists to only include values for which
+                        the user can view the underlying data.</li>
+                    <li>Added the ability to include a remainder data series.</li>
+                </ul>
+            </li>
+        </ul>
     </li>
     <li>Migrated more server calls to the new REST stack</li>
     <li>Simplified the chart/data retrieval infrastructure used by the
-    Metric Explorer and Usage tabs</li>
+        Metric Explorer and Usage tabs</li>
     <li>Improved performance of certain queries</li>
     <li>Updated PBS parsing to support time fields that are formatted in
-    seconds and not HH:MM:SS</li>
-  </ul>
-  <strong>Bug Fixes</strong>
-  <ul>
+        seconds and not HH:MM:SS</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>Fixed report generator document formatting</li>
     <li>Fixed inconsistent data series ordering between timeseries charts
-    when sorted by value in Usage and Metric Explorer tabs</li>
+        when sorted by value in Usage and Metric Explorer tabs</li>
     <li>Fixed Metric Explorer sometimes loading the same chart twice</li>
     <li>Fixed the "Hide Tooltip" option not always working as expected in
-    Usage tab</li>
+        Usage tab</li>
     <li>Fixed filter lists occasionally getting stuck under a loading
-    mask</li>
+        mask</li>
     <li>Fixed predefined date durations not being saved correctly in the
-    Metric Explorer</li>
+        Metric Explorer</li>
     <li>Removed auto-loading of the last open chart in Metric Explorer, a
-    new chart is now opened when visiting the Metric Explorer</li>
+        new chart is now opened when visiting the Metric Explorer</li>
     <li>Improved stability, consistency, and performance of numerous other
-    components</li>
+        components</li>
     <li>Prevent warning messages produced by LSF jobs that don't have a
-    host list</li>
-  </ul>
-</div>
+        host list</li>
+</ul>
 
-<h3>Version 5.0.0 (2015-08-19)</h3>
-<div>
-  <strong>New Features</strong>
-  <ul>
+<h2>Version 5.0.0 (2015-08-19)</h2>
+
+<h3>New Features</h3>
+<ul>
     <li>Utilization metric may now be normalized to a specified percent
-    allocated</li>
+        allocated</li>
     <li>Removed javac dependency</li>
     <li>Add host filter shredder feature</li>
     <li>Improved stability of Usage tab</li>
     <li>Improved error handling for internal dashboard errors</li>
     <li>Added meaningful HTTP status codes to failed login responses</li>
     <li>Resolved frequent warnings in Apache logs about implicitly
-    converting arrays to strings</li>
+        converting arrays to strings</li>
     <li>PBS memory value parsing errors are no longer fatal</li>
     <li>Removed Apache requirement for listening on 127.0.0.1</li>
     <li>Added support for Univa Grid Engine 8.2+</li>
@@ -872,51 +954,48 @@ new version, you will need to acquire a new license.</p>
     <li>Added support for PhantomJS 2.0+</li>
     <li>Added helper script for updating resource specs</li>
     <li>Improved documentation</li>
-  </ul>
-  <strong>Bug Fixes</strong>
-  <ul>
+</ul>
+
+<h3>Bug Fixes</h3>
+<ul>
     <li>Adjust LSF unique key constraint</li>
     <li>Added PBS unique key constraint to prevent duplicate job data</li>
-  </ul>
-</div>
+</ul>
 
-<h3>Version 4.5.2 (2015-02-17)</h3>
-<div>
-  <strong>New Features</strong>
-  <ul>
+<h2>Version 4.5.2 (2015-02-17)</h2>
+
+<h3>New Features</h3>
+<ul>
     <li>Remove excessive "wall time" error messages</li>
     <li>Add more debug logging</li>
     <li>SGE memory value parsing errors are no longer fatal</li>
-  </ul>
-  <strong>Bug Fixes</strong>
-  <ul>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>Fix SGE parsing regression</li>
-  </ul>
-</div>
+</ul>
 
-<h3>Version 4.5.1 (2015-02-05)</h3>
-<div>
-  <strong>New Features</strong>
-  <ul>
+<h2>Version 4.5.1 (2015-02-05)</h2>
+
+<h3>New Features</h3>
+<ul>
     <li>Support for Torque's new "exec_host" syntax</li>
     <li>Updated SGE parsing to support Univa's new "job_class" field and
-    requests for "INFINITY" memory</li>
-  </ul>
-  <strong>Bug Fixes</strong>
-  <ul>
+        requests for "INFINITY" memory</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>Backslash characters in LSF log files now parsed correctly</li>
     <li>Report generator now handles double quotes in portal_settings.ini
-    properly</li>
+        properly</li>
     <li>Fixed optional Node Utilization statistic</li>
-  </ul>
-</div>
+</ul>
 
-<h3>Version 4.5.0 (2014-12-04)</h3>
-<div>
-  <strong>New Features</strong>
-  <ul>
+<h2>Version 4.5.0 (2014-12-04)</h2>
+<h3>New Features</h3>
+<ul>
     <li>Major re-write of the Metric Explorer user interface including a
-    metric catalog and context-sensitive menus</li>
+        metric catalog and context-sensitive menus</li>
     <li>Report generator performance enhancements</li>
     <li>General user interface updates</li>
     <li>Improved image export dialog</li>
@@ -925,7 +1004,7 @@ new version, you will need to acquire a new license.</p>
     <li>Added additional error checking and reporting to shredders</li>
     <li>Added LSF support</li>
     <li>Improved utilization metric to support resources that don't have a
-    constant cpu count over their lifetime</li>
+        constant cpu count over their lifetime</li>
     <li>Added suport for alternate PI data sources</li>
     <li>Improved logging</li>
     <li>Added weighted job size statistic</li>
@@ -934,22 +1013,19 @@ new version, you will need to acquire a new license.</p>
     <li>Added automatic update checker</li>
     <li>Added support for slurm job arrays</li>
     <li>Improved documentation</li>
-  </ul>
-  <strong>Bug Fixes</strong>
-  <ul>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
     <li>PBS and SGE job arrays were not ingested correctly</li>
     <li>sacct configuration option was not recognized</li>
     <li>Arrow keys did not work in axis range boxes</li>
     <li>Parentheses not available in Metric Explorer chart titles</li>
     <li>Proper handling of apostrophes in search dialogs</li>
     <li>On some charts, data points on the last day of the specified date
-    range were not displayed correctly</li>
-  </ul>
-</div>
+        range were not displayed correctly</li>
+</ul>
 
-<h3>Version 3.5.0 (2013-11-18)</h3>
-<div>
-  <ul>
+<h2>Version 3.5.0 (2013-11-18)</h2>
+<ul>
     <li>Initial public release</li>
-  </ul>
-</div>
+</ul>

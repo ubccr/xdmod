@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Resource,"Logical Usage (Bytes)"
+torx,710910661418666.5000
+recex,79408542963200.0000
+---------

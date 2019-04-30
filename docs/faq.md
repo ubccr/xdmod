@@ -14,12 +14,15 @@ disk space per 1 Million jobs on your MySQL server.
 
 ### Will Open XDMoD run on RHEL 5?
 
-It is possible, but you must have PHP 5.3 installed.
+It may be possible but this is not supported please see
+[Software Requirements](software-requirements.html) for recommended and tested
+configurations.
 
 ### Can I use Open XDMoD with MySQL 5.0?
 
-Open XDMoD should work with MySQL 5.0, but it hasn't been tested
-extensively, so we recommend MySQL 5.1 or 5.5.
+It may be possible but this is not supported please see
+[Software Requirements](software-requirements.html) for recommended and tested
+configurations.
 
 ### How do I enable LDAP Authentication?
 
@@ -53,7 +56,7 @@ configuration.
     query_cache_size        = 1G
     group_concat_max_len    = 16M
 
-[optimizing-mysql]: https://dev.mysql.com/doc/refman/5.5/en/optimizing-the-server.html
+[optimizing-mysql]: https://dev.mysql.com/doc/refman/5.5/en/optimizing-server.html
 
 ### How do I install Open XDMoD in a non-root URL?
 

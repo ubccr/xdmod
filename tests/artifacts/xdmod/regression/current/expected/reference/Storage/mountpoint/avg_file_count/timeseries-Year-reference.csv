@@ -1,0 +1,11 @@
+title
+"File Count (Number of files): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[/data] File Count (Number of files)","[/projects] File Count (Number of files)","[/scratch] File Count (Number of files)"
+2018-01-01,110341163,105732869,16142123
+2019-01-01,110328239,106671103,16963874
+---------

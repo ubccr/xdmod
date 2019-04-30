@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Month,"[Unknown] Quota: Soft Threshold (Bytes)","[Molecular Biosciences] Quota: Soft Threshold (Bytes)","[Electrical and Communication Systems] Quota: Soft Threshold (Bytes)","[Chemistry] Quota: Soft Threshold (Bytes)","[Earth Sciences] Quota: Soft Threshold (Bytes)","[Mathematical Sciences] Quota: Soft Threshold (Bytes)","[Arts] Quota: Soft Threshold (Bytes)","[Astronomical Sciences] Quota: Soft Threshold (Bytes)","[Atmospheric Sciences] Quota: Soft Threshold (Bytes)","[Chemical, Thermal Systems] Quota: Soft Threshold (Bytes)","[Environmental Biology] Quota: Soft Threshold (Bytes)","[Materials Research] Quota: Soft Threshold (Bytes)","[Mechanical and Structural Systems] Quota: Soft Threshold (Bytes)","[Microelectronic Information Processing Systems] Quota: Soft Threshold (Bytes)","[Physics] Quota: Soft Threshold (Bytes)","[Polar Programs] Quota: Soft Threshold (Bytes)","[Social and Economic Science] Quota: Soft Threshold (Bytes)"
+2018-12-01,781000019968000,146000015360000,25000001536000,10000003072000,10000003072000,10000003072000,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,781000019968000,146000015360000,25000001536000,10000003072000,10000003072000,10000003072000,0,0,0,0,0,0,0,0,0,0,0
+---------

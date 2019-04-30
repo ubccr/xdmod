@@ -569,12 +569,7 @@ class Packager
             '.git',
             '.github',
             'assets',
-            'docs',
-            'automated_tests',
-            'component_tests',
-            'integration_tests',
-            'regression_tests',
-            'tests',
+            'docs'
         ));
 
         foreach ($dirs as $dir) {

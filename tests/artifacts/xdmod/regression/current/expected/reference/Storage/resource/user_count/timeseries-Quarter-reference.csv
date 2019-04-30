@@ -1,0 +1,11 @@
+title
+"User Count (Number of Users): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[torx] User Count (Number of Users)","[recex] User Count (Number of Users)"
+2018-10-01,341,10
+2019-01-01,341,10
+---------

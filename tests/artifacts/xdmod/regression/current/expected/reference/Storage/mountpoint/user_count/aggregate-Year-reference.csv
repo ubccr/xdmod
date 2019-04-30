@@ -1,0 +1,12 @@
+title
+"User Count (Number of Users): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Mountpoint,"User Count (Number of Users)"
+/scratch,334
+/data,10
+/projects,10
+---------

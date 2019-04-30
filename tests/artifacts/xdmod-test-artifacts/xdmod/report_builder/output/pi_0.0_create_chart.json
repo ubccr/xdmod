@@ -1,8 +1,0 @@
-{
-  "content_type": "application/json",
-  "http_code": 200,
-  "response": {
-    "success": true,
-    "action": "add"
-  }
-}

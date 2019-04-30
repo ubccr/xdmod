@@ -1,0 +1,211 @@
+{
+    "+realms": [
+        {
+            "name": "Jobs",
+            "display": "Jobs"
+        }
+    ],
+    "modw.job_tasks": [
+        {
+            "key": "local_jobid",
+            "name": "Local Job Id",
+            "dtype": "accounting",
+            "group": "Administration",
+            "documentation": "The unique identifier assigned to the job by the job scheduler."
+        },
+        {
+            "key": "resource_id",
+            "name": "Resource",
+            "group": "Administration",
+            "dtype": "foreignkey",
+            "join": {
+                "schema": "modw",
+                "table": "resourcefact"
+            },
+            "documentation": "The resource that ran the job."
+        },
+        {
+            "key": "systemaccount_id",
+            "name": "System Username",
+            "group": "Administration",
+            "dtype": "foreignkey",
+            "join": {
+                "schema": "modw",
+                "table": "systemaccount",
+                "column": "username"
+            },
+            "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource."
+        },
+        {
+            "key": "person_id",
+            "name": "User",
+            "group": "Administration",
+            "dtype": "foreignkey",
+            "join": {
+                "schema": "modw",
+                "table": "person",
+                "column": "long_name"
+            },
+            "documentation": "The name of the job owner."
+        },
+        {
+            "key": "person_organization_id",
+            "name": "Organization",
+            "group": "Administration",
+            "dtype": "foreignkey",
+            "join": {
+                "schema": "modw",
+                "table": "organization"
+            },
+            "documentation": "The organization of the person who ran the task"
+        },
+        {
+            "key": "name",
+            "name": "Name",
+            "documentation": "The name of the job as reported by the job scheduler.",
+            "dtype": "accounting",
+            "group": "Executable"
+        },
+        {
+            "key": "submit_time_ts",
+            "name": "Submit Time",
+            "dtype": "accounting",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "Task submission time"
+        },
+        {
+            "key": "start_time_ts",
+            "name": "Start Time",
+            "dtype": "accounting",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "The time that the job started running."
+        },
+        {
+            "key": "end_time_ts",
+            "name": "End Time",
+            "units": "ts",
+            "dtype": "accounting",
+            "group": "Timing",
+            "documentation": "The time that the job ended."
+        },
+        {
+            "key": "eligible_time_ts",
+            "name": "Eligible Time",
+            "units": "ts",
+            "dtype": "accounting",
+            "group": "Timing",
+            "documentation": "The time that the job was eligible for scheduling by the resource manager."
+        },
+        {
+            "key": "node_count",
+            "name": "Nodes",
+            "dtype": "foreignkey",
+            "group": "Allocated Resource",
+            "join": {
+                "schema": "modw",
+                "table": "nodecount",
+                "column": "nodes"
+            },
+            "documentation": "The number of nodes that were assigned to the job."
+        },
+        {
+            "key": "processor_count",
+            "name": "Cores",
+            "dtype": "accounting",
+            "group": "Allocated Resource",
+            "documentation": "The number of cores that were assigned to the job."
+        },
+        {
+            "key": "memory_kb",
+            "name": "Memory Used",
+            "dtype": "accounting",
+            "group": "Allocated resource",
+            "units": "kilobyte",
+            "documentation": "Memory consumed as reported by the resource manager."
+        },
+        {
+            "key": "wallduration",
+            "name": "Wall Time",
+            "dtype": "accounting",
+            "group": "Timing",
+            "units": "seconds",
+            "documentation": "Overall job duration."
+        },
+        {
+            "key": "waitduration",
+            "name": "Wait Time",
+            "dtype": "accounting",
+            "group": "Timing",
+            "units": "seconds",
+            "documentation": "Time the job waited in the queue"
+        },
+        {
+            "key": "cpu_time",
+            "name": "Core Time",
+            "dtype": "accounting",
+            "group": "Allocated resource",
+            "units": "seconds",
+            "documentation": "The amount of CPU core time (Core Count * Wall Time)"
+        },
+        {
+            "key": "group_name",
+            "name": "UNIX group name",
+            "dtype": "accounting",
+            "group": "Administration",
+            "documentation": "The name of the group that ran the job."
+        },
+        {
+            "key": "gid_number",
+            "name": "UNIX group GID",
+            "dtype": "accounting",
+            "group": "Administration",
+            "documentation": "The GID of the group that ran the job."
+        },
+        {
+            "key": "uid_number",
+            "name": "UNIX UID",
+            "dtype": "accounting",
+            "group": "Administration",
+            "documentation": "The UID of the user that ran the job."
+        },
+        {
+            "key": "exit_code",
+            "name": "Exit Code",
+            "dtype": "accounting",
+            "group": "Executable",
+            "documentation": "The code that the job exited with."
+        },
+        {
+            "key": "exit_state",
+            "name": "Exit State",
+            "dtype": "accounting",
+            "group": "Executable",
+            "documentation": "The state of the job when it completed."
+        },
+        {
+            "key": "cpu_req",
+            "name": "Requested Cores",
+            "dtype": "accounting",
+            "group": "Requested resource",
+            "documentation": "The number of CPUs required by the job."
+        },
+        {
+            "key": "mem_req",
+            "name": "Requested memory",
+            "dtype": "accounting",
+            "group": "Requested resource",
+            "units": "bytes",
+            "documentation": "The amount of memory required by the job."
+        },
+        {
+            "key": "timelimit",
+            "name": "Requested Wall Time",
+            "dtype": "accounting",
+            "group": "Requested resource",
+            "units": "seconds",
+            "documentation": "The time limit of the job."
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+title
+"User Count (Number of Users): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[Unknown] User Count (Number of Users)","[Mechanics and Materials] User Count (Number of Users)","[Cell Biology] User Count (Number of Users)","[Galactic Astronomy] User Count (Number of Users)","[Solid-State and Microstructures] User Count (Number of Users)","[Geology and Paleontology] User Count (Number of Users)","[Physical Chemistry] User Count (Number of Users)","[Sociology] User Count (Number of Users)","[Organic and Macromolecular Chemistry] User Count (Number of Users)","[Geophysics] User Count (Number of Users)","[Biochemistry and Molecular Structure and Function] User Count (Number of Users)","[Biophysics] User Count (Number of Users)","[Experimental Systems] User Count (Number of Users)","[Decision, Risk, and Management Science] User Count (Number of Users)","[Polar Meteorology] User Count (Number of Users)","[Quantum Electronics, Waves, and Beams] User Count (Number of Users)","[Statistics and Probability] User Count (Number of Users)","[Theoretical Physics] User Count (Number of Users)","[Algebra and Number Theory] User Count (Number of Users)","[Arts] User Count (Number of Users)","[Economics] User Count (Number of Users)","[Fluid, Particulate, and Hydraulic Systems] User Count (Number of Users)","[Polar Aeronomy and Astrophysics] User Count (Number of Users)","[Seismology] User Count (Number of Users)","[Solid State Chemistry and Polymers] User Count (Number of Users)","[Structures and Building Systems] User Count (Number of Users)","[Tectonics] User Count (Number of Users)","[Global Atmospheric Research] User Count (Number of Users)","[Law and Social Sciences] User Count (Number of Users)","[Metals, Ceramics, and Electronic Materials] User Count (Number of Users)","[Systematic and Population Biology] User Count (Number of Users)","[Volcanology and Mantle Geochemistry] User Count (Number of Users)"
+2018-10-01,188,20,15,15,12,10,10,9,8,6,5,4,4,3,3,3,3,3,2,2,2,2,2,2,2,2,2,1,1,1,1,1
+2019-01-01,188,20,15,15,12,10,10,9,8,6,5,4,4,3,3,3,3,3,2,2,2,2,2,2,2,2,2,1,1,1,1,1
+---------
