@@ -29,7 +29,7 @@ class QueryHandler
     private $pdo; // populated in the constructor
 
 
-    private function __construct()
+    function __construct()
     {
         // Fetch the database handle
         $pdo = DB::factory('database');
