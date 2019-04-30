@@ -63,4 +63,4 @@ $phpunit ${PHPUNITARGS} --testsuite=Roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROU
 # as XDUserTest dynamically generates new users. Some of which will be center staff,
 # which messes with the tests in lib/Roles. Hence the splitting into two test
 # suites.
-$phpunit ${PHPUNITARGS} --testsuite=ETL -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
+$phpunit ${PHPUNITARGS} --testsuite=non-roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION

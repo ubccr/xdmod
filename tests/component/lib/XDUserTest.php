@@ -529,26 +529,6 @@ class XDUserTest extends BaseTest
     /**
      * @expectedException Exception
      **/
-    public function testCreateUserWithExistingEmailShouldFail()
-    {
-        $username = array_keys(self::$users)[count(self::$users) - 1];
-        self::getUser(null, 'public', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX);
-    }
-
-    /**
-     * @expectedException Exception
-     **/
-    public function testSaveUserWithSameEmailAndNotXsedeTypeAndNoIdShouldFail()
-    {
-        $username = array_keys(self::$users)[count(self::$users) - 1];
-        $anotherUser = self::getUser(null, 'public', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX);
-        $anotherUser->setUserType(DEMO_USER_TYPE);
-        $anotherUser->saveUser();
-    }
-
-    /**
-     * @expectedException Exception
-     **/
     public function testSavePublicUserShouldFail()
     {
         $user = XDUser::getPublicUser();
@@ -626,73 +606,6 @@ class XDUserTest extends BaseTest
 
         $user->setPassword(self::CENTER_STAFF_USER_NAME);
         $user->saveUser();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetRoleIDForValidRole()
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $roleId = $method->invoke($user, self::CENTER_STAFF_ACL_NAME);
-
-        $this->assertNotNull($roleId);
-    }
-
-    /**
-     *
-     */
-    public function testGetRoleIDForInvalidRole()
-    {
-        try {
-            $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-            $reflection = new ReflectionClass($user);
-            $method = $reflection->getMethod('_getRoleID');
-            $method->setAccessible(true);
-            $result = $method->invoke($user, self::INVALID_ACL_NAME);
-            $this->assertNull($result);
-        } catch (Exception $e) {
-            $expectedMessage = 'Undefined offset: 0';
-            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
-            $message = $e->getMessage();
-
-            $this->assertTrue(
-                $isCorrectClass,
-                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
-            );
-            $this->assertNotFalse(
-                strpos($message, $expectedMessage),
-                "Expected the message to contain [$expectedMessage]. Received: [$message]"
-            );
-        }
-    }
-
-    public function testGetRoleWithNull()
-    {
-        try {
-            $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-            $reflection = new ReflectionClass($user);
-            $method = $reflection->getMethod('_getRoleID');
-            $method->setAccessible(true);
-            $result = $method->invoke($user, null);
-            $this->assertNull($result, "Expected [null]. Received [$result]");
-        } catch (Exception $e) {
-            $expectedMessage = 'Undefined offset: 0';
-            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
-            $message = $e->getMessage();
-
-            $this->assertTrue(
-                $isCorrectClass,
-                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
-            );
-            $this->assertNotFalse(
-                strpos($message, $expectedMessage),
-                "Expected the message to contain [$expectedMessage]. Received: [$message]"
-            );
-        }
     }
 
     private function allCombinations(array $data)
@@ -923,24 +836,6 @@ class XDUserTest extends BaseTest
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $actual = $user->isCenterDirectorOfOrganization("");
         $this->assertEquals(false, $actual);
-    }
-
-    /**
-     * @dataProvider provideGetRoleIDFromIdentifierInvalidFails
-     * @param string $roleName
-     * @throws Exception
-     */
-    public function testGetRoleIDFromIdentifierInvalidFails($roleName)
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $getRoleIdFromIdentifier = $reflection->getMethod('_getRoleIDFromIdentifier');
-        $getRoleIdFromIdentifier->setAccessible(true);
-
-
-        $actual = $getRoleIdFromIdentifier->invoke($user, $roleName);
-        $this->assertEquals(-1, $actual);
-
     }
 
     public function provideGetRoleIDFromIdentifierInvalidFails()
