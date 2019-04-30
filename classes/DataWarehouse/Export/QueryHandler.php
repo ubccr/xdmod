@@ -32,7 +32,7 @@ class QueryHandler
     function __construct()
     {
         // Fetch the database handle
-        $pdo = DB::factory('database');
+        $this->pdo = DB::factory('database');
     }
 
     /* transition between request record states */
@@ -68,7 +68,7 @@ class QueryHandler
         // Return count of affected rows--should be 1.
         $result = $this->pdo->execute($sql, $params);
 
-        return($result);
+        return(count($result)==1);
     }
 
     // transition specified export request to Available state from Submitted.
@@ -76,12 +76,12 @@ class QueryHandler
     public function submittedToAvailable($id)
     {
         // read export retention duration from config file. Value is stored in days.
-        $expires_in_days = xd_utilities\getConfiguration('data_warehouse_export','retention_duration');
+        $expires_in_days = \xd_utilities\getConfiguration('data_warehouse_export','retention_duration');
 
         $sql = "UPDATE batch_export_requests
                 SET
-                    export_created=CAST(NOW() as DATETIME),
-                    export_expires=DATE_ADD(CAST(NOW() as DATETIME), INTERVAL :expires_in_days DAY),
+                    export_created_datetime=CAST(NOW() as DATETIME),
+                    export_expires_datetime=DATE_ADD(CAST(NOW() as DATETIME), INTERVAL :expires_in_days DAY),
                     export_succeeded=1
                 WHERE id=:id";
 
@@ -91,7 +91,7 @@ class QueryHandler
         // Return count of affected rows--should be 1.
         $result = $this->pdo->execute($sql, $params);
 
-        return($result);
+        return(count($result)==1);
     }
 
     // transition specified export request to Expired state from Available.
@@ -110,7 +110,7 @@ class QueryHandler
         // Return count of affected rows--should be 1.
         $result = $this->pdo->execute($sql, $params);
 
-        return($result);
+        return(count($result)==1);
     }
 
     /* list request records states */
@@ -123,9 +123,13 @@ class QueryHandler
             WHERE export_succeeded IS NULL";
 
         // Return count of rows.
-        $result = $this->pdo->execute($sql);
+        try {
+            $result = $this->pdo->query($sql);
+            return($result[0]['COUNT(id)']);
 
-        return($result);
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
     // Return details of all export requests presently in Submitted state.
@@ -147,8 +151,8 @@ class QueryHandler
     public function listRequestsForUser($user_id)
     {
         $sql = "SELECT id, realm, start_date, end_date,
-            export_succeeded, expires_datetime,
-            export_created_datetime,
+            export_succeeded, export_expires_datetime,
+            export_created_datetime
             FROM batch_export_requests
             WHERE user_id=:user_id
             ORDER BY id";
