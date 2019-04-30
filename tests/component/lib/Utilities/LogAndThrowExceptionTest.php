@@ -1,10 +1,11 @@
 <?php
 
-namespace IntegrationTests\Utilities;
+namespace ComponentTests\Utilities;
 
 use CCR\DB;
 use CCR\Loggable;
 use Exception;
+use PDOException;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -29,7 +30,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
     public function testNoExceptionCode()
     {
         $msg = "No Code";
-        $expectedMsg = (string) $this->loggable . " $msg";
+        $expectedMsg = (string) $this->loggable . ": $msg";
         try {
             $this->loggable->logAndThrowException($msg);
         } catch ( Exception $e ) {
@@ -45,7 +46,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
     public function testExceptionCode()
     {
         $msg = "Code = 10";
-        $expectedMsg = (string) $this->loggable . " $msg";
+        $expectedMsg = (string) $this->loggable . ": $msg Exception: '$msg'";
         try {
             $this->loggable->logAndThrowException(
                 $msg,
@@ -71,7 +72,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
             try {
                 $this->db->query($sql);
             } catch ( PDOException $p ) {
-                $this->assertEquals('42S02', $p->getCode());
+                $this->assertEquals('42S02', $p->getCode(), 'Inner testPdoException');
                 $this->loggable->logAndThrowException(
                     $p->getMessage(),
                     array(
@@ -81,7 +82,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
                 );
             }
         } catch ( Exception $e ) {
-            $this->assertEquals(1146, $e->getCode());
+            $this->assertEquals(1146, $e->getCode(), 'Outer testPdoException');
         }
     }
 }
