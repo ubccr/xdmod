@@ -1,5 +1,92 @@
 Open XDMoD Change Log
 =====================
+
+## 2019-04-23 v8.1.0
+
+- Documentation
+    - ETL
+        - Improve storage aggregation (PR #882)
+        - Processor Buckets documentation update (PR #881)
+    - General
+        - Update broken url and change wording of supported software (PR #876)
+        - Add Federated XDMoD to About page (PR #873)
+        - Update with some of the options that are avalbile (PR #804)
+        - Improve storage documentation (PR #771)
+    - Cloud
+        - Updated Cloud Documentation for 8.1 Release (PR #875)
+- New Features
+    - Cloud
+        - Add cloud user and system account group by (PR #797)
+        - Add support for cloud data to xdmod-shredder and xdmod-ingestor (PR #739)
+- Enhancements
+    - General
+        - Add support for configurable email subject prefix (PR #872)
+        - Add node_modules to the RPM. (PR #835)
+        - Update config read order (PR #818)
+        - Add initial summary charts for the cloud realm (PR #803)
+        - Support simplesaml's internal session naming (PR #757)
+        - Support asynchronous loading of Usage tab thumbnail charts (PR #750)
+        - Update Job Viewer API to support multiple realms (PR #733)
+        - Support non-numeric values for Usage chart filter parameters (PR #716)
+        - Make "Show raw data" for multiple realms configurable (PR #706)
+        - Update Sign On Panel to collapse local login if SSO is enabled (PR #701)
+    - Cloud
+        - Do not truncate aggregate tables on each ingest (PR #841)
+        - Truncate staging tables after ingestion (PR #778)
+        - Update events that are used to determine VM session starts and stops (PR #732)
+    - ETL
+        - Improve resiliency of ETLv2 manage tables (PR #807)
+        - Add storage shredder/ingestor support (PR #786)
+        - Support ETL '$include' directive (PR #785)
+        - Update Configuration class to support merging objects in local config files (PR #782)
+        - DirectoryScanner support for last modified time based on filename and/or directory (PR #780)
+        - Move the job performance postprocessing SQL to the aggregation pipeline (PR #770)
+        - Implement dynamic fact tables via ETLv2 for job performance ETL (PR #742)
+        - Add exception code to logAndThrowException (PR #719)
+        - Skip only records that fail verificaiton instead of rest of file (PR #714)
+- Bug Fixes
+    - Cloud
+        - Fix roles file comparison to use object and not string (PR #878)
+        - Update session_records timestamps to non-nullable for MySQL 5.7 support (PR #877)
+        - Add cloud raw tables to cloud manage tables action (PR #874)
+        - Change staging table to use 1 as unknown id instead of -1 (PR #866)
+        - Update GroupBys In Cloud Aggregate Table (PR #863)
+        - Change cloud person username fields to be not null (PR #860)
+        - Change where staging action gets user id from for cloud data (PR #845)
+        - Remove event_id from the event table primary key (PR #844)
+        - Prevent null usernames being added when ingesting cloud data (PR #838)
+        - Remove duplicate join statement that was causing 1066 Not unique table/alias error (PR #837)
+        - Fix for generic cloud datetime, and openstack instance type datetime (PR #820)
+        - Update cloud realm to not throw away event precision (PR #811)
+        - Guarantees a deterministic order for events received by the event reconstructor (PR #805)
+    - General
+        - Add proper namespace in VerifyDatabase (PR #819)
+        - Fix path to Exception in TimeAggregationUnit::factory (PR #810)
+        - Explictly check for stdClass in VariableStore initializer (PR #802)
+        - Make lastLogin time be floored to the second instead of microtime (PR #755)
+        - Make logrotate.d file not override global settings (PR #749)
+        - Fix security vulnerabities in job performance (PR #738)
+        - Allow search panel scroll bars on small displays (PR #702)
+    - ETL
+        - Update primary key on resourcefact table to improve cloud ingestion (PR #795)
+        - Throw Exception if lockfile could not be obtained (PR #793)
+        - Improve debugging messages when executing SQL (PR #783)
+        - Don't automatically rewind DirectoryScanner file handle (PR #768)
+        - Explicitly cast potentiall nulls to array for array_merge() (PR #756)
+        - Improve verification of resource codes (PR #720)
+        - Fix uncaught ETL exception in PdoIngestor (PR #718)
+    - Metric Explorer
+        - Fix refesh button for Metric Explorer (PR #740)
+- QA / Testing
+    - General
+        - Speedup integration tests (PR #850)
+        - Clean up linker.php (PR #847)
+        - Add environment variable to force regression test harness to generate expected results (PR #848)
+        - Enforce javascript unit tests (PR #766)
+        - Robustness improvements for integration tests (PR #726)
+    - Cloud
+        - Update cloud reference data (PR #827)
+
 ## 2018-10-30 v8.0.0
 
 - Features
@@ -35,7 +122,7 @@ Open XDMoD Change Log
         - Fixed several exceptions that were outside of a namespace.
         - Fixed an issue where ACLs were not properly created on upgrade.
         - Several minor bugfixes
- 
+
 ## 2018-05-23 v7.5.1
 
 - Bug Fixes

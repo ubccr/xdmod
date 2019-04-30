@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "totalCount": 1,
+  "message": "",
+  "data": [
+    {
+      "tabs": "[{\"tab\":\"tg_summary\",\"isDefault\":true,\"title\":\"Summary\",\"pos\":100,\"permitted_modules\":null,\"javascriptClass\":\"XDMoD.Module.Summary\",\"javascriptReference\":\"CCR.xdmod.ui.tgSummaryViewer\",\"tooltip\":\"Displays summary information\",\"userManualSectionName\":\"Summary Tab\"},{\"tab\":\"tg_usage\",\"isDefault\":false,\"title\":\"Usage\",\"pos\":200,\"permitted_modules\":null,\"javascriptClass\":\"XDMoD.Module.Usage\",\"javascriptReference\":\"CCR.xdmod.ui.chartViewerTGUsage\",\"tooltip\":\"Displays usage\",\"userManualSectionName\":\"Usage Tab\"},{\"tab\":\"metric_explorer\",\"isDefault\":false,\"title\":\"Metric Explorer\",\"pos\":300,\"permitted_modules\":null,\"javascriptClass\":\"XDMoD.Module.MetricExplorer\",\"javascriptReference\":\"CCR.xdmod.ui.metricExplorer\",\"tooltip\":\"\",\"userManualSectionName\":\"Metric Explorer\"},{\"tab\":\"report_generator\",\"isDefault\":false,\"title\":\"Report Generator\",\"pos\":1000,\"permitted_modules\":null,\"javascriptClass\":\"XDMoD.Module.ReportGenerator\",\"javascriptReference\":\"CCR.xdmod.ui.reportGenerator\",\"tooltip\":\"\",\"userManualSectionName\":\"Report Generator\"},{\"tab\":\"job_viewer\",\"isDefault\":false,\"title\":\"Job Viewer\",\"pos\":5000,\"permitted_modules\":null,\"javascriptClass\":\"XDMoD.Module.JobViewer\",\"javascriptReference\":\"CCR.xdmod.ui.jobViewer\",\"tooltip\":\"View detailed job-level metrics\",\"userManualSectionName\":\"Job Viewer\"},{\"tab\":\"about_xdmod\",\"isDefault\":false,\"title\":\"About\",\"pos\":10000,\"permitted_modules\":null,\"javascriptClass\":\"XDMoD.Module.About\",\"javascriptReference\":\"CCR.xdmod.ui.aboutXD\",\"tooltip\":\"\",\"userManualSectionName\":\"About\"}]"
+    }
+  ]
+}

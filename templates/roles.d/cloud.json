@@ -143,7 +143,8 @@
                 },
                 {
                     "realm": "Cloud",
-                    "group_by": "username"
+                    "group_by": "username",
+                    "disable": true
                 }
             ]
         }

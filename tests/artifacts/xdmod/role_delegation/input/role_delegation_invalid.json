@@ -1,0 +1,66 @@
+[
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": "null",
+      "expected": "cd_upgrade_member_member_id_not_specified"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": "",
+      "expected": "cd_upgrade_member_id_invalid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": 4294967296,
+      "expected": "cd_upgrade_member_user_does_not_exist"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": "babaganoush",
+      "expected": "cd_upgrade_member_id_invalid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": "null",
+      "expected": "cd_downgrade_member_member_id_not_specified"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": "",
+      "expected": "cd_downgrade_member_id_invalid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": 4294967296,
+      "expected": "cd_downgrade_member_user_does_not_exist"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": "babaganoush",
+      "expected": "cd_downgrade_member_id_invalid"
+    }
+  ]
+]
