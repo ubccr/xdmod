@@ -93,53 +93,52 @@ try {
                     $user,
                     $realm_name
                 );
+                foreach($query_descripter_groups as $groupBy => $queryDescriptorData) {
+                    $queryDescriptor = $queryDescriptorData['all'];
 
-                foreach($query_descripter_groups as $realm => $query_descripter_group) {
-                    foreach($query_descripter_group as $query_descripter) {
-                        if ($query_descripter->getShowMenu() !== true) {
-                            continue;
-                        }
-
-                        $nodeId = (
-                            'group_by_'
-                            . $categoryName
-                            . '_'
-                            . $query_descripter->getGroupByName()
-                        );
-
-                        // Make sure that the nodeText, derived from the query descripters menu
-                        // label, has each  instance of $realm_name replaced with $categoryName.
-                        $nodeText = preg_replace(
-                            '/' . preg_quote($realm_name, '/') . '/',
-                            $categoryName,
-                            $query_descripter->getMenuLabel()
-                        );
-
-                        // If this $nodeId has been seen before but for a different realm. Update
-                        // the list of realms associated with this $nodeId
-                        $nodeRealms = (
-                        isset($categoryReturnData[$nodeId])
-                            ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
-                            : $realm_name
-                        );
-
-                        $categoryReturnData[$nodeId] = array(
-                            'text' => $nodeText,
-                            'id' => $nodeId,
-                            'group_by' => $query_descripter->getGroupByName(),
-                            'query_group' => $query_group_name,
-                            'category' => $categoryName,
-                            'realm' => $nodeRealms,
-                            'defaultChartSettings' => $query_descripter->getChartSettings(true),
-                            'chartSettings' => $query_descripter->getChartSettings(true),
-                            'node_type' => 'group_by',
-                            'iconCls' => 'menu',
-                            'description' => $query_descripter->getGroupByLabel(),
-                            'leaf' => false
-                        );
-
-                        $hasItems = true;
+                    if ($queryDescriptor->getShowMenu() !== true) {
+                        continue;
                     }
+
+                    $nodeId = (
+                        'group_by_'
+                        . $categoryName
+                        . '_'
+                        . $queryDescriptor->getGroupByName()
+                    );
+
+                    // Make sure that the nodeText, derived from the query descripters menu
+                    // label, has each  instance of $realm_name replaced with $categoryName.
+                    $nodeText = preg_replace(
+                        '/' . preg_quote($realm_name, '/') . '/',
+                        $categoryName,
+                        $queryDescriptor->getMenuLabel()
+                    );
+
+                    // If this $nodeId has been seen before but for a different realm. Update
+                    // the list of realms associated with this $nodeId
+                    $nodeRealms = (
+                    isset($categoryReturnData[$nodeId])
+                        ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
+                        : $realm_name
+                    );
+
+                    $categoryReturnData[$nodeId] = array(
+                        'text' => $nodeText,
+                        'id' => $nodeId,
+                        'group_by' => $queryDescriptor->getGroupByName(),
+                        'query_group' => $query_group_name,
+                        'category' => $categoryName,
+                        'realm' => $nodeRealms,
+                        'defaultChartSettings' => $queryDescriptor->getChartSettings(true),
+                        'chartSettings' => $queryDescriptor->getChartSettings(true),
+                        'node_type' => 'group_by',
+                        'iconCls' => 'menu',
+                        'description' => $queryDescriptor->getGroupByLabel(),
+                        'leaf' => false
+                    );
+
+                    $hasItems = true;
                 }
             }
 
