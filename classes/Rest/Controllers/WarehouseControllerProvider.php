@@ -295,6 +295,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $controller
             ->get("$root/datasets", "$current::getDatasets");
 
+        $controller->get("$root/aggregatedata", "$current::getAggregateData");
+
         $controller
             ->get("$root/plots/formats/output", "$current::getPlotOutputFormats");
 
@@ -699,6 +701,70 @@ class WarehouseControllerProvider extends BaseControllerProvider
             'success' => true,
             'results' => $realms,
         ));
+    }
+
+    /**
+     * Return aggregate data from the datawarehouse
+     *
+     * @param Request     $request The request used to make this call.
+     * @param Application $app     The router application.
+     *
+     * @return json object
+     */
+    public function getAggregateData(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+
+        $json_config = $this->getStringParam($request, 'config', true);
+        $start = $this->getIntParam($request, 'start', true);
+        $limit = $this->getIntParam($request, 'limit', true);
+
+        $config = json_decode($json_config);
+
+        if ($config === null) {
+            throw new BadRequestException('syntax error in config parameter');
+        }
+
+        $mandatory = array('realm', 'group_by', 'statistics', 'aggregation_unit', 'start_date', 'end_date', 'order_by');
+        foreach ($mandatory as $required_property) {
+            if (!property_exists($config, $required_property)) {
+                throw new BadRequestException('Missing mandatory config property ' . $required_property);
+            }
+        }
+
+        $permittedStats = Acls::getPermittedStatistics($user, $config->realm, $config->group_by);
+        $forbiddenStats = array_diff($config->statistics, $permittedStats);
+
+        if (!empty($forbiddenStats) ) {
+            throw new AccessDeniedException('access denied to ' . json_encode($forbiddenStats));
+        }
+
+        $query_classname = '\DataWarehouse\Query\\' . $config->realm . '\Aggregate';
+        $query = new $query_classname($config->aggregation_unit, $config->start_date, $config->end_date, $config->group_by);
+
+        $allRoles = $user->getAllRoles();
+        $query->setMultipleRoleParameters($allRoles, $user);
+
+        foreach ($config->statistics as $stat) {
+            $query->addStat($stat);
+        }
+
+        if (!property_exists($config->order_by, 'field') || !property_exists($config->order_by, 'dirn')) {
+            throw new BadRequestException('Malformed config property order_by');
+        }
+        $dirn = $config->order_by->dirn === 'asc' ? 'ASC' : 'DESC';
+
+        $query->addOrderBy($config->order_by->field, $dirn);
+
+        $dataset = new \DataWarehouse\Data\SimpleDataset($query);
+
+        return $app->json(
+            array(
+                'results' => $dataset->getResults($limit, $start),
+                'total' => $dataset->getTotalPossibleCount(),
+                'success' => true
+            )
+        );
     }
 
     /**
