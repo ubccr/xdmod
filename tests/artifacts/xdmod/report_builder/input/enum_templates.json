@@ -1,0 +1,52 @@
+[
+  [
+    {
+      "user": "pub",
+      "expected": {
+        "file": "pub_enum_templates",
+        "http_code": 401,
+        "content_type": "application/json"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "expected": {
+        "file": "cd_enum_templates",
+        "http_code": 200,
+        "content_type": "application/json"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "expected": {
+        "file": "cs_enum_templates",
+        "http_code": 200,
+        "content_type": "application/json"
+      }
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "expected": {
+        "file": "pi_enum_templates",
+        "http_code": 200,
+        "content_type": "application/json"
+      }
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "expected": {
+        "file": "usr_enum_templates",
+        "http_code": 200,
+        "content_type": "application/json"
+      }
+    }
+  ]
+]

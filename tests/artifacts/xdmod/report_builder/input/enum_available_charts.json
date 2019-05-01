@@ -1,0 +1,35 @@
+[
+  [
+    {
+      "user": "pub",
+      "expected": {
+        "http_code": 401,
+        "content_type": "application/json"
+      },
+      "output": {
+        "name": "pub_enum_available_charts",
+        "extension": ".json"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cd"
+    }
+  ],
+  [
+    {
+      "user": "cs"
+    }
+  ],
+  [
+    {
+      "user": "pi"
+    }
+  ],
+  [
+    {
+      "user": "usr"
+    }
+  ]
+]

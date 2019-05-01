@@ -1,0 +1,22 @@
+[
+  [
+    "centerdirector",
+    "get_all_roles-centerdirector"
+  ],
+  [
+    "centerstaff",
+    "get_all_roles-centerstaff"
+  ],
+  [
+    "principal",
+    "get_all_roles-principal"
+  ],
+  [
+    "normaluser",
+    "get_all_roles-normaluser"
+  ],
+  [
+    "Public User",
+    "get_all_roles-Public User"
+  ]
+]

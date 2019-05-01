@@ -1,0 +1,12 @@
+[
+  [
+    {
+      "base_file": "roles",
+      "local_dir": [
+        "roles.d",
+        "read_order"
+      ],
+      "expected": "roles-read_order"
+    }
+  ]
+]

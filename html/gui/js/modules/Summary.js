@@ -28,6 +28,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
     },
 
+    refreshRequested: false,
+
   // ------------------------------------------------------------------
 
     initComponent: function () {
@@ -49,7 +51,16 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
             self.toolbar.doLayout();
         });
 
-        self.on('activate', self.checkForUpdates);
+        self.on('request_refresh', function () {
+            this.refreshRequested = true;
+        });
+
+        self.on('activate', function () {
+            if (this.refreshRequested) {
+                this.refreshRequested = false;
+                this.reload();
+            }
+        });
 
     // ----------------------------------------
 
@@ -415,12 +426,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
     }, // updateUsageSummary
 
   // ------------------------------------------------------------------
-    checkForUpdates: function () {
-        if (CCR.xdmod.ui.metricExplorer && CCR.xdmod.ui.metricExplorer.summaryDirty === true) {
-            CCR.xdmod.ui.metricExplorer.summaryDirty = false;
-            this.reload();
-        }
-    },
 
     reload: function () {
         if (!this.getDurationSelector().validate()) {

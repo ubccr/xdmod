@@ -1,0 +1,8 @@
+{
+  "_realm_name": "Jobs",
+  "_group_by_name": "jobsize",
+  "_default_statisticname": "sem_avg_wallduration_hours",
+  "_order_id": 0,
+  "_show_menu": false,
+  "_disable_menu": false
+}
