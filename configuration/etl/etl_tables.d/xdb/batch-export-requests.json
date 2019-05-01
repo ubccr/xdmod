@@ -65,6 +65,19 @@
                 "comment": "Date and time of the first download of the exported data."
             },
             {
+                "name": "export_expires_datetime",
+                "type": "datetime",
+                "nullable": true,
+                "comment": "Date and time the export data will expire."
+            },
+            {
+                "name": "export_expired",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0,
+                "comment": "True if the export has expired, false if not."
+            },
+            {
                 "name": "last_modified",
                 "type": "timestamp",
                 "nullable": false,
