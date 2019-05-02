@@ -413,10 +413,23 @@ class DataWarehouseInitializer
      * Check to see if a realm exists in the realms table
      *
      * @param string $realm The realm you are checking to see if exists
+     * @return bool
      */
     public function isRealmEnabled($realm)
     {
-        $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
+        $sql = <<<SQL
+        SELECT 1
+        FROM moddb.acl_group_bys agb
+            JOIN moddb.realms r on agb.realm_id = r.realm_id
+        WHERE r.display = :realm AND
+              agb.enabled = TRUE AND
+              agb.visible = TRUE
+        LIMIT 1;
+SQL;
+        $params = array(
+            ':realm' => $realm
+        );
+        $realms = $this->warehouseDb->query($sql, $params);
         return (count($realms) > 0);
     }
 }
