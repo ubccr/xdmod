@@ -1,6 +1,6 @@
 {
     "module": "xdmod",
-    "migration-8_1_0-8_5_0": [
+    "migration-8_1_1-8_5_0": [
         {
             "name": "update-modw_aggregates-tables",
             "description": "Update modw_aggregates tables",
