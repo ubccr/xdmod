@@ -27,6 +27,7 @@ ini_set('memory_limit', -1);
  */
 $supportedUpgrades = array(
     '8.0.0' => '8.1.0',
+    '8.1.0' => '8.1.1',
 );
 
 /**
