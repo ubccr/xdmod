@@ -3,7 +3,6 @@
 namespace OpenXdmod\Migration\Version800To810;
 
 use CCR\DB;
-use OpenXdmod\DataWarehouseInitializer;
 use OpenXdmod\Setup\Console;
 use XDUser;
 use UserStorage;
@@ -49,11 +48,17 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
-        $hpcdbDb = DB::factory('hpcdb');
-        $dwDb = DB::factory('datawarehouse');
-        $dwi = new DataWarehouseInitializer($hpcdbDb, $dwDb);
+
         $db = DB::factory('database');
-        if($dwi->isRealmEnabled('Cloud')){
+        if(
+            \CCR\DB\MySQLHelper::DatabaseExists(
+                $db->_db_host,
+                $db->_db_port,
+                $db->_db_username,
+                $db->_db_password,
+                'modw_cloud'
+            )
+        ){
 
             $console = Console::factory();
             $console->displayMessage(<<<"EOT"
