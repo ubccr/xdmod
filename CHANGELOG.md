@@ -1,6 +1,12 @@
 Open XDMoD Change Log
 =====================
 
+## 2019-05-03 v8.1.2
+
+- Bug Fixes
+    - General
+        - Update `isRealmEnabled` sql ([\#912](https://github.com/ubccr/xdmod/pull/912))
+
 ## 2019-05-02 v8.1.1
 
 - Bug Fixes
