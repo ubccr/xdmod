@@ -413,6 +413,7 @@ class DataWarehouseInitializer
      * Check to see if a realm exists in the realms table
      *
      * @param string $realm The realm you are checking to see if exists
+     * @return bool
      */
     public function isRealmEnabled($realm)
     {
