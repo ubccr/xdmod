@@ -8,10 +8,14 @@ use \DataWarehouse\Export\QueryHandler;
 
 
 class ExportDBTest extends BaseTest
+    // Test access to batch_export_requests table, via QueryHandler class.
+    // Clean up table to initial state following testing.
+    // $debug variable, if TRUE, enables print of output from public functions,
 {
     static $dbh = null;
     static $maxId = null;
     private static $userId = 34; // Tom Furlani
+    private static $debug = FALSE;
 
     public function testCountSubmitted()
     {
@@ -19,6 +23,9 @@ class ExportDBTest extends BaseTest
         $submittedCount = $query->countSubmittedRecords();
         $this->assertNotNull($submittedCount);
         $this->assertTrue($submittedCount>=0);
+
+        // debug
+        if (self::$debug) print("\n".__FUNCTION__.": submittedRecords=$submittedCount\n");
     }
 
     private function findSubmittedRecord()
@@ -30,9 +37,13 @@ class ExportDBTest extends BaseTest
         if ($maxSubmitted == NULL) {
             $maxSubmitted = $query->createRequestRecord(self::$userId, 'Jobs', '2017-01-01','2017-08-01');
         }
+
+        if (self::$debug) print("\n".__FUNCTION__.": maxSubmitted ID=$maxSubmitted\n");
+
         return($maxSubmitted);
     }
 
+    // Create two new records to enable testing of transition to Available, and transition to Expired:
     public function testNewRecordCreation()
     {
         $query = new QueryHandler();
@@ -44,11 +55,21 @@ class ExportDBTest extends BaseTest
         $requestId = $query->createRequestRecord(self::$userId, 'Jobs', '2019-01-01','2019-03-01');
         $this->assertNotNull($requestId);
 
+        // add another new record and verify
+        $requestId2 = $query->createRequestRecord(self::$userId, 'Accounts', '2016-12-01','2017-01-01');
+
+        $this->assertNotNull($requestId2 );
+        $this->assertTrue($requestId2-$requestId==1);
+
         // determine final count
         $finalCount = $query->countSubmittedRecords();
 
         // verify final count
-        $this->assertTrue($finalCount-$initialCount==1);
+        // should have added 2 records.
+        $this->assertTrue($finalCount-$initialCount==2);
+
+        // debug
+        if (self::$debug) print("\n".__FUNCTION__.": initialCount=$initialCount finalCount=$finalCount requestId=$requestId requestId2=$requestId2\n");
     }
 
     public function testSubmittedToFailed()
@@ -69,10 +90,11 @@ class ExportDBTest extends BaseTest
 
         // That record is marked export_succeeded=FALSE
         $this->assertEquals($test, 0);
+
+        // debug
+        if (self::$debug) print("\n".__FUNCTION__.": transitioned Id=$maxSubmitted\n");
     }
 
-    // TODO
-    // FAILS: needs export_expires_datetime column
     public function testSubmittedToAvailable()
     {
         $query = new QueryHandler();
@@ -90,16 +112,19 @@ class ExportDBTest extends BaseTest
 
         // That record is marked export_succeeded=TRUE
         $this->assertEquals($test, 1);
+
+        // debug
+        if (self::$debug) print("\n".__FUNCTION__.": transitioned Id=$maxSubmitted\n");
     }
 
-    // TODO
-    // FAILS: needs export_expires_datetime
     public function testAvailableToExpired()
     {
         $query = new QueryHandler();
 
         // Find or create a record in available status to transition
-        $maxAvailable = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where export_succeeded IS TRUE')[0]['id'];
+        $maxAvailable = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where
+                                            export_succeeded IS TRUE
+                                            AND export_expired IS FALSE')[0]['id'];
         if ($maxAvailable == NULL) {
             $maxSubmitted = $this->findSubmittedRecord();
             $maxAvailable = $query->submittedToAvailable($maxSubmitted);
@@ -115,6 +140,9 @@ class ExportDBTest extends BaseTest
 
         // That record is marked export_expired=TRUE
         $this->assertEquals($test, 1);
+
+        // debug
+        if (self::$debug) print("\n".__FUNCTION__.": transitioned Id=$maxAvailable\n");
     }
 
     public function testSubmittedRecordFieldList()
@@ -138,8 +166,6 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    // TODO
-    // FAILS: needs export_expires_datetime
     public function testUserRecordFieldList()
     {
         $query = new QueryHandler();
@@ -151,6 +177,7 @@ class ExportDBTest extends BaseTest
             'start_date',
             'end_date',
             'export_succeeded',
+            'export_expired',
             'export_expires_datetime',
             'export_created_datetime'
         );
@@ -165,14 +192,17 @@ class ExportDBTest extends BaseTest
         }
     }
 
+    // determine initial max id to enable cleanup after testing
     public static function setUpBeforeClass()
     {
         static::$dbh = DB::factory('database');
         static::$maxId = static::$dbh->query('SELECT COALESCE(MAX(id), 0) AS id FROM batch_export_requests')[0]['id'];
     }
 
+    // Reset the table to where it started
     public static function tearDownAfterClass()
     {
         static::$dbh->execute('DELETE FROM batch_export_requests WHERE id > :id', array('id' => static::$maxId));
     }
+
 }

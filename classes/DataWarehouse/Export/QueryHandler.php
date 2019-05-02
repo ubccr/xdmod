@@ -15,6 +15,8 @@
  *  determine current testing practices and write tests to them
  *      these need to be component tests
  *
+ *  TODO, possibly: return list of ids for records that need to be marked 'export_expired'
+ *
  *  timestamp and current datetime: always use the database's value
  *  ==========================================================================================
  */
@@ -99,8 +101,6 @@ class QueryHandler
     // Therefore we should create an export_expired flag on the db table.
     public function availableToExpired($id)
     {
-        // TODO: create the field in the DB.
-
         $sql = "UPDATE batch_export_requests
                 SET export_expired=1
                 WHERE id=:id";
@@ -151,8 +151,10 @@ class QueryHandler
     public function listRequestsForUser($user_id)
     {
         $sql = "SELECT id, realm, start_date, end_date,
-            export_succeeded, export_expires_datetime,
-            export_created_datetime
+                export_succeeded,
+                export_expired,
+                export_expires_datetime,
+                export_created_datetime
             FROM batch_export_requests
             WHERE user_id=:user_id
             ORDER BY id";
