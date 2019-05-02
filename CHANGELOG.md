@@ -1,6 +1,12 @@
 Open XDMoD Change Log
 =====================
 
+## 2019-05-02 v8.1.1
+
+- Bug Fixes
+    - General
+        - Allow upgrade to finish if cloud realm schema has not been created ([\#882](https://github.com/ubccr/xdmod/pull/882))
+
 ## 2019-04-23 v8.1.0
 
 - Documentation
