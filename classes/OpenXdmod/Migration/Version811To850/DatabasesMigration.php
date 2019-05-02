@@ -1,13 +1,13 @@
 <?php
 
-namespace OpenXdmod\Migration\Version810To850;
+namespace OpenXdmod\Migration\Version811To850;
 
 use OpenXdmod\Setup\Console;
 use FilterListBuilder;
 use ETL\Utilities;
 
 /**
-* Migrate databases from version 8.1.0 to 8.5.0.
+* Migrate databases from version 8.1.1 to 8.5.0.
 */
 class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 {
