@@ -144,6 +144,7 @@ EOT
         Utilities::runEtlPipeline(array(
             'xdb-bootstrap',
             'jobs-xdw-bootstrap',
+            'xdw-bootstrap-storage',
             'shredder-bootstrap',
             'staging-bootstrap',
             'hpcdb-bootstrap',
