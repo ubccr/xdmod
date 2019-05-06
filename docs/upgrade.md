@@ -102,6 +102,14 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
+8.1.1 to 8.1.2 Upgrade Notes
+----------------------------
+
+Open XDMoD 8.1.2 is a bug fix release that fixes an issue with detecting enabled
+realms and the ingestion / aggregation of data.
+
+You may upgrade directly from 8.0.0 to 8.1.2.
+
 8.1.0 to 8.1.1 Upgrade Notes
 ----------------------------
 

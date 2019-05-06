@@ -185,7 +185,7 @@ below and can be copied from `/usr/share/xdmod/templates/roles.d/storage.json`.
 After adding the file you must update the ACL database tables:
 
 ```
-$ acl-config && acl-import
+$ acl-config
 ```
 
 ## Data Ingestion
