@@ -6,6 +6,8 @@ Open XDMoD Change Log
 - Bug Fixes
     - General
         - Update `isRealmEnabled` sql ([\#912](https://github.com/ubccr/xdmod/pull/912))
+        - Add storage bootstrap to setup ([\#914](https://github.com/ubccr/xdmod/pull/914))
+        - Add jobs cloud common pipeline to cloud ingestion ([\#916](https://github.com/ubccr/xdmod/pull/916))
 
 ## 2019-05-02 v8.1.1
 
