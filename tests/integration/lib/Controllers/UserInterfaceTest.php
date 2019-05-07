@@ -57,7 +57,7 @@ class UserInterfaceTest extends BaseUserAdminTest
         $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, 'output');
 
         if (!is_file($expectedOutputFile)) {
-            file_put_contents($expectedOutputFile, json_encode($actual, JSON_PRETTY_PRINT));
+            file_put_contents($expectedOutputFile, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
             echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
             $this->assertTrue(true);
         }

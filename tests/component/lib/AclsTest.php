@@ -319,7 +319,7 @@ TXT;
         $expectedFile = $this->getTestFiles()->getFile('acls', $fileName);
 
         if (!is_file($expectedFile)) {
-            file_put_contents($expectedFile, json_encode($actual, JSON_PRETTY_PRINT));
+            file_put_contents($expectedFile, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
             echo "Generated: $expectedFile\n";
             $this->assertTrue(true);
         }
