@@ -1,7 +1,44 @@
 [
   [
     {
-
+      "user": "pub",
+      "data": {
+        "public_user": "true",
+        "node": "category_"
+      }
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "data": {
+        "node": "category_"
+      }
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "data": {
+        "node": "category_"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "data": {
+        "node": "category_"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "data": {
+        "public_user": true,
+        "node": "category_"
+      }
     }
   ]
 ]
