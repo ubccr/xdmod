@@ -30,6 +30,9 @@ version_list:
   - "8.1"
   - "8.0"
 
+# For each version the variable `sw_version` should be set to latest release
+# version of Open XDMoD (e.g. "8.1.2") and `prev_sw_version` should be set to
+# the latest release of the previous version of Open XDMoD (e.g. "8.0.0").
 defaults:
   -
     scope:
@@ -39,7 +42,7 @@ defaults:
       layout: "page"
       version: "8.1"
       prev_sw_version: "8.0.0"
-      sw_version: "8.1.1"
+      sw_version: "8.1.2"
       style: "effervescence"
       tocversion: "v8_1toc"
   -
