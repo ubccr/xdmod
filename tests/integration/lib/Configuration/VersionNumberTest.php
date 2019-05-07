@@ -29,7 +29,7 @@ class VersionNumberTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $buildJsonPath = __DIR__ . '/../../../build.json';
+        $buildJsonPath = __DIR__ . '/../../../../open_xdmod/modules/xdmod/build.json';
         $this->buildJsonPath = realpath($buildJsonPath);
         if ($this->buildJsonPath === false) {
             throw new Exception(
