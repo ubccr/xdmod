@@ -1,89 +1,89 @@
 toc:
-    - title: About
-      subfolderitems:
-        - page: Overview
-          url: /8.1/
-        - page: License Notices
-          url: /8.1/notices.html
-        - page: Architecture
-          url: /8.1/architecture.html
-        - page: Documentation Conventions
-          url: /8.1/docs-conventions.html
-    - title: Support
-      subfolderitems:
-        - page: Support
-          url: /8.1/support.html
-    - title: Download
-      subfolderitems:
-        - page: Latest Release
-          url: https://github.com/ubccr/xdmod/releases/latest
-        - page: GitHub Project Page
-          url: https://github.com/ubccr/xdmod/
-    - title: Installing
-      subfolderitems:
-        - page: Software Requirements
-          url: /8.1/software-requirements.html
-        - page: Installation Guides
-          url: /8.1/install.html
-          subsubfolderitems:
-            - page: RPM Installation Guide
-              url: /8.1/install-rpm.html
-            - page: Source Installation Guide
-              url: /8.1/install-source.html
-        - page: Configuration Guide
-          url: /8.1/configuration.html
-        - page: Single Sign On Authentication
-          url: /8.1/simpleSAMLphp.html
-          subsubfolderitems:
-            - page: LDAP Authentication
-              url: /8.1/simpleSAMLphp-ldap.html
-        - page: Database Guide
-          url: /8.1/databases.html
-        - page: Upgrade Guide
-          url: /8.1/upgrade.html
-    - title: Using
-      subfolderitems:
-        - page: Shredder Guide
-          url: /8.1/shredder.html
-        - page: Ingestor Guide
-          url: /8.1/ingestor.html
-        - page: User/PI Names Guide
-          url: /8.1/user-names.html
-        - page: Hierarchy Guide
-          url: /8.1/hierarchy.html
-        - page: Logo Image Notes
-          url: /8.1/logo-image.html
-        - page: Command Reference
-          url: /8.1/commands.html
-        - page: HOWTOs
-          url: /8.1/howto.html
-        - page: Frequently Asked Questions
-          url: /8.1/faq.html
-        - page: Troubleshooting
-          url: /8.1/troubleshooting.html
-        - page: Cloud Metrics (Beta)
-          url: /8.1/cloud.html
-        - page: Storage Metrics (Beta)
-          url: /8.1/storage.html
-    - title: Resource Manager Notes
-      subfolderitems:
-        - page: Slurm
-          url: /8.1/resource-manager-slurm.html
-        - page: SGE/Grid Engine
-          url: /8.1/resource-manager-sge.html
-        - page: Univa Grid Engine
-          url: /8.1/resource-manager-uge.html
-        - page: PBS/TORQUE
-          url: /8.1/resource-manager-pbs.html
-        - page: LSF
-          url: /8.1/resource-manager-lsf.html
-    - title: Optional modules
-      subfolderitems:
-        - page: Application Kernels
-          url: http://appkernels.xdmod.org/ak-overview.html
-        - page: Job Performance (SUPReMM)
-          url: http://supremm.xdmod.org/supremm-overview.html
-    - title: Developing
-      subfolderitems:
-        - page: Code Organization
-          url: /8.1/dev-code-organization.html
+  - title: About
+    subfolderitems:
+      - page: Overview
+        url: /8.1/
+      - page: License Notices
+        url: /8.1/notices.html
+      - page: Architecture
+        url: /8.1/architecture.html
+      - page: Documentation Conventions
+        url: /8.1/docs-conventions.html
+  - title: Support
+    subfolderitems:
+      - page: Support
+        url: /8.1/support.html
+  - title: Download
+    subfolderitems:
+      - page: Latest Release
+        url: https://github.com/ubccr/xdmod/releases/latest
+      - page: GitHub Project Page
+        url: https://github.com/ubccr/xdmod/
+  - title: Installing
+    subfolderitems:
+      - page: Software Requirements
+        url: /8.1/software-requirements.html
+      - page: Installation Guides
+        url: /8.1/install.html
+        subsubfolderitems:
+          - page: RPM Installation Guide
+            url: /8.1/install-rpm.html
+          - page: Source Installation Guide
+            url: /8.1/install-source.html
+      - page: Configuration Guide
+        url: /8.1/configuration.html
+      - page: Single Sign On Authentication
+        url: /8.1/simpleSAMLphp.html
+        subsubfolderitems:
+          - page: LDAP Authentication
+            url: /8.1/simpleSAMLphp-ldap.html
+      - page: Database Guide
+        url: /8.1/databases.html
+      - page: Upgrade Guide
+        url: /8.1/upgrade.html
+  - title: Using
+    subfolderitems:
+      - page: Shredder Guide
+        url: /8.1/shredder.html
+      - page: Ingestor Guide
+        url: /8.1/ingestor.html
+      - page: User/PI Names Guide
+        url: /8.1/user-names.html
+      - page: Hierarchy Guide
+        url: /8.1/hierarchy.html
+      - page: Logo Image Notes
+        url: /8.1/logo-image.html
+      - page: Command Reference
+        url: /8.1/commands.html
+      - page: HOWTOs
+        url: /8.1/howto.html
+      - page: Frequently Asked Questions
+        url: /8.1/faq.html
+      - page: Troubleshooting
+        url: /8.1/troubleshooting.html
+      - page: Cloud Metrics (Beta)
+        url: /8.1/cloud.html
+      - page: Storage Metrics (Beta)
+        url: /8.1/storage.html
+  - title: Resource Manager Notes
+    subfolderitems:
+      - page: Slurm
+        url: /8.1/resource-manager-slurm.html
+      - page: SGE/Grid Engine
+        url: /8.1/resource-manager-sge.html
+      - page: Univa Grid Engine
+        url: /8.1/resource-manager-uge.html
+      - page: PBS/TORQUE
+        url: /8.1/resource-manager-pbs.html
+      - page: LSF
+        url: /8.1/resource-manager-lsf.html
+  - title: Optional modules
+    subfolderitems:
+      - page: Application Kernels
+        url: http://appkernels.xdmod.org/ak-overview.html
+      - page: Job Performance (SUPReMM)
+        url: http://supremm.xdmod.org/supremm-overview.html
+  - title: Developing
+    subfolderitems:
+      - page: Code Organization
+        url: /8.1/dev-code-organization.html
