@@ -12,12 +12,17 @@ required, that no other services run on the same machine and that access is
 limited to system administrators.  All end user access should be restricted to
 the web portal.
 
+For example, a virtual machine with 4 (2018) processor cores and 16GB of memory
+is sufficient to serve an Open XDMoD instance with moderate user activity and
+28M jobs run over 11 years.
+
 ## Processor Requirements
 
-Open XDMoD requires only a single processor core.  The equivalent of an Intel
-server processor from 2010 is sufficient.  It is recommended to use a 64 bit
-x86 processor with at least two cores.  More cores may be desirable if there
-are many concurrent users.
+While a lightly used Open XDMoD installation requires only a single processor
+core (the equivalent of an Intel Nehalem server processor from 2010 or better),
+it is recommended to use a 64 bit x86 processor with at least two cores. XDMoD
+instances supporting sites that process a large number of jobs or many
+concurrent users will require additional CPU resources.
 
 ## Memory Requirements
 
