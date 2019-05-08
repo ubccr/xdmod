@@ -1,0 +1,89 @@
+[
+  [
+    {
+      "username": "pub"
+    }
+  ],
+  [
+    {
+      "username": "cd"
+    }
+  ],
+  [
+    {
+      "username": "cs"
+    }
+  ],
+  [
+    {
+      "username": "pi"
+    }
+  ],
+  [
+    {
+      "username": "usr"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "start_date": "",
+      "expected": {
+        "file": "get_statistics_no_end_date-pub",
+        "http_code": 500
+      }
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "end_date": "",
+      "expected": {
+        "file": "get_statistics_no_start_date-pub",
+        "http_code": 500
+      }
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "start_date": "",
+      "end_date": "",
+      "expected": {
+        "file": "get_statistics_no_start_end_date-pub",
+        "http_code": 500
+      }
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "start_date": "2017-01-01",
+      "end_date": "2016-12-22",
+      "expected": {
+        "file": "get_statistics_start_date_after_end-pub",
+        "http_code": 500
+      }
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "start_date": "christmas",
+      "expected": {
+        "file": "get_statistics_start_date_invalid-pub",
+        "http_code": 500
+      }
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "end_date": "christmas",
+      "expected": {
+        "file": "get_statistics_end_date_invalid-pub",
+        "http_code": 500
+      }
+    }
+  ]
+]
