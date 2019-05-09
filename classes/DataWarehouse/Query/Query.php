@@ -1442,6 +1442,11 @@ class Query
                                $end_date_parsed['month'],
                                $end_date_parsed['day'],
                                $end_date_parsed['year']);
+
+        if ($this->_start_date_ts > $this->_end_date_ts) {
+            throw new \Exception("Invalid Date: start_date must be before end_date");
+        }
+
         list($this->_min_date_id, $this->_max_date_id) = $this->_aggregation_unit->getDateRangeIds($this->_start_date, $this->_end_date);
 
         if (!$start_date_given && !$end_date_given) {
