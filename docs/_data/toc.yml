@@ -23,6 +23,8 @@ toc:
     subfolderitems:
       - page: Software Requirements
         url: /software-requirements.html
+      - page: Hardware Requirements
+        url: /hardware-requirements.html
       - page: Installation Guides
         url: /install.html
         subsubfolderitems:
