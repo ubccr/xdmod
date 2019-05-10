@@ -405,8 +405,6 @@ class UserAdminTest extends BaseUserAdminTest
     public function testGetDwDescripters(array $user)
     {
         $this->assertArrayHasKey('username', $user);
-        $this->assertArrayHasKey('output', $user);
-
         $username = $user['username'];
 
         $isPublicUser = $username === self::PUBLIC_USER_NAME;
@@ -427,13 +425,33 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertArrayHasKey('data', $actual);
         $this->assertArrayHasKey('totalCount', $actual);
 
-        $expectedFileName = $user['output'];
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
-        );
-
-        $this->assertEquals($expected, $actual, "[$username] Get Data Warehouse Descripters - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
-
+        $this->assertArrayHasKey(0, $actual['data']);
+        $this->assertArrayHasKey('realms', $actual['data'][0]);
+        $this->assertNotEmpty($actual['data'][0]['realms']);
+        foreach($actual['data'][0]['realms'] as $realm){
+            $this->assertArrayHasKey('metrics', $realm);
+            $this->assertNotEmpty($realm['metrics']);
+            $this->assertArrayHasKey('dimensions', $realm);
+            $this->assertNotEmpty($realm['dimensions']);
+            $this->assertArrayHasKey('text', $realm);
+            $this->assertNotEmpty($realm['text']);
+            $this->assertArrayHasKey('category', $realm);
+            $this->assertNotEmpty($realm['category']);
+            foreach($realm['metrics'] as $metric){
+                $this->assertArrayHasKey('text', $metric);
+                $this->assertNotEmpty($metric['text']);
+                $this->assertArrayHasKey('info', $metric);
+                $this->assertNotEmpty($metric['info']);
+                $this->assertArrayHasKey('std_err', $metric);
+                $this->assertInternalType('boolean', $metric['std_err']);
+            }
+            foreach($realm['dimensions'] as $dimension){
+                $this->assertArrayHasKey('text', $dimension);
+                $this->assertNotEmpty($dimension['text']);
+                $this->assertArrayHasKey('info', $dimension);
+                $this->assertNotEmpty($dimension['info']);
+            }
+        }
         if (!$isPublicUser) {
             $this->helper->logout();
         }
