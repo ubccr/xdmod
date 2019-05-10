@@ -12,45 +12,46 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
     cls: 'images-view',
     tbar: {
         items: [
-            'Time Range:',
-            ' ',
             {
-                text: 'Previous Quarter',
-                listeners: {
-                    click: function (comp) {
-                        var today = new Date();
-                        var lastQuarter = today.add(Date.DAY, -90);
-                        var start = lastQuarter;
-                        var end = today;
-                        this.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                xtype: 'button',
+                text: 'Time Range',
+                menu: [{
+                    text: '30 day',
+                    listeners: {
+                        click: function (comp) {
+                            var today = new Date();
+                            var lastMonth = today.add(Date.DAY, -30);
+                            var start = lastMonth;
+                            var end = today;
+                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                        }
                     }
-                }
-
-            },
-            {
-                text: 'Previous Year',
-                listeners: {
-                    click: function () {
-                        var today = new Date();
-                        var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
-                        var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
-                        var start = oneYearAgoStart;
-                        var end = oneYearAgoEnd;
-                        this.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                },
+                {
+                    text: 'Previous Year',
+                    listeners: {
+                        click: function () {
+                            var today = new Date();
+                            var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
+                            var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
+                            var start = oneYearAgoStart;
+                            var end = oneYearAgoEnd;
+                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                        }
                     }
-                }
-            },
-            {
-                text: '5 Year',
-                listeners: {
-                    click: function () {
-                        var today = new Date();
-                        var last5Year = today.add(Date.YEAR, -5);
-                        var start = last5Year;
-                        var end = today;
-                        this.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                },
+                {
+                    text: '5 Year',
+                    listeners: {
+                        click: function () {
+                            var today = new Date();
+                            var last5Year = today.add(Date.YEAR, -5);
+                            var start = last5Year;
+                            var end = today;
+                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                        }
                     }
-                }
+                }]
             },
             ' ',
             '|',
