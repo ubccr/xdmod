@@ -22,12 +22,20 @@
          $export_format = $_POST['export_format'];
       }   
        
+      if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
+         $start_date = $_POST['start_date'];
+         $end_date = $_POST['end_date'];
+      } else {
+         $start_date = null;
+         $end_date = null;
+      }
+
       $returnData['action'] = 'send_report';  
       $returnData['build_only'] = ($build_only == "true");         
       
       try {
             
-         $build_response = $rm->buildReport($report_id, $export_format);
+         $build_response = $rm->buildReport($report_id, $export_format, $start_date, $end_date);
          
          $working_dir = $build_response['template_path'];
          $report_filename = $build_response['report_file'];
