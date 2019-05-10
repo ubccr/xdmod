@@ -3,13 +3,6 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 
 use DataWarehouse\Query\Model\TableField;
 
-/*
-* @author Rudra Chakraborty
-* @date 02-20-2018
-*
-* Summation of Average Wallduration per VM
-*/
-
 class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance)
@@ -36,8 +29,6 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return "The average wall time that a session was running, in hours.<br/>
-            <b>Wall Time:</b> The duration between the start and end times of an individual session.<br/>
-            <b>Session:</b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.";
+        return 'The average wall time that a session was running, in hours.<br/><b>Wall Time:</b> The duration between the start and end times of an individual session.<br/><b>Session:</b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.';
     }
 }

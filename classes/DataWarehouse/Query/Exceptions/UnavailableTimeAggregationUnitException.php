@@ -7,22 +7,20 @@ namespace DataWarehouse\Query\Exceptions;
  */
 class UnavailableTimeAggregationUnitException extends QueryException
 {
-	/**
-	 * The message used by this exception if none is provided.
-	 */
-	const defaultMessage = 'Query: Unavailable Time Aggregation Unit Specified';
+    /**
+     * The message used by this exception if none is provided.
+     */
+    const defaultMessage = 'Query: Unavailable Time Aggregation Unit Specified';
 
-	/**
+    /**
      * The code used by this exception if none is provided.
      */
-	const defaultCode = \XDError::QueryUnavailableTimeAggregationUnit;
+    const defaultCode = \XDError::QueryUnavailableTimeAggregationUnit;
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, \Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
+    {
+        parent::__construct($message, $code, $previous);
 
-		$this->httpCode = 400;
-	}
+        $this->httpCode = 400;
+    }
 }
-
-?>
