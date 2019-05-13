@@ -22,6 +22,7 @@ describe('Single Sign On Login', () => {
         browser.waitForInvisible('#xdmod-profile-editor');
     });
     it('Logout', () => {
+        browser.waitForInvisible('.ext-el-mask-msg');
         browser.waitAndClick('#logout_link');
         browser.waitForInvisible('.ext-el-mask-msg');
         $('a[href*=actionLogin]').waitForVisible();
