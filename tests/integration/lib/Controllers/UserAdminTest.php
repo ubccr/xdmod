@@ -399,14 +399,11 @@ class UserAdminTest extends BaseUserAdminTest
      * @depends      testCreateUsersSuccess
      * @dataProvider provideGetDwDescripters
      * @group UserAdminTest.createUsers
-     * @param array $user
+     * @param string $username
      * @throws \Exception
      */
-    public function testGetDwDescripters(array $user)
+    public function testGetDwDescripters($username)
     {
-        $this->assertArrayHasKey('username', $user);
-        $username = $user['username'];
-
         $isPublicUser = $username === self::PUBLIC_USER_NAME;
 
         if (!$isPublicUser) {
@@ -459,13 +456,26 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
-     * @return array|object
+     * The @returns for this is misleading.
+     * technically it returns an array of arrays of a single string
+     * however the funtion that gets called from this only ever gets the string
+     * @return string
      * @throws \Exception
      */
     public function provideGetDwDescripters()
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters-1', 'input')
+        return array(
+            array("admin"),
+            array("centerdirector"),
+            array("centerstaff"),
+            array("principal"),
+            array("normaluser"),
+            array("test.cd.one-center"),
+            array("test.pi"),
+            array("test.normal-user"),
+            array("test.usr_dev"),
+            array("test.usr_mgr"),
+            array("test.usr_mgr_dev")
         );
     }
 
