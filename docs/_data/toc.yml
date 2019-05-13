@@ -1,0 +1,91 @@
+toc:
+  - title: About
+    subfolderitems:
+      - page: Overview
+        url: /
+      - page: License Notices
+        url: /notices.html
+      - page: Architecture
+        url: /architecture.html
+      - page: Documentation Conventions
+        url: /docs-conventions.html
+  - title: Support
+    subfolderitems:
+      - page: Support
+        url: /support.html
+  - title: Download
+    subfolderitems:
+      - page: Latest Release
+        url: https://github.com/ubccr/xdmod/releases/latest
+      - page: GitHub Project Page
+        url: https://github.com/ubccr/xdmod/
+  - title: Installing
+    subfolderitems:
+      - page: Software Requirements
+        url: /software-requirements.html
+      - page: Hardware Requirements
+        url: /hardware-requirements.html
+      - page: Installation Guides
+        url: /install.html
+        subsubfolderitems:
+          - page: RPM Installation Guide
+            url: /install-rpm.html
+          - page: Source Installation Guide
+            url: /install-source.html
+      - page: Configuration Guide
+        url: /configuration.html
+      - page: Single Sign On Authentication
+        url: /simpleSAMLphp.html
+        subsubfolderitems:
+          - page: LDAP Authentication
+            url: /simpleSAMLphp-ldap.html
+      - page: Database Guide
+        url: /databases.html
+      - page: Upgrade Guide
+        url: /upgrade.html
+  - title: Using
+    subfolderitems:
+      - page: Shredder Guide
+        url: /shredder.html
+      - page: Ingestor Guide
+        url: /ingestor.html
+      - page: User/PI Names Guide
+        url: /user-names.html
+      - page: Hierarchy Guide
+        url: /hierarchy.html
+      - page: Logo Image Notes
+        url: /logo-image.html
+      - page: Command Reference
+        url: /commands.html
+      - page: HOWTOs
+        url: /howto.html
+      - page: Frequently Asked Questions
+        url: /faq.html
+      - page: Troubleshooting
+        url: /troubleshooting.html
+      - page: Cloud Metrics (Beta)
+        url: /cloud.html
+      - page: Storage Metrics (Beta)
+        url: /storage.html
+  - title: Resource Manager Notes
+    subfolderitems:
+      - page: Slurm
+        url: /resource-manager-slurm.html
+      - page: SGE/Grid Engine
+        url: /resource-manager-sge.html
+      - page: Univa Grid Engine
+        url: /resource-manager-uge.html
+      - page: PBS/TORQUE
+        url: /resource-manager-pbs.html
+      - page: LSF
+        url: /resource-manager-lsf.html
+  - title: Optional modules
+    subfolderitems:
+      - page: Application Kernels
+        url: http://appkernels.xdmod.org/ak-overview.html
+      - page: Job Performance (SUPReMM)
+        url: http://supremm.xdmod.org/supremm-overview.html
+  - title: Developing
+    subfolderitems:
+      - page: Code Organization
+        url: /dev-code-organization.html

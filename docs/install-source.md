@@ -5,8 +5,8 @@ title: Source Installation Guide
 Install Source Package
 ----------------------
 
-    $ tar zxvf xdmod-x.y.z.tar.gz
-    $ cd xdmod-x.y.z
+    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    $ cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod
 
 Change the prefix as desired.  The default installation prefix is

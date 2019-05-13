@@ -1,6 +1,20 @@
 Open XDMoD Change Log
 =====================
 
+## 2019-05-06 v8.1.2
+
+- Bug Fixes
+    - General
+        - Update `isRealmEnabled` sql ([\#912](https://github.com/ubccr/xdmod/pull/912))
+        - Add storage bootstrap to setup ([\#914](https://github.com/ubccr/xdmod/pull/914))
+        - Add jobs cloud common pipeline to cloud ingestion ([\#916](https://github.com/ubccr/xdmod/pull/916))
+
+## 2019-05-02 v8.1.1
+
+- Bug Fixes
+    - General
+        - Allow upgrade to finish if cloud realm schema has not been created ([\#882](https://github.com/ubccr/xdmod/pull/882))
+
 ## 2019-04-23 v8.1.0
 
 - Documentation

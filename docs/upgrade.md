@@ -35,7 +35,7 @@ Download available at [GitHub][github-latest-release].
 
 ### Install the RPM
 
-    # yum install xdmod-8.1.0-1.0.el7.noarch.rpm
+    # yum install xdmod-{{ page.sw_version }}-1.0.el7.noarch.rpm
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm` RPM
 files if you have those installed.
@@ -59,8 +59,8 @@ Source Package Upgrade Process
 ------------------------------
 
 This example assumes that your previous version of Open XDMoD is installed at
-`/opt/xdmod-8.0.0` and the new version of Open XDMoD will be installed at
-`/opt/xdmod-8.1.0`.  It is recommended to install the new version of Open XDMoD
+`/opt/xdmod-{{ page.prev_sw_version }}` and the new version of Open XDMoD will be installed at
+`/opt/xdmod-{{ page.sw_version }}`.  It is recommended to install the new version of Open XDMoD
 in a different directory than your existing version.
 
 ### Download Latest Open XDMoD Source Package
@@ -69,21 +69,21 @@ Download available at [GitHub][github-latest-release].
 
 ### Extract and Install Source Package
 
-    $ tar zxvf xdmod-8.1.0.tar.gz
-    $ cd xdmod-8.1.0
-    # ./install --prefix=/opt/xdmod-8.1.0
+    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    $ cd xdmod-{{ page.sw_version }}
+    # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm`
 tarballs if you have those installed.
 
 ### Copy Current Config Files
 
-    # cp /opt/xdmod-8.0.0/etc/portal_settings.ini /opt/xdmod-8.1.0/etc
-    # cp /opt/xdmod-8.0.0/etc/hierarchy.json      /opt/xdmod-8.1.0/etc
-    # cp /opt/xdmod-8.0.0/etc/organization.json   /opt/xdmod-8.1.0/etc
-    # cp /opt/xdmod-8.0.0/etc/resource_specs.json /opt/xdmod-8.1.0/etc
-    # cp /opt/xdmod-8.0.0/etc/resources.json      /opt/xdmod-8.1.0/etc
-    # cp /opt/xdmod-8.0.0/etc/update_check.json   /opt/xdmod-8.1.0/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/portal_settings.ini /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/hierarchy.json      /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/organization.json   /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/resource_specs.json /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/resources.json      /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/update_check.json   /opt/xdmod-{{ page.sw_version }}/etc
 
 If you have manually changed (i.e. not using `xdmod-setup`) any of the
 other config files you may need to merge your changes into the new
@@ -100,7 +100,23 @@ the recommended values listed on the [software requirements page][mysql-config].
 
 ### Upgrade Database Schema and Config Files
 
-    # /opt/xdmod-8.1.0/bin/xdmod-upgrade
+    # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
+
+8.1.1 to 8.1.2 Upgrade Notes
+----------------------------
+
+Open XDMoD 8.1.2 is a bug fix release that fixes an issue with detecting enabled
+realms and the ingestion / aggregation of data.
+
+You may upgrade directly from 8.0.0 to 8.1.2.
+
+8.1.0 to 8.1.1 Upgrade Notes
+----------------------------
+
+Open XDMoD 8.1.1 is a bug fix release that fixes an issue with upgrading from
+8.0.0 where the `modw_cloud` schema does not exist.
+
+You may upgrade directly from 8.0.0 to 8.1.1.
 
 8.0.0 to 8.1.0 Upgrade Notes
 ----------------------------

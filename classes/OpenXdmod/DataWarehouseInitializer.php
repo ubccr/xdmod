@@ -139,10 +139,13 @@ class DataWarehouseInitializer
      */
     public function ingestAllShredded($startDate = null, $endDate = null)
     {
-        if( $this->isRealmEnabled('Jobs')){
-            $this->logger->debug('Ingesting shredded data to staging tables');
-            Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
+        if( !$this->isRealmEnabled('Jobs') ){
+            $this->logger->debug('Jobs realm not enabled, not ingesting shredded data to staging tables');
+            return;
         }
+
+        $this->logger->debug('Ingesting shredded data to staging tables');
+        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
     }
 
     /**
@@ -153,10 +156,14 @@ class DataWarehouseInitializer
      */
     public function ingestAllStaging($startDate = null, $endDate = null)
     {
-        if( $this->isRealmEnabled('Jobs')){
-            $this->logger->debug('Ingesting staging data to HPCDB');
-            Utilities::runEtlPipeline(array('hpcdb-ingest-common', 'hpcdb-ingest-jobs'), $this->logger);
+        if( !$this->isRealmEnabled('Jobs') ){
+            $this->logger->debug('Jobs realm not enabled, not ingesting staging data to HPCDB');
+            return;
         }
+
+        $this->logger->debug('Ingesting staging data to HPCDB');
+        Utilities::runEtlPipeline(array('hpcdb-ingest-common', 'hpcdb-ingest-jobs'), $this->logger);
+
     }
 
     /**
@@ -167,34 +174,39 @@ class DataWarehouseInitializer
      */
     public function ingestAllHpcdb($startDate = null, $endDate = null)
     {
-        if( $this->isRealmEnabled('Jobs')){
-            $this->logger->debug('Ingesting HPCDB data to modw');
-            $params = array();
-            $pipeline = array('hpcdb-prep-xdw-job-ingest-by-new-jobs');
 
-            if ($startDate !== null || $endDate !== null) {
-                if ($startDate !== null) {
-                    $params['start-date'] = $startDate . ' 00:00:00';
-                }
-                if ($endDate !== null) {
-                    $params['end-date'] = $endDate . ' 23:59:59';
-                }
-                $pipeline = array('hpcdb-prep-xdw-job-ingest-by-date-range');
-            }
-
-            Utilities::runEtlPipeline($pipeline, $this->logger, $params);
-
-            // Use current time from the database in case clocks are not
-            // synchronized.
-            $lastModifiedStartDate
-                = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
-
-            Utilities::runEtlPipeline(
-                array('hpcdb-xdw-ingest-common', 'hpcdb-xdw-ingest-jobs'),
-                $this->logger,
-                array('last-modified-start-date' => $lastModifiedStartDate)
-            );
+        if( !$this->isRealmEnabled('Jobs') ){
+            $this->logger->debug('Jobs realm not enabled, not ingesting HPCDB data to modw');
+            return;
         }
+
+        $this->logger->debug('Ingesting HPCDB data to modw');
+        $params = array();
+        $pipeline = array('hpcdb-prep-xdw-job-ingest-by-new-jobs');
+
+        if ($startDate !== null || $endDate !== null) {
+            if ($startDate !== null) {
+                $params['start-date'] = $startDate . ' 00:00:00';
+            }
+            if ($endDate !== null) {
+                $params['end-date'] = $endDate . ' 23:59:59';
+            }
+            $pipeline = array('hpcdb-prep-xdw-job-ingest-by-date-range');
+        }
+
+        Utilities::runEtlPipeline($pipeline, $this->logger, $params);
+
+        // Use current time from the database in case clocks are not
+        // synchronized.
+        $lastModifiedStartDate
+            = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
+
+        Utilities::runEtlPipeline(
+            array('hpcdb-xdw-ingest-common', 'hpcdb-xdw-ingest-jobs'),
+            $this->logger,
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
+
     }
 
     /**
@@ -204,21 +216,24 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataOpenStack()
     {
-        if( $this->isRealmEnabled('Cloud') ){
-            try {
-                $this->logger->notice('Ingesting OpenStack event log data');
-                Utilities::runEtlPipeline(
-                    array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
-                    $this->logger
-                );
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            return;
+        }
+
+        try {
+            $this->logger->notice('Ingesting OpenStack event log data');
+            Utilities::runEtlPipeline(
+                array('jobs-cloud-common', 'jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                $this->logger
+            );
+        }
+        catch( Exception $e ){
+            if( $e->getCode() == 1146 ){
+                $this->logger->notice('No OpenStack events to ingest');
             }
-            catch( Exception $e ){
-                if( $e->getCode() == 1146 ){
-                    $this->logger->notice('No OpenStack events to ingest');
-                }
-                else{
-                    throw $e;
-                }
+            else{
+                throw $e;
             }
         }
     }
@@ -230,21 +245,24 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataGeneric()
     {
-        if( $this->isRealmEnabled('Cloud') ){
-            try {
-                $this->logger->notice('Ingesting generic cloud log files');
-                Utilities::runEtlPipeline(
-                    array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
-                    $this->logger
-                );
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            return;
+        }
+
+        try {
+            $this->logger->notice('Ingesting generic cloud log files');
+            Utilities::runEtlPipeline(
+                array('jobs-cloud-common', 'jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
+                $this->logger
+            );
+        }
+        catch( Exception $e ){
+            if( $e->getCode() == 1146 ){
+                $this->logger->notice('No cloud event data to ingest');
             }
-            catch( Exception $e ){
-                if( $e->getCode() == 1146 ){
-                    $this->logger->notice('No cloud event data to ingest');
-                }
-                else{
-                    throw $e;
-                }
+            else{
+                throw $e;
             }
         }
     }
@@ -257,7 +275,7 @@ class DataWarehouseInitializer
     public function ingestStorageData()
     {
         if (!$this->isRealmEnabled('Storage')) {
-            $this->logger->notice('Storage realm not enabled, not ingesting');
+            $this->logger->debug('Storage realm not enabled, not ingesting');
             return;
         }
 
@@ -281,18 +299,21 @@ class DataWarehouseInitializer
      */
     public function aggregateCloudData($lastModifiedStartDate)
     {
-        if( $this->isRealmEnabled('Cloud') ){
-            $this->logger->notice('Aggregating Cloud data');
-            Utilities::runEtlPipeline(
-                array('cloud-state-pipeline'),
-                $this->logger,
-                array('last-modified-start-date' => $lastModifiedStartDate)
-            );
-
-            $filterListBuilder = new FilterListBuilder();
-            $filterListBuilder->setLogger($this->logger);
-            $filterListBuilder->buildRealmLists('Cloud');
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            return;
         }
+
+        $this->logger->notice('Aggregating Cloud data');
+        Utilities::runEtlPipeline(
+            array('cloud-state-pipeline'),
+            $this->logger,
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Cloud');
     }
 
     /**
@@ -347,17 +368,20 @@ class DataWarehouseInitializer
      */
     public function aggregateAllJobs($lastModifiedStartDate)
     {
-
-        if( $this->isRealmEnabled('Jobs') ){
-            Utilities::runEtlPipeline(
-                array('jobs-xdw-aggregate'),
-                $this->logger,
-                array('last-modified-start-date' => $lastModifiedStartDate)
-            );
-            $filterListBuilder = new FilterListBuilder();
-            $filterListBuilder->setLogger($this->logger);
-            $filterListBuilder->buildRealmLists('Jobs');
+        if (!$this->isRealmEnabled('Jobs')) {
+            $this->logger->notice('Jobs realm not enabled, not aggregating');
+            return;
         }
+
+        Utilities::runEtlPipeline(
+            array('jobs-xdw-aggregate'),
+            $this->logger,
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Jobs');
     }
 
     /**
@@ -413,10 +437,23 @@ class DataWarehouseInitializer
      * Check to see if a realm exists in the realms table
      *
      * @param string $realm The realm you are checking to see if exists
+     * @return bool
      */
     public function isRealmEnabled($realm)
     {
-        $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
+        $sql = <<<SQL
+        SELECT 1
+        FROM moddb.acl_group_bys agb
+            JOIN moddb.realms r on agb.realm_id = r.realm_id
+        WHERE r.display = :realm AND
+              agb.enabled = TRUE AND
+              agb.visible = TRUE
+        LIMIT 1;
+SQL;
+        $params = array(
+            ':realm' => $realm
+        );
+        $realms = $this->warehouseDb->query($sql, $params);
         return (count($realms) > 0);
     }
 }

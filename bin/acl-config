@@ -2127,12 +2127,6 @@ function verifyDatabase()
 function tablesExist(iDatabase $db, array $tables, $schema, $all = true)
 {
     $handle = $db->handle();
-    $query = <<<SQL
-SELECT *
-FROM information_schema.tables
-WHERE table_schema = :table_schema
-AND table_name in (:table_list);
-SQL;
 
     $tables = array_reduce(
         $tables,
@@ -2145,10 +2139,18 @@ SQL;
     );
 
     $tableList = implode(',', $tables);
+
+    $query = <<<SQL
+SELECT *
+FROM information_schema.tables
+WHERE table_schema = :table_schema
+AND table_name in ($tableList);
+SQL;
+
     $params = array(
-        ':table_schema' => $schema,
-        ':table_list' => $tableList
+        ':table_schema' => $schema
     );
+
     $results = $db->query(
         $query,
         $params
