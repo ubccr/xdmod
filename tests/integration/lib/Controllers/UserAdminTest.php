@@ -423,7 +423,7 @@ class UserAdminTest extends BaseUserAdminTest
             false
         );
         $validator = new Validator();
-        $validator->check(json_decode(json_encode($actual)), $schemaObject);
+        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
         $errors = array();
         foreach ($validator->getErrors() as $err) {
             $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
