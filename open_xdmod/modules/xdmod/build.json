@@ -85,7 +85,6 @@
             "configuration/resource_types.json",
             "configuration/resources.json",
             "configuration/roles.json",
-            "configuration/roles.d",
             "configuration/rest.json",
             "configuration/rest.d",
             "configuration/setup.json",
@@ -96,9 +95,7 @@
             "configuration/hierarchies.json",
             {"configuration/hierarchies.d/xdmod.json": "hierarchies.d/xdmod.json"},
             {"configuration/modules.d/xdmod.json": "modules.d/xdmod.json"},
-            "email_templates",
-            {"configuration/roles.d/center_report_card.json":  "roles.d/center_report_card.json"}
-
+            "email_templates"
         ],
         "etc/httpd": {
             "configuration/apache.conf": "xdmod.conf"
