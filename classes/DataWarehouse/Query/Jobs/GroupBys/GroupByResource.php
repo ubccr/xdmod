@@ -1,14 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Jobs\GroupBys;
-
-/**
- * @author Amin Ghadersohi
- * @date 2011-Jan-07
- *
- * class for adding group by resource to a query
- *
- */
 
 class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
 {
@@ -70,7 +61,6 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
             )
         );
         $this->addOrder($query, $multi_group);
-
     }
     public function addWhereJoin(
         \DataWarehouse\Query\Query &$query,
@@ -96,7 +86,7 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
 
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
 
@@ -112,10 +102,9 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->resourcefact_table, $this->_order_id_field_name), $dir, $this->getName());
-        if($prepend === true) {
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
@@ -125,6 +114,6 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function pullQueryParameterDescriptions(&$request)
     {
-        return parent::pullQueryParameterDescriptions2($request, "select code as field_label from modw.resourcefact  where id in (_filter_) order by code");
+        return parent::pullQueryParameterDescriptions2($request, 'SELECT code AS field_label FROM modw.resourcefact  WHERE id IN (_filter_) order by code');
     }
 }

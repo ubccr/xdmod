@@ -10,13 +10,6 @@ use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
 
-/*
-* @author Greg Dean
-* @date 05/17/2018
-*
-* Group By Submission Venue
-*/
-
 class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
@@ -26,21 +19,20 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "The venue that a job or cloud instance was initiated from.";
+        return 'The venue that a job or cloud instance was initiated from.';
     }
 
     public function __construct()
     {
-
         parent::__construct(
-            "submission_venue",
+            'submission_venue',
             array(),
-            "SELECT DISTINCT
+            'SELECT DISTINCT
                 sv.submission_venue_id AS id,
                 sv.submission_venue AS short_name,
                 sv.display AS long_name
              FROM
-                submission_venue sv"
+                submission_venue sv'
         );
 
         $this->_id_field_name = 'submission_venue_id';
@@ -73,7 +65,6 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
 
         $query->addWhereCondition(new WhereCondition($id_field, '=', $datatable_submission_venue_id_field));
         $this->addOrder($query, $multi_group);
-
     }
 
     public function addWhereJoin(Query &$query, Table $data_table, $multi_group, $operation, $whereConstraint)
@@ -89,7 +80,7 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
 
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(new WhereCondition($submission_venue_id_field, $operation, $whereConstraint));
@@ -114,7 +105,7 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select display as field_label from modw.submission_venue where id in (_filter_) order by submission_venue_id"
+            'SELECT display AS field_label FROM modw.submission_venue WHERE id IN (_filter_) ORDER BY submission_venue_id'
         );
     }
 }

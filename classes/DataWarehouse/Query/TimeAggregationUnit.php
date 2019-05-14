@@ -87,11 +87,13 @@ abstract class TimeAggregationUnit
         return array_values($dateResult[0]);
     }
 
-    public function getAggTablePrefix() {
+    public function getAggTablePrefix()
+    {
         return $this->_agg_table_prefix;
     }
 
-    public function setAggTablePrefix($aggregate_table_prefix) {
+    public function setAggTablePrefix($aggregate_table_prefix)
+    {
         $this->_agg_table_prefix = $aggregate_table_prefix;
     }
 
@@ -146,7 +148,7 @@ abstract class TimeAggregationUnit
      */
     public static function registerAggregationUnits()
     {
-        if(!self::$_initialized) {
+        if (!self::$_initialized) {
             //TODO: automate this by search directory
             self::registerUnit('day', '\\DataWarehouse\\Query\\TimeAggregationUnits\\DayAggregationUnit');
             // self::registerUnit('week', '\\DataWarehouse\\Query\\TimeAggregationUnits\\WeekAggregationUnit');
@@ -179,11 +181,11 @@ abstract class TimeAggregationUnit
 
         if (isset(self::$_unit_name_to_class_name[$time_period])) {
             $class_name = self::$_unit_name_to_class_name[$time_period];
-            
+
             // we need the derived class to have the realm so we know which aggregate table to use
             $class = new $class_name;
             $class->setAggTablePrefix($aggregate_table_prefix);
-            
+
             return $class;
         } else {
             throw new \Exception("TimeAggregationUnit: Time period {$time_period} is invalid.");
@@ -231,16 +233,13 @@ abstract class TimeAggregationUnit
 
             if ($date_difference->y >= 10) {
                 $time_period = 'quarter';
-            }
-            elseif ((($date_difference->y * 12) + $date_difference->m) >= 6) {
+            } elseif ((($date_difference->y * 12) + $date_difference->m) >= 6) {
                 $time_period = 'month';
-            }
-            else {
+            } else {
                 $time_period = 'day';
             }
 
-            if ($min_aggregation_unit !== null)
-            {
+            if ($min_aggregation_unit !== null) {
                 $min_aggregation_unit = self::deriveAggregationUnitName($min_aggregation_unit, $start_date, $end_date);
 
                 $time_period_length = self::$unit_sizes_in_days[$time_period];
@@ -342,7 +341,8 @@ abstract class TimeAggregationUnit
      * @return boolean       True if the string is the name of a time
      *                       aggregation unit, otherwise false.
      */
-    public static function isTimeAggregationUnitName($name) {
+    public static function isTimeAggregationUnitName($name)
+    {
         return array_key_exists(strtolower($name), self::$unit_sizes_in_days);
     }
 
@@ -359,15 +359,15 @@ abstract class TimeAggregationUnit
         $start_dt = \DateTime::createFromFormat('U', "$time_point");
         $end_dt = \DateTime::createFromFormat('U', "$time_point");
 
-        if($start_dt === false) {
+        if ($start_dt === false) {
             throw new \DomainException("Invalid value for time point");
         }
 
-        if(!static::isTimeAggregationUnitName($period)) {
+        if (!static::isTimeAggregationUnitName($period)) {
             throw new \DomainException("Invalid time period");
         }
 
-        switch($period) {
+        switch ($period) {
             case 'day':
                 // do nothing
                 break;

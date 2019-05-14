@@ -1,10 +1,6 @@
 <?php
 namespace DataWarehouse\Query\Cloud;
 
-/*
-* @author Rudra Chakraborty
-* @date 2018-02-15
-*/
 class Aggregate extends \DataWarehouse\Query\Query
 {
     public function __construct(

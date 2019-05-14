@@ -1,8 +1,4 @@
 <?php
-/**
-* @author Joe White
-* @date 2015-03-25
-*/
 namespace DataWarehouse\Query\Jobs;
 
 use \DataWarehouse\Query\Model\Table;
@@ -11,9 +7,9 @@ use \DataWarehouse\Query\Model\FormulaField;
 use \DataWarehouse\Query\Model\WhereCondition;
 use \DataWarehouse\Query\Model\Schema;
 
-/*
- * @see DataWarehouse::Query::RawQuery
- */
+/**
+  * @see DataWarehouse::Query::RawQuery
+  */
 class JobDataset extends \DataWarehouse\Query\RawQuery
 {
     private $documentation = array();
@@ -22,7 +18,6 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         array $parameters,
         $stat = "all"
     ) {
-
         parent::__construct('Jobs', 'modw_aggregates', 'jobfact_by_day', array());
 
         $config = \Configuration\XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
@@ -31,8 +26,8 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         $joblistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_joblist", "jl");
         $factTable = new Table(new Schema('modw'), 'job_tasks', 'jt');
 
-        $this->addTable($joblistTable );
-        $this->addTable($factTable );
+        $this->addTable($joblistTable);
+        $this->addTable($factTable);
 
         $this->addWhereCondition(new WhereCondition(
             new TableField($joblistTable, "agg_id"),
@@ -93,9 +88,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 "group" => "Administration",
                 'visibility' => 'public',
                 "per" => "resource");
-        }
-        else
-        {
+        } else {
             $this->addField(new TableField($factTable, "job_id", "jobid"));
             $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
 

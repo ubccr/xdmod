@@ -1,14 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
-
-/*
-* @author Amin Ghadersohi
-* @date 2011-Jan-07
-*
-* class for adding group by day to a query
-*
-*/
 
 class GroupByMonth extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -23,13 +14,16 @@ class GroupByMonth extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'month',
             array(),
-            "select distinct gt.id,
-												 date_format(gt.month_start, '%Y-%m') as long_name,
-												 date_format(gt.month_start, '%Y-%m') as short_name,
-												 gt.month_start_ts as start_ts
-												 from  modw.months gt
-												 where 1
-												 order by gt.id asc",
+            'SELECT DISTINCT
+                gt.id,
+                DATE_FORMAT(gt.month_start, "%Y-%m") as long_name,
+                DATE_FORMAT(gt.month_start, "%Y-%m") as short_name,
+                gt.month_start_ts as start_ts
+            FROM
+                modw.months gt
+            WHERE 1
+            ORDER BY
+                gt.id ASC',
             array()
         );
         $this->setAvailableOnDrilldown(false);
@@ -37,14 +31,13 @@ class GroupByMonth extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $field_name = null)
     {
-
         $modw_schema = new \DataWarehouse\Query\Model\Schema('modw');
         $modw_aggregates_schema = new \DataWarehouse\Query\Model\Schema('modw_cloud');
 
-        $id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "month_id", $this->getIdColumnName($multi_group));
-        $name_field = new \DataWarehouse\Query\Model\FormulaField('date_format('.$query->getDateTable()->getAlias().".month_start, '%Y-%m')", $this->getLongNameColumnName($multi_group));
-        $shortname_field = new \DataWarehouse\Query\Model\FormulaField('date_format('.$query->getDateTable()->getAlias().".month_start, '%Y-%m')", $this->getShortNameColumnName($multi_group));
-        $value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), "month_start_ts");
+        $id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), 'month_id', $this->getIdColumnName($multi_group));
+        $name_field = new \DataWarehouse\Query\Model\FormulaField('date_format(' . $query->getDateTable()->getAlias() . '.month_start, "%Y-%m")', $this->getLongNameColumnName($multi_group));
+        $shortname_field = new \DataWarehouse\Query\Model\FormulaField('date_format(' . $query->getDateTable()->getAlias() . '.month_start, "%Y-%m")', $this->getShortNameColumnName($multi_group));
+        $value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), 'month_start_ts');
         $query->addField($id_field);
         $query->addField($name_field);
         $query->addField($shortname_field);
@@ -56,11 +49,10 @@ class GroupByMonth extends \DataWarehouse\Query\Cloud\GroupBy
     }
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
-        $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "month_id"), $dir, $this->getName());
-        if($prepend === true) {
+        $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($query->getDataTable(), 'month_id'), $dir, $this->getName());
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
