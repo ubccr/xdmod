@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use JsonSchema\Validator;
 use TestHarness\TestFiles;
 
 class UserAdminTest extends BaseUserAdminTest
@@ -416,39 +417,19 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
-        $this->validateResponse($response);
-
         $actual = $response[0];
-        $this->assertArrayHasKey('data', $actual);
-        $this->assertArrayHasKey('totalCount', $actual);
-
-        $this->assertArrayHasKey(0, $actual['data']);
-        $this->assertArrayHasKey('realms', $actual['data'][0]);
-        $this->assertNotEmpty($actual['data'][0]['realms']);
-        foreach($actual['data'][0]['realms'] as $realm){
-            $this->assertArrayHasKey('metrics', $realm);
-            $this->assertNotEmpty($realm['metrics']);
-            $this->assertArrayHasKey('dimensions', $realm);
-            $this->assertNotEmpty($realm['dimensions']);
-            $this->assertArrayHasKey('text', $realm);
-            $this->assertNotEmpty($realm['text']);
-            $this->assertArrayHasKey('category', $realm);
-            $this->assertNotEmpty($realm['category']);
-            foreach($realm['metrics'] as $metric){
-                $this->assertArrayHasKey('text', $metric);
-                $this->assertNotEmpty($metric['text']);
-                $this->assertArrayHasKey('info', $metric);
-                $this->assertNotEmpty($metric['info']);
-                $this->assertArrayHasKey('std_err', $metric);
-                $this->assertInternalType('boolean', $metric['std_err']);
-            }
-            foreach($realm['dimensions'] as $dimension){
-                $this->assertArrayHasKey('text', $dimension);
-                $this->assertNotEmpty($dimension['text']);
-                $this->assertArrayHasKey('info', $dimension);
-                $this->assertNotEmpty($dimension['info']);
-            }
+        $schemaObject = JSON::loadFile(
+            $this->getTestFiles()->getFile('schema', 'dw_descripter.spec', ''),
+            false
+        );
+        $validator = new Validator();
+        $validator->check(json_decode(json_encode($actual)), $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
         }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
+        $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();
         }
