@@ -19,6 +19,24 @@
                     "schema": "modw_aggregates"
                 }
             }
+        },
+        {
+            "name": "update-moddb-tables",
+            "description": "Update moddb tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "xdb/batch-export-requests.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ]
 }
