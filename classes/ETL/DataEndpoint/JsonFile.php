@@ -136,7 +136,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
 
         foreach ($this->recordList as $index => $record) {
             $recordCount++;
-            $validator->check($record, $schemaObject);
+            $validator->validate($record, $schemaObject);
 
             if ( $validator->isValid() ) {
                 continue;
