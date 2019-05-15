@@ -1,14 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
-
-/*
-* @author Amin Ghadersohi
-* @date 2011-Jan-07
-*
-* class for adding group by day to a query
-*
-*/
 
 class GroupByQuarter extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -23,13 +14,15 @@ class GroupByQuarter extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'quarter',
             array(),
-            "select distinct gt.id,
-												 concat(year(gt.quarter_start),' Q', ceil(month(gt.quarter_start)/3)) as long_name,
-												 concat(year(gt.quarter_start),' Q', ceil(month(gt.quarter_start)/3)) as short_name,
-												 gt.quarter_start_ts as start_ts
-												 from  modw.quarters gt
-												 where 1
-												 order by gt.id asc",
+            'SELECT DISTINCT
+                gt.id,
+                CONCAT(YEAR(gt.quarter_start), " Q", CEIL(MONTH(gt.quarter_start)/3)) AS long_name,
+                CONCAT(YEAR(gt.quarter_start), " Q", CEIL(MONTH(gt.quarter_start)/3)) AS short_name,
+                gt.quarter_start_ts as start_ts
+            FROM  modw.quarters gt
+            WHERE 1
+            ORDER BY
+                gt.id ASC',
             array()
         );
         $this->setAvailableOnDrilldown(false);
@@ -37,14 +30,13 @@ class GroupByQuarter extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
     {
-
         $modw_schema = new \DataWarehouse\Query\Model\Schema('modw');
         $modw_aggregates_schema = new \DataWarehouse\Query\Model\Schema('modw_cloud');
 
-        $id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "quarter_id", $this->getIdColumnName($multi_group));
+        $id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), 'quarter_id', $this->getIdColumnName($multi_group));
         $name_field = new \DataWarehouse\Query\Model\FormulaField("concat(year({$query->getDateTable()->getAlias()}.quarter_start),' Q', ceil(month({$query->getDateTable()->getAlias()}.quarter_start)/3))", $this->getLongNameColumnName($multi_group));
         $shortname_field = new \DataWarehouse\Query\Model\FormulaField("concat(year({$query->getDateTable()->getAlias()}.quarter_start),' Q', ceil(month({$query->getDateTable()->getAlias()}.quarter_start)/3))", $this->getShortNameColumnName($multi_group));
-        $value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), "quarter_start_ts");
+        $value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), 'quarter_start_ts');
         $query->addField($id_field);
         $query->addField($name_field);
         $query->addField($shortname_field);
@@ -56,11 +48,10 @@ class GroupByQuarter extends \DataWarehouse\Query\Cloud\GroupBy
     }
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
-        $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "quarter_id"), $dir, $this->getName());
-        if($prepend === true) {
+        $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($query->getDataTable(), 'quarter_id'), $dir, $this->getName());
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }

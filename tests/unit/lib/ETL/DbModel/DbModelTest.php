@@ -23,8 +23,9 @@ use ETL\Configuration\EtlConfiguration;
 
 class DbModelTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/dbmodel/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/dbmodel/output";
+    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
+
     private $logger = null;
 
     public function __construct()

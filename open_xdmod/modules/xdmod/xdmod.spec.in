@@ -88,8 +88,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
-* Wed Apr 24 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu>
+* Sun Jul 28 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu>
     - Remove `node_modules` management from `%pre`
+* Mon May 06 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.2-1.0
+    - Update `%pre` with steps for `node_modules` on 8.1.2 release
+* Thu May 02 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.1-1.0
+    - Update `%pre` with steps for `node_modules` on 8.1.1 release
 * Tue Apr 23 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.0-1.0
     - Update `%pre` with steps for `node_modules` on 8.1.0 release
 * Tue Oct 30 2018 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.0.0-1.0

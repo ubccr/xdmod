@@ -26,15 +26,25 @@ url: "http://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
 
+# For each version the variable `sw_version` should be set to latest release
+# version of Open XDMoD (e.g. "8.1.2") and `prev_sw_version` should be set to
+# the latest release of the previous version of Open XDMoD (e.g. "8.0.0").
 defaults:
-    -
-        scope:
-            path: ""
-            type: "pages"
-        values:
-            layout: "page"
-            menu_markdown: "menu.md"
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      prev_sw_version: "8.1.2"
+      sw_version: "8.5.0"
+      style: "effervescence"
+      tocversion: "toc"
 
 # Build settings
 markdown: kramdown
 theme_subdir: "/xdmod-jekyll-theme"
+gems:
+  - jekyll-redirect-from
+whitelist:
+  - jekyll-redirect-from

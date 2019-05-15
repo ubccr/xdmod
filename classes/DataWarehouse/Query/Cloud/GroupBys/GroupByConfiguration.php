@@ -1,5 +1,4 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
 use DataWarehouse\Query\Query;
@@ -8,13 +7,6 @@ use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
-
-/*
-* @author Rudra Chakraborty
-* @date 03/06/2018
-*
-* Group By Configuration
-*/
 
 class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -25,7 +17,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "The instance type of a virtual machine.";
+        return 'The instance type of a virtual machine.';
     }
 
     public function __construct()
@@ -33,14 +25,14 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'configuration',
             array(),
-            "SELECT distinct
+            'SELECT DISTINCT
                 gt.id,
-                gt.instance_type as short_name,
-                gt.display as long_name,
-                gt.instance_type_id as order_id
+                gt.instance_type AS short_name,
+                gt.display AS long_name,
+                gt.instance_type_id AS order_id
             FROM instance_type gt
-            where 1
-            order by order_id"
+            WHERE 1
+            ORDER BY order_id'
         );
         $this->_id_field_name = 'instance_type_id';
         $this->_long_name_field_name = 'display';
@@ -86,7 +78,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addWhereCondition(new WhereCondition(new TableField($this->configuration_table, 'resource_id'), '=', new TableField($data_table, 'host_resource_id')));
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -121,7 +113,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select long_name as field_label from modw_cloud.instance_type where id in (_filter_) order by instance_type_id"
+            'SELECT long_name AS field_label FROM modw_cloud.instance_type WHERE id IN (_filter_) ORDER BY instance_type_id'
         );
     }
 }
