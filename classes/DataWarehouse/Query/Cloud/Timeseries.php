@@ -1,10 +1,6 @@
 <?php
 namespace DataWarehouse\Query\Cloud;
 
-/*
-* @author Rudra Chakraborty
-* @date 2018-02-15
-*/
 class Timeseries extends \DataWarehouse\Query\Timeseries
 {
     public function __construct(

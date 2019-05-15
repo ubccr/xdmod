@@ -2,12 +2,6 @@
 
 namespace DataWarehouse\Query\Model;
 
-/**
- * This is the parent class for a query field that requires calculation
- * via an expression or formula
- *
- * @author Amin Ghadersohi
- */
 class FormulaField extends Field
 {
 
@@ -20,4 +14,3 @@ class FormulaField extends Field
         parent::__construct($formula, $aliasname);
     }
 }
-

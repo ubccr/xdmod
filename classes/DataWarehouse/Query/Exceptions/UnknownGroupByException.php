@@ -7,22 +7,20 @@ namespace DataWarehouse\Query\Exceptions;
  */
 class UnknownGroupByException extends QueryException
 {
-	/**
-	 * The message used by this exception if none is provided.
-	 */
-	const defaultMessage = 'Query: Unknown Group By Specified';
+    /**
+     * The message used by this exception if none is provided.
+     */
+    const defaultMessage = 'Query: Unknown Group By Specified';
 
-	/**
+    /**
      * The code used by this exception if none is provided.
      */
-	const defaultCode = \XDError::QueryUnknownGroupBy;
+    const defaultCode = \XDError::QueryUnknownGroupBy;
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, \Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
+    {
+        parent::__construct($message, $code, $previous);
 
-		$this->httpCode = 400;
-	}
+        $this->httpCode = 400;
+    }
 }
-
-?>

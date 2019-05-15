@@ -1599,9 +1599,6 @@ SQL;
     foreach ($queryDescriptors as $queryDescriptor) {
 
         $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm'] : null;
-        $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
-        $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
-
         // if we can't find the current realm in the array of available realms
         // then just ignore this entry. This is due to the way in which we
         // process modules / how the data is represented and is expected.
@@ -1609,26 +1606,31 @@ SQL;
             continue;
         }
 
+        $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
+        $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
+        $hide = isset($queryDescriptor['hide']) ? $queryDescriptor['hide'] : null;
+
         $realmData = $realms[$realm];
         if (!isset($realmData['statistics'])) {
             $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
             continue;
         }
-        $statistics = $realmData['statistics'];
 
+        $statistics = $realmData['statistics'];
         foreach ($statistics as $statistic) {
 
             $statisticName = isset($statistic['name']) ? $statistic['name'] : null;
-            $hide = isset($statistic['hide']) ? $statistic['hide'] : null;
             $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
 
-            $enabled = null !== $disable ? !$disable : true;
-
-            if ($visible === null && $hide !== null) {
-                $visible = !$hide;
+            // By default, an entry will be shown.
+            // If the statistic defines a $visible value, then prefer that.
+            // Else, if the query descriptor has a hide value, use that.
+            $shown = true;
+            if (isset($visible)) {
+                $shown = $visible;
+            } elseif (!isset($visible) && isset($hide)) {
+                $shown = !$hide;
             }
-
-            $visible = $visible !== null ? $visible : true;
 
             $realmName = strtolower($realm);
 
@@ -1640,8 +1642,8 @@ SQL;
                 ':acl_name' => $acl,
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticName,
-                ':visible' => ( $visible ? 1 : 0 ),
-                ':enabled' => ( $enabled ? 1 : 0 )
+                ':visible' => ( $shown ? 1 : 0 ),
+                ':enabled' => ( !$disable ? 1 : 0 )
             );
 
             $log->debug(json_encode($params));

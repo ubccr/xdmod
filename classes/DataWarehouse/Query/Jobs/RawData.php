@@ -13,7 +13,6 @@ use \DataWarehouse\Query\Model\Schema;
  */
 class RawData extends \DataWarehouse\Query\Query
 {
-
     public function __construct(
         $aggregation_unit_name,
         $start_date,
@@ -25,7 +24,6 @@ class RawData extends \DataWarehouse\Query\Query
         array $parameterDescriptions = array(),
         $single_stat = false
     ) {
-
         parent::__construct(
             'Jobs',
             'modw_aggregates',
@@ -45,7 +43,7 @@ class RawData extends \DataWarehouse\Query\Query
 
         $dataTable = $this->getDataTable();
         $joblistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_joblist", "jl");
-        $factTable = new Table(new Schema('modw'), "job_tasks", "jt" );
+        $factTable = new Table(new Schema('modw'), "job_tasks", "jt");
 
         $resourcefactTable = new Table(new Schema('modw'), 'resourcefact', 'rf');
         $this->addTable($resourcefactTable);
@@ -68,11 +66,11 @@ class RawData extends \DataWarehouse\Query\Query
         $this->addField(new TableField($resourcefactTable, "code", 'resource'));
         $this->addField(new TableField($personTable, "long_name", "name"));
 
-        $this->addField(new TableField($factTable, "job_id", "jobid") );
-        $this->addField(new TableField($factTable, "local_jobid", "local_job_id") );
+        $this->addField(new TableField($factTable, "job_id", "jobid"));
+        $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
 
-        $this->addTable($joblistTable );
-        $this->addTable($factTable );
+        $this->addTable($joblistTable);
+        $this->addTable($factTable);
 
         $this->addWhereCondition(new WhereCondition(
             new TableField($joblistTable, "agg_id"),
@@ -85,12 +83,12 @@ class RawData extends \DataWarehouse\Query\Query
             new TableField($factTable, "job_id")
         ));
 
-        switch($stat) {
+        switch ($stat) {
             case "job_count":
-                $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "between", "d.day_start_ts and d.day_end_ts") );
+                $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
                 break;
             case "started_job_count":
-                $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "between", "d.day_start_ts and d.day_end_ts") );
+                $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
                 break;
             default:
                 // All other metrics show running job count
@@ -117,21 +115,17 @@ class RawData extends \DataWarehouse\Query\Query
             " FROM ".implode(", ", $select_tables).
             " WHERE ".implode(" AND ", $wheres);
 
-        if(count($groups) > 0)
-        {
+        if (count($groups) > 0) {
             $data_query .= " GROUP BY \n".implode(",\n", $groups);
         }
-        if($extraHavingClause != null)
-        {
+        if ($extraHavingClause != null) {
             $data_query .= " HAVING " . $extraHavingClause . "\n";
         }
-        if(count($select_order_by) > 0)
-        {
+        if (count($select_order_by) > 0) {
             $data_query .= " ORDER BY \n".implode(",\n", $select_order_by);
         }
 
-        if($limit !== null && $offset !== null)
-        {
+        if ($limit !== null && $offset !== null) {
             $data_query .= " LIMIT $limit OFFSET $offset";
         }
         return $data_query;
@@ -154,8 +148,7 @@ class RawData extends \DataWarehouse\Query\Query
             " FROM ".implode(", ", $select_tables).
             " WHERE ".implode(" AND ", $wheres);
 
-        if(count($groups) > 0)
-        {
+        if (count($groups) > 0) {
             $data_query .= " GROUP BY \n".implode(",\n", $groups);
         }
         return $data_query . ') as a';
