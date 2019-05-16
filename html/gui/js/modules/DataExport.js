@@ -15,21 +15,37 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
 
 
     initComponent: function () {
-        var requestData = [
-            ['Jobs', '2018-01-01', '2018-12-31', 'CSV', 'Pending']
-        ];
-
         var requestStore = new Ext.data.ArrayStore({
             fields: [
-               {name: 'realm'},
-               {name: 'start_date'},
-               {name: 'end_date'},
-               {name: 'format'},
-               {name: 'state'}
+               'realm',
+               'start_date',
+               'end_date',
+               'format',
+               'state',
+               'requested_date',
+               'expires_date'
+            ],
+            data: [
+                [
+                    'Jobs',
+                    '2018-01-01',
+                    '2018-12-31',
+                    'CSV',
+                    'Pending',
+                    '2018-05-16',
+                    null
+                ],
+                [
+                    'Jobs',
+                    '2017-01-01',
+                    '2017-12-31',
+                    'CSV',
+                    'Available',
+                    '2018-05-16',
+                    '2018-07-01'
+                ]
             ]
         });
-
-        requestStore.loadData(requestData);
 
         Ext.apply(this, {
             items: [
@@ -69,11 +85,13 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                                 {
                                     xtype: 'datefield',
                                     fieldLabel: 'Start Date',
+                                    emptyText: 'Start Date',
                                     name: 'start_date'
                                 },
                                 {
                                     xtype: 'datefield',
                                     fieldLabel: 'End Date',
+                                    emptyText: 'End Date',
                                     name: 'end_date'
                                 },
                                 {
@@ -115,12 +133,12 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                         },
                         {
                             id: 'start_date',
-                            header: 'Start Date',
+                            header: 'Export Start Date',
                             dataIndex: 'start_date'
                         },
                         {
                             id: 'end_date',
-                            header: 'End Date',
+                            header: 'Export End Date',
                             dataIndex: 'end_date'
                         },
                         {
@@ -132,6 +150,16 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                             id: 'state',
                             header: 'State',
                             dataIndex: 'state'
+                        },
+                        {
+                            id: 'requested_date',
+                            header: 'Request Date',
+                            dataIndex: 'requested_date'
+                        },
+                        {
+                            id: 'expiration_date',
+                            header: 'Expiration Date',
+                            dataIndex: 'expires_date'
                         }
                     ]
                 }
