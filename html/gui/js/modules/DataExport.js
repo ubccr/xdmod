@@ -38,59 +38,67 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                     title: 'Request Data Export',
                     region: 'west',
                     width: 375,
-                    layout: 'vbox',
+                    bodyStyle:'padding:5px',
                     items: [
                         {
-                            xtype: 'combo',
-                            fieldLabel: 'Realm',
-                            name: 'realm',
-                            forceSelection: true,
-                            emptyText: 'Select a realm',
-                            // TODO: Switch to remote.
-                            mode: 'local',
-                            valueField: 'id',
-                            displayField: 'name',
-                            store: new Ext.data.ArrayStore({
-                                fields: ['id', 'name'],
-                                data: [
-                                    ['jobs', 'Jobs'],
-                                    ['supremm', 'SUPReMM'],
-                                    ['accounts', 'Accounts'],
-                                    ['allocations', 'Allocations'],
-                                    ['requests', 'Requests'],
-                                    ['resource_allocations', 'Resource Allocations']
-                                ]
-                            })
-                        },
-                        {
-                            xtype: 'datefield',
-                            fieldLabel: 'Start Date',
-                            name: 'start_date'
-                        },
-                        {
-                            xtype: 'datefield',
-                            fieldLabel: 'End Date',
-                            name: 'end_date'
-                        },
-                        {
-                            xtype: 'combo',
-                            fieldLabel: 'Format',
-                            name: 'format',
-                            mode: 'local',
-                            emptyText: 'Select an export format',
-                            valueField: 'id',
-                            displayField: 'name',
-                            store: new Ext.data.ArrayStore({
-                                fields: ['id', 'name'],
-                                data: [
-                                    ['csv', 'CSV'],
-                                    ['json', 'JSON']
-                                ]
-                            })
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Submit Request'
+                            xtype: 'fieldset',
+                            columnWidth: 1,
+                            items: [
+                                {
+                                    xtype: 'combo',
+                                    fieldLabel: 'Realm',
+                                    name: 'realm',
+                                    forceSelection: true,
+                                    emptyText: 'Select a realm',
+                                    // TODO: Switch to remote.
+                                    mode: 'local',
+                                    valueField: 'id',
+                                    displayField: 'name',
+                                    store: new Ext.data.ArrayStore({
+                                        fields: ['id', 'name'],
+                                        data: [
+                                            ['jobs', 'Jobs'],
+                                            ['supremm', 'SUPReMM'],
+                                            ['accounts', 'Accounts'],
+                                            ['allocations', 'Allocations'],
+                                            ['requests', 'Requests'],
+                                            ['resource_allocations', 'Resource Allocations']
+                                        ]
+                                    })
+                                },
+                                {
+                                    xtype: 'datefield',
+                                    fieldLabel: 'Start Date',
+                                    name: 'start_date'
+                                },
+                                {
+                                    xtype: 'datefield',
+                                    fieldLabel: 'End Date',
+                                    name: 'end_date'
+                                },
+                                {
+                                    xtype: 'combo',
+                                    fieldLabel: 'Format',
+                                    name: 'format',
+                                    mode: 'local',
+                                    emptyText: 'Select an export format',
+                                    valueField: 'id',
+                                    displayField: 'name',
+                                    store: new Ext.data.ArrayStore({
+                                        fields: ['id', 'name'],
+                                        data: [
+                                            ['csv', 'CSV'],
+                                            ['json', 'JSON']
+                                        ]
+                                    })
+                                }
+                            ],
+                            buttons: [
+                                {
+                                    xtype: 'button',
+                                    text: 'Submit Request'
+                                }
+                            ]
                         }
                     ]
                 },
