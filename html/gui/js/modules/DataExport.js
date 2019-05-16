@@ -20,14 +20,14 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         ];
 
         var requestStore = new Ext.data.ArrayStore({
-			fields: [
-			   {name: 'realm'},
-			   {name: 'start_date'},
-			   {name: 'end_date'},
-			   {name: 'format'},
-			   {name: 'state'}
-			]
-		});
+            fields: [
+               {name: 'realm'},
+               {name: 'start_date'},
+               {name: 'end_date'},
+               {name: 'format'},
+               {name: 'state'}
+            ]
+        });
 
         requestStore.loadData(requestData);
 
