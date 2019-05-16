@@ -122,6 +122,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                 },
                 {
                     xtype: 'grid',
+                    title: 'Status of Export Requests',
                     region: 'center',
                     // TODO: Replace with remote store.
                     store: requestStore,
