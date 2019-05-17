@@ -13,7 +13,6 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
      */
     _DEFAULT_PAGE_SIZE: 24,
 
-
     initComponent: function () {
         var requestStore = new Ext.data.ArrayStore({
             fields: [
@@ -174,7 +173,15 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                             header: 'Expiration Date',
                             dataIndex: 'expires_date'
                         }
-                    ]
+                    ],
+                    bbar: {
+                        xtype: 'paging',
+                        pageSize: this._DEFAULT_PAGE_SIZE,
+                        displayInfo: true,
+                        displayMsg: 'Displaying export requests {0} - {1} of {2}',
+                        emptyMsg: 'No export requests to display',
+                        store: requestStore
+                    }
                 }
             ]
         });
