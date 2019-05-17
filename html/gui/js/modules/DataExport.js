@@ -1,3 +1,54 @@
+// TODO: Replace this with a HTTP proxy JSON store.
+var requestsStore = new Ext.data.ArrayStore({
+    fields: [
+        'realm',
+        'start_date',
+        'end_date',
+        'format',
+        'state',
+        'requested_date',
+        'expires_date'
+    ],
+    data: [
+        [
+            'Jobs',
+            '2018-01-01',
+            '2018-12-31',
+            'CSV',
+            'Submitted',
+            '2018-05-16',
+            null
+        ],
+        [
+            'SUPReMM',
+            '2017-01-01',
+            '2017-12-31',
+            'CSV',
+            'Available',
+            '2018-05-16',
+            '2018-07-01'
+        ],
+        [
+            'Jobs',
+            '2016-01-01',
+            '2016-12-31',
+            'CSV',
+            'Expired',
+            '2018-01-01',
+            '2018-05-01',
+        ],
+        [
+            'Jobs',
+            '2018-01-01',
+            '2018-12-31',
+            'JSON',
+            'Failed',
+            '2018-05-16',
+            null
+        ]
+    ]
+});
+
 /**
  * Data warehouse export module.
  */
@@ -11,7 +62,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
      *
      * @var {Number}
      */
-    _DEFAULT_PAGE_SIZE: 24,
+    defaultPageSize: 24,
 
     initComponent: function () {
         // TODO: Replace with JsonStore.
@@ -27,11 +78,11 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         this.requestsGrid = new XDMoD.Module.DataExport.RequestsGrid({
             region: 'center',
             margins: '2 2 2 0',
-            pageSize: this._DEFAULT_PAGE_SIZE,
+            pageSize: this.defaultPageSize,
             store: this.requestsStore
         });
 
-        this.items = [ this.requestsGrid, this.requestForm ];
+        this.items = [this.requestsGrid, this.requestForm];
 
         XDMoD.Module.DataExport.superclass.initComponent.call(this);
     }
@@ -179,7 +230,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 pageSize: this.pageSize,
                 displayInfo: true,
                 displayMsg: 'Displaying export requests {0} - {1} of {2}',
-                emptyMsg: 'No export requests to display',
+                emptyMsg: 'No export requests to display'
             }
         });
 
@@ -201,35 +252,3 @@ XDMoD.Module.DataExport.exportStatusHelpText =
 '<b>Expired</b>: Requested data has expired and is no longer available.<br>' +
 '<b>Failed</b>: Data export failed. Submit a support request for more ' +
 'information.';
-
-var requestsStore = new Ext.data.ArrayStore({
-    fields: [
-        'realm',
-        'start_date',
-        'end_date',
-        'format',
-        'state',
-        'requested_date',
-        'expires_date'
-    ],
-    data: [
-        [
-            'Jobs',
-            '2018-01-01',
-            '2018-12-31',
-            'CSV',
-            'Submitted',
-            '2018-05-16',
-            null
-        ],
-        [
-            'Jobs',
-            '2017-01-01',
-            '2017-12-31',
-            'CSV',
-            'Available',
-            '2018-05-16',
-            '2018-07-01'
-        ]
-    ]
-});
