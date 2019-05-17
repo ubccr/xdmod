@@ -35,7 +35,7 @@ var requestsStore = new Ext.data.ArrayStore({
             'CSV',
             'Expired',
             '2018-01-01',
-            '2018-05-01',
+            '2018-05-01'
         ],
         [
             'Jobs',
