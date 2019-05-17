@@ -23,6 +23,12 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         $controller
             ->get(
+                "$root/warehouse/export/realms",
+                __CLASS__ . '::getRealms'
+            );
+
+        $controller
+            ->get(
                 "$root/warehouse/export/requests",
                 __CLASS__ . '::getRequests'
             );
@@ -32,6 +38,31 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 "$root/warehouse/export/request",
                 __CLASS__ . '::createRequest'
             );
+    }
+
+    /**
+     * Get all the realms available for exporting for the current user.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return array
+     * @throws AccessDeniedException
+     */
+    public function getRealms(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        // TODO
+        return [
+            'success' => true,
+            'results' => [
+                ['id' => 'jobs', 'name' => 'Jobs'],
+                ['id' => 'supremm', 'name' => 'SUPReMM'],
+                ['id' => 'accounts', 'name' => 'Accounts'],
+                ['id' => 'allocations', 'name' => 'Allocations'],
+                ['id' => 'requests', 'name' => 'Requests'],
+                ['id' => 'resource_allocations', 'name' => 'Resource Allocations']
+            ]
+        ];
     }
 
     /**
