@@ -31,7 +31,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                     '2018-01-01',
                     '2018-12-31',
                     'CSV',
-                    'Pending',
+                    'Submitted',
                     '2018-05-16',
                     null
                 ],
@@ -51,10 +51,16 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             items: [
                 {
                     xtype: 'form',
-                    title: 'Request Data Export',
+                    title: 'Create Bulk Data Export Request',
                     region: 'west',
                     width: 375,
                     bodyStyle:'padding:5px',
+                    tools: [
+                        {
+                            id: 'help',
+                            qtip: XDMoD.Module.DataExport.createRequestHelpText
+                        }
+                    ],
                     items: [
                         {
                             xtype: 'fieldset',
@@ -126,6 +132,12 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                     region: 'center',
                     // TODO: Replace with remote store.
                     store: requestStore,
+                    tools: [
+                        {
+                            id: 'help',
+                            qtip: XDMoD.Module.DataExport.exportStatusHelpText
+                        }
+                    ],
                     columns: [
                         {
                             id: 'realm',
@@ -134,12 +146,12 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                         },
                         {
                             id: 'start_date',
-                            header: 'Export Start Date',
+                            header: 'Data Start Date',
                             dataIndex: 'start_date'
                         },
                         {
                             id: 'end_date',
-                            header: 'Export End Date',
+                            header: 'Data End Date',
                             dataIndex: 'end_date'
                         },
                         {
@@ -170,3 +182,18 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         XDMoD.Module.DataExport.superclass.initComponent.call(this);
     }
 });
+
+XDMoD.Module.DataExport.createRequestHelpText =
+'Create a new request to bulk export data from the data warehouse. Date ' +
+'ranges are inclusive and are limited to one year. When the exported data is ' +
+'ready you will receive an email notification.';
+
+XDMoD.Module.DataExport.exportStatusHelpText =
+'Bulk data export requests and their current statuses.<br><br>' +
+'Status descriptions:<br>' +
+'<b>Submitted</b>: Request has been submitted, but exported data is not yet ' +
+'available.<br>' +
+'<b>Available</b>: Requested data is available for download.<br>' +
+'<b>Expired</b>: Requested data has expired and is no longer available.<br>' +
+'<b>Failed</b>: Data export failed. Submit a support request for more ' +
+'information.';
