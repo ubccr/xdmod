@@ -17,146 +17,170 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         // TODO: Replace with JsonStore.
         this.requestsStore = requestsStore;
 
+        this.requestForm = new XDMoD.Module.DataExport.RequestForm({
+            region: 'west',
+        });
+
+        this.requestsGrid = new XDMoD.Module.DataExport.RequestsGrid({
+            region: 'center',
+            pageSize: this._DEFAULT_PAGE_SIZE,
+            store: this.requestsStore
+        });
+
+        this.items = [ this.requestsGrid, this.requestForm ];
+
+        XDMoD.Module.DataExport.superclass.initComponent.call(this);
+    }
+});
+
+/**
+ * Data export request form.
+ */
+XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
+    title: 'Create Bulk Data Export Request',
+    width: 375,
+    bodyStyle: 'padding:5px',
+
+    initComponent: function () {
         Ext.apply(this, {
+            tools: [
+                {
+                    id: 'help',
+                    qtip: XDMoD.Module.DataExport.createRequestHelpText
+                }
+            ],
             items: [
                 {
-                    xtype: 'form',
-                    title: 'Create Bulk Data Export Request',
-                    region: 'west',
-                    width: 375,
-                    bodyStyle: 'padding:5px',
-                    tools: [
-                        {
-                            id: 'help',
-                            qtip: XDMoD.Module.DataExport.createRequestHelpText
-                        }
-                    ],
+                    xtype: 'fieldset',
+                    columnWidth: 1,
                     items: [
                         {
-                            xtype: 'fieldset',
-                            columnWidth: 1,
-                            items: [
-                                {
-                                    xtype: 'combo',
-                                    fieldLabel: 'Realm',
-                                    name: 'realm',
-                                    forceSelection: true,
-                                    emptyText: 'Select a realm',
-                                    // TODO: Switch to remote.
-                                    mode: 'local',
-                                    valueField: 'id',
-                                    displayField: 'name',
-                                    store: new Ext.data.ArrayStore({
-                                        fields: ['id', 'name'],
-                                        data: [
-                                            ['jobs', 'Jobs'],
-                                            ['supremm', 'SUPReMM'],
-                                            ['accounts', 'Accounts'],
-                                            ['allocations', 'Allocations'],
-                                            ['requests', 'Requests'],
-                                            ['resource_allocations', 'Resource Allocations']
-                                        ]
-                                    })
-                                },
-                                {
-                                    xtype: 'datefield',
-                                    fieldLabel: 'Start Date',
-                                    emptyText: 'Start Date',
-                                    name: 'start_date'
-                                },
-                                {
-                                    xtype: 'datefield',
-                                    fieldLabel: 'End Date',
-                                    emptyText: 'End Date',
-                                    name: 'end_date'
-                                },
-                                {
-                                    xtype: 'combo',
-                                    fieldLabel: 'Format',
-                                    name: 'format',
-                                    mode: 'local',
-                                    emptyText: 'Select an export format',
-                                    valueField: 'id',
-                                    displayField: 'name',
-                                    store: new Ext.data.ArrayStore({
-                                        fields: ['id', 'name'],
-                                        data: [
-                                            ['csv', 'CSV'],
-                                            ['json', 'JSON']
-                                        ]
-                                    })
-                                }
-                            ],
-                            buttons: [
-                                {
-                                    xtype: 'button',
-                                    text: 'Submit Request'
-                                }
-                            ]
+                            xtype: 'combo',
+                            fieldLabel: 'Realm',
+                            name: 'realm',
+                            forceSelection: true,
+                            emptyText: 'Select a realm',
+                            // TODO: Switch to remote.
+                            mode: 'local',
+                            valueField: 'id',
+                            displayField: 'name',
+                            store: new Ext.data.ArrayStore({
+                                fields: ['id', 'name'],
+                                data: [
+                                    ['jobs', 'Jobs'],
+                                    ['supremm', 'SUPReMM'],
+                                    ['accounts', 'Accounts'],
+                                    ['allocations', 'Allocations'],
+                                    ['requests', 'Requests'],
+                                    ['resource_allocations', 'Resource Allocations']
+                                ]
+                            })
+                        },
+                        {
+                            xtype: 'datefield',
+                            fieldLabel: 'Start Date',
+                            emptyText: 'Start Date',
+                            name: 'start_date'
+                        },
+                        {
+                            xtype: 'datefield',
+                            fieldLabel: 'End Date',
+                            emptyText: 'End Date',
+                            name: 'end_date'
+                        },
+                        {
+                            xtype: 'combo',
+                            fieldLabel: 'Format',
+                            name: 'format',
+                            mode: 'local',
+                            emptyText: 'Select an export format',
+                            valueField: 'id',
+                            displayField: 'name',
+                            store: new Ext.data.ArrayStore({
+                                fields: ['id', 'name'],
+                                data: [
+                                    ['csv', 'CSV'],
+                                    ['json', 'JSON']
+                                ]
+                            })
+                        }
+                    ],
+                    buttons: [
+                        {
+                            xtype: 'button',
+                            text: 'Submit Request'
                         }
                     ]
-                },
-                {
-                    xtype: 'grid',
-                    title: 'Status of Export Requests',
-                    region: 'center',
-                    store: this.requestsStore,
-                    tools: [
-                        {
-                            id: 'help',
-                            qtip: XDMoD.Module.DataExport.exportStatusHelpText
-                        }
-                    ],
-                    columns: [
-                        {
-                            id: 'realm',
-                            header: 'Realm',
-                            dataIndex: 'realm'
-                        },
-                        {
-                            id: 'start_date',
-                            header: 'Data Start Date',
-                            dataIndex: 'start_date'
-                        },
-                        {
-                            id: 'end_date',
-                            header: 'Data End Date',
-                            dataIndex: 'end_date'
-                        },
-                        {
-                            id: 'format',
-                            header: 'Format',
-                            dataIndex: 'format'
-                        },
-                        {
-                            id: 'state',
-                            header: 'State',
-                            dataIndex: 'state'
-                        },
-                        {
-                            id: 'requested_date',
-                            header: 'Request Date',
-                            dataIndex: 'requested_date'
-                        },
-                        {
-                            id: 'expiration_date',
-                            header: 'Expiration Date',
-                            dataIndex: 'expires_date'
-                        }
-                    ],
-                    bbar: {
-                        xtype: 'paging',
-                        pageSize: this._DEFAULT_PAGE_SIZE,
-                        displayInfo: true,
-                        displayMsg: 'Displaying export requests {0} - {1} of {2}',
-                        emptyMsg: 'No export requests to display',
-                        store: this.requestsStore
-                    }
                 }
             ]
         });
 
-        XDMoD.Module.DataExport.superclass.initComponent.call(this);
+        XDMoD.Module.DataExport.RequestForm.superclass.initComponent.call(this);
+    }
+});
+
+/**
+ * Data export request grid.
+ */
+XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
+    title: 'Status of Export Requests',
+
+    initComponent: function () {
+        Ext.apply(this, {
+            tools: [
+                {
+                    id: 'help',
+                    qtip: XDMoD.Module.DataExport.exportStatusHelpText
+                }
+            ],
+            columns: [
+                {
+                    id: 'realm',
+                    header: 'Realm',
+                    dataIndex: 'realm'
+                },
+                {
+                    id: 'start_date',
+                    header: 'Data Start Date',
+                    dataIndex: 'start_date'
+                },
+                {
+                    id: 'end_date',
+                    header: 'Data End Date',
+                    dataIndex: 'end_date'
+                },
+                {
+                    id: 'format',
+                    header: 'Format',
+                    dataIndex: 'format'
+                },
+                {
+                    id: 'state',
+                    header: 'State',
+                    dataIndex: 'state'
+                },
+                {
+                    id: 'requested_date',
+                    header: 'Request Date',
+                    dataIndex: 'requested_date'
+                },
+                {
+                    id: 'expiration_date',
+                    header: 'Expiration Date',
+                    dataIndex: 'expires_date'
+                }
+            ],
+            bbar: {
+                xtype: 'paging',
+                store: this.store,
+                pageSize: this.pageSize,
+                displayInfo: true,
+                displayMsg: 'Displaying export requests {0} - {1} of {2}',
+                emptyMsg: 'No export requests to display',
+            }
+        });
+
+        XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
     }
 });
 
