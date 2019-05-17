@@ -17,13 +17,13 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
     initComponent: function () {
         var requestStore = new Ext.data.ArrayStore({
             fields: [
-               'realm',
-               'start_date',
-               'end_date',
-               'format',
-               'state',
-               'requested_date',
-               'expires_date'
+                'realm',
+                'start_date',
+                'end_date',
+                'format',
+                'state',
+                'requested_date',
+                'expires_date'
             ],
             data: [
                 [
@@ -54,7 +54,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                     title: 'Create Bulk Data Export Request',
                     region: 'west',
                     width: 375,
-                    bodyStyle:'padding:5px',
+                    bodyStyle: 'padding:5px',
                     tools: [
                         {
                             id: 'help',
