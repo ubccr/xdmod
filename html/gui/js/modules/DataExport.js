@@ -19,10 +19,14 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
 
         this.requestForm = new XDMoD.Module.DataExport.RequestForm({
             region: 'west',
+            width: 375,
+            split: true,
+            margins: '2 0 2 2'
         });
 
         this.requestsGrid = new XDMoD.Module.DataExport.RequestsGrid({
             region: 'center',
+            margins: '2 2 2 0',
             pageSize: this._DEFAULT_PAGE_SIZE,
             store: this.requestsStore
         });
@@ -38,7 +42,6 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
  */
 XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
     title: 'Create Bulk Data Export Request',
-    width: 375,
     bodyStyle: 'padding:5px',
 
     initComponent: function () {
