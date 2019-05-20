@@ -20,24 +20,10 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         ControllerCollection $controller
     ) {
         $root = $this->prefix;
-
-        $controller
-            ->get(
-                "$root/warehouse/export/realms",
-                __CLASS__ . '::getRealms'
-            );
-
-        $controller
-            ->get(
-                "$root/warehouse/export/requests",
-                __CLASS__ . '::getRequests'
-            );
-
-        $controller
-            ->post(
-                "$root/warehouse/export/request",
-                __CLASS__ . '::createRequest'
-            );
+        $current = get_class($this);
+        $controller->get("$root/realms", "$current::getRealms");
+        $controller->get("$root/requests", "$current::getRequests");
+        $controller->post("$root/request", "$current::createRequest");
     }
 
     /**
@@ -51,18 +37,24 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function getRealms(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        // TODO
-        return [
-            'success' => true,
-            'results' => [
-                ['id' => 'jobs', 'name' => 'Jobs'],
-                ['id' => 'supremm', 'name' => 'SUPReMM'],
-                ['id' => 'accounts', 'name' => 'Accounts'],
-                ['id' => 'allocations', 'name' => 'Allocations'],
-                ['id' => 'requests', 'name' => 'Requests'],
-                ['id' => 'resource_allocations', 'name' => 'Resource Allocations']
-            ]
+
+        // TODO: Determine realms using user ACLs.
+        $realms = [
+            ['id' => 'jobs', 'name' => 'Jobs'],
+            ['id' => 'supremm', 'name' => 'SUPReMM'],
+            ['id' => 'accounts', 'name' => 'Accounts'],
+            ['id' => 'allocations', 'name' => 'Allocations'],
+            ['id' => 'requests', 'name' => 'Requests'],
+            ['id' => 'resource_allocations', 'name' => 'Resource Allocations']
         ];
+
+        return $app->json(
+            [
+                'success' => true,
+                'data' => $realms,
+                'total' => count($realms)
+            ]
+        );
     }
 
     /**
