@@ -372,13 +372,16 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertArrayHasKey('success', $actual);
         $this->assertArrayHasKey('totalCount', $actual);
         $this->assertArrayHasKey('message', $actual);
+        $this->assertTrue($actual['success'], '"success" is true');
+        $this->assertEquals(1, $actual['totalCount'], '"totalCount" is 1');
+        $this->assertEquals('', $actual['message'], '"message" is ""');
+        $this->assertCount(1, $actual['data'], '"data" has one element');
+        $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
-        $expectedFileName = $user['output'];
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
-        );
+        $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
+        $expected = file_get_contents($expectedFileName);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);
 
         if (!$isPublicUser) {
             $this->helper->logout();
