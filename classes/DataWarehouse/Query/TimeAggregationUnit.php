@@ -228,7 +228,13 @@ abstract class TimeAggregationUnit
             $utc_tz = new \DateTimeZone('UTC');
             $start_date_dt = \DateTime::createFromFormat($dt_format, $start_date, $utc_tz);
             $end_date_dt = \DateTime::createFromFormat($dt_format, $end_date, $utc_tz);
+            if ($start_date_dt === false) {
+                throw new \Exception("Unable to parse start_date");
+            }
 
+            if ($end_date_dt === false) {
+                throw new \Exception("Unable to parse end_date");
+            }
             $date_difference = date_diff($start_date_dt, $end_date_dt);
 
             if ($date_difference->y >= 10) {

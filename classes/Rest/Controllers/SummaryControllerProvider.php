@@ -3,12 +3,13 @@
 namespace Rest\Controllers;
 
 use Configuration\XdmodConfiguration;
+use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
-use DataWarehouse\Query\Exceptions\BadRequestException;
 
 use Models\Services\Acls;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SummaryControllerProvider extends BaseControllerProvider
 {
@@ -201,7 +202,7 @@ class SummaryControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function getStatistics(Request $request, Application $app)
     {
@@ -210,16 +211,8 @@ class SummaryControllerProvider extends BaseControllerProvider
         $filters = json_decode($request->get("filters", '{"data": []}'));
         $aggregation_unit = $request->get('aggregation_unit', 'auto');
 
-        $start_date = $request->get('start_date', null);
-        if ($start_date === null) {
-            throw new \Exception("start_date parameter is not set");
-        }
-
-        $end_date = $request->get('end_date', null);
-        if ($end_date === null) {
-            throw new \Exception("end_date parameter is not set");
-        }
-
+        $start_date = $this->getStringParam($request, 'start_date', true);
+        $end_date = $this->getStringParam($request, 'end_date', true);
 
         $rawParameters = array();
         foreach($filters->data as $filter) {
@@ -234,14 +227,13 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $queryDescripter = new \User\Elements\QueryDescripter('tg_summary', 'Jobs', 'none');
 
-        $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $queryDescripter->pullQueryParameters($rawParameters));
-
         // This try/catch block is intended to replace the "Base table or
         // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
-
         try {
+            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $queryDescripter->pullQueryParameters($rawParameters));
+
             $result = $query->execute();
         } catch (PDOException $e) {
             if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
@@ -250,6 +242,8 @@ class SummaryControllerProvider extends BaseControllerProvider
             } else {
                 throw $e;
             }
+        } catch (Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
         }
 
         $rawRoles = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);

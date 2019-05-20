@@ -20,17 +20,19 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
         $startDate = \xd_utilities\array_get($options, 'start_date', '2016-12-22');
         $endDate = \xd_utilities\array_get($options, 'end_date', '2017-01-01');
 
-        $params = array(
-            'start_date' => $startDate,
-            'end_date' => $endDate
-        );
+        $params = array();
+        if ($startDate !== "null") {
+            $params['start_date'] = $startDate;
+        }
+        if ($endDate !== "null") {
+            $params['end_date'] = $endDate;
+        }
 
         if ($username !== ROLE_ID_PUBLIC) {
             $this->helper->authenticate($username);
         }
 
         $response = $this->helper->get('rest/v0.1/summary/statistics', $params);
-
         if ($username !== ROLE_ID_PUBLIC) {
             $this->helper->logout();
         }
@@ -47,13 +49,12 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
         );
         $expectedHttpCode = \xd_utilities\array_get($expected, 'http_code', 200);
         $expectedContentType = \xd_utilities\array_get($expected, 'content_type', 'application/json');
-
         $this->validateResponse($response, $expectedHttpCode, $expectedContentType);
 
         $actual = $this->recursivelyFilter($response[0], array('query_string', 'query_time'));
 
         $expectedFileName = \xd_utilities\array_get($expected, 'file', $defaultExpectedFile);
-        $expectedFilePath = $this->getTestFiles()->getFile('controllers', $expectedFileName);
+        $expectedFilePath = $this->getTestFiles()->getFile('rest', $expectedFileName);
 
         if (!is_file($expectedFilePath)) {
             file_put_contents($expectedFilePath, sprintf("%s\n", json_encode($actual)));
@@ -96,7 +97,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
                         $expectedValue = (float) $value[0];
                         $actualValue = (float) $actualData[$fieldName][0];
 
-                        $this->assertEquals($expectedValue, $actualValue,"", 1.0e-8);
+                        $this->assertEquals($expectedValue, $actualValue, "", 1.0e-8);
                     } else {
                         $this->assertEquals($value, $actualData[$fieldName]);
                     }
@@ -110,7 +111,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
     public function provideTestGetStatistics()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'get_statistics', 'input')
+            $this->getTestFiles()->getFile('rest', 'get_statistics', 'input')
         );
     }
 
