@@ -1,5 +1,5 @@
 #!/bin/sh
-
+echo "Unit tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 PHPUNITARGS=""
 if [ "$1" = "coverage" ];
 then
