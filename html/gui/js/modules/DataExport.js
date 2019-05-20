@@ -110,46 +110,54 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                     items: [
                         {
                             xtype: 'combo',
-                            fieldLabel: 'Realm',
                             name: 'realm',
-                            forceSelection: true,
+                            fieldLabel: 'Format',
                             emptyText: 'Select a realm',
-                            // TODO: Switch to remote.
-                            mode: 'local',
                             valueField: 'id',
                             displayField: 'name',
-                            store: new Ext.data.ArrayStore({
+                            allowBlank: false,
+                            editable: false,
+                            triggerAction: 'all',
+                            mode: 'local',
+                            store: new Ext.data.JsonStore({
+                                autoLoad: true,
+                                autoDestroy: true,
+                                root: 'data',
                                 fields: ['id', 'name'],
-                                data: [
-                                    ['jobs', 'Jobs'],
-                                    ['supremm', 'SUPReMM'],
-                                    ['accounts', 'Accounts'],
-                                    ['allocations', 'Allocations'],
-                                    ['requests', 'Requests'],
-                                    ['resource_allocations', 'Resource Allocations']
-                                ]
+                                proxy: new Ext.data.HttpProxy({
+                                    method: 'GET',
+                                    url: 'rest/v1/warehouse/export/realms'
+                                })
                             })
                         },
                         {
                             xtype: 'datefield',
+                            name: 'start_date',
                             fieldLabel: 'Start Date',
                             emptyText: 'Start Date',
-                            name: 'start_date'
+                            format: 'Y-m-d',
+                            allowBlank: false
                         },
                         {
                             xtype: 'datefield',
+                            name: 'end_date',
                             fieldLabel: 'End Date',
                             emptyText: 'End Date',
-                            name: 'end_date'
+                            format: 'Y-m-d',
+                            allowBlank: false
                         },
                         {
                             xtype: 'combo',
-                            fieldLabel: 'Format',
                             name: 'format',
-                            mode: 'local',
+                            fieldLabel: 'Format',
                             emptyText: 'Select an export format',
                             valueField: 'id',
                             displayField: 'name',
+                            mode: 'local',
+                            editable: false,
+                            lazyInit: false,
+                            typeAhead: true,
+                            triggerAction: 'all',
                             store: new Ext.data.ArrayStore({
                                 fields: ['id', 'name'],
                                 data: [
