@@ -13,7 +13,9 @@ fi
 CACHEFILE='/tmp/browser-tests-node-modules.tar.gz'
 set -e
 set -o pipefail
+
 echo "UI tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
+
 if [ "$1" = "--headless" ];
 then
     WDIO_MODE=headless
@@ -27,11 +29,12 @@ then
 fi
 
 pushd `dirname $0`
-
-
 if [[ ! -d 'node_modules' && -f $CACHEFILE ]];
 then
+    echo "using cache file"
     tar -moxf $CACHEFILE
+else
+    echo "No cache file found."
 fi
 npm set progress=false
 npm install --quiet
