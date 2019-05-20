@@ -13,7 +13,7 @@ fi
 CACHEFILE='/tmp/browser-tests-node-modules.tar.gz'
 set -e
 set -o pipefail
-
+echo "UI tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 if [ "$1" = "--headless" ];
 then
     WDIO_MODE=headless
