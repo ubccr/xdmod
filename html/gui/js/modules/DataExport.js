@@ -111,7 +111,7 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                         {
                             xtype: 'combo',
                             name: 'realm',
-                            fieldLabel: 'Format',
+                            fieldLabel: 'Realm',
                             emptyText: 'Select a realm',
                             valueField: 'id',
                             displayField: 'name',
