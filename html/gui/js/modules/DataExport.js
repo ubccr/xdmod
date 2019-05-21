@@ -1,16 +1,46 @@
 // TODO: Replace this with a HTTP proxy JSON store.
 var requestsStore = new Ext.data.ArrayStore({
     fields: [
-        'realm',
-        'start_date',
-        'end_date',
-        'format',
-        'state',
-        'requested_date',
-        'expires_date'
+        {
+            name: 'id',
+            type: 'int'
+        },
+        {
+            name: 'realm',
+            type: 'string'
+        },
+        {
+            name: 'start_date',
+            type: 'date',
+            dateFormat: 'Y-m-d'
+        },
+        {
+            name: 'end_date',
+            type: 'date',
+            dateFormat: 'Y-m-d'
+        },
+        {
+            name: 'format',
+            type: 'string'
+        },
+        {
+            name: 'state',
+            type: 'string'
+        },
+        {
+            name: 'requested_date',
+            type: 'date',
+            dateFormat: 'Y-m-d'
+        },
+        {
+            name: 'expires_date',
+            type: 'date',
+            dateFormat: 'Y-m-d'
+        }
     ],
     data: [
         [
+            1,
             'Jobs',
             '2018-01-01',
             '2018-12-31',
@@ -20,6 +50,7 @@ var requestsStore = new Ext.data.ArrayStore({
             null
         ],
         [
+            2,
             'SUPReMM',
             '2017-01-01',
             '2017-12-31',
@@ -29,6 +60,7 @@ var requestsStore = new Ext.data.ArrayStore({
             '2018-07-01'
         ],
         [
+            3,
             'Jobs',
             '2016-01-01',
             '2016-12-31',
@@ -38,6 +70,7 @@ var requestsStore = new Ext.data.ArrayStore({
             '2018-05-01'
         ],
         [
+            4,
             'Jobs',
             '2018-01-01',
             '2018-12-31',
