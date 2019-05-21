@@ -9,13 +9,25 @@ namespace ComponentTests\ETL;
 use CCR\DB;
 
 /**
- * Test various components of the ETLv2 ingestors.
+ * Test various components of the ETLv2 ingestors. All tests in this file run the etl_overseer.php
+ * script to test the entire pipeline. The following tests are performed:
+ *
+ * 1. Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
+ * 2. Insert truncated or out of range data and ensure that the SQL statements returns warning messages.
+ * 3. Insert truncated and out of range data but hide SQL warnings.
+ * 4. Insert truncated and out of range data but hide SQL warnings for incorrect values, leaving
+ *    warnings for out of range values.
+ * 5. Test the structured file ingestor using the directory scanner with one empty (0 byte)
+ *    file, one file containing an empty JSON array, and another file containing 2 records of
+ *    data.
  */
 
 class IngestorTest extends \PHPUnit_Framework_TestCase
 {
+    const TEST_INPUT_DIR = '/tests/artifacts/xdmod/etlv2/configuration/input';
+
     /**
-     * Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
+     * 1. Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
      */
 
     public function testLoadDataInfileWarnings() {
@@ -45,7 +57,8 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Insert truncated or out of range data and ensure that the SQL statements returns warning messages.
+     * 2. Insert truncated or out of range data and ensure that the SQL statements returns warning
+     *    messages.
      */
 
     public function testSqlWarnings() {
@@ -65,8 +78,9 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
-                $numWarnings++;
+                if ( false !== strpos($line, '[warning]') ) {
+                    $numWarnings++;
+                }
             }
         }
 
@@ -75,7 +89,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Insert truncated and out of range data but hide SQL warnings.
+     * 3. Insert truncated and out of range data but hide SQL warnings.
      */
 
     public function testHideSqlWarnings() {
@@ -85,22 +99,18 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         // We are expecting no warnings to be returned
 
-        $numWarnings = 0;
-
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
                 $this->assertNotRegExp('/\[warning\]/', $line);
-                $numWarnings++;
             }
         }
 
-        $this->assertEquals(0, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr'], "Std Error");
     }
 
     /**
-     * Insert truncated and out of range data but hide SQL warnings for incorrect values,
-     * leaving warnings for out of range values.
+     * 4. Insert truncated and out of range data but hide SQL warnings for incorrect values, leaving
+     *    warnings for out of range values.
      */
 
     public function testHideSqlWarningCodes() {
@@ -118,8 +128,9 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
-                $numWarnings++;
+                if ( false !== strpos($line, '[warning]') ) {
+                    $numWarnings++;
+                }
             }
         }
 
@@ -134,13 +145,30 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
-                $numWarnings++;
+                if ( false !== strpos($line, '[warning]') ) {
+                    $numWarnings++;
+                }
             }
         }
 
         $this->assertEquals(0, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr'], "Std Error");
+    }
+
+    /**
+     * 5. Test the structured file ingestor using the directory scanner with one empty (0 byte)
+     *    file, one file containing an empty JSON array, and another file containing 2 records of
+     *    dat.
+     */
+
+    public function testStructuredFileIngestorWithDirectoryScanner() {
+        $result = $this->executeOverseerAction(
+            'xdmod.cloud-jobs.GenericRawCloudEventIngestor',
+            sprintf('-v notice -d "CLOUD_EVENT_LOG_DIR=%s/generic_cloud_logs"', BASE_DIR . self::TEST_INPUT_DIR)
+        );
+
+        $this->assertEquals(0, $result['exit_status'], 'Exit code');
+        $this->assertEquals('', $result['stderr'], 'Std Error');
     }
 
     /**
@@ -154,10 +182,16 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     {
         // Note that tests are run in the directory where the PHP class is defined.
         $overseer = realpath(BASE_DIR . '/tools/etl/etl_overseer.php');
-        $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
-        $options = sprintf('-c %s -a %s %s -v warning', $configFile, $action, $localOptions);
-        $command = sprintf('%s %s', $overseer, $options);
+        $configFile = realpath(BASE_DIR . self::TEST_INPUT_DIR . '/xdmod_etl_config_8.0.0.json');
+        $options = sprintf('-c %s -a %s %s', $configFile, $action, $localOptions);
+
+        // Add a verbosity flag if the local options do not already contain one
+        if ( "" == $localOptions || false === strpos($localOptions, '-v') ) {
+            $options = sprintf('%s -v warning', $options);
+        }
+
         $pipes = array();
+        $command = sprintf('%s %s', $overseer, $options);
 
         $process = proc_open(
             $command,
