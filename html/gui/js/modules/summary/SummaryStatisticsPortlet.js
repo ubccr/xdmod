@@ -51,12 +51,12 @@ XDMoD.Modules.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portl
         var title = this.baseTitle;
 
         var dateRanges = CCR.xdmod.ui.DurationToolbar.getDateRanges();
-        for ( var i = 0; i < dateRanges.length; i++ ) {
+        for (var i = 0; i < dateRanges.length; i++) {
             var dateRange = dateRanges[i];
             if (dateRange.text === this.config.timeframe) {
                 this.config.start_date = this.formatDate(dateRange.start);
                 this.config.end_date = this.formatDate(dateRange.end);
-                title = `${this.baseTitle} - ${this.config.start_date} to ${this.config.end_date}`;
+                title = this.baseTitle + ' - ' + this.config.start_date + ' to ' + this.config.end_date;
             }
         }
 
@@ -205,8 +205,8 @@ XDMoD.Modules.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portl
         this.getTopToolbar().doLayout();
     }, // populateSummaryStatistics
 
-    formatDate: function(date) {
-        return `${date.getFullYear()}-${("" + (date.getMonth() + 1)).padStart(2, '0')}-${("" + date.getDate()).padStart(2, '0')}`
+    formatDate: function (date) {
+        return date.getFullYear() + '-' + ('' + (date.getMonth() + 1)).padStart(2, '0') + '-' + ('' + date.getDate()).padStart(2, '0');
     } // formatDate: function(date) {
 }); // XDMoD.Modules.SummaryPortlets.CenterHealthPortlet = Ext.extend(Ext.ux.Portlet, {
 

@@ -70,15 +70,15 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
                 // present in the `data` section. This will let us detect when we have a `float` and
                 // include a delta for the equality test.
                 $expectedTypes = array();
-                foreach($expected['formats'] as $format) {
-                    foreach($format['items'] as $item) {
+                foreach ($expected['formats'] as $format) {
+                    foreach ($format['items'] as $item) {
                         $expectedTypes[$item['fieldName']] = $item['numberType'];
                     }
                 }
 
                 // These attributes can just straight up be checked for equality.
                 $equalAttributes = array('totalCount', 'success', 'message', 'formats');
-                foreach($equalAttributes as $attribute) {
+                foreach ($equalAttributes as $attribute) {
                     $this->assertEquals($expected[$attribute], $actual[$attribute]);
                 }
 
@@ -88,14 +88,14 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
                 $expectedData = $expected['data'][0];
                 $actualData = $actual['data'][0];
 
-                foreach($expectedData as $fieldName => $value) {
+                foreach ($expectedData as $fieldName => $value) {
                     $this->assertArrayHasKey($fieldName, $actualData);
 
                     if ((array_key_exists($fieldName, $expectedTypes) && $expectedTypes[$fieldName] === 'float') ||
                         strpos($fieldName, 'sem_') !== false) {
                         // Make sure that the values we are validating are in the correct format.
-                        $expectedValue = (float) $value[0];
-                        $actualValue = (float) $actualData[$fieldName][0];
+                        $expectedValue = (float)$value[0];
+                        $actualValue = (float)$actualData[$fieldName][0];
 
                         $this->assertEquals($expectedValue, $actualValue, "", 1.0e-8);
                     } else {
@@ -117,7 +117,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
 
     private function recursivelyFilter(array $data, array $keys)
     {
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             if (in_array($key, $keys, true)) {
                 unset($data[$key]);
             } elseif (is_array($value)) {
