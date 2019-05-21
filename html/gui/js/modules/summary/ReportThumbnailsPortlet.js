@@ -51,6 +51,14 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                             this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                         }
                     }
+                },
+                {
+                    text: 'Report Default',
+                    listeners: {
+                        click: function (comp) {
+                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change');
+                        }
+                    }
                 }]
             },
             ' ',
@@ -205,8 +213,13 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                             var tmpv = v_split[index].split('=')[1];
                             params[tmpk] = tmpv;
                         }
-                        var value = '/report_image_renderer.php?type=cached&ref=' + params.ref;
-                        value = value + '&start=' + self.timeframe.start_date + '&end=' + self.timeframe.end_date + '&token=';
+                        if (!(self.timeframe.start_date === null && self.timeframe.end_date === null)) {
+                            var value = '/report_image_renderer.php?type=cached&ref=' + params.ref;
+                            value = value + '&start=' + self.timeframe.start_date + '&end=' + self.timeframe.end_date + '&token=';
+                        } else {
+                            var value = '/report_image_renderer.php?type=report&ref=' + params.ref;
+                            value = value + '&token=';
+                        }
                         return value;
                     }
                 }
@@ -306,12 +319,15 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 this.tmpHpc.store.setBaseParam(key, config[key]);
                             }
                         }
-                        config.start_date = self.timeframe.start_date;
-                        config.end_date = self.timeframe.end_date;
-                        config.timeframe_label = 'User Defined';
-                        this.tmpHpc.store.setBaseParam('start_date', self.timeframe.start_date);
-                        this.tmpHpc.store.setBaseParam('end_date', self.timeframe.end_date);
-                        this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
+                        if (!(self.timeframe.start_date === null && self.timeframe.end_date === null)) {
+                            config.start_date = self.timeframe.start_date;
+                            config.end_date = self.timeframe.end_date;
+                            config.timeframe_label = 'User Defined';
+                            this.tmpHpc.store.setBaseParam('start_date', self.timeframe.start_date);
+                            this.tmpHpc.store.setBaseParam('end_date', self.timeframe.end_date);
+                            this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
+                        }
+
                         this.tmpHpc.store.setBaseParam('operation', 'get_data');
 
                         var win = new Ext.Window({
@@ -359,9 +375,14 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
         XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet.superclass.initComponent.apply(this, arguments);
     },
     listeners: {
-        timeframe_change: function (start_date, end_date) {
-            this.timeframe.start_date = start_date.format('Y-m-d');
-            this.timeframe.end_date = end_date.format('Y-m-d');
+        timeframe_change: function (start_date = null, end_date = null) {
+            if (!(start_date === null && end_date === null)) {
+                this.timeframe.start_date = start_date.format('Y-m-d');
+                this.timeframe.end_date = end_date.format('Y-m-d');
+            } else {
+                this.timeframe.start_date = start_date;
+                this.timeframe.end_date = end_date;
+            }
             this.store.load();
         }
     }
