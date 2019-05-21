@@ -57,7 +57,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
         $expectedFilePath = $this->getTestFiles()->getFile('rest', $expectedFileName);
 
         if (!is_file($expectedFilePath)) {
-            file_put_contents($expectedFilePath, sprintf("%s\n", json_encode($actual)));
+            file_put_contents($expectedFilePath, sprintf("%s\n", json_encode($actual, JSON_PRETTY_PRINT)));
             echo "Generated Expected File: $expectedFilePath\n";
             $this->assertTrue(true);
         } else {
