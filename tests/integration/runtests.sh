@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+echo "Integration tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
+
 UATCU=""
 UATXCU=""
 
