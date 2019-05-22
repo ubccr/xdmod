@@ -2621,8 +2621,8 @@ SQL;
         $db = DB::factory('database');
 
         $query = <<<SQL
-        SELECT rf.id 
-        FROM modw.resourcefact rf 
+        SELECT rf.id
+        FROM modw.resourcefact rf
         WHERE   rf.organization_id =  :organization_id
 
 SQL;
