@@ -1,88 +1,127 @@
 {
-  "defaults": {
-    "global": {
-      "endpoints": {
-        "source": {
-          "type": "mysql",
-          "name": "Cloud DB",
-          "config": "datawarehouse",
-          "schema": "modw_cloud"
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            }
         },
-        "destination": {
-          "type": "mysql",
-          "name": "Cloud DB",
-          "config": "datawarehouse",
-          "schema": "modw_cloud",
-          "create_schema_if_not_exists": true
+
+        "cloud-jobs": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
         }
-      }
     },
-    "cloud-jobs": {
-      "namespace": "ETL\\Ingestor",
-      "options_class": "IngestorOptions"
-    }
-  },
-  "#": "Current Cloud job ingestion",
-  "cloud-jobs": [
-    {
-      "name": "CloudTableManagement",
-      "class": "ManageTables",
-      "description": "Manage job tables",
-      "namespace": "ETL\\Maintenance",
-      "options_class": "MaintenanceOptions",
-      "definition_file_list": [
-        "cloud/account.json",
-        "cloud/asset.json",
-        "cloud/asset_event.json",
-        "cloud/cloud_resource_metadata.json",
-        "cloud/event.json",
-        "cloud/host.json",
-        "cloud/image.json",
-        "cloud/instance_data.json",
-        "cloud/instance.json",
-        "cloud/job_record_event.json"
-      ],
-      "enabled": true
-    },
-    {
-      "name": "CloudEventTypeIngestor",
-      "description": "Cloud event types",
-      "class": "StructuredFileIngestor",
-      "definition_file": "cloud/event_type.json",
-      "enabled": true,
-      "truncate_destination": true
-    },
-    {
-      "name": "CloudAssetTypeIngestor",
-      "description": "Cloud asset types",
-      "class": "StructuredFileIngestor",
-      "definition_file": "cloud/asset_type.json",
-      "enabled": true,
-      "truncate_destination": true
-    },
-    {
-      "name": "CloudInstanceTypeIngestor",
-      "description": "Cloud instance types",
-      "class": "StructuredFileIngestor",
-      "definition_file": "cloud/instance_type.json",
-      "enabled": true,
-      "truncate_destination": true
-    },
-    {
-      "name": "CloudRegionIngestor",
-      "description": "Cloud regions",
-      "class": "StructuredFileIngestor",
-      "definition_file": "cloud/region.json",
-      "enabled": true,
-      "truncate_destination": true
-    },
-    {
-      "name": "CloudAvailabilityZoneIngestor",
-      "description": "Cloud availability zones",
-      "class": "StructuredFileIngestor",
-      "definition_file": "cloud/avail_zone.json",
-      "enabled": true,
-      "truncate_destination": true
-    }
-  ]
+
+    "#": "Current Cloud job ingestion",
+
+    "cloud-jobs": [
+        {
+            "name": "CloudTableManagement",
+            "class": "ManageTables",
+            "description": "Manage job tables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "cloud/account.json",
+                "cloud/asset.json",
+                "cloud/asset_event.json",
+                "cloud/cloud_resource_metadata.json",
+                "cloud/event.json",
+                "cloud/host.json",
+                "cloud/image.json",
+                "cloud/instance_data.json",
+                "cloud/instance.json",
+                "cloud/job_record_event.json"
+            ],
+            "enabled": true
+        },
+        {
+            "name": "CloudEventTypeIngestor",
+            "description": "Cloud event types",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/event_type.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudAssetTypeIngestor",
+            "description": "Cloud asset types",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/asset_type.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudInstanceTypeIngestor",
+            "description": "Cloud instance types",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/instance_type.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudRegionIngestor",
+            "description": "Cloud regions",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/region.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudAvailabilityZoneIngestor",
+            "description": "Cloud availability zones",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/avail_zone.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "GenericRawCloudEventIngestor",
+            "description": "Loading generic cloud data",
+            "class": "StructuredFileIngestor",
+            "definition_file": "raw_generic_cloud_job_logs.json",
+            "endpoints": {
+                "source": {
+                    "type": "directoryscanner",
+                    "name": "Generic cloud event logs",
+                    "path": "${CLOUD_EVENT_LOG_DIR}",
+                    "file_pattern": "/\\.json$/",
+                    "#": "Recursion depth is relative to the path",
+                    "recursion_depth": 1,
+                    "handler": {
+                        "type": "jsonfile",
+                        "record_separator": "\n",
+                        "field_names": [
+                            "instance_id",
+                            "event_type",
+                            "event_data",
+                            "event_time",
+                            "record_type",
+                            "account",
+                            "node_controller",
+                            "image_type",
+                            "instance_type",
+                            "root_type",
+                            "block_devices",
+                            "public_ip",
+                            "private_ip"
+                        ]
+                    }
+                }
+            }
+        }
+    ]
 }

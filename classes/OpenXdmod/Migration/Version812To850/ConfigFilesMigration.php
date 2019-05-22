@@ -2,6 +2,9 @@
 
 namespace OpenXdmod\Migration\Version810To850;
 
+
+use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
+
 use OpenXdmod\Setup\Console;
 
 /**

@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use JsonSchema\Validator;
 use TestHarness\TestFiles;
 
 class UserAdminTest extends BaseUserAdminTest
@@ -371,13 +372,16 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertArrayHasKey('success', $actual);
         $this->assertArrayHasKey('totalCount', $actual);
         $this->assertArrayHasKey('message', $actual);
+        $this->assertTrue($actual['success'], '"success" is true');
+        $this->assertEquals(1, $actual['totalCount'], '"totalCount" is 1');
+        $this->assertEquals('', $actual['message'], '"message" is ""');
+        $this->assertCount(1, $actual['data'], '"data" has one element');
+        $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
-        $expectedFileName = $user['output'];
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
-        );
+        $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
+        $expected = file_get_contents($expectedFileName);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);
 
         if (!$isPublicUser) {
             $this->helper->logout();
@@ -399,16 +403,11 @@ class UserAdminTest extends BaseUserAdminTest
      * @depends      testCreateUsersSuccess
      * @dataProvider provideGetDwDescripters
      * @group UserAdminTest.createUsers
-     * @param array $user
+     * @param string $username
      * @throws \Exception
      */
-    public function testGetDwDescripters(array $user)
+    public function testGetDwDescripters($username)
     {
-        $this->assertArrayHasKey('username', $user);
-        $this->assertArrayHasKey('output', $user);
-
-        $username = $user['username'];
-
         $isPublicUser = $username === self::PUBLIC_USER_NAME;
 
         if (!$isPublicUser) {
@@ -421,19 +420,19 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
-        $this->validateResponse($response);
-
         $actual = $response[0];
-        $this->assertArrayHasKey('data', $actual);
-        $this->assertArrayHasKey('totalCount', $actual);
-
-        $expectedFileName = $user['output'];
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
+        $schemaObject = JSON::loadFile(
+            $this->getTestFiles()->getFile('schema', 'dw_descripter.spec', ''),
+            false
         );
-
-        $this->assertEquals($expected, $actual, "[$username] Get Data Warehouse Descripters - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
-
+        $validator = new Validator();
+        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
+        }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
+        $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();
         }
@@ -441,13 +440,26 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
-     * @return array|object
+     * The @returns for this is misleading.
+     * technically it returns an array of arrays of a single string
+     * however the funtion that gets called from this only ever gets the string
+     * @return string
      * @throws \Exception
      */
     public function provideGetDwDescripters()
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters-1', 'input')
+        return array(
+            array("admin"),
+            array("centerdirector"),
+            array("centerstaff"),
+            array("principal"),
+            array("normaluser"),
+            array("test.cd.one-center"),
+            array("test.pi"),
+            array("test.normal-user"),
+            array("test.usr_dev"),
+            array("test.usr_mgr"),
+            array("test.usr_mgr_dev")
         );
     }
 

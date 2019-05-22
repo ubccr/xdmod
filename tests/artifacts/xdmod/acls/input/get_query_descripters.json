@@ -157,51 +157,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "fieldofscience",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_fieldofscience_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "fieldofscience",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_fieldofscience_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "fieldofscience",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_fieldofscience_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "fieldofscience",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_fieldofscience_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "fieldofscience",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_fieldofscience_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "fieldofscience",
       "statistic": "started_job_count",
       "file_id": "jobs_fieldofscience_started_job_count"
     }
@@ -402,51 +357,6 @@
       "group_by": "jobsize",
       "statistic": "running_job_count",
       "file_id": "jobs_jobsize_running_job_count"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobsize",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_jobsize_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobsize",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_jobsize_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobsize",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_jobsize_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobsize",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_jobsize_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobsize",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_jobsize_sem_avg_wallduration_hours"
     }
   ],
   [
@@ -661,51 +571,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "jobwalltime",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_jobwalltime_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobwalltime",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_jobwalltime_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobwalltime",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_jobwalltime_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobwalltime",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_jobwalltime_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobwalltime",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_jobwalltime_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "jobwalltime",
       "statistic": "started_job_count",
       "file_id": "jobs_jobwalltime_started_job_count"
     }
@@ -906,51 +771,6 @@
       "group_by": "nodecount",
       "statistic": "running_job_count",
       "file_id": "jobs_nodecount_running_job_count"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nodecount",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_nodecount_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nodecount",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_nodecount_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nodecount",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_nodecount_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nodecount",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_nodecount_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nodecount",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_nodecount_sem_avg_wallduration_hours"
     }
   ],
   [
@@ -1165,51 +985,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "none",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_none_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "none",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_none_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "none",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_none_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "none",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_none_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "none",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_none_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "none",
       "statistic": "started_job_count",
       "file_id": "jobs_none_started_job_count"
     }
@@ -1410,51 +1185,6 @@
       "group_by": "nsfdirectorate",
       "statistic": "running_job_count",
       "file_id": "jobs_nsfdirectorate_running_job_count"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nsfdirectorate",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_nsfdirectorate_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nsfdirectorate",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_nsfdirectorate_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nsfdirectorate",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_nsfdirectorate_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nsfdirectorate",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_nsfdirectorate_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "nsfdirectorate",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_nsfdirectorate_sem_avg_wallduration_hours"
     }
   ],
   [
@@ -1669,51 +1399,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "parentscience",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_parentscience_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "parentscience",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_parentscience_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "parentscience",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_parentscience_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "parentscience",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_parentscience_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "parentscience",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_parentscience_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "parentscience",
       "statistic": "started_job_count",
       "file_id": "jobs_parentscience_started_job_count"
     }
@@ -1914,51 +1599,6 @@
       "group_by": "person",
       "statistic": "running_job_count",
       "file_id": "jobs_person_running_job_count"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "person",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_person_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "person",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_person_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "person",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_person_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "person",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_person_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "person",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_person_sem_avg_wallduration_hours"
     }
   ],
   [
@@ -2173,51 +1813,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "pi",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_pi_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "pi",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_pi_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "pi",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_pi_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "pi",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_pi_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "pi",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_pi_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "pi",
       "statistic": "started_job_count",
       "file_id": "jobs_pi_started_job_count"
     }
@@ -2418,51 +2013,6 @@
       "group_by": "queue",
       "statistic": "running_job_count",
       "file_id": "jobs_queue_running_job_count"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "queue",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_queue_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "queue",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_queue_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "queue",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_queue_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "queue",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_queue_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "queue",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_queue_sem_avg_wallduration_hours"
     }
   ],
   [
@@ -2677,51 +2227,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "resource",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_resource_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_resource_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_resource_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_resource_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_resource_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource",
       "statistic": "started_job_count",
       "file_id": "jobs_resource_started_job_count"
     }
@@ -2929,51 +2434,6 @@
       "username": "principal",
       "realm": "jobs",
       "group_by": "resource_type",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_resource_type_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource_type",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_resource_type_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource_type",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_resource_type_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource_type",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_resource_type_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource_type",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_resource_type_sem_avg_wallduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "resource_type",
       "statistic": "started_job_count",
       "file_id": "jobs_resource_type_started_job_count"
     }
@@ -3174,51 +2634,6 @@
       "group_by": "username",
       "statistic": "running_job_count",
       "file_id": "jobs_username_running_job_count"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "username",
-      "statistic": "sem_avg_cpu_hours",
-      "file_id": "jobs_username_sem_avg_cpu_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "username",
-      "statistic": "sem_avg_node_hours",
-      "file_id": "jobs_username_sem_avg_node_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "username",
-      "statistic": "sem_avg_processors",
-      "file_id": "jobs_username_sem_avg_processors"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "username",
-      "statistic": "sem_avg_waitduration_hours",
-      "file_id": "jobs_username_sem_avg_waitduration_hours"
-    }
-  ],
-  [
-    {
-      "username": "principal",
-      "realm": "jobs",
-      "group_by": "username",
-      "statistic": "sem_avg_wallduration_hours",
-      "file_id": "jobs_username_sem_avg_wallduration_hours"
     }
   ],
   [

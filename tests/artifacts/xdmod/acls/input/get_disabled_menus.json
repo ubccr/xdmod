@@ -1,0 +1,32 @@
+[
+  [
+    {
+      "username": "Public User",
+      "realm": "Jobs"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "realm": "Jobs"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "realm": "Jobs"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "realm": "Jobs"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "realm": "Jobs"
+    }
+  ]
+]

@@ -106,7 +106,7 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
             );
             $tableConfig->initialize();
             $etlTable = new Table(
-                $tableConfig->getTransformedConfig(),
+                $tableConfig->toStdClass(),
                 $this->destinationEndpoint->getSystemQuoteChar(),
                 $this->logger
             );

@@ -27,6 +27,7 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/recentchartsreports", "$class::getRecentChartsReports");
         $controller->get("$root/rolereport", "$class::getRoleReport");
+
     }
 
     /*
@@ -195,6 +196,7 @@ class SummaryControllerProvider extends BaseControllerProvider
             'total' => 1
         ));
     }
+
 
     /**
      * Get recent charts and reports.

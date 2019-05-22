@@ -1,14 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
-
-/*
-* @author Greg Dean
-* @date 2019-01-27
-*
-* class for adding group by system username to a query
-*
-*/
 
 class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -19,20 +10,20 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "The specific system username associated with a running session of a virtual machine.";
+        return 'The specific system username associated with a running session of a virtual machine.';
     }
     public function __construct()
     {
         parent::__construct(
             'username',
             array(),
-            "select distinct
-                gt.username as id,
-                gt.username as short_name,
-                gt.username as long_name
-                from systemaccount gt
-                where 1
-                order by gt.username",
+            'SELECT DISTINCT
+                gt.username AS id,
+                gt.username AS short_name,
+                gt.username AS long_name
+            FROM systemaccount gt
+            WHERE 1
+            ORDER BY gt.username',
             array()
         );
         $this->_id_field_name = 'username';
@@ -118,14 +109,14 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, 'select id from modw.systemaccount where username in (_filter_)', 'systemaccount_id');
+        return parent::pullQueryParameters2($request, 'SELECT id FROM modw.systemaccount WHERE username IN (_filter_)', 'systemaccount_id');
     }
 
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select distinct username as field_label from modw.systemaccount  where username in (_filter_) order by username"
+            'SELECT DISTINCT username AS field_label FROM modw.systemaccount  WHERE username IN (_filter_) ORDER BY username'
         );
     }
 }

@@ -1,14 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
-
-/*
-* @author Amin Ghadersohi
-* @date 2011-Jan-07
-*
-* class for adding no group by to a query
-*
-*/
 
 class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -27,15 +18,13 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
     }
     public function getInfo()
     {
-        return "Summarizes cloud data reported to the " . ORGANIZATION_NAME . ".";
+        return 'Summarizes cloud data reported to the ' . ORGANIZATION_NAME . '.';
     }
     public function getDefaultDisplayType($dataset_type = null)
     {
-        if($dataset_type == 'timeseries') {
+        if ($dataset_type == 'timeseries') {
             return 'line';
-        }
-        else
-        {
+        } else {
             return 'h_bar';
         }
     }
@@ -55,7 +44,7 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
     {
         $query->addField(new \DataWarehouse\Query\Model\FormulaField('-9999', $this->getIdColumnName($multi_group)));
 
-        $fieldLabel = "'".ORGANIZATION_NAME."'";
+        $fieldLabel = "'" . ORGANIZATION_NAME . "'";
 
         $query->addField(new \DataWarehouse\Query\Model\FormulaField($fieldLabel, $this->getLongNameColumnName($multi_group)));
         $query->addField(new \DataWarehouse\Query\Model\FormulaField($fieldLabel, $this->getShortNameColumnName($multi_group)));

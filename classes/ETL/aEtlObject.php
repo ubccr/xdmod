@@ -126,29 +126,6 @@ abstract class aEtlObject extends \CCR\Loggable
     }  // verifyRequiredConfigKeys()
 
     /* ------------------------------------------------------------------------------------------
-     * Parse a JSON table configuration file.
-     *
-     * @param $filename The file containing the table configuration
-     * @param $name Optional name for the file. Useful for error reporting.
-     *
-     * @return This object to support method chaining.
-     *
-     * @throw Exception If the file is does not exist or is not readable
-     * @throw Exception If there is an error parsing the file
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function parseJsonFile($filename, $name = null)
-    {
-        $name = ( null === $name ? "JSON file" : $name );
-        $opt = new DataEndpointOptions(array('name' => $name,
-                                             'path' => $filename,
-                                             'type' => "jsonfile"));
-        $jsonFile = DataEndpoint::factory($opt, $this->logger);
-        return $jsonFile->parse();
-    }  // parseJsonFile()
-
-    /* ------------------------------------------------------------------------------------------
      * Generate a string representation of the endpoint. Typically the name, plus other pertinant
      * information as appropriate.
      *

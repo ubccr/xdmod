@@ -1,14 +1,6 @@
 <?php
-
 namespace DataWarehouse\Query\Jobs\GroupBys;
 
-/**
- * @author Trey Dockendorf
- * @date 2018-Apr-17
- *
- * class for adding group by job wait time (wait duration) to a query
- *
- */
 class GroupByJobWaitTime extends \DataWarehouse\Query\Jobs\GroupBy
 {
     public function __construct()
@@ -49,11 +41,9 @@ class GroupByJobWaitTime extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function getDefaultDisplayType($dataset_type = null)
     {
-        if($dataset_type == 'timeseries') {
+        if ($dataset_type == 'timeseries') {
             return 'area';
-        }
-        else
-        {
+        } else {
             return 'bar';
         }
     }
@@ -103,7 +93,7 @@ class GroupByJobWaitTime extends \DataWarehouse\Query\Jobs\GroupBy
 
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -118,10 +108,9 @@ class GroupByJobWaitTime extends \DataWarehouse\Query\Jobs\GroupBy
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->job_wait_times_table, $this->_order_id_field_name), $dir, $this->getName());
-        if($prepend === true) {
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
@@ -133,7 +122,7 @@ class GroupByJobWaitTime extends \DataWarehouse\Query\Jobs\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select description as field_label from modw.job_wait_times  where id in (_filter_) order by id"
+            "SELECT description AS field_label FROM modw.job_wait_times  WHERE id IN (_filter_) ORDER BY id"
         );
     }
 }

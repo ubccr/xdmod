@@ -296,4 +296,47 @@ TXT;
             $this->getTestFiles()->getFile('acls', 'get_query_descripters', 'input')
         );
     }
+
+    /**
+     * This test ensures that `Acls::getDisabledMenus` is working as expected. The data from this
+     * function informs the front end code on which query descriptors should be grayed out for the
+     * current user. Ex. query descriptors are used to populate the Usage Explorer Tree.
+     *
+     * @dataProvider provideTestAclsGetDisabledMenus
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testAclsGetDisabledMenus(array $options)
+    {
+        $username = $options['username'];
+        $realm = $options['realm'];
+
+        $user = XDUser::getUserByUserName($username);
+        $actual = Acls::getDisabledMenus($user, array($realm));
+
+        $fileName = "get_disabled_menus-" . (str_replace(' ', '_', strtolower($username)));
+        $expectedFile = $this->getTestFiles()->getFile('acls', $fileName);
+
+        if (!is_file($expectedFile)) {
+            file_put_contents($expectedFile, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
+            echo "Generated: $expectedFile\n";
+            $this->assertTrue(true);
+        }
+
+        $expected = JSON::loadFile($expectedFile);
+
+        $this->assertEquals($expected, json_decode(json_encode($actual), true));
+    }
+
+    /**
+     * @return array|object the contents of `get_disabled_menus.json`
+     * @throws \Exception if unable to read / parse the test input file.
+     */
+    public function provideTestAclsGetDisabledMenus()
+    {
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('acls', 'get_disabled_menus', 'input')
+        );
+    }
 }

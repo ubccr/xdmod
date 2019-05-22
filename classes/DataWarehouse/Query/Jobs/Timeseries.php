@@ -1,11 +1,6 @@
 <?php
 namespace DataWarehouse\Query\Jobs;
 
-/* 
-* @author Amin Ghadersohi
-* @date 2011-03-04
-* 
-*/
 class Timeseries extends \DataWarehouse\Query\Timeseries
 {
     public function __construct(
@@ -28,7 +23,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
             $start_date,
             $end_date,
             $group_by,
-            $stat ,
+            $stat,
             $parameters,
             $query_groupname,
             $parameter_description,
@@ -36,5 +31,3 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         );
     }
 }
-
-?>

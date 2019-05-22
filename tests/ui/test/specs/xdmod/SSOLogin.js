@@ -16,7 +16,13 @@ describe('Single Sign On Login', () => {
         expect($('#welcome_message').getText()).to.equal('Saml Jackson');
         $('#main_tab_panel__about_xdmod').waitForVisible();
     });
+    it('Should prompt with My Profile', () => {
+        browser.waitForVisible('#xdmod-profile-editor button.general_btn_close');
+        browser.waitAndClick('#xdmod-profile-editor button.general_btn_close');
+        browser.waitForInvisible('#xdmod-profile-editor');
+    });
     it('Logout', () => {
+        browser.waitForInvisible('.ext-el-mask-msg');
         browser.waitAndClick('#logout_link');
         browser.waitForInvisible('.ext-el-mask-msg');
         $('a[href*=actionLogin]').waitForVisible();

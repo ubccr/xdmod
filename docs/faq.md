@@ -8,9 +8,7 @@ See [Software Requirements](software-requirements.html) for details.
 
 ### What are the hardware requirements for Open XDMoD?
 
-The hardware requirements for Open XDMoD depend on how many concurrent
-users you have and how much data you have.  You'll need roughly 300MB of
-disk space per 1 Million jobs on your MySQL server.
+See [Hardware Requirements](hardware-requirements.html) for details.
 
 ### Will Open XDMoD run on RHEL 5?
 
