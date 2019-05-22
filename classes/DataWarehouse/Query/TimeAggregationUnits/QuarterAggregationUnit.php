@@ -34,10 +34,4 @@ class QuarterAggregationUnit extends \DataWarehouse\Query\TimeAggregationUnit
     {
         return 4;
     }//getMaxPeriodPerYear()
-
-    public function getTimeLabel($timestamp)
-    {
-        $date = getdate($timestamp);
-        return $date['year'].' '.'Q'.(1+intval($date['mon']/3));
-    }
 }
