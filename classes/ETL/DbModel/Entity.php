@@ -94,7 +94,8 @@ class Entity extends Loggable
         if ( null !== $config ) {
 
             if ( is_string($config) ) {
-                $config = $this->parseJsonFile($config, "Table Definition");
+                $config = new \Configuration\Configuration($config);
+                $config = $config->initialize()->toStdClass();
                 // Support the table config directly or assigned to a "table_definition" key
                 if ( isset($config->table_definition) ) {
                     $config = $config->table_definition;
@@ -276,29 +277,6 @@ class Entity extends Loggable
         }
 
     }  // quote()
-
-    /* ------------------------------------------------------------------------------------------
-     * Parse a JSON table configuration file.
-     *
-     * @param $filename The file containing the table configuration
-     * @param $name Optional name for the file. Useful for error reporting.
-     *
-     * @return This object to support method chaining.
-     *
-     * @throw Exception If the file is does not exist or is not readable
-     * @throw Exception If there is an error parsing the file
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function parseJsonFile($filename, $name = null)
-    {
-        $name = ( null === $name ? "JSON file" : $name );
-        $opt = new DataEndpointOptions(array('name' => $name,
-                                             'path' => $filename,
-                                             'type' => "jsonfile"));
-        $jsonFile = DataEndpoint::factory($opt, $this->logger);
-        return $jsonFile->parse();
-    }  // parseJsonFile()
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::toStdClass()

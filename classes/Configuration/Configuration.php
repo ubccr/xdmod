@@ -281,6 +281,8 @@ class Configuration extends Loggable implements \Iterator
      *
      * @param boolean $force TRUE to force re-initialization of the configuration even if it has
      *   previously been initialized.
+     *
+     * @return Configuration This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -364,6 +366,8 @@ class Configuration extends Loggable implements \Iterator
         $this->postMergeTasks();
 
         $this->initialized = true;
+
+        return $this;
 
     }  // initialize()
 
@@ -546,7 +550,7 @@ class Configuration extends Loggable implements \Iterator
     {
         $this->transformedConfig = $this->mergeLocal(
             $this->transformedConfig,
-            $localConfigObj->getTransformedConfig(),
+            $localConfigObj->toStdClass(),
             $localConfigObj->getFilename(),
             $overwrite
         );
@@ -1066,18 +1070,6 @@ class Configuration extends Loggable implements \Iterator
     }  // getVariableStore()
 
     /** -----------------------------------------------------------------------------------------
-     * Get the configuration after applying transforms.
-     *
-     * @return stdClass The transformed configuration.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getTransformedConfig()
-    {
-        return $this->transformedConfig;
-    }  // getTransformedConfig()
-
-    /** -----------------------------------------------------------------------------------------
      * Getter method for accessing data keys using object notation.
      *
      * NOTE: When querying for existance we can't use isset() and must use NULL === $options->key
@@ -1162,6 +1154,19 @@ class Configuration extends Loggable implements \Iterator
         $instance->initialize();
         return $instance;
     }
+
+    /** -----------------------------------------------------------------------------------------
+     * Get the configuration after applying transforms. Note that NULL will be returned if
+     * initialize() has not been called or if cleanup() has been called.
+     *
+     * @return stdClass|null A stdClass representing the transformed configuration.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function toStdClass()
+    {
+        return $this->transformedConfig;
+    }  // toStdClass()
 
     /** -----------------------------------------------------------------------------------------
      * Return the JSON representation of the parsed and translated Configuration.
