@@ -34,11 +34,4 @@ class WeekAggregationUnit extends \DataWarehouse\Query\TimeAggregationUnit
     {
         return 51;
     }//getMaxPeriodPerYear()
-
-
-    public function getTimeLabel($timestamp)
-    {
-        $date = getdate($timestamp);
-        return 'Week '.(1+intval($date['yday']/7)).' starting '.date('Y-m-d', $timestamp);
-    }
 }

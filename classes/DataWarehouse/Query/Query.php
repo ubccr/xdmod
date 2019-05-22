@@ -193,10 +193,6 @@ class Query
     }
 
     protected $_main_stat_field;
-    public function getMainStatisticField()
-    {
-        return $this->_main_stat_field;
-    }
 
     public function getQueryType()
     {
@@ -325,10 +321,6 @@ class Query
 
             foreach ($results as $result) {
 
-                //$return['id'][] = $result['id'];
-                //$return['name'][] = $result['name'];
-                //$return['short_name'][] = $result['short_name'];
-
                 foreach ($fields as $field_key => $field) {
                     $return[$field_key][] = $result[$field_key];
                 }
@@ -344,72 +336,6 @@ class Query
         return $return;
     }
 
-    public function getDataset($limit = 10000000)
-    {
-        $dataset = new \DataWarehouse\Data\AggregateDataset($this->getQueryGroupname(), $this->getRealmName());
-        $dataset->setStartDate($this->getStartDate());
-        $dataset->setEndDate($this->getEndDate());
-
-        $raw_data = $this->execute($limit);
-
-        $this->query_string = $raw_data['query_string'];
-        unset($raw_data['query_string']);
-        $this->query_time = $raw_data['query_time'];
-        unset($raw_data['query_time']);
-        $this->_count = $raw_data['count'];
-        unset($raw_data['count']);
-
-        if (count($raw_data) <= 0) {
-            return $dataset;
-        }
-
-        if ($this->_main_stat_field != null) {
-            $stat_key = $this->_main_stat_field->getAlias()->getName();
-            $sem_key = 'sem_'.$stat_key;
-            $series = new \DataWarehouse\Data\AggregateData(
-                $this->_main_stat_field->getLabel(),
-                $this->_main_stat_field->getLabel(),
-                $this->_main_stat_field,
-                $this->_group_by,
-                $this->_aggregation_unit,
-                is_array($raw_data['id'])?$raw_data['id']:array($raw_data['id']),
-                is_array($raw_data['name'])?$raw_data['name']:array($raw_data['name']),
-                is_array($raw_data['short_name'])?$raw_data['short_name']:array($raw_data['short_name']),
-                is_array($raw_data[$stat_key])?$raw_data[$stat_key]:array($raw_data[$stat_key]),
-                is_array($raw_data['weight'])?$raw_data['weight']:array($raw_data['weight']),
-                null,
-                is_array($raw_data[$sem_key])?$raw_data[$sem_key]:array($raw_data[$sem_key]),
-                $this->query_string,
-                $this->query_time
-            );
-            $dataset->addSeries($series);
-        } else {
-            $stat_fields = $this->getStatFields();
-
-            foreach ($stat_fields as $stat_key => $stat_field) {
-                $sem_key = 'sem_'.$stat_key;
-                $series = new \DataWarehouse\Data\AggregateData(
-                    $stat_field->getLabel(),
-                    $stat_field->getLabel(),
-                    $stat_field,
-                    $this->_group_by,
-                    $this->_aggregation_unit,
-                    is_array($raw_data['id'])?$raw_data['id']:array($raw_data['id']),
-                    is_array($raw_data['name'])?$raw_data['name']:array($raw_data['name']),
-                    is_array($raw_data['short_name'])?$raw_data['short_name']:array($raw_data['short_name']),
-                    is_array($raw_data[$stat_key])?$raw_data[$stat_key]:array($raw_data[$stat_key]),
-                    is_array($raw_data['weight'])?$raw_data['weight']:array($raw_data['weight']),
-                    null,
-                    is_array($raw_data[$sem_key])?$raw_data[$sem_key]:array($raw_data[$sem_key]),
-                    $this->query_string,
-                    $this->query_time
-                );
-                $dataset->addSeries($series);
-            }
-        }
-
-        return $dataset;
-    }
     public function addTable(\DataWarehouse\Query\Model\Table $table)
     {
         $this->_tables[$table->getAlias()->getName()] = $table;
@@ -451,31 +377,6 @@ class Query
         return $this->_stat_fields;
     }
 
-    /**
-     * Add a where condition to the query and add the data to the pdo parameters. This
-     * function should be used when the right hand side of the where condition is untrused
-     * user supplied data.
-     *
-     * Note this function does not handle pdo parameterization of 'IN' conditions.
-     */
-    public function addPdoWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
-    {
-        // key on the non-parameterized form since the substitution string is different every time.
-        $key = $where_condition->__toString();
-
-        if (isset($this->_where_conditions[$key])) {
-            return;
-        }
-
-        $namedParam = $this->getNamedParameterMarker($where_condition->_right);
-
-        $this->_where_conditions[$key] = new \DataWarehouse\Query\Model\WhereCondition(
-            $where_condition->_left,
-            $where_condition->_operation,
-            $namedParam
-        );
-    }
-
     public function addWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
     {
         $this->_where_conditions[$where_condition->__toString()] = $where_condition;
@@ -510,11 +411,6 @@ class Query
     {
         unset($this->_orders);
         $this->_orders = array();
-    }
-    public function isInSelectFields($field_name)
-    {
-        $selectFields = $this->getSelectFields();
-        return isset($selectFields[$field_name]);
     }
     public function getSelectFields()
     {
@@ -568,17 +464,7 @@ class Query
     {
         return $this->_min_date_id;
     }
-    public function getMaxDateId()
-    {
-        return $this->_max_date_id;
-    }
 
-    public function executeRaw($limit = null, $offset = null)
-    {
-        $query_string = $this->getQueryString($limit, $offset);
-        $results = DB::factory($this->_db_profile)->query($query_string, $this->pdoparams);
-        return $results;
-    }
     public function getRawStatement($limit = null, $offset = null, $extraHavingClause = null)
     {
         $query_string = $this->getQueryString($limit, $offset, $extraHavingClause);
@@ -709,6 +595,7 @@ class Query
         }
         return $data_query;
     }
+
     public function getCountQueryString()
     {
         $wheres = $this->getWhereConditions();
@@ -729,21 +616,6 @@ class Query
 
         $data_query .= ") as a WHERE a.total IS NOT NULL";
         return $data_query;
-    }
-
-    /**
-     * Store a bound parameter for the query and return the named parameter
-     * marker that should be used in the SQL query.
-     *
-     * @param the value to bind to the query
-     * @return string a named parameter marker.
-     */
-    protected function getNamedParameterMarker($value)
-    {
-        $pdosubst = ':subst' . $this->pdoindex;
-        $this->pdoparams[$pdosubst] = $value;
-        $this->pdoindex += 1;
-        return $pdosubst;
     }
 
     public function setParameters(array $parameters = array())
@@ -837,14 +709,6 @@ class Query
     }
     protected function setDataTable($schemaname, $tablename, $join_index = '')
     {
-        //AG - disabled count for performance.
-        /*$data_table_count = DB::factory($this->_db_profile)->getRowCount($schemaname, $tablename);
-
-        if($data_table_count <= 0)
-        {
-            throw new \Exception("The data table for $schemaname.$tablename is empty. ");
-        }*/
-
         $this->_data_table = new \DataWarehouse\Query\Model\Table(new \DataWarehouse\Query\Model\Schema($schemaname), $tablename, 'jf', $join_index);
         $this->addTable($this->_data_table);
     }
@@ -857,10 +721,6 @@ class Query
         return $this->_date_table;
     }
 
-    public function getShortTitle()
-    {
-        return $this->_main_stat_field->getLabel();
-    }
     public function getTitle($group_info_only = false)
     {
         $group_label = $this->groupBy()->getLabel();
@@ -868,81 +728,12 @@ class Query
                 $group_label.' stats'.($this->groupBy()->getName()==='none'?
                         ' Summary':
                         ': by '.$this->groupBy()->getLabel()):
-             /*'['.$group_label.'] '.*/$this->_main_stat_field->getLabel().($this->groupBy()->getName()==='none'?'':': by '.$this->groupBy()->getLabel());
-    }
-
-    public function getTitle2()
-    {
-        return implode(" -- ", array_unique($this->parameterDescriptions));
+             $this->_main_stat_field->getLabel().($this->groupBy()->getName()==='none'?'':': by '.$this->groupBy()->getLabel());
     }
 
     public function getFilterParametersTitle()
     {
         return implode("; ", array_unique($this->filterParameterDescriptions));
-    }
-    public function getRoleParametersTitle()
-    {
-        return implode(" -- ", array_unique($this->roleParameterDescriptions));
-    }
-
-    public function configureForChart(&$chartProperties, &$selectedDimensionIds, &$sortInfo)
-    {
-        $this->sortInfo = $sortInfo;
-
-        $xAxis = isset($chartProperties['X Axis'])?$chartProperties['X Axis']:'';
-        if ($xAxis != '') {
-            $x_axis_column_type = substr($xAxis, 0, 3);
-            $x_axis_column_name = substr($xAxis, 4);
-
-            $this->addGroupBy($x_axis_column_name);
-
-            foreach ($selectedDimensionIds as $selectedDimensionId) {
-                if ($selectedDimensionId == $x_axis_column_name) {
-                    continue;
-                }
-                $f  = $this->addFilter($selectedDimensionId);
-            }
-        } else {
-            $this->addGroupBy('none');
-        }
-        {
-            $yAxisIndex = 1;
-        while (($yAxis = isset($chartProperties["Y Axis $yAxisIndex"])?$chartProperties["Y Axis $yAxisIndex"]:'') != '') {
-            $y_axis_column_type = substr($yAxis, 0, 3);
-            $y_axis_column_name = substr($yAxis, 4);
-            $this->addStat($y_axis_column_name);
-            $yAxisIndex++;
-        }
-        }
-
-        if (count($sortInfo) > 0) {
-            $this->clearOrders();
-            foreach ($sortInfo as $sort) {
-                $this->addOrderBy($sort['column_name'], $sort['direction']);
-            }
-        }
-    }
-    public function configureForDatasheet(&$selectedDimensionIds, &$selectedMetricIds, &$sortInfo)
-    {
-        $this->sortInfo = $sortInfo;
-        if (count($selectedDimensionIds) > 0) {
-            foreach ($selectedDimensionIds as $selectedDimensionId) {
-                $this->addGroupBy($selectedDimensionId);
-            }
-        } else {
-            $this->addGroupBy('none');
-        }
-        foreach ($selectedMetricIds as $selectedMetricId) {
-            $this->addStat($selectedMetricId);
-        }
-
-
-        if (count($sortInfo) > 0) {
-            $this->clearOrders();
-            foreach ($sortInfo as $sort) {
-                $this->addOrderBy($sort['column_name'], $sort['direction']);
-            }
-        }
     }
 
     /**
@@ -990,34 +781,8 @@ class Query
         return true;
     }
 
-    public function setParametersFromRequest($request, &$role_parameters)
-    {
-        static::registerGroupBys();
-        $registeredGroupBys = static::getRegisteredGroupBys();
-
-        //if(isset($this->_group_bys['person']) || isset($this->_group_bys['institution']) || isset($this->_group_bys['username']) || isset($this->_group_bys['allocation']) || isset($this->_group_bys['pi']) || isset($this->_group_bys['pi_institution']) || isset($this->_group_bys['nsfstatus']))
-        {
-            $request = array_merge($request, $role_parameters);
-        }
-
-        //if groupby is resource or queue and role params include provider
-
-        $parameters = array();
-        $parameterDescriptions = array();
-        foreach ($registeredGroupBys as $registeredGroupByName => $registeredGroupByClassname) {
-            $group_by_instance = new $registeredGroupByClassname();
-            $parameters = array_merge($group_by_instance->pullQueryParameters($request), $parameters);
-            $parameterDescriptions = array_merge($group_by_instance->pullQueryParameterDescriptions($request), $parameterDescriptions);
-        }
-
-        sort($parameters);
-        $this->setParameters($parameters);
-
-        $this->parameterDescriptions = $parameterDescriptions;
-    }
     public function setFilters($user_filters)
     {
-        //print_r($user_filters);
         $filters = array();
         if (!isset($user_filters->data) || !is_array($user_filters->data)) {
             $user_filters->data = array();
@@ -1414,12 +1179,6 @@ class Query
                 new \DataWarehouse\Query\Model\Field("{$this->_min_date_id} and {$this->_max_date_id}")
             )
         );
-        /*$this->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition($data_table_date_id_field,
-                                                    '<=',
-                                                    new \DataWarehouse\Query\Model\Field("{$this->_max_date_id}")
-                                                    )
-                                );*/
-
 
         $duration_query = " select sum(dd.hours) as duration from modw.{$this->_aggregation_unit}s dd where  dd.id between {$this->_min_date_id} and {$this->_max_date_id} ";
 
@@ -1462,7 +1221,7 @@ class Query
 
         return self::$_group_by_name_to_class_name[$realm];
     }
-    //private static $_statistic_by_instance_cache = array();
+
     private static $_statistic_name_to_class_name = array();
 
     public static function &get_statistic_name_to_class_name()
@@ -1696,18 +1455,5 @@ class Query
                 ." date_table: {$this->_date_table} \n"
                 ." group_by: {$this->_group_by} \n"
                 ." main_stat_field: { $this->_main_stat_field } \n";
-        //." group_bys: ". print_r($this->_group_bys, true)."\n"
-                //." stats: ". print_r($this->_stats, true)."\n"
-                //." tables: ". print_r($this->_tables, true)."\n"
-                //." fields: ". print_r($this->_fields, true)."\n"
-                //." stat_fields: ". print_r($this->_stat_fields, true)."\n"
-                //." where_conditions: ". print_r($this->_where_conditions, true)."\n"
-                //." stat_where_conditions: ". print_r($this->_stat_where_conditions, true)."\n"
-                //." groups: ". print_r($this->_groups, true)."\n"
-                //." orders: ". print_r($this->_orders, true)."\n"
-                //."pdoparams: ".print_r($this->pdoparams, true)." \n"
-                //." pdoindex: {$this->pdoindex} \n" ;
-                //." : ". ."\n"
-                //." : {} \n"
     } // __toString()
 }
