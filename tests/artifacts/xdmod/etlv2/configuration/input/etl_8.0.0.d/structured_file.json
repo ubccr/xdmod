@@ -1,0 +1,70 @@
+{
+    "#": "Value Analytics Ingestion and Aggregation",
+
+    "defaults": {
+        "structured-file": {
+            "truncate_destination": false,
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Test Schema",
+                    "config": "datawarehouse",
+                    "schema": "test",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+
+    "structured-file": [
+        {
+            "name": "read-people-1",
+            "description": "Read a file after passing through an external process",
+            "definition_file": "structured_file/organizations.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "path": "structured_file/people.json",
+                    "name": "People",
+                    "filters": [
+                        {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'map({name: .organizations[].name}) | unique'"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "read-people-2",
+            "description": "Re-read the same file, which should re-use the same endpoint",
+            "definition_file": "structured_file/people.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "path": "structured_file/people.json",
+                    "name": "People"
+                }
+            }
+        },
+        {
+            "name": "read-people-3",
+            "truncate_destination": true,
+            "description": "Re-read the same file a 3rd time, which should re-use the same endpoint",
+            "definition_file": "structured_file/people.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "path": "structured_file/people.json",
+                    "name": "People"
+                }
+            }
+        }
+
+    ]
+}
