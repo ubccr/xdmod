@@ -1059,7 +1059,15 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             $this->firstFileIterator = $this->currentFileIterator;
             $this->firstFilename = $this->currentFilename;
 
-        } elseif ( ! $this->currentFileIterator->valid() ) {
+        }
+
+        // Verify that the current iterator is valid. It is possible that the file does not contain
+        // any records.
+
+        if ( ! $this->currentFileIterator->valid() ) {
+
+            // Does this need to be it's own separate clause to catch cases wherethe current file
+            // iterator is not valid?!? Yes. This is the way of the future.
 
             // If there are no records available in the current file we will need to move on to the
             // next file. Since a file could be empty, move on to the next file if we initialize a
@@ -1136,11 +1144,12 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         }
 
         $fileHandler->verify();
+        // Must call parse() for fileHandler->valid() to work proplerly.
         $record = $fileHandler->parse();
 
         // Save the first record parsed from the first file so we can return it from parse()
 
-        if ( null === $this->firstRecord ) {
+        if ( null === $this->firstRecord && false !== $record ) {
             $this->firstRecord = $record;
         }
 

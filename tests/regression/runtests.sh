@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "Regression tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 set -e
 
 junit_output_dir=""
