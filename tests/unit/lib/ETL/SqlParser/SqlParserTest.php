@@ -15,8 +15,9 @@ use ETL\aAction;
 class SqlParserTest extends \PHPUnit_Framework_TestCase
 {
     // Re-use existing input files
-    const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
+    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
+
     const TMPDIR = '/tmp/xdmod-etl-sqlparser-test';
     private static $defaultModuleName = null;
 

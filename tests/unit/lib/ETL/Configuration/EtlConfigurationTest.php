@@ -18,9 +18,11 @@ use TestHarness\TestFiles;
 
 class EtlConfigurationTest extends \UnitTesting\BaseTest
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
+    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
+
     const TMPDIR = '/tmp/xdmod-etl-configuration-test';
+
     private static $defaultModuleName = null;
 
     private $testFiles;
@@ -28,7 +30,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $this->testFiles = new TestFiles(__DIR__ . '/../../../');
+        $this->testFiles = new TestFiles(__DIR__ . '/../../../../');
     }
 
 
@@ -56,6 +58,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         // generated from or paths stored in the expected result will not match!
 
         @mkdir(self::TMPDIR . '/etl_8.0.0.d', 0755, true);
+
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config_8.0.0.json', self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/maintenance.json', self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/jobs_cloud.json', self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
@@ -68,18 +71,18 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         );
         $configObj->initialize();
         $generated = json_decode($configObj->toJson());
+
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_8.0.0.json';
         $expected = json_decode(file_get_contents($file));
 
         // Cleanup
-
         unlink(self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
         unlink(self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
         unlink(self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
         rmdir(self::TMPDIR . '/etl_8.0.0.d');
         rmdir(self::TMPDIR);
 
-        $this->assertEquals($expected, $generated, $file);
+        $this->assertEquals($expected, $generated, sprintf("Expected: %s\nActual: %s\n", json_encode($expected), json_encode($generated)));
     }
 
     /**
@@ -92,6 +95,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         // generated from or paths stored in the expected result will not match!
 
         @mkdir(self::TMPDIR . '/etl_8.0.0.d', 0755, true);
+
         copy(
             self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config_with_variables_8.0.0.json',
             self::TMPDIR . '/xdmod_etl_config_with_variables_8.0.0.json'
@@ -193,15 +197,17 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
 
         $config->initialize();
 
-        $actual = sprintf("%s\n", $config->toJson());
+        $actual = sprintf("%s\n", json_encode(json_decode($config->toJson()), JSON_PRETTY_PRINT));
 
         if (!is_file($expectedFilePath)) {
             @file_put_contents($expectedFilePath, $actual);
             echo "\nGenerated Expected Output for: $expectedFilePath\n";
         } else {
             $expected = @file_get_contents($expectedFilePath);
+            $actualEncoded = json_decode($actual);
+            $expectedEncoded = json_decode($expected);
 
-            $this->assertEquals($expected, $actual);
+            $this->assertEquals($expectedEncoded, $actualEncoded);
         }
     }
 
@@ -261,16 +267,17 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
             $expectedFileName = sprintf("%s-%s", $options['expected'], $module);
             $expectedFilePath = $this->testFiles->getFile('configuration', $expectedFileName);
 
-            $actual = sprintf("%s\n", json_encode($config->filterByModule($module)));
+            $actual = sprintf("%s\n", json_encode($config->filterByModule($module), JSON_PRETTY_PRINT));
 
             if (!is_file($expectedFilePath)) {
                 @file_put_contents($expectedFilePath, $actual);
                 echo "\nGenerated Expected Output for: $expectedFilePath\n";
             } else {
-
                 $expected = @file_get_contents($expectedFilePath);
+                $expectedDecoded = json_decode($expected);
+                $actualDecoded = json_decode($actual);
 
-                $this->assertEquals($expected, $actual);
+                $this->assertEquals($expectedDecoded, $actualDecoded);
             }
         }
     }

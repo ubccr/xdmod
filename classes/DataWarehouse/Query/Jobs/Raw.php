@@ -3,11 +3,6 @@ namespace DataWarehouse\Query\Jobs;
 
 use CCR\DB;
 
-/**
- * @author Amin Ghadersohi
- * @date 2011-03-04
- *
- */
 class Raw extends \DataWarehouse\Query\Query
 {
     public function getQueryType()
@@ -34,10 +29,10 @@ class Raw extends \DataWarehouse\Query\Query
     {
         $this->setDataTable("modw", $db_tablename);
 
-        if(strtotime($start_date) == false) {
+        if (strtotime($start_date) == false) {
             throw new \Exception("start_date must be a date");
         }
-        if(strtotime($end_date) == false) {
+        if (strtotime($end_date) == false) {
             throw new \Exception("end_date must be a date");
         }
 
@@ -164,8 +159,7 @@ class Raw extends \DataWarehouse\Query\Query
         $columnCount = $statement->columnCount();
 
 
-        for($i = 0; $i < $columnCount; $i++)
-        {
+        for ($i = 0; $i < $columnCount; $i++) {
             $columnMeta = $statement->getColumnMeta($i);
             $fields[] =  array("name" => $columnMeta['name'], "type" => $columnMeta['native_type']);
 
@@ -173,8 +167,7 @@ class Raw extends \DataWarehouse\Query\Query
               "sortable" => true, 'editable' => false, 'align' => 'left','xtype' => 'gridcolumn', 'locked' => false);
         }
 
-        while($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT))
-        {
+        while ($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
             $records[] = $result;
         }
 

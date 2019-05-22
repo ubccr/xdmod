@@ -1,0 +1,7 @@
+[
+    {
+        "id": "group_by_jobs_username",
+        "group_by": "username",
+        "realm": "Jobs"
+    }
+]

@@ -9,13 +9,6 @@ use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
 
-/*
-* @author Rudra Chakraborty
-* @date 03/06/2018
-*
-* Group By Person
-*/
-
 class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
@@ -25,7 +18,7 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "A person on a principal investigator's allocation, able to spin up and manipulate VM instances.";
+        return 'A person on a principal investigator\'s allocation, able to spin up and manipulate VM instances.';
     }
 
     public function __construct()
@@ -33,14 +26,14 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'person',
             array(),
-            "SELECT distinct
-				gt.id,
-				gt.short_name as short_name,
-				gt.long_name as long_name
-		 	FROM person gt
-			where 1
-			order by gt.order_id
-		"
+            'SELECT distinct
+                gt.id,
+                gt.short_name AS short_name,
+                gt.long_name AS long_name
+            FROM person gt
+            WHERE 1
+            ORDER BY
+                gt.order_id'
         );
         $this->_id_field_name = 'id';
         $this->_long_name_field_name = 'long_name';
@@ -90,7 +83,7 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
         );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -125,7 +118,7 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select long_name as field_label from modw.person  where id in (_filter_) order by order_id"
+            'SELECT long_name AS field_label FROM modw.person WHERE id IN (_filter_) ORDER BY order_id'
         );
     }
 }

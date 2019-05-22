@@ -1,13 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
-
-/*
-* @author Rudra Chakraborty
-* @date 03/28/2018
-*
-* Group By VM Size in Cores
-*/
 
 class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -16,15 +8,13 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'vm_size',
             array(),
-            "
-			select
-				gt.id,
-				gt.description as short_name,
-				gt.description as long_name
-			from processor_buckets gt
-			where 1
-			order by gt.id
-		"
+            'SELECT
+                gt.id,
+                gt.description AS short_name,
+                gt.description AS long_name
+            FROM processor_buckets gt
+            WHERE 1
+            ORDER by gt.ID'
         );
 
         $this->_id_field_name = 'id';
@@ -38,7 +28,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return     "A categorization of sessions into discrete groups based on the number of cores used by each VM.";
+        return     'A categorization of sessions into discrete groups based on the number of cores used by each VM.';
     }
 
     public static function getLabel()
@@ -102,7 +92,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
         );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -133,7 +123,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select description as field_label from modw.processor_buckets  where id in (_filter_) order by id"
+            'SELECT description AS field_label FROM modw.processor_buckets  WHERE id IN (_filter_) ORDER BY id'
         );
     }
 }

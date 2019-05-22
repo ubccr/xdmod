@@ -30,8 +30,9 @@ use ETL\DataEndpoint\DataEndpointOptions;
 
 class DirectoryScanner extends \PHPUnit_Framework_TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/dataendpoint/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/dataendpoint/output";
+    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
+
     private $logger = null;
 
     public function __construct()
@@ -102,7 +103,6 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      * 3. Test basic scanner with no filters and default handler for all file types. This
      *    directory includes a file that is empty (has no records).
      */
-
     public function testBasicOptions()
     {
         $config = array(
@@ -135,8 +135,8 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
 
     /**
      * 4. Test trying to read a file filtered using the file_pattern and directory_pattern regex.
+     *
      */
-
     public function testPatternFilters()
     {
         // Restrict to directories containing "_scanner" and files matching "euca*.json"

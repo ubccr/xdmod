@@ -40,8 +40,8 @@ use ETL\DataEndpoint\DataEndpointOptions;
 
 class StructuredFileTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/dataendpoint/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/dataendpoint/output";
+    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
     private $logger = null;
 
     public function __construct()

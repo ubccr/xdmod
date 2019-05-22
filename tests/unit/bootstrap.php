@@ -10,7 +10,7 @@ spl_autoload_register(
                 DIRECTORY_SEPARATOR,
                 array(
                     $dir,
-                    '../integration_tests',
+                    '../integration',
                     'lib',
                     str_replace('\\', '/', $className) . '.php'
                 )
@@ -32,4 +32,4 @@ spl_autoload_register(
 );
 
 // Autoloader for XDMoD classes.
-require_once __DIR__ . '/../../../../configuration/linker.php';
+require_once __DIR__ . '/../../configuration/linker.php';

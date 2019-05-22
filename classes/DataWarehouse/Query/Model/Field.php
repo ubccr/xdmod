@@ -2,11 +2,6 @@
 
 namespace DataWarehouse\Query\Model;
 
-/**
- * This is the parent class for a query field.
- *
- * @author Amin Ghadersohi
- */
 class Field
 {
 
@@ -88,4 +83,3 @@ class Field
         return $this->_def;
     }
 }
-
