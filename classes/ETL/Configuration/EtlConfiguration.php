@@ -877,7 +877,7 @@ class EtlConfiguration extends Configuration
         // Register the key with the configuration
         $config->key = $endpointKey;
 
-        return $endpoint;
+        return $this->endpoints[$endpointKey];
 
     }  // addDataEndpoint()
 

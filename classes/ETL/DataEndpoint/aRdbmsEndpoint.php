@@ -344,7 +344,7 @@ ORDER BY ordinal_position ASC";
             (null !== $this->port ? ":{$this->port}" : "" ) .
             (null !== $this->username ? ", user={$this->username}" : "" ) .
             ")";
-    } 
+    }
 
     /**
      * @see iRdbmsEndpoint::schemaExists()
