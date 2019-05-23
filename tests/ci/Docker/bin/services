@@ -1,0 +1,44 @@
+#!/bin/bash
+
+case "$1" in
+    start)
+        /usr/libexec/mariadb-prepare-db-dir
+        /usr/bin/mysqld_safe --basedir=/usr &
+        /usr/libexec/mariadb-wait-ready $!
+        httpd -k start
+        /usr/sbin/postfix start
+        ;;
+    stop)
+        httpd -k stop
+        mysqladmin shutdown
+        /usr/sbin/postfix stop
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    nodaemon)
+        $0 start
+        while sleep 1; do
+            mysqladmin status > /dev/null 2>&1
+            shouldDie=0
+            if [ $? -ne 0 ];then
+                echo "mySQL not running";
+                shouldDie=1
+            fi
+            /usr/sbin/postfix status > /dev/null 2>&1
+            if [ $? -ne 0 ];then
+                echo "Postfix not running";
+                shouldDie=1
+            fi
+            pidof httpd > /dev/null 2>&1
+            if [ $? -ne 0 ];then
+                echo "httpd not running";
+                shouldDie=1
+            fi
+            if [ $shouldDie -ne 0 ];then
+                exit 1
+            fi
+        done;
+        ;;
+esac
