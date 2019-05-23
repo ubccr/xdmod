@@ -375,13 +375,13 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
         XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet.superclass.initComponent.apply(this, arguments);
     },
     listeners: {
-        timeframe_change: function (start_date = null, end_date = null) {
-            if (!(start_date === null && end_date === null)) {
+        timeframe_change: function (start_date, end_date) {
+            if (start_date !== undefined && end_date !== undefined) {
                 this.timeframe.start_date = start_date.format('Y-m-d');
                 this.timeframe.end_date = end_date.format('Y-m-d');
             } else {
-                this.timeframe.start_date = start_date;
-                this.timeframe.end_date = end_date;
+                this.timeframe.start_date = null;
+                this.timeframe.end_date = null;
             }
             this.store.load();
         }

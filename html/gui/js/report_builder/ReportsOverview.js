@@ -396,7 +396,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
       // ----------------------------------------------------
 
       editReport = function () {
-
          var record = queueGrid.getSelectionModel().getSelected();
 
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Attempting to edit report', record.data.report_name);
