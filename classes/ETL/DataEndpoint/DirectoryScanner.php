@@ -367,11 +367,47 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
     /**
      * @see aDataEndpoint::generateUniqueKey()
+     *
+     * The DirectoryScanner is a complex data endpoint with many options that must be taken into
+     * account to determine uniqueness.
      */
 
     protected function generateUniqueKey()
     {
-        $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->name)));
+        $keySource = array($this->type, $this->path, $this->name);
+
+        if ( null !== $this->filePattern ) {
+            $keySource[] = $this->filePattern;
+        }
+
+        if ( null !== $this->directoryPattern ) {
+            $keySource[] = $this->directoryPattern;
+        }
+
+        if ( null !== $this->lastModifiedStartTimestamp ) {
+            $keySource[] = $this->lastModifiedStartTimestamp;
+        }
+
+        if ( null !== $this->lastModifiedEndTimestamp ) {
+            $keySource[] = $this->lastModifiedEndTimestamp;
+        }
+
+        if ( null !== $this->maxRecursionDepth ) {
+            $keySource[] = $this->maxRecursionDepth;
+        }
+
+        if ( null !== $this->lastModifiedFileRegex ) {
+            $keySource[] = $this->lastModifiedFileRegex;
+        }
+        if ( null !== $this->lastModifiedDirRegex ) {
+            $keySource[] =$this->lastModifiedDirRegex ;
+        }
+
+        if ( null !== $this->handlerTemplate ) {
+            $keySource[] = json_encode($this->handlerTemplate);
+        }
+
+        $this->key = md5(implode($this->keySeparator, $keySource));
     }
 
     /**
