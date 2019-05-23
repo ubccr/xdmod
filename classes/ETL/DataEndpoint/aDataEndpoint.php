@@ -64,11 +64,7 @@ abstract class aDataEndpoint extends aEtlObject
 
         $this->type = $options->type;
         $this->setName($options->name);
-
     }
-
-    // ------------------------------------------------------------------------------------------
-    // Accessors
 
     /**
      *  @see iDataEndpoint::getType()
@@ -121,16 +117,17 @@ abstract class aDataEndpoint extends aEtlObject
     }
 
     /**
-     * Generate and store a unique data endpoint key.
+     * Generate and store a key that uniquely identifies this data endpoint. This is used to
+     * determine if this endpoint is being used in multiuple locations and allows us to re-use
+     * endpoint objects where possible.
      *
-     * This may be used by aDataEndpoint subclasses that either don't have or
-     * don't have a way to identify reusable endpoints.
+     * This may be used by aDataEndpoint subclass that doesn't have a way to identify reusable
+     * endpoints.
      */
 
     protected function generateUniqueKey()
     {
-        $keyIndex = self::$currentUniqueKeyIndex++;
-        $this->key = "DataEndpoint{$keyIndex}";
+        $this->key = sprintf("%s-%d", get_class($this), self::$currentUniqueKeyIndex++);
     }
 
     /**

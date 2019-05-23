@@ -54,12 +54,20 @@ class File extends aDataEndpoint implements iDataEndpoint
 
         $this->path = $options->path;
 
-        $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->mode)));
-
         if ( isset($options->paths->data_dir) ) {
             $this->path = \xd_utilities\qualify_path($options->path, $options->paths->data_dir);
         }
 
+        $this->generateUniqueKey();
+    }
+
+    /**
+     * @see aDataEndpoint::generateUniqueKey()
+     */
+
+    protected function generateUniqueKey()
+    {
+        $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->mode)));
     }
 
     /**

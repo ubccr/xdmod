@@ -344,6 +344,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                 default:
                     break;
             }
+
+            $this->generateUniqueKey();
         }
 
         // Implictly discover the methods to use when determining the last modified time of a file
@@ -361,9 +363,15 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                 $this->lastModifiedMethods = array('file');
             }
         }
+    }
 
+    /**
+     * @see aDataEndpoint::generateUniqueKey()
+     */
+
+    protected function generateUniqueKey()
+    {
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->name)));
-
     }
 
     /**

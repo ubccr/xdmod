@@ -47,8 +47,16 @@ class Rest extends aDataEndpoint implements iDataEndpoint
             $this->sleepMicroseconds = $seconds * 1000000;
         }
 
-        $this->key = md5(implode($this->keySeparator, array($this->type, $this->name, $this->baseUrl)));
+        $this->generateUniqueKey();
+    }
 
+    /**
+     * @see aDataEndpoint::generateUniqueKey()
+     */
+
+    protected function generateUniqueKey()
+    {
+        $this->key = md5(implode($this->keySeparator, array($this->type, $this->name, $this->baseUrl)));
     }
 
     /**
