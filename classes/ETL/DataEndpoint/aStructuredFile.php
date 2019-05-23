@@ -87,8 +87,6 @@ abstract class aStructuredFile extends File
     {
         parent::__construct($options, $logger);
 
-        $this->generateUniqueKey();
-
         $messages = array();
         $propertyTypes = array(
             'record_schema_path' => 'string',
@@ -141,6 +139,33 @@ abstract class aStructuredFile extends File
             $this->recordPassthrough = $options->record_passthrough;
         }
 
+        $this->generateUniqueKey();
+    }
+
+    /**
+     * @see aDataEndpoint::generateUniqueKey()
+     *
+     * A StructuredFile endpoint may be filtered through one or more external processes such as jq
+     * or awk. We must take these into account when determining the uniqueness of the endpoint.
+     */
+
+    protected function generateUniqueKey()
+    {
+        // If there are no filter definitions we use the same key as a File endpoint.
+
+        if ( null === $this->filterDefinitions ) {
+            return parent::generateUniqueKey();
+        }
+
+        // Start with the standard components and add in each filter
+
+        $keySource = array($this->type, $this->path, $this->mode);
+        foreach ( $this->filterDefinitions as $filter )
+        {
+            $keySource[] = $filter->path;
+            $keySource[] = $filter->arguments;
+        }
+        $this->key = md5(implode($this->keySeparator, $keySource));
     }
 
     /**
@@ -532,6 +557,25 @@ abstract class aStructuredFile extends File
     public function getRecordList()
     {
         return $this->recordList;
+    }
+
+    /**
+     * @see iDataEndpoint::__toString()
+     */
+
+    public function __toString()
+    {
+        if ( null === $this->filterDefinitions ) {
+            return parent::__toString();
+        } else {
+            return sprintf(
+                '%s (name=%s, path=%s, %d filters)',
+                get_class($this),
+                $this->name,
+                $this->path,
+                count($this->filterDefinitions)
+            );
+        }
     }
 
     /**
