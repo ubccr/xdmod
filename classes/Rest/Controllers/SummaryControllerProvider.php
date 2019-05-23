@@ -23,8 +23,6 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $controller->post("$root/layout", "$class::setLayout");
         $controller->delete("$root/layout", "$class::resetLayout");
-
-        $controller->get("$root/statistics", "$class::getStatistics");
     }
 
     /*
