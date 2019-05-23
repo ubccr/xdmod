@@ -174,8 +174,8 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * 6. Test the structured file ingestor using the same file in multiple actions to
-     *    ensure that the file is fully processed each time.
+     * 6. Test the structured file ingestor using the same file in multiple actions both with and
+     *    without filters. We want to ensure that the file is fully processed each time.
      */
 
     public function testStructuredFileIngestorWithSameFile() {
@@ -186,7 +186,13 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         );
 
         // Parse the output looking for [notice] lines indicating how many records were loaded for
-        // each action in the pipeline. Ensure the expected number of records were loaded.
+        // each action in the pipeline. Ensure the expected number of records were loaded. We are
+        // expecting 4 actions to be run:
+        //
+        // xdmod.structured-file.read-people-1 with 1 record, filtered person.json
+        // xdmod.structured-file.read-people-2 with 3 record, unfiltered person.json
+        // xdmod.structured-file.read-people-3 with 3 record, same file as #2
+        // xdmod.structured-file.read-people-4 with 1 record, same file as #1
 
         $recordsLoaded = array();
 
@@ -202,9 +208,10 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertEquals(1, $recordsLoaded[1], 'Records loaded');
-        $this->assertEquals(3, $recordsLoaded[2], 'Records loaded');
-        $this->assertEquals(3, $recordsLoaded[3], 'Records loaded');
+        $this->assertEquals(1, $recordsLoaded[1], 'Records loaded 1');
+        $this->assertEquals(3, $recordsLoaded[2], 'Records loaded 2');
+        $this->assertEquals(3, $recordsLoaded[3], 'Records loaded 3');
+        $this->assertEquals(1, $recordsLoaded[4], 'Records loaded 4');
         $this->assertEquals(0, $result['exit_status'], 'Exit code');
         $this->assertEquals('', $result['stderr'], 'Std Error');
     }
