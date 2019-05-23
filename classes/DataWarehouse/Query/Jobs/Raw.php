@@ -195,9 +195,4 @@ class Raw extends \DataWarehouse\Query\Query
     {
         throw new \Exception('Raw::getDataset() - Not Implemented');
     }
-
-    public function getDataset($limit = 20, $offset = 1)
-    {
-        throw new \Exception('Raw::getDataset() - Not Implemented');
-    }
 }
