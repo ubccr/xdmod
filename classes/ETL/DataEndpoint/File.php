@@ -1,7 +1,6 @@
 <?php
-/* ==========================================================================================
- * File data endpoint.
- * ==========================================================================================
+/**
+ * File data endpoint implements a method for reading raw data files.
  */
 
 namespace ETL\DataEndpoint;
@@ -12,19 +11,24 @@ use Log;
 class File extends aDataEndpoint implements iDataEndpoint
 {
 
-    // The ENDPOINT_NAME constant defines the name for this endpoint that should be used
-    // in configuration files. It also allows us to implement auto-discovery.
+    /**
+     * @const string Defines the name for this endpoint that should be used in configuration
+     * files. It also allows us to implement auto-discovery.
+     */
     const ENDPOINT_NAME = 'file';
 
-    // The path to the file.
+    /**
+     * @var string The path to the file.
+     */
     protected $path = null;
 
-    // File mode. See http://php.net/manual/en/function.fopen.php
+    /**
+     * @var string File mode. See http://php.net/manual/en/function.fopen.php
+     */
     protected $mode = 'r';
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__construct()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
@@ -56,33 +60,28 @@ class File extends aDataEndpoint implements iDataEndpoint
             $this->path = \xd_utilities\qualify_path($options->path, $options->paths->data_dir);
         }
 
-    }  // __construct()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iFile::getPath()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getPath()
     {
         return $this->path;
-    } // getPath()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iFile::getMode()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getMode()
     {
-
-
         return $this->mode;
-    } // getMode()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::connect()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function connect()
@@ -105,11 +104,10 @@ class File extends aDataEndpoint implements iDataEndpoint
 
         return $this->handle;
 
-    }  // connect()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::disconnect()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function disconnect()
@@ -130,11 +128,10 @@ class File extends aDataEndpoint implements iDataEndpoint
 
         return true;
 
-    }  // disconnect()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::verify()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function verify($dryrun = false, $leaveConnected = false)
@@ -161,15 +158,14 @@ class File extends aDataEndpoint implements iDataEndpoint
         }
 
         return true;
-    }  // verify()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__toString()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __toString()
     {
         return sprintf('%s (name=%s, path=%s)', get_class($this), $this->name, $this->path);
-    }  // __toString()
-}  // class File
+    }
+}

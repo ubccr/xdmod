@@ -1,16 +1,12 @@
 <?php
-/* ==========================================================================================
+/**
  * Options (with defaults) supported by all data endpoints.  Options specifically defined in this
  * class are available and may have verification performed when they are set.  Additional options
  * may be added if defined in the configuration, but it will be up the the individual endpoint types
  * whether or not to use them.  We use an array along with the __set() magic method for optimum
  * flexibility.
  *
- * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2015-10-15
- *
  * @see aOptions
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint;
@@ -21,11 +17,10 @@ use Exception;
 class DataEndpointOptions extends aOptions
 {
 
-    /* ------------------------------------------------------------------------------------------
-     * Constructor. Optionally initialize the options using key/value pairs from an associative array
+    /**
+     * Optionally initialize the options using key/value pairs from an associative array
      *
      * @param $options An optional associative array used to initialize the values of this object
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(array $options = null)
@@ -58,11 +53,13 @@ class DataEndpointOptions extends aOptions
 
         parent::__construct($options);
 
-    }  // __construct()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Generic setter method for properties not otherwise covered.
-     * ------------------------------------------------------------------------------------------
+     *
+     * @param string $property The property being set.
+     * @param mixed $value The value of the property being set.
      */
 
     public function __set($property, $value)
@@ -86,5 +83,5 @@ class DataEndpointOptions extends aOptions
 
         $this->options[$property] = $value;
         return $this;
-    }  // __set()
-}  // class DataEndpointOptions
+    }
+}

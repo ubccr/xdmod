@@ -1,10 +1,6 @@
 <?php
-/* ==========================================================================================
+/**
  * Implementation of the Mysql DataEndpoint
- *
- * @author Steve Gallo <smgallo@buffalo.edu>
- * @data 2015-10-05
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint;
@@ -14,32 +10,28 @@ use Log;
 
 class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
-    /** -----------------------------------------------------------------------------------------
-     * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
-     * in configuration files. It also allows us to implement auto-discovery.
-     *
-     * @const string
+    /**
+     * @const string Defines the name for this endpoint that should be used in configuration files.
+     * It also allows us to implement auto-discovery.
      */
 
     const ENDPOINT_NAME = 'mysql';
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__construct()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
     {
         parent::__construct($options, $logger);
         $this->systemQuoteChar = '`';
-    }  // __construct()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * We consider 2 MySQL servers to be the same if the host and port are equal.  Query both the
      * current and comparison endpoints and compare.
      *
      * @see iDataEndpoint::isSameServer()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function isSameServer(iDataEndpoint $cmp)
@@ -76,11 +68,10 @@ class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
 
         return $match;
 
-    }  // isSameServer()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::schemaExists()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function schemaExists($schemaName = null)
@@ -92,11 +83,10 @@ WHERE schema_name = :schema";
 
         return $this->executeSchemaExistsQuery($sql, $schemaName);
 
-    }  // schemaExists()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::createSchema()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function createSchema($schemaName = null)
@@ -127,5 +117,5 @@ WHERE schema_name = :schema";
 
         return true;
 
-    }  // createSchema()
-}  // class Mysql
+    }
+}

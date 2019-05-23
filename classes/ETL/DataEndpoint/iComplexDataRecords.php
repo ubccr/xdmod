@@ -1,5 +1,5 @@
 <?php
-/** =========================================================================================
+/**
  * The ETL process supports populating multiple destinations from a single source. For example,
  * a single database query or data file can be used to populate multiple destination tables.
  * The destination field map is used to map individual fields in the source record fields to fields
@@ -39,17 +39,13 @@
  * }
  *
  * @see iStructuredFile::supportsComplexDataRecords()
- *
- * @author Steve Gallo  <smgallo@buffalo.edu>
- * @datetime 2017-07-19
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint;
 
 interface iComplexDataRecords
 {
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Perorm validation of the destination map for an INDIVIDUAL table to ensure that the source
      * fields specified in the map are in a supported format and the fields that they evaluate to
      * are present in the fields provided by the source endpoint.
@@ -60,23 +56,21 @@ interface iComplexDataRecords
      *
      * @return array An associative array of destination map entries that did NOT pass validation.
      *   The keys are destination fields and the values are source record fields.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function validateDestinationMapSourceFields(array $destinationTableMap);
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Determine if the given field is a complex file as supported by the implementing class.
      *
      * @param string $sourceField The source field to examine.
      *
      * @return boolean TRUE if the field is a complex field, FALSE otherwise.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function isComplexSourceField($sourceField);
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Evaluate a complex source field against a record and return the data in the record referenced
      * by the field. For example, if the field is a JSON pointer return the data in the record
      * referenced by the pointer.
@@ -90,8 +84,7 @@ interface iComplexDataRecords
      * @return mixed The data in the record referenced by the source field.
      *
      * @throws Exception If the source field was invalid
-     * ------------------------------------------------------------------------------------------
      */
 
     public function evaluateComplexSourceField($sourceField, $record, $invalidReferenceValue = null);
-} // interface iComplexDataRecords
+}

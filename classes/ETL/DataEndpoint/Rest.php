@@ -1,10 +1,6 @@
 <?php
-/* ==========================================================================================
+/**
  * REST data endpoint
- *
- * @author Steve Gallo <smgallo@buffalo.edu>
- * @data 2015-11-12
- * ==========================================================================================
  */
 
 // Access the config options parser
@@ -16,20 +12,25 @@ use Log;
 
 class Rest extends aDataEndpoint implements iDataEndpoint
 {
-    // The ENDPOINT_NAME constant defines the name for this endpoint that should be used
-    // in configuration files. It also allows us to implement auto-discovery.
+    /**
+     * @const string Defines the name for this endpoint that should be used in configuration files.
+     * It also allows us to implement auto-discovery.
+     */
 
     const ENDPOINT_NAME = 'rest';
 
-    // The base url for this endpoint
+    /**
+     * @var stromg The base url for this endpoint
+     */
     protected $baseUrl = null;
 
-    // The base url for this endpoint
+    /**
+     * @var integer The number of microseconds to sleep between REST requests.
+     */
     protected $sleepMicroseconds = null;
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__construct()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
@@ -48,11 +49,10 @@ class Rest extends aDataEndpoint implements iDataEndpoint
 
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->name, $this->baseUrl)));
 
-    }  // __construct()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see aDataEndpoint::verify()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function verify($dryrun = false, $leaveConnected = false)
@@ -65,11 +65,10 @@ class Rest extends aDataEndpoint implements iDataEndpoint
         }
 
         return true;
-    }  // verify()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see aDataEndpoint::connect()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function connect()
@@ -80,46 +79,42 @@ class Rest extends aDataEndpoint implements iDataEndpoint
         curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, true);
 
         return $this->handle;
-    }  // connect()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see aDataEndpoint::disconnect()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function disconnect()
     {
         curl_close($this->handle);
         return true;
-    }  // disconnect()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @return The base url from the options
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getBaseUrl()
     {
         return $this->baseUrl;
-    }  // getBaseUrl()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @return The number of microseconds to sleep between REST calls
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getSleepMicroseconds()
     {
         return $this->sleepMicroseconds;
-    }  // getSleepMicrosecondsl()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__toString()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __toString()
     {
         return "{$this->name} (" . get_class($this) . ", base_url = {$this->baseUrl})";
-    }  // __toString()
-}  // class Rest
+    }
+}
