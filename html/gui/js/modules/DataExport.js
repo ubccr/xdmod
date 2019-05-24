@@ -1,5 +1,5 @@
-// TODO: Replace this with a HTTP proxy JSON store.
-var requestsStore = new Ext.data.ArrayStore({
+var requestsStore = new Ext.data.JsonStore({
+    root: 'data',
     fields: [
         {
             name: 'id',
@@ -20,66 +20,44 @@ var requestsStore = new Ext.data.ArrayStore({
             dateFormat: 'Y-m-d'
         },
         {
-            name: 'format',
+            name: 'export_file_format',
             type: 'string'
+        },
+        {
+            name: 'requested_datetime',
+            type: 'date',
+            dateFormat: 'Y-m-d H:i:s'
+        },
+        {
+            name: 'export_created_datetime',
+            type: 'date',
+            dateFormat: 'Y-m-d H:i:s'
+        },
+        {
+            name: 'export_expires_datetime',
+            type: 'date',
+            dateFormat: 'Y-m-d H:i:s'
+        },
+        {
+            name: 'export_expired',
+            type: 'boolean'
         },
         {
             name: 'state',
-            type: 'string'
-        },
-        {
-            name: 'requested_date',
-            type: 'date',
-            dateFormat: 'Y-m-d'
-        },
-        {
-            name: 'expires_date',
-            type: 'date',
-            dateFormat: 'Y-m-d'
+            convert: function (v, record) {
+                // TODO
+                if (record.export_expired == '1') {
+                    return 'Expired';
+                }
+
+                return 'Submitted';
+            }
         }
     ],
-    data: [
-        [
-            1,
-            'Jobs',
-            '2018-01-01',
-            '2018-12-31',
-            'CSV',
-            'Submitted',
-            '2018-05-16',
-            null
-        ],
-        [
-            2,
-            'SUPReMM',
-            '2017-01-01',
-            '2017-12-31',
-            'CSV',
-            'Available',
-            '2018-05-16',
-            '2018-07-01'
-        ],
-        [
-            3,
-            'Jobs',
-            '2016-01-01',
-            '2016-12-31',
-            'CSV',
-            'Expired',
-            '2018-01-01',
-            '2018-05-01'
-        ],
-        [
-            4,
-            'Jobs',
-            '2018-01-01',
-            '2018-12-31',
-            'JSON',
-            'Failed',
-            '2018-05-16',
-            null
-        ]
-    ]
+    proxy: new Ext.data.HttpProxy({
+        method: 'GET',
+        url: 'rest/v1/warehouse/export/requests'
+    })
 });
 
 /**
@@ -98,8 +76,9 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
     defaultPageSize: 24,
 
     initComponent: function () {
-        // TODO: Replace with JsonStore.
         this.requestsStore = requestsStore;
+
+        this.on('afterrender', this.requestsStore.load, this.requestsStore);
 
         this.requestForm = new XDMoD.Module.DataExport.RequestForm({
             region: 'west',
@@ -202,7 +181,22 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                     buttons: [
                         {
                             xtype: 'button',
-                            text: 'Submit Request'
+                            text: 'Submit Request',
+                            scope: this,
+                            handler: function () {
+                                Ext.Ajax.request({
+                                    url: 'rest/v1/warehouse/export/request',
+                                    method: 'POST',
+                                    params: this.getForm().getValues(),
+                                    scope: this,
+                                    success: function (response) {
+                                        // TODO
+                                    },
+                                    failure: function (response) {
+                                        // TODO
+                                    }
+                                });
+                            }
                         }
                     ]
                 }
@@ -230,7 +224,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             columns: [
                 {
                     header: 'Request Date',
-                    dataIndex: 'requested_date',
+                    dataIndex: 'requested_datetime',
                     xtype: 'datecolumn',
                     format: 'Y-m-d'
                 },
@@ -256,7 +250,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 {
                     header: 'Format',
-                    dataIndex: 'format'
+                    dataIndex: 'export_file_format'
                 },
                 {
                     header: 'Expiration Date',

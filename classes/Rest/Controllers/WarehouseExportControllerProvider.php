@@ -70,7 +70,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
         $handler = new QueryHandler();
         $results = $handler->listRequestsForUser($user->getUserId());
-        return $app->json(['success' => true, 'results' => $results]);
+        return $app->json(['success' => true, 'data' => $results]);
     }
 
     /**
