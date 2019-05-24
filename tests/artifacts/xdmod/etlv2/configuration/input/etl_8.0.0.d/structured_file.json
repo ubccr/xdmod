@@ -42,7 +42,7 @@
         },
         {
             "name": "read-people-2",
-            "description": "Re-read the same file, which should re-use the same endpoint",
+            "description": "Re-read the same file without the filters",
             "definition_file": "structured_file/people.json",
             "endpoints": {
                 "source": {
@@ -55,13 +55,34 @@
         {
             "name": "read-people-3",
             "truncate_destination": true,
-            "description": "Re-read the same file a 3rd time, which should re-use the same endpoint",
+            "description": "Re-read the same file a 2nd time without filters, which will re-use the same endpoint from read-people-2",
             "definition_file": "structured_file/people.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
                     "path": "structured_file/people.json",
                     "name": "People"
+                }
+            }
+        },
+        {
+            "name": "read-people-4",
+            "truncate_destination": true,
+            "description": "Re-read the file with filters, which will re-use the endpoint from read-people-1",
+            "definition_file": "structured_file/organizations.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "path": "structured_file/people.json",
+                    "name": "People",
+                    "filters": [
+                        {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'map({name: .organizations[].name}) | unique'"
+                        }
+                    ]
                 }
             }
         }
