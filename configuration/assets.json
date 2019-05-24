@@ -2,7 +2,11 @@
     "xdmod": {
         "portal": {
             "js": [
-                "gui/js/modules/summary/ChartPortlet.js"
+                "gui/js/modules/summary/ChartPortlet.js",
+                "gui/js/modules/summary/ReportThumbnailsPortlet.js"
+            ],
+            "css": [
+                "gui/css/ReportThumbnailsPortlet.css"
             ]
         }
     }
