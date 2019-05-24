@@ -269,9 +269,8 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     xtype: 'templatecolumn',
                     tpl: new Ext.XTemplate(
                         '<img title="Delete" src="gui/images/delete.png"/>',
-                        ' <tpl if="state == \'Submitted\'"><img title="Download" src="gui/images/disk.png"/></tpl>',
-                        ' <tpl if="state == \'Expired\' || state == \'Failed\'"><img title="Resubmit" src="gui/images/arrow_redo.png"/></tpl>',
-                        ''
+                        ' <tpl if="state == \'Available\'"><img title="Download" src="gui/images/disk.png"/></tpl>',
+                        ' <tpl if="state == \'Expired\' || state == \'Failed\'"><img title="Resubmit" src="gui/images/arrow_redo.png"/></tpl>'
                     )
                 }
             ],
