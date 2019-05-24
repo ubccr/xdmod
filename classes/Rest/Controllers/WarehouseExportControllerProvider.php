@@ -69,7 +69,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     {
         $user = $this->authorize($request);
         $handler = new QueryHandler();
-        $results = $handler->listRequestsForUser($user->getId());
+        $results = $handler->listRequestsForUser($user->getUserId());
         return ['success' => true, 'results' => $results];
     }
 
@@ -89,7 +89,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $handler = new QueryHandler();
 
         $handler->createRequestRecord(
-            $user->getId(),
+            $user->getUserId(),
             $realm,
             $startDate,
             $endDate
