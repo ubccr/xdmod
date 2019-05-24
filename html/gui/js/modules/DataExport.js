@@ -186,11 +186,10 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             emptyText: 'Select an export format',
                             valueField: 'id',
                             displayField: 'name',
-                            mode: 'local',
+                            allowBlank: false,
                             editable: false,
-                            lazyInit: false,
-                            typeAhead: true,
                             triggerAction: 'all',
+                            mode: 'local',
                             store: new Ext.data.ArrayStore({
                                 fields: ['id', 'name'],
                                 data: [
