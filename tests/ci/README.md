@@ -18,7 +18,7 @@ development and speed up the build times of Docker.
 If you look in `assets/copy-caches.sh` you will see all of the files that will be put into place.
 
 ### vimrc
-This is just some defaults for VIM when useing the docker for development
+This is just some defaults for VIM when using the docker for development
 
 ### npmrc
 This is a default used for installing the chromedriver instead of downloading it
@@ -38,13 +38,13 @@ defaults for mysql server
 The composer cache to speed up the install of composer modules.
 
 ### chromedriver_linux64.zip
-chromedriver for automated tests.  Since google now versions with chrome the
-chromedriver node module doesnt currently handle the installed version.
-This also prevents the need to download it everytime.
+chromedriver for automated tests. Since google now versions with chrome the
+chromedriver node module doesn't currently handle the installed version.
+This also prevents the need to download it every time.
 
 https://sites.google.com/a/chromium.org/chromedriver/downloads
 
 ### PhantomJS
 Since PhantomJS is no longer maintained, we have a copy that we use instead of
-automatically getting it from the internet everytime
+automatically getting it from the internet every time
 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2

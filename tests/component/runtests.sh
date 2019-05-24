@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "Component tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 # Implode an array using the specified separator
 
 function implode_array {

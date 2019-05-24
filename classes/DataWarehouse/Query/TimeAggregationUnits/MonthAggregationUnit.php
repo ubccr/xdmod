@@ -34,10 +34,4 @@ class MonthAggregationUnit extends \DataWarehouse\Query\TimeAggregationUnit
     {
         return 12;
     }//getMaxPeriodPerYear()
-
-
-    public function getTimeLabel($timestamp)
-    {
-        return date('Y-m', $timestamp);
-    }
 }
