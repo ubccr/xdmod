@@ -230,49 +230,79 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             ],
             columns: [
                 {
-                    id: 'realm',
-                    header: 'Realm',
-                    dataIndex: 'realm'
+                    header: 'Request Date',
+                    dataIndex: 'requested_date',
+                    xtype: 'datecolumn',
+                    format: 'Y-m-d'
                 },
                 {
-                    id: 'start_date',
-                    header: 'Data Start Date',
-                    dataIndex: 'start_date'
-                },
-                {
-                    id: 'end_date',
-                    header: 'Data End Date',
-                    dataIndex: 'end_date'
-                },
-                {
-                    id: 'format',
-                    header: 'Format',
-                    dataIndex: 'format'
-                },
-                {
-                    id: 'state',
                     header: 'State',
                     dataIndex: 'state'
                 },
                 {
-                    id: 'requested_date',
-                    header: 'Request Date',
-                    dataIndex: 'requested_date'
+                    header: 'Realm',
+                    dataIndex: 'realm'
                 },
                 {
-                    id: 'expiration_date',
+                    header: 'Data Start Date',
+                    dataIndex: 'start_date',
+                    xtype: 'datecolumn',
+                    format: 'Y-m-d'
+                },
+                {
+                    header: 'Data End Date',
+                    dataIndex: 'end_date',
+                    xtype: 'datecolumn',
+                    format: 'Y-m-d'
+                },
+                {
+                    header: 'Format',
+                    dataIndex: 'format'
+                },
+                {
                     header: 'Expiration Date',
-                    dataIndex: 'expires_date'
+                    dataIndex: 'expires_date',
+                    xtype: 'datecolumn',
+                    format: 'Y-m-d'
+                },
+                {
+                    header: 'Actions',
+                    xtype: 'templatecolumn',
+                    tpl: new Ext.XTemplate(
+                        '<img title="Delete" src="gui/images/delete.png"/>',
+                        ' <tpl if="state == \'Submitted\'"><img title="Download" src="gui/images/disk.png"/></tpl>',
+                        ' <tpl if="state == \'Expired\' || state == \'Failed\'"><img title="Resubmit" src="gui/images/arrow_redo.png"/></tpl>',
+                        ''
+                    )
                 }
             ],
-            bbar: {
-                xtype: 'paging',
-                store: this.store,
-                pageSize: this.pageSize,
-                displayInfo: true,
-                displayMsg: 'Displaying export requests {0} - {1} of {2}',
-                emptyMsg: 'No export requests to display'
-            }
+            bbar: [
+                {
+                    xtype: 'button',
+                    text: 'Delete all expired requests',
+                    handler: function () {
+                        Ext.Msg.confirm(
+                            'Delete All Expired Requests',
+                            'Are you sure that you want to delete all expired requests? You cannot undo this operation.',
+                            function (selection) {
+                                if (selection === 'yes') {
+                                    Ext.Msg.alert('TODO', 'TODO: Delete all the expired requests');
+                                }
+                            },
+                            this
+                        );
+                    }
+                },
+                '->',
+                {
+                    xtype: 'paging',
+                    store: this.store,
+                    pageSize: this.pageSize,
+                    displayInfo: true,
+                    displayMsg: 'Displaying export requests {0} - {1} of {2}',
+                    emptyMsg: 'No export requests to display'
+                }
+            ]
         });
 
         XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
