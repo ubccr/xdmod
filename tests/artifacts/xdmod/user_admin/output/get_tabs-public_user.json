@@ -22,6 +22,17 @@
         "userManualSectionName": "Usage Tab"
     },
     {
+        "tab": "data_export",
+        "isDefault": false,
+        "title": "Data Export",
+        "pos": 400,
+        "permitted_modules": null,
+        "javascriptClass": "XDMoD.Module.DataExport",
+        "javascriptReference": "CCR.xdmod.ui.dataExport",
+        "tooltip": "",
+        "userManualSectionName": "Data Export"
+    },
+    {
         "tab": "about_xdmod",
         "isDefault": false,
         "title": "About",
