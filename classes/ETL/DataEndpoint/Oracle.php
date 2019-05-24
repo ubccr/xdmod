@@ -1,10 +1,6 @@
 <?php
-/* ==========================================================================================
+/**
  * Implementation of the Oracle DataEndpoint.
- *
- * @author Steve Gallo <smgallo@buffalo.edu>
- * @data 2017-01-13
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint;
@@ -16,32 +12,36 @@ use PDOException;
 class Oracle extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
 
-    // The ENDPOINT_NAME constant defines the name for this endpoint that should be used
-    // in configuration files. It also allows us to implement auto-discovery.
+    /**
+     * @const string Defines the name for this endpoint that should be used in configuration files.
+     * It also allows us to implement auto-discovery.
+     */
     const ENDPOINT_NAME = 'oracle';
+
+    /**
+     * @see iDataEndpoint::__construct()
+     */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
     {
         parent::__construct($options, $logger);
         $this->systemQuoteChar = '"';
-    }  // __construct()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * We consider 2 Postgres servers to be the same if the host and port are equal.  Query both the
      * current and comparison endpoints and compare.
      *
      * @see iDataEndpoint::isSameServer()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function isSameServer(iDataEndpoint $cmp)
     {
         return false;
-    }  // isSameServer()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::schemaExists()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function schemaExists($schemaName = null)
@@ -53,11 +53,10 @@ WHERE username = UPPER(:schema)";
 
         return $this->executeSchemaExistsQuery($sql, $schemaName);
 
-    }  // schemaExists()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::createSchema()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function createSchema($schemaName = null)
@@ -79,11 +78,10 @@ WHERE username = UPPER(:schema)";
 
         return false;
 
-    }  // createSchema()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::tableExists()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function tableExists($tableName, $schemaName = null)
@@ -123,15 +121,14 @@ AND table_name = UPPER(:tablename)";
 
         return true;
 
-    }  // tableExists()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::getTableColumnNames()
      *
      * Obtaining the columns for a table is straightforward, however views are another
      * matter. ALL_VIEWS contains the view definition but there is no data dictionary view
      * for views akin to all_tab_cols. For this we need to use "describe <view>".
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getTableColumnNames($tableName, $schemaName = null)
@@ -174,5 +171,5 @@ ORDER BY column_id ASC";
 
         return $columnNames;
 
-    }  // getTableColumnNames()
-}  // class Postgres
+    }
+}
