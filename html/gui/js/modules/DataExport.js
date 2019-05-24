@@ -46,7 +46,7 @@ var requestsStore = new Ext.data.JsonStore({
             name: 'state',
             convert: function (v, record) {
                 // TODO
-                if (record.export_expired == '1') {
+                if (record.export_expired === '1') {
                     return 'Expired';
                 }
 
