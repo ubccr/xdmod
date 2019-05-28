@@ -48,7 +48,7 @@ class QueryHandler
                 (NOW(), :user_id, :realm, :start_date, :end_date)";
 
         $params = array('user_id' => $userId,
-                        'realm' => $this->pdo->quote($realm),
+                        'realm' => $realm,
                         'start_date' => $startDate,
                         'end_date' => $endDate);
 
@@ -135,7 +135,8 @@ class QueryHandler
     // Return details of all export requests presently in Submitted state.
     public function listSubmittedRecords()
     {
-        $sql = "SELECT id, realm, start_date, end_date
+        $sql = "SELECT id, realm, start_date, end_date,
+            export_file_format, requested_datetime
             FROM batch_export_requests
             WHERE export_succeeded IS NULL";
 
@@ -150,11 +151,16 @@ class QueryHandler
     // Return details of all export requests made by specified user.
     public function listRequestsForUser($user_id)
     {
-        $sql = "SELECT id, realm, start_date, end_date,
+        $sql = "SELECT id,
+                realm,
+                start_date,
+                end_date,
                 export_succeeded,
                 export_expired,
                 export_expires_datetime,
-                export_created_datetime
+                export_created_datetime,
+                export_file_format,
+                requested_datetime
             FROM batch_export_requests
             WHERE user_id=:user_id
             ORDER BY id";
