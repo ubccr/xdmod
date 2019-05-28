@@ -18,23 +18,48 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
     initComponent: function () {
         this.requestsStore = new XDMoD.Module.DataExport.RequestsStore();
 
-        this.on('afterrender', this.requestsStore.load, this.requestsStore);
-
         this.requestForm = new XDMoD.Module.DataExport.RequestForm({
-            region: 'west',
-            width: 375,
-            split: true,
-            margins: '2 0 2 2'
+            title: 'Create Bulk Data Export Request',
+            bodyStyle: 'padding: 5px 5px 0 5px',
+            border: false,
+            region: 'north'
         });
 
         this.requestsGrid = new XDMoD.Module.DataExport.RequestsGrid({
+            title: 'Status of Export Requests',
             region: 'center',
             margins: '2 2 2 0',
             pageSize: this.defaultPageSize,
             store: this.requestsStore
         });
 
-        this.items = [this.requestsGrid, this.requestForm];
+        this.requestsGrid.on('afterrender', this.requestsStore.load, this.requestsStore, { single: true });
+        this.requestForm.on('actioncomplete', this.requestsGrid.reload, this.requestsGrid);
+
+        this.items = [
+            {
+                xtype: 'panel',
+                border: true,
+                width: 375,
+                split: true,
+                region: 'west',
+                margins: '2 0 0 2',
+                layout: 'vbox',
+                layoutConfig: {
+                    align: 'stretch'
+                },
+                items: [
+                    this.requestForm,
+                    {
+                        // Spacer panel
+                        xtype: 'panel',
+                        border: false,
+                        flex: 1
+                    }
+                ]
+            },
+            this.requestsGrid
+        ];
 
         XDMoD.Module.DataExport.superclass.initComponent.call(this);
     }
@@ -44,11 +69,17 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
  * Data export request form.
  */
 XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
-    title: 'Create Bulk Data Export Request',
-    bodyStyle: 'padding:5px',
-
     initComponent: function () {
+        this.maxDateRangeText = '1 year';
+        this.maxDateRangeInMilliseconds = 1000 * 60 * 60 * 24 * 365;
+
+        Ext.apply(this.initialConfig, {
+            method: 'POST',
+            url: 'rest/v1/warehouse/export/request'
+        });
+
         Ext.apply(this, {
+            monitorValid: true,
             tools: [
                 {
                     id: 'help',
@@ -58,6 +89,9 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
             items: [
                 {
                     xtype: 'fieldset',
+                    style: {
+                        margin: '0'
+                    },
                     columnWidth: 1,
                     items: [
                         {
@@ -71,16 +105,14 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             editable: false,
                             triggerAction: 'all',
                             mode: 'local',
-                            store: new Ext.data.JsonStore({
+                            store: {
+                                xtype: 'jsonstore',
                                 autoLoad: true,
                                 autoDestroy: true,
                                 root: 'data',
                                 fields: ['id', 'name'],
-                                proxy: new Ext.data.HttpProxy({
-                                    method: 'GET',
-                                    url: 'rest/v1/warehouse/export/realms'
-                                })
-                            })
+                                url: 'rest/v1/warehouse/export/realms'
+                            }
                         },
                         {
                             xtype: 'datefield',
@@ -88,7 +120,8 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             fieldLabel: 'Start Date',
                             emptyText: 'Start Date',
                             format: 'Y-m-d',
-                            allowBlank: false
+                            allowBlank: false,
+                            validator: this.validateStartDate.bind(this)
                         },
                         {
                             xtype: 'datefield',
@@ -96,7 +129,8 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             fieldLabel: 'End Date',
                             emptyText: 'End Date',
                             format: 'Y-m-d',
-                            allowBlank: false
+                            allowBlank: false,
+                            validator: this.validateEndDate.bind(this)
                         },
                         {
                             xtype: 'combo',
@@ -109,41 +143,112 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             editable: false,
                             triggerAction: 'all',
                             mode: 'local',
-                            store: new Ext.data.ArrayStore({
+                            store: {
+                                xtype: 'arraystore',
                                 fields: ['id', 'name'],
                                 data: [
                                     ['csv', 'CSV'],
                                     ['json', 'JSON']
                                 ]
-                            })
-                        }
-                    ],
-                    buttons: [
-                        {
-                            xtype: 'button',
-                            text: 'Submit Request',
-                            scope: this,
-                            handler: function () {
-                                Ext.Ajax.request({
-                                    url: 'rest/v1/warehouse/export/request',
-                                    method: 'POST',
-                                    params: this.getForm().getValues(),
-                                    scope: this,
-                                    success: function (response) {
-                                        // TODO
-                                    },
-                                    failure: function (response) {
-                                        // TODO
-                                    }
-                                });
                             }
                         }
                     ]
+                }
+            ],
+            buttons: [
+                {
+                    xtype: 'button',
+                    text: 'Submit Request',
+                    formBind: true,
+                    disabled: true,
+                    scope: this,
+                    handler: function () {
+                        this.getForm().submit()
+                    }
                 }
             ]
         });
 
         XDMoD.Module.DataExport.RequestForm.superclass.initComponent.call(this);
+
+        this.getForm().on('actionfailed', function (form, action) {
+            if (action.failureType === Ext.form.Action.CLIENT_INVALID) {
+                Ext.Msg.alert('Error', 'Validation failed, please check input values.');
+            } else if (action.failureType === Ext.form.Action.CONNECT_FAILURE || action.failureType === Ext.form.Action.SERVER_INVALID) {
+                var response = action.response;
+                Ext.Msg.alert(
+                    response.statusText || 'Error',
+                    JSON.parse(response.responseText).message || 'Unknown Error'
+                );
+            } else if (action.failureType === '') {
+            } else {
+            }
+        });
+
+        //this.on('clientvalidation', this.validateForm, this);
+    },
+
+    validateStartDate: function (startDate) {
+        try {
+		    startDate = this.parseDate(startDate);
+        } catch (e) {
+            return e.message;
+        }
+
+        var endDate = this.getForm().getFieldValues()['end_date'];
+
+        if (endDate === '') {
+            return true;
+        }
+
+        if (startDate > endDate) {
+            return 'Start date must be before the end date';
+        }
+
+        if (endDate - startDate > this.maxDateRangeInMilliseconds) {
+            return 'Date range must be less than ' + this.maxDateRangeText;
+        }
+
+        return true;
+    },
+
+    validateEndDate: function (endDate) {
+        try {
+            endDate = this.parseDate(endDate);
+        } catch (e) {
+            return e.message;
+        }
+
+        var startDate = this.getForm().getFieldValues()['start_date'];
+
+        if (startDate === '') {
+            return true;
+        }
+
+        if (startDate > endDate) {
+            return 'End date must be after the start date';
+        }
+
+        if (endDate - startDate > this.maxDateRangeInMilliseconds) {
+            return 'Date range must be less than ' + this.maxDateRangeText;
+        }
+
+        return true;
+    },
+
+    parseDate: function (date) {
+        if (Ext.isDate(date)) {
+            return date;
+        }
+
+		var format = 'Y-m-d';
+		var parsedDate = Date.parseDate(date, format);
+
+        if (parsedDate === undefined) {
+            throw new Error(date + ' is not a valid date - it must be in the format ' + format);
+		}
+
+        return parsedDate;
     }
 });
 
@@ -151,10 +256,12 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
  * Data export request grid.
  */
 XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
-    title: 'Status of Export Requests',
-
     initComponent: function () {
+        this.store.on('beforeload', this.showLoadingMask, this);
+        this.store.on('load', this.hideLoadingMask, this);
+
         Ext.apply(this, {
+            loadMask: true,
             tools: [
                 {
                     id: 'help',
@@ -202,9 +309,13 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     header: 'Actions',
                     xtype: 'templatecolumn',
                     tpl: new Ext.XTemplate(
-                        '<img title="Delete" src="gui/images/delete.png"/>',
-                        ' <tpl if="state == \'Available\'"><img title="Download" src="gui/images/disk.png"/></tpl>',
-                        ' <tpl if="state == \'Expired\' || state == \'Failed\'"><img title="Resubmit" src="gui/images/arrow_redo.png"/></tpl>'
+                        '<img title="Delete" src="gui/images/delete.png" onclick="alert(\'TODO: Delete {id}\')"/>',
+                        '<tpl if="state == \'Available\'">',
+                        '    <img title="Download" src="gui/images/disk.png" onclick="alert(\'TODO: Download {id}\');"/>',
+                        '</tpl>',
+                        '<tpl if="state == \'Expired\' || state == \'Failed\'">',
+                        '     <img title="Resubmit" src="gui/images/arrow_redo.png" onclick="alert(\'TODO: Resubmit {id}\');"/>',
+                        '</tpl>'
                     )
                 }
             ],
@@ -212,11 +323,13 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 {
                     xtype: 'button',
                     text: 'Delete all expired requests',
+                    scope: this,
                     handler: function () {
                         Ext.Msg.confirm(
                             'Delete All Expired Requests',
                             'Are you sure that you want to delete all expired requests? You cannot undo this operation.',
                             function (selection) {
+                                this.reload();
                                 if (selection === 'yes') {
                                     Ext.Msg.alert('TODO', 'TODO: Delete all the expired requests');
                                 }
@@ -238,6 +351,17 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
         });
 
         XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
+    },
+
+    showLoadingMask: function () {
+
+    },
+
+    hideLoadingMask: function () {
+    },
+
+    reload: function () {
+        this.store.reload();
     }
 });
 
@@ -263,6 +387,7 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
     constructor: function (config) {
         config = config || {};
         Ext.apply(config, {
+            url: 'rest/v1/warehouse/export/requests',
             root: 'data',
             fields: [
                 {
@@ -318,11 +443,7 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                         return 'Submitted';
                     }
                 }
-            ],
-            proxy: new Ext.data.HttpProxy({
-                method: 'GET',
-                url: 'rest/v1/warehouse/export/requests'
-            })
+            ]
         });
 
         XDMoD.Module.DataExport.RequestsStore.superclass.constructor.call(this, config);
