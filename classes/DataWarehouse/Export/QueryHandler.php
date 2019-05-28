@@ -48,7 +48,7 @@ class QueryHandler
                 (NOW(), :user_id, :realm, :start_date, :end_date)";
 
         $params = array('user_id' => $userId,
-                        'realm' => $this->pdo->$realm,
+                        'realm' => $this->pdo->quote($realm),
                         'start_date' => $startDate,
                         'end_date' => $endDate);
 

@@ -5,6 +5,7 @@ namespace ComponentTests;
 use CCR\DB;
 use \Exception;
 use \DataWarehouse\Export\QueryHandler;
+use \XDUser;
 
 
 class ExportDBTest extends BaseTest
@@ -14,8 +15,8 @@ class ExportDBTest extends BaseTest
 {
     static $dbh = null;
     static $maxId = null;
-    private static $userId = 34; // Tom Furlani
-    private static $debug = FALSE;
+    private static $userName = self::NORMAL_USER_USER_NAME;
+    private static $debug = TRUE;
 
     public function testCountSubmitted()
     {
@@ -28,14 +29,24 @@ class ExportDBTest extends BaseTest
         if (self::$debug) print("\n".__FUNCTION__.": submittedRecords=$submittedCount\n");
     }
 
+    private function acquireUserId()
+    {
+        $userId = static::$dbh->query('SELECT MIN(id) AS id FROM Users')[0]['id'];
+        if ($userId == NULL) {
+            $userId = XDUser::getUserByUserName(self::$userName);
+        }
+        return $userId;
+    }
+
     private function findSubmittedRecord()
     {
         $query = new QueryHandler();
+        $userId = $this->acquireUserId(); //XDUser::getUserByUserName(self::$userName);
 
         // Find or create a record in submitted status to transition
         $maxSubmitted = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where export_succeeded IS NULL')[0]['id'];
         if ($maxSubmitted == NULL) {
-            $maxSubmitted = $query->createRequestRecord(self::$userId, 'Jobs', '2017-01-01','2017-08-01');
+            $maxSubmitted = $query->createRequestRecord($userId, 'Jobs', '2017-01-01','2017-08-01');
         }
 
         if (self::$debug) print("\n".__FUNCTION__.": maxSubmitted ID=$maxSubmitted\n");
@@ -47,16 +58,18 @@ class ExportDBTest extends BaseTest
     public function testNewRecordCreation()
     {
         $query = new QueryHandler();
+        $userId = $this->acquireUserId(); //XDUser::getUserByUserName(self::$userName);
+        //if (self::$debug) print("\n".__FUNCTION__.": userName=".self::$userName." userId=$userId\n");
 
         // find the count
         $initialCount = $query->countSubmittedRecords();
 
         // add new record and verify
-        $requestId = $query->createRequestRecord(self::$userId, 'Jobs', '2019-01-01','2019-03-01');
+        $requestId = $query->createRequestRecord($userId, 'Jobs', '2019-01-01','2019-03-01');
         $this->assertNotNull($requestId);
 
         // add another new record and verify
-        $requestId2 = $query->createRequestRecord(self::$userId, 'Accounts', '2016-12-01','2017-01-01');
+        $requestId2 = $query->createRequestRecord($userId, 'Accounts', '2016-12-01','2017-01-01');
 
         $this->assertNotNull($requestId2 );
         $this->assertTrue($requestId2-$requestId==1);
@@ -169,6 +182,7 @@ class ExportDBTest extends BaseTest
     public function testUserRecordFieldList()
     {
         $query = new QueryHandler();
+        $userId = $this->acquireUserId(); //XDUser::getUserByUserName(self::$userName);
 
         // Expect these keys from the associative array
         $expectedKeys = array(
@@ -183,7 +197,7 @@ class ExportDBTest extends BaseTest
         );
 
         // Requests via this user have been created as part of these tests
-        $actual = $query->listRequestsForUser(self::$userId);
+        $actual = $query->listRequestsForUser($userId);
 
         if (count($actual) > 0) {
 
@@ -195,6 +209,7 @@ class ExportDBTest extends BaseTest
     // determine initial max id to enable cleanup after testing
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         static::$dbh = DB::factory('database');
         static::$maxId = static::$dbh->query('SELECT COALESCE(MAX(id), 0) AS id FROM batch_export_requests')[0]['id'];
     }
