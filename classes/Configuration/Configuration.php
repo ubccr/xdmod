@@ -267,7 +267,13 @@ class Configuration extends Loggable implements \Iterator
         $inCache = false;
         $cacheKey = null;
 
-        if ( self::$enableObjectCache ) {
+        // If this is a local config file, do not attempt to pull it out of the cache because its
+        // contents depend on options passed in from the global config. If the global config was
+        // retrieved from the cache we won't be processing the local configs anyway.
+
+        $skipCacheCheck = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
+
+        if ( self::$enableObjectCache && ! $skipCacheCheck ) {
             // The cache key must take into account the full filename as well as any options
             // provided as this may affect the generated object. We use serialize() instead of
             // json_encode() because the latter only takes into account public member variables and
@@ -276,7 +282,7 @@ class Configuration extends Loggable implements \Iterator
             $inCache = array_key_exists($cacheKey, self::$objectCache);
         }
 
-        if ( ! self::$enableObjectCache || ! $inCache ) {
+        if ( ! self::$enableObjectCache || ! $inCache || $skipCacheCheck ) {
             // Let the constructor know that it was called via factory()
             $options['called_via_factory'] = true;
             $instance = new static($filename, $baseDir, $logger, $options);
