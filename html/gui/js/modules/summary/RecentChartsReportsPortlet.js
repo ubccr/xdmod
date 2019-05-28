@@ -127,11 +127,6 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
         this.height = this.width * aspectRatio;
         this.items = [this.chartReportGrid];
         XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
-    },
-    listeners: {
-        duration_change: function (timeframe) {
-            this.chartReportGrid.getView().refresh();
-        }
     }
 });
 
