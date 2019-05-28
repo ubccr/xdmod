@@ -219,21 +219,113 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
         $this->xdmodhelper->logout();
     }
 
-    public function testInvalidJobSearchMissingParams() {
+    public function missingParamsProvider() {
 
-        $searchparams = array(
-            'realm' => 'Jobs',
-            'params' => json_encode(array('resource_id' => '2801'))
+        $xdmodhelper = new \TestHarness\XdmodTestHelper(array('decodetextasjson' => true));
+        $xdmodhelper->authenticate('cd');
+
+        $tests = array();
+
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'realm' => 'Jobs',
+                'params' => json_encode(array('resource_id' => '2801'))
+            ),
+            false
         );
 
-        $this->xdmodhelper->authenticate('cd');
-        $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'start_date' => '2015-01-01',
+                'end_date' => '2015-01-01',
+                'realm' => 'Blobs',
+                'params' => json_encode(array()),
+                'start' => 0,
+                'limit' => 10
+            ),
+            false
+        );
+
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'start_date' => '2015-01-01',
+                'realm' => 'Jobs',
+                'params' => json_encode(array()),
+                'start' => 0,
+                'limit' => 10
+            ),
+            false
+        );
+
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'start_date' => '2015-01-01',
+                'end_date' => '2015-01-01',
+                'realm' => 'Jobs',
+                'params' => json_encode(array())
+            ),
+            false
+        );
+
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'start_date' => '2015-01-01',
+                'end_date' => '2015-01-01',
+                'realm' => 'Jobs',
+                'params' => json_encode(array()),
+                'start' => 0,
+            ),
+            false
+        );
+
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'start_date' => '2015-01-01',
+                'end_date' => '2015-01-01',
+                'realm' => 'Jobs',
+                'params' => json_encode(3),
+                'start' => 0,
+                'limit' => 20
+            ),
+            false
+        );
+
+        $tests[] = array(
+            $xdmodhelper,
+            array(
+                'start_date' => '2015-01-01',
+                'end_date' => '2015-01-01',
+                'realm' => 'Jobs',
+                'params' => json_encode(array(3)),
+                'start' => 0,
+                'limit' => 20
+            ),
+            true
+        );
+
+        return $tests;
+    }
+
+    /**
+     * @dataProvider missingParamsProvider
+     */
+    public function testInvalidJobSearchMissingParams($xdmodhelper, $searchparams, $isfinal) {
+
+        $result = $xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
 
         $this->assertArrayHasKey('success', $result[0]);
         $this->assertEquals($result[0]['success'], false);
         $this->assertEquals($result[1]['http_code'], 400);
 
-        $this->xdmodhelper->logout();
+        if ($isfinal) {
+            $xdmodhelper->logout();
+        }
     }
 
     public function testAdvancedSearchInvalid() {
@@ -253,6 +345,32 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
         $this->assertEquals($result[0]['success'], false);
         $this->assertEquals($result[1]['http_code'], 400);
+
+        $this->xdmodhelper->logout();
+    }
+
+    public function testAdvancedSearchNoParams() {
+        $searchparams = array(
+            'start_date' => '2016-12-31',
+            'end_date' => '2016-12-31',
+            'realm' => 'Jobs',
+            'params' => '{}',
+            'limit' => 5,
+            'start' => 0
+        );
+
+        $this->xdmodhelper->authenticate('usr');
+        $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
+        $this->assertEquals(true, $result[0]['success']);
+        $this->assertEquals(200, $result[1]['http_code']);
+
+        $this->assertEquals(9, $result[0]['totalCount']);
+        $this->assertCount(5, $result[0]['results']);
+
+        // Normal user can only see their jobs
+        foreach($result[0]['results'] as $jobrecord) {
+            $this->assertEquals('Whimbrel', $jobrecord['name']);
+        }
 
         $this->xdmodhelper->logout();
     }
