@@ -115,7 +115,7 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
                         selModel.clearSelections();
                         if (r.data.type === 'Chart') {
                             var config = Ext.util.JSON.decode(r.data.config);
-                            XDMoD.Module.MetricExplorer.setConfig(config, config.summary_index, Boolean(config.preset));
+                            XDMoD.Module.MetricExplorer.setConfig(config, r.data.name, false);
                         } else if (r.data.type === 'Report') {
                             CCR.xdmod.ui.reportGenerator.fireEvent('load_report', r.data.report_id);
                         }
