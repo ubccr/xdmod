@@ -178,10 +178,143 @@ class Configuration extends Loggable implements \Iterator
      *
      * @var boolean
      */
+
     protected $forceArrayReturn = false;
+
+    /**
+     * Enable or disable the object cache to improve performance. Enabling the object cache means
+     * that a Configuration object will only need to be created once for a given global file.
+     *
+     * @var boolean
+     */
+
+    protected static $enableObjectCache = true;
+
+    /**
+     * Associative array used as a key value store to cache parsed and transformed configuration
+     * files to improve performance.  Keys are the fully qualified path of the global file and
+     * values are parsed and transformed objects generated from that file and any local files.
+     *
+     * @var array
+     */
+
+    protected static $objectCache = array();
+
+    /**
+     * A factory / helper method for instantiating a Configuration object, initializing it, and
+     * returning the results of its `toAssocArray` function.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return array the results of the instantiated configuration objects `toAssocArray` function.
+     */
+
+    public static function assocArrayFactory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+
+        return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
+    }
+
+    /**
+     * A helper function that instantiates, initializes, and returns a Configuration object.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return Configuration an initialized instance of Configuration.
+     */
+
+    public static function factory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+        if ( empty($filename) ) {
+            $msg = sprintf("%s: Configuration filename cannot be empty", get_called_class());
+            if ( null !== $logger ) {
+                $logger->error($msg);
+            }
+            throw new Exception($msg);
+        }
+
+        // We need the fully qualified path for the object cache key because there could be two
+        // files with the same base name in different directories.
+        //
+        // If the base directory was provided use that value and ensure the filename is
+        // fully qualified. If not provided, use the dirname of the configuration filename
+        // (which may be the current directory) and qualify the filename with the current
+        // directory so the correct, fully qualified path, shows in the logs.
+
+        if ( null === $baseDir ) {
+            // This will be used for the main config file, any sub-files should have the
+            // base explicitly dir passed to them.
+            $baseDir = \xd_utilities\qualify_path(dirname($filename), getcwd());
+            $filename = \xd_utilities\qualify_path($filename, getcwd());
+        } else {
+            $filename = \xd_utilities\qualify_path($filename, $baseDir);
+        }
+
+        $inCache = false;
+        $cacheKey = null;
+
+        if ( self::$enableObjectCache ) {
+            // The cache key must take into account the full filename as well as any options
+            // provided as this may affect the generated object.
+            $cacheKey = md5($filename . '|' . json_encode($options));
+            $inCache = array_key_exists($cacheKey, self::$objectCache);
+        }
+
+        if ( ! self::$enableObjectCache || ! $inCache ) {
+            // Let the constructor know that it was called via factory()
+            $options['called_via_factory'] = true;
+            $instance = new static($filename, $baseDir, $logger, $options);
+            $instance->initialize();
+            if ( self::$enableObjectCache ) {
+                self::$objectCache[$cacheKey] = $instance;
+            }
+            return $instance;
+        } else {
+            if ( null !== $logger ) {
+                $logger->debug(sprintf("Fetching %s object for '%s' from cache", get_called_class(), $cacheKey));
+            }
+            return self::$objectCache[$cacheKey];
+        }
+    }
+
+    /**
+     * Enable the object cache.
+     */
+
+    public static function enableObjectCache()
+    {
+        self::$enableObjectCache = true;
+    }
+
+    /**
+     * Disable the object cache and clear any cached objects.
+     */
+
+    public static function disableObjectCache()
+    {
+        self::$enableObjectCache = false;
+        self::$objectCache = array();
+    }
 
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
+     *
+     * *** Note that the constructor should not be called directly (e.g., new Configuration). Use
+     * *** the factory() method instead.
      *
      * @param string $filename Name of the JSON configuration file to parse
      * @param string $baseDir Base directory for configuration files. Overrides the base dir provided in
@@ -213,24 +346,23 @@ class Configuration extends Loggable implements \Iterator
     ) {
         parent::__construct($logger);
 
+        // The constructor is not meant to be called directly, the factory method should be used
+        // instead. We cannot set the constructor to private because it extends Loggable, which has
+        // a public constructor, so we set a flag via factory() instead.
+
+        if ( ! array_key_exists('called_via_factory', $options) || ! $options['called_via_factory'] ) {
+            $this->logAndThrowException(
+                sprintf("Cannot call %s::__construct() directly, use factory() instead", get_called_class())
+            );
+        }
+
         if ( empty($filename) ) {
-            $this->logAndThrowException("Configuration filename cannot be empty");
+            $this->logAndThrowException(sprintf("%s: Configuration filename cannot be empty", get_called_class()));
         }
 
-        // If the base directory was provided use that value and ensure the filename is
-        // fully qualified. If not provided, use the dirname of the configuration filename
-        // (which may be the current directory) and qualify the filename with the current
-        // directory so the correct, fully qualified path, shows in the logs.
-
-        if ( null === $baseDir ) {
-            // This will be used for the main config file, any sub-files should have the
-            // base explicitly dir passed to them.
-            $this->baseDir = \xd_utilities\qualify_path(dirname($filename), getcwd());
-            $this->filename = \xd_utilities\qualify_path($filename, getcwd());
-        } else {
-            $this->baseDir = $baseDir;
-            $this->filename = \xd_utilities\qualify_path($filename, $this->baseDir);
-        }
+        // The base directory and filename are expected to be qualifed in factory()
+        $this->baseDir = $baseDir;
+        $this->filename = $filename;
 
         if ( isset($options['local_config_dir']) ) {
 
@@ -242,7 +374,6 @@ class Configuration extends Loggable implements \Iterator
 
             $this->localConfigDir = $options['local_config_dir'];
         } else {
-
             // Set $localConfigDir to the default value.
             $this->localConfigDir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
         }
@@ -518,8 +649,7 @@ class Configuration extends Loggable implements \Iterator
         // the method on. This allows classes extending Configuration to create instances of
         // themselves when calling this method if they have not overriden it.
 
-        $localConfigObj = new static($localConfigFile, $this->baseDir, $this->logger, $options);
-        $localConfigObj->initialize();
+        $localConfigObj = static::factory($localConfigFile, $this->baseDir, $this->logger, $options);
 
         return $localConfigObj;
 
@@ -1111,48 +1241,6 @@ class Configuration extends Loggable implements \Iterator
     public function getFilename()
     {
         return $this->filename;
-    }
-
-    /**
-     * A factory / helper method for instantiating a Configuration object, initializing it, and
-     * returning the results of its `toAssocArray` function.
-     *
-     * @param string         $filename the base configuration file name to be processed.
-     * @param string|null    $baseDir  the directory in which $filename can be found.
-     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
-     * @param array          $options  options that will be used during construction of the Configuration object.
-     *
-     * @return array the results of the instantiated configuration objects `toAssocArray` function.
-     */
-    public static function assocArrayFactory(
-        $filename,
-        $baseDir = null,
-        Log $logger = null,
-        array $options = array()
-    ) {
-
-        return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
-    }
-
-    /**
-     * A helper function that instantiates, initializes, and returns a Configuration object.
-     *
-     * @param string         $filename the base configuration file name to be processed.
-     * @param string|null    $baseDir  the directory in which $filename can be found.
-     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
-     * @param array          $options  options that will be used during construction of the Configuration object.
-     *
-     * @return Configuration an initialized instance of Configuration.
-     */
-    public static function factory(
-        $filename,
-        $baseDir = null,
-        Log $logger = null,
-        array $options = array()
-    ) {
-        $instance = new static($filename, $baseDir, $logger, $options);
-        $instance->initialize();
-        return $instance;
     }
 
     /** -----------------------------------------------------------------------------------------
