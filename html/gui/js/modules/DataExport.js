@@ -1,64 +1,4 @@
-var requestsStore = new Ext.data.JsonStore({
-    root: 'data',
-    fields: [
-        {
-            name: 'id',
-            type: 'int'
-        },
-        {
-            name: 'realm',
-            type: 'string'
-        },
-        {
-            name: 'start_date',
-            type: 'date',
-            dateFormat: 'Y-m-d'
-        },
-        {
-            name: 'end_date',
-            type: 'date',
-            dateFormat: 'Y-m-d'
-        },
-        {
-            name: 'export_file_format',
-            type: 'string'
-        },
-        {
-            name: 'requested_datetime',
-            type: 'date',
-            dateFormat: 'Y-m-d H:i:s'
-        },
-        {
-            name: 'export_created_datetime',
-            type: 'date',
-            dateFormat: 'Y-m-d H:i:s'
-        },
-        {
-            name: 'export_expires_datetime',
-            type: 'date',
-            dateFormat: 'Y-m-d H:i:s'
-        },
-        {
-            name: 'export_expired',
-            type: 'boolean'
-        },
-        {
-            name: 'state',
-            convert: function (v, record) {
-                // TODO
-                if (record.export_expired === '1') {
-                    return 'Expired';
-                }
-
-                return 'Submitted';
-            }
-        }
-    ],
-    proxy: new Ext.data.HttpProxy({
-        method: 'GET',
-        url: 'rest/v1/warehouse/export/requests'
-    })
-});
+Ext.ns('XDMoD.Module.DataExport');
 
 /**
  * Data warehouse export module.
@@ -76,7 +16,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
     defaultPageSize: 24,
 
     initComponent: function () {
-        this.requestsStore = requestsStore;
+        this.requestsStore = new XDMoD.Module.DataExport.RequestsStore();
 
         this.on('afterrender', this.requestsStore.load, this.requestsStore);
 
@@ -315,3 +255,76 @@ XDMoD.Module.DataExport.exportStatusHelpText =
 '<b>Expired</b>: Requested data has expired and is no longer available.<br>' +
 '<b>Failed</b>: Data export failed. Submit a support request for more ' +
 'information.';
+
+/**
+ * Data warehouse export batch requests data store.
+ */
+XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
+    constructor: function (config) {
+        config = config || {};
+        Ext.apply(config, {
+            root: 'data',
+            fields: [
+                {
+                    name: 'id',
+                    type: 'int'
+                },
+                {
+                    name: 'realm',
+                    type: 'string'
+                },
+                {
+                    name: 'start_date',
+                    type: 'date',
+                    dateFormat: 'Y-m-d'
+                },
+                {
+                    name: 'end_date',
+                    type: 'date',
+                    dateFormat: 'Y-m-d'
+                },
+                {
+                    name: 'export_file_format',
+                    type: 'string'
+                },
+                {
+                    name: 'requested_datetime',
+                    type: 'date',
+                    dateFormat: 'Y-m-d H:i:s'
+                },
+                {
+                    name: 'export_created_datetime',
+                    type: 'date',
+                    dateFormat: 'Y-m-d H:i:s'
+                },
+                {
+                    name: 'export_expires_datetime',
+                    type: 'date',
+                    dateFormat: 'Y-m-d H:i:s'
+                },
+                {
+                    name: 'export_expired',
+                    type: 'boolean'
+                },
+                {
+                    name: 'state',
+                    convert: function (v, record) {
+                        // TODO
+                        return 'Available';
+                        if (record.export_expired === '1') {
+                            return 'Expired';
+                        }
+
+                        return 'Submitted';
+                    }
+                }
+            ],
+            proxy: new Ext.data.HttpProxy({
+                method: 'GET',
+                url: 'rest/v1/warehouse/export/requests'
+            })
+        });
+
+        XDMoD.Module.DataExport.RequestsStore.superclass.constructor.call(this, config);
+    }
+});
