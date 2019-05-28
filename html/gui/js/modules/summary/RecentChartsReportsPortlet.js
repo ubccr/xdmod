@@ -8,8 +8,7 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
     width: 1000,
 
     initComponent: function () {
-        var aspectRatio = 0.8;
-
+        var aspectRatio = 11 / 17;
 
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
@@ -32,8 +31,15 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
                         return Ext.util.Format.date(new Date(rec.ts * 1000).toString(), 'Y-m-d h:i:s');
                     }
                 }
-            ]
+            ],
+            sortInfo: {
+                field: 'ts',
+                direction: 'DESC'
+            }
+
         });
+        this.chartReportStore.load();
+
         var searchField = new Ext.form.TwinTriggerField({
             xtype: 'twintriggerfield',
             validationEvent: false,
@@ -69,6 +75,7 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
                 }
             }
         });
+
         this.chartReportGrid = new Ext.grid.GridPanel({
             store: this.chartReportStore,
             border: false,
@@ -116,16 +123,13 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
                 }
             })
         });
+
         this.height = this.width * aspectRatio;
         this.items = [this.chartReportGrid];
-        this.chartReportStore.reload();
-        this.chartReportStore.sort('ts', 'DESC');
         XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
     },
     listeners: {
         duration_change: function (timeframe) {
-            this.chartReportStore.reload();
-            this.chartReportStore.sort('ts', 'DESC');
             this.chartReportGrid.getView().refresh();
         }
     }
