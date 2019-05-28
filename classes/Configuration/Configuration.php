@@ -120,7 +120,7 @@ class Configuration extends Loggable implements \Iterator
 
     /**
      * The configuration constructed from the parsed file after processing any transformers and
-     * performing manipulations. Note that this is cleared if cleanup() is called.
+     * performing manipulations.
      * @var stdClass
      */
 
@@ -820,15 +820,13 @@ class Configuration extends Loggable implements \Iterator
     }
 
     /** -----------------------------------------------------------------------------------------
-     * Clean up intermediate information that we don't need to keep around after processing. This
-     * includes parsed and constructed JSON.
+     * Clean up intermediate information that we don't need to keep around after processing.
      * ------------------------------------------------------------------------------------------
      */
 
     public function cleanup()
     {
         $this->parsedConfig = null;
-        $this->transformedConfig = null;
     }  // cleanup()
 
     /** -----------------------------------------------------------------------------------------
