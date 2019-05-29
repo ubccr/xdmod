@@ -196,7 +196,11 @@ $org = \Configuration\XdmodConfiguration::assocArrayFactory(
     CONFIG_DIR
 );
 define('ORGANIZATION_NAME', $org['name']);
-define('ORGANIZATION_NAME_ABBREV', $org['abbrev']);
+$org_abbrev = $org['abbrev'];
+if (empty($org_abbrev)) {
+    $org_abbrev = ORGANIZATION_NAME;
+};
+define('ORGANIZATION_NAME_ABBREV', $org_abbrev);
 
 $hierarchy = \Configuration\XdmodConfiguration::assocArrayFactory(
     'hierarchy.json',
