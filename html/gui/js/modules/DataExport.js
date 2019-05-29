@@ -192,6 +192,7 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
     },
 
     validateStartDate: function (date) {
+        var startDate;
         try {
             startDate = this.parseDate(date);
         } catch (e) {
@@ -216,6 +217,7 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
     },
 
     validateEndDate: function (date) {
+        var endDate;
         try {
             endDate = this.parseDate(date);
         } catch (e) {
@@ -444,11 +446,7 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                         }
 
                         if (record.export_created_datetime !== '') {
-                            if (Date.now() < Date.parseDate(record.export_expires_datetime, 'Y-m-d H:i:s')) {
-                                return 'Available';
-                            } else {
-                                return 'Expired';
-                            }
+                            return 'Available';
                         }
 
                         return 'Submitted';
