@@ -39,7 +39,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testJsonParseError()
     {
-        $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/parse_error.json');
+        Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/parse_error.json');
     }
 
     /**
@@ -102,7 +102,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testBadFragment()
     {
-        $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
+        Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
     }
 
     /**
@@ -201,9 +201,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testCallConfigurationConstructor()
     {
-        $configObj = new Configuration(
+        new Configuration(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json'
         );
     }
-
 } // class ConfigurationTest

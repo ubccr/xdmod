@@ -247,6 +247,8 @@ class Configuration extends Loggable implements \Iterator
             throw new Exception($msg);
         }
 
+        $startTime = microtime(true);
+
         // We need the fully qualified path for the object cache key because there could be two
         // files with the same base name in different directories.
         //
@@ -274,11 +276,12 @@ class Configuration extends Loggable implements \Iterator
         $skipCacheCheck = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
 
         if ( self::$enableObjectCache && ! $skipCacheCheck ) {
-            // The cache key must take into account the full filename as well as any options
-            // provided as this may affect the generated object. We use serialize() instead of
-            // json_encode() because the latter only takes into account public member variables and
-            // we have more complex objects that can be passed as options such as VariableStore.
-            $cacheKey = md5($filename . '|' . serialize($options));
+            // The cache key must take into account the full filename, the class that was actually
+            // instantiated, as well as any options provided as this may affect the generated
+            // object. We use serialize() instead of json_encode() because the latter only takes
+            // into account public member variables and we have more complex objects that can be
+            // passed as options such as VariableStore.
+            $cacheKey = md5($filename . '|' . get_called_class() . '|' . serialize($options));
             $inCache = array_key_exists($cacheKey, self::$objectCache);
         }
 
@@ -287,13 +290,32 @@ class Configuration extends Loggable implements \Iterator
             $options['called_via_factory'] = true;
             $instance = new static($filename, $baseDir, $logger, $options);
             $instance->initialize();
+            if ( null !== $logger ) {
+                $logger->trace(
+                    sprintf(
+                        "Created %s%s (%s) in %fs",
+                        ($skipCacheCheck ? "local " : ""),
+                        get_called_class(),
+                        $filename,
+                        microtime(true) - $startTime
+                    )
+                );
+            }
             if ( self::$enableObjectCache ) {
                 self::$objectCache[$cacheKey] = $instance;
             }
             return $instance;
         } else {
             if ( null !== $logger ) {
-                $logger->debug(sprintf("Fetching %s object for '%s' from cache", get_called_class(), $cacheKey));
+                $logger->trace(
+                    sprintf(
+                        "Fetching object %s (%s) from cache with key %s in %fs",
+                        get_called_class(),
+                        $filename,
+                        $cacheKey,
+                        microtime(true) - $startTime
+                    )
+                );
             }
             return self::$objectCache[$cacheKey];
         }
