@@ -3,21 +3,11 @@
  *
  * Class governing database access by Data Warehouse Export batch script
  *
- * TODO: Notes and choices: evaluate these:
- *  Perhaps no: make this class a singleton--does it make sense?
- *      or do I need to have multiple instances--and who instantiates them?
- *      say I'm using it for a rest endpoint--what I do need to know?
- *  For database access and to issue queries:
- *      use CCR\DB namespace, which contains PDODB class that we want.
- *  deciding against e.g. making the state transitions reflected by classes. Too much.
- *  think about and safe access...
- *      do I need to do more to secure vars coming in
- *  determine current testing practices and write tests to them
- *      these need to be component tests
- *
  *  TODO, possibly: return list of ids for records that need to be marked 'export_expired'
  *
  *  timestamp and current datetime: always use the database's value
+ *
+ * ------------------------------------------------------------------------------------------
  *
  *  Recognized states enforced in this class:
  *
@@ -29,6 +19,8 @@
  *  Failed      FALSE               NULL                        FALSE
  *  (Deleted)       not   present    in    database   or    filesystem
  *
+ * ------------------------------------------------------------------------------------------
+ *
  *  State transitions enforced in this class:
  *
  *    Submitted -> Available -> Expired
@@ -37,6 +29,7 @@
  *    Failed
  *
  *    ...any state can transition to Deleted.
+ *
  *  ==========================================================================================
  */
 
@@ -47,7 +40,8 @@ use CCR\DB;
 
 class QueryHandler
 {
-    private $pdo; // populated in the constructor
+    // database handle, populated in the constructor
+    private $pdo;
 
     // Definition of Submitted state:
     private $whereSubmitted = "WHERE export_succeeded is NULL and export_created_datetime is NULL and export_expired = FALSE ";
@@ -59,9 +53,9 @@ class QueryHandler
         $this->pdo = DB::factory('database');
     }
 
-    /* transition between request record states */
+    /* ******** Transition between request record states ******** */
 
-    // Create request record for specified export request
+    // Create request record for specified export request.
     // Result is a single request in Submitted state.
     public function createRequestRecord($userId, $realm, $startDate, $endDate, $format)
     {
@@ -79,7 +73,6 @@ class QueryHandler
 
         // return the id for the inserted record
         $id = $this->pdo->insert($sql, $params);
-
         return($id);
     }
 
@@ -93,14 +86,12 @@ class QueryHandler
 
         $params = array('id' => $id);
 
-        // Return count of affected rows--should be 1.
+        // Return count of affected rows--should be 1 if successful.
         $result = $this->pdo->execute($sql, $params);
-
-        //return(count($result)==1);
         return($result);
     }
 
-    // transition specified export request from Submitted state to Available state.
+    // Transition specified export request from Submitted state to Available state.
     // All time is current time as relative to database.
     public function submittedToAvailable($id)
     {
@@ -116,10 +107,9 @@ class QueryHandler
         $params = array('expires_in_days' => $expires_in_days,
                         'id' => $id);
 
-        // Return count of affected rows--should be 1.
+        // Return count of affected rows--should be 1 if successful.
         $result = $this->pdo->execute($sql, $params);
-
-        return(count($result)==1);
+        return($result);
     }
 
     // Transition specified export request from Available state to Expired state.
@@ -133,15 +123,14 @@ class QueryHandler
 
         $params = array('id' => $id);
 
-        // Return count of affected rows--should be 1.
+        // Return count of affected rows--should be 1 if successful.
         $result = $this->pdo->execute($sql, $params);
-
-        return(count($result)==1);
+        return($result);
     }
 
-    /* list request records states */
+    /* ******** List request records and states ******** */
 
-    // Return count of export requests presently in Submitted state.
+    // Return count of all export requests presently in Submitted state.
     public function countSubmittedRecords()
     {
         $sql = "SELECT COUNT(id) FROM batch_export_requests " . $this->whereSubmitted;
@@ -164,11 +153,10 @@ class QueryHandler
 
         // Return query results.
         $result = $this->pdo->query($sql);
-
         return($result);
     }
 
-    // Return details of all export requests made by specified user.
+    // Return details of export requests made by specified user.
     public function listRequestsForUser($user_id)
     {
         $sql = "SELECT id,
@@ -189,16 +177,14 @@ class QueryHandler
 
         // Return query results.
         $result = $this->pdo->query($sql, $params);
-
-        return $result;
+        return($result);
     }
 
-    // Return details (including state) of all export requests made by specified user.
+    // Return details (including state) of export requests made by specified user.
     public function listUserRequestsByState($user_id)
     {
         $attributes = "SELECT id, realm, start_date, end_date, export_succeeded, export_expired, export_expires_datetime, export_created_datetime, export_file_format, requested_datetime, ";
         $fromTable = "FROM batch_export_requests ";
-        //$whereSubmitted = "WHERE export_succeeded is NULL and export_created_datetime is NULL and export_expired = FALSE ";
         $whereAvailable = "WHERE export_succeeded = TRUE and export_created_datetime is NOT NULL and export_expired = FALSE ";
         $whereExpired = "WHERE export_succeeded = TRUE and export_created_datetime is NOT NULL and export_expired = TRUE ";
         $whereFailed = "WHERE export_succeeded = FALSE and export_created_datetime is NULL and export_expired = FALSE ";
@@ -213,11 +199,13 @@ class QueryHandler
 
         // Return query results.
         $result = $this->pdo->query($sql, $params);
-        return $result;
+        return($result);
     }
 
-    // Delete specified record, regardless of its state.
-    // Only the user who submittedthe request may delete it.
+    /* ******** Delete single user-submitted request record ******** */
+
+    // Delete specified record from the database, regardless of its state.
+    // Only the user who submitted the request may delete it.
     public function deleteRequest($id, $user)
     {
         // delete record, providing that requesting user owns specified record
