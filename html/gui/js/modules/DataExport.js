@@ -163,7 +163,7 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                     disabled: true,
                     scope: this,
                     handler: function () {
-                        this.getForm().submit()
+                        this.getForm().submit();
                     }
                 }
             ]
@@ -173,29 +173,32 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
 
         this.getForm().on('actionfailed', function (form, action) {
             if (action.failureType === Ext.form.Action.CLIENT_INVALID) {
-                Ext.Msg.alert('Error', 'Validation failed, please check input values.');
+                // It shouldn't be possible to submit and invalid form, but it
+                // does happen display an error message.
+                Ext.Msg.alert('Error', 'Validation failed, please check input values and resubmit.');
             } else if (action.failureType === Ext.form.Action.CONNECT_FAILURE || action.failureType === Ext.form.Action.SERVER_INVALID) {
                 var response = action.response;
                 Ext.Msg.alert(
                     response.statusText || 'Error',
                     JSON.parse(response.responseText).message || 'Unknown Error'
                 );
-            } else if (action.failureType === '') {
+            } else if (action.failureType === Ext.form.Action.LOAD_FAILURE) {
+                // This error occurs when the server doesn't return anything.
+                Ext.Msg.alert('Submission Error', 'Failed to submit request, try again later.');
             } else {
+                Ext.Msg.alert('Unknown Error', 'An unknown error occured, try again later.');
             }
         });
-
-        //this.on('clientvalidation', this.validateForm, this);
     },
 
-    validateStartDate: function (startDate) {
+    validateStartDate: function (date) {
         try {
-		    startDate = this.parseDate(startDate);
+            startDate = this.parseDate(date);
         } catch (e) {
             return e.message;
         }
 
-        var endDate = this.getForm().getFieldValues()['end_date'];
+        var endDate = this.getForm().getFieldValues().end_date;
 
         if (endDate === '') {
             return true;
@@ -212,14 +215,14 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
         return true;
     },
 
-    validateEndDate: function (endDate) {
+    validateEndDate: function (date) {
         try {
-            endDate = this.parseDate(endDate);
+            endDate = this.parseDate(date);
         } catch (e) {
             return e.message;
         }
 
-        var startDate = this.getForm().getFieldValues()['start_date'];
+        var startDate = this.getForm().getFieldValues().start_date;
 
         if (startDate === '') {
             return true;
@@ -241,12 +244,12 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
             return date;
         }
 
-		var format = 'Y-m-d';
-		var parsedDate = Date.parseDate(date, format);
+        var format = 'Y-m-d';
+        var parsedDate = Date.parseDate(date, format);
 
         if (parsedDate === undefined) {
             throw new Error(date + ' is not a valid date - it must be in the format ' + format);
-		}
+        }
 
         return parsedDate;
     }
@@ -384,8 +387,8 @@ XDMoD.Module.DataExport.exportStatusHelpText =
  * Data warehouse export batch requests data store.
  */
 XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
-    constructor: function (config) {
-        config = config || {};
+    constructor: function (c) {
+        var config = c || {};
         Ext.apply(config, {
             url: 'rest/v1/warehouse/export/requests',
             root: 'data',
@@ -434,10 +437,18 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                 {
                     name: 'state',
                     convert: function (v, record) {
-                        // TODO
-                        return 'Available';
+                        // TODO: Replace this with data from the server.
+
                         if (record.export_expired === '1') {
                             return 'Expired';
+                        }
+
+                        if (record.export_created_datetime !== '') {
+                            if (Date.now() < Date.parseDate(record.export_expires_datetime, 'Y-m-d H:i:s')) {
+                                return 'Available';
+                            } else {
+                                return 'Expired';
+                            }
                         }
 
                         return 'Submitted';
