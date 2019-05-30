@@ -96,7 +96,7 @@ class QueryHandler
     public function submittedToAvailable($id)
     {
         // read export retention duration from config file. Value is stored in days.
-        $expires_in_days = \xd_utilities\getConfiguration('data_warehouse_export','retention_duration');
+        $expires_in_days = \xd_utilities\getConfiguration('data_warehouse_export','retention_duration_days');
 
         $sql = "UPDATE batch_export_requests
                 SET export_created_datetime=CAST(NOW() as DATETIME),
