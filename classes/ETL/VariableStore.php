@@ -260,9 +260,9 @@ class VariableStore extends Loggable
             return $string;
         }
 
-        // Return if there are no variables found in the string (this is likely).
+        // Return if there is no possibility that there is a variable in the string (this is likely).
 
-        if ( false === preg_match($this->variableRegex, $string) ) {
+        if ( false === strpos($string, '${') ) {
             return $string;
         }
 
