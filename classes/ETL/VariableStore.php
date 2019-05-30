@@ -78,6 +78,15 @@ class VariableStore extends Loggable
     }
 
     /**
+     * @return int The number of variables in the store.
+     */
+
+    public function count()
+    {
+        return count($this->variables);
+    }
+
+    /**
      * Set a variable in the store.  If a variable should be overwritten use overwrite() instead.
      * Setting a variable to a NULL value will unset the variable.  If the variable is already set,
      * do not overwrite and issue a warning. This is done so that variables set early in a process

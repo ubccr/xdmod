@@ -821,6 +821,10 @@ class Configuration extends Loggable implements \Iterator
 
     protected function substituteVariables($entity)
     {
+        if ( 0 == $this->variableStore->count() ) {
+            return $entity;
+        }
+
         if ( is_string($entity) ) {
             return $this->variableStore->substitute($entity);
         } elseif ( is_array($entity) || $entity instanceof \stdClass || $entity instanceof \Traversable ) {
