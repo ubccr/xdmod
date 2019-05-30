@@ -96,7 +96,7 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                     items: [
                         {
                             xtype: 'combo',
-                            name: 'realm',
+                            hiddenName: 'realm',
                             fieldLabel: 'Realm',
                             emptyText: 'Select a realm',
                             valueField: 'id',
@@ -109,9 +109,12 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                                 xtype: 'jsonstore',
                                 autoLoad: true,
                                 autoDestroy: true,
+                                url: 'rest/v1/warehouse/export/realms',
                                 root: 'data',
-                                fields: ['id', 'name'],
-                                url: 'rest/v1/warehouse/export/realms'
+                                fields: [
+                                    {name: 'id', type: 'string'},
+                                    {name: 'name', type: 'string'}
+                                ]
                             }
                         },
                         {
@@ -137,20 +140,11 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             name: 'format',
                             fieldLabel: 'Format',
                             emptyText: 'Select an export format',
-                            valueField: 'id',
-                            displayField: 'name',
                             allowBlank: false,
                             editable: false,
                             triggerAction: 'all',
                             mode: 'local',
-                            store: {
-                                xtype: 'arraystore',
-                                fields: ['id', 'name'],
-                                data: [
-                                    ['csv', 'CSV'],
-                                    ['json', 'JSON']
-                                ]
-                            }
+                            store: ['CSV', 'JSON']
                         }
                     ]
                 }
@@ -435,7 +429,7 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                             return 'Expired';
                         }
 
-                        if (record.export_created_datetime !== '') {
+                        if (record.export_created_datetime !== null) {
                             return 'Available';
                         }
 
