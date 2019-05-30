@@ -2606,48 +2606,4 @@ SQL;
     {
         return $this->sticky;
     }
-
-    /**
-     * Retrieves the resources that this user has access to.
-     *
-     * @param array $resourceNames [optional|default array()] an array of resourcefact.code values
-     *                             that should optionally further constrain the resources returned.
-     * @return integer[] an array of the resourcefact.id values
-     *
-     * @throws Exception if there is a problem connecting to / querying the database.
-     */
-    public function getResources($resourceNames = array())
-    {
-        $db = DB::factory('database');
-
-        $query = <<<SQL
-        SELECT rf.id
-        FROM modw.resourcefact rf
-        WHERE   rf.organization_id =  :organization_id
-
-SQL;
-        $params = array(':organization_id' => $this->getOrganizationID());
-
-        // If we have resource names then update the query / params accordingly
-        if (count($resourceNames) > 0) {
-            $query .= "AND rf.code IN (:organization_codes)";
-
-            $handle = $db->handle();
-            $resourceNames = array_map(
-                function ($value) use ($handle) {
-                    return $handle->quote($value);
-                },
-                $resourceNames
-            );
-            $params[':organization_codes'] = implode(
-                ',',
-                $resourceNames
-            );
-        } // if (count($resourceNames) > 0) {
-
-        $stmt = $db->prepare($query);
-        $stmt->execute($params);
-
-        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-    } // public function getResources($resourceNames = array())
 }//XDUser
