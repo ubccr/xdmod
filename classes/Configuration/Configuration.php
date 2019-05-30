@@ -280,8 +280,9 @@ class Configuration extends Loggable implements \Iterator
             // instantiated, as well as any options provided as this may affect the generated
             // object. We use serialize() instead of json_encode() because the latter only takes
             // into account public member variables and we have more complex objects that can be
-            // passed as options such as VariableStore.
-            $cacheKey = md5($filename . '|' . get_called_class() . '|' . serialize($options));
+            // passed as options such as VariableStore. The filename and called class are maintained
+            // in clear text for debugging purposes.
+            $cacheKey = $filename . '|' . get_called_class() . '|' . md5(serialize($options));
             $inCache = array_key_exists($cacheKey, self::$objectCache);
         }
 
