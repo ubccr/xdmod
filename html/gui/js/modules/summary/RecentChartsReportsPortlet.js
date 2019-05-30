@@ -14,10 +14,10 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
             // store configs
             autoDestroy: true,
             url: XDMoD.REST.url + '/summary/recentchartsreports',
-            storeId: 'chartReportStore',
             // reader configs
             root: 'data',
             idProperty: 'name',
+            autoLoad: true,
             fields: [
                 'name',
                 'report_id',
@@ -38,7 +38,6 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
             }
 
         });
-        this.chartReportStore.load();
 
         var searchField = new Ext.form.TwinTriggerField({
             xtype: 'twintriggerfield',
