@@ -6,6 +6,7 @@ use DataWarehouse\Export\QueryHandler;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
@@ -79,22 +80,52 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function createRequest(Request $request, Application $app)
     {
         $user = $this->authorize($request);
+        $realm = $this->getStringParam($request, 'realm', true);
 
-        // TODO: Validate input.
-        $realm = $this->getStringParam($request, 'realm');
-        $startDate = $this->getStringParam($request, 'start_date');
-        $endDate = $this->getStringParam($request, 'end_date');
-        $format = $this->getStringParam($request, 'format');
+        // TODO: Validate realm from user ACLs.
+        if (!in_array(
+            $realm,
+            [
+                'jobs',
+                'supremm',
+                'accounts',
+                'allocations',
+                'requests',
+                'resource_allocations'
+            ]
+        )) {
+            throw new BadRequestHttpException('Invalid realm');
+        }
+
+        $startDate = $this->getDateFromISO8601Param($request, 'start_date', true);
+        $endDate = $this->getDateFromISO8601Param($request, 'end_date', true);
+
+        $interval = $startDate->diff($endDate);
+
+        if ($interval === false) {
+            throw new BadRequestHttpException('Failed to calculate date interval');
+        }
+
+        if ($interval->invert === 1) {
+            throw new BadRequestHttpException('Start date must be before end date');
+        }
+
+        $format = strtoupper($this->getStringParam($request, 'format', true));
+
+        if (!in_array($format, ['CSV', 'JSON'])) {
+            throw new BadRequestHttpException('format must be CSV or JSON');
+        }
 
         $handler = new QueryHandler();
 
-        $handler->createRequestRecord(
+        $id = $handler->createRequestRecord(
             $user->getUserId(),
             $realm,
-            $startDate,
-            $endDate
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d'),
+            $format
         );
 
-        return $app->json(['success' => true]);
+        return $app->json(['success' => true, 'data' => ['id' => $id]]);
     }
 }
