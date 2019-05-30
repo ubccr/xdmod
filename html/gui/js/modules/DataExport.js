@@ -262,9 +262,6 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
  */
 XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
     initComponent: function () {
-        this.store.on('beforeload', this.showLoadingMask, this);
-        this.store.on('load', this.hideLoadingMask, this);
-
         Ext.apply(this, {
             loadMask: true,
             tools: [
@@ -356,13 +353,6 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
         });
 
         XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
-    },
-
-    showLoadingMask: function () {
-
-    },
-
-    hideLoadingMask: function () {
     },
 
     reload: function () {
