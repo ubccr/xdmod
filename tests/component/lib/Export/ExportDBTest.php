@@ -7,17 +7,16 @@ use \Exception;
 use \DataWarehouse\Export\QueryHandler;
 use \XDUser;
 
-
 // Test access to batch_export_requests table, via QueryHandler class.
 class ExportDBTest extends BaseTest
 {
-    static $dbh = null;
+    private static $dbh = null;
 
     // Used for: Clean up table to initial state following testing.
-    static $maxId = null;
+    private static $maxId = null;
 
-    // $debug variable, if TRUE, enables print of output from public functions,
-    private static $debug = FALSE;
+    // $debug variable, if true, enables print of output from public functions,
+    private static $debug = false;
 
     /* *********** PRIVATE HELPER METHODS *********** */
 
@@ -30,12 +29,12 @@ class ExportDBTest extends BaseTest
     private function findSubmittedRecord()
     {
         // Find or create a record in Submitted status
-        $maxSubmitted = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where export_succeeded IS NULL')[0]['id'];
+        $maxSubmitted = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE export_succeeded IS NULL')[0]['id'];
 
-        if ($maxSubmitted == NULL) {
+        if ($maxSubmitted == null) {
             $query = new QueryHandler();
             $userId = $this->acquireUserId();
-            $maxSubmitted = $query->createRequestRecord($userId, 'Jobs', '2017-01-01','2017-08-01','CSV');
+            $maxSubmitted = $query->createRequestRecord($userId, 'Jobs', '2017-01-01', '2017-08-01','CSV');
         }
         return($maxSubmitted);
     }
@@ -43,10 +42,10 @@ class ExportDBTest extends BaseTest
     private function findAvailableRecord()
     {
         // Find or create a record in Available status
-        $maxAvailable = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where
+        $maxAvailable = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE
                                             export_succeeded IS TRUE
                                             AND export_expired IS FALSE')[0]['id'];
-        if ($maxAvailable == NULL) {
+        if ($maxAvailable == null) {
             $query = new QueryHandler();
             $maxSubmitted = $this->findSubmittedRecord();
             $maxAvailable = $query->submittedToAvailable($maxSubmitted);
@@ -57,9 +56,9 @@ class ExportDBTest extends BaseTest
     private function findExpiredRecord()
     {
         // Find or create a record in Expired status
-        $maxExpired = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where
+        $maxExpired = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE
                                             export_expired IS TRUE')[0]['id'];
-        if ($maxExpired == NULL) {
+        if ($maxExpired == null) {
             $query = new QueryHandler();
             $maxAvailable = $this->findAvailableRecord();
             $maxExpired = $query->availableToExpired($maxAvailable);
@@ -70,9 +69,9 @@ class ExportDBTest extends BaseTest
     private function findFailedRecord()
     {
         // Find or create a record in Failed status
-        $maxFailed = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests where
+        $maxFailed = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE
                                             export_succeeded IS FALSE')[0]['id'];
-        if ($maxFailed == NULL) {
+        if ($maxFailed == null) {
             $query = new QueryHandler();
             $maxSubmitted = $this->findSubmittedRecord();
             $maxFailed = $query->submittedToFailed($maxSubmitted);
@@ -82,7 +81,7 @@ class ExportDBTest extends BaseTest
 
     private function flattenRecords($inArr)
     {
-        $ids = Array();
+        $ids = array();
         foreach($inArr as $arr)
         {
             $ids[] = $arr['id'];
@@ -93,7 +92,7 @@ class ExportDBTest extends BaseTest
     private function listSubmittedRecords()
     {
         // List ids of records in Submitted state
-        $submittedArr = static::$dbh->query('SELECT id FROM batch_export_requests where export_succeeded IS NULL');
+        $submittedArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS NULL');
         $retval = $this->flattenRecords($submittedArr);
         return($retval);
     }
@@ -101,7 +100,7 @@ class ExportDBTest extends BaseTest
     private function listAvailableRecords()
     {
         // List ids of records in Available state
-        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests where export_succeeded IS TRUE and export_expired IS FALSE');
+        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS TRUE and export_expired IS FALSE');
         $retval = $this->flattenRecords($availableArr);
         return($retval);
     }
@@ -109,7 +108,7 @@ class ExportDBTest extends BaseTest
     private function listExpiredRecords()
     {
         // List ids of records in Expired state
-        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests where export_succeeded IS TRUE and export_expired IS TRUE');
+        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS TRUE and export_expired IS TRUE');
         $retval = $this->flattenRecords($availableArr);
         return($retval);
     }
@@ -117,7 +116,7 @@ class ExportDBTest extends BaseTest
     private function listFailedRecords()
     {
         // List ids of records in Failed state
-        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests where export_succeeded IS FALSE and export_expired IS FALSE');
+        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS FALSE and export_expired IS FALSE');
         $retval = $this->flattenRecords($availableArr);
         return($retval);
     }
@@ -136,10 +135,13 @@ class ExportDBTest extends BaseTest
         $this->assertTrue($submittedCount>=0);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": submittedRecords=$submittedCount\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": submittedRecords=$submittedCount\n");
+        }
     }
 
-    // Create two new records to enable testing of transition to Available, and transition to Expired:
+    // Create two new records in Submitted state.
     public function testNewRecordCreation()
     {
         $query = new QueryHandler();
@@ -149,11 +151,11 @@ class ExportDBTest extends BaseTest
         $initialCount = $query->countSubmittedRecords();
 
         // Add new record and verify
-        $requestId = $query->createRequestRecord($userId, 'Jobs', '2019-01-01','2019-03-01','CSV');
+        $requestId = $query->createRequestRecord($userId, 'Jobs', '2019-01-01', '2019-03-01','CSV');
         $this->assertNotNull($requestId);
 
         // Add another new record and verify
-        $requestId2 = $query->createRequestRecord($userId, 'Accounts', '2016-12-01','2017-01-01','JSON');
+        $requestId2 = $query->createRequestRecord($userId, 'Accounts', '2016-12-01', '2017-01-01','JSON');
         $this->assertNotNull($requestId2 );
 
         // Determine final count
@@ -168,7 +170,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($requestId, $allSubmitted);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": initialCount=$initialCount finalCount=$finalCount requestId=$requestId requestId2=$requestId2\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": initialCount=$initialCount finalCount=$finalCount requestId=$requestId requestId2=$requestId2\n");
+        }
     }
 
     public function testSubmittedToFailed()
@@ -190,7 +195,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxSubmitted, $allFailed);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxSubmitted\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxSubmitted\n");
+        }
     }
 
     public function testSubmittedToAvailable()
@@ -211,7 +219,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxSubmitted, $allAvailable);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": transitioned Id=$maxSubmitted\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": transitioned Id=$maxSubmitted\n");
+        }
     }
 
     public function testSubmittedToExpired()
@@ -232,9 +243,11 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxSubmitted, $allSubmitted);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxSubmitted\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxSubmitted\n");
+        }
     }
-
 
     public function testAvailableToExpired()
     {
@@ -254,7 +267,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxAvailable, $allExpired);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": transitioned Id=$maxAvailable\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": transitioned Id=$maxAvailable\n");
+        }
     }
 
     public function testAvailableToFailed()
@@ -276,7 +292,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxAvailable, $allAvailable);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxAvailable\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxAvailable\n");
+        }
     }
 
     public function testExpiredToFailed()
@@ -298,7 +317,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxExpired, $allExpired);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxExpired\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxExpired\n");
+        }
     }
 
     public function testFailedToExpired()
@@ -319,7 +341,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxFailed, $allFailed);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxFailed\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxFailed\n");
+        }
     }
 
     public function testExpiredToAvailable()
@@ -340,7 +365,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxExpired, $allExpired);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxExpired\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxExpired\n");
+        }
     }
 
     public function testFailedToAvailable()
@@ -361,7 +389,10 @@ class ExportDBTest extends BaseTest
         $this->assertContains($maxFailed, $allFailed);
 
         // debug
-        if (self::$debug) print("\n".__FUNCTION__.": NON transitioned Id=$maxFailed\n");
+        if (self::$debug)
+        {
+            print("\n".__FUNCTION__.": NON transitioned Id=$maxFailed\n");
+        }
     }
 
     // Verify field list returned from listSubmittedRecords()
@@ -465,7 +496,11 @@ class ExportDBTest extends BaseTest
 
             // assert that the delete affected 1 row
             $this->assertEquals($testVal, 1);
-            if (self::$debug) print("\n".__FUNCTION__.": deleted record? $testVal\n");
+
+            if (self::$debug)
+            {
+                print("\n".__FUNCTION__.": deleted record? $testVal\n");
+            }
         }
     }
 
@@ -479,7 +514,7 @@ class ExportDBTest extends BaseTest
         // Requests via user with $userId have been created as part of these tests
         $actual = $query->listRequestsForUser($userId);
 
-        // Provided that different users created and try to delete:
+        // Provided that we have specified two different users here:
         if (count($actual) > 0 && $userId != $wrongUserId) {
 
             // pick the first such request and try to delete it:
@@ -487,23 +522,27 @@ class ExportDBTest extends BaseTest
 
             // assert that the delete attempt affected 0 rows
             $this->assertEquals($testVal, 0);
-            if (self::$debug) print("\n".__FUNCTION__.": deleted record? $testVal\n");
+
+            if (self::$debug)
+            {
+                print("\n".__FUNCTION__.": deleted record? $testVal\n");
+            }
         }
     }
 
-    // determine initial max id to enable cleanup after testing
     public static function setUpBeforeClass()
     {
-        // setup needed to use PUBLIC_USER_NAME or the like
+        // setup needed to use NORMAL_USER_USER_NAME or the like
         parent::setUpBeforeClass();
+
+        // determine initial max id to enable cleanup after testing
         static::$dbh = DB::factory('database');
         static::$maxId = static::$dbh->query('SELECT COALESCE(MAX(id), 0) AS id FROM batch_export_requests')[0]['id'];
     }
 
-    // Reset the batch_export_requests database table to where it started
     public static function tearDownAfterClass()
     {
+        // Reset the batch_export_requests database table to its initial contents
         static::$dbh->execute('DELETE FROM batch_export_requests WHERE id > :id', array('id' => static::$maxId));
     }
-
 }
