@@ -260,6 +260,12 @@ class VariableStore extends Loggable
             return $string;
         }
 
+        // Return if there are no variables found in the string (this is likely).
+
+        if ( false === preg_match($this->variableRegex, $string) ) {
+            return $string;
+        }
+
         $exceptionForUnusedVariables = (null !== $this->logger && null != $exceptionPrefix);
         $trackDetails = ( null !== $substitutionDetails );
 
