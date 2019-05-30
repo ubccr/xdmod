@@ -254,9 +254,9 @@ class VariableStore extends Loggable
         array &$substitutionDetails = null
     ) {
 
-        // Can't do anything with NULL or ""
+        // Can't do anything with NULL, "", or non-strings.
 
-        if ( empty($string) ) {
+        if ( ! is_string($string) || empty($string) ) {
             return $string;
         }
 
