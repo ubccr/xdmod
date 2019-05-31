@@ -273,7 +273,23 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 {
                     header: 'State',
-                    dataIndex: 'state'
+                    dataIndex: 'state',
+                    renderer: function (value, metaData) {
+                        switch (value) {
+                            case 'Available':
+                                metaData.attr = 'style="background-color:#040"';
+                                break;
+                            case 'Expired':
+                            case 'Failed':
+                                metaData.attr = 'style="background-color:#f00"';
+                                break;
+                            case 'Submitted':
+                                metaData.attr = 'style="background-color:yellow"';
+                                break;
+                            default:
+                        }
+                        return value;
+                    }
                 },
                 {
                     header: 'Realm',
@@ -303,16 +319,39 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 {
                     header: 'Actions',
-                    xtype: 'templatecolumn',
-                    tpl: new Ext.XTemplate(
-                        '<img title="Delete" src="gui/images/delete.png" onclick="alert(\'TODO: Delete {id}\')"/>',
-                        '<tpl if="state == \'Available\'">',
-                        '    <img title="Download" src="gui/images/disk.png" onclick="alert(\'TODO: Download {id}\');"/>',
-                        '</tpl>',
-                        '<tpl if="state == \'Expired\' || state == \'Failed\'">',
-                        '     <img title="Resubmit" src="gui/images/arrow_redo.png" onclick="alert(\'TODO: Resubmit {id}\');"/>',
-                        '</tpl>'
-                    )
+                    xtype: 'actioncolumn',
+                    dataIndex: 'state',
+                    scope: this,
+                    items: [
+                        {
+                            icon: 'gui/images/report_generator/delete_report.png',
+                            tooltip: 'Delete Request',
+                            iconCls: 'data-export-action-icon',
+                            handler: function (grid, rowIndex) {
+                                this.deleteRequest(grid.store.getAt(rowIndex));
+                            }
+                        },
+                        {
+                            icon: 'gui/images/report_generator/download_report.png',
+                            tooltip: 'Download Exported Data',
+                            getClass: function (state, metaData) {
+                                return 'data-export-action-icon' + (state !== 'Available' ? '-hidden': '');
+                            },
+                            handler: function (grid, rowIndex) {
+                                this.downloadRequest(grid.store.getAt(rowIndex));
+                            }
+                        },
+                        {
+                            icon: 'gui/images/arrow_redo.png',
+                            tooltip: 'Resumbit Request',
+                            getClass: function (state, metaData) {
+                                return 'data-export-action-icon' + (state !== 'Expired' && state !== 'Failed' ? '-hidden': '');
+                            },
+                            handler: function (grid, rowIndex) {
+                                this.resubmitRequest(grid.store.getAt(rowIndex));
+                            }
+                        }
+                    ]
                 }
             ],
             bbar: [
@@ -351,6 +390,30 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
 
     reload: function () {
         this.store.reload();
+    },
+
+    deleteRequest: function (record) {
+        Ext.Msg.confirm(
+            'Delete Request',
+            'Are you sure that you want to delete this request? You cannot undo this operation.',
+            function (selection) {
+                if (selection === 'yes') {
+                    console.log({ 'delete': record });
+                    Ext.Msg.alert('TODO', 'TODO: Delete the request');
+                }
+            },
+            this
+        );
+    },
+
+    downloadRequest: function (record) {
+        // TODO
+        console.log({ download: record });
+    },
+
+    resubmitRequest: function (record) {
+        // TODO
+        console.log({ resubmit: record });
     }
 });
 
