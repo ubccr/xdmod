@@ -166,21 +166,24 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
         XDMoD.Module.DataExport.RequestForm.superclass.initComponent.call(this);
 
         this.getForm().on('actionfailed', function (form, action) {
-            if (action.failureType === Ext.form.Action.CLIENT_INVALID) {
-                // It shouldn't be possible to submit and invalid form, but it
-                // does happen display an error message.
-                Ext.Msg.alert('Error', 'Validation failed, please check input values and resubmit.');
-            } else if (action.failureType === Ext.form.Action.CONNECT_FAILURE || action.failureType === Ext.form.Action.SERVER_INVALID) {
-                var response = action.response;
-                Ext.Msg.alert(
-                    response.statusText || 'Error',
-                    JSON.parse(response.responseText).message || 'Unknown Error'
-                );
-            } else if (action.failureType === Ext.form.Action.LOAD_FAILURE) {
-                // This error occurs when the server doesn't return anything.
-                Ext.Msg.alert('Submission Error', 'Failed to submit request, try again later.');
-            } else {
-                Ext.Msg.alert('Unknown Error', 'An unknown error occured, try again later.');
+            switch (action.failureType) {
+                case Ext.form.Action.CLIENT_INVALID:
+                    // It shouldn't be possible to submit and invalid form, but it
+                    // does happen display an error message.
+                    Ext.Msg.alert('Error', 'Validation failed, please check input values and resubmit.');
+                    break;
+                case Ext.form.Action.CONNECT_FAILURE:
+                case Ext.form.Action.SERVER_INVALID:
+                    var response = action.response;
+                    Ext.Msg.alert(
+                        response.statusText || 'Error',
+                        JSON.parse(response.responseText).message || 'Unknown Error'
+                    );
+                case Ext.form.Action.LOAD_FAILURE:
+                    // This error occurs when the server doesn't return anything.
+                    Ext.Msg.alert('Submission Error', 'Failed to submit request, try again later.');
+                default:
+                    Ext.Msg.alert('Unknown Error', 'An unknown error occured, try again later.');
             }
         });
     },
@@ -359,19 +362,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     xtype: 'button',
                     text: 'Delete all expired requests',
                     scope: this,
-                    handler: function () {
-                        Ext.Msg.confirm(
-                            'Delete All Expired Requests',
-                            'Are you sure that you want to delete all expired requests? You cannot undo this operation.',
-                            function (selection) {
-                                this.reload();
-                                if (selection === 'yes') {
-                                    Ext.Msg.alert('TODO', 'TODO: Delete all the expired requests');
-                                }
-                            },
-                            this
-                        );
-                    }
+                    handler: this.deleteExpiredRequests
                 },
                 '->',
                 {
@@ -390,6 +381,19 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
 
     reload: function () {
         this.store.reload();
+    },
+
+    deleteExpiredRequests: function () {
+        Ext.Msg.confirm(
+            'Delete All Expired Requests',
+            'Are you sure that you want to delete all expired requests? You cannot undo this operation.',
+            function (selection) {
+                if (selection === 'yes') {
+                    Ext.Msg.alert('TODO', 'TODO: Delete all the expired requests');
+                }
+            },
+            this
+        );
     },
 
     deleteRequest: function (record) {
