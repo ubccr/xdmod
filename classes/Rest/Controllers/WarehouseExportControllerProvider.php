@@ -30,8 +30,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $conversions = '\Rest\Utilities\Conversions';
 
         $controller->get("$root/realms", "$current::getRealms");
-        $controller->get("$root/requests", "$current::getRequests");
         $controller->post("$root/request", "$current::createRequest");
+        $controller->get("$root/requests", "$current::getRequests");
+        $controller->delete("$root/requests", "$current::deleteRequests");
 
         $controller->get("$root/request/{id}", "$current::getRequest")
             ->assert('id', '\d+')
@@ -40,8 +41,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $controller->delete("$root/request/{id}", "$current::deleteRequest")
             ->assert('id', '\d+')
             ->convert('id', "$conversions::toInt");
-
-        $controller->delete("$root/requests/{id}", "$current::deleteRequests");
     }
 
     /**
@@ -270,7 +269,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $requestIds = [];
 
         try {
-            $requestIds = json_decode($request->getContent());
+            $requestIds = @json_decode($request->getContent());
 
             if ($requestIds === null) {
                 throw new Exception('Failed to decode JSON');
