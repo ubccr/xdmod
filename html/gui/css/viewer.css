@@ -781,3 +781,12 @@ div.chart_thumb a {
 .jobviewer_helpcontent strong {
     font-weight: bold;
 }
+
+/* Data warehouse export module */
+img.data-export-action-icon {
+    margin-right: 3px;
+}
+
+img.data-export-action-icon-hidden {
+    display: none;
+}
