@@ -422,19 +422,7 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                 },
                 {
                     name: 'state',
-                    convert: function (v, record) {
-                        // TODO: Replace this with data from the server.
-
-                        if (record.export_expired === '1') {
-                            return 'Expired';
-                        }
-
-                        if (record.export_created_datetime !== null) {
-                            return 'Available';
-                        }
-
-                        return 'Submitted';
-                    }
+                    type: 'string'
                 }
             ]
         });
