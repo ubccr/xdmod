@@ -18,11 +18,21 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
     initComponent: function () {
         this.requestsStore = new XDMoD.Module.DataExport.RequestsStore();
 
+        this.realmsStore = new Ext.data.JsonStore({
+            url: 'rest/v1/warehouse/export/realms',
+            root: 'data',
+            fields: [
+                { name: 'id', type: 'string' },
+                { name: 'name', type: 'string' }
+            ]
+        });
+
         this.requestForm = new XDMoD.Module.DataExport.RequestForm({
             title: 'Create Bulk Data Export Request',
             bodyStyle: 'padding: 5px 5px 0 5px',
             border: false,
-            region: 'north'
+            region: 'north',
+            realmsStore: this.realmsStore
         });
 
         this.requestsGrid = new XDMoD.Module.DataExport.RequestsGrid({
@@ -30,11 +40,20 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             region: 'center',
             margins: '2 2 2 0',
             pageSize: this.defaultPageSize,
+            realmsStore: this.realmsStore,
             store: this.requestsStore
         });
 
-        this.requestsGrid.on('afterrender', this.requestsStore.load, this.requestsStore, { single: true });
-        this.requestForm.on('actioncomplete', this.requestsGrid.reload, this.requestsGrid);
+        // Defer loading of realms so they are not loaded immediately.
+        this.on('beforerender', this.realmsStore.load, this.realmsStore, { single: true });
+
+        // Load the requests after the realms have loaded.  This is necessary so
+        // that the realm name can be determined from its ID when displayed in
+        // the grid.
+        this.realmsStore.on('load', this.requestsStore.load, this.requestsStore, { single: true });
+
+        // Reload the requests every time a new request is submitted.
+        this.requestForm.on('actioncomplete', this.requestsStore.reload, this.requestsStore);
 
         this.items = [
             {
@@ -105,17 +124,7 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             editable: false,
                             triggerAction: 'all',
                             mode: 'local',
-                            store: {
-                                xtype: 'jsonstore',
-                                autoLoad: true,
-                                autoDestroy: true,
-                                url: 'rest/v1/warehouse/export/realms',
-                                root: 'data',
-                                fields: [
-                                    { name: 'id', type: 'string' },
-                                    { name: 'name', type: 'string' }
-                                ]
-                            }
+                            store: this.realmsStore
                         },
                         {
                             xtype: 'datefield',
@@ -298,7 +307,11 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 {
                     header: 'Realm',
-                    dataIndex: 'realm'
+                    dataIndex: 'realmId',
+                    scope: this,
+                    renderer: function (value) {
+                        return this.realmsStore.getById(value).get('name');
+                    }
                 },
                 {
                     header: 'Data Start Date',
@@ -381,10 +394,6 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
         XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
     },
 
-    reload: function () {
-        this.store.reload();
-    },
-
     deleteExpiredRequests: function () {
         Ext.Msg.confirm(
             'Delete All Expired Requests',
@@ -450,8 +459,9 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                     type: 'int'
                 },
                 {
-                    name: 'realm',
-                    type: 'string'
+                    name: 'realmId',
+                    type: 'string',
+                    mapping: 'realm'
                 },
                 {
                     name: 'start_date',
