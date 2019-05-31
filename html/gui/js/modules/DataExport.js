@@ -291,14 +291,14 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     renderer: function (value, metaData) {
                         switch (value) {
                             case 'Available':
-                                metaData.attr = 'style="background-color:#040"';
+                                metaData.attr = 'style="background-color:#040"'; // eslint-disable-line no-param-reassign
                                 break;
                             case 'Expired':
                             case 'Failed':
-                                metaData.attr = 'style="background-color:#f00"';
+                                metaData.attr = 'style="background-color:#f00"'; // eslint-disable-line no-param-reassign
                                 break;
                             case 'Submitted':
-                                metaData.attr = 'style="background-color:yellow"';
+                                metaData.attr = 'style="background-color:yellow"'; // eslint-disable-line no-param-reassign
                                 break;
                             default:
                         }
