@@ -433,10 +433,7 @@ class EtlConfiguration extends Configuration
             'default_module_name' => $this->defaultModuleName
         );
 
-        $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
-        $localConfigObj->initialize();
-
-        return $localConfigObj;
+        return EtlConfiguration::factory($localConfigFile, $this->baseDir, $this->logger, $options);
 
     }  // processLocalConfig()
 

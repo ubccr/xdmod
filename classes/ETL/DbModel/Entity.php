@@ -94,8 +94,8 @@ class Entity extends Loggable
         if ( null !== $config ) {
 
             if ( is_string($config) ) {
-                $config = new \Configuration\Configuration($config);
-                $config = $config->initialize()->toStdClass();
+                $config = \Configuration\Configuration::factory($config);
+                $config = $config->toStdClass();
                 // Support the table config directly or assigned to a "table_definition" key
                 if ( isset($config->table_definition) ) {
                     $config = $config->table_definition;

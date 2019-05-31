@@ -23,13 +23,12 @@ class Etlv2Migration extends Migration
      */
     public function execute()
     {
-        $etlConfig = new EtlConfiguration(
+        $etlConfig = EtlConfiguration::factory(
             CONFIG_DIR . '/etl/etl.json',
             null,
             $this->logger,
             array('default_module_name' => 'xdmod')
         );
-        $etlConfig->initialize();
         Utilities::setEtlConfig($etlConfig);
 
         $sectionFilter = 'migration-' . str_replace('.', '_', $this->currentVersion) . '-' . str_replace('.', '_', $this->newVersion);

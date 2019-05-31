@@ -101,7 +101,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         $this->options_array["definition_file"] = BASE_DIR . "/tests/artifacts/xdmod/etlv2/configuration/input/etl_action_defs_8.0.0.d/cloud_state.json";
 
         $options = new IngestorOptions($this->options_array);
-        $conf = new ETLConfiguration($configFile);
+        $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudStateReconstructorTransformIngestor($options, $conf);
     }

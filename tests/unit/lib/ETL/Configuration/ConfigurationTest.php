@@ -26,7 +26,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'file' => false,
             'db' => false,
             'mail' => false,
-            'consoleLogLevel' => Log::DEBUG
+            'consoleLogLevel' => Log::WARNING
         );
         self::$logger = Log::factory('PHPUnit', $conf);
     }
@@ -39,8 +39,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testJsonParseError()
     {
-        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/parse_error.json');
-        $configObj->initialize();
+        Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/parse_error.json');
     }
 
     /**
@@ -49,8 +48,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testConfiguration()
     {
-        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
-        $configObj->initialize();
+        $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json'));
         $this->assertEquals($generated, $expected);
@@ -62,8 +60,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testComments()
     {
-        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/comments.json');
-        $configObj->initialize();
+        $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/comments.json');
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/comments.json'));
         $this->assertEquals($generated, $expected);
@@ -76,8 +73,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testFullPathReference()
     {
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/reference_target.json', '/tmp/reference_target.json');
-        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_full_reference.json');
-        $configObj->initialize();
+        $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_full_reference.json');
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/rfc6901_full_reference.json'));
         unlink('/tmp/reference_target.json');
@@ -91,8 +87,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testRelativePathReference()
     {
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/reference_target.json', '/tmp/reference_target.json');
-        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_relative_reference.json');
-        $configObj->initialize();
+        $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_relative_reference.json');
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/rfc6901_full_reference.json'));
         unlink('/tmp/reference_target.json');
@@ -107,8 +102,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testBadFragment()
     {
-        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
-        $configObj->initialize();
+        Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
     }
 
     /**
@@ -117,13 +111,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigurationVariables()
     {
-        $configObj = new Configuration(
+        $configObj = Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
             null,
             null,
             array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
         );
-        $configObj->initialize();
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config.expected'));
         $this->assertEquals($generated, $expected);
@@ -142,7 +135,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json', '/tmp/sample_config_with_variables.json');
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_reference.json', '/tmp/sample_config_with_reference.json');
-        $configObj = new Configuration(
+        $configObj = Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_transformer_keys.json',
             null,
             self::$logger,
@@ -156,11 +149,60 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 )
             )
         );
-        $configObj->initialize();
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config_with_transformer_keys.expected'));
         @unlink('/tmp/sample_config_with_variables.json');
         @unlink('/tmp/sample_config_with_reference.json');
         $this->assertEquals($generated, $expected, "Test multiple transformer directives");
+    }
+
+    /**
+     * Test the Configuration class object cache.
+     */
+
+    public function testConfigurationObjectCache()
+    {
+        // The object cache is enabled by default so objects 1 and 2 will be the same
+
+        $configObj1 = Configuration::factory(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        $configObj2 = Configuration::factory(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        $this->assertTrue($configObj1 === $configObj2, "Object cache enabled");
+
+        // Disable the cache, object 3 will be a new object
+
+        Configuration::disableObjectCache();
+        $configObj3 = Configuration::factory(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        $this->assertTrue($configObj1 !== $configObj3, "Object cache disabled");
+    }
+
+    /**
+     * Test calling Configuration::__construct() directly, which is not allowed.
+     *
+     * @expectedException Exception
+     */
+
+    public function testCallConfigurationConstructor()
+    {
+        new Configuration(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json'
+        );
     }
 } // class ConfigurationTest

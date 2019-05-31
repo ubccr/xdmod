@@ -162,8 +162,12 @@ abstract class aStructuredFile extends File
         $keySource = array($this->type, $this->path, $this->mode);
         foreach ( $this->filterDefinitions as $filter )
         {
-            $keySource[] = $filter->path;
-            $keySource[] = $filter->arguments;
+            if ( isset($filter->path) ) {
+                $keySource[] = $filter->path;
+            }
+            if ( isset($filter->arguments) ) {
+                $keySource[] = $filter->arguments;
+            }
         }
         $this->key = md5(implode($this->keySeparator, $keySource));
     }
