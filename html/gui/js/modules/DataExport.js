@@ -337,7 +337,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         {
                             icon: 'gui/images/report_generator/download_report.png',
                             tooltip: 'Download Exported Data',
-                            getClass: function (state, metaData) {
+                            getClass: function (state) {
                                 return 'data-export-action-icon' + (state !== 'Available' ? '-hidden': '');
                             },
                             handler: function (grid, rowIndex) {
@@ -347,7 +347,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         {
                             icon: 'gui/images/arrow_redo.png',
                             tooltip: 'Resumbit Request',
-                            getClass: function (state, metaData) {
+                            getClass: function (state) {
                                 return 'data-export-action-icon' + (state !== 'Expired' && state !== 'Failed' ? '-hidden': '');
                             },
                             handler: function (grid, rowIndex) {
