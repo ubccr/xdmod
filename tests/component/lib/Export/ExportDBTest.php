@@ -43,8 +43,8 @@ class ExportDBTest extends BaseTest
     {
         // Find or create a record in Available status
         $maxAvailable = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE
-                                            export_succeeded IS TRUE
-                                            AND export_expired IS FALSE')[0]['id'];
+                                            export_succeeded = 1
+                                            AND export_expired = 0')[0]['id'];
         if ($maxAvailable == null) {
             $query = new QueryHandler();
             $maxSubmitted = $this->findSubmittedRecord();
@@ -57,7 +57,7 @@ class ExportDBTest extends BaseTest
     {
         // Find or create a record in Expired status
         $maxExpired = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE
-                                            export_expired IS TRUE')[0]['id'];
+                                            export_expired = 1')[0]['id'];
         if ($maxExpired == null) {
             $query = new QueryHandler();
             $maxAvailable = $this->findAvailableRecord();
@@ -70,7 +70,7 @@ class ExportDBTest extends BaseTest
     {
         // Find or create a record in Failed status
         $maxFailed = static::$dbh->query('SELECT MAX(id) AS id FROM batch_export_requests WHERE
-                                            export_succeeded IS FALSE')[0]['id'];
+                                            export_succeeded = 0')[0]['id'];
         if ($maxFailed == null) {
             $query = new QueryHandler();
             $maxSubmitted = $this->findSubmittedRecord();
@@ -100,7 +100,7 @@ class ExportDBTest extends BaseTest
     private function listAvailableRecords()
     {
         // List ids of records in Available state
-        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS TRUE and export_expired IS FALSE');
+        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded = 1 and export_expired = 0');
         $retval = $this->flattenRecords($availableArr);
         return($retval);
     }
@@ -108,7 +108,7 @@ class ExportDBTest extends BaseTest
     private function listExpiredRecords()
     {
         // List ids of records in Expired state
-        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS TRUE and export_expired IS TRUE');
+        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded = 1 and export_expired = 1');
         $retval = $this->flattenRecords($availableArr);
         return($retval);
     }
@@ -116,7 +116,7 @@ class ExportDBTest extends BaseTest
     private function listFailedRecords()
     {
         // List ids of records in Failed state
-        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded IS FALSE and export_expired IS FALSE');
+        $availableArr = static::$dbh->query('SELECT id FROM batch_export_requests WHERE export_succeeded = 0 and export_expired = 0');
         $retval = $this->flattenRecords($availableArr);
         return($retval);
     }
