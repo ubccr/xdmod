@@ -179,9 +179,11 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                         response.statusText || 'Error',
                         JSON.parse(response.responseText).message || 'Unknown Error'
                     );
+                    break;
                 case Ext.form.Action.LOAD_FAILURE:
                     // This error occurs when the server doesn't return anything.
                     Ext.Msg.alert('Submission Error', 'Failed to submit request, try again later.');
+                    break;
                 default:
                     Ext.Msg.alert('Unknown Error', 'An unknown error occured, try again later.');
             }
