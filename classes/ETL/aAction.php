@@ -172,13 +172,12 @@ abstract class aAction extends aEtlObject
                 $options = array(
                     'variable_store' => $this->variableStore
                 );
-                $this->parsedDefinitionFile = new Configuration(
+                $this->parsedDefinitionFile = Configuration::factory(
                     $this->definitionFile,
                     ( isset($this->options->paths->base_dir) ? $this->options->paths->base_dir : null ),
                     $logger,
                     $options
                 );
-                $this->parsedDefinitionFile->initialize();
                 $this->parsedDefinitionFile->cleanup();
             }
         }  // if ( null !== $this->options->definition_file )

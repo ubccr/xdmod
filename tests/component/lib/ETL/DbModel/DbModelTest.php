@@ -39,8 +39,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
 
         // The modify_table.json file defines actions to create and modify the table as well was the test schema.
         $configFile = self::$testArtifactInputPath . "/xdmod_etl_config_8.0.0.json";
-        self::$etlConfig = new EtlConfiguration($configFile, self::$testArtifactInputPath);
-        self::$etlConfig->initialize();
+        self::$etlConfig = EtlConfiguration::factory($configFile, self::$testArtifactInputPath);
         self::$endpoint = self::$etlConfig->getGlobalEndpoint('utility');
 
         self::$etlOverseerOptions = new EtlOverseerOptions(array());

@@ -23,7 +23,7 @@ class Rfc6901Test extends \PHPUnit_Framework_TestCase
     public function __construct()
     {
         // Configuration is used in the transformer to qualify relative paths
-        $this->config = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
+        $this->config = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
         $this->transformer = new JsonReferenceTransformer();
     }
 
