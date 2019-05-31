@@ -112,8 +112,8 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                                 url: 'rest/v1/warehouse/export/realms',
                                 root: 'data',
                                 fields: [
-                                    {name: 'id', type: 'string'},
-                                    {name: 'name', type: 'string'}
+                                    { name: 'id', type: 'string' },
+                                    { name: 'name', type: 'string' }
                                 ]
                             }
                         },
