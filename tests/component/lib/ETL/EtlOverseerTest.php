@@ -34,13 +34,12 @@ class EtlOverseerTest extends \PHPUnit_Framework_TestCase
 
         // Use a pipeline with DummyIngestor and/or DummyAggregator so we can test infrastructure
         $configFile = self::$testArtifactInputPath . "/xdmod_etl_config_dummy_actions.json";
-        self::$etlConfig = new EtlConfiguration(
+        self::$etlConfig = EtlConfiguration::factory(
             $configFile,
             self::$testArtifactInputPath,
             null,
             array('default_module_name' => 'xdmod')
         );
-        self::$etlConfig->initialize();
 
         // Explicitly set the resource code map so we don't need to query the database
         self::$overseerOptions = new EtlOverseerOptions(

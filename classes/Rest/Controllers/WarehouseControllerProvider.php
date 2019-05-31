@@ -1227,22 +1227,25 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $queryDescripters = Acls::getQueryDescripters($user, $realm);
 
+        if (empty($queryDescripters)) {
+            throw new BadRequestException('Invalid realm');
+        }
+
         $offset = $this->getIntParam($request, 'start', true);
         $limit = $this->getIntParam($request, 'limit', true);
 
-        $allowableDimensions = array_keys($queryDescripters);
+        $searchParameterStr = $this->getStringParam($request, 'params', true);
 
-        $params = $this->parseRestArguments($request, $allowableDimensions, false, 'params');
+        $searchParams = json_decode($searchParameterStr, true);
 
-        if (count($params) < 1) {
-            $results = $app->json(
-                array(
-                    'success' => false,
-                    'action' => $action,
-                    'message' => 'Must provide at least one additional parameter to submit a search request.'
-                ),
-                400
-            );
+        if ($searchParams === null || !is_array($searchParams)) {
+            throw new BadRequestException('The params parameter must be a json object');
+        }
+
+        $params = array_intersect_key($searchParams, $queryDescripters);
+
+        if (count($params) != count($searchParams)) {
+            throw new BadRequestException('Invalid search parameters specified in params object');
         } else {
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
             $query = new $QueryClass("day", $startDate, $endDate, null, "", array(), 'tg_usage', array(), false);
@@ -1250,7 +1253,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $allRoles = $user->getAllRoles();
             $query->setMultipleRoleParameters($allRoles, $user);
 
-            $query->setRoleParameters($params);
+            if (!empty($params)) {
+                $query->setRoleParameters($params);
+            }
 
             $dataSet = new \DataWarehouse\Data\SimpleDataset($query);
             $raw = $dataSet->getResults($limit, $offset);
@@ -1285,7 +1290,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $privQuery = new $QueryClass("day", $startDate, $endDate, null, "", array(), "tg_usage", array(), false);
                 $privQuery->setRoleParameters($params);
 
-                $privDataSet = new \DataWarehouse\Data\SimpleDataset($privQuery);
+                $privDataSet = new \DataWarehouse\Data\SimpleDataset($privQuery, 1, 0);
                 $privResults = $privDataSet->getResults();
                 if (count($privResults) != 0) {
                     $results = $app->json(

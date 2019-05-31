@@ -35,7 +35,7 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 
     public function keyMatches($key)
     {
-        return ( 0 === strpos($key, self::COMMENT_PREFIX) );
+        return $key[0] === self::COMMENT_PREFIX;
     }  // keyMatches()
 
     /* ------------------------------------------------------------------------------------------

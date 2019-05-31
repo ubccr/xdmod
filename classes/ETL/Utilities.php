@@ -245,13 +245,12 @@ class Utilities
             $configOptions['config_variables'] = $params['variable-overrides'];
         }
 
-        $etlConfig = new EtlConfiguration(
+        $etlConfig = EtlConfiguration::factory(
             CONFIG_DIR . '/etl/etl.json',
             null,
             $logger,
             $configOptions
         );
-        $etlConfig->initialize();
         self::setEtlConfig($etlConfig);
 
         $scriptOptions = array_merge(
