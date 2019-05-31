@@ -404,7 +404,6 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             'Are you sure that you want to delete this request? You cannot undo this operation.',
             function (selection) {
                 if (selection === 'yes') {
-                    console.log({ 'delete': record });
                     Ext.Msg.alert('TODO', 'TODO: Delete the request');
                 }
             },
@@ -414,12 +413,10 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
 
     downloadRequest: function (record) {
         // TODO
-        console.log({ download: record });
     },
 
     resubmitRequest: function (record) {
         // TODO
-        console.log({ resubmit: record });
     }
 });
 
