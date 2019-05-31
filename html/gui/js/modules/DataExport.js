@@ -400,7 +400,29 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             'Are you sure that you want to delete all expired requests? You cannot undo this operation.',
             function (selection) {
                 if (selection === 'yes') {
-                    Ext.Msg.alert('TODO', 'TODO: Delete all the expired requests');
+                    var requestIds = [];
+
+                    this.store.each(function (record) {
+                        if (record.get('state') === 'Expired') {
+                            requestIds.push(record.get('id'));
+                        }
+                    });
+
+                    Ext.Ajax.request({
+                        method: 'DELETE',
+                        url: 'rest/v1/warehouse/export/requests',
+                        jsonData: requestIds,
+                        scope: this,
+                        success: function () {
+                            this.store.reload();
+                        },
+                        failure: function (response) {
+                            Ext.Msg.alert(
+                                response.statusText || 'Deletion Failure',
+                                JSON.parse(response.responseText).message || 'Unknown Error'
+                            );
+                        }
+                    });
                 }
             },
             this
@@ -413,7 +435,20 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             'Are you sure that you want to delete this request? You cannot undo this operation.',
             function (selection) {
                 if (selection === 'yes') {
-                    Ext.Msg.alert('TODO', 'TODO: Delete the request');
+                    Ext.Ajax.request({
+                        method: 'DELETE',
+                        url: 'rest/v1/warehouse/export/request/' + record.get('id'),
+                        scope: this,
+                        success: function () {
+                            this.store.reload();
+                        },
+                        failure: function (response) {
+                            Ext.Msg.alert(
+                                response.statusText || 'Deletion Failure',
+                                JSON.parse(response.responseText).message || 'Unknown Error'
+                            );
+                        }
+                    });
                 }
             },
             this
