@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use xd_utilities;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
@@ -175,7 +176,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $requests = array_filter(
             $handler->listUserRequestsByState($user->getUserId()),
             function ($request) use ($id) {
-                return $request['id'] === $id;
+                return $request['id'] == $id;
             }
         );
 
@@ -196,17 +197,32 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         $file = sprintf(
-            '%s/%s.%s',
+            '%s/%s.%s.zip',
             $exportDir,
             $id,
-            strtolower($request['format'])
+            strtolower($request['export_file_format'])
         );
 
         if (!is_readable($file)) {
             throw new AccessDeniedHttpException();
         }
 
-        return $this->sendFile($file);
+        $fileName = sprintf(
+            '%s--%s-%s.%s.zip',
+            $request['realm'],
+            $request['start_date'],
+            $request['end_date'],
+            strtolower($request['export_file_format'])
+        );
+
+        return $app->sendFile(
+            $file,
+            200,
+            [
+                'Content-type' => 'application/zip',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName)
+            ]
+        );
     }
 
     /**
