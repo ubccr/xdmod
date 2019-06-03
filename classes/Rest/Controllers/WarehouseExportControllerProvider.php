@@ -180,7 +180,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         );
 
         if (count($requests) === 0) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('Export request not found');
         }
 
         // Using `array_shift` because `array_filter` preserves keys so the
@@ -194,7 +194,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         try {
             $exportDir = xd_utilities\getConfiguration('data_warehouse_export', 'export_directory');
         } catch (Exception $e) {
-            throw new BadRequestHttpException('Export directory is not configured');
+            throw new NotFoundHttpException('Export directory is not configured');
         }
 
         $file = sprintf(
@@ -204,8 +204,12 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             strtolower($request['export_file_format'])
         );
 
+        if (!is_file($file)) {
+            throw new NotFoundHttpException('Exported data not found');
+        }
+
         if (!is_readable($file)) {
-            throw new AccessDeniedHttpException();
+            throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
         $fileName = sprintf(
@@ -243,7 +247,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $count = $handler->deleteRequest($id, $user->getUserId());
 
         if ($count === 0) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('Export request not found');
         }
 
         return $app->json([
@@ -278,12 +282,12 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             }
 
             if (!is_array($requestIds)) {
-                throw new Exception('Request IDs must be in an array');
+                throw new Exception('Export request IDs must be in an array');
             }
 
             foreach ($requestIds as $id) {
                 if (!is_int($id)) {
-                    throw new Exception('Request IDs must integers');
+                    throw new Exception('Export request IDs must integers');
                 }
             }
         } catch (Exception $e) {
@@ -299,7 +303,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             foreach ($requestIds as $id) {
                 $count = $handler->deleteRequest($id, $user->getUserId());
                 if ($count === 0) {
-                    throw new NotFoundHttpException();
+                    throw new NotFoundHttpException('Export request not found');
                 }
             }
 
