@@ -339,7 +339,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 {
                     header: 'Expiration Date',
-                    dataIndex: 'expires_date',
+                    dataIndex: 'export_expires_datetime',
                     xtype: 'datecolumn',
                     format: 'Y-m-d'
                 },
