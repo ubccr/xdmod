@@ -291,7 +291,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     renderer: function (value, metaData) {
                         switch (value) {
                             case 'Available':
-                                metaData.attr = 'style="background-color:#040"'; // eslint-disable-line no-param-reassign
+                                metaData.attr = 'style="background-color:#0f0"'; // eslint-disable-line no-param-reassign
                                 break;
                             case 'Expired':
                             case 'Failed':
@@ -340,11 +340,22 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     xtype: 'actioncolumn',
                     dataIndex: 'state',
                     scope: this,
+                    // XXX: The first argument to the getClass callback should
+                    // always contain the value specified by the dataIndex, but
+                    // the ActionColumn renderer alters it and so is only
+                    // accurate in the renderer callback. Store this value in
+                    // the meta object so it can be used for the icons.
+                    //
+                    // See https://docs.sencha.com/extjs/3.4.0/source/Column2.html#Ext-grid-ActionColumn-method-constructor
+                    renderer: function (state, meta) {
+                        meta._rowState = state; // eslint-disable-line no-param-reassign
+                    },
                     items: [
                         {
                             icon: 'gui/images/report_generator/delete_report.png',
                             tooltip: 'Delete Request',
                             iconCls: 'data-export-action-icon',
+                            scope: this,
                             handler: function (grid, rowIndex) {
                                 this.deleteRequest(grid.store.getAt(rowIndex));
                             }
@@ -352,8 +363,9 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         {
                             icon: 'gui/images/report_generator/download_report.png',
                             tooltip: 'Download Exported Data',
-                            getClass: function (state) {
-                                return 'data-export-action-icon' + (state !== 'Available' ? '-hidden' : '');
+                            scope: this,
+                            getClass: function (v, meta) {
+                                return 'data-export-action-icon' + (meta._rowState !== 'Available' ? '-hidden' : '');
                             },
                             handler: function (grid, rowIndex) {
                                 this.downloadRequest(grid.store.getAt(rowIndex));
@@ -361,9 +373,10 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         },
                         {
                             icon: 'gui/images/arrow_redo.png',
-                            tooltip: 'Resumbit Request',
-                            getClass: function (state) {
-                                return 'data-export-action-icon' + (state !== 'Expired' && state !== 'Failed' ? '-hidden' : '');
+                            tooltip: 'Resubmit Request',
+                            scope: this,
+                            getClass: function (v, meta) {
+                                return 'data-export-action-icon' + (meta._rowState !== 'Expired' && meta._rowState !== 'Failed' ? '-hidden' : '');
                             },
                             handler: function (grid, rowIndex) {
                                 this.resubmitRequest(grid.store.getAt(rowIndex));
@@ -456,7 +469,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
     },
 
     downloadRequest: function (record) {
-        // TODO
+        window.open('rest/v1/warehouse/export/request/' + record.get('id'));
     },
 
     resubmitRequest: function (record) {
