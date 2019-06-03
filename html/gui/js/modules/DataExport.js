@@ -213,6 +213,10 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
             return true;
         }
 
+        if (startDate > Date.now()) {
+            return 'Start date cannot be in the future';
+        }
+
         if (startDate > endDate) {
             return 'Start date must be before the end date';
         }
@@ -236,6 +240,10 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
 
         if (startDate === '') {
             return true;
+        }
+
+        if (endDate > Date.now()) {
+            return 'End date cannot be in the future';
         }
 
         if (startDate > endDate) {

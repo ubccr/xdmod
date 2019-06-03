@@ -4,6 +4,7 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use DataWarehouse\Export\QueryHandler;
+use DateTime;
 use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -121,6 +122,15 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         $startDate = $this->getDateFromISO8601Param($request, 'start_date', true);
         $endDate = $this->getDateFromISO8601Param($request, 'end_date', true);
+        $now = new DateTime();
+
+        if ($startDate > $now) {
+            throw new BadRequestHttpException('Start date cannot be in the future');
+        }
+
+        if ($endDate > $now) {
+            throw new BadRequestHttpException('End date cannot be in the future');
+        }
 
         $interval = $startDate->diff($endDate);
 
