@@ -485,7 +485,26 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
     },
 
     resubmitRequest: function (record) {
-        // TODO
+        Ext.Ajax.request({
+            method: 'POST',
+            url: 'rest/v1/warehouse/export/request',
+            params: {
+                realm: record.get('realm_id'),
+                start_date: record.get('start_date').format('Y-m-d'),
+                end_date: record.get('end_date').format('Y-m-d'),
+                format: record.get('export_file_format')
+            },
+            scope: this,
+            success: function () {
+                this.store.reload();
+            },
+            failure: function (response) {
+                Ext.Msg.alert(
+                    response.statusText || 'Resubmission Failure',
+                    JSON.parse(response.responseText).message || 'Unknown Error'
+                );
+            }
+        });
     }
 });
 
