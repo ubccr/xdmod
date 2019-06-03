@@ -387,7 +387,9 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             bbar: [
                 {
                     xtype: 'button',
+                    id: 'delete-all-expired-requests-button',
                     text: 'Delete all expired requests',
+                    disabled: true,
                     scope: this,
                     handler: this.deleteExpiredRequests
                 },
@@ -404,6 +406,25 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
         });
 
         XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
+
+        // Enable or disable the "Delete all ..." after the store loads.
+        this.store.on('load', function () {
+            Ext.getCmp('delete-all-expired-requests-button').setDisabled(
+                this.getExpiredRequestIds().length === 0
+            );
+        }, this);
+    },
+
+    getExpiredRequestIds: function () {
+        var requestIds = [];
+
+        this.store.each(function (record) {
+            if (record.get('state') === 'Expired') {
+                requestIds.push(record.get('id'));
+            }
+        });
+
+        return requestIds;
     },
 
     deleteExpiredRequests: function () {
@@ -412,18 +433,10 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             'Are you sure that you want to delete all expired requests? You cannot undo this operation.',
             function (selection) {
                 if (selection === 'yes') {
-                    var requestIds = [];
-
-                    this.store.each(function (record) {
-                        if (record.get('state') === 'Expired') {
-                            requestIds.push(record.get('id'));
-                        }
-                    });
-
                     Ext.Ajax.request({
                         method: 'DELETE',
                         url: 'rest/v1/warehouse/export/requests',
-                        jsonData: requestIds,
+                        jsonData: this.getExpiredRequestIds(),
                         scope: this,
                         success: function () {
                             this.store.reload();
