@@ -744,6 +744,7 @@ class MetricExplorer extends Common
                     'tg_usage',
                     $realm,
                     $dimension_id,
+                    null,
                     $includePub
                 );
             } catch (AccessDeniedException $e) {
