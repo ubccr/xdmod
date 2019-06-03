@@ -307,7 +307,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                 },
                 {
                     header: 'Realm',
-                    dataIndex: 'realmId',
+                    dataIndex: 'realm_id',
                     scope: this,
                     renderer: function (value) {
                         return this.realmsStore.getById(value).get('name');
@@ -519,7 +519,7 @@ XDMoD.Module.DataExport.RequestsStore = Ext.extend(Ext.data.JsonStore, {
                     type: 'int'
                 },
                 {
-                    name: 'realmId',
+                    name: 'realm_id',
                     type: 'string',
                     mapping: 'realm'
                 },
