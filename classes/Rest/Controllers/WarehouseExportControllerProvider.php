@@ -183,7 +183,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException();
         }
 
-        $request = $requests[0];
+        // Using `array_shift` because `array_filter` preserves keys so the
+        // request may not be at index 0.
+        $request = array_shift($requests);
 
         if ($request['state'] !== 'Available') {
             throw new BadRequestHttpException('Requested data is not available');
