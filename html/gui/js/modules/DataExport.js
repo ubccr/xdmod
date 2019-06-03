@@ -344,18 +344,19 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     // always contain the value specified by the dataIndex, but
                     // the ActionColumn renderer alters it and so is only
                     // accurate in the renderer callback. Store this value in
-                    // the meta object so it can be used for the icons.
+                    // the metaData object so it can be used by the icons.
                     //
                     // See https://docs.sencha.com/extjs/3.4.0/source/Column2.html#Ext-grid-ActionColumn-method-constructor
-                    renderer: function (state, meta) {
-                        meta._rowState = state; // eslint-disable-line no-param-reassign
+                    renderer: function (state, metaData) {
+                        console.log(JSON.stringify(metaData));
+                        metaData.rowState = state; // eslint-disable-line no-param-reassign
+                        return '';
                     },
                     items: [
                         {
                             icon: 'gui/images/report_generator/delete_report.png',
                             tooltip: 'Delete Request',
                             iconCls: 'data-export-action-icon',
-                            scope: this,
                             handler: function (grid, rowIndex) {
                                 this.deleteRequest(grid.store.getAt(rowIndex));
                             }
@@ -363,9 +364,8 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         {
                             icon: 'gui/images/report_generator/download_report.png',
                             tooltip: 'Download Exported Data',
-                            scope: this,
-                            getClass: function (v, meta) {
-                                return 'data-export-action-icon' + (meta._rowState !== 'Available' ? '-hidden' : '');
+                            getClass: function (v, metaData) {
+                                return 'data-export-action-icon' + (metaData.rowState !== 'Available' ? '-hidden' : '');
                             },
                             handler: function (grid, rowIndex) {
                                 this.downloadRequest(grid.store.getAt(rowIndex));
@@ -374,9 +374,8 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         {
                             icon: 'gui/images/arrow_redo.png',
                             tooltip: 'Resubmit Request',
-                            scope: this,
-                            getClass: function (v, meta) {
-                                return 'data-export-action-icon' + (meta._rowState !== 'Expired' && meta._rowState !== 'Failed' ? '-hidden' : '');
+                            getClass: function (v, metaData) {
+                                return 'data-export-action-icon' + (metaData.rowState !== 'Expired' && metaData.rowState !== 'Failed' ? '-hidden' : '');
                             },
                             handler: function (grid, rowIndex) {
                                 this.resubmitRequest(grid.store.getAt(rowIndex));
