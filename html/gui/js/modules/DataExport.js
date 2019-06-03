@@ -415,11 +415,18 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
 
         XDMoD.Module.DataExport.RequestsGrid.superclass.initComponent.call(this);
 
-        // Enable or disable the "Delete all ..." after the store loads.
+        // Update elements that should be enabled/disabled or masked/unmasked
+        // after the store loads.
         this.store.on('load', function () {
             Ext.getCmp('delete-all-expired-requests-button').setDisabled(
                 this.getExpiredRequestIds().length === 0
             );
+
+            if (this.store.getCount() === 0) {
+                this.el.mask('No Current Requests');
+            } else {
+                this.el.unmask();
+            }
         }, this);
     },
 
