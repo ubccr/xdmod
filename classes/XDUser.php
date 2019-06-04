@@ -2635,7 +2635,9 @@ SQL;
         $db = DB::factory('database');
 
         $query = <<<SQL
-        SELECT rf.id
+        SELECT rf.id,
+              replace(rf.code, '-', ' ') as name,
+              replace(rf.code, '-', ' ') as short_name
         FROM modw.resourcefact rf
         WHERE   rf.organization_id =  :organization_id
 SQL;
@@ -2658,9 +2660,6 @@ SQL;
             );
         } // if (count($resourceNames) > 0) {
 
-        $stmt = $db->prepare($query);
-        $stmt->execute($params);
-
-        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+        return $db->query($query, $params);
     } // public function getResources($resourceNames = array())
 }//XDUser
