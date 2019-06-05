@@ -260,4 +260,20 @@ interface iConfiguration extends \Iterator
      */
 
     public function __toString();
+
+    /**
+     * The Configuration and child classes use serialize() during caching and must have access to
+     * all properties whether public, proptected, or private. This cannot be implemented higher up
+     * the inheritance chain as get_object_vars($this) only returns variables defined as public and
+     * protected in child classes and not those defined as private.
+     *
+     * DUE TO PHP SCOPING RULES, ALL CLASSES AND CHILD CLASSES OF CONFIGURATION MUST IMPLEMENT THIS
+     * METHOD FOR OBJECT CACHING TO WORK PROPERLY!
+     *
+     * @see https://www.php.net/manual/en/function.sleep.php
+     *
+     * @return array An array containing all data members to be serialized.
+     */
+
+    public function __sleep();
 }

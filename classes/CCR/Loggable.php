@@ -157,14 +157,27 @@ class Loggable
         return "(" . get_class($this) . ")";
     }
 
-    /* ------------------------------------------------------------------------------------------
-     * Do not allow serialization of the logger as it may contain a PDO resource, which cannot
-     * be serialized.
-     * ------------------------------------------------------------------------------------------
+    /**
+     * Prepare the class for serialize()
      */
 
     public function __sleep()
     {
-        return array();
+        // Do not allow serialization of the logger as it may contain a PDO resource, which cannot
+        // be serialized.
+        $vars = get_object_vars($this);
+        unset($vars['logger']);
+        return array_keys($vars);
+    }
+
+    /**
+     * Set up the class when unserialize() is called.
+     */
+
+    public function __wakeup()
+    {
+        //  On unserialize() the logger is expected the be a PEAR Log object so be sure to
+        //  re-initialize it.
+        $this->setLogger(null);
     }
 }  // class Loggable
