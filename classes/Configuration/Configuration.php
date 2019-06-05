@@ -74,7 +74,7 @@ use Log;
 use stdClass;
 use Traversable;
 
-class Configuration extends Loggable implements \Iterator
+class Configuration extends Loggable implements iConfiguration
 {
     // NOTE: Any properties that need to be accessed in a transformer defined in a subclass cannot be
     // private.
@@ -132,6 +132,20 @@ class Configuration extends Loggable implements \Iterator
     protected $localConfigDir = null;
 
     /**
+     * @var boolean Flag indicating that the directory for local configuration files has been
+     * scanned and the list of filenames has been stored for use.
+     */
+
+    protected $localDirectoryScanned = false;
+
+    /**
+     * @var integer A unix timestamp indicating the maximum last modified time of the global
+     * configuration file and any local configuration files found in the local config directory.
+     */
+
+    public $maxLastModifiedTime = 0;
+
+    /**
      * @var array An associative array of options that was passed in from the parent. This is useful
      * for providing additional customized information to the implementation such as additional
      * parameters used by child classes or variables and values that the transformers may use to
@@ -163,23 +177,35 @@ class Configuration extends Loggable implements \Iterator
     protected $forceArrayReturn = false;
 
     /**
-     * Enable or disable the object cache to improve performance. Enabling the object cache means
-     * that a Configuration object will only need to be created once for a given global file.
-     *
-     * @var boolean
+     * @var boolean Enable or disable the object cache to improve performance. Enabling the object
+     * cache means that a Configuration object will only need to be created once for a given global
+     * file.
      */
 
-    protected static $enableObjectCache = true;
+    protected static $objectCacheEnabled = true;
 
     /**
-     * Associative array used as a key value store to cache parsed and transformed configuration
-     * files to improve performance.  Keys are the fully qualified path of the global file and
-     * values are parsed and transformed objects generated from that file and any local files.
-     *
-     * @var array
+     * @var array Associative array used as a key value store to cache parsed and transformed
+     * configuration files to improve performance.  Keys are the fully qualified path of the global
+     * file and values are parsed and transformed objects generated from that file and any local
+     * files.
      */
 
     protected static $objectCache = array();
+
+    /**
+     * @var string The late static binding name of this class (e.g., the class that was
+     * instantiated)
+     */
+
+    protected static $calledClassName = null;
+
+    /**
+     * @var boolean Force use of the local (per-session) object cache rather than APCu or other
+     * caching mechanisms. This is used mainly for testing purposes.
+     */
+
+    protected static $forceLocalObjectCache = false;
 
     /**
      * A factory / helper method for instantiating a Configuration object, initializing it, and
@@ -199,7 +225,6 @@ class Configuration extends Loggable implements \Iterator
         Log $logger = null,
         array $options = array()
     ) {
-
         return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
     }
 
@@ -220,15 +245,15 @@ class Configuration extends Loggable implements \Iterator
         Log $logger = null,
         array $options = array()
     ) {
+        $calledClass = get_called_class();
+
         if ( empty($filename) ) {
-            $msg = sprintf("%s: Configuration filename cannot be empty", get_called_class());
+            $msg = sprintf("%s: Configuration filename cannot be empty", $calledClass);
             if ( null !== $logger ) {
                 $logger->error($msg);
             }
             throw new Exception($msg);
         }
-
-        $startTime = microtime(true);
 
         // We need the fully qualified path for the object cache key because there could be two
         // files with the same base name in different directories.
@@ -247,60 +272,111 @@ class Configuration extends Loggable implements \Iterator
             $filename = \xd_utilities\qualify_path($filename, $baseDir);
         }
 
-        $inCache = false;
         $cacheKey = null;
+        $cachedInstance = null;
+        $apcuEnabled = (
+            filter_var(ini_get('apc.enabled'), FILTER_VALIDATE_BOOLEAN) &&
+            ! self::$forceLocalObjectCache
+        );
 
-        // If this is a local config file, do not attempt to pull it out of the cache because its
-        // contents depend on options passed in from the global config. If the global config was
-        // retrieved from the cache we won't be processing the local configs anyway.
+        // If this is a local config file, do not attempt to use the cache because its contents
+        // depend on options passed in from the global config. If the global config was retrieved
+        // from the cache we won't be processing the local configs anyway.
 
-        $skipCacheCheck = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
+        $isLocalConfig = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
 
-        if ( self::$enableObjectCache && ! $skipCacheCheck ) {
+        if ( self::$objectCacheEnabled && ! $isLocalConfig ) {
+
             // The cache key must take into account the full filename, the class that was actually
             // instantiated, as well as any options provided as this may affect the generated
             // object. We use serialize() instead of json_encode() because the latter only takes
             // into account public member variables and we have more complex objects that can be
             // passed as options such as VariableStore. The filename and called class are maintained
             // in clear text for debugging purposes.
-            $cacheKey = $filename . '|' . get_called_class() . '|' . md5(serialize($options));
-            $inCache = array_key_exists($cacheKey, self::$objectCache);
+
+            $cacheKey = $calledClass . '|' . $filename . '|' . md5(serialize($options));
+            $inCache = ( $apcuEnabled ? apcu_exists($cacheKey) : array_key_exists($cacheKey, self::$objectCache) );
+
+            if ( $inCache ) {
+                $startTime = microtime(true);
+                $success = null;
+                $cachedInstance = ( $apcuEnabled ? apcu_fetch($cacheKey, $success) : self::$objectCache[$cacheKey] );
+                $cachedInstance->setLogger($logger);
+                if ( null !== $logger ) {
+                    $logger->trace(
+                        sprintf(
+                            'Fetched object %s (%s) from %s cache with key %s in %fs',
+                            $calledClass,
+                            $filename,
+                            ( $apcuEnabled ? 'APCu' : 'local' ),
+                            $cacheKey,
+                            microtime(true) - $startTime
+                        )
+                    );
+                }
+            }
         }
 
-        if ( ! self::$enableObjectCache || ! $inCache || $skipCacheCheck ) {
-            // Let the constructor know that it was called via factory()
-            $options['called_via_factory'] = true;
-            $instance = new static($filename, $baseDir, $logger, $options);
+        // Create an object instance but do not initialize it yet. This allows us to check to
+        // see if any global or local configuration files have changed since the object was
+        // placed into the cache.
+
+        $startTime = microtime(true);
+        $options['called_via_factory'] = true;  // Let the constructor know that it was called via factory()
+        $instance = new static($filename, $baseDir, $logger, $options);
+
+        $staleCachedObject = (
+            null !== $cachedInstance &&
+            $instance->getMaxLastModifiedTime() > $cachedInstance->getMaxLastModifiedTime()
+        );
+
+       if ( $staleCachedObject && null !== $logger ) {
+           $logger->debug(
+               sprintf(
+                   'Updating stale cached object %s (%s) (%s < %s)',
+                   $calledClass,
+                   $filename,
+                   date('Y-m-d H:i:s', $cachedInstance->getMaxLastModifiedTime()),
+                   date('Y-m-d H:i:s', $instance->getMaxLastModifiedTime())
+               )
+           );
+       }
+
+        // If the object was not in the cache (either due to the cache not being enabled or the key
+        // not found) or it was in the cache but we have detected newer files then it must be
+        // initialized.
+
+        if ( null === $cachedInstance || $staleCachedObject ) {
             $instance->initialize();
-            if ( null !== $logger ) {
-                $logger->trace(
-                    sprintf(
-                        "Created %s%s (%s) in %fs",
-                        ($skipCacheCheck ? "local " : ""),
-                        get_called_class(),
-                        $filename,
-                        microtime(true) - $startTime
-                    )
-                );
-            }
-            if ( self::$enableObjectCache ) {
+        } elseif ( null !== $cachedInstance ) {
+            $instance = $cachedInstance;
+        }
+
+        if (
+            self::$objectCacheEnabled &&
+            ! $isLocalConfig &&  // Do not cache intermediate local objects
+            ( null === $cachedInstance || $staleCachedObject )
+        ) {
+            if ( $apcuEnabled ) {
+                apc_store($cacheKey, $instance);
+            } else {
                 self::$objectCache[$cacheKey] = $instance;
             }
-            return $instance;
-        } else {
             if ( null !== $logger ) {
-                $logger->trace(
+                $logger->debug(
                     sprintf(
-                        "Fetching object %s (%s) from cache with key %s in %fs",
-                        get_called_class(),
+                        'Stored object %s (%s) in %s cache with key %s in %fs',
+                        $calledClass,
                         $filename,
+                        ( $apcuEnabled ? 'APCu' : 'local' ),
                         $cacheKey,
                         microtime(true) - $startTime
                     )
                 );
             }
-            return self::$objectCache[$cacheKey];
         }
+
+        return $instance;
     }
 
     /**
@@ -309,7 +385,7 @@ class Configuration extends Loggable implements \Iterator
 
     public static function enableObjectCache()
     {
-        self::$enableObjectCache = true;
+        self::$objectCacheEnabled = true;
     }
 
     /**
@@ -318,8 +394,20 @@ class Configuration extends Loggable implements \Iterator
 
     public static function disableObjectCache()
     {
-        self::$enableObjectCache = false;
+        self::$objectCacheEnabled = false;
         self::$objectCache = array();
+    }
+
+    /**
+     * Force use of the local object cache rather than APCu or other methods. Used mainly for
+     * testing.
+     *
+     * @param boolean $flag TRUE to force use of the local object cache.
+     */
+
+    public static function forceLocalObjectCache($flag = true)
+    {
+        self::$forceLocalObjectCache = $flag;
     }
 
     /**
@@ -374,17 +462,35 @@ class Configuration extends Loggable implements \Iterator
         // The base directory and filename are expected to be qualifed in factory()
         $this->baseDir = $baseDir;
         $this->filename = $filename;
+        $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
+        $this->calledClassName = get_called_class();
+        $this->options = $options;
 
         if ( isset($options['local_config_dir']) ) {
             $this->localConfigDir = $options['local_config_dir'];
-        } else {
+        } elseif ( ! $this->isLocalConfig ) {
             // Imply the local config directory from the global config file name
-            $this->localConfigDir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
+            $dir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
+            if ( is_dir($dir) ) {
+                $this->localConfigDir = $dir;
+            }
         }
 
-        $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
+        // If the local config dir has been set (either explicitly as a parameter or implictly via
+        // the file name) scan it for local files.
 
-        $this->options = $options;
+        if ( null !== $this->localConfigDir ) {
+            $this->scanLocalConfigDir();
+        }
+
+        // Before continuing, make sure that the specified directory actually exists. It not
+        // existing could have unexpected consequences for an XDMoD installation.
+
+        if ( null !== $this->localConfigDir && ! is_dir($this->localConfigDir) ) {
+            $this->logAndThrowException(
+                sprintf('Unable to find the local configuration directory: %s', $this->localConfigDir)
+            );
+        }
 
         // Clean up directory paths
         $this->filename = \xd_utilities\resolve_path($this->filename);
@@ -409,6 +515,11 @@ class Configuration extends Loggable implements \Iterator
         if ( isset($options['force_array_return']) ) {
             $this->forceArrayReturn = $options['force_array_return'];
         }
+
+        // Set the last modified time of the global config file
+
+        $fileStats = stat($this->filename);
+        $this->maxLastModifiedTime = $fileStats['mtime'];
     }
 
     /**
@@ -453,55 +564,89 @@ class Configuration extends Loggable implements \Iterator
 
         $this->interpretData();
 
-        // Process any local configuration files iff $localConfigDir exists, is actually a directory,
-        // and this is not a local config file itself.
-        if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) ) {
+        // Scan the local config directory. This is performed in the constructor to obtain the max
+        // last modified time of the local files but in some cases the local directory may not be
+        // available until after the global file has been parsed (such as EtlConfiguration) so we
+        // need to check again here.
 
-            if ( false === ($dh = @opendir($this->localConfigDir)) ) {
-                $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
-            }
+        $this->scanLocalConfigDir();
 
-            // Examine the subdirectory for .json files and collect them for later use.
-            $files = array();
-            while ( false !== ( $file = readdir($dh) ) ) {
-
-                // Only process .json files
-
-                $len = strlen($file);
-                $pos = strrpos(strtolower($file), ".json");
-                if ( false === $pos || ($len - $pos) != 5 ) {
-                    continue;
-                }
-
-                $files[] = $this->localConfigDir . "/" . $file;
-
-            }  //  while ( false !== ( $file = readdir($dh) ) )
+        // Process any local configuration files
+        
+        if ( ! $this->isLocalConfig && 0 != count($this->localConfigFiles) ) {
 
             // Sort the retrieved .json files.
-            sort($files, SORT_LOCALE_STRING);
+            sort($this->localConfigFiles, SORT_LOCALE_STRING);
 
             // Process each .json file before merging into the main file.
-            foreach( $files as $file ) {
+            foreach( $this->localConfigFiles as $file ) {
 
                 try {
                     $localConfigObj = $this->processLocalConfig($file);
                 } catch ( Exception $e ) {
-                    throw new Exception(sprintf("Processing %s: %s", $file, $e->getMessage()));
+                    throw new Exception(sprintf("Processing local file %s: %s", $file, $e->getMessage()));
                 }
 
                 $this->merge($localConfigObj);
-
-                $localConfigObj->cleanup();
-            } // foreach($files as $file)
-
-            closedir($dh);
-        } // if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) )
+                $localConfigObj->cleanup(true);
+            }
+        }
 
         $this->postMergeTasks();
 
         $this->initialized = true;
 
         return $this;
+    }
+
+    /**
+     * Scan the local configuration directory for a list of .json files and store them. While
+     * scanning, determine the maximum last modified time of all global and local configuraiton
+     * files.
+     *
+     * @param boolean $force Force a re-scan of the filesystem even in the file list is not empty.
+     *
+     * @return int The number of local configuration files found.
+     */
+
+    public function scanLocalConfigDir($force = false)
+    {
+        // Do not re-scan the directory if we don't need to.
+
+        if ( null === $this->localConfigDir | ($this->localDirectoryScanned && ! $force) ) {
+            return count($this->localConfigFiles);
+        }
+
+        $this->localConfigFiles = array();
+
+        if ( false === ($dh = @opendir($this->localConfigDir)) ) {
+            $err = error_get_last();
+            $this->logAndThrowException(
+                sprintf("Error opening configuration directory '%s': %s", $this->localConfigDir, $err['message'])
+            );
+        }
+
+        // Examine the subdirectory for .json files and collect them for later use.
+
+        while ( false !== ( $file = readdir($dh) ) ) {
+
+            // Only process .json files
+
+            $pos = strrpos(strtolower($file), '.json');
+            if ( false === $pos || (strlen($file) - $pos) != 5 ) {
+                continue;
+            }
+
+            $fullpath = $this->localConfigDir . '/' . $file;
+            $this->localConfigFiles[] = $fullpath;
+            $fileStats = stat($fullpath);
+            $this->maxLastModifiedTime = max($this->maxLastModifiedTime, $fileStats['mtime']);
+        }
+
+        closedir($dh);
+        $this->localDirectoryScanned = true;
+
+        return count($this->localConfigFiles);
     }
 
     /**
@@ -817,11 +962,16 @@ class Configuration extends Loggable implements \Iterator
 
     /**
      * Clean up intermediate information that we don't need to keep around after processing.
+     *
+     * @var boolean $deepCleanup Flag indicating that a more thorough cleanup should be performed.
      */
 
-    public function cleanup()
+    public function cleanup($deepCleanup = false)
     {
         $this->parsedConfig = null;
+        if ( $deepCleanup ) {
+            $this->transformedConfig = null;
+        }
     }
 
     /**
@@ -1154,7 +1304,7 @@ class Configuration extends Loggable implements \Iterator
     public function getBaseDir()
     {
         return $this->baseDir;
-    }  // getBaseDir()
+    }
 
     /**
      * @return array The associative array of options that was passed in from the parent, and
@@ -1164,6 +1314,26 @@ class Configuration extends Loggable implements \Iterator
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @return string The late static binding name for this class (e.g., the instantiated class
+     * name)
+     */
+
+    public function getCalledClassName()
+    {
+        return $this->calledClassName;
+    }
+
+    /**
+     * @return integer A unix timestamp indicating the maximum last modified time of the global
+     * configuration file and any local configuration files found in the local config directory.
+     */
+
+    public function getMaxLastModifiedTime()
+    {
+        return $this->maxLastModifiedTime;
     }
 
     /**
@@ -1262,5 +1432,14 @@ class Configuration extends Loggable implements \Iterator
     public function __toString()
     {
         return get_class($this) . " ({$this->filename})";
+    }
+
+    /**
+     * @see iConfiguration::__sleep()
+     */
+
+    public function __sleep()
+    {
+        return array_keys(get_object_vars($this));
     }
 }  // class Configuration
