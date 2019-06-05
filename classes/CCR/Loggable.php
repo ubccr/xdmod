@@ -164,4 +164,15 @@ class Loggable
     {
         return "(" . get_class($this) . ")";
     }  // __toString()
+
+    /* ------------------------------------------------------------------------------------------
+     * Do not allow serialization of the logger as it may contain a PDO resource, which cannot
+     * be serialized.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function __sleep()
+    {
+        return array();
+    }
 }  // class Loggable

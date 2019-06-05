@@ -431,7 +431,7 @@ try {
 // Parse the ETL configuration. We will need it for listing available ingestors, aggregators, etc.
 
 try {
-    $etlConfig = new EtlConfiguration(
+    $etlConfig = EtlConfiguration::factory(
         $scriptOptions['config-file'],
         $scriptOptions['base-dir'],
         $logger,
@@ -442,7 +442,6 @@ try {
         )
     );
     $etlConfig->setLogger($logger);
-    $etlConfig->initialize();
 } catch ( Exception $e ) {
     log_error_and_exit(
         sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
