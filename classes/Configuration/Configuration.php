@@ -177,6 +177,13 @@ class Configuration extends Loggable implements iConfiguration
     protected $forceArrayReturn = false;
 
     /**
+     * @var string The late static binding name of this class (e.g., the class that was
+     * instantiated)
+     */
+
+    protected $calledClassName = null;
+
+    /**
      * @var boolean Enable or disable the object cache to improve performance. Enabling the object
      * cache means that a Configuration object will only need to be created once for a given global
      * file.
@@ -192,13 +199,6 @@ class Configuration extends Loggable implements iConfiguration
      */
 
     protected static $objectCache = array();
-
-    /**
-     * @var string The late static binding name of this class (e.g., the class that was
-     * instantiated)
-     */
-
-    protected static $calledClassName = null;
 
     /**
      * @var boolean Force use of the local (per-session) object cache rather than APCu or other
@@ -330,17 +330,17 @@ class Configuration extends Loggable implements iConfiguration
             $instance->getMaxLastModifiedTime() > $cachedInstance->getMaxLastModifiedTime()
         );
 
-       if ( $staleCachedObject && null !== $logger ) {
-           $logger->debug(
-               sprintf(
-                   'Updating stale cached object %s (%s) (%s < %s)',
-                   $calledClass,
-                   $filename,
-                   date('Y-m-d H:i:s', $cachedInstance->getMaxLastModifiedTime()),
-                   date('Y-m-d H:i:s', $instance->getMaxLastModifiedTime())
-               )
-           );
-       }
+        if ( $staleCachedObject && null !== $logger ) {
+            $logger->debug(
+                sprintf(
+                    'Updating stale cached object %s (%s) (%s < %s)',
+                    $calledClass,
+                    $filename,
+                    date('Y-m-d H:i:s', $cachedInstance->getMaxLastModifiedTime()),
+                    date('Y-m-d H:i:s', $instance->getMaxLastModifiedTime())
+                )
+            );
+        }
 
         // If the object was not in the cache (either due to the cache not being enabled or the key
         // not found) or it was in the cache but we have detected newer files then it must be
@@ -572,7 +572,7 @@ class Configuration extends Loggable implements iConfiguration
         $this->scanLocalConfigDir();
 
         // Process any local configuration files
-        
+
         if ( ! $this->isLocalConfig && 0 != count($this->localConfigFiles) ) {
 
             // Sort the retrieved .json files.
