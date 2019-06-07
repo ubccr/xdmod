@@ -370,13 +370,13 @@ describe('Report Generator', function () {
         it('Select Report Generator tab', function () {
             reportGeneratorPage.selectTab();
         });
-        it('No reports listed', function () {
-            expect(reportGeneratorPage.getMyReportsRows().length, 'No rows in the list of reports').to.be.equal(0);
+        it('Reports listed', function () {
+            expect(reportGeneratorPage.getMyReportsRows().length, 'Rows in the list of reports').to.be.equal(1);
         });
         it('No available charts listed', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
         });
-        it('No report templates available', function () {
+        it('Report templates available', function () {
             expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
         });
     });
