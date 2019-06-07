@@ -98,7 +98,7 @@ describe('Report Generator', function () {
 
     const centerDirectorReportTemplates = [
         {
-            name: expected.centerdirector.report_templates.name,
+            name: expected.centerdirector.report_templates[0].name,
             chartsPerPage: 1,
             schedule: 'Quarterly',
             deliveryFormat: 'PDF',
@@ -230,6 +230,78 @@ describe('Report Generator', function () {
                     title: 'YEAR TO DATE: CPU Hours and Number of Jobs',
                     drillDetails: 'by Queue',
                     timeframeType: 'Year to date'
+                }
+            ]
+        },
+        {
+            name: expected.centerdirector.report_templates[1].name,
+            chartsPerPage: 1,
+            schedule: 'Quarterly',
+            deliveryFormat: 'PDF',
+            charts: [
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'Total CPU Hours and Jobs',
+                    drillDetails: '',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'Percent Utilization',
+                    drillDetails: '',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'CPU Hours and Number of Jobs - Top 20 Users',
+                    drillDetails: '',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'CPU Hours and Number of Jobs',
+                    drillDetails: 'by Resource',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'CPU Hours, Number of Jobs, and Wait Time per Job',
+                    drillDetails: 'by Job Size',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'CPU Hours and User Expansion Factor',
+                    drillDetails: 'by Job Size',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'Wait Hours per Job',
+                    drillDetails: 'by Queue',
+                    timeframeType: 'Previous quarter'
+                },
+                {
+                    realm: 'Jobs',
+                    startDate: previousQuarterStartDate,
+                    endDate: previousQuarterEndDate,
+                    title: 'CPU Hours and Number of Jobs',
+                    drillDetails: 'by Queue',
+                    timeframeType: 'Previous quarter'
                 }
             ]
         }
@@ -655,7 +727,9 @@ describe('Report Generator', function () {
         it('Click "New Based On"', function () {
             reportGeneratorPage.clickNewBasedOn();
         });
+
         it('Check list of report templates', function () {
+               
             reportGeneratorPage.getReportTemplateNames().forEach((reportTemplateName, i) => {
                 expect(reportTemplateName, 'Report template ' + i).to.be.equal(centerDirectorReportTemplates[i].name);
             });
@@ -664,7 +738,7 @@ describe('Report Generator', function () {
             // Close the menu so that it can be re-opened in the loop below.
             reportGeneratorPage.clickNewBasedOn();
         });
-        centerDirectorReportTemplates.forEach(template => {
+        centerDirectorReportTemplates.forEach((template, report_template_index) => {
             let reportIndex;
 
             it('Click "New Based On"', function () {
@@ -676,13 +750,13 @@ describe('Report Generator', function () {
             });
             it('Check list of reports', function () {
                 const reportRows = reportGeneratorPage.getMyReportsRows();
-                expect(reportRows.length, 'New report added').to.be.equal(reportIndex + expected.centerdirector.report_templates.reports_created);
+                expect(reportRows.length, 'New report added').to.be.equal(reportIndex + expected.centerdirector.report_templates[report_template_index].reports_created);
                 const reportRow = reportRows[reportIndex];
-                expect(reportRow.getName(), 'Name is correct').to.be.equal(expected.centerdirector.report_templates.created_name + ' 1');
+                expect(reportRow.getName(), 'Name is correct').to.be.equal(expected.centerdirector.report_templates[report_template_index].created_name + ' 1');
                 expect(reportRow.getDerivedFrom(), '"Derived From" is correct').to.be.equal(template.name);
                 expect(reportRow.getSchedule(), 'Schedule is correct').to.be.equal(template.schedule);
-                expect(reportRow.getDeliveryFormat(), 'Delivery format is correct').to.be.equal(expected.centerdirector.report_templates.delivery_format);
-                expect(reportRow.getNumberOfCharts(), 'Number of charts of is correct').to.be.equal(expected.centerdirector.report_templates.created_reports_count);
+                expect(reportRow.getDeliveryFormat(), 'Delivery format is correct').to.be.equal(expected.centerdirector.report_templates[report_template_index].delivery_format);
+                expect(reportRow.getNumberOfCharts(), 'Number of charts of is correct').to.be.equal(expected.centerdirector.report_templates[report_template_index].created_reports_count);
                 expect(reportRow.getNumberOfChartsPerPage(), 'Number of charts per page is correct').to.be.equal(template.chartsPerPage);
             });
             it('Edit report based on template', function () {
@@ -691,6 +765,7 @@ describe('Report Generator', function () {
             it('Check charts', function () {
                 const templateCharts = reportGeneratorPage.getCharts(
                     'centerdirector',
+                    report_template_index,
                     {
                         startDate: startDate,
                         endDate: endDate,
