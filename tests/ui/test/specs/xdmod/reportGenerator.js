@@ -729,7 +729,6 @@ describe('Report Generator', function () {
         });
 
         it('Check list of report templates', function () {
-               
             reportGeneratorPage.getReportTemplateNames().forEach((reportTemplateName, i) => {
                 expect(reportTemplateName, 'Report template ' + i).to.be.equal(centerDirectorReportTemplates[i].name);
             });
