@@ -1212,7 +1212,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
                         cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
-                        if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
+                        if (parseInt(json.user_information.user_type, 10) === CCR.xdmod.SSO_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
                             cmbUserType.hide();
                             lblXSEDEUser.show();
