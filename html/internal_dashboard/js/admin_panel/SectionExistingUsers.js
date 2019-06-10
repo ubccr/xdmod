@@ -433,6 +433,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             cmbUserType.setDisabled(true);
             btnSaveChanges.setDisabled(true);
             existingUserEmailField.setValue('');
+            cmbUserType.setValue('');
 
             if (self.initFlag === 1) {
                 document.getElementById('txtAccountTimestamps').innerText = '';
@@ -665,11 +666,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             maxLengthText: 'Maximum length (' + maxEmailLength + ' characters) exceeded.',
 
             validator: function (value) {
-                // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
-                    return true;
-                }
-
                 // Return validity of value in the field.
                 // (Other validators will check the remaining criteria.)
                 return XDMoD.validator.email(value);
@@ -896,11 +892,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
-                // When we are working on a 'Single Sign On' user the cmbUserType will
-                // not have a value ( as it's hidden ). In that case use the
-                // cached_user_type variable which is populated when we fetch
-                // the users details.
-                var userType = cmbUserType.isVisible() ? cmbUserType.getValue() : cached_user_type;
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
@@ -910,7 +901,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '-1' :
                         cmbUserMapping.getValue(),
                     institution: cmbInstitution.getValue(),
-                    user_type: userType,
+                    user_type: cmbUserType.getValue(),
                     sticky: stickyCheckbox.getValue()
                 };
 
@@ -1212,8 +1203,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
                         cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
-                        if (parseInt(json.user_information.user_type, 10) === CCR.xdmod.SSO_USER_TYPE) {
+                        var userType = parseInt(json.user_information.user_type, 10);
+                        if (userType === CCR.xdmod.SSO_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
+                            cmbUserType.setValue(userType);
+                            cmbUserType.originalValue = cmbUserType.getValue();
                             cmbUserType.hide();
                             lblXSEDEUser.show();
 
@@ -1226,8 +1220,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             mnuItemPasswordReset.show();
 
                             cmbUserType.setDisabled(false);
-                            cached_user_type = String(json.user_information.user_type);
-                            cmbUserType.setValue(cached_user_type);
+                            cmbUserType.setValue(userType);
                             cmbUserType.originalValue = cmbUserType.getValue();
                         }
                         var sticky = Boolean(json.user_information.sticky);
