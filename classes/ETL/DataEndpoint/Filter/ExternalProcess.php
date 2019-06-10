@@ -1,5 +1,5 @@
 <?php
-/* ==========================================================================================
+/**
  * PHP stream filter implementation allowing data to be passed through an external process
  * (e.g., jq, awk, sed) for processing. The external application MUST support reading from
  * standard input and writing to standard output.
@@ -12,7 +12,6 @@
  *
  * @see http://php.net/manual/en/stream.filters.php
  * @see http://php.net/manual/en/class.php-user-filter.php
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint\Filter;
@@ -22,27 +21,25 @@ use Log;
 class ExternalProcess extends \php_user_filter
 {
     /**
-     * Filter name, used when registering the stream filter.
+     * @const string Filter name, used when registering the stream filter.
      */
 
     const NAME = 'xdmod.external_process';
 
     /**
-     * Number of bytes to read and write to the application pipes at once
+     * @const integer Number of bytes to read and write to the application pipes at once
      */
 
     const READ_SIZE = 1024;
 
     /**
-     * The name of the filter, populated by PHP
-     *
-     * @var string
+     * @var string The name of the filter, populated by PHP
      */
 
     public $filtername = null;
 
     /**
-     * The parameters passed to this filter by stream_filter_prepend() or
+     * @var object The parameters passed to this filter by stream_filter_prepend() or
      * stream_filter_append(), set by PHP. This is expected to be an object with the
      * following properties:
      *
@@ -50,48 +47,39 @@ class ExternalProcess extends \php_user_filter
      *       shell $PATH rules apply.
      * arguments: Optional argument string to be passed to the application
      * logger: Optional logger for displying error messages
-     *
-     * @var object
      */
 
     public $params = null;
 
     /**
-     * An array containing file descriptors connected to the application.
+     * @var array An array containing file descriptors connected to the application. The following
+     * indexes are expected:
      * 0: application stdin
      * 1: application stdout
      * 2: application stdout
-     *
-     * @var array
      */
 
     private $pipes = null;
 
     /**
-     * File handle returned by proc_open()
-     *
-     * @var resource
+     * @var resource File handle returned by proc_open()
      */
 
     private $filterResource = null;
 
     /**
-     * Temporary resource used when creating new buckets
-     *
-     * @var resource
+     * @var resource Temporary resource used when creating new buckets
      */
 
     private $tmpResource = null;
 
     /**
-     * The command that was executed, including arguments.
-     *
-     * @var string
+     * @var string The command that was executed, including arguments.
      */
 
     private $command = null;
 
-    /** ------------------------------------------------------------------------------------------
+    /**
      * Called when applying the filter. Move data from the input buckets to the output
      * buckets, filtering along the way.
      *
@@ -108,7 +96,6 @@ class ExternalProcess extends \php_user_filter
      * @return PSFS_PASS_ON If data has been copied to the $out brigade
      * @return PSFS_FEED_ME If the filter was successful but did not copy data to the $out brigade,
      * @return PSFS_ERR_FATAL On error.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function filter($in, $out, &$consumed, $closing)
@@ -148,15 +135,14 @@ class ExternalProcess extends \php_user_filter
 
             $retval = PSFS_PASS_ON;
 
-        }  // if ($closing)
+        }
 
         return $retval;
-    }  // filter()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Perform setup on filter instantiation. This includes setting up the external filter
      * application and opening read and write pipes to the application.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function onCreate()
@@ -226,11 +212,10 @@ class ExternalProcess extends \php_user_filter
 
         return true;
 
-    }  // onCreate()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Cleanup after the filter is closed.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function onClose()
@@ -259,13 +244,12 @@ class ExternalProcess extends \php_user_filter
         proc_close($this->filterResource);
         fclose($this->tmpResource);
 
-    } // onClose()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Log error messages to stderr or the logger if it has been provided.
      *
      * @param string $message The log message
-     * ------------------------------------------------------------------------------------------
      */
 
     private function logError($message)
@@ -275,5 +259,5 @@ class ExternalProcess extends \php_user_filter
         } else {
             fwrite(STDERR, $message . PHP_EOL);
         }
-    }  // logError()
-}  // class ExternalProcess
+    }
+}

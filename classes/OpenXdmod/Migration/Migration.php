@@ -54,7 +54,7 @@ abstract class Migration
 
         $this->logger = \Log::singleton('null');
 
-        $this->config = new Configuration(
+        $this->config = Configuration::factory(
             ".",
             CONFIG_DIR,
             $this->logger

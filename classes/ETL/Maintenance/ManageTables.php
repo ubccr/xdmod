@@ -99,14 +99,13 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
                 $defFile = \xd_utilities\qualify_path($defFile, $this->options->paths->table_definition_dir);
             }
             $this->logger->info(sprintf("Parse table definition: '%s'", $defFile));
-            $tableConfig = new Configuration(
+            $tableConfig = Configuration::factory(
                 $defFile,
                 $this->options->paths->base_dir,
                 $this->logger
             );
-            $tableConfig->initialize();
             $etlTable = new Table(
-                $tableConfig->getTransformedConfig(),
+                $tableConfig->toStdClass(),
                 $this->destinationEndpoint->getSystemQuoteChar(),
                 $this->logger
             );

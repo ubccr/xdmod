@@ -158,7 +158,7 @@ class MetricExplorer {
         browser.click(this.selectors.toolbar.buttonByName('New Chart'));
         browser.waitAndClick(this.selectors.newChart.topMenuByText(datasetType));
         browser.waitAndClick(this.selectors.newChart.subMenuByText(datasetType, plotType));
-        browser.waitForVisible(this.selectors.newChart.modalDialog.box);
+        browser.waitAndClick(this.selectors.newChart.modalDialog.textBox());
         browser.setValue(this.selectors.newChart.modalDialog.textBox(), chartName);
         browser.click(this.selectors.newChart.modalDialog.ok());
         browser.waitForInvisible(this.selectors.newChart.modalDialog.box);
@@ -171,8 +171,7 @@ class MetricExplorer {
         browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton);
     }
     setDateRange(start, end) {
-        browser.waitForAllInvisible('.ext-el-mask');
-        browser.waitAndClick(this.selectors.startDate);
+        this.clickSelectorAndWaitForMask(this.selectors.startDate);
         browser.setValue(this.selectors.startDate, start);
         browser.waitAndClick(this.selectors.endDate);
         browser.setValue(this.selectors.endDate, end);

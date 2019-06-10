@@ -6,7 +6,7 @@
 // Open XDMoD and 476 (TACC) for XSEDE XDMoD.
 
 define('SERVICE_PROVIDER_ID', 1);
-define('DEFAULT_SECRETS_FILE', '/root/assets/secrets.json');
+define('DEFAULT_SECRETS_FILE', __DIR__ . '/../testing.json');
 define('DEFAULT_XDMOD_PATH', '/usr/share/xdmod');
 
 $scriptOptions = array(
