@@ -519,6 +519,12 @@ class Configuration extends Loggable implements iConfiguration
         // Set the last modified time of the global config file
 
         $fileStats = stat($this->filename);
+        if ( false === $fileStats ) {
+            $err = error_get_last();
+            $this->logAndThrowException(
+                sprintf("Error calling stat() on global configuration file %s: %s", $this->filename, $err['message'])
+            );
+        }
         $this->maxLastModifiedTime = $fileStats['mtime'];
     }
 
@@ -640,6 +646,12 @@ class Configuration extends Loggable implements iConfiguration
             $fullpath = $this->localConfigDir . '/' . $file;
             $this->localConfigFiles[] = $fullpath;
             $fileStats = stat($fullpath);
+            if ( false === $fileStats ) {
+                $err = error_get_last();
+                $this->logAndThrowException(
+                    sprintf("Error calling stat() on local configuration file %s: %s", $fullpath, $err['message'])
+                );
+            }
             $this->maxLastModifiedTime = max($this->maxLastModifiedTime, $fileStats['mtime']);
         }
 
