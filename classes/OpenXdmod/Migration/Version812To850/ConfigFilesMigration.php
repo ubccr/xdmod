@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Migration\Version812To850;
 
+use CCR\Json;
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;
 
@@ -15,6 +16,32 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
      */
     public function execute()
     {
+        $cloudRolesFilePath = CONFIG_DIR . '/roles.d/cloud.json';
+        if (file_exists($cloudRolesFilePath)) {
+            $cloudRolesFile = Json::loadFile($cloudRolesFilePath);
+            if (
+                (isset($cloudRolesFile['+roles']) || array_key_exists('+roles', $cloudRolesFile)) &&
+                (isset($cloudRolesFile['+roles']['+default']) || array_key_exists('+default', $cloudRolesFile['+roles'])) &&
+                (isset($cloudRolesFile['+roles']['+default']['+summary_charts']) || array_key_exists('+summary_charts', $cloudRolesFile['+roles']['+default']))
+            ){
+                foreach($cloudRolesFile['+roles']['+default']['+summary_charts'] as $key => $data){
+                    if(
+                        (isset($data['data_series']) || array_key_exists('data_series', $data))  &&
+                        (isset($data['data_series']['data']) || array_key_exists('data', $data['data_series']))
+                    ){
+                        $dataId = 0.00000000000010;
+                        foreach($data['data_series']['data'] as $dsKey => $dsData){
+                            if(!isset($data['data_series']['data'][$dsKey]['id'])){
+                                $cloudRolesFile['+roles']['+default']['+summary_charts'][$key]['data_series']['data'][$dsKey]['id'] = $dataId;
+                                $dataId += 0.00000000000001;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
         $this->assertPortalSettingsIsWritable();
 
         $console = Console::factory();
