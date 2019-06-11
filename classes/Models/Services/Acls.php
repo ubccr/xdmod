@@ -1064,7 +1064,6 @@ SQL;
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $descripter = new QueryDescripter(
-                    'tg_usage',
                     $row['realm'],
                     $row['group_by']
                 );
