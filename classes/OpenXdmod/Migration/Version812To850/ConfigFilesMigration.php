@@ -33,6 +33,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
                     }
                 }
             }
+            Json::saveFile($cloudRolesFilePath, $cloudRolesFile);
         }
 
         $this->assertPortalSettingsIsWritable();
