@@ -9,10 +9,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         $end_date,
         $group_by,
         $stat = 'cloud_num_sessions_running',
-        array $parameters = array(),
-        $query_groupname = 'query_groupname',
-        array $parameter_description = array(),
-        $single_stat = false
+        array $parameters = array()
     ) {
         parent::__construct(
             'Cloud',
@@ -24,10 +21,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
             $end_date,
             $group_by,
             $stat,
-            $parameters,
-            $query_groupname,
-            $parameter_description,
-            $single_stat
+            $parameters
         );
     }
 }
