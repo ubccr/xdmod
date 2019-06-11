@@ -22,11 +22,11 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             if (isset($cloudRolesFile['+roles']['+default']['+summary_charts'])) {
                 foreach($cloudRolesFile['+roles']['+default']['+summary_charts'] as $key => $data) {
                     if(isset($data['data_series']['data'])){
-                        $dataId = 0.00000000000010;
+                        $dataId = 1;
                         foreach($data['data_series']['data'] as $dsKey => $dsData) {
                             if(!isset($data['data_series']['data'][$dsKey]['id'])) {
                                 $cloudRolesFile['+roles']['+default']['+summary_charts'][$key]['data_series']['data'][$dsKey]['id'] = $dataId;
-                                $dataId += 0.00000000000001;
+                                $dataId++;
                             }
 
                         }
