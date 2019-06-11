@@ -23,6 +23,15 @@
                 ],
                 "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "job_lookup_key",
+                "columns": [
+                    "jobid",
+                    "agg_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
             }
         ],
         "triggers": []
