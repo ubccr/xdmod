@@ -431,6 +431,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         var self = this;
 
+        var chartToolbar;
         var handleDataException;
 
         var public_user = this.public_user || CCR.xdmod.publicUser;
@@ -1025,6 +1026,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             var nSettings = Ext.decode(n.attributes.chartSettings);
                             if (Ext.isObject(nodeSettings) && Ext.isObject(nSettings)) {
                                 nodeSettings.limit = nSettings.limit;
+                                if (!n.attributes.supportsAggregate) {
+                                    nodeSettings.dataset_type = nSettings.dataset_type;
+                                    nodeSettings.display_type = nSettings.display_type;
+                                    nodeSettings.swap_xy = nSettings.swap_xy;
+                                }
                                 newNodeSettings = Ext.encode(nodeSettings);
                             }
                         }
@@ -1211,7 +1217,61 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             chartToolbar.disable();
 
             if (n.attributes.chartSettings) {
-                chartToolbar.fromJSON(n.attributes.chartSettings);
+                var decoded = JSON.parse(n.attributes.chartSettings);
+                if (n.attributes.supportsAggregate === false) {
+                    // the node does not support aggregate so we need to
+                    // force timeseries/line/swap_xy=false
+                    decoded.dataset_type = 'timeseries';
+                    decoded.display_type = 'line';
+                    decoded.swap_xy = false;
+
+                    // Update the `timeseries` menu item to be disabled / checked.
+
+                    chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(true);
+                    chartToolbar.chartConfigButton.menu.datasetItem.setChecked(true, true);
+
+                    // Default tooltip that will be attached to the `Timeseries`
+                    // menu item.
+                    var tooltip = {
+                        title: 'Restricted by Statistic',
+                        text: 'The selected statistic does not support aggregate view'
+                    };
+
+                    // We need the `timeseries` menu item's element to setup the quicktip.
+                    // If the `timeseries` menu item has not been rendered yet,
+                    // the element won't exist yet. In this case, add an `afterrender` listener
+                    // that takes care of registering the quicktip.
+                    if (undefined !== chartToolbar.chartConfigButton.menu.datasetItem.el) {
+                        tooltip.target = chartToolbar.chartConfigButton.menu.datasetItem.el;
+                        Ext.QuickTips.register(tooltip);
+                    } else {
+                        chartToolbar.chartConfigButton.menu.datasetItem.on(
+                            'afterrender',
+                            function () {
+                                tooltip.target = chartToolbar.chartConfigButton.menu.datasetItem.el;
+                                Ext.QuickTips.register(tooltip);
+                            },
+                            {
+                                single: true
+                            }
+                        );
+                    }
+                } else {
+                    // then this statistic does support aggregate, so we need to
+                    // make sure that the `timeseries` menu item is enabled and
+                    // is checked if appropriate.
+                    var isTimeseries = decoded.dataset_type === 'timeseries';
+                    chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(false);
+                    chartToolbar.chartConfigButton.menu.datasetItem.setChecked(isTimeseries, true);
+
+                    // Now that we're not restricted, make sure to unregister the
+                    // quicktip.
+                    Ext.QuickTips.unregister(chartToolbar.chartConfigButton.menu.datasetItem.el);
+                }
+
+                // Now that all the shenanigans are over, go ahead and update the
+                // toolbar w/ the possibly updated decoded chart settings.
+                chartToolbar.fromJSON(JSON.stringify(decoded));
             } else {
                 chartToolbar.resetValues();
             }
@@ -1385,24 +1445,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                         legend += '</ul>';
                         updateDescription(legend, chartStore.getAt(0).get('subnotes'));
-
-                        var chartSettings = Ext.util.JSON.decode(chartStore.getAt(0).get('chart_settings').replace(/`/g, '"'));
-
-                        n.attributes.chartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
-
-                        for (var setting in chartSettings ) {
-                            if (chartSettings.hasOwnProperty(setting)
-                                && typeof chartSettings[setting]
-                                === 'boolean' ) {
-                                chartSettings[setting] =
-                                    chartSettings[setting]
-                                        ? 'y'
-                                        : 'n';
-                            }
-                        }
-
-                        if (!n.attributes.defaultChartSettings) n.attributes.defaultChartSettings = chartSettings;
-                        chartToolbar.fromJSON(n.attributes.chartSettings);
 
                         XDMoD.TrackEvent('Usage', 'Selected Chart Category Via Tree', n.getPath('text'));
 
@@ -1624,7 +1666,27 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         'Usage',
                         errorMessage
                     );
-
+                    return;
+                } else {
+                    var extraInfo = JSON.parse(data.message);
+                    var groupDescription = extraInfo.description;
+                    if (extraInfo.statistic !== '') {
+                        groupDescription += ' by ' + extraInfo.statistic;
+                    }
+                    viewer.el.unmask();
+                    view.tpl = new Ext.XTemplate(['<tpl for=".">', '<div>{group_description}</div><div>{description}</div>', '</tpl>']);;
+                    view.store.loadData({
+                        totalCount: 1,
+                        success: true,
+                        message: "Error",
+                        data: [
+                            {
+                                group_description: groupDescription,
+                                description: extraInfo.instructions
+                            }
+                        ]
+                    });
+                    view.refresh();
                     return;
                 }
             }
@@ -1836,7 +1898,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var chartToolbar = new CCR.xdmod.ui.ChartToolbar({
+        chartToolbar = new CCR.xdmod.ui.ChartToolbar({
 
             id: 'chart_toolbar_' + layoutId,
             handler: reloadChartFunc,
@@ -2636,12 +2698,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         'Loaded Chart',
                         'Chart: ' + chartStore.getAt(0).get('title') + ', Params: ' + chartStore.getAt(0).get('params_title')
                     );
-
-                    var chartSettings = Ext.util.JSON.decode(chartStore.getAt(0).get('chart_settings').replace(/`/g, '"'));
-
-                    n.attributes.chartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
-                    if (!n.attributes.defaultChartSettings) n.attributes.defaultChartSettings = chartSettings;
-                    chartToolbar.fromJSON(n.attributes.chartSettings);
 
                     self.setImageExport(true);
 
