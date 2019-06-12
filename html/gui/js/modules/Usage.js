@@ -433,6 +433,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         var chartToolbar;
         var handleDataException;
+        var view;
 
         var public_user = this.public_user || CCR.xdmod.publicUser;
 
@@ -1667,28 +1668,27 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         errorMessage
                     );
                     return;
-                } else {
-                    var extraInfo = JSON.parse(data.message);
-                    var groupDescription = extraInfo.description;
-                    if (extraInfo.statistic !== '') {
-                        groupDescription += ' by ' + extraInfo.statistic;
-                    }
-                    viewer.el.unmask();
-                    view.tpl = new Ext.XTemplate(['<tpl for=".">', '<div>{group_description}</div><div>{description}</div>', '</tpl>']);;
-                    view.store.loadData({
-                        totalCount: 1,
-                        success: true,
-                        message: "Error",
-                        data: [
-                            {
-                                group_description: groupDescription,
-                                description: extraInfo.instructions
-                            }
-                        ]
-                    });
-                    view.refresh();
-                    return;
                 }
+                var extraInfo = JSON.parse(data.message);
+                var groupDescription = extraInfo.description;
+                if (extraInfo.statistic !== '') {
+                    groupDescription += ' by ' + extraInfo.statistic;
+                }
+                viewer.el.unmask();
+                view.tpl = new Ext.XTemplate(['<tpl for=".">', '<div>{group_description}</div><div>{description}</div>', '</tpl>']);
+                view.store.loadData({
+                    totalCount: 1,
+                    success: true,
+                    message: 'Error',
+                    data: [
+                        {
+                            group_description: groupDescription,
+                            description: extraInfo.instructions
+                        }
+                    ]
+                });
+                view.refresh();
+                return;
             }
 
             CCR.xdmod.ui.presentFailureResponse(response);
@@ -1795,7 +1795,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var view = new Ext.DataView({
+        view = new Ext.DataView({
 
             id: 'view_chart_' + this.id,
             title: 'Chart',
