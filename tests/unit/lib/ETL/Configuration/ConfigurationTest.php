@@ -157,40 +157,118 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the Configuration class object cache.
+     * Test the Configuration class local object cache. This is an array-based key-value store in
+     * the Configuration object.
      */
 
-    public function testConfigurationObjectCache()
+    public function testLocalConfigurationObjectCache()
     {
+        $tmpFile = sprintf('%s/sample_config_with_variables.json', sys_get_temp_dir());
+        @copy(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            $tmpFile
+        );
+
+        // Force the system to use the local object cache
+
+        Configuration::forceLocalObjectCache();
+
         // The object cache is enabled by default so objects 1 and 2 will be the same
 
         $configObj1 = Configuration::factory(
-            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            $tmpFile,
             null,
             null,
             array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
         );
 
         $configObj2 = Configuration::factory(
-            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            $tmpFile,
             null,
             null,
             array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
         );
 
-        $this->assertTrue($configObj1 === $configObj2, "Object cache enabled");
+        // Using the local object cache we can compare objects directly
 
-        // Disable the cache, object 3 will be a new object
+        $this->assertTrue($configObj1 === $configObj2, "Local object cache");
+
+        // Modify the file and ensure that the cache was update with a new object. Note that we must
+        // clear the stat cache since PHP caches these values for performance reasons.
+
+        sleep(1);
+        touch($tmpFile);
+        clearstatcache();
+
+        $configObj3 = Configuration::factory(
+            $tmpFile,
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        $this->assertTrue($configObj1 !== $configObj3, "Updating stale cache");
+
+        // Disable the cache and expect a new object
 
         Configuration::disableObjectCache();
-        $configObj3 = Configuration::factory(
-            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+
+        $configObj4 = Configuration::factory(
+            $tmpFile,
             null,
             null,
             array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
         );
 
-        $this->assertTrue($configObj1 !== $configObj3, "Object cache disabled");
+        $this->assertTrue($configObj3 !== $configObj4, "Object cache disabled");
+
+        @unlink($tmpFile);
+    }
+
+    /**
+     * Test the APCu object cache. Objects retrieved from the cache are expected to be different
+     * because they are serialized and then unserialzed but their JSON representation are expected
+     * to be the same.
+     */
+
+    public function testApcuObjectCache()
+    {
+        // Copy the configuration file to a temporary directory so this test does not affect others.
+
+        $tmpFile = sprintf('%s/sample_config_with_variables.json', sys_get_temp_dir());
+        @copy(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            $tmpFile
+        );
+
+        // The object cache is enabled by default so objects 1 and 2 will be the same
+
+        $configObj1 = Configuration::factory(
+            $tmpFile,
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        $configObj2 = Configuration::factory(
+            $tmpFile,
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        // We cannot compare the objects directly because those in the APCu cache have been
+        // serialized and unserialized so expect 2 different objects with the same JSON
+        // representation.
+
+        $this->assertTrue($configObj1 !== $configObj2, "APCu object cache enabled, different objects");
+        $this->assertJsonStringEqualsJsonString(
+            $configObj1->toJson(),
+            $configObj2->toJson(),
+            "APCu object cache enabled, same JSON representation"
+        );
+
+        @unlink($tmpFile);
     }
 
     /**
