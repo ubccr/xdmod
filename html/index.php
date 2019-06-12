@@ -463,6 +463,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/modules/Usage.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/modules/ReportGenerator.js"></script>
+        <script type="text/javascript" src="gui/js/modules/DataExport.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="gui/js/modules/About.js"></script>
 

@@ -33,6 +33,17 @@
         "userManualSectionName": "Metric Explorer"
     },
     {
+        "tab": "data_export",
+        "isDefault": false,
+        "title": "Data Export",
+        "pos": 400,
+        "permitted_modules": null,
+        "javascriptClass": "XDMoD.Module.DataExport",
+        "javascriptReference": "CCR.xdmod.ui.dataExport",
+        "tooltip": "",
+        "userManualSectionName": "Data Export"
+    },
+    {
         "tab": "report_generator",
         "isDefault": false,
         "title": "Report Generator",
