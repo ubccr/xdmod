@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Migration\Version812To850;
 
+use CCR\Json;
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;
 
@@ -15,6 +16,26 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
      */
     public function execute()
     {
+        $cloudRolesFilePath = CONFIG_DIR . '/roles.d/cloud.json';
+        if (file_exists($cloudRolesFilePath)) {
+            $cloudRolesFile = Json::loadFile($cloudRolesFilePath);
+            if (isset($cloudRolesFile['+roles']['+default']['+summary_charts'])) {
+                foreach($cloudRolesFile['+roles']['+default']['+summary_charts'] as $key => $data) {
+                    if(isset($data['data_series']['data'])){
+                        $dataId = 1;
+                        foreach($data['data_series']['data'] as $dsKey => $dsData) {
+                            if(!isset($data['data_series']['data'][$dsKey]['id'])) {
+                                $cloudRolesFile['+roles']['+default']['+summary_charts'][$key]['data_series']['data'][$dsKey]['id'] = $dataId;
+                                $dataId++;
+                            }
+
+                        }
+                    }
+                }
+            }
+            Json::saveFile($cloudRolesFilePath, $cloudRolesFile);
+        }
+
         $this->assertPortalSettingsIsWritable();
 
         $console = Console::factory();
