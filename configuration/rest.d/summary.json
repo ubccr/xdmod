@@ -1,0 +1,6 @@
+{
+  "summary": {
+    "prefix": "summary",
+    "controller": "Rest\\Controllers\\SummaryControllerProvider"
+  }
+}

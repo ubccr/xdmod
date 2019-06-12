@@ -34,7 +34,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
         $logger = Log::factory('PHPUnit', $conf);
         
         // Configuration is used in the transformer to qualify relative paths
-        self::$config = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
+        self::$config = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
         self::$transformer = new IncludeTransformer($logger);
     }
 

@@ -66,9 +66,9 @@ class Timeseries extends \DataWarehouse\Query\Query
     }
 
     public function getQueryString(
-        $limit = NULL,
-        $offset = NULL,
-        $extraHavingClause = NULL
+        $limit = null,
+        $offset = null,
+        $extraHavingClause = null
     ) {
         $wheres = $this->getWhereConditions();
         $groups = $this->getGroups();
@@ -92,7 +92,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             $data_query .= " group by \n" . implode(",\n", $select_group_by);
         }
 
-        if ($extraHavingClause != NULL) {
+        if ($extraHavingClause != null) {
             $data_query .= " having " . $extraHavingClause . "\n";
         }
 
@@ -100,119 +100,11 @@ class Timeseries extends \DataWarehouse\Query\Query
             $data_query .= " order by \n" . implode(",\n", $select_order_by);
         }
 
-        if ($limit !== NULL && $offset !== NULL) {
+        if ($limit !== null && $offset !== null) {
             $data_query .= " limit $limit offset $offset";
         }
 
         return $data_query;
-    }
-
-    public function configureForChart(
-        &$chartProperties,
-        &$selectedDimensionIds,
-        &$sortInfo
-    ) {
-        $this->sortInfo = $sortInfo;
-
-        $xAxis
-            = isset($chartProperties['X Axis'])
-            ? $chartProperties['X Axis']
-            : '';
-
-        if ($xAxis != '') {
-            $x_axis_column_type = substr($xAxis, 0, 3);
-            $x_axis_column_name = substr($xAxis, 4);
-
-            $datagroup
-                = isset($chartProperties['Data Series'])
-                && $chartProperties['Data Series'] != 'none'
-                ? $chartProperties['Data Series']
-                : '';
-
-            if ($datagroup != '') {
-                $datagroup_column_type = substr($datagroup, 0, 3);
-                $datagroup_column_name = substr($datagroup, 4);
-                $this->addGroupBy($datagroup_column_name);
-            }
-
-            foreach ($selectedDimensionIds as $selectedDimensionId) {
-                if ($selectedDimensionId == $x_axis_column_name) {
-                    continue;
-                }
-
-                $f = $this->addFilter($selectedDimensionId);
-            }
-
-            $yAxisIndex = 1;
-
-            while(
-                (
-                    $yAxis
-                    = isset($chartProperties["Y Axis $yAxisIndex"])
-                    ? $chartProperties["Y Axis $yAxisIndex"]
-                    : ''
-                )
-                != ''
-            ) {
-                $y_axis_column_type = substr($yAxis, 0, 3);
-                $y_axis_column_name = substr($yAxis, 4);
-                $this->addStat($y_axis_column_name);
-                $yAxisIndex++;
-            }
-        }
-
-        if (count($sortInfo) > 0) {
-            $this->clearOrders();
-
-            foreach ($sortInfo as $sort) {
-                if (
-                       $sort['column_name'] == 'day'
-                    || $sort['column_name'] == 'month'
-                    || $sort['column_name'] == 'quarter'
-                    || $sort['column_name'] == 'year'
-                ) {
-                    $sort['direction'] = 'asc';
-                }
-
-                $this->addOrderBy($sort['column_name'], $sort['direction']);
-            }
-        }
-    }
-
-    public function configureForDatasheet(
-        &$selectedDimensionIds,
-        &$selectedMetricIds,
-        &$sortInfo
-    ) {
-        $this->sortInfo = $sortInfo;
-
-        if (count($selectedDimensionIds) > 0) {
-            foreach ($selectedDimensionIds as $selectedDimensionId) {
-                $this->addGroupBy($selectedDimensionId);
-            }
-        } else {
-            $this->addGroupBy('none');
-        }
-
-        foreach ($selectedMetricIds as $selectedMetricId) {
-            $this->addStat($selectedMetricId);
-        }
-
-        if (count($sortInfo) > 0) {
-            $this->clearOrders();
-
-            foreach ($sortInfo as $sort) {
-                if (
-                       $sort['column_name'] == 'day'
-                    || $sort['column_name'] == 'month'
-                    || $sort['column_name'] == 'quarter'
-                ) {
-                    $sort['direction'] = 'asc';
-                }
-
-                $this->addOrderBy($sort['column_name'], $sort['direction']);
-            }
-        }
     }
 
     public function getTimestamps()
@@ -393,7 +285,6 @@ class Timeseries extends \DataWarehouse\Query\Query
 
             $sorted_group_to_id[$gi['name']]          = $group_to_id[$gi['name']];
             $sorted_group_to_short_label[$gi['name']] = $group_to_short_label[$gi['name']];
-
         }
 
         $data_by_group['series'] = $sorted_group_to_id ;
@@ -403,7 +294,7 @@ class Timeseries extends \DataWarehouse\Query\Query
         $statement->closeCursor();
         $statement->execute();
 
-        while($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
+        while ($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
             $data_by_group[$result['name']][$period_id_lookup[$result["{$this->_aggregation_unit}_id"]]] = $result[$stat];
 
             // running_job_count will never be zero, but just in case
@@ -422,48 +313,5 @@ class Timeseries extends \DataWarehouse\Query\Query
         $data_by_group['query_time']   = $time_end - $time_start;
 
         return $data_by_group;
-    }
-
-    public function getDataset($limit = 10000000)
-    {
-        $dataset = new \DataWarehouse\Data\TimeseriesDataset(
-            $this->getQueryGroupname(),
-            $this->getRealmName()
-        );
-
-        $dataset->setStartDate($this->getStartDate());
-        $dataset->setEndDate($this->getEndDate());
-
-        $raw_data = $this->execute($limit);
-
-        $this->query_string = $raw_data['query_string'];
-        unset($raw_data['query_string']);
-
-        $this->query_time = $raw_data['query_time'];
-        unset($raw_data['query_time']);
-
-        $stat_key = $this->_main_stat_field->getAlias()->getName();
-
-        foreach ($raw_data['series'] as $series_name => $series_id) {
-            $series = new \DataWarehouse\Data\TimeseriesData(
-                $series_name,
-                $raw_data['short_series'][$series_name],
-                $this->_main_stat_field,
-                $this->_group_by,
-                $this->_aggregation_unit,
-                array($series_id),
-                $raw_data['labels'],
-                $raw_data['labels'],
-                $raw_data[$series_name],
-                $raw_data[$series_name . '-weights'],
-                $raw_data[$series_name . '-sem'],
-                $this->query_string,
-                $this->query_time
-            );
-
-            $dataset->addSeries($series);
-        }
-
-        return $dataset;
     }
 }

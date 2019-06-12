@@ -63,13 +63,12 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/maintenance.json', self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/jobs_cloud.json', self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
 
-        $configObj = new EtlConfiguration(
+        $configObj = EtlConfiguration::factory(
             self::TMPDIR . '/xdmod_etl_config_8.0.0.json',
             self::TMPDIR,
             null,
             array('default_module_name' => self::$defaultModuleName)
         );
-        $configObj->initialize();
         $generated = json_decode($configObj->toJson());
 
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_8.0.0.json';
@@ -117,13 +116,12 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
             ),
             'default_module_name' => self::$defaultModuleName
         );
-        $configObj = new EtlConfiguration(
+        $configObj = EtlConfiguration::factory(
             self::TMPDIR . '/xdmod_etl_config_with_variables_8.0.0.json',
             self::TMPDIR,
             null,
             $options
         );
-        $configObj->initialize();
         $generated = json_decode($configObj->toJson());
         $this->filterKeysRecursive(array('key'), $generated);
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_with_variables.json';
@@ -180,7 +178,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
                     'input'
                 )
             );
-            $config = new XdmodConfiguration(
+            $config = XdmodConfiguration::factory(
                 $baseFile,
                 $baseDir,
                 null,
@@ -189,13 +187,11 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
                 )
             );
         } else {
-            $config = new XdmodConfiguration(
+            $config = XdmodConfiguration::factory(
                 $baseFile,
                 $baseDir
             );
         }
-
-        $config->initialize();
 
         $actual = sprintf("%s\n", json_encode(json_decode($config->toJson()), JSON_PRETTY_PRINT));
 
@@ -252,7 +248,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
             )
         );
 
-        $config = new ModuleConfiguration(
+        $config = ModuleConfiguration::factory(
             $baseFile,
             $baseDir,
             null,
@@ -260,7 +256,6 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
                 'local_config_dir' => $localConfigDir
             )
         );
-        $config->initialize();
 
         $modules = $options['modules'];
         foreach($modules as $module) {
@@ -376,7 +371,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
             )
         );
 
-        $config = new XdmodConfiguration(
+        $config = XdmodConfiguration::factory(
             $baseFile,
             $baseDir,
             null,
@@ -384,7 +379,6 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
                 'local_config_dir' => $localConfigDir
             )
         );
-        $config->initialize();
 
         // Make sure that the actual is pretty-printed for ease of reading.
 

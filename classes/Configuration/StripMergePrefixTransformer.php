@@ -33,7 +33,7 @@ class StripMergePrefixTransformer extends Loggable implements iConfigFileKeyTran
      */
     public function keyMatches($key)
     {
-        return substr($key, 0, 1) === self::MERGE_PREFIX;
+        return $key[0] === self::MERGE_PREFIX;
     }
 
     /**
@@ -41,7 +41,7 @@ class StripMergePrefixTransformer extends Loggable implements iConfigFileKeyTran
      */
     public function transform(&$key, &$value, stdClass $obj, Configuration $config)
     {
-        $key = substr($key, 1, strlen($key) - 1);
+        $key = substr($key, 1);
 
         return true;
     }

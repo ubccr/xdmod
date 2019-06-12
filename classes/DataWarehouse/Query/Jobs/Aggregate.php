@@ -1,14 +1,8 @@
 <?php
 namespace DataWarehouse\Query\Jobs;
 
-/* 
-* @author Amin Ghadersohi
-* @date 2011-03-04
-* 
-*/
 class Aggregate extends \DataWarehouse\Query\Query
 {
-
     public function __construct(
         $aggregation_unit_name,
         $start_date,
@@ -37,4 +31,3 @@ class Aggregate extends \DataWarehouse\Query\Query
         );
     }
 }
-

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+case "$1" in
+    start)
+        mysqld_safe --defaults-file=/tmp/mysql-master.cnf &
+        /root/bin/mariadb-wait-ready $! /tmp/mysql-master.cnf
+        mysqld_safe --defaults-file=/tmp/mysql-slave.cnf &
+        /root/bin/mariadb-wait-ready $! /tmp/mysql-slave.cnf
+        httpd -k start
+        ;;
+    stop)
+        httpd -k stop
+        mysqladmin -S /var/lib/mysql/mysql.sock shutdown
+        mysqladmin -S /var/lib/mysql-slave/mysql.sock shutdown
+        ;;
+    restart)
+        $0 stop
+        $0 start
+esac

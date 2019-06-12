@@ -9,17 +9,31 @@ namespace ComponentTests\ETL;
 use CCR\DB;
 
 /**
- * Test various components of the ETLv2 ingestors.
+ * Test various components of the ETLv2 ingestors. All tests in this file run the etl_overseer.php
+ * script to test the entire pipeline. The following tests are performed:
+ *
+ * 1. Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
+ * 2. Insert truncated or out of range data and ensure that the SQL statements returns warning messages.
+ * 3. Insert truncated and out of range data but hide SQL warnings.
+ * 4. Insert truncated and out of range data but hide SQL warnings for incorrect values, leaving
+ *    warnings for out of range values.
+ * 5. Test the structured file ingestor using the directory scanner with one empty (0 byte)
+ *    file, one file containing an empty JSON array, and another file containing 2 records of
+ *    data.
  */
 
 class IngestorTest extends \PHPUnit_Framework_TestCase
 {
+    const TEST_INPUT_DIR = '/tests/artifacts/xdmod/etlv2/configuration/input';
+    const ACTION = 0;   // Run an overseer action
+    const PIPELINE = 1; // Run an overseer pipeline
+
     /**
-     * Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
+     * 1. Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
      */
 
     public function testLoadDataInfileWarnings() {
-        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-load-data-infile-warnings');
+        $result = $this->executeOverseer('xdmod.ingestor-tests.test-load-data-infile-warnings');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -45,11 +59,12 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Insert truncated or out of range data and ensure that the SQL statements returns warning messages.
+     * 2. Insert truncated or out of range data and ensure that the SQL statements returns warning
+     *    messages.
      */
 
     public function testSqlWarnings() {
-        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings');
+        $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -65,8 +80,9 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
-                $numWarnings++;
+                if ( false !== strpos($line, '[warning]') ) {
+                    $numWarnings++;
+                }
             }
         }
 
@@ -75,36 +91,32 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Insert truncated and out of range data but hide SQL warnings.
+     * 3. Insert truncated and out of range data but hide SQL warnings.
      */
 
     public function testHideSqlWarnings() {
-        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warnings=true"');
+        $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warnings=true"');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         // We are expecting no warnings to be returned
 
-        $numWarnings = 0;
-
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
                 $this->assertNotRegExp('/\[warning\]/', $line);
-                $numWarnings++;
             }
         }
 
-        $this->assertEquals(0, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr'], "Std Error");
     }
 
     /**
-     * Insert truncated and out of range data but hide SQL warnings for incorrect values,
-     * leaving warnings for out of range values.
+     * 4. Insert truncated and out of range data but hide SQL warnings for incorrect values, leaving
+     *    warnings for out of range values.
      */
 
     public function testHideSqlWarningCodes() {
-        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
+        $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -118,8 +130,9 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
-                $numWarnings++;
+                if ( false !== strpos($line, '[warning]') ) {
+                    $numWarnings++;
+                }
             }
         }
 
@@ -127,15 +140,16 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $result['stderr'], "Std Error");
 
         // Run the same action, but filter all expected warning codes.
-        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=[1264,1366]"');
+        $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=[1264,1366]"');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
         $numWarnings = 0;
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
-                $numWarnings++;
+                if ( false !== strpos($line, '[warning]') ) {
+                    $numWarnings++;
+                }
             }
         }
 
@@ -144,19 +158,103 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Execute the ETL overseer.
+     * 5. Test the structured file ingestor using the directory scanner with one empty (0 byte)
+     *    file, one file containing an empty JSON array, and another file containing 2 records of
+     *    dat.
+     */
+
+    public function testStructuredFileIngestorWithDirectoryScanner() {
+        $result = $this->executeOverseer(
+            'xdmod.cloud-jobs.GenericRawCloudEventIngestor',
+            sprintf('-v notice -d "CLOUD_EVENT_LOG_DIR=%s/generic_cloud_logs"', BASE_DIR . self::TEST_INPUT_DIR)
+        );
+
+        $this->assertEquals(0, $result['exit_status'], 'Exit code');
+        $this->assertEquals('', $result['stderr'], 'Std Error');
+    }
+
+    /**
+     * 6. Test the structured file ingestor using the same file in multiple actions both with and
+     *    without filters. We want to ensure that the file is fully processed each time.
+     */
+
+    public function testStructuredFileIngestorWithSameFile() {
+        $result = $this->executeOverseer(
+            'xdmod.structured-file',
+            '-v notice',
+            self::PIPELINE
+        );
+
+        // Parse the output looking for [notice] lines indicating how many records were loaded for
+        // each action in the pipeline. Ensure the expected number of records were loaded. We are
+        // expecting 4 actions to be run:
+        //
+        // xdmod.structured-file.read-people-1 with 1 record, filtered person.json
+        // xdmod.structured-file.read-people-2 with 3 record, unfiltered person.json
+        // xdmod.structured-file.read-people-3 with 3 record, same file as #2
+        // xdmod.structured-file.read-people-4 with 1 record, same file as #1
+
+        $recordsLoaded = array();
+
+        foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
+            if ( false !== strpos($line, '[notice]') ) {
+                $matches = array();
+                if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
+                    $number = $matches[1];
+                    if ( preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
+                        $recordsLoaded[$number] = $matches[1];
+                    }
+                }
+            }
+        }
+
+        $this->assertEquals(1, $recordsLoaded[1], 'Records loaded 1');
+        $this->assertEquals(3, $recordsLoaded[2], 'Records loaded 2');
+        $this->assertEquals(3, $recordsLoaded[3], 'Records loaded 3');
+        $this->assertEquals(1, $recordsLoaded[4], 'Records loaded 4');
+        $this->assertEquals(0, $result['exit_status'], 'Exit code');
+        $this->assertEquals('', $result['stderr'], 'Std Error');
+    }
+
+    /**
+     * Execute a single ETL overseer action via the CLI script.
      *
      * @param string $action The name of the action to execute.
      * @param string $localOptions A string of additional options to pass to the overseer.
+     * @param int $type Either an action or a pipeline
      */
 
-    private function executeOverseerAction($action, $localOptions = "")
+    private function executeOverseer($name, $localOptions = "", $type = self::ACTION)
     {
         // Note that tests are run in the directory where the PHP class is defined.
         $overseer = realpath(BASE_DIR . '/tools/etl/etl_overseer.php');
-        $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
-        $options = sprintf('-c %s -a %s %s -v warning', $configFile, $action, $localOptions);
+        $configFile = realpath(BASE_DIR . self::TEST_INPUT_DIR . '/xdmod_etl_config_8.0.0.json');
+        $options = sprintf(
+            '-c %s %s %s %s',
+            $configFile,
+            (self::ACTION == $type ? '-a' : '-p'),
+            $name,
+            $localOptions
+        );
+
+        // Add a verbosity flag if the local options do not already contain one
+        if ( "" == $localOptions || false === strpos($localOptions, '-v') ) {
+            $options = sprintf('%s -v warning', $options);
+        }
+
         $command = sprintf('%s %s', $overseer, $options);
+
+        return $this->executeCommand($command);
+    }
+
+    /**
+     * Execute a command.
+     *
+     * @param string $command The command to execute
+     */
+
+    private function executeCommand($command)
+    {
         $pipes = array();
 
         $process = proc_open(
@@ -204,5 +302,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     {
         $dbh = DB::factory('database');
         $dbh->execute('DROP TABLE IF EXISTS `test`.`load_data_infile_test`');
+        $dbh->execute('DROP TABLE IF EXISTS `test`.`organizations`');
+        $dbh->execute('DROP TABLE IF EXISTS `test`.`people`');
     }
 }

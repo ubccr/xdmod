@@ -58,7 +58,7 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
         // Rather than call the SQL parser directly, use the same methods that an ETL action would use.
         // This requires that we instantiate a class that extends aRdbmsDestinationAction.
 
-        $etlConfig = new EtlConfiguration(
+        $etlConfig = EtlConfiguration::factory(
             self::TMPDIR . '/xdmod_etl_config_8.0.0.json',
             self::TMPDIR,
             null,
