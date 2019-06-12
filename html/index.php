@@ -199,6 +199,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
     <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTip.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTipTour.js"></script>
 
     <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
     <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
@@ -403,7 +405,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/lib/Portal.js"></script>
     <script type="text/javascript" src="gui/lib/PortalColumn.js"></script>
     <script type="text/javascript" src="gui/lib/Portlet.js"></script>
-
+    <script type="text/javascript" src="gui/js/Portlet.js"></script>
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
         <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
@@ -433,7 +435,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
     <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
     <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
-
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/Spotlight.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
         <script type="text/javascript" src="gui/js/AddDataPanel.js"></script>

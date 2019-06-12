@@ -7,8 +7,8 @@
 }
 
 .assist_panel_section {
-	border: 1px solid #bbb; 
-	padding: 5px; 
+	border: 1px solid #bbb;
+	padding: 5px;
 	background-color: #fef8ee;
 	width: 263px;
 }
@@ -63,9 +63,9 @@ h2 {
 	color:#083772;
 	letter-spacing:-1px;
 	font-weight:normal;
-	
+
 	padding:2px 2px;
-	
+
 }
 h3 {
 		font-family: arial;
@@ -84,11 +84,11 @@ h3 {
 
 /* CustomSearch.js (Search Usage module */
 
-/* Addresses issues regarding the 'Search By' section 
+/* Addresses issues regarding the 'Search By' section
    when in IE8 Quirks Mode */
-   
-/* CustomSearch tab no longer exists and its source has been removed. 
- * However, the custom_search_mode class is referenced by 
+
+/* CustomSearch tab no longer exists and its source has been removed.
+ * However, the custom_search_mode class is referenced by
  * report_builder/ReportCreator.js and
  * report_builder/ChartDateEditor.js
  *
@@ -126,12 +126,12 @@ h3 {
 .highlighted_tab .x-tab-right,
 .highlighted_tab .x-tab-left,
 .highlighted_tab .x-tab-strip-inner {
-         
+
    background-color: #93fc7b !important;
    background-image: none !important;
-            
+
 }
-         
+
 .checkbox_available_for_report {
    padding-bottom: 4px !important;
 }
@@ -415,7 +415,7 @@ h3 {
 	vertical-align:  top;
 	valign: top;
  	color:#15428b;
-	font-weight:bold; 
+	font-weight:bold;
     font-size: 10px;
     font-family: arial,verdana,sans-serif;
 }
@@ -526,7 +526,7 @@ h3 {
 	vertical-align: top;
 	padding-right: 10px;
 	padding-left: 10px;
-	
+
 }
 
 .xd-img {
@@ -549,7 +549,7 @@ h3 {
 	color: #1111ff !important;
 }
 
-.ext-el-mask-msg div 
+.ext-el-mask-msg div
 {
 	cursor:default !important;
 }
@@ -570,7 +570,7 @@ h3 {
 	font: 12px arial, "Times New Roman", Times, serif;
 	font-weight: bold;
 }
-        
+
 .x-tree-multiline-node-collapsed .x-tree-elbow-line-multiline-expanded {
 	background-image: none;
 }
@@ -684,7 +684,7 @@ background:#fafafa;
     background-image: url(../images/realm.png) !important;
 }
 
-/*.highcharts-container span { 
+/*.highcharts-container span {
  background-color: #ffffff;
  padding-bottom: 5px; //so the Qs dont get cut off
 }*/
@@ -692,7 +692,7 @@ background:#fafafa;
 .exclamation {
     background-image: url(../images/exclamation_ak.png) !important;
 }
- 	
+
 .delete {
     background-image: url(../images/delete.png) !important;
 }
@@ -780,4 +780,59 @@ div.chart_thumb a {
 
 .jobviewer_helpcontent strong {
     font-weight: bold;
+}
+.help-tip-body {
+    padding-bottom: 7px !important;
+    margin-top: 15px;
+    margin-bottom:  10px;
+    border: none !important;
+}
+.base-help-tip {
+    background-color: #E9F3FF;
+    padding: 5px;
+    border: 1px solid #bbb;
+    font: normal 12px tahoma, arial, helvetica, sans-serif;
+    color: #31383D;
+}
+.base-help-tip ul {
+    list-style-type: disc;
+    margin: 10px 0px 0px 20px;
+}
+.base-help-tip li {
+    margin: 10px 0px;
+}
+.base-help-tip-bbar {
+    background-color: #E9F3FF;
+    color: #31383D;
+}
+.base-help-tip-bbar .x-toolbar {
+    background-color: #e9f3ff;
+    color: #31383D;
+    background-image: none;
+    border: none;
+}
+.x-spotlight {
+    opacity: .65 !important;
+}
+.next-help-tip, .previous-help-tip, .end-help-tip-tour {
+    border: 1px solid black;
+    padding: 3px 10px;
+    background-color: #BAC2CC;
+    border-radius: 5px;
+
+ }
+.next-help-tip button, .previous-help-tip button, .end-help-tip-tour button, .base-help-tip-header-text {
+    font-weight: bold;
+    font-size: 12px;
+}
+.help-tip-button {
+    background-color: #4E6480;
+}
+.help-tip-button button {
+    color: #E8F4FF !important;
+}
+.help-tip-button .x-btn-tl, .help-tip-button .x-btn-tr, .help-tip-button .x-btn-tc, .help-tip-button .x-btn-ml,
+.help-tip-button .x-btn-mr, .help-tip-button .x-btn-mc, .help-tip-button .x-btn-bl, .help-tip-button .x-btn-br,
+.help-tip-button .x-btn-bc{
+    background: none !important;
 }
