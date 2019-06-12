@@ -1,5 +1,5 @@
 <?php
-/** =========================================================================================
+/**
  * Read and parse a JSON configuration file containing keys with associated values
  * (scalar, object, array). Values that are objects are considered to be fixed entities
  * that define something in the configuration. Key transformers may also be added allowing
@@ -60,16 +60,6 @@
  * Perform any tasks that need to occur after the merging of the local configuration objects (if
  * any) into the global configuration object. This is useful for massaging the final configuration
  * object.
- *
- * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2016-06-15
- *
- * @date 2017-04-11 - Added dynamic key transformers
- *
- * @date 2017-04-18 - Moved parsing of local configuration files into this class
- *
- * @date 2018-03-09 - Added postMergeTasks()
- * ==========================================================================================
  */
 
 namespace Configuration;
@@ -84,85 +74,90 @@ use Log;
 use stdClass;
 use Traversable;
 
-class Configuration extends Loggable implements \Iterator
+class Configuration extends Loggable implements iConfiguration
 {
     // NOTE: Any properties that need to be accessed in a transformer defined in a subclass cannot be
     // private.
 
     /**
-     * Key transformers will be used to dynamically add functionality for matching keys and
-     * must implement the iConfigFileKeyTransformer interface.
-     * @var array(iConfigFileKeyTransformer)
+     * @var array(iConfigFileKeyTransformer) Key transformers will be used to dynamically add
+     * functionality for matching keys and must implement the iConfigFileKeyTransformer interface.
      */
 
     private $keyTransformers = array();
 
     /**
-    * Configuration file name
-    * @var string
+    * @var string Configuration file name
     */
 
     protected $filename = null;
 
     /**
-    * The base directory for any paths that are not fully qualified
-    * @var string
+    * @var string The base directory for any paths that are not fully qualified
     */
 
     protected $baseDir = null;
 
     /**
-     * The parsed configuration file prior to manipulation
-     * @var stdClass
+     * @var stdClass The parsed configuration file prior to manipulation
      */
 
     protected $parsedConfig = null;
 
     /**
-     * The configuration constructed from the parsed file after processing any transformers and
-     * performing manipulations.
-     * @var stdClass
+     * @var stdClass The configuration constructed from the parsed file after processing any
+     * transformers and performing manipulations.
      */
 
     protected $transformedConfig = null;
 
     /**
-     * An associative array where keys are section names and values the data associated with that
-     * section.
-     * @var array(stdclass)
+     * @var array(stdclass) An associative array where keys are section names and values the data
+     * associated with that section.
      */
 
     protected $sectionData = array();
 
     /**
-     * TRUE if this is a local configuration file as opposed to the main configuration file
-     * @var boolean
+     * @var boolean TRUE if this is a local configuration file as opposed to the main configuration
+     * file
      */
 
     protected $isLocalConfig = false;
 
     /**
-     * Directory to look for local configuration files (e.g. sub-configs)
-     * @var string
+     * @var string Directory to look for local configuration files (e.g. sub-configs)
      */
 
     protected $localConfigDir = null;
 
     /**
-     * An associative array of options that was passed in from the parent. This is useful for
-     * providing additional customized information to the implementation such as additional
+     * @var boolean Flag indicating that the directory for local configuration files has been
+     * scanned and the list of filenames has been stored for use.
+     */
+
+    protected $localDirectoryScanned = false;
+
+    /**
+     * @var integer A unix timestamp indicating the maximum last modified time of the global
+     * configuration file and any local configuration files found in the local config directory.
+     */
+
+    public $maxLastModifiedTime = 0;
+
+    /**
+     * @var array An associative array of options that was passed in from the parent. This is useful
+     * for providing additional customized information to the implementation such as additional
      * parameters used by child classes or variables and values that the transformers may use to
      * support variable substitution.
-     * @var array
      */
 
     protected $options = array();
 
     /**
-     * A collection of variable names and values available for substitution during the ETL process.
-     * Note that the contents of this collection may change over time as variables can be added via
-     * the command line, configuration files, or ETL actions themselves.
-     * @var VariableStore
+     * @var VariableStore A collection of variable names and values available for substitution
+     * during the ETL process.  Note that the contents of this collection may change over time as
+     * variables can be added via the command line, configuration files, or ETL actions themselves.
      */
 
     protected $variableStore = null;
@@ -182,23 +177,35 @@ class Configuration extends Loggable implements \Iterator
     protected $forceArrayReturn = false;
 
     /**
-     * Enable or disable the object cache to improve performance. Enabling the object cache means
-     * that a Configuration object will only need to be created once for a given global file.
-     *
-     * @var boolean
+     * @var string The late static binding name of this class (e.g., the class that was
+     * instantiated)
      */
 
-    protected static $enableObjectCache = true;
+    protected $calledClassName = null;
 
     /**
-     * Associative array used as a key value store to cache parsed and transformed configuration
-     * files to improve performance.  Keys are the fully qualified path of the global file and
-     * values are parsed and transformed objects generated from that file and any local files.
-     *
-     * @var array
+     * @var boolean Enable or disable the object cache to improve performance. Enabling the object
+     * cache means that a Configuration object will only need to be created once for a given global
+     * file.
+     */
+
+    protected static $objectCacheEnabled = true;
+
+    /**
+     * @var array Associative array used as a key value store to cache parsed and transformed
+     * configuration files to improve performance.  Keys are the fully qualified path of the global
+     * file and values are parsed and transformed objects generated from that file and any local
+     * files.
      */
 
     protected static $objectCache = array();
+
+    /**
+     * @var boolean Force use of the local (per-session) object cache rather than APCu or other
+     * caching mechanisms. This is used mainly for testing purposes.
+     */
+
+    protected static $forceLocalObjectCache = false;
 
     /**
      * A factory / helper method for instantiating a Configuration object, initializing it, and
@@ -218,7 +225,6 @@ class Configuration extends Loggable implements \Iterator
         Log $logger = null,
         array $options = array()
     ) {
-
         return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
     }
 
@@ -239,15 +245,15 @@ class Configuration extends Loggable implements \Iterator
         Log $logger = null,
         array $options = array()
     ) {
+        $calledClass = get_called_class();
+
         if ( empty($filename) ) {
-            $msg = sprintf("%s: Configuration filename cannot be empty", get_called_class());
+            $msg = sprintf("%s: Configuration filename cannot be empty", $calledClass);
             if ( null !== $logger ) {
                 $logger->error($msg);
             }
             throw new Exception($msg);
         }
-
-        $startTime = microtime(true);
 
         // We need the fully qualified path for the object cache key because there could be two
         // files with the same base name in different directories.
@@ -266,60 +272,111 @@ class Configuration extends Loggable implements \Iterator
             $filename = \xd_utilities\qualify_path($filename, $baseDir);
         }
 
-        $inCache = false;
         $cacheKey = null;
+        $cachedInstance = null;
+        $apcuEnabled = (
+            filter_var(ini_get('apc.enabled'), FILTER_VALIDATE_BOOLEAN) &&
+            ! self::$forceLocalObjectCache
+        );
 
-        // If this is a local config file, do not attempt to pull it out of the cache because its
-        // contents depend on options passed in from the global config. If the global config was
-        // retrieved from the cache we won't be processing the local configs anyway.
+        // If this is a local config file, do not attempt to use the cache because its contents
+        // depend on options passed in from the global config. If the global config was retrieved
+        // from the cache we won't be processing the local configs anyway.
 
-        $skipCacheCheck = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
+        $isLocalConfig = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
 
-        if ( self::$enableObjectCache && ! $skipCacheCheck ) {
+        if ( self::$objectCacheEnabled && ! $isLocalConfig ) {
+
             // The cache key must take into account the full filename, the class that was actually
             // instantiated, as well as any options provided as this may affect the generated
             // object. We use serialize() instead of json_encode() because the latter only takes
             // into account public member variables and we have more complex objects that can be
             // passed as options such as VariableStore. The filename and called class are maintained
             // in clear text for debugging purposes.
-            $cacheKey = $filename . '|' . get_called_class() . '|' . md5(serialize($options));
-            $inCache = array_key_exists($cacheKey, self::$objectCache);
+
+            $cacheKey = $calledClass . '|' . $filename . '|' . md5(serialize($options));
+            $inCache = ( $apcuEnabled ? apcu_exists($cacheKey) : array_key_exists($cacheKey, self::$objectCache) );
+
+            if ( $inCache ) {
+                $startTime = microtime(true);
+                $success = null;
+                $cachedInstance = ( $apcuEnabled ? apcu_fetch($cacheKey, $success) : self::$objectCache[$cacheKey] );
+                $cachedInstance->setLogger($logger);
+                if ( null !== $logger ) {
+                    $logger->trace(
+                        sprintf(
+                            'Fetched object %s (%s) from %s cache with key %s in %fs',
+                            $calledClass,
+                            $filename,
+                            ( $apcuEnabled ? 'APCu' : 'local' ),
+                            $cacheKey,
+                            microtime(true) - $startTime
+                        )
+                    );
+                }
+            }
         }
 
-        if ( ! self::$enableObjectCache || ! $inCache || $skipCacheCheck ) {
-            // Let the constructor know that it was called via factory()
-            $options['called_via_factory'] = true;
-            $instance = new static($filename, $baseDir, $logger, $options);
+        // Create an object instance but do not initialize it yet. This allows us to check to
+        // see if any global or local configuration files have changed since the object was
+        // placed into the cache.
+
+        $startTime = microtime(true);
+        $options['called_via_factory'] = true;  // Let the constructor know that it was called via factory()
+        $instance = new static($filename, $baseDir, $logger, $options);
+
+        $staleCachedObject = (
+            null !== $cachedInstance &&
+            $instance->getMaxLastModifiedTime() > $cachedInstance->getMaxLastModifiedTime()
+        );
+
+        if ( $staleCachedObject && null !== $logger ) {
+            $logger->debug(
+                sprintf(
+                    'Updating stale cached object %s (%s) (%s < %s)',
+                    $calledClass,
+                    $filename,
+                    date('Y-m-d H:i:s', $cachedInstance->getMaxLastModifiedTime()),
+                    date('Y-m-d H:i:s', $instance->getMaxLastModifiedTime())
+                )
+            );
+        }
+
+        // If the object was not in the cache (either due to the cache not being enabled or the key
+        // not found) or it was in the cache but we have detected newer files then it must be
+        // initialized.
+
+        if ( null === $cachedInstance || $staleCachedObject ) {
             $instance->initialize();
-            if ( null !== $logger ) {
-                $logger->trace(
-                    sprintf(
-                        "Created %s%s (%s) in %fs",
-                        ($skipCacheCheck ? "local " : ""),
-                        get_called_class(),
-                        $filename,
-                        microtime(true) - $startTime
-                    )
-                );
-            }
-            if ( self::$enableObjectCache ) {
+        } elseif ( null !== $cachedInstance ) {
+            $instance = $cachedInstance;
+        }
+
+        if (
+            self::$objectCacheEnabled &&
+            ! $isLocalConfig &&  // Do not cache intermediate local objects
+            ( null === $cachedInstance || $staleCachedObject )
+        ) {
+            if ( $apcuEnabled ) {
+                apc_store($cacheKey, $instance);
+            } else {
                 self::$objectCache[$cacheKey] = $instance;
             }
-            return $instance;
-        } else {
             if ( null !== $logger ) {
-                $logger->trace(
+                $logger->debug(
                     sprintf(
-                        "Fetching object %s (%s) from cache with key %s in %fs",
-                        get_called_class(),
+                        'Stored object %s (%s) in %s cache with key %s in %fs',
+                        $calledClass,
                         $filename,
+                        ( $apcuEnabled ? 'APCu' : 'local' ),
                         $cacheKey,
                         microtime(true) - $startTime
                     )
                 );
             }
-            return self::$objectCache[$cacheKey];
         }
+
+        return $instance;
     }
 
     /**
@@ -328,7 +385,7 @@ class Configuration extends Loggable implements \Iterator
 
     public static function enableObjectCache()
     {
-        self::$enableObjectCache = true;
+        self::$objectCacheEnabled = true;
     }
 
     /**
@@ -337,11 +394,23 @@ class Configuration extends Loggable implements \Iterator
 
     public static function disableObjectCache()
     {
-        self::$enableObjectCache = false;
+        self::$objectCacheEnabled = false;
         self::$objectCache = array();
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
+     * Force use of the local object cache rather than APCu or other methods. Used mainly for
+     * testing.
+     *
+     * @param boolean $flag TRUE to force use of the local object cache.
+     */
+
+    public static function forceLocalObjectCache($flag = true)
+    {
+        self::$forceLocalObjectCache = $flag;
+    }
+
+    /**
      * Constructor. Read and parse the configuration file.
      *
      * *** Note that the constructor should not be called directly (e.g., new Configuration). Use
@@ -366,7 +435,6 @@ class Configuration extends Loggable implements \Iterator
      *   variables: An associative array of variables and their value. These may be used by
      *     transformers to support variable substitution. NOTE: JsonReferenceTransforer must
      *     be modified to use the VariableStore.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(
@@ -394,24 +462,35 @@ class Configuration extends Loggable implements \Iterator
         // The base directory and filename are expected to be qualifed in factory()
         $this->baseDir = $baseDir;
         $this->filename = $filename;
+        $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
+        $this->calledClassName = get_called_class();
+        $this->options = $options;
 
         if ( isset($options['local_config_dir']) ) {
-
-            // Before continuing, make sure that the specified directory actually exists. It not
-            // existing could have unexpected consequences for an XDMoD installation.
-            if (!is_dir($options['local_config_dir'])) {
-                $this->logAndThrowException(sprintf("Unable to find the specified local configuration directory: %s", $options['local_config_dir']));
-            }
-
             $this->localConfigDir = $options['local_config_dir'];
-        } else {
-            // Set $localConfigDir to the default value.
-            $this->localConfigDir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
+        } elseif ( ! $this->isLocalConfig ) {
+            // Imply the local config directory from the global config file name
+            $dir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
+            if ( is_dir($dir) ) {
+                $this->localConfigDir = $dir;
+            }
         }
 
-        $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
+        // If the local config dir has been set (either explicitly as a parameter or implictly via
+        // the file name) scan it for local files.
 
-        $this->options = $options;
+        if ( null !== $this->localConfigDir ) {
+            $this->scanLocalConfigDir();
+        }
+
+        // Before continuing, make sure that the specified directory actually exists. It not
+        // existing could have unexpected consequences for an XDMoD installation.
+
+        if ( null !== $this->localConfigDir && ! is_dir($this->localConfigDir) ) {
+            $this->logAndThrowException(
+                sprintf('Unable to find the local configuration directory: %s', $this->localConfigDir)
+            );
+        }
 
         // Clean up directory paths
         $this->filename = \xd_utilities\resolve_path($this->filename);
@@ -436,16 +515,26 @@ class Configuration extends Loggable implements \Iterator
         if ( isset($options['force_array_return']) ) {
             $this->forceArrayReturn = $options['force_array_return'];
         }
-    }  // __construct()
 
-    /** -----------------------------------------------------------------------------------------
+        // Set the last modified time of the global config file
+
+        $fileStats = stat($this->filename);
+        if ( false === $fileStats ) {
+            $err = error_get_last();
+            $this->logAndThrowException(
+                sprintf("Error calling stat() on global configuration file %s: %s", $this->filename, $err['message'])
+            );
+        }
+        $this->maxLastModifiedTime = $fileStats['mtime'];
+    }
+
+    /**
      * Initialize the configuration objecton.
      *
      * @param boolean $force TRUE to force re-initialization of the configuration even if it has
      *   previously been initialized.
      *
      * @return Configuration This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function initialize($force = false)
@@ -481,66 +570,103 @@ class Configuration extends Loggable implements \Iterator
 
         $this->interpretData();
 
-        // Process any local configuration files iff $localConfigDir exists, is actually a directory,
-        // and this is not a local config file itself.
-        if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) ) {
+        // Scan the local config directory. This is performed in the constructor to obtain the max
+        // last modified time of the local files but in some cases the local directory may not be
+        // available until after the global file has been parsed (such as EtlConfiguration) so we
+        // need to check again here.
 
-            if ( false === ($dh = @opendir($this->localConfigDir)) ) {
-                $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
-            }
+        $this->scanLocalConfigDir();
 
-            // Examine the subdirectory for .json files and collect them for later use.
-            $files = array();
-            while ( false !== ( $file = readdir($dh) ) ) {
+        // Process any local configuration files
 
-                // Only process .json files
-
-                $len = strlen($file);
-                $pos = strrpos(strtolower($file), ".json");
-                if ( false === $pos || ($len - $pos) != 5 ) {
-                    continue;
-                }
-
-                $files[] = $this->localConfigDir . "/" . $file;
-
-            }  //  while ( false !== ( $file = readdir($dh) ) )
+        if ( ! $this->isLocalConfig && 0 != count($this->localConfigFiles) ) {
 
             // Sort the retrieved .json files.
-            sort($files, SORT_LOCALE_STRING);
+            sort($this->localConfigFiles, SORT_LOCALE_STRING);
 
             // Process each .json file before merging into the main file.
-            foreach( $files as $file ) {
+            foreach( $this->localConfigFiles as $file ) {
 
                 try {
                     $localConfigObj = $this->processLocalConfig($file);
                 } catch ( Exception $e ) {
-                    throw new Exception(sprintf("Processing %s: %s", $file, $e->getMessage()));
+                    throw new Exception(sprintf("Processing local file %s: %s", $file, $e->getMessage()));
                 }
 
                 $this->merge($localConfigObj);
-
-                $localConfigObj->cleanup();
-            } // foreach($files as $file)
-
-            closedir($dh);
-        } // if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) )
+                $localConfigObj->cleanup(true);
+            }
+        }
 
         $this->postMergeTasks();
 
         $this->initialized = true;
 
         return $this;
+    }
 
-    }  // initialize()
+    /**
+     * Scan the local configuration directory for a list of .json files and store them. While
+     * scanning, determine the maximum last modified time of all global and local configuraiton
+     * files.
+     *
+     * @param boolean $force Force a re-scan of the filesystem even in the file list is not empty.
+     *
+     * @return int The number of local configuration files found.
+     */
 
+    public function scanLocalConfigDir($force = false)
+    {
+        // Do not re-scan the directory if we don't need to.
 
-    /** -----------------------------------------------------------------------------------------
+        if ( null === $this->localConfigDir | ($this->localDirectoryScanned && ! $force) ) {
+            return count($this->localConfigFiles);
+        }
+
+        $this->localConfigFiles = array();
+
+        if ( false === ($dh = @opendir($this->localConfigDir)) ) {
+            $err = error_get_last();
+            $this->logAndThrowException(
+                sprintf("Error opening configuration directory '%s': %s", $this->localConfigDir, $err['message'])
+            );
+        }
+
+        // Examine the subdirectory for .json files and collect them for later use.
+
+        while ( false !== ( $file = readdir($dh) ) ) {
+
+            // Only process .json files
+
+            $pos = strrpos(strtolower($file), '.json');
+            if ( false === $pos || (strlen($file) - $pos) != 5 ) {
+                continue;
+            }
+
+            $fullpath = $this->localConfigDir . '/' . $file;
+            $this->localConfigFiles[] = $fullpath;
+            $fileStats = stat($fullpath);
+            if ( false === $fileStats ) {
+                $err = error_get_last();
+                $this->logAndThrowException(
+                    sprintf("Error calling stat() on local configuration file %s: %s", $fullpath, $err['message'])
+                );
+            }
+            $this->maxLastModifiedTime = max($this->maxLastModifiedTime, $fileStats['mtime']);
+        }
+
+        closedir($dh);
+        $this->localDirectoryScanned = true;
+
+        return count($this->localConfigFiles);
+    }
+
+    /**
      * Parse the configuration file.
      *
      * @param boolean $force TRUE if the configuration file should be re-parsed.
      *
      * @return Configuration This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     private function parse($force = false)
@@ -585,16 +711,14 @@ class Configuration extends Loggable implements \Iterator
         $this->parsedConfig = $parsed;
 
         return $this;
+    }
 
-    }  // parse()
-
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Perform any tasks that must happen after parsing but before we continue on to
      * transformation. For example, in a configuration file we may want to apply a base
      * path to some elements before transforming JSON reference pointers.
      *
      * @return Configuration This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function preTransformTasks()
@@ -604,13 +728,12 @@ class Configuration extends Loggable implements \Iterator
         $this->addKeyTransformer(new StripMergePrefixTransformer($this->logger));
         $this->addKeyTransformer(new IncludeTransformer($this->logger));
         return $this;
-    }  //preTransformTasks()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Perform transformation by running any key transformers that have been added.
      *
      * @return Configuration This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     private function transform()
@@ -634,18 +757,15 @@ class Configuration extends Loggable implements \Iterator
             $this->transformedConfig = $this->processKeyTransformers($tmp);
         }
 
-
         return $this;
+    }
 
-    }  // transform()
-
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Interpret the transformed data in the configuration file. By default the only interpretation
      * performed is adding transformed configuration sections and data to the section list. Child
      * classes should override this method as needed.
      *
      * @return Configuration This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function interpretData()
@@ -655,9 +775,9 @@ class Configuration extends Loggable implements \Iterator
             $this->addSection($key, $value);
         }
         return $this;
-    }  // interpretData()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Given a path to a local configuration file, create a Configuration object and parse
      * the file. This functionality is broken out so child classes can apply any necessary
      * options and object types.
@@ -665,7 +785,6 @@ class Configuration extends Loggable implements \Iterator
      * @param string $localConfigFile The path to the local configuration file
      *
      * @return Configuration A Configuration object containing the parsed config.
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function processLocalConfig($localConfigFile)
@@ -683,10 +802,9 @@ class Configuration extends Loggable implements \Iterator
         $localConfigObj = static::factory($localConfigFile, $this->baseDir, $this->logger, $options);
 
         return $localConfigObj;
+    }
 
-    }  // processLocalConfig()
-
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Merge data from the specified local configuration object, either overwriting or
      * merging data from local configuration objects into the current object. If
      * $overwrite is TRUE, overwrite data for a given key in this Configuration object
@@ -704,7 +822,6 @@ class Configuration extends Loggable implements \Iterator
      *   with data found in a local configuration.
      *
      * @return Configuration This object to support method chaining
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function merge(Configuration $localConfigObj, $overwrite = false)
@@ -730,7 +847,7 @@ class Configuration extends Loggable implements \Iterator
 
         return $this;
 
-    }  // merge()
+    }
 
     /**
      * Merge $incoming object into the $existing object recursively.
@@ -743,6 +860,7 @@ class Configuration extends Loggable implements \Iterator
      * @param bool      $overwriteScalar  whether or not to force overwriting of just scalar values.
      * @return \stdClass the updated $existing object.
      */
+
     protected function mergeLocal(\stdClass $existing, \stdClass $incoming, $incomingFileName, $overwrite = false, $overwriteScalar = true)
     {
         foreach($incoming as $property => $incomingValue) {
@@ -804,11 +922,11 @@ class Configuration extends Loggable implements \Iterator
      * @return Configuration This object to support method chaining.
      * @throws Exception
      */
+
     protected function postMergeTasks()
     {
-
         return $this;
-    }  // postMergeTasks()
+    }
 
     /**
      * Perform variable substitution on an entity. The entity may be a simple string, an array, or
@@ -854,17 +972,21 @@ class Configuration extends Loggable implements \Iterator
         return $traversable;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Clean up intermediate information that we don't need to keep around after processing.
-     * ------------------------------------------------------------------------------------------
+     *
+     * @var boolean $deepCleanup Flag indicating that a more thorough cleanup should be performed.
      */
 
-    public function cleanup()
+    public function cleanup($deepCleanup = false)
     {
         $this->parsedConfig = null;
-    }  // cleanup()
+        if ( $deepCleanup ) {
+            $this->transformedConfig = null;
+        }
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Compare object keys against the list of key transformers and recursively apply
      * transformers where they match.
      *
@@ -872,7 +994,6 @@ class Configuration extends Loggable implements \Iterator
      *
      * @return stdClass The transformed object, although this is not strictly necessary since PHP
      *   passes objects by reference.
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function processKeyTransformers(stdClass $obj)
@@ -939,7 +1060,7 @@ class Configuration extends Loggable implements \Iterator
                     break;
                 }
 
-            }  // foreach ( $this->keyTransformers as $transformer )
+            }
 
             // A value can be an object, array, or salcar. The (possibly transformed)
             // value should now be examined for an objects that may need to be transformed
@@ -956,7 +1077,7 @@ class Configuration extends Loggable implements \Iterator
                     if ( is_object($element) ) {
                         $element = $this->processKeyTransformers($element);
                     }
-                }  // foreach ( $value as $element )
+                }
             }
 
             // If we have replaced the object by something that is not Traversable (such as an
@@ -967,41 +1088,38 @@ class Configuration extends Loggable implements \Iterator
                 break;
             }
 
-        }  // foreach ( $obj as $key => $value )
+        }
 
         return $obj;
 
-    }  // processKeyTransformers()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Get the list of section names.
      *
      * @return array An array of section names
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getSectionNames()
     {
         return array_keys($this->sectionData);
-    }  // getSectionNames()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @param string $name The name of the section to examine.
      *
      * @return array TRUE if a section is defined
-     * ------------------------------------------------------------------------------------------
      */
 
     public function sectionExists($name)
     {
         return array_key_exists($name, $this->sectionData);
-    }  // sectionExists()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @param string $name The name of the section to examine.
      *
      * @return boolean TRUE if a section is defined
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getSectionData($name)
@@ -1010,9 +1128,9 @@ class Configuration extends Loggable implements \Iterator
                  ? $this->sectionData[$name]
                  : false
             );
-    }  // getSectionData()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Add a new section to the internal data structures if it doesn't already exist or
      * update the data associated with the section if it does exist (unless $overwrite ==
      * false)
@@ -1022,7 +1140,6 @@ class Configuration extends Loggable implements \Iterator
      * @param boolean $overwrite TRUE if any existing data for the given section should be overwritten
      *
      * @return Configuration This object for method chaining
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function addSection($name, $data = null, $overwrite = true)
@@ -1035,15 +1152,14 @@ class Configuration extends Loggable implements \Iterator
 
         return $this;
 
-    }  // addSection()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Remove a section from the internal data structures.
      *
      * @param string $name The name of the section
      *
      * @return Configuration This object for method chaining
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function deleteSection($name)
@@ -1054,7 +1170,7 @@ class Configuration extends Loggable implements \Iterator
 
         return $this;
 
-    }  // deleteSection()
+    }
 
     /* ==========================================================================================
      * Iterator implementation. Allow iteration over the list of sections.
@@ -1064,40 +1180,39 @@ class Configuration extends Loggable implements \Iterator
     public function current()
     {
         return current($this->sectionData);
-    }  // current()
+    }
 
     public function key()
     {
         return key($this->sectionData);
-    }  // key()
+    }
 
     public function next()
     {
         return next($this->sectionData);
-    }  // next()
+    }
 
     public function rewind()
     {
         return reset($this->sectionData);
-    }  // rewind()
+    }
 
     public function valid()
     {
         return false !== current($this->sectionData);
-    }  // valid()
+    }
 
     /* ==========================================================================================
      * Key Transformer Management
      * ==========================================================================================
      */
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Add a key transformer to the configuration, warning and overwriting if a duplicate is added.
      *
      * @param iConfigFileKeyTransformer $transformer A key transformer to add.
      *
      * @return Configuration This object for method chaining
-     * ------------------------------------------------------------------------------------------
      */
 
     public function addKeyTransformer(iConfigFileKeyTransformer $transformer)
@@ -1114,15 +1229,14 @@ class Configuration extends Loggable implements \Iterator
 
         return $this;
 
-    }  // addKeyTransformer()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Return TRUE if the transformer has already been added to this configuration file.
      *
      * @param string|iConfigFileKeyTransformer $transformer A key transformer object or class name
      *
      * @return boolean TRUE if the transformer has already been added to this configuration file.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function hasKeyTransformer($transformer)
@@ -1143,30 +1257,26 @@ class Configuration extends Loggable implements \Iterator
 
         return array_key_exists($className, $this->keyTransformers);
 
-    }  // hasKeyTransformer()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Get all key transformers for this configuration file.
      *
      * @return array An associative array of where the key is the transformer class name and the
      *   value is the transformer object.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getKeyTransformers() {
-
         return $this->keyTransformers;
+    }
 
-    }  // getKeyTransformers()
-
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Delete a key handler and return it.
      *
      * @param string|iConfigFileKeyTransformer $transformer A key transformer object or class
      *   name configuration)
      *
      * @return Configuration This object for method chaining
-     * ------------------------------------------------------------------------------------------
      */
 
     public function deleteKeyTransformer($transformer)
@@ -1195,44 +1305,59 @@ class Configuration extends Loggable implements \Iterator
 
         return $this;
 
-    }  // deleteKeyHandler()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Get the base directory for this configuration.
      *
      * @return string The base directory for this configuration.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getBaseDir()
     {
         return $this->baseDir;
-    }  // getBaseDir()
+    }
 
     /**
-     * ------------------------------------------------------------------------------------------
      * @return array The associative array of options that was passed in from the parent, and
      *   possibly augmented locally.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getOptions()
     {
         return $this->options;
-    }  // getOptions()
+    }
 
     /**
-     * ------------------------------------------------------------------------------------------
+     * @return string The late static binding name for this class (e.g., the instantiated class
+     * name)
+     */
+
+    public function getCalledClassName()
+    {
+        return $this->calledClassName;
+    }
+
+    /**
+     * @return integer A unix timestamp indicating the maximum last modified time of the global
+     * configuration file and any local configuration files found in the local config directory.
+     */
+
+    public function getMaxLastModifiedTime()
+    {
+        return $this->maxLastModifiedTime;
+    }
+
+    /**
      * @return VariableStore The VariableStore currently in use for this configuration.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getVariableStore()
     {
         return $this->variableStore;
-    }  // getVariableStore()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Getter method for accessing data keys using object notation.
      *
      * NOTE: When querying for existance we can't use isset() and must use NULL === $options->key
@@ -1240,7 +1365,6 @@ class Configuration extends Loggable implements \Iterator
      * @param string $property The name of the property to retrieve
      *
      * @return mixed The property, or NULL if the property doesn't exist.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __get($property)
@@ -1250,77 +1374,84 @@ class Configuration extends Loggable implements \Iterator
         }
 
         return null;
-    }  // __get()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Return TRUE if a property is set and is not NULL.
      *
      * @param string $property The name of the property to retrieve
      *
      * @return boolean TRUE if the property exists and is not NULL, or FALSE otherwise.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __isset($property)
     {
         return ( array_key_exists($property, $this->sectionData) && null !== $this->sectionData[$property] );
-    }  // __isset()
+    }
 
     /**
      * Return this Configuration's $filename property.
      *
      * @return string
      */
+
     public function getFilename()
     {
         return $this->filename;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Get the configuration after applying transforms. Note that NULL will be returned if
      * initialize() has not been called or if cleanup() has been called.
      *
      * @return stdClass|null A stdClass representing the transformed configuration.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function toStdClass()
     {
         return $this->transformedConfig;
-    }  // toStdClass()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Return the JSON representation of the parsed and translated Configuration.
      *
      * @return string A JSON representation of the Configuration object.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function toJson()
     {
         return json_encode($this->transformedConfig);
-    }  // toJson()
+    }
 
     /**
      * Retrieve this `Configuration` objects data formatted as an associative array.
      *
      * @return array
      */
+
     public function toAssocArray()
     {
         return json_decode(json_encode($this->transformedConfig), true);
-    } // toAssocArray
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Generate a string representation of this object. Typically the name, plus other pertinant
      * information as appropriate.
      *
      * @return string A string representation of the object
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __toString()
     {
         return get_class($this) . " ({$this->filename})";
-    }  // __toString()
+    }
+
+    /**
+     * @see iConfiguration::__sleep()
+     */
+
+    public function __sleep()
+    {
+        return array_keys(get_object_vars($this));
+    }
 }  // class Configuration

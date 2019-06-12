@@ -14,7 +14,7 @@ BuildRequires: php-cli
 Requires:      httpd
 Requires:      mariadb >= 5.5.3
 Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-mcrypt php-xml php-mbstring
-Requires:      php-pear-MDB2 php-pear-MDB2-Driver-mysql
+Requires:      php-pear-MDB2 php-pear-MDB2-Driver-mysql php-pecl-apcu
 Requires:      java-1.8.0-openjdk java-1.8.0-openjdk-devel
 Requires:      cronie
 Requires:      logrotate
