@@ -54,7 +54,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      */
     public function getRealms(Request $request, Application $app)
     {
-        $user = $this->authorize($request);
+        /* $user = */$this->authorize($request);
 
         // TODO: Determine realms using user ACLs.
         $realms = [

@@ -99,15 +99,15 @@ class ExportDBTest extends BaseTest
         $initialCount = $query->countSubmittedRecords();
 
         // Add new record and verify
-        $requestId = $query->createRequestRecord($userId, 'Jobs', '2019-01-01', '2019-03-01','CSV');
+        $requestId = $query->createRequestRecord($userId, 'Jobs', '2019-01-01', '2019-03-01', 'CSV');
         $this->assertNotNull($requestId);
 
         // Add another new record and verify
-        $requestId2 = $query->createRequestRecord($userId, 'Accounts', '2016-12-01', '2017-01-01','JSON');
+        $requestId2 = $query->createRequestRecord($userId, 'Accounts', '2016-12-01', '2017-01-01', 'JSON');
         $this->assertNotNull($requestId2 );
 
         // Add another new record and verify
-        $requestId3 = $query->createRequestRecord($userId, 'Jobs', '2014-01-05', '2014-01-26','CSV');
+        $requestId3 = $query->createRequestRecord($userId, 'Jobs', '2014-01-05', '2014-01-26', 'CSV');
         $this->assertNotNull($requestId3 );
 
         // Determine final count

@@ -356,7 +356,6 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     //
                     // See https://docs.sencha.com/extjs/3.4.0/source/Column2.html#Ext-grid-ActionColumn-method-constructor
                     renderer: function (state, metaData) {
-                        console.log(JSON.stringify(metaData));
                         metaData.rowState = state; // eslint-disable-line no-param-reassign
                         return '';
                     },
