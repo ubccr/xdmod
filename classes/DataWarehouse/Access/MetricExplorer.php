@@ -574,9 +574,10 @@ class MetricExplorer extends Common
         $query_groupname,
         $realm_name = null,
         $group_by_name = null,
-        $statistic_name = null
+        $statistic_name = null,
+        $includePub = true
     ) {
-        $userRoles = $user->getAllRoles(true);
+        $userRoles = $user->getAllRoles($includePub);
 
         $authorizedRoles = array();
         foreach ($userRoles as $userRole) {
@@ -701,7 +702,8 @@ class MetricExplorer extends Common
         $offset = 0,
         $limit = null,
         $searchText = null,
-        array $selectedFilterIds = null
+        array $selectedFilterIds = null,
+        $includePub = true
     ) {
         // Check if the realms were specified, and if not, use all realms.
         $realmsSpecified = !empty($realms);
@@ -741,7 +743,9 @@ class MetricExplorer extends Common
                     $user,
                     'tg_usage',
                     $realm,
-                    $dimension_id
+                    $dimension_id,
+                    null,
+                    $includePub
                 );
             } catch (AccessDeniedException $e) {
                 // Only throw an exception that the user is not authorized if

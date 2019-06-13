@@ -139,11 +139,12 @@ class Configuration extends Loggable implements iConfiguration
     protected $localDirectoryScanned = false;
 
     /**
-     * @var integer A unix timestamp indicating the maximum last modified time of the global
-     * configuration file and any local configuration files found in the local config directory.
+     * @var array An array of unix timestamps for all global and local configuration files used to
+     * create this object. These are used to determine if any of the configuration files changed and
+     * the object needs to be updated.
      */
 
-    public $maxLastModifiedTime = 0;
+    public $lastModifiedTimes = array();
 
     /**
      * @var array An associative array of options that was passed in from the parent. This is useful
@@ -327,17 +328,16 @@ class Configuration extends Loggable implements iConfiguration
 
         $staleCachedObject = (
             null !== $cachedInstance &&
-            $instance->getMaxLastModifiedTime() > $cachedInstance->getMaxLastModifiedTime()
+            $instance->getLastModifiedTimes() != $cachedInstance->getLastModifiedTimes()
         );
 
         if ( $staleCachedObject && null !== $logger ) {
             $logger->debug(
                 sprintf(
-                    'Updating stale cached object %s (%s) (%s < %s)',
+                    'Updating stale cached object %s (%s) (time differences: %s)',
                     $calledClass,
                     $filename,
-                    date('Y-m-d H:i:s', $cachedInstance->getMaxLastModifiedTime()),
-                    date('Y-m-d H:i:s', $instance->getMaxLastModifiedTime())
+                    implode(',', array_diff($cachedInstance->getMaxLastModifiedTime(), $instance->getMaxLastModifiedTime()))
                 )
             );
         }
@@ -516,8 +516,11 @@ class Configuration extends Loggable implements iConfiguration
             $this->forceArrayReturn = $options['force_array_return'];
         }
 
-        // Set the last modified time of the global config file
+        // Set the last modified time of the global config file. Note that PHP caches stat
+        // information on a per-filename basis and we want the most recent data so the cache is
+        // cleared.
 
+        clearstatcache();
         $fileStats = stat($this->filename);
         if ( false === $fileStats ) {
             $err = error_get_last();
@@ -525,7 +528,7 @@ class Configuration extends Loggable implements iConfiguration
                 sprintf("Error calling stat() on global configuration file %s: %s", $this->filename, $err['message'])
             );
         }
-        $this->maxLastModifiedTime = $fileStats['mtime'];
+        $this->lastModifiedTimes[] = $fileStats['mtime'];
     }
 
     /**
@@ -581,9 +584,6 @@ class Configuration extends Loggable implements iConfiguration
 
         if ( ! $this->isLocalConfig && 0 != count($this->localConfigFiles) ) {
 
-            // Sort the retrieved .json files.
-            sort($this->localConfigFiles, SORT_LOCALE_STRING);
-
             // Process each .json file before merging into the main file.
             foreach( $this->localConfigFiles as $file ) {
 
@@ -624,19 +624,26 @@ class Configuration extends Loggable implements iConfiguration
         }
 
         $this->localConfigFiles = array();
+        $fileList = array();
 
-        if ( false === ($dh = @opendir($this->localConfigDir)) ) {
+        // Use scandir here rather than opendir() as it sorts the files for us to maintain a
+        // consistent ordering. Examine the subdirectory for .json files and collect them for later
+        // use.
+
+        if ( false === ($fileList = scandir($this->localConfigDir, SCANDIR_SORT_NONE)) ) {
             $err = error_get_last();
             $this->logAndThrowException(
                 sprintf("Error opening configuration directory '%s': %s", $this->localConfigDir, $err['message'])
             );
         }
 
-        // Examine the subdirectory for .json files and collect them for later use.
+        // Sort the local configuration files to ensure that they are processed in the proper order,
+        // as this may affect the resulting merged configuration object. We are sorting using
+        // strings based on the current locale which scandir() doesn't support.
 
-        while ( false !== ( $file = readdir($dh) ) ) {
+        sort($fileList, SORT_LOCALE_STRING);
 
-            // Only process .json files
+        foreach ( $fileList as $file ) {
 
             $pos = strrpos(strtolower($file), '.json');
             if ( false === $pos || (strlen($file) - $pos) != 5 ) {
@@ -645,6 +652,7 @@ class Configuration extends Loggable implements iConfiguration
 
             $fullpath = $this->localConfigDir . '/' . $file;
             $this->localConfigFiles[] = $fullpath;
+
             $fileStats = stat($fullpath);
             if ( false === $fileStats ) {
                 $err = error_get_last();
@@ -652,10 +660,9 @@ class Configuration extends Loggable implements iConfiguration
                     sprintf("Error calling stat() on local configuration file %s: %s", $fullpath, $err['message'])
                 );
             }
-            $this->maxLastModifiedTime = max($this->maxLastModifiedTime, $fileStats['mtime']);
+            $this->lastModifiedTimes[] = $fileStats['mtime'];
         }
 
-        closedir($dh);
         $this->localDirectoryScanned = true;
 
         return count($this->localConfigFiles);
@@ -1339,13 +1346,13 @@ class Configuration extends Loggable implements iConfiguration
     }
 
     /**
-     * @return integer A unix timestamp indicating the maximum last modified time of the global
-     * configuration file and any local configuration files found in the local config directory.
+     * @return array An array of unix timestamps for all global and local configuration files used to
+     * create this object.
      */
 
-    public function getMaxLastModifiedTime()
+    public function getLastModifiedTimes()
     {
-        return $this->maxLastModifiedTime;
+        return $this->lastModifiedTimes;
     }
 
     /**

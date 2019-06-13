@@ -119,7 +119,7 @@ class SummaryControllerProvider extends BaseControllerProvider
 
                     $queryConfig = json_decode($query['config']);
 
-                    if (!$queryConfig->featured) {
+                    if (!isset($queryConfig->featured) || !$queryConfig->featured) {
                         continue;
                     }
 

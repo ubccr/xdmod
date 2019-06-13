@@ -189,10 +189,8 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="js/UsersSummary/Store.js"></script>
   <script type="text/javascript" src="js/UsersSummary/Portlet.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="../gui/lib/extjs/examples/ux/css/ColumnHeaderGroup.css"/>
   <link rel="stylesheet" type="text/css" href="../gui/css/GroupTab.css"/>
 
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/ColumnHeaderGroup.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTab.js"></script>
 
