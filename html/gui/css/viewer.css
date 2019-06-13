@@ -126,7 +126,7 @@ h3 {
 .highlighted_tab .x-tab-right,
 .highlighted_tab .x-tab-left,
 .highlighted_tab .x-tab-strip-inner {
-          
+         
    background-color: #93fc7b !important;
    background-image: none !important;
             
@@ -570,7 +570,7 @@ h3 {
 	font: 12px arial, "Times New Roman", Times, serif;
 	font-weight: bold;
 }
-
+        
 .x-tree-multiline-node-collapsed .x-tree-elbow-line-multiline-expanded {
 	background-image: none;
 }
@@ -684,7 +684,7 @@ background:#fafafa;
     background-image: url(../images/realm.png) !important;
 }
 
-/*.highcharts-container span {
+/*.highcharts-container span { 
  background-color: #ffffff;
  padding-bottom: 5px; //so the Qs dont get cut off
 }*/
