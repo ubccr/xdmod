@@ -1,11 +1,14 @@
-title
-"CPU Hours: Per Job: by Department"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2016-12-22,2017-01-01
----------
-Month,"[Chemical, Thermal Systems] CPU Hours: Per Job","[Electrical and Communication Systems] CPU Hours: Per Job","[Atmospheric Sciences] CPU Hours: Per Job","[Physics] CPU Hours: Per Job","[Mathematical Sciences] CPU Hours: Per Job","[Materials Research] CPU Hours: Per Job","[Arts] CPU Hours: Per Job","[Molecular Biosciences] CPU Hours: Per Job","[Mechanical and Structural Systems] CPU Hours: Per Job","[Design and Manufacturing Systems] CPU Hours: Per Job","[Astronomical Sciences] CPU Hours: Per Job","[Chemistry] CPU Hours: Per Job","[Polar Programs] CPU Hours: Per Job","[Microelectronic Information Processing Systems] CPU Hours: Per Job","[Earth Sciences] CPU Hours: Per Job","[Environmental Biology] CPU Hours: Per Job","[Computer and Computation Research] CPU Hours: Per Job","[Social and Economic Science] CPU Hours: Per Job"
-2016-12,4368.65777778,1112.27138506,1441.02222222,529.63777778,540.56594872,338.80760349,183.58806397,192.74581243,221.80616753,58.97181208,41.04805132,27.61529618,19.87039394,25.35750883,10.48083171,6.47641111,5.04208333,3.49505680
-2017-01,0,271.71664683,3.46666667,0,103.31233796,0,59.98977778,78.92785948,0.96969246,29.54166397,323.23959596,16.57782656,23.44196390,12.31921090,10.94629630,6.26263789,0,0.62134448
----------
+    ],
+    "data": [
+
+    ],
+    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
+    "code": 104
+}

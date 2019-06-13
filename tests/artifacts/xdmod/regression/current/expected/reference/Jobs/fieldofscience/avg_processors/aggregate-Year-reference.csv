@@ -1,11 +1,14 @@
-title
-"Job Size: Per Job (Core Count): by PI Group"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2016-12-22,2017-01-01
----------
-Year,"[Fluid, Particulate, and Hydraulic Systems] Job Size: Per Job (Core Count)","[Global Atmospheric Research] Job Size: Per Job (Core Count)","[Structures and Building Systems] Job Size: Per Job (Core Count)","[Design, Tools, and Test] Job Size: Per Job (Core Count)","[Emerging Technologies Initiation] Job Size: Per Job (Core Count)","[Organic and Macromolecular Chemistry] Job Size: Per Job (Core Count)","[Metals, Ceramics, and Electronic Materials] Job Size: Per Job (Core Count)","[Quantum Electronics, Waves, and Beams] Job Size: Per Job (Core Count)","[Stellar Astronomy and Astrophysics] Job Size: Per Job (Core Count)","[Systematic and Population Biology] Job Size: Per Job (Core Count)","[Polar Aeronomy and Astrophysics] Job Size: Per Job (Core Count)","[Economics] Job Size: Per Job (Core Count)","[Design and Computer-Integrated Engineering] Job Size: Per Job (Core Count)","[Geophysics] Job Size: Per Job (Core Count)","[Volcanology and Mantle Geochemistry] Job Size: Per Job (Core Count)","[Solid State Chemistry and Polymers] Job Size: Per Job (Core Count)","[Geology and Paleontology] Job Size: Per Job (Core Count)","[Law and Social Sciences] Job Size: Per Job (Core Count)","[Biophysics] Job Size: Per Job (Core Count)","[Algebra and Number Theory] Job Size: Per Job (Core Count)","[Polar Ocean and Climate Systems] Job Size: Per Job (Core Count)","[Theoretical Physics] Job Size: Per Job (Core Count)","[Arts] Job Size: Per Job (Core Count)","[Seismology] Job Size: Per Job (Core Count)","[Statistics and Probability] Job Size: Per Job (Core Count)","[Sociology] Job Size: Per Job (Core Count)","[Experimental Systems] Job Size: Per Job (Core Count)","[Physical Chemistry] Job Size: Per Job (Core Count)","[Galactic Astronomy] Job Size: Per Job (Core Count)","[Cell Biology] Job Size: Per Job (Core Count)","[Solid-State and Microstructures] Job Size: Per Job (Core Count)","[Biochemistry and Molecular Structure and Function] Job Size: Per Job (Core Count)","[Decision, Risk, and Management Science] Job Size: Per Job (Core Count)","[Computer and Computation Theory] Job Size: Per Job (Core Count)","[Extragalactic Astronomy and Cosmology] Job Size: Per Job (Core Count)","[Mechanics and Materials] Job Size: Per Job (Core Count)","[Operations Research and Production Systems] Job Size: Per Job (Core Count)","[Polar Meteorology] Job Size: Per Job (Core Count)","[Systems Prototyping and Fabrication] Job Size: Per Job (Core Count)","[Tectonics] Job Size: Per Job (Core Count)"
-2016,224.0000,160.0000,112.0000,108.0000,96.0000,123.2941,72.0000,69.7188,55.2000,48.8800,28.0000,24.5435,23.1111,20.0000,20.0000,18.9315,23.3333,16.0000,30.0000,12.0000,12.0000,12.0000,11.0909,10.6250,10.7037,9.5143,9.5172,8.2151,4.2402,3.0833,2.2970,1.7333,1.0418,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000
-2017,0,160.0000,0,0,96.0000,32.0000,0,53.0000,49.3333,37.8993,0,24.0000,23.1111,0,0,0,5.0000,0,8.1852,12.0000,12.0000,0,10.4000,12.0000,10.5532,9.1352,8.0000,10.4080,8.5000,8.0000,2.0000,0,0,0,0,1.0000,1.0000,1.0000,1.0000,0
----------
+    ],
+    "data": [
+
+    ],
+    "message": "{\"statistic\":\"Job Size: Per Job (Core Count)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
+    "code": 104
+}
