@@ -1,14 +1,10 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Per Job (Core Count): by Resource Type"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Per Job (Core Count)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"High-performance computing",8.7346,0.02156312501879985
+---------

@@ -1,14 +1,14 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Node Hours: Per Job: by Resource"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Node Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+robertson,8.66693030,0.14416043507237195
+frearson,0.99743674,0.08910316577749812
+pozidriv,0.61345852,0.025732433486385795
+phillips,0.33239461,0.10524107017931526
+mortorq,0.30365382,0.009829076394921818
+---------

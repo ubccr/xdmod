@@ -1,14 +1,16 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Normalized (% of Total Cores): by Decanal Unit"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Normalized (% of Total Cores)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Job Size: Normalized (% of Total Cores)"
+"Biological Sciences",0.375665266
+Humanities/Arts,0.138636364
+Engineering,0.095215241
+Geosciences,0.047546749
+"Social, Behavioral, and Economic Sciences",0.045246083
+"Mathematical and Physical Sciences",0.042916197
+"Computer and Information Science and Engineering",0.028814663
+---------
