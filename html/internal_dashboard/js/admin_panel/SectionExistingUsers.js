@@ -1217,7 +1217,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             lblXSEDEUser.hide();
                             cmbUserType.show();
                             mnuItemPasswordReset.show();
-                            cmbUserType.setDisabled(false);
                         }
 
                         var sticky = Boolean(json.user_information.sticky);
