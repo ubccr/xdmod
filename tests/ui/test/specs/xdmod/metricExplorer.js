@@ -139,11 +139,11 @@ describe('Metric Explorer', function metricExplorer() {
             me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
         });
 
-        it('Switch to aggregate chart (expect incompatible metric error)', function () {
+        it('Switch to aggregate chart', function () {
             me.waitForChartToChange(me.switchToAggregate);
         });
-        it('Check that error message is displayed', function () {
-            me.checkChart('An error occurred while loading the chart.', null, null, false);
+        it('Chart contains correct information', function () {
+            me.checkChart('untitled query 1', 'CPU Hour', ['CPU Hours: Total', 'CPU Hours: Per Job']);
         });
         it('Undo Scratch Pad switch to aggregate', function () {
             me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
