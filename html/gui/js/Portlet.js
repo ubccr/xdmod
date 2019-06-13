@@ -34,25 +34,25 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
     initComponent: function() {
         this.makeHelpTour();
 
-         if(this.tools === undefined){
+        if (this.tools === undefined) {
             this.tools = [];
         }
 
-         this.tools.push({
-          id: 'maximize',
-          qtip: 'View Portlet Help Tour',
-          scope: this,
-          handler: function (event, toolEl, panel) {
-            this.helpTour.startTour();
-          }
+        this.tools.push({
+            id: 'maximize',
+            qtip: 'View Portlet Help Tour',
+            scope: this,
+            handler: function(event, toolEl, panel) {
+                this.helpTour.startTour();
+            }
         });
 
-         Ext.ux.Portlet.superclass.initComponent.apply(this, arguments);
+        Ext.ux.Portlet.superclass.initComponent.apply(this, arguments);
     },
     makeHelpTour: function() {
         var self = this;
 
-         if (self.helpTourDetails.tips !== undefined && self.helpTourDetails.tips.length > 0) {
+        if (self.helpTourDetails.tips !== undefined && self.helpTourDetails.tips.length > 0) {
             self.helpTour = new Ext.ux.HelpTipTour({
                 title: self.helpTourDetails.title,
                 items: []
@@ -64,7 +64,7 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
                     position: value.position
                 });
 
-                 self.helpTour.items.push(tip);
+                self.helpTour.items.push(tip);
             });
         }
     }

@@ -7,8 +7,8 @@
 }
 
 .assist_panel_section {
-	border: 1px solid #bbb;
-	padding: 5px;
+	border: 1px solid #bbb; 
+	padding: 5px; 
 	background-color: #fef8ee;
 	width: 263px;
 }
@@ -63,9 +63,9 @@ h2 {
 	color:#083772;
 	letter-spacing:-1px;
 	font-weight:normal;
-
+	
 	padding:2px 2px;
-
+	
 }
 h3 {
 		font-family: arial;
@@ -84,11 +84,11 @@ h3 {
 
 /* CustomSearch.js (Search Usage module */
 
-/* Addresses issues regarding the 'Search By' section
+/* Addresses issues regarding the 'Search By' section 
    when in IE8 Quirks Mode */
-
-/* CustomSearch tab no longer exists and its source has been removed.
- * However, the custom_search_mode class is referenced by
+   
+/* CustomSearch tab no longer exists and its source has been removed. 
+ * However, the custom_search_mode class is referenced by 
  * report_builder/ReportCreator.js and
  * report_builder/ChartDateEditor.js
  *
@@ -126,12 +126,12 @@ h3 {
 .highlighted_tab .x-tab-right,
 .highlighted_tab .x-tab-left,
 .highlighted_tab .x-tab-strip-inner {
-
+          
    background-color: #93fc7b !important;
    background-image: none !important;
-
+            
 }
-
+         
 .checkbox_available_for_report {
    padding-bottom: 4px !important;
 }
@@ -415,7 +415,7 @@ h3 {
 	vertical-align:  top;
 	valign: top;
  	color:#15428b;
-	font-weight:bold;
+	font-weight:bold; 
     font-size: 10px;
     font-family: arial,verdana,sans-serif;
 }
@@ -526,7 +526,7 @@ h3 {
 	vertical-align: top;
 	padding-right: 10px;
 	padding-left: 10px;
-
+	
 }
 
 .xd-img {
@@ -549,7 +549,7 @@ h3 {
 	color: #1111ff !important;
 }
 
-.ext-el-mask-msg div
+.ext-el-mask-msg div 
 {
 	cursor:default !important;
 }
@@ -692,7 +692,7 @@ background:#fafafa;
 .exclamation {
     background-image: url(../images/exclamation_ak.png) !important;
 }
-
+ 	
 .delete {
     background-image: url(../images/delete.png) !important;
 }

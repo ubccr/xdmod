@@ -31,21 +31,21 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
      showTip: function(tip_index){
         var self = this;
 
-         if (tip_index < 0 || tip_index > this.items.length) {
+        if (tip_index < 0 || tip_index > this.items.length) {
             return false;
         }
 
-         this.tip_index = tip_index;
+        this.tip_index = tip_index;
         this.current_tip = this.getTip(this.tip_index);
         var target_element = Ext.select(this.current_tip.target);
 
-         if (this.current_tip.title === undefined){
+        if (this.current_tip.title === undefined){
             this.current_tip.title = this.title;
         }
 
-         this.current_tip.title = this.current_tip.title + ' -- Tip ' + (this.tip_index + 1) + ' of ' + this.items.length;
+        this.current_tip.title = this.current_tip.title + ' -- Tip ' + (this.tip_index + 1) + ' of ' + this.items.length;
 
-         var next_button = new Ext.Button({
+        var next_button = new Ext.Button({
             text: 'Next',
             cls: 'next-help-tip',
             overCls: 'help-tip-button',
@@ -58,7 +58,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             }
         });
 
-         var previous_button = new Ext.Button({
+        var previous_button = new Ext.Button({
             text: 'Previous',
             cls: 'previous-help-tip',
             overCls: 'help-tip-button',
@@ -71,7 +71,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             }
         });
 
-         var end_tour_button = new Ext.Button({
+        var end_tour_button = new Ext.Button({
             text: 'End Tour',
             cls: 'end-help-tip-tour',
             overCls: 'help-tip-button',
@@ -82,7 +82,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             }
         });
 
-         // If there is nothing in the bbar of the HelpTip being shown add appropriate
+        // If there is nothing in the bbar of the HelpTip being shown add appropriate
         // Previous, Next or End Tour buttons
         if (this.current_tip.bbar === null) {
             if (this.tip_index == 0) {
@@ -99,7 +99,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             }
         }
 
-         var el = (target_element.elements.length !== 0) ? target_element.elements[0] : '';
+        var el = (target_element.elements.length !== 0) ? target_element.elements[0] : '';
         this.current_tip.showBy(el);
     }
 });

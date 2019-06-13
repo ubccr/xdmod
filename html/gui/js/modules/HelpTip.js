@@ -15,7 +15,7 @@
  */
 Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
-     cls: 'help-tip',
+    cls: 'help-tip',
     bodyCssClass: 'help-tip-body',
     baseCls: 'base-help-tip',
     spotlight: null,
@@ -45,7 +45,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             'l': 'x-tip-anchor-left'
         };
 
-         this.anchorCls = anchorCls[this.tipAnchorPos.charAt(0)]
+        this.anchorCls = anchorCls[this.tipAnchorPos.charAt(0)]
         this.anchorEl = this.el.createChild({
             cls: 'x-tip-anchor ' + this.anchorCls
         });
@@ -96,12 +96,12 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         this.anchorEl.alignTo(this.el, anchorPos+'-'+this.tipAnchorPos, offset);
     },
 
-     showBy : function(el){
+    showBy : function(el){
         if(!this.rendered){
             this.render(Ext.getBody());
         }
 
-         var alignmentOffsets = {
+        var alignmentOffsets = {
             'bl': [0, -7],
             'tl': [-10, 7],
             't': [0, 7],
@@ -112,14 +112,14 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             'r': [-7, 0]
         }
 
-         var offset = alignmentOffsets[this.tipAnchorPos].map(function(v, k){
-              return v + this.offset[k];
+        var offset = alignmentOffsets[this.tipAnchorPos].map(function(v, k){
+            return v + this.offset[k];
         }, this);
 
-         this.createSpotlight();
+        this.createSpotlight();
         this.spotlight.show(el);
 
-         // Help tips are aligned to the specified target element relative to specific
+        // Help tips are aligned to the specified target element relative to specific
         // anchor points. In order to correctly anchor the help tip, the help tip must
         // has a height and width which it does not have until iti si rendered on the
         // page. The help tip is first shown off the screen with the statement below so
@@ -128,11 +128,11 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         this.showAt([-1000,-1000]);
         this.showAt(this.el.getAlignToXY(el, this.position, offset));
 
-         this.syncAnchor();
+        this.syncAnchor();
     },
 
-     hideTip : function(){
-      this.hide();
+    hideTip : function(){
+        this.hide();
     },
 
      createSpotlight: function(){
