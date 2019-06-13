@@ -89,19 +89,14 @@ class Query
         $end_date,
         $group_by,
         $stat = 'job_count',
-        array $parameters = array(),
-        $query_groupname = 'query_groupname',
-        array $parameterDescriptions = array(),
-        $single_stat = false
+        array $parameters = array()
     ) {
         static::registerStatistics();
         static::registerGroupBys();
 
         $this->pdoparams = array();
         $this->pdoindex = 0;
-
         $this->setRealmName($realm_name);
-        $this->setQueryGroupname($query_groupname);
 
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory($aggregation_unit_name, $start_date, $end_date, "{$datatable_schema}.{$datatable_name}_by_");
         $this->setDataTable($datatable_schema, "{$datatable_name}_by_{$this->_aggregation_unit}");
@@ -114,9 +109,8 @@ class Query
         $this->setParameters($parameters);
 
         if ($stat != null) {
-            $this->setStat($stat, $single_stat);
+            $this->setStat($stat);
         }
-        $this->parameterDescriptions = $parameterDescriptions;
 
         foreach ($control_stats as $control_stat) {
             $this->addStatField(static::getStatistic($control_stat, $this));
@@ -138,24 +132,9 @@ class Query
     public $_db_profile = 'datawarehouse'; //The name of the db settings in portal_settings.ini
 
     /*
-    * The query group name is used to group a set of queries together and define
-    * groupings, stats and drilldowns for them independent of other queries.
-    */
-    private $_query_groupname = 'query_groupname';
-
-    /*
     * The query realm name defines what part of the data warehouse the query belongs to.
     */
     private $_realm_name = 'query_realm';
-
-    public function getQueryGroupname()
-    {
-        return $this->_query_groupname;
-    }
-    public function setQueryGroupname($query_groupname)
-    {
-        $this->_query_groupname = $query_groupname;
-    }
 
     public function getRealmName()
     {
@@ -165,10 +144,6 @@ class Query
     {
         $this->_realm_name = $realm_name;
     }
-
-
-
-    public $_single_stat = false;
 
     protected $_data_table;
     protected $_date_table;
@@ -1123,10 +1098,8 @@ class Query
         } // switch ($data_description->sort_type)
     }
 
-    public function setStat($stat, $single_stat = false)
+    public function setStat($stat)
     {
-        $this->_single_stat = $single_stat;
-
         $stat_name_to_classname = static::getRegisteredStatistics();
 
         $permitted_statistics = $this->_group_by->getPermittedStatistics();
@@ -1143,12 +1116,8 @@ class Query
             }
 
             $this->_main_stat_field = static::getStatistic($stat, $this);
-            if ($single_stat === true) {
-                $this->addStatField($this->_main_stat_field);
-            } else {
-                foreach ($permitted_statistics as $stat_name) {
-                    $this->addStatField(static::getStatistic($stat_name, $this));
-                }
+            foreach ($permitted_statistics as $stat_name) {
+                $this->addStatField(static::getStatistic($stat_name, $this));
             }
         }
     }
@@ -1487,9 +1456,7 @@ class Query
 
     public function __toString()
     {
-        return " query_groupname: {$this->_query_groupname} \n"
-                ." realm_name: {$this->_realm_name} \n"
-                ." single_stat: {$this->_single_stat} \n"
+        return " realm_name: {$this->_realm_name} \n"
                 ." aggregation_unit: {$this->_aggregation_unit} \n"
                 ." data_table: {$this->_data_table} \n"
                 ." date_table: {$this->_date_table} \n"

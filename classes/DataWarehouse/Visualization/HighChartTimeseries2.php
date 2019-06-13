@@ -224,10 +224,7 @@ class HighChartTimeseries2 extends HighChart2
                     $this->_endDate,
                     null,
                     null,
-                    array(),
-                    'tg_usage',
-                    array(),
-                    false
+                    array()
                 );
 
                 // @refer ComplexDataset::determineRoleParameters()
