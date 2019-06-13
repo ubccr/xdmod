@@ -113,7 +113,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             r: [-7, 0]
         };
 
-        var offset = alignmentOffsets[this.tipAnchorPos].map( function(v, k) {
+        var offset = alignmentOffsets[this.tipAnchorPos].map(function (v, k) {
             return v + this.offset[k];
         }, this);
 

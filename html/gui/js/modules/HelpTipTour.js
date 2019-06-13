@@ -50,7 +50,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'next-help-tip',
             overCls: 'help-tip-button',
             listeners: {
-                click: function() {
+                click: function () {
                     var tip_to_show = (self.tip_index < self.items.length - 1) ? self.tip_index + 1 : self.items.length - 1;
                     self.current_tip.hideTip();
                     self.showTip(tip_to_show);
@@ -63,7 +63,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'previous-help-tip',
             overCls: 'help-tip-button',
             listeners: {
-                click: function() {
+                click: function () {
                     var tip_to_show = (self.tip_index > 0) ? self.tip_index - 1 : 0;
                     self.current_tip.hideTip();
                     self.showTip(tip_to_show);
