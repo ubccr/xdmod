@@ -1,14 +1,27 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Normalized (% of Total Cores): by Department"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Normalized (% of Total Cores)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Job Size: Normalized (% of Total Cores)"
+"Chemical, Thermal Systems",5.600000000
+"Atmospheric Sciences",4.000000000
+"Environmental Biology",1.062343096
+"Electrical and Communication Systems",0.339984472
+Physics,0.300000000
+"Mechanical and Structural Systems",0.266304348
+"Materials Research",0.177995643
+Arts,0.138636364
+"Mathematical Sciences",0.136538462
+"Polar Programs",0.084813596
+"Molecular Biosciences",0.060699153
+Chemistry,0.054007031
+"Social and Economic Science",0.045246083
+"Astronomical Sciences",0.045039933
+"Design and Manufacturing Systems",0.040694006
+"Microelectronic Information Processing Systems",0.028843270
+"Computer and Computation Research",0.025000000
+"Earth Sciences",0.018027211
+---------

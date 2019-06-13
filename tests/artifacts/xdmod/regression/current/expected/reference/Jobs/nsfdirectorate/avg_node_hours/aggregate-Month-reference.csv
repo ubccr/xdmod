@@ -1,14 +1,16 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Node Hours: Per Job: by Decanal Unit"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Node Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+Engineering,56.96282432,4.620916677516273
+"Computer and Information Science and Engineering",25.30848292,0.10897197187940741
+Humanities/Arts,17.27322391,1.2812633375632778
+"Biological Sciences",8.85906941,2.447594190728218
+Geosciences,5.54539143,0.13410152621275237
+"Mathematical and Physical Sciences",2.95953498,0.3684096188215414
+"Social, Behavioral, and Economic Sciences",0.29385782,0.006624191502553313
+---------

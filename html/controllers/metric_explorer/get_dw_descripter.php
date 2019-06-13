@@ -41,7 +41,6 @@ foreach ($roles as $activeRole) {
         $realms = array();
         $groupByObjects = array();
 
-        $query_group_name = 'tg_usage';
         $query_descripter_realms = Acls::getQueryDescripters($user);
 
         foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups)

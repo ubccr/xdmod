@@ -1,14 +1,49 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"CPU Hours: Per Job: by PI Group"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+"Organic and Macromolecular Chemistry",4770.96515556,1280.6779521962624
+"Fluid, Particulate, and Hydraulic Systems",4368.65777778,3398.832310418393
+"Quantum Electronics, Waves, and Beams",3349.41898359,483.5702375532598
+"Metals, Ceramics, and Electronic Materials",2627.28571429,173.36998095799686
+"Structures and Building Systems",1767.64000000,158.84195310837734
+"Emerging Technologies Initiation",1217.11333333,41.359060776731056
+"Stellar Astronomy and Astrophysics",1099.78650000,285.31920900832716
+"Polar Aeronomy and Astrophysics",1006.98777778,712.0416008450284
+"Volcanology and Mantle Geochemistry",960.13333333,0
+"Global Atmospheric Research",722.24444444,508.25264083286396
+"Statistics and Probability",646.25423868,51.459856675505876
+"Design and Computer-Integrated Engineering",584.70172840,
+"Theoretical Physics",529.63777778,46.636532607630166
+"Algebra and Number Theory",472.55000000,42.08961460801514
+Biophysics,350.97654122,220.00497833274875
+"Solid State Chemistry and Polymers",229.08605023,76.31072359860417
+"Experimental Systems",199.11258258,23.468158632214884
+Arts,188.13274411,16.44278594480015
+"Geology and Paleontology",147.58368056,114.52976296802045
+"Cell Biology",120.93180941,23.278643251385912
+"Biochemistry and Molecular Structure and Function",68.10298148,53.28768177700803
+Seismology,62.26494444,18.726467654568296
+"Operations Research and Production Systems",49.85089556,1.1100595034642202
+"Design, Tools, and Test",28.14000000,0
+"Systems Prototyping and Fabrication",25.48654262,0.09521527865289223
+"Polar Ocean and Climate Systems",25.28805115,0.5677021199320009
+Economics,20.97018519,8.396540327209507
+"Solid-State and Microstructures",20.18978548,2.814335511780527
+"Galactic Astronomy",18.09286078,5.960009068465851
+"Physical Chemistry",9.96996384,1.3696184350054212
+Tectonics,8.59051583,0.027937647321332644
+"Systematic and Population Biology",6.35208275,0.7295707950782502
+"Extragalactic Astronomy and Cosmology",5.98691667,0.9781127830854605
+"Computer and Computation Theory",5.04208333,1.9381499596292342
+Sociology,2.92105820,0.02265708678309858
+Geophysics,1.60992063,0.44663758019891886
+"Law and Social Sciences",1.04000000,0
+"Mechanics and Materials",0.97173942,0.00025764463006399947
+"Polar Meteorology",0.88155664,0.09909785167735996
+"Decision, Risk, and Management Science",0.44956007,0.42794057709117733
+---------
