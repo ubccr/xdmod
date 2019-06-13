@@ -253,7 +253,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             triggerAction: 'all',
             valueField: 'id',
             emptyText: 'No User Type Selected',
-            listeners: { change: comboChangeHandler, select: comboChangeHandler }
+            listeners: { change: updateSaveIndicator, select: updateSaveIndicator }
         });
 
         cmbUserType.on('disable', function () {
