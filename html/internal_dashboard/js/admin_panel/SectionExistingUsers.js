@@ -1202,25 +1202,24 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
                         var userType = parseInt(json.user_information.user_type, 10);
-                        if (userType === CCR.xdmod.SSO_USER_TYPE) {
-                            // XSEDE-derived User: Can't change user type
-                            cmbUserType.setValue(userType);
-                            cmbUserType.originalValue = cmbUserType.getValue();
-                            cmbUserType.hide();
-                            lblXSEDEUser.show();
+                        cmbUserType.setValue(userType);
+                        cmbUserType.originalValue = cmbUserType.getValue();
 
+                        if (userType === CCR.xdmod.SSO_USER_TYPE) {
+                            // XSEDE-derived User: Can't change user type so we
+                            // instead show the `lblXSEDEUser` element and hide
+                            // the `cmbUserType`.
+                            lblXSEDEUser.show();
+                            cmbUserType.hide();
                             mnuItemPasswordReset.hide();
                         } else {
                             // All other (non-XSEDE-derived) users
                             lblXSEDEUser.hide();
                             cmbUserType.show();
-
                             mnuItemPasswordReset.show();
-
                             cmbUserType.setDisabled(false);
-                            cmbUserType.setValue(userType);
-                            cmbUserType.originalValue = cmbUserType.getValue();
                         }
+
                         var sticky = Boolean(json.user_information.sticky);
                         stickyCheckbox.originalValue = sticky;
                         stickyCheckbox.setValue(sticky);
