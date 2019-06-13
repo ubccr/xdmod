@@ -10,7 +10,7 @@ CCR.xdmod.ui.ChartToolbar = function (config) {
 Ext.extend(CCR.xdmod.ui.ChartToolbar, Ext.Toolbar, {
     show_legend: 'y',
     dataset_type: 'aggregate',
-    display_type: 'auto',
+    display_type: 'none',
     data_combine_method: 'auto',
     log_scale: 'n',
 
@@ -19,8 +19,8 @@ Ext.extend(CCR.xdmod.ui.ChartToolbar, Ext.Toolbar, {
             // dataset_type
             'aggregate',
 
-            // display_type
-            'auto',
+            // display_type: none will unselect everything because there's no option for none.
+            'none',
 
             // data_combine_method
             'auto',

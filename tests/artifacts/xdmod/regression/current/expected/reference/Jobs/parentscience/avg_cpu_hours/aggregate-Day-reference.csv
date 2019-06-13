@@ -1,20 +1,14 @@
-title
-"CPU Hours: Per Job: by Department"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2016-12-22,2017-01-01
----------
-Day,"[Chemical, Thermal Systems] CPU Hours: Per Job","[Electrical and Communication Systems] CPU Hours: Per Job","[Atmospheric Sciences] CPU Hours: Per Job","[Materials Research] CPU Hours: Per Job","[Mathematical Sciences] CPU Hours: Per Job","[Physics] CPU Hours: Per Job","[Mechanical and Structural Systems] CPU Hours: Per Job","[Arts] CPU Hours: Per Job","[Molecular Biosciences] CPU Hours: Per Job","[Astronomical Sciences] CPU Hours: Per Job","[Chemistry] CPU Hours: Per Job","[Polar Programs] CPU Hours: Per Job","[Design and Manufacturing Systems] CPU Hours: Per Job","[Microelectronic Information Processing Systems] CPU Hours: Per Job","[Environmental Biology] CPU Hours: Per Job","[Earth Sciences] CPU Hours: Per Job","[Computer and Computation Research] CPU Hours: Per Job","[Social and Economic Science] CPU Hours: Per Job"
-2016-12-22,0,0,0,0,0,0,0,0,200.95666667,0,203.30000000,0,0,0,0,0,0,0
-2016-12-23,0,0,0,0,0,0,0,0,288.00000000,8.60361111,288.00000000,0,0,0,0,0,0,0
-2016-12-24,0,0,0,0,0,0,0,0,288.00000000,24.00000000,288.00000000,0,0,0,0,0,0,0
-2016-12-25,0,0,0,0,0,0,0,0,288.00000000,24.00000000,116.56750000,0,0,0,0,0,0,0
-2016-12-26,0,0,0,0,43.26666667,0,0,0,288.00000000,24.00000000,432.00000000,0,0,0,0,0,0,0
-2016-12-27,0,1246.47111111,0,1432.93629630,320.78689815,0,0,0,166.08277778,280.65174603,163.84000000,0,0,0,0,0,0,3.21666667
-2016-12-28,0,1462.12800000,0,548.99703704,102.73824786,60.47666667,0,0,271.00512821,535.66833333,1359.38973180,0,13.35268330,6.69041168,0,94.01111111,0,24.00000000
-2016-12-29,0,1903.63119342,1038.22222222,558.21381944,342.00281481,288.00000000,410.97777778,46.91737374,66.39927778,251.25414683,877.62333333,758.98888889,16.60273286,14.27582622,0,266.00208333,2.01966667,7.39809663
-2016-12-30,2468.14222222,1342.20575694,402.80000000,183.79372168,249.86375000,181.16111111,256.62628858,107.24694444,48.60799020,13.81820610,14.56036587,15.25876587,21.71949405,14.71385475,5.80186420,4.87608476,4.10559722,3.03737720
-2016-12-31,5701.54666667,236.60267442,0,49.49041005,246.30230726,0,103.53553819,171.46924897,148.77467172,178.36906250,9.20850345,8.74733740,23.62045770,13.61654527,12.54733333,6.47695188,8.63138889,3.78294327
-2017-01-01,0,271.71664683,3.46666667,0,103.31233796,0,0.96969246,59.98977778,78.92785948,323.23959596,16.57782656,23.44196390,29.54166397,12.31921090,6.26263789,10.94629630,0,0.62134448
----------
+    ],
+    "data": [
+
+    ],
+    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
+    "code": 104
+}

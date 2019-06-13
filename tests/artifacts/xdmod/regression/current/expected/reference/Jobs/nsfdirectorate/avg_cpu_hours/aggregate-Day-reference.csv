@@ -1,20 +1,14 @@
-title
-"CPU Hours: Per Job: by Decanal Unit"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2016-12-22,2017-01-01
----------
-Day,"[Engineering] CPU Hours: Per Job","[Humanities/Arts] CPU Hours: Per Job","[Biological Sciences] CPU Hours: Per Job","[Mathematical and Physical Sciences] CPU Hours: Per Job","[Computer and Information Science and Engineering] CPU Hours: Per Job","[Geosciences] CPU Hours: Per Job","[Social, Behavioral, and Economic Sciences] CPU Hours: Per Job"
-2016-12-22,0,0,200.95666667,203.30000000,0,0,0
-2016-12-23,0,0,288.00000000,148.30180556,0,0,0
-2016-12-24,0,0,288.00000000,156.00000000,0,0,0
-2016-12-25,0,0,288.00000000,98.05400000,0,0,0
-2016-12-26,0,0,288.00000000,196.83333333,0,0,0
-2016-12-27,1246.47111111,0,166.08277778,349.39508333,0,0,3.21666667
-2016-12-28,147.49854595,0,271.00512821,681.38766382,6.69041168,94.01111111,24.00000000
-2016-12-29,214.07366750,46.91737374,66.39927778,585.33533832,14.21335853,582.30381944,7.39809663
-2016-12-30,229.01666415,107.24694444,26.59341111,19.79102838,14.58756597,6.26633395,3.03737720
-2016-12-31,107.44654864,171.46924897,106.20362847,17.08886588,13.61354217,6.56568955,3.78294327
-2017-01-01,67.15728861,59.98977778,20.54366410,32.64719972,12.31921090,23.37171659,0.62134448
----------
+    ],
+    "data": [
+
+    ],
+    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
+    "code": 104
+}

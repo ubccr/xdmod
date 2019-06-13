@@ -1,11 +1,14 @@
-title
-"Job Size: Per Job (Core Count)"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2016-12-22,2017-01-01
----------
-Month,"[Screwdriver] Job Size: Per Job (Core Count)"
-2016-12,8.5390
-2017-01,9.1326
----------
+    ],
+    "data": [
+
+    ],
+    "message": "{\"statistic\":\"Job Size: Per Job (Core Count)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
+    "code": 104
+}
