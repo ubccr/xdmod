@@ -16,19 +16,19 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
     tip_index: null,
     current_tip: null,
     title: 'XDMoD Help Tips',
-    initComponent: function(){
+    initComponent: function() {
         Ext.ux.HelpTipTour.superclass.initComponent.call(this);
     },
 
-     getTip: function(tip_index){
+    getTip: function(tip_index) {
         return this.items[tip_index];
     },
 
-     startTour: function(){
+    startTour: function() {
         this.showTip(0);
     },
 
-     showTip: function(tip_index){
+    showTip: function(tip_index) {
         var self = this;
 
         if (tip_index < 0 || tip_index > this.items.length) {
@@ -39,7 +39,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
         this.current_tip = this.getTip(this.tip_index);
         var target_element = Ext.select(this.current_tip.target);
 
-        if (this.current_tip.title === undefined){
+        if (this.current_tip.title === undefined) {
             this.current_tip.title = this.title;
         }
 
@@ -50,11 +50,11 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'next-help-tip',
             overCls: 'help-tip-button',
             listeners: {
-              'click' : function(){
-                  var tip_to_show = (self.tip_index < self.items.length - 1) ? self.tip_index + 1 : self.items.length - 1;
-                  self.current_tip.hideTip();
-                  self.showTip(tip_to_show);
-              }
+                'click': function() {
+                    var tip_to_show = (self.tip_index < self.items.length - 1) ? self.tip_index + 1 : self.items.length - 1;
+                    self.current_tip.hideTip();
+                    self.showTip(tip_to_show);
+                }
             }
         });
 
@@ -63,11 +63,11 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'previous-help-tip',
             overCls: 'help-tip-button',
             listeners: {
-              'click' : function(){
-                  var tip_to_show = (self.tip_index > 0) ? self.tip_index - 1 : 0;
-                  self.current_tip.hideTip();
-                  self.showTip(tip_to_show);
-              }
+                'click': function() {
+                    var tip_to_show = (self.tip_index > 0) ? self.tip_index - 1 : 0;
+                    self.current_tip.hideTip();
+                    self.showTip(tip_to_show);
+                }
             }
         });
 
@@ -76,9 +76,9 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'end-help-tip-tour',
             overCls: 'help-tip-button',
             listeners: {
-              'click' : function(){
-                  self.current_tip.hideTip();
-              }
+                'click': function() {
+                    self.current_tip.hideTip();
+                }
             }
         });
 

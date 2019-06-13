@@ -138,8 +138,8 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
      createSpotlight: function(){
         if(this.spotlight === null){
             this.spotlight =  new Ext.ux.Spotlight({
-              easing: 'easeOut',
-              duration: .3
+                easing: 'easeOut',
+                duration: .3
             });
         }
     }
