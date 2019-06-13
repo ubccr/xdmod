@@ -1,13 +1,7 @@
 <?php
-/* ==========================================================================================
- * Helper class providing common functionality for all RDBMS DataEndpoints.
- *
- * @author Steve Gallo <smgallo@buffalo.edu>
- * @data 2015-11-12
- * ==========================================================================================
+/**
+ * Abstract helper class providing common functionality for all RDBMS DataEndpoints.
  */
-
-// Access the config options parser
 
 namespace ETL\DataEndpoint;
 
@@ -20,29 +14,45 @@ use PDOException;
 
 abstract class aRdbmsEndpoint extends aDataEndpoint
 {
-    // The database schema for this endpoint
+    /**
+     * @ var string The database schema for this endpoint
+     */
     protected $schema = null;
 
-    // The configuration section identifier that contains database connection info
+    /**
+     * @var string The name of the section in the configuration file that contains database
+     * connection details.
+     */
     protected $config = null;
 
-    // The character used to escape system identifiers
+    /**
+     * @var string The character used to escape database system identifiers
+     */
     protected $systemQuoteChar = '`';
 
-    // Database hostname
+    /**
+     * @var string The database hostname
+     */
     protected $hostname = null;
 
-    // Database port
+    /**
+     * @var int The database port
+     */
     protected $port = null;
 
-    // User used to connect to the database
+    /**
+     * @var string The user used to authenticate to the database
+     */
     protected $username = null;
 
+    /**
+     * @var bool Set to TRUE if the database schema should be created if it does not already exist.
+     * Note that the database user will need the appropriate permissions.
+     */
     protected $createSchemaIfNotExists = false;
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__construct()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
@@ -74,22 +84,26 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
             $this->logAndThrowException($msg);
         }
 
+        $this->generateUniqueKey();
+    }
+
+    /**
+     * @see aDataEndpoint::generateUniqueKey()
+     */
+
+    protected function generateUniqueKey()
+    {
         // Since the name is arbitrary, do not use it for the unique key
-        $this->key = md5(implode(
-            $this->keySeparator,
-            array(
-                $this->type,
-                $this->config,
-                $this->schema,
-                $this->createSchemaIfNotExists
+        $this->key = md5(
+            implode(
+                $this->keySeparator,
+                array($this->type, $this->config, $this->schema, $this->createSchemaIfNotExists)
             )
-        ));
+        );
+    }
 
-    }  // __construct()
-
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::verify()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function verify($dryrun = false, $leaveConnected = false)
@@ -114,21 +128,19 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
         }
 
         return true;
-    }  // verify()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::getSchema()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getSchema($quote = false)
     {
         return ( $quote ? $this->quoteSystemIdentifier($this->schema) : $this->schema );
-    }  // getSchema()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see aDataEndpoint::connect()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function connect()
@@ -146,52 +158,47 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
 
         return $this->handle;
 
-    }  // connect()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see aDataEndpoint::disconnect()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function disconnect()
     {
         $this->handle = null;
         return true;
-    }  // disconnect()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::quote()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function quote($str)
     {
         return $this->getHandle()->quote($str);
-    }  // quote()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::quoteSystemIdentifier()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function quoteSystemIdentifier($identifier)
     {
         return $this->systemQuoteChar . $identifier . $this->systemQuoteChar;
-    }  // quoteSystemIdentifier()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::getSystemQuoteChar()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getSystemQuoteChar()
     {
         return $this->systemQuoteChar;
-    }  // getSystemQuoteChar()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::tableExists()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function tableExists($tableName, $schemaName = null)
@@ -232,11 +239,10 @@ AND table_name = :tablename";
 
         return true;
 
-    }  // tableExists()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::getTableColumnNames()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getTableColumnNames($tableName, $schemaName = null)
@@ -282,9 +288,9 @@ ORDER BY ordinal_position ASC";
 
         return $columnNames;
 
-    }  // getTableColumnNames()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Helper function used by specific data endpoint drivers to query the underlying
      * database to check if a schema exists.
      *
@@ -297,7 +303,6 @@ ORDER BY ordinal_position ASC";
      * @return TRUE if the schema exists, FALSE if it does not
      * @throw Exception If an empty and non-NULL schema was provided
      * @throw Exception If tehre was an errir querying the database
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function executeSchemaExistsQuery($sql, $schemaName = null, array $sqlParameters = array())
@@ -326,11 +331,10 @@ ORDER BY ordinal_position ASC";
         }
 
         return true;
-    }  // executeSchemaExistsQuery()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see aDataEndpoint::__toString()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __toString()
@@ -340,19 +344,17 @@ ORDER BY ordinal_position ASC";
             (null !== $this->port ? ":{$this->port}" : "" ) .
             (null !== $this->username ? ", user={$this->username}" : "" ) .
             ")";
-    }  // __toString()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::schemaExists()
-     * ------------------------------------------------------------------------------------------
      */
 
     abstract public function schemaExists($schemaName = null);
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @see iRdbmsEndpoint::createSchema()
-     * ------------------------------------------------------------------------------------------
      */
 
     abstract public function createSchema($schemaName = null);
-}  // class aRdbmsEndpoint
+}

@@ -1,8 +1,7 @@
 <?php
-/* ==========================================================================================
+/**
  * JSON file data endpoint. Includes support for parsing a JSON file and returning the parsed
  * representation via the parse() method.
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint;
@@ -19,30 +18,26 @@ use JsonSchema\Constraints\Factory;
 
 class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataRecords
 {
-    /** -----------------------------------------------------------------------------------------
-     * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
-     * in configuration files. It also allows us to implement auto-discovery.
-     *
-     * @const string
+    /**
+     * @const string Defines the name for this endpoint that should be used in configuration files.
+     * It also allows us to implement auto-discovery.
      */
 
     const ENDPOINT_NAME = 'jsonfile';
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__construct()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
     {
         parent::__construct($options, $logger);
-    }  // __construct()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Quote the string for JSON.
      *
      * @see iDataEndpoint::quote()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function quote($str)
@@ -50,13 +45,12 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
         // json_encode() will enclose the string in double-quotes in addition to escaping characters
         // in the string so remove them.
         return trim(json_encode($str), '"');
-    }  // quote()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Decodes a JSON string into a PHP object and add it to the record list.
      *
      * @see aStructuredFile::decodeRecord()
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function decodeRecord($data)
@@ -95,11 +89,10 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
         }
 
         return true;
-    }  // decodeRecord()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see aStructuredFile::verifyData()
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function verifyData()
@@ -156,11 +149,10 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
 
         return true;
 
-    }  // verifyData()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see aStructuredFile::discoverRecordFieldNames()
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function discoverRecordFieldNames()
@@ -218,11 +210,10 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
             $this->requestedRecordFieldNames = $this->discoveredRecordFieldNames;
         }
 
-    }  // setRecordFieldNames()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see aStructuredFile::createReturnRecord()
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function createReturnRecord($record)
@@ -236,9 +227,9 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
         } else {
             return $arrayRecord;
         }
-    }  // createReturnRecord()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Validate the source record fields in the destination field map.
      * aRdbmsDestinationAction::verifyDestinationMapSourceFields() has a hook to allow the
      * verification of the source record fields to be handled by the source endpoint if it
@@ -250,7 +241,6 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
      * addresses the data since we do not have access to the records at this time.
      *
      * @see iComplexDataRecords::validateDestinationMapSourceFields()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function validateDestinationMapSourceFields(array $destinationTableMap)
@@ -276,21 +266,19 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
 
         return $missing;
 
-    }  // validateDestinationMapSourceFields()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iComplexDataRecords::isComplexSourceField()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function isComplexSourceField($sourceField)
     {
         return JsonPointer::isValidPointer($sourceField);
-    }  // isComplexSourceField()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iComplexDataRecords::evaluateComplexSourceField()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function evaluateComplexSourceField($sourceField, $record, $invalidRefValue = null)
@@ -300,15 +288,14 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
         } catch ( Exception $e ) {
             return $invalidRefValue;
         }
-    }  // evaluateComplexSourceField()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Implementation of json_last_error_msg() for pre PHP 5.5 systems.
      *
      * @param $errorCode The error code returned by json_last_error()
      *
      * @return A human-readable error message
-     * ------------------------------------------------------------------------------------------
      */
 
     private function jsonLastErrorMsg($errorCode)
@@ -350,5 +337,5 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
 
         return $message;
 
-    }  // jsonLastErrorMsg()
-}  // class JsonFile
+    }
+}

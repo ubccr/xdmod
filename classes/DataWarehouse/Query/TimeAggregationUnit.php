@@ -45,8 +45,6 @@ abstract class TimeAggregationUnit
      */
     abstract public function getMaxPeriodPerYear();
 
-    abstract public function getTimeLabel($timestamp);
-
     /**
      * geDateRangeIds
      * Given a date range (start, end) return a new date range that has been

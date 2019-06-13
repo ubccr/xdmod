@@ -1,5 +1,5 @@
 <?php
-/* ==========================================================================================
+/**
  * Abstract class to define properties and implement methods required by all structured
  * files. Methods supporting the Iterator and Countable interfaces that iStructuredFile
  * extends are defined here as well as abstract methods that are file format and/or
@@ -7,7 +7,6 @@
  *
  * @see Iterator
  * @see Countable
- * ==========================================================================================
  */
 
 namespace ETL\DataEndpoint;
@@ -17,102 +16,76 @@ use Log;
 abstract class aStructuredFile extends File
 {
     /**
-     * The default number of bytes for file read operations.
+     * @const integer The default number of bytes for file read operations.
      */
     const DEFAULT_READ_BYTES = 4096;
 
     /**
-     * Optional path to a schema describing each record the structured file.
-     *
-     * This is null if no schema was provided.
-     *
-     * @var array|null
+     * @var array|null Optional path to a schema describing each record the structured file.  This
+     * is null if no schema was provided.
      */
     protected $recordSchemaPath = null;
 
     /**
-     * The list of filters that have been attached to the file handle
-     *
-     * @var array|null
+     * @var array|null The list of filters that have been attached to the file handle
      */
     protected $filterList = array();
 
     /**
-     * The list of filters definition objects used to create filters.
-     *
-     * @var array|null
+     * @var array|null The list of filters definition objects used to create filters.
      */
     protected $filterDefinitions = null;
 
     /**
-     * The list of records read from the input file
-     *
-     * @var array
+     * @var array The list of records read from the input file
      */
     protected $recordList = array();
 
     /**
-     * Character used to separate records in the input file, defaults to NULL.
-     *
-     * @var string
+     * @var string Character used to separate records in the input file, defaults to NULL.
      */
     protected $recordSeparator = null;
 
     /**
-     * Character used to separate fields in the record, defaults to NULL.
-     *
-     * @var string
+     * @var string Character used to separate fields in the record, defaults to NULL.
      */
     protected $fieldSeparator = null;
 
     /**
-     * TRUE if the file is expected to have a header record, FALSE otherwise.
-     *
-     * @var boolean
+     * @var boolean TRUE if the file is expected to have a header record, FALSE otherwise.
      */
     protected $hasHeaderRecord = true;
 
     /**
-     * An array of field names to return. If this is a subset of the fields present in the
-     * record, then return only the fields requested. If there are requested fields that
-     * are not present in the record return NULL for those fields. If NULL, return all
-     * discovered record fields.
-     *
-     * @var array
+     * @var array An array of field names to return. If this is a subset of the fields present in
+     * the record, then return only the fields requested. If there are requested fields that are not
+     * present in the record return NULL for those fields. If NULL, return all discovered record
+     * fields.
      */
     protected $requestedRecordFieldNames = array();
 
     /**
-     * An array of field names corresponding to the data in the file. File formats may
-     * interpret this differently, but all implementations are expected to return data for
-     * all fields specified here. If a field does not exist in the data, its value
-     * expected to be NULL.
-     *
-     * @var array
+     * @var array An array of field names corresponding to the data in the file. File formats may
+     * interpret this differently, but all implementations are expected to return data for all
+     * fields specified here. If a field does not exist in the data, its value expected to be NULL.
      */
     protected $discoveredRecordFieldNames = array();
 
     /**
-     * A flag indicating whether or not records should be returned exactly as they were
-     * found in the data file. When set to FALSE, records are normalized into an
-     * associative array (or other Traversable entity) containing only the fields that
-     * were requested. If set to TRUE, the normalization step is skipped and the raw
-     * record is returned.
-     *
-     * @var boolean
+     * @var boolean A flag indicating whether or not records should be returned exactly as they were
+     * found in the data file. When set to FALSE, records are normalized into an associative array
+     * (or other Traversable entity) containing only the fields that were requested. If set to TRUE,
+     * the normalization step is skipped and the raw record is returned.
      */
     protected $recordPassthrough = false;
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iDataEndpoint::__construct()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
     {
         parent::__construct($options, $logger);
-
-        $this->generateUniqueKey();
 
         $messages = array();
         $propertyTypes = array(
@@ -166,11 +139,41 @@ abstract class aStructuredFile extends File
             $this->recordPassthrough = $options->record_passthrough;
         }
 
-    }  // __construct()
+        $this->generateUniqueKey();
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
+     * @see aDataEndpoint::generateUniqueKey()
+     *
+     * A StructuredFile endpoint may be filtered through one or more external processes such as jq
+     * or awk. We must take these into account when determining the uniqueness of the endpoint.
+     */
+
+    protected function generateUniqueKey()
+    {
+        // If there are no filter definitions we use the same key as a File endpoint.
+
+        if ( null === $this->filterDefinitions ) {
+            return parent::generateUniqueKey();
+        }
+
+        // Start with the standard components and add in each filter
+
+        $keySource = array($this->type, $this->path, $this->mode);
+        foreach ( $this->filterDefinitions as $filter )
+        {
+            if ( isset($filter->path) ) {
+                $keySource[] = $filter->path;
+            }
+            if ( isset($filter->arguments) ) {
+                $keySource[] = $filter->arguments;
+            }
+        }
+        $this->key = md5(implode($this->keySeparator, $keySource));
+    }
+
+    /**
      * @see iStructuredFile::parse()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function parse()
@@ -187,15 +190,14 @@ abstract class aStructuredFile extends File
         $this->rewind();
         return $this->current();
 
-    } // parse()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Add any filters that have been configured for this endpoint. PHP's stream filters
      * will be used to implement filtering and filters will be attached directly to the
      * file handle. As data is read from the file it is passed through the list of filters
      * using a bucket-brigade and accessed normally using fread() or other file functions.
      * See http://php.net/manual/en/ref.stream.php
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function attachFilters()
@@ -257,9 +259,9 @@ abstract class aStructuredFile extends File
             }
         }
 
-    }  // attachFilters()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Parse and decode a data file and return the parsed representation. We parse (and
      * optionally filter) the entire file at once and place decoded records into the
      * record list. Reading is not allowed until after parsing is complete. In the future,
@@ -272,7 +274,6 @@ abstract class aStructuredFile extends File
      *
      * @throw Exception If the file could not be read.
      * @throw Exception If the file could not be parsed.
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function parseFile($path)
@@ -376,11 +377,10 @@ abstract class aStructuredFile extends File
 
         return $totalBytesRead;
 
-    }  // parseFile()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::getRecordSeparator()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getRecordSeparator()
@@ -388,9 +388,8 @@ abstract class aStructuredFile extends File
         return $this->recordSeparator;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::getFieldSeparator()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getFieldSeparator()
@@ -398,9 +397,8 @@ abstract class aStructuredFile extends File
         return $this->fieldSeparator;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::hasHeaderRecord()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function hasHeaderRecord()
@@ -408,9 +406,8 @@ abstract class aStructuredFile extends File
         return $this->hasHeaderRecord;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::getRecordFieldNames()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getRecordFieldNames()
@@ -418,9 +415,8 @@ abstract class aStructuredFile extends File
         return $this->requestedRecordFieldNames;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::getDiscoveredRecordFieldNames()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getDiscoveredRecordFieldNames()
@@ -428,9 +424,8 @@ abstract class aStructuredFile extends File
         return $this->discoveredRecordFieldNames;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::getAttachedFilters()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getAttachedFilters()
@@ -438,7 +433,7 @@ abstract class aStructuredFile extends File
         return $this->filterList;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Construct a Traversable return record. The return record must contain all of the
      * requested field names (keys) along with their values or NULL if a value is not
      * present for that field.
@@ -449,7 +444,6 @@ abstract class aStructuredFile extends File
      * array.  The child class can re-implement this method as needed.
 
      * @return array A record that includes all of the data for the requested fields
-     * ------------------------------------------------------------------------------------------
      */
 
     protected function createReturnRecord($record)
@@ -478,24 +472,22 @@ abstract class aStructuredFile extends File
         $dataTemplate = array_fill_keys($this->requestedRecordFieldNames, null);
 
         return array_merge($dataTemplate, array_intersect_key($arrayRecord, $dataTemplate));
-    }  // createReturnRecord()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see iStructuredFile::supportsComplexDataRecords()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function supportsComplexDataRecords()
     {
         return ( $this instanceof iComplexDataRecords );
-    }  // supportsComplexDataRecords()
+    }
 
-     /** -----------------------------------------------------------------------------------------
+    /**
      * Return the current record as a Traversable entity such as an associative array or
      * stdClass where the keys are field names.
      *
      * @see Iterator::current()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function current()
@@ -510,41 +502,37 @@ abstract class aStructuredFile extends File
 
         return $this->createReturnRecord(current($this->recordList));
 
-    }  // current()
+    }
 
-   /** -----------------------------------------------------------------------------------------
+   /**
      * @see Iterator::key()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function key()
     {
         return key($this->recordList);
-    }  // key()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see Iterator::next()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function next()
     {
         next($this->recordList);
-    }  // next()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see Iterator::rewind()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function rewind()
     {
         reset($this->recordList);
-    }  // rewind()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see Iterator::valid()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function valid()
@@ -553,51 +541,68 @@ abstract class aStructuredFile extends File
         // Note that we can't check for values that are FALSE because that is a valid
         // data value.
         return null !== key($this->recordList);
-    }  // valid()
+    }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * @see Countable::count()
-     * ------------------------------------------------------------------------------------------
      */
 
     public function count()
     {
         return count($this->recordList);
-    }  // count()
+    }
 
     /**
      * A simple getter for the `recordList` property.
      *
      * @return array
      */
+
     public function getRecordList()
     {
         return $this->recordList;
     }
 
-    /** -----------------------------------------------------------------------------------------
+    /**
+     * @see iDataEndpoint::__toString()
+     */
+
+    public function __toString()
+    {
+        if ( null === $this->filterDefinitions ) {
+            return parent::__toString();
+        } else {
+            return sprintf(
+                '%s (name=%s, path=%s, %d filters)',
+                get_class($this),
+                $this->name,
+                $this->path,
+                count($this->filterDefinitions)
+            );
+        }
+    }
+
+    /**
      * Decodes a data string into a PHP object and add it to the record list.
      *
      * @param  string $data The data string to decode.
      *
      * @return bool TRUE on success
      * @throws Exception if there was an error decoding the data.
-     * ------------------------------------------------------------------------------------------
      */
 
     abstract protected function decodeRecord($data);
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * If a record schema was specified, verify that each record conforms to that schema.
      *
      * @return TRUE on success
      * @throw Exception If there was a validation error
-     * ------------------------------------------------------------------------------------------
      */
 
     abstract protected function verifyData();
 
-    /** -----------------------------------------------------------------------------------------
+    /**
      * Set the discovered field names for the records in a file. How the field names are
      * determined is specific to the file type. For example, the fields can be inferred
      * from a CSV/TSV file with a header or a JSON file representing data as objects but
@@ -605,8 +610,7 @@ abstract class aStructuredFile extends File
      * records as arrays.
      *
      * @return array The list of record field names.
-     * ------------------------------------------------------------------------------------------
      */
 
     abstract protected function discoverRecordFieldNames();
-}  // abstract class aStructuredFile
+}
