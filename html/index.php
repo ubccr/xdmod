@@ -142,6 +142,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     </script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
+    <link rel="stylesheet" type="text/css" href="gui/css/helptour.css">
 
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
