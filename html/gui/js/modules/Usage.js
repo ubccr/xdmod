@@ -1218,19 +1218,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             chartToolbar.disable();
 
             if (n.attributes.chartSettings) {
-                var decoded = JSON.parse(n.attributes.chartSettings);
                 if (n.attributes.supportsAggregate === false) {
-                    // the node does not support aggregate so we need to
-                    // force timeseries/line/swap_xy=false
-                    decoded.dataset_type = 'timeseries';
-                    decoded.display_type = 'line';
-                    decoded.swap_xy = false;
-
-                    // Update the `timeseries` menu item to be disabled / checked.
-
-                    chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(true);
-                    chartToolbar.chartConfigButton.menu.datasetItem.setChecked(true, true);
-
                     // Default tooltip that will be attached to the `Timeseries`
                     // menu item.
                     var tooltip = {
@@ -1258,13 +1246,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         );
                     }
                 } else {
-                    // then this statistic does support aggregate, so we need to
-                    // make sure that the `timeseries` menu item is enabled and
-                    // is checked if appropriate.
-                    var isTimeseries = decoded.dataset_type === 'timeseries';
-                    chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(false);
-                    chartToolbar.chartConfigButton.menu.datasetItem.setChecked(isTimeseries, true);
-
                     // Now that we're not restricted, make sure to unregister the
                     // quicktip.
                     Ext.QuickTips.unregister(chartToolbar.chartConfigButton.menu.datasetItem.el);
@@ -1272,7 +1253,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                 // Now that all the shenanigans are over, go ahead and update the
                 // toolbar w/ the possibly updated decoded chart settings.
-                chartToolbar.fromJSON(JSON.stringify(decoded));
+                chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(n.attributes.supportsAggregate === false);
+                chartToolbar.fromJSON(n.attributes.chartSettings);
             } else {
                 chartToolbar.resetValues();
             }
@@ -1944,44 +1926,38 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         } //maximizeScale
 
-        // ---------------------------------------------------------
-
         function reloadChartFunc(chartSettingsObject) {
-
             var model = tree.getSelectionModel();
             var node = model.getSelectedNode();
 
             if (node != null) {
-
-                if (chartSettingsObject) node.attributes.chartSettings = chartSettingsObject;
+                if (chartSettingsObject) {
+                    node.attributes.chartSettings = chartSettingsObject;
+                }
 
                 if (node.attributes.node_type == 'group_by') {
-
                     node.eachChild(function (n) {
-
-                        n.attributes.chartSettings = node.attributes.chartSettings || undefined;
+                        var statisticNode = n;
+                        if (n.attributes.supportsAggregate === false) {
+                            // do not overide chart settings for nodes that correspond to statistics that must be
+                            // shown in timeseries mode (note for future: there should be no statistics like this in XDMoD).
+                            var decoded = JSON.parse(n.attributes.chartSettings);
+                            decoded.dataset_type = 'timeseries';
+                            decoded.display_type = 'line';
+                            decoded.swap_xy = false;
+                            statisticNode.attributes.chartSettings = JSON.stringify(decoded);
+                        } else {
+                            statisticNode.attributes.chartSettings = node.attributes.chartSettings || undefined;
+                        }
+                        statisticNode.attributes.filter = node.attributes.filter || undefined;
+                        statisticNode.attributes.filterText = node.attributes.filterText || undefined;
                         return true;
-
                     }, this);
-
-                    node.eachChild(function (n) {
-
-                        n.attributes.filter = node.attributes.filter || undefined;
-                        n.attributes.filterText = node.attributes.filterText || undefined;
-                        return true;
-
-                    }, this);
-
-                } //if(node.attributes.node_type == 'group_by')
-
+                }
                 tree.getSelectionModel().unselect(node, true);
                 tree.getSelectionModel().select(node);
-
-            } //if (node != null)
-
-        } //reloadChartFunc
-
-        // ---------------------------------------------------------
+            }
+        }
 
         var reloadChartTask = new Ext.util.DelayedTask(reloadChartFunc, this);
 
