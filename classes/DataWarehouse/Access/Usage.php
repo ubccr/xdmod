@@ -62,10 +62,10 @@ class Usage extends Common
                     . ' accuracy of the following (and related) statistics: Job'
                     . ' Size and CPU Consumption';
             }
-
+            $datasetType = \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType());
             $usageChartSettings = array(
-                'dataset_type' => \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType()),
-                'display_type' => \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($usageGroupByObject->getDefaultDatasetType())),
+                'dataset_type' => $datasetType,
+                'display_type' => \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($datasetType)),
                 'combine_type' => \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()),
                 'show_legend' => \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()),
                 'show_guide_lines' => \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()),
@@ -93,14 +93,18 @@ class Usage extends Common
                 if (!$statsClass->isVisible()) {
                     continue;
                 }
+                $statUsageChartSettings = $usageChartSettings;
 
+                if(!$statsClass->usesTimePeriodTablesForAggregate()){
+                    $statUsageChartSettings['dataset_type'] = 'timeseries';
+                    $statUsageChartSettings['display_type'] = 'line';
+                    $statUsageChartSettings['swap_xy'] = false;
+                }
                 $errorstat = 'sem_' . $userStatistic;
                 if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
-                    $usageChartSettings['enable_errors'] = 'y';
-                } else {
-                    $usageChartSettings['enable_errors'] = 'n';
+                    $statUsageChartSettings['enable_errors'] = 'y';
                 }
-                $usageChartSettings['statistic'] = $userStatistic;
+                $statUsageChartSettings['statistic'] = $userStatistic;
 
                 $usageChart = array(
                         'hc_jsonstore' => array('title' => array('text' => '')),
@@ -110,7 +114,7 @@ class Usage extends Common
                         'subnotes' => $usageSubnotes,
                         'group_description' => $usageGroupByObject->getDescription(),
                         'description' => $statsClass->getDescription($usageGroupByObject),
-                        'chart_settings' => json_encode($usageChartSettings),
+                        'chart_settings' => json_encode($statUsageChartSettings),
                 );
 
                 $usageCharts[] = $usageChart;
@@ -255,9 +259,15 @@ class Usage extends Common
                 if (!$usageIsTimeseries) {
                     $userStatisticObject = $usageRealmAggregateClass::getStatistic($this->request['statistic']);
                     if (!$userStatisticObject->usesTimePeriodTablesForAggregate()) {
-                        $this->request['dataset_type'] = 'timeseries';
-                        $this->request['display_type'] = 'line';
-                        $this->request['swap_xy'] = false;
+                        throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+                            json_encode(
+                                array(
+                                    'statistic' => $userStatisticObject->getLabel(),
+                                    'instructions' =>  'Try again as timeseries',
+                                    'description' => 'Aggregate View not supported'
+                                )
+                            )
+                        );
                     }
                 }
                 $meRequests[] = $this->convertChartRequest($this->request, $isTextExport);
