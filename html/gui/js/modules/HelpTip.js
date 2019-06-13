@@ -22,21 +22,21 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
     bbar: [],
     autoHide: false,
     closable: true,
-    offset: [0,0],
+    offset: [0, 0],
     anchorOffset: 0,
-    initComponent : function(){
+    initComponent: function() {
         var anchor = this.position.split('-');
         this.tipAnchorPos = anchor[0];
         this.targetAnchorPos = anchor[1];
         Ext.ToolTip.superclass.initComponent.call(this);
     },
     listeners: {
-        hide: function(){
+        hide: function() {
             this.spotlight.hide();
         }
     },
     // private
-    onRender : function(ct, position){
+    onRender: function(ct, position) {
         Ext.ToolTip.superclass.onRender.call(this, ct, position);
         var anchorCls = {
             't': 'x-tip-anchor-top',
@@ -51,22 +51,22 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         });
     },
 
-     // private
-    afterRender : function(){
+    // private
+    afterRender: function() {
         Ext.ToolTip.superclass.afterRender.call(this);
         this.anchorEl.setStyle('z-index', this.el.getZIndex() + 1).setVisibilityMode(Ext.Element.DISPLAY);
     },
 
-     syncAnchor : function(){
+    syncAnchor: function() {
         var anchorPos, offset;
-        switch(this.tipAnchorPos) {
+        switch (this.tipAnchorPos) {
             case 'tl':
                 anchorPos = 'b';
-                offset = [10+this.anchorOffset, 2];
+                offset = [10 + this.anchorOffset, 2];
                 break;
             case 'tr':
                 anchorPos = 'b';
-                offset = [-10+this.anchorOffset, 2];
+                offset = [-10 + this.anchorOffset, 2];
                 break;
             case 't':
                 anchorPos = 'b';
@@ -82,22 +82,22 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
                 break;
             case 'bl':
                 anchorPos = 't';
-                offset = [10+this.anchorOffset, -2];
+                offset = [10 + this.anchorOffset, -2];
                 break;
             case 'br':
                 anchorPos = 't';
-                offset = [-10+this.anchorOffset, -2];
+                offset = [-10 + this.anchorOffset, -2];
                 break;
             default:
                 anchorPos = 'r';
-                offset = [2, 11+this.anchorOffset];
+                offset = [2, 11 + this.anchorOffset];
                 break;
         }
-        this.anchorEl.alignTo(this.el, anchorPos+'-'+this.tipAnchorPos, offset);
+        this.anchorEl.alignTo(this.el, anchorPos + '-' + this.tipAnchorPos, offset);
     },
 
-    showBy : function(el){
-        if(!this.rendered){
+    showBy: function(el) {
+        if (!this.rendered) {
             this.render(Ext.getBody());
         }
 
@@ -112,7 +112,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             'r': [-7, 0]
         }
 
-        var offset = alignmentOffsets[this.tipAnchorPos].map(function(v, k){
+        var offset = alignmentOffsets[this.tipAnchorPos].map(function(v, k) {
             return v + this.offset[k];
         }, this);
 
@@ -125,19 +125,19 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         // page. The help tip is first shown off the screen with the statement below so
         // it has a height and width and then the showAt() function is called again
         // to show it in the correct location relative to its target element.
-        this.showAt([-1000,-1000]);
+        this.showAt([-1000, -1000]);
         this.showAt(this.el.getAlignToXY(el, this.position, offset));
 
         this.syncAnchor();
     },
 
-    hideTip : function(){
+    hideTip: function() {
         this.hide();
     },
 
-     createSpotlight: function(){
-        if(this.spotlight === null){
-            this.spotlight =  new Ext.ux.Spotlight({
+    createSpotlight: function() {
+        if (this.spotlight === null) {
+            this.spotlight = new Ext.ux.Spotlight({
                 easing: 'easeOut',
                 duration: .3
             });
