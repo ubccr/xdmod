@@ -1,11 +1,14 @@
-title
-"CPU Hours: Per Job: by PI Group"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2016-12-22,2017-01-01
----------
-Quarter,"[Organic and Macromolecular Chemistry] CPU Hours: Per Job","[Fluid, Particulate, and Hydraulic Systems] CPU Hours: Per Job","[Quantum Electronics, Waves, and Beams] CPU Hours: Per Job","[Metals, Ceramics, and Electronic Materials] CPU Hours: Per Job","[Structures and Building Systems] CPU Hours: Per Job","[Emerging Technologies Initiation] CPU Hours: Per Job","[Polar Aeronomy and Astrophysics] CPU Hours: Per Job","[Volcanology and Mantle Geochemistry] CPU Hours: Per Job","[Stellar Astronomy and Astrophysics] CPU Hours: Per Job","[Global Atmospheric Research] CPU Hours: Per Job","[Theoretical Physics] CPU Hours: Per Job","[Algebra and Number Theory] CPU Hours: Per Job","[Statistics and Probability] CPU Hours: Per Job","[Biophysics] CPU Hours: Per Job","[Design and Computer-Integrated Engineering] CPU Hours: Per Job","[Solid State Chemistry and Polymers] CPU Hours: Per Job","[Arts] CPU Hours: Per Job","[Experimental Systems] CPU Hours: Per Job","[Geology and Paleontology] CPU Hours: Per Job","[Cell Biology] CPU Hours: Per Job","[Biochemistry and Molecular Structure and Function] CPU Hours: Per Job","[Seismology] CPU Hours: Per Job","[Operations Research and Production Systems] CPU Hours: Per Job","[Design, Tools, and Test] CPU Hours: Per Job","[Polar Ocean and Climate Systems] CPU Hours: Per Job","[Economics] CPU Hours: Per Job","[Solid-State and Microstructures] CPU Hours: Per Job","[Systems Prototyping and Fabrication] CPU Hours: Per Job","[Galactic Astronomy] CPU Hours: Per Job","[Physical Chemistry] CPU Hours: Per Job","[Tectonics] CPU Hours: Per Job","[Systematic and Population Biology] CPU Hours: Per Job","[Extragalactic Astronomy and Cosmology] CPU Hours: Per Job","[Computer and Computation Theory] CPU Hours: Per Job","[Sociology] CPU Hours: Per Job","[Geophysics] CPU Hours: Per Job","[Law and Social Sciences] CPU Hours: Per Job","[Mechanics and Materials] CPU Hours: Per Job","[Polar Meteorology] CPU Hours: Per Job","[Decision, Risk, and Management Science] CPU Hours: Per Job"
-"2016 Q4",7012.77516340,4368.65777778,4514.85752604,2627.28571429,1767.64000000,1233.33333333,1006.98777778,960.13333333,1254.11377778,1441.02222222,529.63777778,467.04545455,555.54234568,1530.62425926,385.99851852,229.08605023,183.58806397,220.83068966,189.64305556,107.22319830,68.10298148,76.40201389,48.78758939,28.14000000,2.35937500,26.97462560,19.84069307,23.01874399,17.62892461,9.52178441,8.59051583,6.47641111,5.98691667,5.04208333,3.66207287,1.60992063,1.04000000,0.97276290,1.45671498,0.44956007
-"2017 Q1",7.11888889,0,144.94972222,0,0,667.68761905,0,0,353.78037037,3.46666667,0,60.55000000,104.22217494,62.83434156,198.70320988,0,59.98977778,68.79111111,21.40555556,141.00285714,0,5.71666667,13.34534574,0,25.37236259,8.24440000,35.25833333,11.50582962,185.80611111,16.76606412,0,6.26263789,0,0,0.60766446,0,0,0.96969246,0.02809588,0
----------
+    ],
+    "data": [
+
+    ],
+    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
+    "code": 104
+}
