@@ -4,6 +4,7 @@ namespace Rest\Controllers;
 
 use Configuration\XdmodConfiguration;
 use Exception;
+use PDOException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -208,31 +209,17 @@ class SummaryControllerProvider extends BaseControllerProvider
     {
         $user = $this->getUserFromRequest($request);
 
-        $filters = json_decode($request->get("filters", '{"data": []}'));
         $aggregation_unit = $request->get('aggregation_unit', 'auto');
 
         $start_date = $this->getStringParam($request, 'start_date', true);
         $end_date = $this->getStringParam($request, 'end_date', true);
-
-        $rawParameters = array();
-        foreach($filters->data as $filter) {
-            $filterDimensionKey = $filter->dimension_id . '_filter';
-            $filterValueId = $filter->value_id;
-            if (isset($rawParameters[$filterDimensionKey])) {
-                $rawParameters[$filterDimensionKey] .= ',' . $filterValueId;
-            } else {
-                $rawParameters[$filterDimensionKey] = $filterValueId;
-            }
-        }
-
-        $queryDescripter = new \User\Elements\QueryDescripter('tg_summary', 'Jobs', 'none');
 
         // This try/catch block is intended to replace the "Base table or
         // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
         try {
-            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $queryDescripter->pullQueryParameters($rawParameters));
+            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all');
 
             $result = $query->execute();
         } catch (PDOException $e) {
@@ -250,7 +237,6 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $mostPrivileged = $user->getMostPrivilegedRole()->getName();
         $formats = $rawRoles['roles'][$mostPrivileged]['statistics_formats'];
-
 
         return $app->json(
             array(
