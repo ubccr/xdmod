@@ -126,7 +126,6 @@ class MetricExplorer extends Common
         foreach ($data_series as $data_description) {
             $data_description->authorizedRoles = self::checkDataAccess(
                 $user,
-                'tg_usage',
                 $data_description->realm,
                 $data_description->group_by,
                 $data_description->metric
@@ -246,10 +245,7 @@ class MetricExplorer extends Common
                     $end_date,
                     null,
                     null,
-                    array(),
-                    'tg_usage',
-                    array(),
-                    false
+                    array()
                 );
 
                 $query->addGroupBy($data_description->group_by);
@@ -558,7 +554,6 @@ class MetricExplorer extends Common
      * Check that a user has access to the specified metric data.
      *
      * @param  XDUser $user            The user to check the authorization of.
-     * @param  string $query_groupname The query group name.
      * @param  string $realm_name      (Optional) The realm name.
      * @param  string $group_by_name   (Optional) The group by name.
      * @param  string $statistic_name  (Optional) The statistic name.
@@ -571,7 +566,6 @@ class MetricExplorer extends Common
      */
     public static function checkDataAccess(
         XDUser $user,
-        $query_groupname,
         $realm_name = null,
         $group_by_name = null,
         $statistic_name = null,
@@ -741,7 +735,6 @@ class MetricExplorer extends Common
             try {
                 $realmAuthorizedRoles = MetricExplorer::checkDataAccess(
                     $user,
-                    'tg_usage',
                     $realm,
                     $dimension_id,
                     null,
@@ -1010,11 +1003,10 @@ class MetricExplorer extends Common
      * Get a list of realms available to a user.
      *
      * @param  XDUser $user       The user whose realms are being retrieved.
-     * @param  string $queryGroup (Optional) The query group of the realms.
-     *                            (Defaults to 'tg_usage'.)
+     *
      * @return array              The realms available to the user.
      */
-    public static function getRealmsFromUser(XDUser $user, $queryGroup = 'tg_usage') {
+    public static function getRealmsFromUser(XDUser $user) {
         return Realms::getRealmsForUser($user);
     }
 
@@ -1049,7 +1041,6 @@ class MetricExplorer extends Common
         // realm. If not, an exception will be thrown.
         self::checkDataAccess(
             $user,
-            'tg_usage',
             $realm,
             $dimension_id
         );
