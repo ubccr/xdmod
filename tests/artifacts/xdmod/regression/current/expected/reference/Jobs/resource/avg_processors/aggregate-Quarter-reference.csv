@@ -1,14 +1,14 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Per Job (Core Count): by Resource"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Per Job (Core Count)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+frearson,12.1241,0.039163324788032736
+pozidriv,9.6298,0.022205555738387606
+phillips,8.1614,0.042682930132102684
+mortorq,8.0462,0.003261653381528898
+robertson,5.8348,0.08741048159054844
+---------
