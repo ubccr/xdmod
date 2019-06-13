@@ -16,19 +16,19 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
     tip_index: null,
     current_tip: null,
     title: 'XDMoD Help Tips',
-    initComponent: function() {
+    initComponent: function () {
         Ext.ux.HelpTipTour.superclass.initComponent.call(this);
     },
 
-    getTip: function(tip_index) {
+    getTip: function (tip_index) {
         return this.items[tip_index];
     },
 
-    startTour: function() {
+    startTour: function () {
         this.showTip(0);
     },
 
-    showTip: function(tip_index) {
+    showTip: function (tip_index) {
         var self = this;
 
         if (tip_index < 0 || tip_index > this.items.length) {
@@ -50,7 +50,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'next-help-tip',
             overCls: 'help-tip-button',
             listeners: {
-                'click': function() {
+                click: function() {
                     var tip_to_show = (self.tip_index < self.items.length - 1) ? self.tip_index + 1 : self.items.length - 1;
                     self.current_tip.hideTip();
                     self.showTip(tip_to_show);
@@ -63,7 +63,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'previous-help-tip',
             overCls: 'help-tip-button',
             listeners: {
-                'click': function() {
+                click: function() {
                     var tip_to_show = (self.tip_index > 0) ? self.tip_index - 1 : 0;
                     self.current_tip.hideTip();
                     self.showTip(tip_to_show);
@@ -76,7 +76,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
             cls: 'end-help-tip-tour',
             overCls: 'help-tip-button',
             listeners: {
-                'click': function() {
+                click: function () {
                     self.current_tip.hideTip();
                 }
             }
@@ -85,10 +85,10 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
         // If there is nothing in the bbar of the HelpTip being shown add appropriate
         // Previous, Next or End Tour buttons
         if (this.current_tip.bbar === null) {
-            if (this.tip_index == 0) {
+            if (this.tip_index === 0) {
                 this.current_tip.getBottomToolbar().addFill();
                 this.current_tip.getBottomToolbar().addButton(next_button);
-            } else if (this.tip_index == this.items.length - 1) {
+            } else if (this.tip_index === this.items.length - 1) {
                 this.current_tip.getBottomToolbar().addButton(previous_button);
                 this.current_tip.getBottomToolbar().addFill();
                 this.current_tip.getBottomToolbar().addButton(end_tour_button);
@@ -101,5 +101,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Component, {
 
         var el = (target_element.elements.length !== 0) ? target_element.elements[0] : '';
         this.current_tip.showBy(el);
+
+        return true;
     }
 });
