@@ -1,0 +1,16 @@
+title
+"CPU Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+ovenb,1324.23822222,
+ybsbu,405.12111111,
+sante,87.43875000,
+swath,6.35072152,2.726103053894975
+litst,4.48717172,1.181752638807895
+savsp,0.02439103,0.001692897033294295
+---------

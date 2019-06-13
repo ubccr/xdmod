@@ -1,14 +1,17 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"CPU Hours: Per Job: by Job Wait Time"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+"0 - 1s",9.30792642,2.0599663777836197
+"1 - 30s",10.79112748,1.819715858503851
+"30s - 30min",7.33605372,0.38751767300854256
+"30 - 60min",2.62126326,0.6285384136113866
+"1 - 5hr",8.71891050,1.1682995952692328
+"5 - 10hr",8.64869500,1.4145533962722754
+"10 - 18hr",20.61959391,5.220125574719083
+18+hr,88.88410428,12.921376255919107
+---------

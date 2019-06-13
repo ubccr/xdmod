@@ -1,14 +1,10 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"CPU Hours: Per Job"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Summary,"CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+Screwdriver,11.78685285,0.7937184281551048
+---------

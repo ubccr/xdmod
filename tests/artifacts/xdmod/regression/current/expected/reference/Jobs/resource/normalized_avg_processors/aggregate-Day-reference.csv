@@ -1,14 +1,14 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Normalized (% of Total Cores): by Resource"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Normalized (% of Total Cores)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Job Size: Normalized (% of Total Cores)"
+frearson,0.303103212
+pozidriv,0.240744351
+phillips,0.204034849
+mortorq,0.201155678
+robertson,0.145870094
+---------
