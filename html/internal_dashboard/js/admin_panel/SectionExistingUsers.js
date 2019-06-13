@@ -112,8 +112,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var selected_user_id = -1;
         var selected_username = '';
 
-        var cached_user_type = null;
-
         var user_update_callback;
 
         self.setCallback = function (callback) {
