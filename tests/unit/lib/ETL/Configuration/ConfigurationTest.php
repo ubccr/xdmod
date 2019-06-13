@@ -193,12 +193,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($configObj1 === $configObj2, "Local object cache");
 
-        // Modify the file and ensure that the cache was update with a new object. Note that we must
-        // clear the stat cache since PHP caches these values for performance reasons.
+        // Modify the file and ensure that the cache was update with a new object. Note that stat
+        // has single second granularity so we must sleep(1) during the test or adjust the timestamp
+        // accordingly.
 
-        sleep(1);
-        touch($tmpFile);
-        clearstatcache();
+        $currentTimestamp = time();
+        touch($tmpFile, $currentTimestamp + 2);
 
         $configObj3 = Configuration::factory(
             $tmpFile,
@@ -207,11 +207,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
         );
 
-        $this->assertTrue($configObj1 !== $configObj3, "Updating stale cache");
+        $this->assertTrue($configObj1 !== $configObj3, "Updating stale cache, newer file");
 
-        // Disable the cache and expect a new object
+        // Test the case where an older file was copied over a newer file.
 
-        Configuration::disableObjectCache();
+        touch($tmpFile, $currentTimestamp - 2);
 
         $configObj4 = Configuration::factory(
             $tmpFile,
@@ -220,7 +220,20 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
         );
 
-        $this->assertTrue($configObj3 !== $configObj4, "Object cache disabled");
+        $this->assertTrue($configObj3 !== $configObj4, "Updating stale cache, older file");
+
+        // Disable the cache and expect a new object
+
+        Configuration::disableObjectCache();
+
+        $configObj5 = Configuration::factory(
+            $tmpFile,
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+
+        $this->assertTrue($configObj3 !== $configObj5, "Object cache disabled");
 
         @unlink($tmpFile);
     }
