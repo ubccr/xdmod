@@ -97,7 +97,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
         $handler = new QueryHandler();
         $results = $handler->listUserRequestsByState($user->getUserId());
-        return $app->json(['success' => true, 'data' => $results]);
+        return $app->json(
+            [
+                'success' => true,
+                'data' => $results,
+                'total' => count($results)
+            ]
+        );
     }
 
     /**
@@ -162,7 +168,8 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         return $app->json([
             'success' => true,
             'message' => 'Created export request',
-            'data' => ['id' => $id]
+            'data' => [['id' => $id]],
+            'total' => 1
         ]);
     }
 
@@ -263,7 +270,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         return $app->json([
             'success' => true,
-            'message' => 'Deleted export request'
+            'message' => 'Deleted export request',
+            'data' => [['id' => $id]],
+            'total' => 1
         ]);
     }
 
@@ -329,7 +338,14 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         return $app->json([
             'success' => true,
-            'message' => 'Deleted export requests'
+            'message' => 'Deleted export requests',
+            'data' => array_map(
+                function ($id) {
+                    return ['id' => $id];
+                },
+                $requestIds
+            ),
+            'total' => count($requestIds)
         ]);
     }
 }
