@@ -1248,7 +1248,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestException('Invalid search parameters specified in params object');
         } else {
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
-            $query = new $QueryClass("day", $startDate, $endDate, null, "", array(), 'tg_usage', array(), false);
+            $query = new $QueryClass("day", $startDate, $endDate, null, "", array());
 
             $allRoles = $user->getAllRoles();
             $query->setMultipleRoleParameters($allRoles, $user);
@@ -1287,7 +1287,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 // need to rerun the query without the role params to see if any results come back.
                 // note the data for the priviledged query is not returned to the user.
 
-                $privQuery = new $QueryClass("day", $startDate, $endDate, null, "", array(), "tg_usage", array(), false);
+                $privQuery = new $QueryClass("day", $startDate, $endDate, null, "", array());
                 $privQuery->setRoleParameters($params);
 
                 $privDataSet = new \DataWarehouse\Data\SimpleDataset($privQuery, 1, 0);

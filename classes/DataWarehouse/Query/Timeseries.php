@@ -26,10 +26,7 @@ class Timeseries extends \DataWarehouse\Query\Query
         $end_date,
         $group_by,
         $stat = 'total_cpu_hours',
-        array $parameters = array(),
-        $query_groupname = 'query_groupname',
-        array $parameter_description = array(),
-        $single_stat = false
+        array $parameters = array()
     ) {
         parent::__construct(
             $realm_name,
@@ -41,10 +38,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             $end_date,
             $group_by,
             $stat,
-            $parameters,
-            $query_groupname,
-            $parameter_description,
-            $single_stat
+            $parameters
         );
 
         $this->addGroupBy($this->_aggregation_unit->getUnitName());

@@ -26,10 +26,7 @@ abstract class RawQuery extends \DataWarehouse\Query\Query
             "2010-01-01",
             null,
             null,
-            array(),
-            'query_groupname',
-            array(),
-            false
+            array()
         );
 
         $this->setDataTable($schema, $facttable);

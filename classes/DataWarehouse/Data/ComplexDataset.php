@@ -97,10 +97,7 @@ class ComplexDataset
                 $endDate,
                 null,
                 null,
-                array(),
-                'tg_usage',
-                array(),
-                false
+                array()
             );
 
             $dataSources[$query->getDataSource()] = 1;

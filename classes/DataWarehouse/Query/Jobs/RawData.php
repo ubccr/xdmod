@@ -19,10 +19,7 @@ class RawData extends \DataWarehouse\Query\Query
         $end_date,
         $group_by,
         $stat = 'jl.jobid',
-        array $parameters = array(),
-        $query_groupname = 'query_groupname',
-        array $parameterDescriptions = array(),
-        $single_stat = false
+        array $parameters = array()
     ) {
         parent::__construct(
             'Jobs',
@@ -34,10 +31,7 @@ class RawData extends \DataWarehouse\Query\Query
             $end_date,
             null,
             null,
-            $parameters,
-            $query_groupname,
-            $parameterDescriptions,
-            $single_stat
+            $parameters
         );
 
 
