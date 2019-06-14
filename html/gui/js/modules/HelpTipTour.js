@@ -1,6 +1,6 @@
 /**
  * @class Ext.ux.HelpTipTour
- * @extends Ext.Component
+ * @extends Ext.Container
  * @author: Greg Dean
  *
  * Creates a new component called HelpTipTour which takes a set of json objects and makes
