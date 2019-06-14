@@ -49,6 +49,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
         );
         $expectedHttpCode = \xd_utilities\array_get($expected, 'http_code', 200);
         $expectedContentType = \xd_utilities\array_get($expected, 'content_type', 'application/json');
+
         $this->validateResponse($response, $expectedHttpCode, $expectedContentType);
 
         $actual = $this->recursivelyFilter($response[0], array('query_string', 'query_time'));
@@ -97,7 +98,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
                         $expectedValue = (float)$value[0];
                         $actualValue = (float)$actualData[$fieldName][0];
 
-                        $this->assertEquals($expectedValue, $actualValue, "", 1.0e-8);
+                        $this->assertEquals($expectedValue, $actualValue, "Failed equivalency for: $fieldName", 1.0e-8);
                     } else {
                         $this->assertEquals($value, $actualData[$fieldName]);
                     }
