@@ -1,14 +1,49 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Node Hours: Per Job: by PI Group"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Node Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"Fluid, Particulate, and Hydraulic Systems",364.05481481,283.2360258681995
+"Organic and Macromolecular Chemistry",299.71225556,79.82382338004409
+"Quantum Electronics, Waves, and Beams",280.53725379,40.08967968847617
+"Metals, Ceramics, and Electronic Materials",218.94047619,14.44749841316656
+"Structures and Building Systems",110.47750000,9.927622069273584
+"Emerging Technologies Initiation",101.42611111,3.4465883980609213
+"Stellar Astronomy and Astrophysics",98.65240278,27.275167014617164
+"Global Atmospheric Research",90.28055556,63.531580104107995
+"Statistics and Probability",52.69561728,
+"Design and Computer-Integrated Engineering",50.98981481,
+"Polar Aeronomy and Astrophysics",50.34944444,35.60204075854135
+"Operations Research and Production Systems",49.85089556,1.1100595034642202
+"Volcanology and Mantle Geochemistry",48.00666667,0
+"Theoretical Physics",44.13648148,3.8863777173028686
+Biophysics,39.80336022,26.386475830697922
+"Algebra and Number Theory",39.37916667,3.5074678840012607
+"Systems Prototyping and Fabrication",25.48654262,0.09521527865289223
+"Experimental Systems",24.23206456,3.046402847031802
+"Cell Biology",21.20512731,2.519094985257857
+Arts,17.27322391,1.2812633375632778
+"Biochemistry and Molecular Structure and Function",16.76537037,3.911305555603074
+"Solid State Chemistry and Polymers",16.21672374,6.170931378438703
+"Geology and Paleontology",13.65055556,9.195084663741797
+Tectonics,8.59051583,0.027937647321332644
+"Solid-State and Microstructures",7.94699670,0.4591933087881705
+Seismology,7.02769444,2.431694700689441
+"Extragalactic Astronomy and Cosmology",5.98691667,0.9781127830854605
+"Computer and Computation Theory",5.04208333,1.9381499596292342
+"Design, Tools, and Test",2.34500000,0
+"Polar Ocean and Climate Systems",2.10733760,0.04730850999433886
+"Galactic Astronomy",1.80356997,0.4327483645961316
+Economics,1.74795089,0.6996960905360882
+"Mechanics and Materials",0.97173942,0.00025764463006399947
+"Polar Meteorology",0.88155664,0.09909785167735996
+"Physical Chemistry",0.77948613,0.10397217424885151
+"Systematic and Population Biology",0.62984891,0.07224051664061484
+Sociology,0.29997993,0.00460726351698731
+"Decision, Risk, and Management Science",0.12795354,0.10698104049029705
+Geophysics,0.08049603,0.022331879009996006
+"Law and Social Sciences",0.06500000,0
+---------

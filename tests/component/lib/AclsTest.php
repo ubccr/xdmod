@@ -19,7 +19,6 @@ class AclsTest extends BaseTest
 -----------------------------------------
 AclsTest - %s
 User:            %s
-    Query Group: %s
     Realm:       %s
     Group By:    %s
     Statistic:   %s
@@ -73,8 +72,6 @@ TXT;
 
         $expected = (bool)$options['enabled'];
 
-        $queryGroup = 'tg_usage';
-
         $user = XDUser::getUserByUserName($userName);
 
         $allRoles = $user->getAllRoles();
@@ -93,7 +90,6 @@ TXT;
             try {
                 $authorizedRoles = MetricExplorer::checkDataAccess(
                     $user,
-                    $queryGroup,
                     ucfirst($realm),
                     $groupBy,
                     $statistic
@@ -120,7 +116,6 @@ TXT;
                     self::DEBUG_MSG,
                     self::HAS_DATA_ACCESS,
                     $user->getUsername(),
-                    $queryGroup,
                     $realm,
                     $groupBy,
                     $statistic,
@@ -224,7 +219,6 @@ TXT;
                     self::DEBUG_MSG,
                     self::GET_QUERY_DESCRIPTERS,
                     $user->getUsername(),
-                    'tg_usage',
                     $realm,
                     $groupBy,
                     $statistic,

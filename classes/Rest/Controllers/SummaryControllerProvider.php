@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use DataWarehouse\Query\Exceptions\BadRequestException;
 
 use Models\Services\Acls;
-use User\Roles;
 
 class SummaryControllerProvider extends BaseControllerProvider
 {
@@ -115,7 +114,7 @@ class SummaryControllerProvider extends BaseControllerProvider
 
                     $queryConfig = json_decode($query['config']);
 
-                    if (!$queryConfig->featured) {
+                    if (!isset($queryConfig->featured) || !$queryConfig->featured) {
                         continue;
                     }
 

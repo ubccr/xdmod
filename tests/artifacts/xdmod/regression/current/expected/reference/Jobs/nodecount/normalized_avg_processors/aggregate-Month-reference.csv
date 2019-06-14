@@ -1,14 +1,24 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Normalized (% of Total Cores): by Node Count"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Normalized (% of Total Cores)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Node Count","Job Size: Normalized (% of Total Cores)"
+28,8.400000000
+24,7.200000000
+16,4.160000000
+20,4.000000000
+7,2.800000000
+9,2.700000000
+12,2.127272727
+6,1.590000000
+5,1.500000000
+14,1.400000000
+8,1.085714286
+3,0.900000000
+4,0.336769759
+2,0.285714286
+1,0.042294211
+---------
