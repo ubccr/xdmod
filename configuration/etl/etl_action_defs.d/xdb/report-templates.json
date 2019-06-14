@@ -1,8 +1,59 @@
 {
-    "#": "This action loads data from a structured file and only needs the table definition",
-    "table_definition": [
-        {
-            "$ref": "${table_definition_dir}/xdb/report-templates.json#/table_definition"
-        }
+  "#": "This action loads data from a structured file and only needs the table definition",
+  "table_definition": [
+    {
+      "$ref": "${table_definition_dir}/xdb/report-templates.json#/table_definition"
+    }
+  ],
+  "destination_record_map": {
+    "ReportTemplates": {
+      "id": "id",
+      "name": "name",
+      "description": "description",
+      "template": "template",
+      "title": "title",
+      "header": "header",
+      "footer": "footer",
+      "format": "format",
+      "font": "font",
+      "schedule": "schedule",
+      "delivery": "delivery",
+      "charts_per_page": "charts_per_page",
+      "use_submenu": "use_submenu"
+    }
+  },
+  "source_query": {
+    "records": {
+      "id": "rts.id",
+      "name": "rts.name",
+      "description": "rts.description",
+      "template": "rts.template",
+      "title": "rts.title",
+      "header": "rts.header",
+      "footer": "rts.footer",
+      "format": "rts.format",
+      "font": "rts.font",
+      "schedule": "rts.schedule",
+      "delivery": "rts.delivery",
+      "charts_per_page": "rts.charts_per_page",
+      "use_submenu": "rts.use_submenu"
+    },
+    "joins": [
+      {
+        "name": "ReportTemplatesStaging",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "rts"
+      },
+      {
+        "name": "ReportTemplates",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "rt",
+        "type": "left outer",
+        "on": "rts.id=rt.id",
+        "where": [
+          "rt.id IS NULL"
+        ]
+      }
     ]
+  }
 }

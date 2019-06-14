@@ -24,7 +24,6 @@
             "options_class": "IngestorOptions"
         }
     },
-
     "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
     "xdb-bootstrap": [
         {
@@ -138,6 +137,49 @@
                     "path": "xdb/user-types.json"
                 }
             }
+        },
+        {
+            "name": "report-templates-staging",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "description": "report-templates-staging + data",
+            "definition_file": "xdb/report-templates-staging.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-templates-staging",
+                    "path": "xdb/report-templates.json"
+                }
+            },
+            "truncate_destination": true
+        },
+        {
+            "name": "report-template-charts-staging",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "description": "report-template-charts-staging + data",
+            "definition_file": "xdb/report-template-charts-staging.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-template-charts-staging",
+                    "path": "xdb/report-template-charts.json"
+                }
+            },
+            "truncate_destination": true
+        }
+    ],
+    "xdb-import": [
+        {
+            "name": "report-templates",
+            "description": "report-templates + data",
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "xdb/report-templates.json",
+            "truncate_destination": true
         }
     ]
 }
