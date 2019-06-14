@@ -1,0 +1,38 @@
+{
+    "Normal user": [
+        "usr",
+        200,
+        "GET-realms",
+        ["jobs"]
+    ],
+    "PI": [
+        "pi",
+        200,
+        "GET-realms",
+        ["jobs"]
+    ],
+    "Center staff": [
+        "cs",
+        200,
+        "GET-realms",
+        ["jobs"]
+    ],
+    "Center director": [
+        "cd",
+        200,
+        "GET-realms",
+        ["jobs"]
+    ],
+    "Administrative user": [
+        "mgr",
+        200,
+        "GET-realms",
+        ["jobs"]
+    ],
+    "Public user": [
+        "pub",
+        401,
+        "error",
+        []
+    ]
+}

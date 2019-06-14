@@ -273,7 +273,7 @@ class XdmodTestHelper
         return array($content, $curlinfo, $this->responseHeaders);
     }
 
-    public function delete($path, $params = null)
+    public function delete($path, $params = null, $data = null)
     {
         $url = $this->siteurl . $path;
         if ($params !== null) {
@@ -281,7 +281,14 @@ class XdmodTestHelper
         }
 
         curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_POST, false);
+
+        if ($data === null) {
+            curl_setopt($this->curl, CURLOPT_POST, false);
+        } else {
+            curl_setopt($this->curl, CURLOPT_POST, true);
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
+        }
+
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
 
