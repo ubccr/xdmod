@@ -16,6 +16,7 @@
 Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
     cls: 'help-tip',
+    xtype: 'helptip',
     bodyCssClass: 'help-tip-body',
     baseCls: 'base-help-tip',
     spotlight: null,
@@ -145,3 +146,5 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         }
     }
 });
+
+Ext.reg('helptip', Ext.ux.HelpTip);
