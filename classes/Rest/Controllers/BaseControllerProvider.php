@@ -724,7 +724,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         $diff = date_diff($startDateTime, $endDateTime);
 
-        if ($diff < 0) {
+        if ($diff->y < 0 || $diff->m < 0 || $diff->d < 0 || $diff->h < 0 || $diff->m < 0 || $diff->s < 0) {
             throw new BadRequestHttpException('Start Date must not be after End Date');
         }
     }
