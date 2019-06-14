@@ -2,6 +2,8 @@
 
 namespace Rest\Controllers;
 
+use DateTime;
+use DateTimeZone;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -551,7 +553,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             FILTER_CALLBACK,
             array(
                 "options" => function ($value) {
-                    $value_dt = \DateTime::createFromFormat('U', $value);
+                    $value_dt = DateTime::createFromFormat('U', $value);
                     if ($value_dt === false) {
                         return null;
                     }
@@ -705,4 +707,47 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         return $retval;
 
     }  // formatLogMessage()
+
+    /**
+     * Checks that the `$[start|end]Date` values are valid ( `Y-m-d` ) dates and that `$startDate`
+     * is before `$endDate`.
+     *
+     * @param string $startDate the beginning of the date range.
+     * @param string $endDate   the end of the date range.
+     * @throws BadRequestHttpException if either start or end dates are not provided in the format
+     * `Y-m-d`, or if the start date is after the end date.
+     */
+    protected function checkDateRange($startDate, $endDate)
+    {
+        $startDateTime = $this->getDateTime($startDate, 'start_date');
+        $endDateTime = $this->getDateTime($endDate, 'end_date');
+
+        $diff = date_diff($startDateTime, $endDateTime);
+
+        if ($diff < 0) {
+            throw new BadRequestHttpException('Start Date must not be after End Date');
+        }
+    }
+
+    /**
+     * Attempt to convert the provided string $date value into an equivalent DateTime.
+     *
+     * @param string $date              The value to be converted into a DateTime.
+     * @param string $paramName 'date', The name of the parameter to be included in the exception
+     *                                  message if validation fails.
+     * @param string $format 'Y-m-d',   The format that `$date` should be in.
+     * @param string $tz 'UTF',         The timezone that `$date` is expected to be in.
+     * @return DateTime created from the provided `$date` value.
+     * @throws BadRequestHttpException if the date is not in the form `Y-m-d`.
+     */
+    protected function getDateTime($date, $paramName = 'date', $format = 'Y-m-d', $tz = 'UTC')
+    {
+        $date = DateTime::createFromFormat($format, $date, new DateTimeZone($tz));
+
+        if ($date === false) {
+            throw new BadRequestHttpException("Unable to parse $paramName");
+        }
+
+        return $date;
+    }
 }

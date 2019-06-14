@@ -209,17 +209,19 @@ class SummaryControllerProvider extends BaseControllerProvider
     {
         $user = $this->getUserFromRequest($request);
 
-        $aggregation_unit = $request->get('aggregation_unit', 'auto');
+        $aggregationUnit = $request->get('aggregation_unit', 'auto');
 
-        $start_date = $this->getStringParam($request, 'start_date', true);
-        $end_date = $this->getStringParam($request, 'end_date', true);
+        $startDate = $this->getStringParam($request, 'start_date', true);
+        $endDate = $this->getStringParam($request, 'end_date', true);
+
+        $this->checkDateRange($startDate, $endDate);
 
         // This try/catch block is intended to replace the "Base table or
         // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
         try {
-            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all');
+            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregationUnit, $startDate, $endDate, 'none', 'all');
 
             $result = $query->execute();
         } catch (PDOException $e) {
