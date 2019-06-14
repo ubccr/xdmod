@@ -6,6 +6,7 @@ use CCR\DB;
 use DataWarehouse\Export\QueryHandler;
 use DateTime;
 use Exception;
+use Models\Services\Realms;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,17 +55,25 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      */
     public function getRealms(Request $request, Application $app)
     {
-        /* $user = */$this->authorize($request);
+        $user = $this->authorize($request);
+        $userRealms = Realms::getRealmsForUser($user); // XXX Returns data from moddb.realms.display column.
 
-        // TODO: Determine realms using user ACLs.
+        // TODO: Get list of exportable realms.
         $realms = [
             ['id' => 'jobs', 'name' => 'Jobs'],
             ['id' => 'supremm', 'name' => 'SUPReMM'],
             ['id' => 'accounts', 'name' => 'Accounts'],
             ['id' => 'allocations', 'name' => 'Allocations'],
             ['id' => 'requests', 'name' => 'Requests'],
-            ['id' => 'resource_allocations', 'name' => 'Resource Allocations']
+            ['id' => 'resourceallocations', 'name' => 'ResourceAllocations']
         ];
+
+        $realms = array_filter(
+            $realms,
+            function ($realm) use ($userRealms) {
+                return in_array($realm['name'], $userRealms);
+            }
+        );
 
         return $app->json(
             [
@@ -103,22 +112,14 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function createRequest(Request $request, Application $app)
     {
         $user = $this->authorize($request);
+        $userRealms = Realms::getRealmsForUser($user); // XXX Returns data from moddb.realms.display column.
+
         $realm = $this->getStringParam($request, 'realm', true);
 
-        // TODO: Validate realm from user ACLs.
-        if (!in_array(
-            $realm,
-            [
-                'jobs',
-                'supremm',
-                'accounts',
-                'allocations',
-                'requests',
-                'resource_allocations'
-            ]
-        )) {
-            throw new BadRequestHttpException('Invalid realm');
-        }
+        // TODO: Check that realm is in list of exportable realms.
+        //if (!in_array($realm, $userRealms)) {
+        //    throw new BadRequestHttpException('Invalid realm');
+        //}
 
         $startDate = $this->getDateFromISO8601Param($request, 'start_date', true);
         $endDate = $this->getDateFromISO8601Param($request, 'end_date', true);
