@@ -5,7 +5,71 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Scaup, Lesser] CPU Hours: Per Job","[Scoter, Velvet] CPU Hours: Per Job","[Pipit, Meadow] CPU Hours: Per Job","[Warbler, Dusky] CPU Hours: Per Job","[Siskin] CPU Hours: Per Job","[Chaffinch] CPU Hours: Per Job","[Smew] CPU Hours: Per Job","[Duck, Ferruginous] CPU Hours: Per Job","[Goose, Egyptian] CPU Hours: Per Job","[Peregrine] CPU Hours: Per Job","[Ovenbird] CPU Hours: Per Job","[Crane] CPU Hours: Per Job","[Bunting, Yellow-browed] CPU Hours: Per Job","[Ibis, Glossy] CPU Hours: Per Job","[Warbler, Yellow-browed] CPU Hours: Per Job","[Grosbeak, Evening] CPU Hours: Per Job","[Plover, White-tailed] CPU Hours: Per Job","[Thrush, Mistle] CPU Hours: Per Job","[Bunting, Yellow-breasted] CPU Hours: Per Job","[Shag] CPU Hours: Per Job","[Warbler, Sardinian] CPU Hours: Per Job","[Warbler, Garden] CPU Hours: Per Job","[Whimbrel] CPU Hours: Per Job","[Sparrow, White-throated] CPU Hours: Per Job","[Treecreeper, Short-toed] CPU Hours: Per Job","[Sandpiper, Spotted] CPU Hours: Per Job","[Warbler, Hooded] CPU Hours: Per Job","[Shearwater, Cory's] CPU Hours: Per Job","[Crane, Sandhill] CPU Hours: Per Job","[Roller] CPU Hours: Per Job","[Sapsucker, Yellow-bellied] CPU Hours: Per Job","[Oriole, Baltimore] CPU Hours: Per Job","[Tern, Sandwich] CPU Hours: Per Job","[Fieldfare] CPU Hours: Per Job","[Warbler, Moltoni's] CPU Hours: Per Job","[Warbler, Booted] CPU Hours: Per Job","[Auk, Little] CPU Hours: Per Job","[Redpoll, Lesser] CPU Hours: Per Job","[Lapwing] CPU Hours: Per Job","[Swift, Alpine] CPU Hours: Per Job","[Shrike, Long-tailed] CPU Hours: Per Job","[Gull, Ring-billed] CPU Hours: Per Job","[Gallinule, Allen's] CPU Hours: Per Job","[Plover, Caspian] CPU Hours: Per Job","[Jackdaw] CPU Hours: Per Job","[Warbler, Golden-winged] CPU Hours: Per Job","[Thrush, Grey-cheeked] CPU Hours: Per Job","[Moorhen] CPU Hours: Per Job","[Dove, Turtle] CPU Hours: Per Job","[Grebe, Pied-billed] CPU Hours: Per Job","[Grey, Lesser] CPU Hours: Per Job","[Dunlin] CPU Hours: Per Job","[Thrush, Swainson's] CPU Hours: Per Job","[Bunting, Reed] CPU Hours: Per Job","[Bunting, Black-headed] CPU Hours: Per Job","[Harrier, Hen] CPU Hours: Per Job","[Stint, Little] CPU Hours: Per Job","[Honey-buzzard] CPU Hours: Per Job","[Martin, Crag] CPU Hours: Per Job","[Partridge, Red-legged] CPU Hours: Per Job","[Coot] CPU Hours: Per Job","[Martin, Purple] CPU Hours: Per Job","[Egret, Cattle] CPU Hours: Per Job","[Grey, Southern] CPU Hours: Per Job","[Sparrow, Savannah] CPU Hours: Per Job","[Grey, Great] CPU Hours: Per Job"
-"2016 Q4",13184.81728395,5278.79111111,6550.23272727,4368.65777778,4202.09666667,6387.18222222,2627.28571429,3060.11666667,1767.64000000,1438.12222222,1249.92088889,1233.33333333,1006.98777778,960.13333333,1441.02222222,564.52666667,529.63777778,467.04545455,405.12111111,405.36020202,433.21966967,564.66565514,337.00333333,385.99851852,328.17578283,198.73672222,183.94862434,317.64611111,158.95125772,189.64305556,167.62456790,559.31266667,87.43875000,111.17000000,72.00694444,68.10298148,76.40201389,52.61055556,48.78758939,69.22777778,16.58158730,31.90972222,28.14000000,2.35937500,21.84694444,26.97462560,19.84069307,23.01874399,13.91899034,10.00406111,8.59051583,6.47641111,6.35072152,5.56210777,5.98691667,5.04208333,4.48717172,3.59102850,1.60992063,1.04000000,0.97288194,0.97296296,0.97234375,1.45671498,0.02434444,0.02076714
-"2017 Q1",0,0,263.45777778,0,0,1293.28000000,0,1140.35000000,0,158.23333333,371.58666667,667.68761905,0,0,3.46666667,0,0,60.55000000,0,118.89333333,70.31901235,104.22217494,269.34857143,198.70320988,141.00285714,63.49666667,0,68.79111111,0,21.40555556,51.40333333,15.50950855,0,61.31777778,0,0,5.71666667,45.96222222,13.34534574,7.11888889,45.02654321,0,0,25.37236259,0,8.24440000,35.25833333,11.50582962,9.56621212,0,0,6.26263789,0,36.21190476,0,0,0,0.56752421,0,0,0.96979167,0.96958333,0.96975694,0.02809588,0.02555556,0
+User,"CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+"Scaup, Lesser",13184.81728395,603.4757859265736
+Chaffinch,7680.46222222,
+"Pipit, Meadow",6103.17666667,301.2710478905464
+"Scoter, Velvet",5278.79111111,3599.4343600743646
+"Warbler, Dusky",4368.65777778,3398.832310418393
+Siskin,4202.09666667,594.2548959317785
+"Duck, Ferruginous",4200.46666667,
+Smew,2627.28571429,173.36998095799686
+"Goose, Egyptian",1767.64000000,158.84195310837734
+Peregrine,1490.86666667,82.75515611850135
+Ovenbird,1324.23822222,181.00444987302672
+Crane,1217.11333333,41.359060776731056
+"Bunting, Yellow-browed",1006.98777778,712.0416008450284
+"Ibis, Glossy",960.13333333,0
+"Warbler, Yellow-browed",722.24444444,508.25264083286396
+"Warbler, Garden",657.08909329,51.277475129665504
+"Sparrow, White-throated",584.70172840,
+"Grosbeak, Evening",564.52666667,397.72870823660134
+"Plover, White-tailed",529.63777778,46.636532607630166
+"Thrush, Mistle",472.55000000,42.08961460801514
+Shag,416.16868687,199.7953128066435
+"Bunting, Yellow-breasted",405.12111111,141.1043831299275
+"Treecreeper, Short-toed",373.04032828,40.54497290955818
+"Warbler, Sardinian",370.26664198,96.52889912011452
+Whimbrel,351.31928571,67.88674190889104
+"Shearwater, Cory's",219.01527778,36.582071548135346
+"Sandpiper, Spotted",202.96983333,16.920386011566084
+"Sapsucker, Yellow-bellied",199.03771605,
+"Warbler, Hooded",183.94862434,30.125386375518342
+"Crane, Sandhill",158.95125772,31.51810543421254
+Roller,147.58368056,114.52976296802045
+Fieldfare,114.99185185,
+"Oriole, Baltimore",106.66035185,91.42855590332098
+"Tern, Sandwich",87.43875000,49.35183032798893
+"Redpoll, Lesser",75.59166667,
+"Warbler, Moltoni's",72.00694444,0
+"Warbler, Booted",68.10298148,53.28768177700803
+"Auk, Little",62.26494444,18.726467654568296
+Lapwing,49.85089556,1.1100595034642202
+"Swift, Alpine",38.17333333,15.42650790996771
+"Shrike, Long-tailed",32.58187500,10.180164841566825
+"Gull, Ring-billed",31.90972222,0
+"Gallinule, Allen's",28.14000000,0
+Moorhen,25.48654262,0.09521527865289223
+"Plover, Caspian",25.28805115,0.5677021199320009
+Jackdaw,21.84694444,1.3829746334642423
+"Warbler, Golden-winged",20.97018519,8.396540327209507
+"Thrush, Grey-cheeked",20.18978548,2.814335511780527
+"Dove, Turtle",12.78054650,2.649327129689236
+"Grebe, Pied-billed",10.00406111,0.00040214624761869517
+"Grey, Lesser",8.59051583,0.027937647321332644
+Dunlin,6.35208275,0.7295707950782502
+"Thrush, Swainson's",6.35072152,4.342532117238334
+"Bunting, Reed",6.00085977,1.2236468009082848
+"Bunting, Black-headed",5.98691667,0.9781127830854605
+"Harrier, Hen",5.04208333,1.9381499596292342
+"Stint, Little",4.48717172,1.181752638807895
+Honey-buzzard,2.85685472,0.017162232477992725
+"Martin, Crag",1.60992063,0.44663758019891886
+"Partridge, Red-legged",1.04000000,0
+Coot,0.97185185,0.0004785195136278676
+"Martin, Purple",0.97183642,0.0003786808428516845
+"Egret, Cattle",0.97148148,0.0005075905675059155
+"Grey, Southern",0.88155664,0.09909785167735996
+"Sparrow, Savannah",0.02439103,0.001692897033294295
+"Grey, Great",0.02076714,0.0006447632527319155
 ---------

@@ -6,8 +6,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[whimb] CPU Hours: Per Job"
-2016-12-30,683.12000000
-2016-12-31,261.10111111
-2017-01-01,269.34857143
+"System Username","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+whimb,351.31928571,65.80534086370237
 ---------

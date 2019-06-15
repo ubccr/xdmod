@@ -48,7 +48,7 @@ try {
         }
     }
 
-    $query_descripter = new \User\Elements\QueryDescripter('tg_summary', 'Jobs', 'none');
+    $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
 
     $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
 

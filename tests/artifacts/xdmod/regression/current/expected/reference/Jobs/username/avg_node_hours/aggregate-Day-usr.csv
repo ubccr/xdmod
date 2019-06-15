@@ -6,8 +6,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[whimb] Node Hours: Per Job"
-2016-12-30,56.92666667
-2016-12-31,21.75842593
-2017-01-01,22.44571429
+"System Username","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+whimb,29.27660714,5.4837784053086
 ---------
