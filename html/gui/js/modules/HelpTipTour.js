@@ -61,7 +61,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Container, {
 
         this.tip_index = tip_index;
         this.current_tip = this.getTip(this.tip_index);
-        var target_element = Ext.select(this.current_tip.target);
+        var target_element = Ext.query(this.current_tip.target);
 
         if (this.current_tip.title === undefined) {
             this.current_tip.title = this.title;
