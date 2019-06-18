@@ -5,6 +5,6 @@
   "totalCount": 0,
   "results": [],
   "data": [],
-  "message": "Invalid Date: start_date must be before end_date",
+  "message": "Start Date must not be after End Date",
   "code": 0
 }

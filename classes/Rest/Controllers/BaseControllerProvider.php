@@ -722,11 +722,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         $startDateTime = $this->getDateTime($startDate, 'start_date');
         $endDateTime = $this->getDateTime($endDate, 'end_date');
 
-        $diff = date_diff($startDateTime, $endDateTime);
-
-        // We intentionally did not include the `absolute` flag in the above `date_diff` call so that
-        // we can tell when the `$startDate` is after the `$endDate`.
-        if ($diff->y < 0 || $diff->m < 0 || $diff->d < 0 || $diff->h < 0 || $diff->m < 0 || $diff->s < 0) {
+        if ($startDateTime > $endDateTime) {
             throw new BadRequestHttpException('Start Date must not be after End Date');
         }
     }
@@ -744,9 +740,17 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     protected function getDateTime($date, $paramName = 'date', $format = 'Y-m-d', $tz = 'UTC')
     {
-        $date = DateTime::createFromFormat($format, $date, new DateTimeZone($tz));
+        $parsed = date_parse_from_format($format, $date);
+        $date = mktime(
+            $parsed['hour'],
+            $parsed['minute'],
+            $parsed['second'],
+            $parsed['month'],
+            $parsed['day'],
+            $parsed['year']
+        );
 
-        if ($date === false) {
+        if ($date === false || $parsed['error_count'] > 0) {
             throw new BadRequestHttpException("Unable to parse $paramName");
         }
 
