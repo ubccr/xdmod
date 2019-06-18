@@ -19,6 +19,115 @@
                     "schema": "modw_aggregates"
                 }
             }
+        },
+        {
+            "name": "add-moddb_staging-tables",
+            "description": "Add moddb staging tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "xdb/report-templates-staging.json",
+                "xdb/report-template-charts-staging.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+        {
+            "name": "report-templates-staging",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "description": "report-templates-staging + data",
+            "definition_file": "xdb/report-templates-staging.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-templates-staging",
+                    "path": "xdb/report-templates.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            },
+            "truncate_destination": true
+        },
+        {
+            "name": "report-template-charts-staging",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "description": "report-template-charts-staging + data",
+            "definition_file": "xdb/report-template-charts-staging.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-template-charts-staging",
+                    "path": "xdb/report-template-charts.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            },
+            "truncate_destination": true
+        },
+        {
+            "name": "report-templates",
+            "description": "report-templates + data",
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "xdb/report-templates.json",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            },
+            "truncate_destination": true
+        },
+        {
+            "name": "report-template-charts",
+            "description": "report-template-charts + data",
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "xdb/report-template-charts.json",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            },
+            "truncate_destination": true
         }
     ]
 }

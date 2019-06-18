@@ -1,6 +1,13 @@
 {
   "status": "success",
   "success": true,
-  "templates": [],
-  "count": 0
+  "templates": [
+    {
+      "id": "3",
+      "name": "Center Staff",
+      "description": "Center Staff",
+      "use_submenu": "0"
+    }
+  ],
+  "count": 1
 }
