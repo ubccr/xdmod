@@ -1643,8 +1643,8 @@ class ReportGenerator {
         browser.waitForExist(this.selectors.reportEditor.includedCharts.chartList.rows() + `[${includedChartCountBefore + 1}]`);
     }
 
-    getCharts(user, options) {
-        var charts = expected[user].report_templates.charts;
+    getCharts(user, report_template_index, options) {
+        var charts = expected[user].report_templates[report_template_index].charts;
         charts.forEach(function (chart, i) {
             if (chart.startDate in options) {
                 charts[i].startDate = options[chart.startDate];
