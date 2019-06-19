@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use DateTimeZone;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
