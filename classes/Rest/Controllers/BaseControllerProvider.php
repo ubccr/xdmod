@@ -734,11 +734,10 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @param string $paramName 'date', The name of the parameter to be included in the exception
      *                                  message if validation fails.
      * @param string $format 'Y-m-d',   The format that `$date` should be in.
-     * @param string $tz 'UTF',         The timezone that `$date` is expected to be in.
      * @return int created from the provided `$date` value.
      * @throws BadRequestHttpException if the date is not in the form `Y-m-d`.
      */
-    protected function getTimestamp($date, $paramName = 'date', $format = 'Y-m-d', $tz = 'UTC')
+    protected function getTimestamp($date, $paramName = 'date', $format = 'Y-m-d')
     {
         $parsed = date_parse_from_format($format, $date);
         $date = mktime(
