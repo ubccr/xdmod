@@ -719,26 +719,26 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     protected function checkDateRange($startDate, $endDate)
     {
-        $startDateTime = $this->getDateTime($startDate, 'start_date');
-        $endDateTime = $this->getDateTime($endDate, 'end_date');
+        $startTimestamp = $this->getTimestamp($startDate, 'start_date');
+        $endTimestamp = $this->getTimestamp($endDate, 'end_date');
 
-        if ($startDateTime > $endDateTime) {
+        if ($startTimestamp > $endTimestamp) {
             throw new BadRequestHttpException('Start Date must not be after End Date');
         }
     }
 
     /**
-     * Attempt to convert the provided string $date value into an equivalent DateTime.
+     * Attempt to convert the provided string $date value into an equivalent unix timestamp (int).
      *
      * @param string $date              The value to be converted into a DateTime.
      * @param string $paramName 'date', The name of the parameter to be included in the exception
      *                                  message if validation fails.
      * @param string $format 'Y-m-d',   The format that `$date` should be in.
      * @param string $tz 'UTF',         The timezone that `$date` is expected to be in.
-     * @return DateTime created from the provided `$date` value.
+     * @return int created from the provided `$date` value.
      * @throws BadRequestHttpException if the date is not in the form `Y-m-d`.
      */
-    protected function getDateTime($date, $paramName = 'date', $format = 'Y-m-d', $tz = 'UTC')
+    protected function getTimestamp($date, $paramName = 'date', $format = 'Y-m-d', $tz = 'UTC')
     {
         $parsed = date_parse_from_format($format, $date);
         $date = mktime(
