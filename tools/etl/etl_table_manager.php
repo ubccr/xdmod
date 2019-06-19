@@ -172,9 +172,8 @@ if ( null === $scriptOptions['config-file'] ||
 // Parse the ETL configuration. We will need it for listing available ingestors, aggregators, etc.
 
 try {
-    $etlConfig = new EtlConfiguration($scriptOptions['config-file']);
+    $etlConfig = EtlConfiguration::factory($scriptOptions['config-file']);
     $etlConfig->setLogger($logger);
-    $etlConfig->initialize();
 } catch ( Exception $e ) {
     exit($e->getMessage() . "\n");
 }

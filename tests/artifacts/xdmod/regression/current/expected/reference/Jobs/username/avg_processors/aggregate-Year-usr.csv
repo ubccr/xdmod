@@ -6,7 +6,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[whimb] Job Size: Per Job (Core Count)"
-2016,52.0000
-2017,46.2857
+"System Username","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+whimb,48.8571,4.610167493255085
 ---------

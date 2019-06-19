@@ -5,7 +5,13 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[0 - 1s] Job Size: Per Job (Core Count)","[1 - 30s] Job Size: Per Job (Core Count)","[30s - 30min] Job Size: Per Job (Core Count)","[30 - 60min] Job Size: Per Job (Core Count)","[1 - 5hr] Job Size: Per Job (Core Count)","[5 - 10hr] Job Size: Per Job (Core Count)","[10 - 18hr] Job Size: Per Job (Core Count)","[18+hr] Job Size: Per Job (Core Count)"
-2016-12,10.5960,9.9692,6.3631,5.1467,8.2329,8.3970,15.2294,8.3990
-2017-01,10.3887,9.1105,7.1757,11.2128,11.9969,11.0870,11.9532,12.1824
+"Job Wait Time","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"0 - 1s",10.5420,0.03629478540827314
+"1 - 30s",9.7539,0.034361815865037997
+"30s - 30min",6.7929,0.031129165197921423
+"30 - 60min",5.4662,0.13124014108310847
+"1 - 5hr",8.6117,0.05383875091010273
+"5 - 10hr",9.0963,0.1243649472830689
+"10 - 18hr",13.0761,0.4770600686209722
+18+hr,8.8613,0.22926837811614564
 ---------

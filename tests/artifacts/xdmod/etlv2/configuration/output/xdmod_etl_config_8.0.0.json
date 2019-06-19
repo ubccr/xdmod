@@ -651,6 +651,118 @@
         "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
         "base_dir": "/tmp/xdmod-etl-configuration-test"
       }
+    },
+    {
+        "class": "StructuredFileIngestor",
+        "definition_file": "raw_generic_cloud_job_logs.json",
+        "description": "Loading generic cloud data",
+        "endpoints": {
+            "destination": {
+                "config": "datawarehouse",
+                "create_schema_if_not_exists": true,
+                "key": "04d8e2279be6616bc524830353c866e4",
+                "name": "Cloud DB",
+                "paths": {
+                    "action_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_action_defs_8.0.0.d",
+                    "base_dir": "/tmp/xdmod-etl-configuration-test",
+                    "data_dir": "/tmp/xdmod-etl-configuration-test/etl_data.d",
+                    "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
+                    "macro_dir": "/tmp/xdmod-etl-configuration-test/etl_macros.d",
+                    "specs_dir": "/tmp/xdmod-etl-configuration-test/etl_specs.d",
+                    "sql_dir": "/tmp/xdmod-etl-configuration-test/etl_sql.d",
+                    "table_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_tables_8.0.0.d"
+                },
+                "schema": "modw_cloud",
+                "type": "mysql"
+            },
+            "source": {
+                "file_pattern": "/\\.json$/",
+                "handler": {
+                    "field_names": [
+                        "instance_id",
+                        "event_type",
+                        "event_data",
+                        "event_time",
+                        "record_type",
+                        "account",
+                        "node_controller",
+                        "image_type",
+                        "instance_type",
+                        "root_type",
+                        "block_devices",
+                        "public_ip",
+                        "private_ip"
+                    ],
+                    "paths": {
+                        "action_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_action_defs_8.0.0.d",
+                        "base_dir": "/tmp/xdmod-etl-configuration-test",
+                        "data_dir": "/tmp/xdmod-etl-configuration-test/etl_data.d",
+                        "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
+                        "macro_dir": "/tmp/xdmod-etl-configuration-test/etl_macros.d",
+                        "specs_dir": "/tmp/xdmod-etl-configuration-test/etl_specs.d",
+                        "sql_dir": "/tmp/xdmod-etl-configuration-test/etl_sql.d",
+                        "table_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_tables_8.0.0.d"
+                    },
+                    "record_separator": "\n",
+                    "type": "jsonfile"
+                },
+                "key": "6e92814c53ca85ad6bdd9a7eb0111a1c",
+                "name": "Generic cloud event logs",
+                "path": "${CLOUD_EVENT_LOG_DIR}",
+                "paths": {
+                    "action_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_action_defs_8.0.0.d",
+                    "base_dir": "/tmp/xdmod-etl-configuration-test",
+                    "data_dir": "/tmp/xdmod-etl-configuration-test/etl_data.d",
+                    "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
+                    "macro_dir": "/tmp/xdmod-etl-configuration-test/etl_macros.d",
+                    "specs_dir": "/tmp/xdmod-etl-configuration-test/etl_specs.d",
+                    "sql_dir": "/tmp/xdmod-etl-configuration-test/etl_sql.d",
+                    "table_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_tables_8.0.0.d"
+                },
+                "recursion_depth": 1,
+                "type": "directoryscanner"
+            },
+            "utility": {
+                "config": "datawarehouse",
+                "key": "ca2e6e39f463877e41347d44eca9eaaa",
+                "name": "Utility DB",
+                "paths": {
+                    "action_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_action_defs_8.0.0.d",
+                    "base_dir": "/tmp/xdmod-etl-configuration-test",
+                    "data_dir": "/tmp/xdmod-etl-configuration-test/etl_data.d",
+                    "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
+                    "macro_dir": "/tmp/xdmod-etl-configuration-test/etl_macros.d",
+                    "specs_dir": "/tmp/xdmod-etl-configuration-test/etl_specs.d",
+                    "sql_dir": "/tmp/xdmod-etl-configuration-test/etl_sql.d",
+                    "table_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_tables_8.0.0.d"
+                },
+                "schema": "modw",
+                "type": "mysql"
+            }
+        },
+        "name": "xdmod.cloud-jobs.GenericRawCloudEventIngestor",
+        "namespace": "ETL\\Ingestor",
+        "options_class": "IngestorOptions",
+        "paths": {
+            "action_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_action_defs_8.0.0.d",
+            "base_dir": "/tmp/xdmod-etl-configuration-test",
+            "data_dir": "/tmp/xdmod-etl-configuration-test/etl_data.d",
+            "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
+            "macro_dir": "/tmp/xdmod-etl-configuration-test/etl_macros.d",
+            "specs_dir": "/tmp/xdmod-etl-configuration-test/etl_specs.d",
+            "sql_dir": "/tmp/xdmod-etl-configuration-test/etl_sql.d",
+            "table_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_tables_8.0.0.d"
+        },
+        "variables": {
+            "action_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_action_defs_8.0.0.d",
+            "base_dir": "/tmp/xdmod-etl-configuration-test",
+            "data_dir": "/tmp/xdmod-etl-configuration-test/etl_data.d",
+            "local_config_dir": "/tmp/xdmod-etl-configuration-test/etl_8.0.0.d",
+            "macro_dir": "/tmp/xdmod-etl-configuration-test/etl_macros.d",
+            "specs_dir": "/tmp/xdmod-etl-configuration-test/etl_specs.d",
+            "sql_dir": "/tmp/xdmod-etl-configuration-test/etl_sql.d",
+            "table_definition_dir": "/tmp/xdmod-etl-configuration-test/etl_tables_8.0.0.d"
+        }
     }
   ]
 }

@@ -312,9 +312,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             Ext.getCmp('search-add').disable();
             Ext.getCmp('job-viewer-search-search').disable();
             this.searchStore.removeAll();
-            this.valueField.store.setBaseParam({
-                realm: realm
-            });
+            this.valueField.store.setBaseParam('realm', realm);
             this.searchField.reset();
             this.searchField.store.load({
                 params: {

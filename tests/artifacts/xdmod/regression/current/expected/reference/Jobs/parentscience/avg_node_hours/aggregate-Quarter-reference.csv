@@ -5,7 +5,23 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Chemical, Thermal Systems] Node Hours: Per Job","[Atmospheric Sciences] Node Hours: Per Job","[Electrical and Communication Systems] Node Hours: Per Job","[Physics] Node Hours: Per Job","[Design and Manufacturing Systems] Node Hours: Per Job","[Mathematical Sciences] Node Hours: Per Job","[Materials Research] Node Hours: Per Job","[Molecular Biosciences] Node Hours: Per Job","[Microelectronic Information Processing Systems] Node Hours: Per Job","[Arts] Node Hours: Per Job","[Mechanical and Structural Systems] Node Hours: Per Job","[Earth Sciences] Node Hours: Per Job","[Computer and Computation Research] Node Hours: Per Job","[Astronomical Sciences] Node Hours: Per Job","[Polar Programs] Node Hours: Per Job","[Chemistry] Node Hours: Per Job","[Environmental Biology] Node Hours: Per Job","[Social and Economic Science] Node Hours: Per Job"
-"2016 Q4",364.05481481,180.12777778,97.44003640,44.13648148,48.31750559,42.25983761,25.49166667,28.88674432,23.05458294,16.77843434,14.66085503,8.53732429,5.04208333,3.96500141,2.16238636,1.86156256,0.61704722,0.36183462
-"2017 Q1",0,0.43333333,22.86779762,0,13.73172330,11.08009838,0,9.57901961,11.46455460,6.53122222,0.96969246,1.74462963,0,26.23500000,1.95545864,1.60116192,0.63905875,0.06801433
+Department,"Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"Chemical, Thermal Systems",364.05481481,283.2360258681995
+"Electrical and Communication Systems",91.73356280,14.427730516613305
+"Atmospheric Sciences",90.28055556,63.531580104107995
+"Mathematical Sciences",50.44206410,
+"Design and Manufacturing Systems",49.88323081,1.0321299155708914
+Physics,44.13648148,3.8863777173028686
+"Molecular Biosciences",25.52672787,7.162125375100813
+"Materials Research",25.49166667,6.843939813709927
+"Microelectronic Information Processing Systems",25.46046192,0.10333862832038718
+Arts,17.27322391,1.2812633375632778
+"Mechanical and Structural Systems",10.49397947,3.3307345987775676
+"Earth Sciences",8.51752052,0.07150352368202234
+"Computer and Computation Research",5.04208333,1.9381499596292342
+"Astronomical Sciences",4.29891691,0.9682279330941039
+"Polar Programs",2.00614675,0.11737439315915173
+Chemistry,1.85185221,0.37224280733115245
+"Environmental Biology",0.62984891,0.07224051664061484
+"Social and Economic Science",0.29385782,0.006624191502553313
 ---------

@@ -1,11 +1,9 @@
 <?php
-/* ------------------------------------------------------------------------------------------
+/**
  * Provide logging functionality using the PEAR Logger (http://pear.github.io/Log/).
  *
  * Extending classes can access the logger using $this->logger->logmethod() or using the __call()
  * functionality as $this->logmethod().
- *
- * ------------------------------------------------------------------------------------------
  */
 
 namespace CCR;
@@ -21,47 +19,44 @@ class Loggable
     // PEAR log class
     protected $logger = null;
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Set the provided logger or instantiate a null logger if one was not provided.  The null handler
      * consumes log events and does nothing with them.
      *
      * @param $logger A PEAR Log object or null to use the null logger.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __construct(Logger $logger = null)
     {
         $this->setLogger($logger);
-    }  // __construct()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Set the logger for this object.
      *
      * @param Log $logger A logger class or NULL to use the null logger
      *
      * @return This object for method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function setLogger(Logger $logger = null)
     {
         $this->logger = ( null === $logger ? Logger::singleton('null') : $logger );
         return $this;
-    }  // setLogger()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Set the logger for this object.
      *
      * @param Log $logger A logger class
      *
      * @return This object for method chaining.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function getLogger()
     {
         return $this->logger;
-    }  // getLogger()
+    }
 
     /**
      * Determine the file and line from which the statement that executed this method was called.
@@ -77,9 +72,9 @@ class Loggable
         $backtrace = debug_backtrace();
         $caller = next($backtrace);
         return array($caller['file'], $caller['line']);
-    } // getCallerInfo()
+    }
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Helper function to log errors in a consistent format and provide a mechanism to
      * supply additional, optional, parameters for greater detail.
      *
@@ -94,7 +89,6 @@ class Loggable
      *   'endpoint' => DataEndpoint being used when error was caught
      *
      * @throws Exception
-     * ------------------------------------------------------------------------------------------
      */
 
     public function logAndThrowException($message, array $options = null)
@@ -143,25 +137,47 @@ class Loggable
             if ( array_key_exists('log_level', $options) && ! empty($options['log_level']) ) {
                 $logLevel = $logMessage['log_level'];
             }
-        }  // if ( null !== $options )
+        }
 
         $logMessage['message'] = $message;
 
         $this->logger->log($logMessage, $logLevel);
         throw new Exception($message, $code);
 
-    }  // logAndThrowException()
+    }
 
-    /* ------------------------------------------------------------------------------------------
-     * Generate a string representation of the endpoint. Typically the name, plus other pertinant
-     * information as appropriate.
+    /**
+     * Generate a string representation of this class.
      *
      * @return A string representation of the endpoint
-     * ------------------------------------------------------------------------------------------
      */
 
     public function __toString()
     {
         return "(" . get_class($this) . ")";
-    }  // __toString()
+    }
+
+    /**
+     * Prepare the class for serialize()
+     */
+
+    public function __sleep()
+    {
+        // Do not allow serialization of the logger as it may contain a PDO resource, which cannot
+        // be serialized.
+        $vars = get_object_vars($this);
+        unset($vars['logger']);
+        return array_keys($vars);
+    }
+
+    /**
+     * Set up the class when unserialize() is called.
+     */
+
+    public function __wakeup()
+    {
+        //  On unserialize() the logger is expected the be a PEAR Log object so be sure to
+        //  re-initialize it.
+        $this->setLogger(null);
+    }
 }  // class Loggable

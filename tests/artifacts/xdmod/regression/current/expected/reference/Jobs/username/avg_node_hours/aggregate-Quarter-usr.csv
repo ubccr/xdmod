@@ -6,7 +6,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[whimb] Node Hours: Per Job"
-"2016 Q4",28.08361111
-"2017 Q1",22.44571429
+"System Username","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+whimb,29.27660714,5.657228492407654
 ---------

@@ -5,7 +5,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[High-performance computing] Node Hours: Per Job"
-2016,2.46307856
-2017,1.07790443
+"Resource Type","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"High-performance computing",2.19179880,0.0629473985565196
 ---------
