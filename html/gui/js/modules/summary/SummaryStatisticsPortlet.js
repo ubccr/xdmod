@@ -121,23 +121,6 @@ XDMoD.Modules.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portl
 
     listeners: {
         /**
-         * duration_change event gets fired when the duration settings
-         * in the top toolbar are changed by the user or when the refresh
-         * button is clicked.
-         *
-         * A typical portlet will reload its content with the updated
-         * duration parameters.
-         */
-        duration_change: function (timeframe) {
-            this.summaryStatisticsStore.load({
-                params: {
-                    start_date: timeframe.start_date,
-                    end_date: timeframe.end_date
-                }
-            });
-        },
-
-        /**
          * This event fires after the component has been rendered. This will only
          * occur once per page refresh.
          */
@@ -205,6 +188,14 @@ XDMoD.Modules.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portl
         this.getTopToolbar().doLayout();
     }, // populateSummaryStatistics
 
+    /**
+     * Returns a consistently formatted string from the provided `date`.
+     * Ex. `2019-01-01`
+     *
+     * @param date {Date} the date to use when building the formatted string.
+     * @returns {string} a `YYYY-MM-DD` formatted string based on the `date`
+     * parameter.
+     */
     formatDate: function (date) {
         return date.getFullYear() + '-' + ('' + (date.getMonth() + 1)).padStart(2, '0') + '-' + ('' + date.getDate()).padStart(2, '0');
     } // formatDate: function(date) {
