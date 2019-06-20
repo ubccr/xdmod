@@ -24,7 +24,6 @@
             "options_class": "IngestorOptions"
         }
     },
-
     "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
     "xdb-bootstrap": [
         {
