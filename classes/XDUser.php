@@ -2627,8 +2627,7 @@ SQL;
     public function getResources($resourceNames = array())
     {
         // We need to make sure that this function is only called for Center [Director|Staff]
-        if (!$this->hasAcl(ROLE_ID_CENTER_DIRECTOR) ||
-            !$this->hasAcl(ROLE_ID_CENTER_STAFF)) {
+        if ( ! ( $this->hasAcl(ROLE_ID_CENTER_DIRECTOR) ||  $this->hasAcl(ROLE_ID_CENTER_STAFF) ) ) {
             throw new Exception('Unable to complete action. User is not authorized.');
         }
 
