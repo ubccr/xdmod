@@ -229,10 +229,13 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
+      var editReport;
+
       var queueGrid = new Ext.grid.GridPanel({
 
          store: this.reportStore,
          //id: 'reportPool_queueGrid' + Ext.id(),
+         itemId: 'reportQueueGrid',
 
          viewConfig: {
             emptyText: reportsEmptyText,
@@ -253,7 +256,26 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
             {header: 'Schedule', width: 70, dataIndex: 'report_schedule', sortable: true},
             {header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer},
             {header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer}
-         ]
+         ],
+         listeners: {
+            load_report: function (reportId) {
+               this.store.load({
+                  callback: function (records, operation, success) {
+                     var index = queueGrid.store.find('report_id', reportId);
+                     queueGrid.getSelectionModel().selectRow(index);
+                     if ((self.parent.reportCreator.report_id !== reportId) && (self.parent.reportCreator.isDirty() === true)) {
+                        Ext.Msg.show({
+                           title: 'Cannot open another report!',
+                           msg: 'You cannot open another report because this report has unsaved changes.',
+                           buttons: Ext.Msg.OK
+                        });
+                     } else {
+                        editReport();
+                     }
+                  }
+               });
+            }
+         }
 
       });//queueGrid
 
@@ -373,8 +395,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var editReport = function(){
-
+      editReport = function () {
          var record = queueGrid.getSelectionModel().getSelected();
 
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Attempting to edit report', record.data.report_name);
