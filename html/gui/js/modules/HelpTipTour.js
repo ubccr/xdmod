@@ -123,7 +123,7 @@ Ext.ux.HelpTipTour = Ext.extend(Ext.Container, {
             }
         }
 
-        var el = (target_element.elements.length !== 0) ? target_element.elements[0] : '';
+        var el = (target_element.length !== 0) ? target_element[0] : '';
         this.current_tip.showBy(el);
 
         return true;
