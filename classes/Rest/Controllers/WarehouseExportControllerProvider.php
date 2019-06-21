@@ -122,6 +122,18 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         $realm = $this->getStringParam($request, 'realm', true);
 
+        // TODO: Get list of exportable realms.
+        $realms = [
+            'jobs',
+            'supremm',
+            'accounts',
+            'allocations',
+            'requests',
+            'resourceallocations'
+        ];
+        if (!in_array($realm, $realms)) {
+            throw new BadRequestHttpException('Invalid realm');
+        }
         // TODO: Check that realm is in list of exportable realms.
         //if (!in_array($realm, $userRealms)) {
         //    throw new BadRequestHttpException('Invalid realm');

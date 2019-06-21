@@ -1,2 +1,174 @@
-[
-]
+{
+    "Normal user": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        200,
+        "POST-request"
+    ],
+    "Normal user (JSON format)": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2017-02-01",
+            "end_date": "2017-02-28",
+            "format": "JSON"
+        },
+        200,
+        "POST-request"
+    ],
+    "PI": [
+        "pi",
+        {
+            "realm": "jobs",
+            "start_date": "2017-01-01",
+            "end_date": "2017-12-31",
+            "format": "CSV"
+        },
+        200,
+        "POST-request"
+    ],
+    "Center director": [
+        "cd",
+        {
+            "realm": "jobs",
+            "start_date": "2016-01-01",
+            "end_date": "2016-12-31",
+            "format": "CSV"
+        },
+        200,
+        "POST-request"
+    ],
+    "Missing realm": [
+        "usr",
+        {
+            "start_date": "2018-01-01",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Missing start date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Missing end date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Missing format": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "2018-12-31"
+        },
+        400,
+        "error"
+    ],
+    "Invalid realm": [
+        "usr",
+        {
+            "realm": "foo",
+            "start_date": "2018-01-01",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Invalid start date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "1 January 2018",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Invalid end date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "31 December 2018",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Invalid format": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "2018-12-31",
+            "format": "bar"
+        },
+        400,
+        "error"
+    ],
+    "Future start date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "9999-12-31",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Future end date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "9999-12-31",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Start date before end date": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2018-12-31",
+            "end_date": "2018-01-01",
+            "format": "CSV"
+        },
+        400,
+        "error"
+    ],
+    "Public user": [
+        "pub",
+        {
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "2018-12-31",
+            "format": "CSV"
+        },
+        401,
+        "error"
+    ]
+}

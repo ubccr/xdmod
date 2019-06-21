@@ -1,2 +1,17 @@
-[
-]
+{
+    "Normal user": [
+        "usr",
+        200,
+        "DELETE-requests"
+    ],
+    "PI": [
+        "pi",
+        200,
+        "DELETE-requests"
+    ],
+    "Center director": [
+        "cd",
+        200,
+        "DELETE-requests"
+    ]
+}

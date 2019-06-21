@@ -3,31 +3,56 @@
         "usr",
         200,
         "GET-realms",
-        ["jobs"]
+        [
+            {
+                "id": "jobs",
+                "name": "Jobs"
+            }
+        ]
     ],
     "PI": [
         "pi",
         200,
         "GET-realms",
-        ["jobs"]
+        [
+            {
+                "id": "jobs",
+                "name": "Jobs"
+            }
+        ]
     ],
     "Center staff": [
         "cs",
         200,
         "GET-realms",
-        ["jobs"]
+        [
+            {
+                "id": "jobs",
+                "name": "Jobs"
+            }
+        ]
     ],
     "Center director": [
         "cd",
         200,
         "GET-realms",
-        ["jobs"]
+        [
+            {
+                "id": "jobs",
+                "name": "Jobs"
+            }
+        ]
     ],
     "Administrative user": [
         "mgr",
         200,
         "GET-realms",
-        ["jobs"]
+        [
+            {
+                "id": "jobs",
+                "name": "Jobs"
+            }
+        ]
     ],
     "Public user": [
         "pub",

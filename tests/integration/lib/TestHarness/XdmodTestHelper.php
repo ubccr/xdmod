@@ -22,32 +22,48 @@ class XdmodTestHelper
         $this->headers = array();
         $this->decodeTextAsJson = false;
 
-        $this->curl = curl_init();
-
-        curl_setopt($this->curl, CURLOPT_USERAGENT, "XDMoD REST Test harness");
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
-
-        # Enable header information in the response data
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($this->curl, CURLOPT_HEADERFUNCTION, array(&$this, 'processResponseHeader'));
-
-        # Disable ssl certificate checks (needed when using self-signed certificates).
-        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
-
         $this->cookiefile = tempnam(sys_get_temp_dir(), "xdmodtestcookies.");
-        curl_setopt($this->curl, CURLOPT_COOKIEFILE, $this->cookiefile);
-
-        if (isset($this->cookie)) {
-            curl_setopt($this->curl, CURLOPT_COOKIE, $this->cookie);
-        }
 
         if (isset($config['decodetextasjson'])) {
             $this->decodeTextAsJson = true;
         }
         if (isset($config['verbose'])) {
             $this->verbose = true;
+        }
+
+        $this->resetCurlSession();
+    }
+
+    /**
+     * Reset the cURL session.
+     *
+     * This function must be called after any use of CURLOPT_CUSTOMREQUEST to
+     * reset the request type.
+     */
+    private function resetCurlSession()
+    {
+        // Close existing session to write cookies to file.
+        if (isset($this->curl)) {
+            curl_close($this->curl);
+        }
+
+        $this->curl = curl_init();
+        curl_setopt($this->curl, CURLOPT_USERAGENT, "XDMoD REST Test harness");
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
+
+        # Enable header information in the response data
+        curl_setopt($this->curl, CURLOPT_HEADERFUNCTION, array($this, 'processResponseHeader'));
+
+        # Disable ssl certificate checks (needed when using self-signed certificates).
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        curl_setopt($this->curl, CURLOPT_COOKIEFILE, $this->cookiefile);
+        curl_setopt($this->curl, CURLOPT_COOKIEJAR, $this->cookiefile);
+
+        if (isset($this->cookie)) {
+            curl_setopt($this->curl, CURLOPT_COOKIE, $this->cookie);
         }
     }
 
@@ -292,7 +308,10 @@ class XdmodTestHelper
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
 
-        return $this->docurl();
+        $response = $this->docurl();
+        $this->resetCurlSession();
+
+        return $response;
     }
 
     public function get($path, $params = null, $isurl = false)
@@ -362,8 +381,8 @@ class XdmodTestHelper
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
         $response = $this->docurl();
+        $this->resetCurlSession();
 
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, null);
         return $response;
     }
     public function getSiteurl(){

@@ -1,1 +1,79 @@
-[]
+{
+    "Normal user": [
+        "usr",
+        200,
+        "GET-requests",
+        [
+            {
+                "realm": "jobs",
+                "start_date": "2018-01-01",
+                "end_date": "2018-12-31",
+                "export_succeeded": null,
+                "export_expired": "0",
+                "export_expires_datetime": null,
+                "export_created_datetime": null,
+                "export_file_format": "CSV",
+                "state": "Submitted"
+            },
+            {
+                "realm": "jobs",
+                "start_date": "2017-02-01",
+                "end_date": "2017-02-28",
+                "export_succeeded": null,
+                "export_expired": "0",
+                "export_expires_datetime": null,
+                "export_created_datetime": null,
+                "export_file_format": "JSON",
+                "state": "Submitted"
+            }
+        ]
+    ],
+    "PI": [
+        "pi",
+        200,
+        "GET-requests",
+        [
+            {
+                "realm": "jobs",
+                "start_date": "2017-01-01",
+                "end_date": "2017-12-31",
+                "export_succeeded": null,
+                "export_expired": "0",
+                "export_expires_datetime": null,
+                "export_created_datetime": null,
+                "export_file_format": "CSV",
+                "state": "Submitted"
+            }
+        ]
+    ],
+    "Center staff": [
+        "cs",
+        200,
+        "GET-requests",
+        []
+    ],
+    "Center director": [
+        "cd",
+        200,
+        "GET-requests",
+        [
+            {
+                "realm": "jobs",
+                "start_date": "2016-01-01",
+                "end_date": "2016-12-31",
+                "export_succeeded": null,
+                "export_expired": "0",
+                "export_expires_datetime": null,
+                "export_created_datetime": null,
+                "export_file_format": "CSV",
+                "state": "Submitted"
+            }
+        ]
+    ],
+    "Public user": [
+        "pub",
+        401,
+        "error",
+        []
+    ]
+}
