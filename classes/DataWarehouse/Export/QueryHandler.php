@@ -148,7 +148,7 @@ class QueryHandler
     public function listSubmittedRecords()
     {
         $sql = "SELECT id, realm, start_date, end_date, export_file_format, requested_datetime
-            FROM batch_export_requests " . $this->whereSubmitted;
+            FROM batch_export_requests " . $this->whereSubmitted . ' ORDER BY requested_datetime, id';
 
         // Return query results.
         $result = $this->pdo->query($sql);
@@ -170,7 +170,7 @@ class QueryHandler
                 requested_datetime
             FROM batch_export_requests
             WHERE user_id=:user_id
-            ORDER BY id";
+            ORDER BY requested_datetime, id";
 
         $params = array('user_id' => $user_id);
 
@@ -192,7 +192,7 @@ class QueryHandler
         $sql =  $attributes . "'Submitted' as state " . $fromTable . $this->whereSubmitted . $userClause . "UNION " .
                 $attributes . "'Available' as state " . $fromTable . $whereAvailable . $userClause . "UNION " .
                 $attributes . "'Expired' as state "   . $fromTable . $whereExpired . $userClause . "UNION " .
-                $attributes . "'Failed' as state "    . $fromTable . $whereFailed . $userClause . "ORDER BY requested_datetime";
+                $attributes . "'Failed' as state "    . $fromTable . $whereFailed . $userClause . "ORDER BY requested_datetime, id";
 
         $params = array('user_id' => $user_id);
 
