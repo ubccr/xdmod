@@ -209,6 +209,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     public function testGetRealms($role, $httpCode, $schema, array $realms)
     {
         list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/realms');
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
 
@@ -231,6 +232,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     public function testCreateRequest($role, array $params, $httpCode, $schema)
     {
         list($content, $info, $headers) = self::$helpers[$role]->post('rest/warehouse/export/request', null, $params);
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
     }
@@ -254,6 +256,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
         array $requests
     ) {
         list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/requests');
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
 
@@ -274,6 +277,8 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     public function testGetRequest()
     {
         //list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/request/' . $id);
+        //$this->assertRegExp('#\applcation/zip\b#', $headers['Content-Type'], 'Content type header');
+        //$this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->markTestIncomplete('This test has not been implemented yet.');
     }
 
@@ -302,6 +307,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
         $id = $createContent['data'][0]['id'];
 
         list($content, $info, $headers) = self::$helpers[$role]->delete('rest/warehouse/export/request/' . $id);
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
         $this->assertEquals($id, $content['data'][0]['id'], 'Deleted ID is in response');
@@ -322,23 +328,27 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     {
         // Public user can't delete anything.
         list($content, $info, $headers) = self::$helpers['pub']->delete('rest/warehouse/export/request/1');
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(401, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Non-integer ID.
         list($content, $info, $headers) = self::$helpers['usr']->delete('rest/warehouse/export/request/abc');
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Trying to delete a non-existent request.
         list($row) = self::$dbh->query('SELECT MAX(id) + 1 AS id FROM batch_export_requests');
         list($content, $info, $headers) = self::$helpers['usr']->delete('rest/warehouse/export/request/' . $row['id']);
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Trying to delete another user's request.
         list($row) = self::$dbh->query('SELECT id FROM batch_export_requests WHERE user_id = :user_id LIMIT 1', ['user_id' => self::$users['pi']->getUserId()]);
         list($content, $info, $headers) = self::$helpers['usr']->delete('rest/warehouse/export/request/' . $row['id']);
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
     }
@@ -371,6 +381,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
 
         // Delete all existing requests.
         list($content, $info, $headers) = self::$helpers[$role]->delete('rest/warehouse/export/requests', null, $data);
+        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
         $this->assertArraySubset($content['data'], $beforeContent['data'], 'Deleted IDs are in response');
