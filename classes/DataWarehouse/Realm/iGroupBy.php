@@ -86,11 +86,11 @@ interface iGroupBy
     public function getAttributeTable($includeSchema = true);
 
     /**
-     * @return string The key column name in the attribute table. This is also used to map data
-     *   between the attribute and aggregate tables.
+     * @return array An array of strings containing the key column name(s) in the attribute table.
+     * This is also used to map data between the attribute and aggregate tables.
      */
 
-    public function getAttributeKey();
+    public function getAttributeKeys();
 
     /**
      * @param boolean $includeSchema TRUE to include the schema in the table name.
