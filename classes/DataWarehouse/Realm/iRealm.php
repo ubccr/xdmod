@@ -10,7 +10,21 @@ use Log as Logger;  // PEAR logger
 interface iRealm
 {
     /**
-     * Instantiate a Realm class using the specified options or realm name.
+     * @var int Constants used to specify how various lists will be ordered including realm names,
+     *   realm objects, statistic names, etc. Possible values are:
+     *
+     *  0 (SORT_ON_ORDER) = Numeric sort based on the realm order configuration option. If multiple
+     *      realms have the same order hint their relative order is undefined. This is the default.
+     *  1 (SORT_ON_SHORT_ID) = Natural sort based on the realm short identifier (id)
+     *  2 (SORT_ON_NAME) = Natural sort based on the human-readbale realm name
+     */
+
+    const SORT_ON_ORDER = 0;
+    const SORT_ON_SHORT_ID = 1;
+    const SORT_ON_NAME = 2;
+
+    /**
+     * Instantiate a Realm class using the specified configuration or realm name.
      *
      * @param mixed $specificaiton A stdClass contaning the realm definition or a string specifying
      *   a realm name.
@@ -22,17 +36,6 @@ interface iRealm
      */
 
     public static function factory($specification, Logger $logger = null);
-
-    /**
-     * List the realms that have been defined in the database.
-     *
-     * @param Log|null $logger A Log instance that will be utilized during processing.
-     *
-     * @return array An associative array of Realm names where the keys are realm ids and the values
-     *   are realm names.
-     */
-
-    public static function enumerate(Log $logger = null);
 
     /**
      * Initialize data for all realms from the definition source. This can mean constructing the
@@ -48,12 +51,27 @@ interface iRealm
     public static function initialize(Logger $logger = null);
 
     /**
-     * Save the Realm into a data store.
+     * Return an associative array where the array keys are realm short identifier (id) and the values
+     * are human-readable realm names.
      *
-     * @throws Exception if there was an error while saving.
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     *
+     * @return array An associative array of realm ids and names, ordered as specified.
      */
 
-    public function save();
+    public static function getRealmNames($order = SORT_ON_ORDER);
+
+    /**
+     * Return an associative array where the array keys are realm short identifier (id) and the values
+     * are the Realm objects associated with that key.
+     *
+     * @param int $order See getRealmNames() for a description of this parameter.
+     *
+     * @return array An associative array of realm ids and Realm objects, ordered as specified.
+     */
+
+    public static function getRealmObjects($order = SORT_ON_ORDER);
 
     /**
      * @return string The short internal identifier.
@@ -91,22 +109,10 @@ interface iRealm
 
     /**
      * @return boolean TRUE if the realm is disabled and should not be visible iat all to the
-     *   system. Note that this is different than being disabled or hidden.
+     *   system.
      */
 
     public function isDisabled();
-
-    /**
-     * @return TRUE if the realm is hidden and should not be displayed in the UI/
-     */
-
-    public function isHidden();
-
-    /**
-     * @return TRUE if the realm is restricted and access is controlled by the ACL infrastructure.
-     */
-
-    public function isRestricted();
 
     /**
      * @return int The order to advise how realms should be displayed visually in reference to one
@@ -116,34 +122,62 @@ interface iRealm
     public function getOrder();
 
     /**
-     * @return array An array of GroupBy obects available to this realm.
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     *
+     * @return array An associative array of the GroupBy names available to this realm where the key
+     *   is the short identifier and the value is the human readable name.
      */
 
-    public function getGroupBys();
+    public function getGroupByNames($order = SORT_ON_ORDER);
 
     /**
-     * @return array An array of Statistic objects available to this realm.
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     *
+     * @return array An associative array of the Statistic names available to this realm where the
+     *   key is the short identifier and the value is the human readable name.
      */
 
-    public function getStatistics();
+    public function getStatisticNames($order = SORT_ON_ORDER);
+
+    /**
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     *
+     * @return array An associative array of the GroupBy obects available to this realm where the
+     *   key is the GroupBy short identifier and the value is the associated object.
+     */
+
+    public function getGroupByObjects($order = SORT_ON_ORDER);
+
+    /**
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     *
+     * @return array An associative array of the Statistic obects available to this realm where the
+     *   key is the Statistic short identifier and the value is the associated object.
+     */
+
+    public function getStatisticObjects($order = SORT_ON_ORDER);
 
     /**
      * @param string $id The internal GroupBy identifier to locate.
      *
      * @return GroupBy|null The GroupBy class associated with this realm that has the specified
-     * identifier or NULL if the identifier was not found.
+     *   short identifier or NULL if the identifier was not found.
      */
 
-    public function getGroupBy($id);
+    public function getGroupByObject($id);
 
     /**
      * @param string $id The internal Statistic identifier to locate.
      *
      * @return Statistic|null The Statistic class associated with this realm that has the specified
-     * identifier or NULL if the identifier was not found.
+     *   short identifier or NULL if the identifier was not found.
      */
 
-    public function getStatistic($id);
+    public function getStatisticObject($id);
 
     /**
      * @return string The default weighting statistic for this realm. This can be overriden by

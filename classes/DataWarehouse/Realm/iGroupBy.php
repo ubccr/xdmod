@@ -115,17 +115,11 @@ interface iGroupBy
     public function getModuleName();
 
     /**
-     * @return boolean TRUE if the realm is disabled and should not be visible iat all to the
-     *   system. Note that this is different than being disabled or hidden.
+     * @return boolean TRUE if the realm is disabled and should not be visible at all to the
+     *   system.
      */
 
     public function isDisabled();
-
-    /**
-     * @return TRUE if the realm is hidden and should not be displayed in the UI/
-     */
-
-    public function isHidden();
 
     /**
      * @return TRUE if the realm is restricted and access is controlled by the ACL infrastructure.

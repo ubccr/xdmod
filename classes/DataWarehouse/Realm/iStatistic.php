@@ -30,26 +30,6 @@ interface iStatistic
     public static function factory($specification, Realm $realm = null, Logger $log = null);
 
     /**
-     * List the statistics that have been defined in the database.
-     *
-     * @param string $realmName The realm that we are examining for statistics
-     * @param Log|null $logger A Log instance that will be utilized during processing.
-     *
-     * @return array An associative array of Statistic names where the keys are realm ids and the
-     *   values are realm names.
-     */
-
-    public static function enumerate($realmName, Logger $log = null);
-
-    /**
-     * Save the Realm into a data store.
-     *
-     * @throws Exception if there was an error while saving.
-     */
-
-    public function save();
-
-    /**
      * @return string The short internal identifier. This is often used as an alias in SQL queries.
      * For example, "total_cpu_hours".
      */
@@ -138,7 +118,6 @@ interface iStatistic
      */
 
     public function isDisabled();
-
 
     /**
      * Note: Returns null except where overriden by the JobViewer code
