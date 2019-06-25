@@ -28,26 +28,6 @@ interface iGroupBy
     public static function factory($specification, Realm $realm = null, Logger $log = null);
 
     /**
-     * List the groupbys that have been defined in the database.
-     *
-     * @param string $realmName The realm that we are examining for groupbys
-     * @param Log|null $logger A Log instance that will be utilized during processing.
-     *
-     * @return array An associative array of GroupBy names where the keys are realm ids and the
-     *   values are realm names.
-     */
-
-    public static function enumerate($realmName, Logger $log = null);
-
-    /**
-     * Save the Realm into a data store.
-     *
-     * @throws Exception if there was an error while saving.
-     */
-
-    public function save();
-
-    /**
      * @return string The short internal identifier.
      */
 
@@ -101,8 +81,8 @@ interface iGroupBy
     public function getAggregateTable($includeSchema = true);
 
     /**
-     * @return string The key column name in the aggregate table. This is also used to map data
-     *   between the attribute and aggregate tables.
+     * @return array An array containing the names of the key columns in the aggregate table. This
+     *   is also used to map data between the attribute and aggregate tables.
      */
 
     public function getAggregateKey();
@@ -120,12 +100,6 @@ interface iGroupBy
      */
 
     public function isDisabled();
-
-    /**
-     * @return TRUE if the realm is restricted and access is controlled by the ACL infrastructure.
-     */
-
-    public function isRestricted();
 
     /**
      * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
