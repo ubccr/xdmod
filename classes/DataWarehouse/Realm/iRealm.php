@@ -55,7 +55,7 @@ interface iRealm
      * are human-readable realm names.
      *
      * @param int $order A specification on how the realm list will be ordered. Possible values are:
-     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
      * @return array An associative array of realm ids and names, ordered as specified.
      */
@@ -66,7 +66,8 @@ interface iRealm
      * Return an associative array where the array keys are realm short identifier (id) and the values
      * are the Realm objects associated with that key.
      *
-     * @param int $order See getRealmNames() for a description of this parameter.
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
      * @return array An associative array of realm ids and Realm objects, ordered as specified.
      */
@@ -122,8 +123,8 @@ interface iRealm
     public function getOrder();
 
     /**
-     * @param int $order A specification on how the realm list will be ordered. Possible values are:
-     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
      * @return array An associative array of the GroupBy names available to this realm where the key
      *   is the short identifier and the value is the human readable name.
@@ -132,8 +133,8 @@ interface iRealm
     public function getGroupByNames($order = SORT_ON_ORDER);
 
     /**
-     * @param int $order A specification on how the realm list will be ordered. Possible values are:
-     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
      * @return array An associative array of the Statistic names available to this realm where the
      *   key is the short identifier and the value is the human readable name.
@@ -142,8 +143,8 @@ interface iRealm
     public function getStatisticNames($order = SORT_ON_ORDER);
 
     /**
-     * @param int $order A specification on how the realm list will be ordered. Possible values are:
-     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
      * @return array An associative array of the GroupBy obects available to this realm where the
      *   key is the GroupBy short identifier and the value is the associated object.
@@ -152,8 +153,8 @@ interface iRealm
     public function getGroupByObjects($order = SORT_ON_ORDER);
 
     /**
-     * @param int $order A specification on how the realm list will be ordered. Possible values are:
-     *   SORT_ID, SORT_ALPHA_ID, SORT_ALPHA_NAME.
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
      * @return array An associative array of the Statistic obects available to this realm where the
      *   key is the Statistic short identifier and the value is the associated object.
