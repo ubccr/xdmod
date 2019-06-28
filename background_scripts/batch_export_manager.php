@@ -14,6 +14,8 @@ try {
     $dryRun = false;
     $logLevel = -1;
 
+    $args = getopt('hqvd', ['help', 'dry-run', 'quiet', 'verbose', 'debug']);
+
     foreach ($args as $key => $value) {
         if (is_array($value)) {
             fwrite(STDERR, "Multiple values not allowed for '$key'\n");
@@ -57,7 +59,7 @@ try {
         exit;
     }
 
-    $conf = array(
+    $logConf = array(
         'file' => false,
         'mail' => false,
         'consoleLogLevel' => $logLevel
