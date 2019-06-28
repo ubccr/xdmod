@@ -3,8 +3,6 @@
  *
  * Class governing database access by Data Warehouse Export batch script
  *
- *  TODO, possibly: return list of ids for records that need to be marked 'export_expired'
- *
  *  timestamp and current datetime: always use the database's value
  *
  *  Recognized states enforced in this class:
@@ -180,14 +178,24 @@ class QueryHandler
     }
 
     /**
-     * Return export requests in Expired state.
+     * Return export requests in Available state that should expire.
      *
      * @return array
      */
-    public function listExpiredRecords()
+    public function listExpiringRecords()
     {
-        $sql = 'SELECT id, realm, start_date, end_date, export_file_format, requested_datetime
-            FROM batch_export_requests ' . $this->whereExpired . ' ORDER BY requested_datetime, id';
+        $sql = 'SELECT id,
+                realm,
+                start_date,
+                end_date,
+                export_succeeded,
+                export_expired,
+                export_expires_datetime,
+                export_created_datetime,
+                export_file_format,
+                requested_datetime
+            FROM batch_export_requests ' . $this->whereAvailable . ' AND export_expires_datetime > NOW()
+            ORDER BY requested_datetime, id';
         return $this->dbh->query($sql);
     }
 
