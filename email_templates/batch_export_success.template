@@ -1,0 +1,11 @@
+Dear [:first_name:],
+
+Your requested data was generated on [:current_date:] and is available for
+download at the following link:
+
+    [:download_url:]
+
+This data will be available until [:expiration_date:].
+
+Sincerely,
+[:maintainer_signature:]
