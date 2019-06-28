@@ -23,6 +23,9 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $controller->post("$root/layout", "$class::setLayout");
         $controller->delete("$root/layout", "$class::resetLayout");
+
+        $controller->post("$root/viewedUserTour", "$class::setViewedUserTour");
+        $controller->get("$root/viewedUserTour", "$class::getViewedUserTour");
     }
 
     /*
@@ -189,6 +192,37 @@ class SummaryControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'success' => true,
             'total' => 1
+        ));
+    }
+
+    /**
+     * Set value for if a user should view the help tour or not
+     */
+    public function setViewedUserTour(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+         $content = json_decode($this->getStringParam($request, 'data', true), true);
+         if ($content === null || !isset($content['viewedTour'])) {
+            throw new BadRequestException('Invalid data parameter');
+        }
+         $storage = new \UserStorage($user, 'viewed_user_tour');
+         return $app->json(array(
+            'success' => true,
+            'total' => 1,
+            'msg' => $storage->upsert(0, $content)
+        ));
+    }
+     /**
+     * Get stored value for if a user should view the help tour or not
+     */
+    public function getViewedUserTour(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        $storage = new \UserStorage($user, 'viewed_user_tour');
+         return $app->json(array(
+            'success' => true,
+            'total' => 1,
+            'data' => $storage->get()
         ));
     }
 }
