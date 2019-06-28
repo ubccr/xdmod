@@ -119,25 +119,25 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     portalwindow.add(portal);
                     portalwindow.doLayout();
 
-                    if(CCR.xdmod.publicUser !== true){
+                    if (CCR.xdmod.publicUser !== true) {
                         var userTour = self.createNewUserTour();
                         var conn = new Ext.data.Connection();
 
-                         conn.request({
-                            url: XDMoD.REST.url+'/summary/viewedUserTour',
+                        conn.request({
+                            url: XDMoD.REST.url + '/summary/viewedUserTour',
                             params: {
                                 data: Ext.encode({
-                                  uid: CCR.xdmod.ui.mappedPID,
-                                  token: XDMoD.REST.token
+                                    uid: CCR.xdmod.ui.mappedPID,
+                                    token: XDMoD.REST.token
                                 })
                             },
                             method: 'GET',
-                            callback: function(options, success, response) {
+                            callback: function (options, success, response) {
                                 var resp = Ext.decode(response.responseText);
-                                if (resp.data.length == 0 || !resp.data[0].viewedTour) {
+                                if (resp.data.length === 0 || !resp.data[0].viewedTour) {
                                     Ext.Msg.show({
                                         cls: 'new-user-tour-dialog-container',
-                                        title: "New User Tour",
+                                        title: 'New User Tour',
                                         msg: "Welcome to XDMoD. It seems that you haven't viewed our User Tour yet. The User Tour is a short series of information tips giving an overview of some basic components of XDMoD. If you want to view the tour now click Yes below.<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show me this again.",
                                         buttons: Ext.Msg.YESNO,
                                         icon: Ext.Msg.INFO,
@@ -146,8 +146,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                             if (buttonValue === 'yes') {
                                                 userTour.startTour();
                                             } else if (buttonValue === 'no' && newUserTourCheckbox.elements[0].checked === true) {
-                                                var conn = new Ext.data.Connection();
-                                                conn.request({
+                                                var connection = new Ext.data.Connection();
+                                                connection.request({
                                                     url: XDMoD.REST.url + '/summary/viewedUserTour',
                                                     params: {
                                                         data: Ext.encode({
@@ -157,16 +157,16 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                                         })
                                                     },
                                                     method: 'POST',
-                                                    callback: function (options, success, response) {
+                                                    callback: function (opt, suc, resp) {
                                                         Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the User Tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
-                                                    } //callback
-                                                }); //conn.request
+                                                    } // callback
+                                                }); // conn.request
                                             }
                                         }
                                     });
                                 }
-                            } //callback
-                        }); //conn.request
+                            } // callback
+                        }); // conn.request
                     }
                 }
             }
@@ -201,10 +201,11 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         XDMoD.Module.Summary.superclass.initComponent.apply(this, arguments);
     },
 
-    createNewUserTour: function() {
+    createNewUserTour: function () {
         var userTour = new Ext.ux.HelpTipTour({
             title: 'New User Tour',
-            items: [{
+            items: [
+                {
                     html: 'Welcome to Open XDMoD! Open XDMoD is an open source tool to facilitate the management of\
                       high performance computing resources. <br /><br />Open XDMoD’s management capabilities\
                       include monitoring standard metrics such as utilization, providing quality of service\
@@ -234,8 +235,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                       building a report. It shows the the title of the chart, the delivery schedule, the\
                       delivery format and the number of charts.\
                       </li></ul>',
-                    target: "#main_tab_panel .x-tab-panel-header",
-                    position: "tl-bl",
+                    target: '#main_tab_panel .x-tab-panel-header',
+                    position: 'tl-bl',
                     maxWidth: 400,
                     offset: [20, 0]
                 },
@@ -244,21 +245,21 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                       data with several small summary charts. These charts display information such as the\
                       number of jobs run, average CPU time per job, and the average number of processors per\
                       job.',
-                    target: "#tg_summary",
-                    position: "t-t"
+                    target: '#tg_summary',
+                    position: 't-t'
                 },
                 {
                     html: 'The Summary tab is made up of several informational boxes called portlets. Each portlet\
                       contains summary statistics, selected charts or other pieces of information that are\
                       useful to the role of the current user.',
-                    target: ".x-portlet:first",
-                    position: "l-r"
+                    target: '.x-portlet:first',
+                    position: 'l-r'
                 },
                 {
                     html: 'From left to right, this toolbar provides a button for collapsing the portlet, a button\
                       to configure information in the portlet, and a button that when hovered over will present\
                       a tooltip to describe the the information in the portlet.',
-                    target: ".x-portlet:first .x-panel-header:first",
+                    target: '.x-portlet:first .x-panel-header:first',
                     position: 'tl-br',
                     offset: [-10, 0]
                 },
@@ -269,24 +270,24 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                       If help is available for the section of XDMoD you currently are visiting, the User Manual\
                       will automatically navigate to the respective section when it loads. Clicking on FAQ\
                       will take you to a page containing Frequently Asked Questions.',
-                    target: "#help_button",
-                    position: "tr-bl"
+                    target: '#help_button',
+                    position: 'tr-bl'
                 },
                 {
                     html: 'The My Profile button allows you to view and update general settings pertaining to your\
                       account. Your current role will be displayed in the title bar of the My Profile window.\
                       <br /><br />Information you can update includes data such as your First Name, Last Name,\
                       Email Address and Password.',
-                    target: "#global-toolbar-profile",
-                    position: "tl-bl",
+                    target: '#global-toolbar-profile',
+                    position: 'tl-bl',
                 },
                 {
                     html: 'Thank you for viewing the XDMoD User Tour. If you want to view this tour again you can\
                       find it by clicking on the Help button in the upper right corner.',
-                    target: "#tg_summary",
-                    position: "t-t",
+                    target: '#tg_summary',
+                    position: 't-t',
                     listeners: {
-                        show: function() {
+                        show: function () {
                             var conn = new Ext.data.Connection();
                             conn.request({
                                 url: XDMoD.REST.url + '/summary/viewedUserTour',
@@ -298,7 +299,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                     })
                                 },
                                 method: 'POST'
-                            }); //conn.request
+                            }); // conn.request
                         }
                     }
                 }
@@ -306,13 +307,13 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         });
 
         if (CCR.xdmod.publicUser !== true) {
-            Ext.get('help_button').on('click', function() {
-                Ext.get('global-toolbar-help-new-user-tour').on('click', function() {
+            Ext.get('help_button').on('click', function () {
+                Ext.get('global-toolbar-help-new-user-tour').on('click', function () {
                     Ext.History.add('main_tab_panel:tg_summary');
-                    new Ext.util.DelayedTask(function() {
+                    new Ext.util.DelayedTask( function () {
                         userTour.startTour();
                     }).delay(10);
-                })
+                });
             });
         }
 
