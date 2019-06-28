@@ -133,8 +133,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                             },
                             method: 'GET',
                             callback: function (options, success, response) {
-                                var resp = Ext.decode(response.responseText);
-                                if (resp.data.length === 0 || !resp.data[0].viewedTour) {
+                                var serverResp = Ext.decode(response.responseText);
+                                if (serverResp.data.length === 0 || !serverResp.data[0].viewedTour) {
                                     Ext.Msg.show({
                                         cls: 'new-user-tour-dialog-container',
                                         title: 'New User Tour',
@@ -206,12 +206,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
             title: 'New User Tour',
             items: [
                 {
-                    html: 'Welcome to Open XDMoD! Open XDMoD is an open source tool to facilitate the management of\
+                    html: "Welcome to Open XDMoD! Open XDMoD is an open source tool to facilitate the management of\
                       high performance computing resources. <br /><br />Open XDMoD’s management capabilities\
                       include monitoring standard metrics such as utilization, providing quality of service\
-                      metrics designed to proactively identify underperforming system hardware and software.',
-                    target: "#tg_summary",
-                    position: "t-t"
+                      metrics designed to proactively identify underperforming system hardware and software.",
+                    target: '#tg_summary',
+                    position: 't-t'
                 },
                 {
                     html: 'The XDMoD User Interface contains a wealth of information and has been organized into tabs\
@@ -279,7 +279,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                       <br /><br />Information you can update includes data such as your First Name, Last Name,\
                       Email Address and Password.',
                     target: '#global-toolbar-profile',
-                    position: 'tl-bl',
+                    position: 'tl-bl'
                 },
                 {
                     html: 'Thank you for viewing the XDMoD User Tour. If you want to view this tour again you can\
@@ -310,7 +310,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
             Ext.get('help_button').on('click', function () {
                 Ext.get('global-toolbar-help-new-user-tour').on('click', function () {
                     Ext.History.add('main_tab_panel:tg_summary');
-                    new Ext.util.DelayedTask( function () {
+                    new Ext.util.DelayedTask(function () {
                         userTour.startTour();
                     }).delay(10);
                 });
