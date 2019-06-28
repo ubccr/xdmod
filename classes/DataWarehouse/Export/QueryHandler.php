@@ -46,6 +46,8 @@ class QueryHandler
     // Definition of Submitted state:
     private $whereSubmitted = "WHERE export_succeeded is NULL and export_created_datetime is NULL and export_expired = FALSE ";
 
+    private $whereExpired = "WHERE export_succeeded = TRUE and export_created_datetime is NOT NULL and export_expired = TRUE ";
+
     public function __construct()
     {
         // Fetch the database handle
@@ -155,6 +157,18 @@ class QueryHandler
         return($result);
     }
 
+    /**
+     * Return export requests in Expired state.
+     *
+     * @return array
+     */
+    public function listExpiredRecords()
+    {
+        $sql = 'SELECT id, realm, start_date, end_date, export_file_format, requested_datetime
+            FROM batch_export_requests ' . $this->whereExpired . ' ORDER BY requested_datetime, id';
+        return $this->pdo->query($sql);
+    }
+
     // Return details of export requests made by specified user.
     public function listRequestsForUser($user_id)
     {
@@ -185,13 +199,12 @@ class QueryHandler
         $attributes = "SELECT id, realm, start_date, end_date, export_succeeded, export_expired, export_expires_datetime, export_created_datetime, export_file_format, requested_datetime, ";
         $fromTable = "FROM batch_export_requests ";
         $whereAvailable = "WHERE export_succeeded = TRUE and export_created_datetime is NOT NULL and export_expired = FALSE ";
-        $whereExpired = "WHERE export_succeeded = TRUE and export_created_datetime is NOT NULL and export_expired = TRUE ";
         $whereFailed = "WHERE export_succeeded = FALSE and export_created_datetime is NULL and export_expired = FALSE ";
         $userClause = "AND user_id = :user_id ";
 
         $sql =  $attributes . "'Submitted' as state " . $fromTable . $this->whereSubmitted . $userClause . "UNION " .
                 $attributes . "'Available' as state " . $fromTable . $whereAvailable . $userClause . "UNION " .
-                $attributes . "'Expired' as state "   . $fromTable . $whereExpired . $userClause . "UNION " .
+                $attributes . "'Expired' as state "   . $fromTable . $this->whereExpired . $userClause . "UNION " .
                 $attributes . "'Failed' as state "    . $fromTable . $whereFailed . $userClause . "ORDER BY requested_datetime, id";
 
         $params = array('user_id' => $user_id);
