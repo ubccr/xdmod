@@ -4,9 +4,9 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use DataWarehouse\Export\QueryHandler;
+use DataWarehouse\Export\RealmManager;
 use DateTime;
 use Exception;
-use Models\Services\Realms;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +17,23 @@ use xd_utilities;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
+    /**
+     * @var DataWarehouse\Export\QueryHandler
+     */
+    private $queryHandler;
+
+    /**
+     * @var DataWarehouse\Export\RealmManager
+     */
+    private $realmManager;
+
+    public function __construct(array $params = [])
+    {
+        parent::__construct($params);
+        $this->realmManager = new RealmManager();
+        $this->queryHandler = new QueryHandler();
+    }
+
     /**
      * Set up data warehouse export routes.
      *
@@ -56,23 +73,14 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function getRealms(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        $userRealms = Realms::getRealmsForUser($user); // XXX Returns data from moddb.realms.display column.
-
-        // TODO: Get list of exportable realms.
-        $realms = [
-            ['id' => 'jobs', 'name' => 'Jobs'],
-            ['id' => 'supremm', 'name' => 'SUPReMM'],
-            ['id' => 'accounts', 'name' => 'Accounts'],
-            ['id' => 'allocations', 'name' => 'Allocations'],
-            ['id' => 'requests', 'name' => 'Requests'],
-            ['id' => 'resourceallocations', 'name' => 'ResourceAllocations']
-        ];
-
-        $realms = array_filter(
-            $realms,
-            function ($realm) use ($userRealms) {
-                return in_array($realm['name'], $userRealms);
-            }
+        $realms = array_map(
+            function ($realm) {
+                return [
+                    'id' => $realm->getName(),
+                    'name' => $realm->getDisplay()
+                ];
+            },
+            $this->realmManager->getRealmsForUser($user)
         );
 
         return $app->json(
@@ -95,8 +103,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function getRequests(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        $handler = new QueryHandler();
-        $results = $handler->listUserRequestsByState($user->getUserId());
+        $results = $this->queryHandler->listUserRequestsByState($user->getUserId());
         return $app->json(
             [
                 'success' => true,
@@ -120,19 +127,12 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
         $realm = $this->getStringParam($request, 'realm', true);
 
-        // TODO: Check that realm is in list of exportable realms.
-        //$userRealms = Realms::getRealmsForUser($user); // XXX Returns data from moddb.realms.display column.
-        //if (!in_array($realm, $userRealms)) {
-        //    throw new BadRequestHttpException('Invalid realm');
-        //}
-        $realms = [
-            'jobs',
-            'supremm',
-            'accounts',
-            'allocations',
-            'requests',
-            'resourceallocations'
-        ];
+        $realms = array_map(
+            function ($realm) {
+                return $this->getName();
+            },
+            $this->realmManager->getRealmsForUser($user)
+        );
         if (!in_array($realm, $realms)) {
             throw new BadRequestHttpException('Invalid realm');
         }
@@ -165,9 +165,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('format must be CSV or JSON');
         }
 
-        $handler = new QueryHandler();
-
-        $id = $handler->createRequestRecord(
+        $id = $this->queryHandler->createRequestRecord(
             $user->getUserId(),
             $realm,
             $startDate->format('Y-m-d'),
@@ -198,10 +196,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function getRequest(Request $request, Application $app, $id)
     {
         $user = $this->authorize($request);
-        $handler = new QueryHandler();
 
         $requests = array_filter(
-            $handler->listUserRequestsByState($user->getUserId()),
+            $this->queryHandler->listUserRequestsByState($user->getUserId()),
             function ($request) use ($id) {
                 return $request['id'] == $id;
             }
@@ -271,8 +268,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function deleteRequest(Request $request, Application $app, $id)
     {
         $user = $this->authorize($request);
-        $handler = new QueryHandler();
-        $count = $handler->deleteRequest($id, $user->getUserId());
+        $count = $this->queryHandler->deleteRequest($id, $user->getUserId());
 
         if ($count === 0) {
             throw new NotFoundHttpException('Export request not found');
@@ -300,7 +296,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function deleteRequests(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        $handler = new QueryHandler();
 
         $requestIds = [];
 
@@ -331,7 +326,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             $dbh->beginTransaction();
 
             foreach ($requestIds as $id) {
-                $count = $handler->deleteRequest($id, $user->getUserId());
+                $count = $this->queryHandler->deleteRequest($id, $user->getUserId());
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
