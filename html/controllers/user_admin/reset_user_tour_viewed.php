@@ -10,8 +10,8 @@ if (!$isValid) {
 \xd_security\assertParameterSet('uid', RESTRICTION_UID);
 
 $user = XDUser::getUserByID($_POST['uid']);
- if ($user == NULL) {
-   \xd_response\presentError("user_does_not_exist");
+if ($user == null) {
+    \xd_response\presentError("user_does_not_exist");
 }
 
 $storage = new \UserStorage($user, 'viewed_user_tour');
@@ -22,4 +22,3 @@ $storage->upsert(0, ['uid' => $_POST['uid'], 'viewedTour' => $_POST['viewed_user
     'total' => 1,
     'message' => 'This user will be now be propmted to view the New User Tour the next time they visit XDMoD'
 ));
- ?>
