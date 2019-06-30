@@ -79,6 +79,9 @@ class BatchProcessor extends Loggable
     }
 
     /**
+     * Process a single export request.
+     *
+     * @param array $request The export request data.
      */
     private function processSubmittedRequest(array $request)
     {
@@ -97,14 +100,21 @@ class BatchProcessor extends Loggable
 
         try {
             $this->dbh->beginTransaction();
-
             $this->queryHandler->submittedToAvailable($request['id']);
+            // Get query class
+            // Execute query
+            // Write data to file
+            // Zip file
             // TODO: update request array with expiration date
             //$request = $this->queryHandler->get
-            $this->dbh->commit();
             $this->sendExportSuccessEmail($user, $request);
+            $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
+            $this->logger->err([
+                'message' => 'Failed to export data: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString()
+            ]);
             $this->sendExportFailureEmail(
                 $user,
                 $request,
@@ -120,7 +130,7 @@ class BatchProcessor extends Loggable
      * Check if the request has expired and, if so, remove expired data and
      * update the request.
      */
-    private function processExpiringdRequests()
+    private function processExpiringRequests()
     {
         $this->logger->info('Processing expired requests');
         foreach ($this->queryHandler->listExpiringRecords() as $request) {
@@ -129,12 +139,25 @@ class BatchProcessor extends Loggable
     }
 
     /**
+     * Process a single export request that is expiring.
+     *
+     * @param array $request The export request data.
      */
     private function processExpiringRequest(array $request)
     {
         try {
-
+            $this->dbh->beginTransaction();
+            $this->queryHandler->availableToExpired($request['id']);
+            // TODO
+            // Delete file
+            $this->dbh->commit();
         } catch (Exception $e) {
+            $this->dbh->rollback();
+            $this->logger->err(
+                sprintf(
+                    'Failed to remove expired data'
+                )
+            );
         }
     }
 
@@ -152,6 +175,10 @@ class BatchProcessor extends Loggable
     }
 
     /**
+     * Create a zip file containing a single file.
+     *
+     * @param string $dataFile Absolute path to file that will be put in zip file.
+     * @param string $zipFile Absolute path to zip file that will be created.
      */
     private function createZipFile($dataFile, $zipFile)
     {
@@ -202,7 +229,7 @@ class BatchProcessor extends Loggable
     }
 
     /**
-     * Send emails indicating a successful export.
+     * Send email indicating a successful export.
      *
      * @param XDUser $user The user that requested the export.
      * @param array $request The batch request data.
@@ -232,6 +259,15 @@ class BatchProcessor extends Loggable
     }
 
     /**
+     * Send email indicating a failed export.
+     *
+     * Sends one email to the user that created the request and another email
+     * to the tech support recipient.
+     *
+     * @param XDUser $user The user that created the request.
+     * @param array $request Export request data.
+     * @param string $failureReason Friendly text explaining failure.
+     * @param Exception $e The exception that caused the failure.
      */
     private function sendExportFailureEmail(
         XDUser $user,
