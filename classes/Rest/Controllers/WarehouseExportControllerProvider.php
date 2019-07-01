@@ -129,7 +129,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         $realms = array_map(
             function ($realm) {
-                return $this->getName();
+                return $realm->getName();
             },
             $this->realmManager->getRealmsForUser($user)
         );
