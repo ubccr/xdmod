@@ -7,7 +7,7 @@ namespace DataWarehouse\Export;
 
 use CCR\DB;
 use Configuration\XdmodConfiguration;
-use Service\Realms;
+use Models\Services\Realms;
 use XDUser;
 
 /**
