@@ -101,6 +101,29 @@ class QueryHandler
     }
 
     /**
+     * Get a single export request record.
+     *
+     * @param integer $id Export request primary key.
+     * @return array
+     */
+    public function getRequestRecord($id)
+    {
+        $sql = 'SELECT id,
+                realm,
+                start_date,
+                end_date,
+                export_succeeded,
+                export_expired,
+                export_expires_datetime,
+                export_created_datetime,
+                export_file_format,
+                requested_datetime
+            FROM batch_export_requests
+            WHERE id = :id';
+        return $this->dbh->query($sql, ['id' => $id]);
+    }
+
+    /**
      * Transition specified export request from Submitted state to Failed state.
      *
      * @param integer $id Export request primary key.
