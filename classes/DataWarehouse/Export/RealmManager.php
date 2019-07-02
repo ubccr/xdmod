@@ -7,6 +7,7 @@ namespace DataWarehouse\Export;
 
 use CCR\DB;
 use Configuration\XdmodConfiguration;
+use Exception;
 use Models\Services\Realms;
 use XDUser;
 
@@ -81,8 +82,53 @@ class RealmManager
     }
 
     /**
+     * Get the raw data query class for the given realm.
+     *
+     * @param string $realmName The realm name used in moddb.realms.name.
+     * @return string The fully qualified name of the query class.
      */
-    public function getRawDataQueryClass($realm)
+    public function getRawDataQueryClass($realmName)
     {
+        // The query classes use the "name" from the rawstatistics
+        // configuration, but the realm name is taken from moddb.realms.name.
+        // These use the same "display" name so that is used to find the
+        // correct class name.
+
+        // Realm model.
+        $realmObj = null;
+
+        foreach ($this->getRealms() as $realm) {
+            if ($realm->getName() == $realmName) {
+                $realmObj = $realm;
+                break;
+            }
+        }
+
+        if ($realmObj === null) {
+            throw new Exception(
+                sprintf('Failed to find model for realm "%s"', $realmName)
+            );
+        }
+
+        // Realm rawstatistics configuration.
+        $realmConfig = null;
+
+        foreach ($this->config['realms'] as $realm) {
+            if ($realm['display'] == $realmObj->getDisplay()) {
+                $realmConfig = $realm;
+                break;
+            }
+        }
+
+        if ($realmConfig === null) {
+            throw new Exception(
+                sprintf(
+                    'Failed to find rawstatistics configuration for realm "%s"',
+                    $realmName
+                )
+            );
+        }
+
+        return sprintf('\DataWarehouse\Query\%s\JobDataset', $realmConfig['name']);
     }
 }
