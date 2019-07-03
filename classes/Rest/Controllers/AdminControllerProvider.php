@@ -29,26 +29,25 @@ class AdminControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
      */
-     public function resetUserTourViewed(Request $request, Application $app)
-     {
-         $this->authorize($request, array('mgr'));
-         $viewedTour = $this->getIntParam($request, 'viewedTour', true);
-         $selected_user = XDUser::getUserByID($this->getIntParam($request, 'uid', true));
+    public function resetUserTourViewed(Request $request, Application $app)
+    {
+        $this->authorize($request, array('mgr'));
+        $viewedTour = $this->getIntParam($request, 'viewedTour', true);
+        $selected_user = XDUser::getUserByID($this->getIntParam($request, 'uid', true));
 
-         if (!in_array($viewedTour, [0,1])) {
-             throw new BadRequestException('Invalid data parameter');
-         }
+        if (!in_array($viewedTour, [0,1])) {
+            throw new BadRequestException('Invalid data parameter');
+        }
 
-         $storage = new \UserStorage($selected_user, 'viewed_user_tour');
-         $storage->upsert(0, ['viewedTour' => $viewedTour]);
+        $storage = new \UserStorage($selected_user, 'viewed_user_tour');
+        $storage->upsert(0, ['viewedTour' => $viewedTour]);
 
-         return $app->json(
+        return $app->json(
              array(
                  'success' => true,
                  'total' => 1,
                  'message' => 'This user will be now be propmted to view the New User Tour the next time they visit XDMoD'
              )
          );
-     }
-
+    }
 }

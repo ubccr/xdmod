@@ -205,34 +205,35 @@ class SummaryControllerProvider extends BaseControllerProvider
     */
     public function setViewedUserTour(Request $request, Application $app)
     {
-       $user = $this->authorize($request);
-       $viewedTour = $this->getIntParam($request, 'viewedTour', true);
+        $user = $this->authorize($request);
+        $viewedTour = $this->getIntParam($request, 'viewedTour', true);
 
-       if (!in_array($viewedTour, [0,1])) {
-           throw new BadRequestException('Invalid data parameter');
-       }
+        if (!in_array($viewedTour, [0,1])) {
+            throw new BadRequestException('Invalid data parameter');
+        }
 
-       $storage = new \UserStorage($user, 'viewed_user_tour');
+        $storage = new \UserStorage($user, 'viewed_user_tour');
 
-       return $app->json(array(
-           'success' => true,
-           'total' => 1,
-           'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
-       ));
+        return $app->json(array(
+            'success' => true,
+            'total' => 1,
+            'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
+        ));
     }
+
     /**
     * Get stored value for if a user should view the help tour or not
     */
     public function getViewedUserTour(Request $request, Application $app)
     {
-       $user = $this->authorize($request);
-       $storage = new \UserStorage($user, 'viewed_user_tour');
-       return $app->json(array(
-           'success' => true,
-           'total' => 1,
-           'data' => $storage->get()
+        $user = $this->authorize($request);
+        $storage = new \UserStorage($user, 'viewed_user_tour');
+        return $app->json(array(
+            'success' => true,
+            'total' => 1,
+            'data' => $storage->get()
        ));
-     }
+    }
     /**
      * Retrieve summary statistics
      *
