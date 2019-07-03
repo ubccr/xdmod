@@ -110,8 +110,8 @@ class BatchProcessor extends Loggable
 
             $dataFile = $this->writeDataToFile($dataSet, $request['format']);
 
-            // Zip file
-            $this->createZipFile($dataFile, $zipFile)
+            $zipFile = 'TODO';
+            $this->createZipFile($dataFile, $zipFile);
 
             // Query for same record to get expiration date.
             $request = $this->queryHandler->getRequestRecord($request['id']);
@@ -185,7 +185,7 @@ class BatchProcessor extends Loggable
     private function getDataSet(array $request, XDUser $user)
     {
         $this->logger->info([
-            'message' => 'Querying data'
+            'message' => 'Querying data',
             'Users.id' => $user->getUserID(),
             'user_email' => $user->getEmailAddress(),
             'user_first_name' => $user->getFirstName(),
@@ -218,7 +218,7 @@ class BatchProcessor extends Loggable
 
             return $dataSet;
         } catch (Exception $e) {
-            throw new Exception('Failed to execute batch export query' 0, $e);
+            throw new Exception('Failed to execute batch export query', 0, $e);
         }
     }
 
