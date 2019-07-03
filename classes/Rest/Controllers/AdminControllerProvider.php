@@ -43,11 +43,11 @@ class AdminControllerProvider extends BaseControllerProvider
         $storage->upsert(0, ['viewedTour' => $viewedTour]);
 
         return $app->json(
-             array(
-                 'success' => true,
-                 'total' => 1,
-                 'message' => 'This user will be now be propmted to view the New User Tour the next time they visit XDMoD'
-             )
-         );
+            array(
+                'success' => true,
+                'total' => 1,
+                'message' => 'This user will be now be propmted to view the New User Tour the next time they visit XDMoD'
+            )
+        );
     }
 }

@@ -232,7 +232,7 @@ class SummaryControllerProvider extends BaseControllerProvider
             'success' => true,
             'total' => 1,
             'data' => $storage->get()
-       ));
+        ));
     }
     /**
      * Retrieve summary statistics
