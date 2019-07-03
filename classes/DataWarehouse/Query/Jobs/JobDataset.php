@@ -42,7 +42,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         if (isset($parameters['primary_key'])) {
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'job_id'), "=", $parameters['primary_key']));
-        } else {
+        } elseif (isset($parameters['job_identifier'])) {
             $matches = array();
             if (preg_match('/^(\d+)(?:[\[_](\d+)\]?)?$/', $parameters['job_identifier'], $matches)) {
                 $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'resource_id'), '=', $parameters['resource_id']));
@@ -53,8 +53,39 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                     $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'local_job_id_raw'), '=', $matches[1]));
                 }
             } else {
-                throw new \Exception('invalid query parameters');
+                throw new \Exception('invalid "job_identifier" query parameter');
             }
+        } elseif (isset($parameters['start_date']) && isset($parameters['end_date'])) {
+            $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
+            $startDateTs = mktime(
+                $startDate['hour'],
+                $startDate['minute'],
+                $startDate['second'],
+                $startDate['month'],
+                $startDate['day'],
+                $startDate['year']
+            );
+            if ($startDateTs === false) {
+                throw new \Exception('invalid "start_date" query parameter');
+            }
+
+            $endDate = date_parse_from_format('Y-m-d', $parameters['end_date']);
+            $endDateTs = mktime(
+                23,
+                59,
+                59,
+                $endDate['month'],
+                $endDate['day'],
+                $endDate['year']
+            );
+            if ($startDateTs === false) {
+                throw new \Exception('invalid "end_date" query parameter');
+            }
+
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_date_ts'), ">=", $startDateTs));
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_date_ts'), "<=", $endDateTs));
+        } else {
+            throw new \Exception('invalid query parameters');
         }
 
         if ($stat == "accounting") {
