@@ -32,6 +32,5 @@ $controller->registerOperation('enum_user_types');
 $controller->registerOperation('enum_exception_email_addresses');
 $controller->registerOperation('empty_report_image_cache');
 $controller->registerOperation('search_users');
-$controller->registerOperation('reset_user_tour_viewed');
 
 $controller->invoke('POST', 'xdDashboardUser');
