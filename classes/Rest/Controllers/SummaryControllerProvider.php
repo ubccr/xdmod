@@ -2,12 +2,15 @@
 
 namespace Rest\Controllers;
 
+use Configuration\XdmodConfiguration;
+use Exception;
+use PDOException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
-use DataWarehouse\Query\Exceptions\BadRequestException;
 
 use Models\Services\Acls;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SummaryControllerProvider extends BaseControllerProvider
 {
@@ -26,6 +29,8 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $controller->post("$root/viewedUserTour", "$class::setViewedUserTour");
         $controller->get("$root/viewedUserTour", "$class::getViewedUserTour");
+
+        $controller->get("$root/statistics", "$class::getStatistics");
     }
 
     /*
@@ -195,37 +200,90 @@ class SummaryControllerProvider extends BaseControllerProvider
         ));
     }
 
-    /**
-     * Set value for if a user should view the help tour or not
-     */
+    /*
+    * Set value for if a user should view the help tour or not
+    */
     public function setViewedUserTour(Request $request, Application $app)
     {
-        $user = $this->authorize($request);
-        $viewedTour = $this->getIntParam($request, 'viewedTour', true);
+       $user = $this->authorize($request);
+       $viewedTour = $this->getIntParam($request, 'viewedTour', true);
 
-        if (!in_array($viewedTour, [0,1])) {
-            throw new BadRequestException('Invalid data parameter');
-        }
+       if (!in_array($viewedTour, [0,1])) {
+           throw new BadRequestException('Invalid data parameter');
+       }
 
-        $storage = new \UserStorage($user, 'viewed_user_tour');
+       $storage = new \UserStorage($user, 'viewed_user_tour');
 
-        return $app->json(array(
-            'success' => true,
-            'total' => 1,
-            'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
-        ));
+       return $app->json(array(
+           'success' => true,
+           'total' => 1,
+           'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
+       ));
     }
-     /**
-     * Get stored value for if a user should view the help tour or not
-     */
+    /**
+    * Get stored value for if a user should view the help tour or not
+    */
     public function getViewedUserTour(Request $request, Application $app)
     {
-        $user = $this->authorize($request);
-        $storage = new \UserStorage($user, 'viewed_user_tour');
-        return $app->json(array(
-            'success' => true,
-            'total' => 1,
-            'data' => $storage->get()
-        ));
+       $user = $this->authorize($request);
+       $storage = new \UserStorage($user, 'viewed_user_tour');
+       return $app->json(array(
+           'success' => true,
+           'total' => 1,
+           'data' => $storage->get()
+       ));
+     }
+    /**
+     * Retrieve summary statistics
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws Exception
+     */
+    public function getStatistics(Request $request, Application $app)
+    {
+        $user = $this->getUserFromRequest($request);
+
+        $aggregationUnit = $request->get('aggregation_unit', 'auto');
+
+        $startDate = $this->getStringParam($request, 'start_date', true);
+        $endDate = $this->getStringParam($request, 'end_date', true);
+
+        $this->checkDateRange($startDate, $endDate);
+
+        // This try/catch block is intended to replace the "Base table or
+        // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
+        // doesn't exist" error message with something more informative for
+        // Open XDMoD users.
+        try {
+            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregationUnit, $startDate, $endDate, 'none', 'all');
+
+            $result = $query->execute();
+        } catch (PDOException $e) {
+            if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
+                $msg = 'Aggregate table not found, have you ingested your data?';
+                throw new Exception($msg);
+            } else {
+                throw $e;
+            }
+        } catch (Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $rawRoles = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+
+        $mostPrivileged = $user->getMostPrivilegedRole()->getName();
+        $formats = $rawRoles['roles'][$mostPrivileged]['statistics_formats'];
+
+        return $app->json(
+            array(
+                'totalCount' => 1,
+                'success' => true,
+                'message' => '',
+                'formats' => $formats,
+                'data' => array($result)
+            )
+        );
     }
 }
