@@ -201,15 +201,18 @@ class SummaryControllerProvider extends BaseControllerProvider
     public function setViewedUserTour(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        $content = json_decode($this->getStringParam($request, 'data', true), true);
-        if ($content === null || !isset($content['viewedTour'])) {
+        $viewedTour = $this->getIntParam($request, 'viewedTour', true);
+
+        if (!in_array($viewedTour, [0,1])) {
             throw new BadRequestException('Invalid data parameter');
         }
+
         $storage = new \UserStorage($user, 'viewed_user_tour');
+
         return $app->json(array(
             'success' => true,
             'total' => 1,
-            'msg' => $storage->upsert(0, $content)
+            'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
         ));
     }
      /**

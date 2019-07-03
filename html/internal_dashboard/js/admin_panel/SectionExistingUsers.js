@@ -537,11 +537,38 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         this.groupToggle = usersTypeSplitButton;
 
         var resetNewUserTour = function () {
-            userManagementAction({
-                operation: 'reset_user_tour_viewed',
-                viewedTour: 0,
-                uid: selected_user_id
-            });
+            Ext.Ajax.request({
+                url: XDMoD.REST.url + '/admin/reset_user_tour_viewed',
+                params: {
+                    viewedTour: 0,
+                    uid: selected_user_id
+                },
+                method: 'POST',
+
+                callback: function (options, success, response) {
+                    var json;
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+
+                        // eslint-disable-next-line no-param-reassign
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'User operation failed.'
+                        });
+                        return;
+                    }
+
+                    var displayedMessage = json.message ? json.message : json.status;
+                    CCR.xdmod.ui.userManagementMessage(
+                        displayedMessage,
+                        json.success
+                    );
+                }
+            }); // Ext.Ajax.request
         };
 
         // ------------------------------------------

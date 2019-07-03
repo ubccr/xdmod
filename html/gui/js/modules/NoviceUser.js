@@ -126,10 +126,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                         conn.request({
                             url: XDMoD.REST.url + '/summary/viewedUserTour',
                             params: {
-                                data: Ext.encode({
-                                    uid: CCR.xdmod.ui.mappedPID,
-                                    token: XDMoD.REST.token
-                                })
+                                uid: CCR.xdmod.ui.mappedPID,
+                                token: XDMoD.REST.token
                             },
                             method: 'GET',
                             callback: function (options, success, response) {
@@ -150,11 +148,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                                 connection.request({
                                                     url: XDMoD.REST.url + '/summary/viewedUserTour',
                                                     params: {
-                                                        data: Ext.encode({
-                                                            viewedTour: 1,
-                                                            uid: CCR.xdmod.ui.mappedPID,
-                                                            token: XDMoD.REST.token
-                                                        })
+                                                        viewedTour: 1,
+                                                        token: XDMoD.REST.token
                                                     },
                                                     method: 'POST',
                                                     callback: function (opt, suc, resp) {
@@ -292,11 +287,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                             conn.request({
                                 url: XDMoD.REST.url + '/summary/viewedUserTour',
                                 params: {
-                                    data: Ext.encode({
-                                        viewedTour: 1,
-                                        uid: CCR.xdmod.ui.mappedPID,
-                                        token: XDMoD.REST.token
-                                    })
+                                    viewedTour: 1,
+                                    token: XDMoD.REST.token
                                 },
                                 method: 'POST'
                             }); // conn.request
