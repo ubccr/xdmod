@@ -105,7 +105,7 @@ Usage: {$argv[0]}
         Output warning level logging.
 
     --dry-run
-		Perform all the processing steps, but don't 't generate any files,
-		send any emails change status of any requests.
+        Perform all the processing steps, but don't generate or remove any
+        files, send any emails, or change the status of any export requests.
 EOMSG;
 }
