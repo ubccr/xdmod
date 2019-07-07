@@ -100,6 +100,7 @@ class BatchProcessTest extends BaseTest
     public function testRequestProcessing()
     {
         $batchProcessor = new BatchProcessor();
+        $batchProcessor->processRequests();
         $this->markTestIncomplete('This test has not been implemented yet.');
     }
 }
