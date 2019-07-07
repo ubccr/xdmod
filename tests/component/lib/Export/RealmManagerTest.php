@@ -1,6 +1,6 @@
 <?php
 
-namespace ComponentTests\Roles;
+namespace ComponentTests\Export;
 
 use CCR\Json;
 use ComponentTests\BaseTest;

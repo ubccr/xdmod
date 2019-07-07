@@ -1,7 +1,8 @@
 <?php
 
-namespace ComponentTests\Roles;
+namespace ComponentTests\Export;
 
+use ComponentTests\BaseTest;
 use DataWarehouse\Export\BatchProcessor;
 use DataWarehouse\Export\QueryHandler;
 use xd_utilities;
