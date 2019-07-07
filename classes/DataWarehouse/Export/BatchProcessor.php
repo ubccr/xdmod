@@ -35,12 +35,22 @@ class BatchProcessor extends Loggable
     private $queryHandler;
 
     /**
+     * Path of directory containing export zip files.
+     * @var string
+     */
+    private $exportDirectory;
+
+    /**
      * Construct a new batch processor.
      */
     public function __construct()
     {
         $this->dbh = DB::factory('database');
         $this->queryHandler = new QueryHandler();
+        $this->exportDirectory = xd_utilities::getConfiguration(
+            'data_warehouse_export',
+            'export_directory'
+        );
     }
 
     /**
@@ -105,12 +115,9 @@ class BatchProcessor extends Loggable
         try {
             $this->dbh->beginTransaction();
             $this->queryHandler->submittedToAvailable($request['id']);
-
             $dataSet = $this->getDataSet($request);
-
             $dataFile = $this->writeDataToFile($dataSet, $request['format']);
-
-            $zipFile = 'TODO';
+            $zipFile = $this->getExportZipFilePath($request['id']);
             $this->createZipFile($dataFile, $zipFile);
 
             // Query for same record to get expiration date.
@@ -161,9 +168,8 @@ class BatchProcessor extends Loggable
 
         try {
             $this->dbh->beginTransaction();
-            // TODO
-            // Delete file
             $this->queryHandler->availableToExpired($request['id']);
+            $this->removeExportFile($request['id']);
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
@@ -190,6 +196,7 @@ class BatchProcessor extends Loggable
             'user_email' => $user->getEmailAddress(),
             'user_first_name' => $user->getFirstName(),
             'user_last_name' => $user->getLastName(),
+            'batch_export_request.id' => $request['id'],
             'realm' => $request['realm'],
             'start_date' => $request['start_date'],
             'end_date' => $request['end_date']
@@ -223,16 +230,36 @@ class BatchProcessor extends Loggable
     }
 
     /**
+     * Write data set to file.
+     *
+     * @param \DataWarehouse\Data\RawDataset $dataSet
+     * @param string $format
      */
-    private function generateExportFile()
+    private function writeDataToFile(RawDataset $dataSet, $format)
     {
         if ($this->dryRun) {
-            $this->logger->notice('dry run: Not generating export file');
+            $this->logger->notice('dry run: Not writing data to file');
             return;
         }
 
-        $this->logger->info('Generating export file');
-        // TODO
+        $tmpFile = tempnam(sys_get_temp_dir(), 'batch-export-');
+
+        $this->logger->info([
+            'message' => 'Writing data to file',
+            'tmp_file' => $tmpFile
+        ]);
+
+        // The `export` function returns the first result along with the
+        // necessary metadata.
+        foreach ($dataSet->export() as $datum) {
+            // TODO
+        }
+
+        foreach ($dataSet->getResults() as $result) {
+            // TODO
+        }
+
+        return $tmpFile;
     }
 
     /**
@@ -249,7 +276,11 @@ class BatchProcessor extends Loggable
             return;
         }
 
-        $this->logger->info('Creating zip file');
+        $this->logger->info([
+            'message' => 'Creating zip file',
+            'data_file' => $dataFile,
+            'zip_file' => $zipFile
+        ]);
 
         $zip = new ZipArchive();
         $zipOpenCode = $zip->open($zipFile, ZipArchive::CREATE);
@@ -278,16 +309,39 @@ class BatchProcessor extends Loggable
     }
 
     /**
+     * Remove an export data file.
+     *
+     * @param int $id Export request primary key.
      */
-    private function removeExportFile()
+    private function removeExportFile($id)
     {
         if ($this->dryRun) {
             $this->logger->notice('dry run: Not removing export file');
             return;
         }
 
-        $this->logger->info('Removing export file');
-        // TODO
+        $zipFile = $this->getExportZipFilePath($id);
+
+        $this->logger->info([
+            'message' => 'Removing export file',
+            'batch_export_request.id' => $id,
+            'zip_file' => $zipFile
+        ]);
+
+        if (!unlink($zipFile)) {
+            throw new Exception(sprintf('Failed to delete "%s"', $zipFile));
+        }
+    }
+
+    /**
+     * Get the full path for the export data file.
+     *
+     * @param int $id Export request primary key.
+     * @return string
+     */
+    private function getExportZipFilePath($id)
+    {
+        return $this->exportDirectory . DIRECTORY_SEPARATOR . $id . '.zip';
     }
 
     /**
