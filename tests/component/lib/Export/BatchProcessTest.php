@@ -42,7 +42,7 @@ class BatchProcessTest extends BaseTest
     {
         parent::setUpBeforeClass();
         self::$queryHandler = new QueryHandler();
-        self::$exportDirectory = xd_utilities::getConfiguration(
+        self::$exportDirectory = xd_utilities\getConfiguration(
             'data_warehouse_export',
             'export_directory'
         );
