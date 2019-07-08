@@ -81,7 +81,7 @@ class BatchProcessTest extends BaseTest
         $batchProcessor->processRequests();
 
         $this->assertEquals($emails, self::getEmails(), 'No new emails');
-        $this->assertEquals($files, self::getFiles(), 'No new export files');
+        $this->assertEquals($files, self::getExportFiles(), 'No new export files');
         $this->assertEquals(
             $submittedRequests,
             self::$queryHandler->listSubmittedRecords(),
