@@ -45,6 +45,7 @@ class BatchProcessor extends Loggable
      */
     public function __construct()
     {
+        parent::__construct();
         $this->dbh = DB::factory('database');
         $this->queryHandler = new QueryHandler();
         $this->exportDirectory = xd_utilities\getConfiguration(
