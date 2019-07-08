@@ -117,7 +117,7 @@ class BatchProcessor extends Loggable
             $this->dbh->beginTransaction();
             $this->queryHandler->submittedToAvailable($request['id']);
             $dataSet = $this->getDataSet($request);
-            $dataFile = $this->writeDataToFile($dataSet, $request['format']);
+            $dataFile = $this->writeDataSetToFile($dataSet, $request['format']);
             $zipFile = $this->getExportZipFilePath($request['id']);
             $this->createZipFile($dataFile, $zipFile);
 
@@ -236,7 +236,7 @@ class BatchProcessor extends Loggable
      * @param \DataWarehouse\Data\RawDataset $dataSet
      * @param string $format
      */
-    private function writeDataToFile(RawDataset $dataSet, $format)
+    private function writeDataSetToFile(RawDataset $dataSet, $format)
     {
         if ($this->dryRun) {
             $this->logger->notice('dry run: Not writing data to file');
