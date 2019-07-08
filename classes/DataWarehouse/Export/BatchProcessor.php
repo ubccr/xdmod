@@ -97,7 +97,7 @@ class BatchProcessor extends Loggable
      */
     private function processSubmittedRequest(array $request)
     {
-        $this->logger->debug([
+        $this->logger->info([
             'message' => 'Processing request',
             'batch_export_request.id' => $request['id']
         ]);
@@ -162,7 +162,7 @@ class BatchProcessor extends Loggable
      */
     private function processExpiringRequest(array $request)
     {
-        $this->logger->debug([
+        $this->logger->info([
             'message' => 'Expiring request',
             'batch_export_request.id' => $request['id']
         ]);
@@ -397,7 +397,10 @@ class BatchProcessor extends Loggable
             return;
         }
 
-        $this->logger->info('Sending failure email');
+        $this->logger->info([
+            'message' => 'Sending failure email',
+            'batch_export_request.id' => $request['id']
+        ]);
 
         MailWrapper::sendTemplate(
             'batch_export_failure_admin_notice',
