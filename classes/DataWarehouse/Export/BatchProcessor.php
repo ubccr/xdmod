@@ -131,13 +131,7 @@ class BatchProcessor extends Loggable
                 'message' => 'Failed to export data: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
-            $failureReason = '...';
-            $this->sendExportFailureEmail(
-                $user,
-                $request,
-                $failureReason,
-                $e
-            );
+            $this->sendExportFailureEmail($user, $request, $e);
         }
     }
 
@@ -383,13 +377,11 @@ class BatchProcessor extends Loggable
      *
      * @param \XDUser $user The user that created the request.
      * @param array $request Export request data.
-     * @param string $failureReason Friendly text explaining failure.
      * @param \Exception $e The exception that caused the failure.
      */
     private function sendExportFailureEmail(
         XDUser $user,
         array $request,
-        $failureReason,
         Exception $e
     ) {
         if ($this->dryRun) {
@@ -402,6 +394,12 @@ class BatchProcessor extends Loggable
             'batch_export_request.id' => $request['id']
         ]);
 
+        $message = $e->getMessage();
+        $stackTrace = $e->getTraceAsString();
+        while ($e = $e->getPrevious()) {
+            $stackTrace .= "\n\n" . $e->getTraceAsString();
+        }
+
         MailWrapper::sendTemplate(
             'batch_export_failure_admin_notice',
             [
@@ -411,9 +409,8 @@ class BatchProcessor extends Loggable
                 'user_first_name' => $user->getFirstName(),
                 'user_last_name' => $user->getLastName(),
                 'current_date' => date('Y-m-d'),
-                'failure_reason' => $failureReason,
-                'failure_exception' => $e->getMessage(),
-                'failure_stack_trace' => $e->getTraceAsString()
+                'failure_exception' => $message,
+                'failure_stack_trace' => $stackTrace
             ]
         );
 
@@ -425,7 +422,7 @@ class BatchProcessor extends Loggable
                 'first_name' => $user->getFirstName(),
                 'last_name' => $user->getLastName(),
                 'current_date' => date('Y-m-d'),
-                'failure_reason' => $failureReason,
+                'failure_reason' => $message,
                 'maintainer_signature' => MailWrapper::getMaintainerSignature()
             ]
         );
