@@ -50,7 +50,7 @@ class BatchProcessTest extends BaseTest
 
     /**
      */
-    private function getEmails()
+    private static function getEmails()
     {
         // TODO
         return [];
@@ -58,7 +58,7 @@ class BatchProcessTest extends BaseTest
 
     /**
      */
-    private function getExportFiles()
+    private static function getExportFiles()
     {
         // TODO
         return [];
@@ -72,23 +72,24 @@ class BatchProcessTest extends BaseTest
         $batchProcessor = new BatchProcessor();
         $batchProcessor->setDryRun(true);
 
-        $emails = $this->getEmails();
-        $files = $this->getExportFiles();
-        $submittedRequests = $this->queryHandler->listSubmittedRecords();
-        $expiringRequests = $this->queryHandler->listExpiringRecords();
+        // Capture state before processing requests.
+        $emails = self::getEmails();
+        $files = self::getExportFiles();
+        $submittedRequests = self::$queryHandler->listSubmittedRecords();
+        $expiringRequests = self::$queryHandler->listExpiringRecords();
 
         $batchProcessor->processRequests();
 
-        $this->assertEquals($emails, $this->getEmails(), 'No new emails');
-        $this->assertEquals($files, $this->getFiles(), 'No new export files');
+        $this->assertEquals($emails, self::getEmails(), 'No new emails');
+        $this->assertEquals($files, self::getFiles(), 'No new export files');
         $this->assertEquals(
             $submittedRequests,
-            $this->queryHandler->listSubmittedRecords(),
+            self::$queryHandler->listSubmittedRecords(),
             'No submitted requests changed'
         );
         $this->assertEquals(
             $expiringRequests,
-            $this->queryHandler->listExpiringRecords(),
+            self::$queryHandler->listExpiringRecords(),
             'No expiring requests changed'
         );
 
