@@ -28,7 +28,7 @@ class BatchProcessTest extends BaseTest
      * The file containing email data.
      * @var string
      */
-    private static $mailSpool = '/var/mail/root';
+    private static $mailbox = '/var/mail/root';
 
     /**
      * The directory containing batch export zip files.
@@ -49,19 +49,85 @@ class BatchProcessTest extends BaseTest
     }
 
     /**
+     * Get emails in root mailbox.
+     *
+     * @return array[]
      */
     private static function getEmails()
     {
-        // TODO
-        return [];
+        if (!file_exists(self::$mailbox)) {
+            return [];
+        }
+
+        $emails = [];
+        $currentEmail = [];
+        $body = '';
+        $lines = file(self::$mailbox);
+        while (count($lines) > 0) {
+            $line = array_shift($lines);
+            // Check for a new message.
+            if (substr($line, 0, 5) === 'From ') {
+                // Store previous email.
+                if (!empty($currentEmail)) {
+                    // Remove trailing newline.
+                    $body = substr($body, 0, -1);
+                    // Undo "From " escaping.
+                    $body = preg_replace("/\n>([>]*From )/", "\n$1", $body);
+                    $currentEmail['body'] = $body;
+                    $emails[] = $currentEmail;
+                }
+                $currentEmail = [];
+                $headers = [];
+                // Parse headers.
+                while (count($lines) > 0 && $lines[0] != "\n") {
+                    $line = substr(array_shift($lines), 0, -1);
+                    list($key, $value) = explode(': ', $line, 2);
+                    while ($lines[0][0] === "\t") {
+                        $value .= ' ' . substr(substr(array_shift($lines), 0, -1), 1);
+                    }
+                    $headers[$key] = $value;
+                }
+                $currentEmail['headers'] = $headers;
+                $body = '';
+                // Skip blank line before body.
+                array_shift($lines);
+            } else {
+                $body .= $line;
+            }
+        }
+        // Store last email.
+        if (!empty($currentEmail)) {
+            // Remove trailing newline.
+            $body = substr($body, 0, -1);
+            // Undo "From " escaping.
+            $body = preg_replace("/\n>([>]*From )/", "\n$1", $body);
+            $currentEmail['body'] = $body;
+            $emails[] = $currentEmail;
+        }
+        return $emails;
     }
 
     /**
+     * Get information about all the files in the export directory.
+     *
+     * @return array[]
      */
     private static function getExportFiles()
     {
-        // TODO
-        return [];
+        $dir = self::$exportDirectory;
+
+        return array_map(
+            function ($file) use ($dir) {
+                return stat($dir . DIRECTORY_SEPARATOR . $file);
+            },
+            // Filter out files starting with ".".
+            array_filter(
+                scandir($dir),
+                function ($file) {
+                    return $file[0] !== '.';
+                }
+            )
+        );
     }
 
     /**
