@@ -27,6 +27,8 @@ from resource managers in high-performance computing environments.
 XDMoD presents resource utilization over set time periods and provides
 detailed interactive charts, graphs, and tables.
 
+%define xdmod_export_dir %{_var}/spool/%{name}/export
+
 %prep
 %setup -q -n %{name}-%{version}__PRERELEASE__
 
@@ -49,6 +51,7 @@ DESTDIR=$RPM_BUILD_ROOT ./install \
     --httpdconfdir=%{_sysconfdir}/httpd/conf.d \
     --logrotatedconfdir=%{_sysconfdir}/logrotate.d \
     --crondconfdir=%{_sysconfdir}/cron.d
+mkdir -p $RPM_BUILD_ROOT%{xdmod_export_dir}
 
 %post
 # Create log files that need to be writable by both Apache and Open XDMoD scripts.
@@ -87,9 +90,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
+%dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
+
 %changelog
 * Sun Jul 28 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu>
     - Remove `node_modules` management from `%pre`
+    - Add data warehouse batch export directory `/var/spool/xdmod/export`
 * Mon May 06 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.2-1.0
     - Update `%pre` with steps for `node_modules` on 8.1.2 release
 * Thu May 02 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.1-1.0
