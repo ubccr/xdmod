@@ -55,6 +55,8 @@ EOT
         );
 
         $this->writePortalSettingsFile(array(
+            'data_warehouse_export_export_directory' => '/var/spool/xdmod/export',
+            'data_warehouse_export_retention_duration_days' => 30,
             'features_novice_user' => $novice_user
         ));
     }
