@@ -151,7 +151,7 @@ class BatchProcessor extends Loggable
             $dataSet = $this->getDataSet($request, $user);
             $dataFile = tempnam(sys_get_temp_dir(), 'batch-export-');
             $fileWriter = $this->fileWriterFactory->getFileWriter(
-                ($this->dryRun ? 'null' : $request['format']),
+                ($this->dryRun ? 'null' : $request['export_file_format']),
                 $dataFile
             );
             $this->writeDataSetToFile($dataSet, $fileWriter);
