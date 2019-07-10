@@ -144,6 +144,7 @@ class BatchProcessor extends Loggable
                 'message' => 'Failed to export data: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
+            $this->queryHandler->submittedToFailed($request['id']);
             $this->sendExportFailureEmail($user, $request, $e);
         }
     }
