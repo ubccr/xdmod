@@ -24,7 +24,7 @@ class FileWriterFactory extends Loggable
             'file' => $file
         ]);
 
-        switch ($format) {
+        switch (strtolower($format)) {
             case 'csv':
                 return new CsvFileWriter($file, $this->logger);
                 break;
