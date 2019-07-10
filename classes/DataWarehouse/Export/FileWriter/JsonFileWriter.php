@@ -79,6 +79,6 @@ class JsonFileWriter extends aFileWriter
             );
         }
 
-        $recordWritten = true;
+        $this->recordWritten = true;
     }
 }
