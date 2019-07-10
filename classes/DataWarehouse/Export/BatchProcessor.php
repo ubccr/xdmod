@@ -241,6 +241,10 @@ class BatchProcessor extends Loggable
 
             return $dataSet;
         } catch (Exception $e) {
+            $this->logger->err([
+                'message' => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString()
+            ]);
             throw new Exception('Failed to execute batch export query', 0, $e);
         }
     }
@@ -284,6 +288,10 @@ class BatchProcessor extends Loggable
 
             $fileWriter->close();
         } catch (Exception $e) {
+            $this->logger->err([
+                'message' => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString()
+            ]);
             throw new Exception('Failed to write data set to file', 0, $e);
         }
     }
@@ -313,7 +321,7 @@ class BatchProcessor extends Loggable
             $zipOpenCode = $zip->open($zipFile, ZipArchive::CREATE);
 
             if ($zipOpenCode !== true) {
-                $this->logAndThrowException(sprintf(
+                throw new Exception(sprintf(
                     'Failed to open zip file "%s", error code "%s"',
                     $zipFile,
                     $zipOpenCode
@@ -321,7 +329,7 @@ class BatchProcessor extends Loggable
             }
 
             if ($zip->addFile($dataFile, basename($dataFile)) === false) {
-                $this->logAndThrowException(sprintf(
+                throw new Exception(sprintf(
                     'Failed to add file "%s" to zip file "%s"',
                     $dataFile,
                     $zipFile
@@ -330,6 +338,10 @@ class BatchProcessor extends Loggable
 
             $zip->close();
         } catch (Exception $e) {
+            $this->logger->err([
+                'message' => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString()
+            ]);
             throw new Exception('Failed to create zip file', 0, $e);
         }
     }
