@@ -183,7 +183,7 @@ class BatchProcessor extends Loggable
      */
     private function processExpiringRequests()
     {
-        $this->logger->info('Processing expired requests');
+        $this->logger->info('Processing expiring requests');
         foreach ($this->queryHandler->listExpiringRecords() as $request) {
             $this->processExpiringRequest($request);
         }
