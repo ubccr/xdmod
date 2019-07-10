@@ -3,7 +3,7 @@
 namespace DataWarehouse\Export\FileWriter;
 
 use CCR\Loggable;
-use CCR\Log;
+use Log;
 
 /**
  * Abstract class for writing data warehouse batch export data.
@@ -24,7 +24,7 @@ abstract class aFileWriter extends Loggable implements iFileWriter
      * Open the file for writing.
      *
      * @param string $file
-     * @param \CCR\Log $logger
+     * @param \Log $logger
      */
     public function __construct($file, Log $logger)
     {

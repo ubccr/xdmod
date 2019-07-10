@@ -3,7 +3,7 @@
 namespace DataWarehouse\Export\FileWriter;
 
 use CCR\Json;
-use CCR\Log;
+use Log;
 
 /**
  * Write data warehouse batch export to file in JSON format.
@@ -26,7 +26,7 @@ class JsonFileWriter extends aFileWriter
      * Open the file and write the opening bracket.
      *
      * @param string $file
-     * @param \CCR\Log $logger
+     * @param \Log $logger
      */
     public function __construct($file, Log $logger)
     {

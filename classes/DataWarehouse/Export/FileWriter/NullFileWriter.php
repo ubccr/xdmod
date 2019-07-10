@@ -2,7 +2,7 @@
 
 namespace DataWarehouse\Export\FileWriter;
 
-use CCR\Log;
+use Log;
 
 /**
  * File writer that doesn't actually write to any files.
@@ -15,7 +15,7 @@ class NullFileWriter extends aFileWriter
      * Don't open the file or do anything.
      *
      * @param string $file
-     * @param \CCR\Log $logger
+     * @param \Log $logger
      */
     public function __construct($file, Log $logger)
     {

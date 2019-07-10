@@ -12,6 +12,7 @@ use DataWarehouse\Data\RawDataset;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use DataWarehouse\Export\FileWriter\iFileWriter;
 use Exception;
+use Log;
 use XDUser;
 use ZipArchive;
 use xd_utilities;
@@ -56,9 +57,10 @@ class BatchProcessor extends Loggable
     /**
      * Construct a new batch processor.
      */
-    public function __construct()
+    public function __construct(Log $logger)
     {
-        parent::__construct();
+        $this->fileWriterFactory = new FileWriterFactory($this->logger);
+        parent::__construct($logger);
         $this->dbh = DB::factory('database');
         $this->queryHandler = new QueryHandler();
         $this->realmManager = new RealmManager();
@@ -66,7 +68,20 @@ class BatchProcessor extends Loggable
             'data_warehouse_export',
             'export_directory'
         );
-        $this->fileWriterFactory = new FileWriterFactory($this->logger);
+    }
+
+    /**
+     * Set the logger for this object.
+     *
+     * @see \CCR\Loggable::setLogger()
+     * @param \Log $logger A logger class or NULL to use the null logger
+     * @return \DataWarehouse\Export\BatchProcessor This object for method chaining.
+     */
+    public function setLogger(Log $logger = null)
+    {
+        parent::setLogger($logger);
+        $this->fileWriterFactory->setLogger($logger);
+        return $this;
     }
 
     /**
