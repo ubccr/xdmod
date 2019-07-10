@@ -45,16 +45,16 @@ class QueryHandler
     private $whereSubmitted = "WHERE export_succeeded IS NULL AND export_created_datetime IS NULL AND export_expired = 0 ";
 
     /**
-     * Definition of Expired state.
-     * @var string
-     */
-    private $whereExpired = "WHERE export_succeeded = TRUE AND export_created_datetime IS NOT NULL AND export_expired = 1 ";
-
-    /**
      * Definition of Available state.
      * @var string
      */
     private $whereAvailable = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 0 ";
+
+    /**
+     * Definition of Expired state.
+     * @var string
+     */
+    private $whereExpired = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 1 ";
 
     /**
      * Definition of Failed state.
@@ -118,13 +118,13 @@ class QueryHandler
                 export_succeeded,
                 export_created_datetime,
                 downloaded_datetime,
-                export_expired,
                 export_expires_datetime,
                 export_expired,
                 last_modified
             FROM batch_export_requests
             WHERE id = :id';
-        return $this->dbh->query($sql, ['id' => $id]);
+        list($record) = $this->dbh->query($sql, ['id' => $id]);
+        return $record;
     }
 
     /**
@@ -222,7 +222,9 @@ class QueryHandler
                 export_created_datetime,
                 export_expires_datetime
             FROM batch_export_requests
-            ' . $this->whereAvailable . ' AND export_expires_datetime > NOW()
+            ' . $this->whereAvailable . '
+                AND export_expires_datetime IS NOT NULL
+                AND export_expires_datetime < NOW()
             ORDER BY requested_datetime, id';
         return $this->dbh->query($sql);
     }
