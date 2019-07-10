@@ -354,6 +354,9 @@ class BatchProcessor extends Loggable
 
         $this->logger->info('Sending success email');
 
+        // Remove time from expiration date time.
+        list($expirationDate) = explode(' ', $request['export_expires_datetime']);
+
         MailWrapper::sendTemplate(
             'batch_export_success',
             [
@@ -362,7 +365,7 @@ class BatchProcessor extends Loggable
                 'first_name' => $user->getFirstName(),
                 'last_name' => $user->getLastName(),
                 'current_date' => date('Y-m-d'),
-                'expiration_date' => $request[''], // TODO
+                'expiration_date' => $expirationDate,
                 'download_url' => '', // TODO
                 'maintainer_signature' => MailWrapper::getMaintainerSignature()
             ]
