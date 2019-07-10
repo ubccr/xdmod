@@ -82,8 +82,8 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 throw new \Exception('invalid "end_date" query parameter');
             }
 
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_date_ts'), ">=", $startDateTs));
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_date_ts'), "<=", $endDateTs));
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), ">=", $startDateTs));
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), "<=", $endDateTs));
         } else {
             throw new \Exception('invalid query parameters');
         }
