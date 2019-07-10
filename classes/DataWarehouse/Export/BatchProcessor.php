@@ -276,13 +276,7 @@ class BatchProcessor extends Loggable
             $fileWriter->writeRecord($header);
 
             foreach ($dataSet->getResults() as $result) {
-                $row = array_map(
-                    function ($datum) {
-                        return $datum['value'];
-                    },
-                    $result
-                );
-                $fileWriter->writeRecord($row);
+                $fileWriter->writeRecord(array_values($result));
             }
 
             $fileWriter->close();
