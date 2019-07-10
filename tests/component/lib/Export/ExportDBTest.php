@@ -104,21 +104,18 @@ class ExportDBTest extends BaseTest
 
         // Add another new record and verify
         $requestId2 = $query->createRequestRecord($userId, 'Accounts', '2016-12-01', '2017-01-01', 'JSON');
-        $this->assertNotNull($requestId2 );
+        $this->assertNotNull($requestId2);
 
         // Add another new record and verify
         $requestId3 = $query->createRequestRecord($userId, 'Jobs', '2014-01-05', '2014-01-26', 'CSV');
-        $this->assertNotNull($requestId3 );
+        $this->assertNotNull($requestId3);
 
         // Determine final count
         $finalCount = $query->countSubmittedRecords();
         $finalCountTest = $this->countSubmittedRecords();
 
-        // Verify final Submitted count. Should have added 3 records.
-        $this->assertTrue($finalCount-$initialCount==3);
-
-        // Verify test and class methods return same Submitted counts
-        $this->assertEquals($finalCount, $finalCountTest);
+        $this->assertEquals(3, $finalCount - $initialCount, 'Verify final Submitted count. Should have added 3 records');
+        $this->assertEquals($finalCount, $finalCountTest, 'Verify test and class methods return same Submitted counts');
 
         // debug
         if (self::$debug)
@@ -137,7 +134,7 @@ class ExportDBTest extends BaseTest
 
         $this->assertEquals($submittedCount, $submittedCountTest);
         $this->assertNotNull($submittedCount);
-        $this->assertTrue($submittedCount>=0);
+        $this->assertGreaterThanOrEqual(0, $submittedCount);
 
         // debug
         if (self::$debug)
@@ -165,11 +162,8 @@ class ExportDBTest extends BaseTest
         // List all records in Submitted state:
         $actual = $query->listSubmittedRecords();
 
-        // assert that the expected fields are returned from the query
-        $this->assertEquals($expectedKeys, array_keys($actual[0]));
-
-        // assert that the expected number of records is returned from the query
-        $this->assertEquals($this->countSubmittedRecords(), count($actual));
+        $this->assertEquals($expectedKeys, array_keys($actual[0]), 'the expected fields are returned from the query');
+        $this->assertEquals($this->countSubmittedRecords(), count($actual), 'the expected number of records is returned from the query');
     }
 
     public function testSubmittedToFailed()
@@ -188,13 +182,9 @@ class ExportDBTest extends BaseTest
         $submittedCountFinal = $this->countSubmittedRecords();
         $failedCountFinal = $this->countFailedRecords();
 
-        // Assert that:
-        // Exactly one record was transitioned
-        $this->assertTrue($result==1);
-
-        // There is one fewer Submitted record, one more Failed.
-        $this->assertTrue($submittedCountFinal + 1 == $submittedCountInitial);
-        $this->assertTrue($failedCountFinal - 1 == $failedCountInitial);
+        $this->assertEquals(1, $result, 'Exactly one record was transitioned');
+        $this->assertEquals($submittedCountInitial - 1, $submittedCountFinal, 'There is one fewer Submitted record');
+        $this->assertEquals($failedCountInitial + 1, $failedCountFinal, 'There is one more Failed record');
 
         // debug
         if (self::$debug)
@@ -219,13 +209,9 @@ class ExportDBTest extends BaseTest
         $submittedCountFinal = $this->countSubmittedRecords();
         $expiredCountFinal = $this->countExpiredRecords();
 
-        // Assert that:
-        // Exactly zero records transitioned
-        $this->assertTrue($result==0);
-
-        // No change in Submitted and Expired state counts occurred
-        $this->assertTrue($submittedCountFinal == $submittedCountInitial);
-        $this->assertTrue($expiredCountFinal == $expiredCountInitial);
+        $this->assertEquals(0, $result, 'Exactly zero records transitioned');
+        $this->assertEquals($submittedCountInitial, $submittedCountFinal, 'No change in Submitted counts occurred');
+        $this->assertEquals($expiredCountInitial, $expiredCountFinal, 'No change in Expired state counts occurred');
 
         // debug
         if (self::$debug)
@@ -250,13 +236,9 @@ class ExportDBTest extends BaseTest
         $submittedCountFinal = $this->countSubmittedRecords();
         $availCountFinal = $this->countAvailableRecords();
 
-        // Assert that:
-        // Exactly one record was transitioned
-        $this->assertTrue($result==1);
-
-        // There is one fewer Submitted record, one more Available.
-        $this->assertTrue($submittedCountFinal + 1 == $submittedCountInitial);
-        $this->assertTrue($availCountFinal - 1 == $availCountInitial);
+        $this->assertEquals(1, $result, 'Exactly one record was transitioned');
+        $this->assertEquals($submittedCountInitial - 1, $submittedCountFinal, 'There is one fewer Submitted record');
+        $this->assertEquals($availCountInitial + 1, $availCountFinal, 'There is one more Available record');
 
         // debug
         if (self::$debug)
@@ -281,13 +263,9 @@ class ExportDBTest extends BaseTest
         $availCountFinal = $this->countAvailableRecords();
         $failCountFinal = $this->countFailedRecords();
 
-        // Assert that:
-        // Exactly zero records were transitioned
-        $this->assertTrue($result==0);
-
-        // No change in Available and Failed state counts occurred
-        $this->assertTrue($availCountFinal == $availCountInitial);
-        $this->assertTrue($failCountFinal == $failCountInitial);
+        $this->assertEquals(0, $result, 'Exactly zero records were transitioned');
+        $this->assertEquals($availCountInitial, $availCountFinal, 'No change in Available state counts occurred');
+        $this->assertEquals($failCountInitial, $failCountFinal, 'No change in Failed state counts occurred');
 
         // debug
         if (self::$debug)
@@ -312,13 +290,9 @@ class ExportDBTest extends BaseTest
         $availCountFinal = $this->countAvailableRecords();
         $expiredCountFinal = $this->countExpiredRecords();
 
-        // Assert that:
-        // Exactly one record was transitioned
-        $this->assertTrue($result==1);
-
-        // There is one fewer Available record, one more Expired.
-        $this->assertTrue($availCountFinal + 1 == $availCountInitial);
-        $this->assertTrue($expiredCountFinal - 1 == $expiredCountInitial);
+        $this->assertEquals(1, $result, 'Exactly one record was transitioned');
+        $this->assertEquals($availCountInitial - 1, $availCountFinal, 'There is one fewer Available record');
+        $this->assertEquals($expiredCountInitial + 1, $expiredCountFinal, 'There is one more Expired record');
 
         // debug
         if (self::$debug)
@@ -343,13 +317,9 @@ class ExportDBTest extends BaseTest
         $expiredCountFinal = $this->countExpiredRecords();
         $failCountFinal = $this->countFailedRecords();
 
-        // Assert that:
-        // Exactly zero records were transitioned
-        $this->assertTrue($result==0);
-
-        // No change in Expired and Failed state counts occurred
-        $this->assertTrue($expiredCountFinal == $expiredCountInitial);
-        $this->assertTrue($failCountFinal == $failCountInitial);
+        $this->assertEquals(0, $result, 'Exactly zero records were transitioned');
+        $this->assertEquals($expiredCountInitial, $expiredCountFinal, 'No change in Expired state counts occurred');
+        $this->assertEquals($failCountInitial, $failCountFinal, 'No change in Failed state counts occurred');
 
         // debug
         if (self::$debug)
@@ -374,13 +344,9 @@ class ExportDBTest extends BaseTest
         $expiredCountFinal = $this->countExpiredRecords();
         $failCountFinal = $this->countFailedRecords();
 
-        // Assert that:
-        // Exactly zero records transitioned
-        $this->assertTrue($result==0);
-
-        // No change in Expired and Failed state counts occurred
-        $this->assertTrue($expiredCountFinal == $expiredCountInitial);
-        $this->assertTrue($failCountFinal == $failCountInitial);
+        $this->assertEquals(0, $result, 'Exactly zero records transitioned');
+        $this->assertEquals($expiredCountInitial, $expiredCountFinal, 'No change in Expired state counts occurred');
+        $this->assertEquals($failCountInitial, $failCountFinal, 'No change in Failed state counts occurred');
 
         // debug
         if (self::$debug)
@@ -405,13 +371,9 @@ class ExportDBTest extends BaseTest
         $expiredCountFinal = $this->countExpiredRecords();
         $availCountFinal = $this->countAvailableRecords();
 
-        // Assert that:
-        // Exactly zero records transitioned
-        $this->assertTrue($result==0);
-
-        // No change in Expired and Available state counts occurred
-        $this->assertTrue($expiredCountFinal == $expiredCountInitial);
-        $this->assertTrue($availCountFinal == $availCountInitial);
+        $this->assertEquals(0, $result, 'Exactly zero records transitioned');
+        $this->assertEquals($expiredCountInitial, $expiredCountFinal, 'No change in Expired state counts occurred');
+        $this->assertEquals($availCountInitial, $availCountFinal, 'No change in Available state counts occurred');
 
         // debug
         if (self::$debug)
@@ -436,13 +398,9 @@ class ExportDBTest extends BaseTest
         $availCountFinal = $this->countAvailableRecords();
         $failCountFinal = $this->countFailedRecords();
 
-        // Assert that:
-        // Exactly zero records transitioned
-        $this->assertTrue($result==0);
-
-        // No change in Available and Failed state counts occurred
-        $this->assertTrue($availCountFinal == $availCountInitial);
-        $this->assertTrue($failCountFinal == $failCountInitial);
+        $this->assertEquals(0, $result, 'Exactly zero records transitioned');
+        $this->assertEquals($availCountInitial, $availCountFinal, 'No change in Available state counts occurred');
+        $this->assertEquals($failCountInitial, $failCountFinal, 'No change in Failed state counts occurred');
 
         // debug
         if (self::$debug)
@@ -474,11 +432,8 @@ class ExportDBTest extends BaseTest
         // Requests via this user have been created as part of these tests
         $actual = $query->listRequestsForUser($userId);
 
-        // assert that the expected fields are returned from the query
-        $this->assertEquals($expectedKeys, array_keys($actual[0]));
-
-        // assert that the expected number of records is returned from the query
-        $this->assertEquals($this->countUserRequests(), count($actual));
+        $this->assertEquals($expectedKeys, array_keys($actual[0]), 'the expected fields are returned from the query');
+        $this->assertEquals($this->countUserRequests(), count($actual), 'the expected number of records is returned from the query');
     }
 
     // Verify field list returned from listUserRequestsByState()
@@ -505,11 +460,8 @@ class ExportDBTest extends BaseTest
         // Requests via this user have been created as part of these tests
         $actual = $query->listUserRequestsByState($userId);
 
-        // assert that the expected fields are returned from the query
-        $this->assertEquals($expectedKeys, array_keys($actual[0]));
-
-        // assert that the expected number of records is returned from the query
-        $this->assertEquals($this->countUserRequests(), count($actual));
+        $this->assertEquals($expectedKeys, array_keys($actual[0]), 'the expected fields are returned from the query');
+        $this->assertEquals($this->countUserRequests(), count($actual), 'the expected number of records is returned from the query');
     }
 
     // Verify that user that did not create request cannot delete it
@@ -528,8 +480,7 @@ class ExportDBTest extends BaseTest
             // try to delete the request:
             $actual = $query->deleteRequest($maxSubmitted, $wrongUserId);
 
-            // assert that the delete attempt affected 0 rows
-            $this->assertEquals($actual, 0);
+            $this->assertEquals(0, $actual, 'the delete attempt affected 0 rows');
 
             if (self::$debug)
             {
@@ -550,8 +501,7 @@ class ExportDBTest extends BaseTest
         // try to delete the request:
         $actual = $query->deleteRequest($maxSubmitted, $userId);
 
-        // assert that the delete affected 1 row
-        $this->assertEquals($actual, 1);
+        $this->assertEquals(1, $actual, 'the delete affected 1 row');
 
         if (self::$debug)
         {
