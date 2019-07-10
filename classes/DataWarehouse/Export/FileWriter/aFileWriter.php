@@ -53,8 +53,12 @@ abstract class aFileWriter extends Loggable implements iFileWriter
     }
 
     /**
+     * Return string representation of class instance.
      *
-     * @param
+     * @returns string
      */
-    //abstract public function writeRecord(array $record);
+    public function __toString()
+    {
+        return sprintf('%s(file: "%s")', get_class($this), $this->file);
+    }
 }
