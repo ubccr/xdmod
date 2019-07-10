@@ -277,30 +277,30 @@ class BatchProcessor extends Loggable
             'zip_file' => $zipFile
         ]);
 
-        $zip = new ZipArchive();
-        $zipOpenCode = $zip->open($zipFile, ZipArchive::CREATE);
+        try {
+            $zip = new ZipArchive();
+            $zipOpenCode = $zip->open($zipFile, ZipArchive::CREATE);
 
-        if ($zipOpenCode !== true) {
-            $this->logAndThrowException(
-                sprintf(
-                    'Failed to create zip file "%s", error code "%s"',
+            if ($zipOpenCode !== true) {
+                $this->logAndThrowException(sprintf(
+                    'Failed to open zip file "%s", error code "%s"',
                     $zipFile,
                     $zipOpenCode
-                )
-            );
-        }
+                ));
+            }
 
-        if ($zip->addFile($dataFile, basename($dataFile)) === false) {
-            $this->logAndThrowException(
-                sprintf(
+            if ($zip->addFile($dataFile, basename($dataFile)) === false) {
+                $this->logAndThrowException(sprintf(
                     'Failed to add file "%s" to zip file "%s"',
                     $dataFile,
                     $zipFile
-                )
-            );
-        }
+                ));
+            }
 
-        $zip->close();
+            $zip->close();
+        } catch (Exception $e) {
+            throw new Exception('Failed to create zip file', 0, $e);
+        }
     }
 
     /**
