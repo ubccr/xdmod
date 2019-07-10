@@ -37,6 +37,12 @@ class BatchProcessor extends Loggable
     private $queryHandler;
 
     /**
+     * Data warehouse export realm manager.
+     * @var \DataWarehouse\Export\RealmManager
+     */
+    private $realmManager;
+
+    /**
      * Path of directory containing export zip files.
      * @var string
      */
@@ -55,6 +61,7 @@ class BatchProcessor extends Loggable
         parent::__construct();
         $this->dbh = DB::factory('database');
         $this->queryHandler = new QueryHandler();
+        $this->realmManager = new RealmManager();
         $this->exportDirectory = xd_utilities\getConfiguration(
             'data_warehouse_export',
             'export_directory'
