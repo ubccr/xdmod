@@ -1,0 +1,6 @@
+[
+  ["resource_code", "domain_name", "submission_venue_name"],
+  ["openstack",     "Default",     "openstack-api"],
+  ["openstack",     "adjunct",     "openstack-api"],
+  ["openstack",     "tacc",        "atmosphere"]
+]

@@ -1,0 +1,9 @@
+title
+"Average Wall Hours per Session: by Domain"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Domain,"Average Wall Hours per Session"
+---------

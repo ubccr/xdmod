@@ -1,0 +1,29 @@
+{
+  "#": "Assets are specific to a resource and include volumes, ip addresses, etc.",
+
+  "table_definition": {
+    "name": "domain_submission_venues_staging",
+    "engine": "MyISAM",
+    "comment": "Which domains are currently being tracked by the Cloud realm",
+    "columns": [
+      {
+        "name": "resource_code",
+        "type": "varchar(64)",
+        "nullable": false,
+        "comment": "FK to modw.resourcefact.code"
+      },
+      {
+        "name": "domain_name",
+        "type": "varchar(64)",
+        "nullable": false,
+        "comment": "FK to modw_cloud.domains.name"
+      },
+      {
+        "name": "submission_venue_name",
+        "type": "varchar(64)",
+        "nullable": false,
+        "comment": "FK to modw_cloud.submission_venue.submission_venue"
+      }
+    ]
+  }
+}

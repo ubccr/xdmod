@@ -1,0 +1,19 @@
+{
+  "table_definition": {
+    "$ref": "${table_definition_dir}/cloud_common/domains.json#/table_definition"
+  },
+  "source_query": {
+    "records": {
+      "resource_id": "ds.resource_id",
+      "domain_id": "ds.domain_id",
+      "name": "ds.name"
+    },
+    "joins": [
+      {
+        "name": "domains_staging",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "ds"
+      }
+    ]
+  }
+}

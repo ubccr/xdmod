@@ -1,0 +1,55 @@
+{
+  "#": "Domains are specific to a resource",
+  "#": "Populated from the `domains_staging` table. `domains_staging` manages",
+  "#": "the `resource_id` + `domain_id` combination auto-increment. This table",
+  "#": "manages the overall row unique column `id`.",
+  "table_definition": {
+    "name": "domains",
+    "engine": "MyISAM",
+    "comment": "Which domains are currently being tracked by the Cloud realm",
+    "columns": [
+      {
+        "name": "id",
+        "type": "int(11)",
+        "nullable": false,
+        "extra": "auto_increment",
+        "comment": "Column that will uniquely identify each row"
+      },
+      {
+        "name": "resource_id",
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "Resource to which this domain belongs"
+      },
+      {
+        "name": "domain_id",
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "Unknown = 1"
+      },
+      {
+        "name": "name",
+        "type": "varchar(64)",
+        "nullable": false,
+        "comment": "The human readable internal name, as received from the resource."
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "id"
+        ],
+        "is_unique": true
+      },
+      {
+        "name": "idx_resource_id_domain_id",
+        "columns": [
+          "resource_id",
+          "domain_id"
+        ],
+        "is_unique": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "table_definition": {
+    "$ref": "${table_definition_dir}/cloud_openstack/domain_submission_venue.json#/table_definition"
+  },
+  "source_query": {
+    "records": {
+      "resource_id": "rf.id",
+      "domain_id": "COALESCE(d.id, -1)",
+      "submission_venue_id": "sv.submission_venue_id"
+    },
+    "joins": [
+      {
+        "name": "domain_submission_venues_staging",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "src"
+      },
+      {
+        "name": "resourcefact",
+        "schema": "${UTILITY_SCHEMA}",
+        "alias": "rf",
+        "on": "rf.code = src.resource_code"
+      },
+      {
+        "name": "domains",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "d",
+        "on": "d.name = src.domain_name",
+        "type": "LEFT"
+      },
+      {
+        "name": "submission_venue",
+        "schema": "${UTILITY_SCHEMA}",
+        "alias": "sv",
+        "on": "sv.submission_venue = src.submission_venue_name"
+      }
+    ]
+  }
+}

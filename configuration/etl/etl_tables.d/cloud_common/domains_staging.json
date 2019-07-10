@@ -1,0 +1,48 @@
+{
+  "#": "Assets are specific to a resource and include volumes, ip addresses, etc.",
+
+  "table_definition": {
+    "name": "domains_staging",
+    "engine": "MyISAM",
+    "comment": "Which domains are currently being tracked by the Cloud realm",
+    "columns": [
+      {
+        "name": "resource_id",
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "Resource to which this domain belongs"
+      },
+      {
+        "name": "domain_id",
+        "type": "int(11)",
+        "nullable": false,
+        "extra": "auto_increment",
+        "comment": "Unknown = 1"
+      },
+      {
+        "name": "name",
+        "type": "varchar(64)",
+        "nullable": false,
+        "comment": "The human readable internal name, as received from the resource."
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "resource_id",
+          "name"
+        ],
+        "is_unique": true
+      },
+      {
+        "name": "autoincrement_key",
+        "columns": [
+          "resource_id",
+          "domain_id"
+        ],
+        "is_unique": true
+      }
+    ]
+  }
+}

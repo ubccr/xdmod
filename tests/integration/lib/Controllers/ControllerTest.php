@@ -306,9 +306,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testSabUserEnumTgUsers()
     {
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users')
-        );
+
 
         $this->helper->authenticateDashboard('mgr');
 
@@ -340,6 +338,15 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('success', $data['status'], "Expected the 'status' property to equal 'success'. Received: " . $data['status']);
         $this->assertEquals('success', $data['message'], "Expected the 'message' property to equal 'success'. Received: " . $data['message']);
         $this->assertCount(300, $data['users'], "Expected 300 users to be returned. Received: " . count($data['users']));
+
+        $expectedFilePath = $this->getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users');
+
+        if (!is_file($expectedFilePath)) {
+            file_put_contents($expectedFilePath, json_encode($data, JSON_PRETTY_PRINT)) . "\n";
+            $this->markTestSkipped();
+        } else {
+            $expected = JSON::loadFile($expectedFilePath);
+        }
 
         $expectedUsers = $expected['users'];
         $actualUsers = $data['users'];

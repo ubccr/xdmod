@@ -1,0 +1,75 @@
+{
+  "#": "Assets are specific to a resource and include volumes, ip addresses, etc.",
+
+  "table_definition": {
+    "name": "domain_submission_venues",
+    "engine": "MyISAM",
+    "comment": "Which domains are currently being tracked by the Cloud realm",
+    "columns": [
+      {
+        "name": "domain_submission_venue_id",
+        "type": "int(11)",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "domain_id",
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "FK to domains.id"
+      },
+      {
+        "name": "submission_venue_id",
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "FK to submission_venue.submission_venue_id"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "domain_submission_venue_id"
+        ],
+        "is_unique": true
+      },
+      {
+        "name": "idx_fk_domain_id",
+        "columns": [
+          "domain_id"
+        ],
+        "type": "BTREE"
+      },
+      {
+        "name": "idx_fk_submission_venue_id",
+        "columns": [
+          "submission_venue_id"
+        ],
+        "type": "BTREE"
+      }
+    ],
+    "foreign_key_constraints": [
+      {
+        "name": "fk_dsv_domain_id",
+        "columns": [
+          "domain_id"
+        ],
+        "referenced_table": "domains",
+        "referenced_columns": [
+          "id"
+        ],
+        "on_delete": "CASCADE"
+      },
+      {
+        "name": "fk_dsv_submission_venue_id",
+        "columns": [
+          "submission_venue_id"
+        ],
+        "referenced_table": "submission_venue",
+        "referenced_columns": [
+          "submission_venue_id"
+        ]
+      }
+    ]
+  }
+}

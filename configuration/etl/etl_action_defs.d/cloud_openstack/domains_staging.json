@@ -1,0 +1,21 @@
+{
+  "table_definition": {
+    "$ref": "${table_definition_dir}/cloud_common/domains_staging.json#/table_definition"
+  },
+  "source_query": {
+    "records": {
+      "resource_id": "DISTINCT raw.resource_id",
+      "name": "raw.domain"
+    },
+    "joins": [
+      {
+        "name": "openstack_raw_event",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "raw"
+      }
+    ],
+    "where": [
+      "raw.domain IS NOT NULL"
+    ]
+  }
+}
