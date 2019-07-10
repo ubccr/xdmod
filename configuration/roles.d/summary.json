@@ -1,0 +1,40 @@
+{
+  "+roles": {
+    "+cd": {
+      "summary_portlets": [
+        {
+          "name": "Summary Statistics",
+          "type": "SummaryStatisticsPortlet",
+          "region": "top",
+          "config": {
+            "timeframe": "Quarter to date"
+          }
+        }
+      ]
+    },
+    "+cs": {
+      "summary_portlets": [
+        {
+          "name": "Summary Statistics",
+          "type": "SummaryStatisticsPortlet",
+          "region": "top",
+          "config": {
+            "timeframe": "Month to date"
+          }
+        }
+      ]
+    },
+    "+pub": {
+      "summary_portlets": [
+        {
+          "name": "Summary Statistics",
+          "type": "SummaryStatisticsPortlet",
+          "region": "top",
+          "config": {
+            "timeframe": "Last month"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -235,6 +235,15 @@ cores per node on their resources.
         [14,   4097, 2147483647, "> 4k"]
     ]
 
+After changing this file it must be re-ingested and all job data must be
+re-aggregated.  If the job data are not re-aggregated the new labels will be
+displayed, but will not be accurate if the corresponding bucket has changed.
+
+```sh
+/usr/share/xdmod/tools/etl/etl_overseer.php -a xdmod.jobs-xdw-bootstrap.processorbuckets
+xdmod-ingestor --aggregate=job --last-modified-start-date 1970-01-01
+```
+
 ### roles.json
 
 Defines roles and the modules and statistics that each role grants
