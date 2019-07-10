@@ -222,12 +222,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException('Export directory is not configured');
         }
 
-        $file = sprintf(
-            '%s/%s.%s.zip',
-            $exportDir,
-            $id,
-            strtolower($request['export_file_format'])
-        );
+        $file = sprintf('%s/%s.zip', $exportDir, $id);
 
         if (!is_file($file)) {
             throw new NotFoundHttpException('Exported data not found');
