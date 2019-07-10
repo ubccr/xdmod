@@ -9,6 +9,8 @@ use CCR\DB;
 use CCR\Loggable;
 use CCR\MailWrapper;
 use DataWarehouse\Data\RawDataset;
+use DataWarehouse\Export\FileWriter\iFileWriter;
+use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
 use XDUser;
 use ZipArchive;
@@ -41,6 +43,11 @@ class BatchProcessor extends Loggable
     private $exportDirectory;
 
     /**
+     * @var DataWarehouse\Export\FileWriter\FileWriterFactory
+     */
+    private $fileWriterFactory;
+
+    /**
      * Construct a new batch processor.
      */
     public function __construct()
@@ -52,6 +59,7 @@ class BatchProcessor extends Loggable
             'data_warehouse_export',
             'export_directory'
         );
+        $this->fileWriterFactory = new FileWriterFactory($this->logger);
     }
 
     /**
@@ -117,7 +125,12 @@ class BatchProcessor extends Loggable
             $this->dbh->beginTransaction();
             $this->queryHandler->submittedToAvailable($request['id']);
             $dataSet = $this->getDataSet($request);
-            $dataFile = $this->writeDataSetToFile($dataSet, $request['format']);
+            $dataFile = tempnam(sys_get_temp_dir(), 'batch-export-');
+            $fileWriter = $this->fileWriterFactory->getFileWriter(
+                ($this->dryRun ? 'null' : $request['format']),
+                $dataFile
+            );
+            $this->writeDataSetToFile($dataSet, $fileWriter);
             $zipFile = $this->getExportZipFilePath($request['id']);
             $this->createZipFile($dataFile, $zipFile);
 
@@ -228,33 +241,43 @@ class BatchProcessor extends Loggable
      * Write data set to file.
      *
      * @param \DataWarehouse\Data\RawDataset $dataSet
-     * @param string $format
+     * @param \DataWarehouse\Export\FileWriter\iFileWriter $fileWriter
      */
-    private function writeDataSetToFile(RawDataset $dataSet, $format)
-    {
-        if ($this->dryRun) {
-            $this->logger->notice('dry run: Not writing data to file');
-            return;
+    private function writeDataSetToFile(
+        RawDataset $dataSet,
+        iFileWriter $fileWriter
+    ) {
+        try {
+            $this->logger->info([
+                'message' => 'Writing data to file',
+                'file_writer' => $fileWriter
+            ]);
+
+            $header = [];
+
+            // The `export` function returns the first result along with the
+            // necessary metadata.
+            foreach ($dataSet->export() as $datum) {
+                $header[] = $datum['key'];
+            }
+
+            $fileWriter->writeRecord($header);
+
+            foreach ($dataSet->getResults() as $result) {
+                $row = array_map(
+                    function ($datum) {
+                        return $datum['value'];
+                    },
+                    $result
+                );
+                fputcsv($fh, $row);
+                $fileWriter->writeRecord($row);
+            }
+
+            $fileWriter->close();
+        } catch (Exception $e) {
+            throw new Exception('Failed to write data set to file', 0, $e);
         }
-
-        $tmpFile = tempnam(sys_get_temp_dir(), 'batch-export-');
-
-        $this->logger->info([
-            'message' => 'Writing data to file',
-            'tmp_file' => $tmpFile
-        ]);
-
-        // The `export` function returns the first result along with the
-        // necessary metadata.
-        foreach ($dataSet->export() as $datum) {
-            // TODO
-        }
-
-        foreach ($dataSet->getResults() as $result) {
-            // TODO
-        }
-
-        return $tmpFile;
     }
 
     /**
