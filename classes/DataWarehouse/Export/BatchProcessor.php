@@ -282,7 +282,6 @@ class BatchProcessor extends Loggable
                     },
                     $result
                 );
-                fputcsv($fh, $row);
                 $fileWriter->writeRecord($row);
             }
 
