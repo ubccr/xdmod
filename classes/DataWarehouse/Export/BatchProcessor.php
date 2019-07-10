@@ -57,7 +57,7 @@ class BatchProcessor extends Loggable
     /**
      * Construct a new batch processor.
      */
-    public function __construct(Log $logger)
+    public function __construct(Log $logger = null)
     {
         $this->fileWriterFactory = new FileWriterFactory($this->logger);
         parent::__construct($logger);
