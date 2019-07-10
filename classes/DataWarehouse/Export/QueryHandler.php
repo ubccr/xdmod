@@ -109,15 +109,19 @@ class QueryHandler
     public function getRequestRecord($id)
     {
         $sql = 'SELECT id,
+                user_id
                 realm,
                 start_date,
                 end_date,
-                export_succeeded,
-                export_expired,
-                export_expires_datetime,
-                export_created_datetime,
                 export_file_format,
                 requested_datetime
+                export_succeeded,
+                export_created_datetime,
+                downloaded_datetime,
+                export_expired,
+                export_expires_datetime,
+                export_expired,
+                last_modified
             FROM batch_export_requests
             WHERE id = :id';
         return $this->dbh->query($sql, ['id' => $id]);
@@ -195,7 +199,7 @@ class QueryHandler
      */
     public function listSubmittedRecords()
     {
-        $sql = "SELECT id, realm, start_date, end_date, export_file_format, requested_datetime
+        $sql = "SELECT id, user_id, realm, start_date, end_date, export_file_format, requested_datetime
             FROM batch_export_requests " . $this->whereSubmitted . ' ORDER BY requested_datetime, id';
         return $this->dbh->query($sql);
     }
@@ -208,16 +212,17 @@ class QueryHandler
     public function listExpiringRecords()
     {
         $sql = 'SELECT id,
+                user_id,
                 realm,
                 start_date,
                 end_date,
-                export_succeeded,
-                export_expired,
-                export_expires_datetime,
-                export_created_datetime,
                 export_file_format,
-                requested_datetime
-            FROM batch_export_requests ' . $this->whereAvailable . ' AND export_expires_datetime > NOW()
+                requested_datetime,
+                export_succeeded,
+                export_created_datetime,
+                export_expires_datetime
+            FROM batch_export_requests
+            ' . $this->whereAvailable . ' AND export_expires_datetime > NOW()
             ORDER BY requested_datetime, id';
         return $this->dbh->query($sql);
     }
