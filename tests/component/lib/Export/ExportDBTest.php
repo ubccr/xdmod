@@ -154,6 +154,7 @@ class ExportDBTest extends BaseTest
         // Expect these keys from the associative array
         $expectedKeys = array(
             'id',
+            'user_id',
             'realm',
             'start_date',
             'end_date',
