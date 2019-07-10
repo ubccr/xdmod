@@ -145,7 +145,9 @@ class BatchProcessor extends Loggable
 
         try {
             $this->dbh->beginTransaction();
-            $this->queryHandler->submittedToAvailable($request['id']);
+            if (!$this->dryRun) {
+                $this->queryHandler->submittedToAvailable($request['id']);
+            }
             $dataSet = $this->getDataSet($request, $user);
             $dataFile = tempnam(sys_get_temp_dir(), 'batch-export-');
             $fileWriter = $this->fileWriterFactory->getFileWriter(
@@ -166,7 +168,9 @@ class BatchProcessor extends Loggable
                 'message' => 'Failed to export data: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
-            $this->queryHandler->submittedToFailed($request['id']);
+            if (!$this->dryRun) {
+                $this->queryHandler->submittedToFailed($request['id']);
+            }
             $this->sendExportFailureEmail($user, $request, $e);
         }
     }
@@ -199,7 +203,9 @@ class BatchProcessor extends Loggable
 
         try {
             $this->dbh->beginTransaction();
-            $this->queryHandler->availableToExpired($request['id']);
+            if (!$this->dryRun) {
+                $this->queryHandler->availableToExpired($request['id']);
+            }
             $this->removeExportFile($request['id']);
             $this->dbh->commit();
         } catch (Exception $e) {
