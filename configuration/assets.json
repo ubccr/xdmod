@@ -2,7 +2,15 @@
     "xdmod": {
         "portal": {
             "js": [
+                "gui/js/modules/summary/JobPortlet.js",
                 "gui/js/modules/summary/ChartPortlet.js"
+            ]
+        }
+    },
+    "xdmod": {
+        "portal": {
+            "css": [
+                "gui/css/SummaryTab.css"
             ]
         }
     }
