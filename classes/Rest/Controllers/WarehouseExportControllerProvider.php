@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use CCR\DB;
+use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
 use DateTime;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use xd_utilities;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
@@ -30,6 +30,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function __construct(array $params = [])
     {
         parent::__construct($params);
+        $this->fileManager = new FileManager();
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler();
     }
@@ -216,13 +217,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('Requested data is not available');
         }
 
-        try {
-            $exportDir = xd_utilities\getConfiguration('data_warehouse_export', 'export_directory');
-        } catch (Exception $e) {
-            throw new NotFoundHttpException('Export directory is not configured');
-        }
-
-        $file = sprintf('%s/%s.zip', $exportDir, $id);
+        $file = $this->fileManager->getExportDataFilePath($id);
 
         if (!is_file($file)) {
             throw new NotFoundHttpException('Exported data not found');
@@ -232,20 +227,15 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
-        $fileName = sprintf(
-            '%s--%s-%s.%s.zip',
-            $request['realm'],
-            $request['start_date'],
-            $request['end_date'],
-            strtolower($request['export_file_format'])
-        );
-
         return $app->sendFile(
             $file,
             200,
             [
                 'Content-type' => 'application/zip',
-                'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName)
+                'Content-Disposition' => sprintf(
+                    'attachment; filename="%s"',
+                    $this->fileManager->getZipFileName($request)
+                )
             ]
         );
     }

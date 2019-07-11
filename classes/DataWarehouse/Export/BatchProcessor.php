@@ -9,12 +9,9 @@ use CCR\DB;
 use CCR\Loggable;
 use CCR\MailWrapper;
 use DataWarehouse\Data\RawDataset;
-use DataWarehouse\Export\FileWriter\FileWriterFactory;
-use DataWarehouse\Export\FileWriter\iFileWriter;
 use Exception;
 use Log;
 use XDUser;
-use ZipArchive;
 use xd_utilities;
 
 class BatchProcessor extends Loggable
@@ -44,43 +41,36 @@ class BatchProcessor extends Loggable
     private $realmManager;
 
     /**
-     * Path of directory containing export zip files.
-     * @var string
+     * Data warehouse export file manager.
+     * @var \DataWarehouse\Export\FileManager
      */
-    private $exportDirectory;
-
-    /**
-     * @var DataWarehouse\Export\FileWriter\FileWriterFactory
-     */
-    private $fileWriterFactory;
+    private $fileManager;
 
     /**
      * Construct a new batch processor.
      */
     public function __construct(Log $logger = null)
     {
-        $this->fileWriterFactory = new FileWriterFactory($this->logger);
+        // Must set properties that are used in `setLogger` before calling the
+        // parent constructor.
+        $this->fileManager = new FileManager($logger);
         parent::__construct($logger);
         $this->dbh = DB::factory('database');
         $this->queryHandler = new QueryHandler();
         $this->realmManager = new RealmManager();
-        $this->exportDirectory = xd_utilities\getConfiguration(
-            'data_warehouse_export',
-            'export_directory'
-        );
     }
 
     /**
      * Set the logger for this object.
      *
      * @see \CCR\Loggable::setLogger()
-     * @param \Log $logger A logger class or NULL to use the null logger
-     * @return \DataWarehouse\Export\BatchProcessor This object for method chaining.
+     * @param \Log $logger A logger instance or null to use the null logger.
+     * @return self This object for method chaining.
      */
     public function setLogger(Log $logger = null)
     {
         parent::setLogger($logger);
-        $this->fileWriterFactory->setLogger($logger);
+        $this->fileManager->setLogger($logger);
         return $this;
     }
 
@@ -149,14 +139,9 @@ class BatchProcessor extends Loggable
                 $this->queryHandler->submittedToAvailable($request['id']);
             }
             $dataSet = $this->getDataSet($request, $user);
-            $dataFile = tempnam(sys_get_temp_dir(), 'batch-export-');
-            $fileWriter = $this->fileWriterFactory->getFileWriter(
-                ($this->dryRun ? 'null' : $request['export_file_format']),
-                $dataFile
-            );
-            $this->writeDataSetToFile($dataSet, $fileWriter);
-            $zipFile = $this->getExportZipFilePath($request['id']);
-            $this->createZipFile($dataFile, $zipFile);
+            $format = $this->dryRun ? 'null' : $request['export_file_format'];
+            $dataFile = $this->fileManager->writeDataSetToFile($dataSet, $format);
+            $zipFile = $this->fileManager->createZipFile($dataFile, $request);
 
             // Query for same record to get expiration date.
             $request = $this->queryHandler->getRequestRecord($request['id']);
@@ -201,12 +186,15 @@ class BatchProcessor extends Loggable
             'batch_export_request.id' => $request['id']
         ]);
 
+        if ($this->dryRun) {
+            $this->logger->notice('dry run: Not expiring export file');
+            return;
+        }
+
         try {
             $this->dbh->beginTransaction();
-            if (!$this->dryRun) {
-                $this->queryHandler->availableToExpired($request['id']);
-            }
-            $this->removeExportFile($request['id']);
+            $this->queryHandler->availableToExpired($request['id']);
+            $this->fileManager->removeExportFile($request['id']);
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
@@ -254,6 +242,8 @@ class BatchProcessor extends Loggable
 
             $dataSet = new RawDataset($query, $user);
 
+            $this->logger->debug('Executing query');
+
             // Data are fetched from the database as a side effect of checking
             // for results.
             if ($dataSet->hasResults()) {
@@ -268,132 +258,6 @@ class BatchProcessor extends Loggable
             ]);
             throw new Exception('Failed to execute batch export query', 0, $e);
         }
-    }
-
-    /**
-     * Write data set to file.
-     *
-     * @param \DataWarehouse\Data\RawDataset $dataSet
-     * @param \DataWarehouse\Export\FileWriter\iFileWriter $fileWriter
-     */
-    private function writeDataSetToFile(
-        RawDataset $dataSet,
-        iFileWriter $fileWriter
-    ) {
-        try {
-            $this->logger->info([
-                'message' => 'Writing data to file',
-                'file_writer' => $fileWriter
-            ]);
-
-            $header = [];
-
-            // The `export` function returns the first result along with the
-            // necessary metadata.
-            foreach ($dataSet->export() as $datum) {
-                $header[] = $datum['key'];
-            }
-
-            $fileWriter->writeRecord($header);
-
-            foreach ($dataSet->getResults() as $result) {
-                $fileWriter->writeRecord(array_values($result));
-            }
-
-            $fileWriter->close();
-        } catch (Exception $e) {
-            $this->logger->err([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
-            ]);
-            throw new Exception('Failed to write data set to file', 0, $e);
-        }
-    }
-
-    /**
-     * Create a zip file containing a single file.
-     *
-     * @param string $dataFile Absolute path to file that will be put in zip file.
-     * @param string $zipFile Absolute path to zip file that will be created.
-     * @throws \Exception
-     */
-    private function createZipFile($dataFile, $zipFile)
-    {
-        if ($this->dryRun) {
-            $this->logger->notice('dry run: Not creating zip file');
-            return;
-        }
-
-        $this->logger->info([
-            'message' => 'Creating zip file',
-            'data_file' => $dataFile,
-            'zip_file' => $zipFile
-        ]);
-
-        try {
-            $zip = new ZipArchive();
-            $zipOpenCode = $zip->open($zipFile, ZipArchive::CREATE);
-
-            if ($zipOpenCode !== true) {
-                throw new Exception(sprintf(
-                    'Failed to open zip file "%s", error code "%s"',
-                    $zipFile,
-                    $zipOpenCode
-                ));
-            }
-
-            if ($zip->addFile($dataFile, basename($dataFile)) === false) {
-                throw new Exception(sprintf(
-                    'Failed to add file "%s" to zip file "%s"',
-                    $dataFile,
-                    $zipFile
-                ));
-            }
-
-            $zip->close();
-        } catch (Exception $e) {
-            $this->logger->err([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
-            ]);
-            throw new Exception('Failed to create zip file', 0, $e);
-        }
-    }
-
-    /**
-     * Remove an export data file.
-     *
-     * @param int $id Export request primary key.
-     */
-    private function removeExportFile($id)
-    {
-        if ($this->dryRun) {
-            $this->logger->notice('dry run: Not removing export file');
-            return;
-        }
-
-        $zipFile = $this->getExportZipFilePath($id);
-
-        $this->logger->info([
-            'message' => 'Removing export file',
-            'batch_export_request.id' => $id,
-            'zip_file' => $zipFile
-        ]);
-
-        if (!unlink($zipFile)) {
-            throw new Exception(sprintf('Failed to delete "%s"', $zipFile));
-        }
-    }
-
-    /**
-     * Get the full path for the export data file.
-     *
-     * @param int $id Export request primary key.
-     * @return string
-     */
-    private function getExportZipFilePath($id)
-    {
-        return $this->exportDirectory . DIRECTORY_SEPARATOR . $id . '.zip';
     }
 
     /**

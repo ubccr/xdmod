@@ -16,7 +16,7 @@ class FileWriterFactory extends Loggable
      * @param string $file File path.
      * @return \DataWarehouse\Export\FileWriter\iFileWriter
      */
-    public function getFileWriter($format, $file)
+    public function createFileWriter($format, $file)
     {
         $this->logger->debug([
             'message' => 'Creating new file writer',
