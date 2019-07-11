@@ -237,9 +237,6 @@ class BatchProcessor extends Loggable
                 ],
                 'accounting'
             );
-            $allRoles = $user->getAllRoles();
-            $query->setMultipleRoleParameters($allRoles, $user);
-
             $dataSet = new RawDataset($query, $user);
 
             $this->logger->debug('Executing query');
