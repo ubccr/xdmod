@@ -141,7 +141,7 @@ class BatchProcessor extends Loggable
             $dataSet = $this->getDataSet($request, $user);
             $format = $this->dryRun ? 'null' : $request['export_file_format'];
             $dataFile = $this->fileManager->writeDataSetToFile($dataSet, $format);
-            $zipFile = $this->fileManager->createZipFile($dataFile, $request);
+            $this->fileManager->createZipFile($dataFile, $request);
 
             // Query for same record to get expiration date.
             $request = $this->queryHandler->getRequestRecord($request['id']);
