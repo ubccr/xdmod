@@ -30,7 +30,10 @@ class SummaryControllerProvider extends BaseControllerProvider
         $controller->post("$root/viewedUserTour", "$class::setViewedUserTour");
         $controller->get("$root/viewedUserTour", "$class::getViewedUserTour");
 
+        $controller->get("$root/recentchartsreports", "$class::getRecentChartsReports");
+
         $controller->get("$root/statistics", "$class::getStatistics");
+
     }
 
     /*
@@ -235,6 +238,49 @@ class SummaryControllerProvider extends BaseControllerProvider
         ));
     }
     /**
+
+     * Get recent charts and reports.
+     **/
+    public function getRecentChartsReports(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        if (isset($user)) {
+            // fetch charts
+            $queries = new \UserStorage($user, 'queries_store');
+            $data = $queries->get();
+            foreach ($data as &$query) {
+                $query['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
+                $query['type'] = 'Chart';
+            }
+            // fetch reports
+            $rm = new \XDReportManager($user);
+            $reports = $rm->fetchReportTable();
+            foreach ($reports as &$report) {
+                $tmp = array();
+                $tmp['type'] = 'Report';
+                $tmp['name'] = $report['report_name'];
+                $tmp['chart_count'] = $report['chart_count'];
+                $tmp['charts_per_page'] = $report['charts_per_page'];
+                $tmp['creation_method'] = $report['creation_method'];
+                $tmp['report_delivery'] = $report['report_delivery'];
+                $tmp['report_format'] = $report['report_format'];
+                $tmp['report_id'] = $report['report_id'];
+                $tmp['report_name'] = $report['report_name'];
+                $tmp['report_schedule'] = $report['report_schedule'];
+                $tmp['report_title'] = $report['report_title'];
+                $tmp['ts'] = $report['last_modified'];
+                $tmp['config'] = $report['report_id'];
+                $data[] = $tmp;
+            }
+            return $app->json(array(
+                'success' => true,
+                'total' => count($data),
+                'data' => $data
+            ));
+        }
+    }
+
+    /*
      * Retrieve summary statistics
      *
      * @param Request $request
