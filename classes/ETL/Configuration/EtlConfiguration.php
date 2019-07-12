@@ -761,7 +761,7 @@ class EtlConfiguration extends Configuration
         // the action configuration.
 
         if ( ! isset($config->options_class) ) {
-            $this->logAndThrowException("Options class not defined for $actionName");
+            $this->logAndThrowException("Key 'options_class' not defined for $actionName");
         }
 
         $optionsClassName = $config->options_class;
