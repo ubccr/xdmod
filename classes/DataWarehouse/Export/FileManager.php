@@ -239,7 +239,7 @@ class FileManager extends Loggable
      */
     public function removeExportFile($id)
     {
-        $zipFile = $this->getExportZipFilePath($id);
+        $zipFile = $this->getExportDataFilePath($id);
 
         $this->logger->info([
             'message' => 'Removing export file',
