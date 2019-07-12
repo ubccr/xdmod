@@ -27,8 +27,11 @@ class SummaryControllerProvider extends BaseControllerProvider
         $controller->post("$root/layout", "$class::setLayout");
         $controller->delete("$root/layout", "$class::resetLayout");
 
-
         $controller->get("$root/rolereport", "$class::getRoleReport");
+        $controller->get("$root/recentchartsreports", "$class::getRecentChartsReports");
+
+        $controller->post("$root/viewedUserTour", "$class::setViewedUserTour");
+        $controller->get("$root/viewedUserTour", "$class::getViewedUserTour");
 
         $controller->get("$root/statistics", "$class::getStatistics");
 
@@ -201,8 +204,28 @@ class SummaryControllerProvider extends BaseControllerProvider
         ));
     }
 
-    /**
+    /*
+    * Set value for if a user should view the help tour or not
+    */
+    public function setViewedUserTour(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        $viewedTour = $this->getIntParam($request, 'viewedTour', true);
 
+        if (!in_array($viewedTour, [0,1])) {
+            throw new BadRequestException('Invalid data parameter');
+        }
+
+        $storage = new \UserStorage($user, 'viewed_user_tour');
+
+        return $app->json(array(
+            'success' => true,
+            'total' => 1,
+            'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
+        ));
+    }
+
+    /**
      * Get charts based on role.
      **/
     public function getRoleReport(Request $request, Application $app)
@@ -258,6 +281,57 @@ class SummaryControllerProvider extends BaseControllerProvider
             return $app->json(array(
                 'success' => true,
                 'total' => 1,
+    }
+    /*          
+    * Get stored value for if a user should view the help tour or not
+    */
+    public function getViewedUserTour(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        $storage = new \UserStorage($user, 'viewed_user_tour');
+        return $app->json(array(
+            'success' => true,
+            'total' => 1,
+            'data' => $storage->get()
+        ));
+    }
+    /**
+     * Get recent charts and reports.
+     **/
+    public function getRecentChartsReports(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        if (isset($user)) {
+            // fetch charts
+            $queries = new \UserStorage($user, 'queries_store');
+            $data = $queries->get();
+            foreach ($data as &$query) {
+                $query['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
+                $query['type'] = 'Chart';
+            }
+            // fetch reports
+            $rm = new \XDReportManager($user);
+            $reports = $rm->fetchReportTable();
+            foreach ($reports as &$report) {
+                $tmp = array();
+                $tmp['type'] = 'Report';
+                $tmp['name'] = $report['report_name'];
+                $tmp['chart_count'] = $report['chart_count'];
+                $tmp['charts_per_page'] = $report['charts_per_page'];
+                $tmp['creation_method'] = $report['creation_method'];
+                $tmp['report_delivery'] = $report['report_delivery'];
+                $tmp['report_format'] = $report['report_format'];
+                $tmp['report_id'] = $report['report_id'];
+                $tmp['report_name'] = $report['report_name'];
+                $tmp['report_schedule'] = $report['report_schedule'];
+                $tmp['report_title'] = $report['report_title'];
+                $tmp['ts'] = $report['last_modified'];
+                $tmp['config'] = $report['report_id'];
+                $data[] = $tmp;
+            }
+            return $app->json(array(
+                'success' => true,
+                'total' => count($data),
                 'data' => $data
             ));
         }
