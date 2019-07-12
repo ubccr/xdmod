@@ -6242,7 +6242,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         self.on('chart_link_clicked', function () {
             var encodedData = window.btoa(JSON.stringify(this.getConfig()));
             var link = window.location.protocol + '//' + window.location.host + '/#main_tab_panel:metric_explorer?config=' + encodedData;
-            var msg = 'Use the following link to share the current chart. Note that the link does no override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br> We recommend using Chrome or Firefox if the link does not work in Internet Explorer.<br><b>' + link + '</b>';
+            var msg = 'Use the following link to share the current chart. Note that the link does not override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br> We recommend using Chrome or Firefox if the link does not work in Internet Explorer.<br><b>' + link + '</b>';
             Ext.Msg.show({
                 title: 'Link to Chart',
                 minWidth: 700,
