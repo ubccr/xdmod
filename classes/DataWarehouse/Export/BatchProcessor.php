@@ -284,7 +284,11 @@ class BatchProcessor extends Loggable
                 'last_name' => $user->getLastName(),
                 'current_date' => date('Y-m-d'),
                 'expiration_date' => $expirationDate,
-                'download_url' => '', // TODO
+                'download_url' => sprintf(
+                    '%srest/v1/warehouse/export/download/%d',
+                    xd_utilities\getConfigurationUrlBase('general', 'site_address'),
+                    $request['id']
+                ),
                 'maintainer_signature' => MailWrapper::getMaintainerSignature()
             ]
         );
@@ -327,11 +331,11 @@ class BatchProcessor extends Loggable
                 'subject' => 'Batch export failed',
                 'toAddress' => xd_utilities\getConfiguration('general', 'tech_support_recipient'),
                 'user_email' => $user->getEmailAddress(),
-                'user_first_name' => $user->getFirstName(),
-                'user_last_name' => $user->getLastName(),
+                'user_username' => $user->getUsername(),
+                'user_formal_name' => $user->getFormalName(true),
                 'current_date' => date('Y-m-d'),
-                'failure_exception' => $message,
-                'failure_stack_trace' => $stackTrace
+                'exception_message' => $message,
+                'exception_stack_trace' => $stackTrace
             ]
         );
 
