@@ -35,6 +35,10 @@ class AdminControllerProvider extends BaseControllerProvider
         $viewedTour = $this->getIntParam($request, 'viewedTour', true);
         $selected_user = XDUser::getUserByID($this->getIntParam($request, 'uid', true));
 
+        if ($selected_user === null) {
+            throw new BadRequestException('User not found');
+        }
+
         if (!in_array($viewedTour, [0,1])) {
             throw new BadRequestException('Invalid data parameter');
         }
@@ -46,7 +50,7 @@ class AdminControllerProvider extends BaseControllerProvider
             array(
                 'success' => true,
                 'total' => 1,
-                'message' => 'This user will be now be propmted to view the New User Tour the next time they visit XDMoD'
+                'message' => 'This user will be now be prompted to view the New User Tour the next time they visit XDMoD'
             )
         );
     }
