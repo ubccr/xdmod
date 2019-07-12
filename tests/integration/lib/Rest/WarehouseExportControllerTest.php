@@ -291,7 +291,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $info['http_code'], 'HTTP response code');
         $this->assertEquals($zipContent, $content, 'Download content');
         self::$fileManager->removeExportFile($id);
-        self::$queryHandler->deleteRequest($id);
+        self::$queryHandler->deleteRequest($id, self::$users[$role]->getUserID());
     }
 
     /**
