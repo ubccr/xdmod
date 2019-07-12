@@ -495,7 +495,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
     },
 
     downloadRequest: function (record) {
-        window.open('rest/v1/warehouse/export/request/' + record.get('id'));
+        window.open('rest/v1/warehouse/export/download/' + record.get('id'));
     },
 
     resubmitRequest: function (record) {

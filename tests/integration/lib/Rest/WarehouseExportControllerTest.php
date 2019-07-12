@@ -3,6 +3,7 @@
 namespace IntegrationTests\Rest;
 
 use CCR\DB;
+use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use Exception;
 use JsonSchema\Constraints\Constraint;
@@ -62,6 +63,12 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     private static $queryHandler;
 
     /**
+     * Data warehouse export file manager.
+     * @var FileManager
+     */
+    private static $fileManager;
+
+    /**
      * JSON schema validator.
      * @var Validator
      */
@@ -113,6 +120,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
 
         self::$schemaValidator = new Validator();
         self::$queryHandler = new QueryHandler();
+        self::$fileManager = new FileManager();
     }
 
     /**
@@ -269,17 +277,21 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     /**
      * Test getting the exported data.
      *
-     * @covers ::getRequest
-     * @depends testCreateRequest
-     * #dataProvider getRequestProvider
+     * @covers ::getExportedDataFile
      */
-    //public function testGetRequest($role, $params, $httpCode)
-    public function testGetRequest()
+    public function testDownloadExportedDataFile()
     {
-        //list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/request/' . $id);
-        //$this->assertRegExp('#\applcation/zip\b#', $headers['Content-Type'], 'Content type header');
-        //$this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $role = 'usr';
+        $zipContent = 'Mock Zip File';
+        $id = self::$queryHandler->createRequestRecord(self::$users[$role]->getUserID(), 'jobs', '2019-01-01', '2019-01-31', 'CSV');
+        self::$queryHandler->submittedToAvailable($id);
+        @file_put_contents(self::$fileManager->getExportDataFilePath($id), $zipContent);
+        list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/download/' . $id);
+        $this->assertRegExp('#\bapplication/zip\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertEquals(200, $info['http_code'], 'HTTP response code');
+        $this->assertEquals($zipContent, $content, 'Download content');
+        self::$fileManager->removeExportFile($id);
+        self::$queryHandler->deleteRequest($id);
     }
 
     /**

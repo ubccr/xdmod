@@ -54,7 +54,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $controller->get("$root/requests", "$current::getRequests");
         $controller->delete("$root/requests", "$current::deleteRequests");
 
-        $controller->get("$root/request/{id}", "$current::getRequest")
+        $controller->get("$root/download/{id}", "$current::getExportedDataFile")
             ->assert('id', '\d+')
             ->convert('id', "$conversions::toInt");
 
@@ -194,7 +194,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      * @throws NotFoundHttpException
      * @throws BadRequestHttpException
      */
-    public function getRequest(Request $request, Application $app, $id)
+    public function getExportedDataFile(Request $request, Application $app, $id)
     {
         $user = $this->authorize($request);
 
