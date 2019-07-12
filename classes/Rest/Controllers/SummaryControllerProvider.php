@@ -280,9 +280,12 @@ class SummaryControllerProvider extends BaseControllerProvider
             }
             return $app->json(array(
                 'success' => true,
-                'total' => 1,
+                'total' => count($data),
+                'data' => $data
+            ));
+        }
     }
-    /*          
+    /*
     * Get stored value for if a user should view the help tour or not
     */
     public function getViewedUserTour(Request $request, Application $app)
