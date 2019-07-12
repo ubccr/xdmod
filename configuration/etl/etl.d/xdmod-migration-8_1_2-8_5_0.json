@@ -8,7 +8,6 @@
             "class": "ManageTables",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
-                "jobs/xdw/jobfact_by_day.json",
                 "jobs/xdw/jobfact_by_day_joblist.json"
             ],
             "endpoints": {
