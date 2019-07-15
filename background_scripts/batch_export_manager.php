@@ -9,6 +9,12 @@ require_once __DIR__ . '/../configuration/linker.php';
 use CCR\Log;
 use DataWarehouse\Export\BatchProcessor;
 
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+// Disable maximum execution time.
+set_time_limit(0);
+
 try {
     $help = false;
     $dryRun = false;
