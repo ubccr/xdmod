@@ -322,7 +322,11 @@ class BatchProcessor extends Loggable
         $message = $e->getMessage();
         $stackTrace = $e->getTraceAsString();
         while ($e = $e->getPrevious()) {
-            $stackTrace .= "\n\n" . $e->getTraceAsString();
+            $stackTrace .= sprintf(
+                "\n\n%s\n%s",
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
         }
 
         MailWrapper::sendTemplate(
