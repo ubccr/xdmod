@@ -8,25 +8,17 @@ Ext.namespace('XDMoD.Modules.SummaryPortlets');
 
 XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
 
-    layout: 'border',
-    title: 'Recent Jobs for ' + CCR.xdmod.ui.fullName,
+    layout: 'fit',
+    title: 'Recent Jobs',
 
     initComponent: function () {
+        var page_size = 9;
+
         var formatDateWithTimezone = function (value) {
             return moment(value * 1000).format('Y-MM-DD HH:mm:ss z');
         };
 
-        var formatJobInfo = function (value, p, record) {
-            return String.format(
-                '<div class="topic"><b>{0}</b><br /><span class="author">Started: {1} Ended: {2}.</span><br /><span>CPU Usage {3}%</span></div>',
-                value,
-                moment(1000 * record.data.start_time_ts).format('Y-MM-DD HH:mm:ss z'),
-                moment(1000 * record.data.end_time_ts).format('Y-MM-DD HH:mm:ss z'),
-                (record.data.cpu_user * 100.0).toFixed(1)
-            );
-        };
-
-        var jobEfficiency = function (value, p, record) {
+        var jobEfficiency = function (value, metadata, record) {
             var getDataColor = function (data) {
                 var color = 'gray';
                 var steps = [{
@@ -55,30 +47,50 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
                 return color;
             };
 
+            if (record.data.cpu_user < 0) {
+                return 'N/A';
+            }
+
+            metadata.attr = 'ext:qtip="CPU Usage ' + (record.data.cpu_user * 100.0).toFixed(1) + '%"';
+
             return String.format('<div class="circle" style="background-color: {0}"></div>', getDataColor(record.data.cpu_user));
         };
 
-        var end_date = new Date();
-        var start_date = end_date.add(Date.DAY, -30);
+        // Sync date ranges
+        var dateRanges = CCR.xdmod.ui.DurationToolbar.getDateRanges();
 
-        this.jobStore = new Ext.data.JsonStore({
+        var timeframe = this.config.timeframe ? this.config.timeframe : '30 day';
+
+        var date = dateRanges.find(function (element) {
+            return element.text === timeframe;
+        }, this);
+
+        this.title += ' (' + timeframe + ')';
+
+        if (!this.config.multiuser) {
+            this.title += ' for ' + CCR.xdmod.ui.mappedPName;
+            page_size = 10;
+        }
+
+        // The default search parameters are set to all jobs - this
+        // will result in all of the jobs that the user has permission to
+        // view.
+        var defaultParams = {};
+
+        var jobStore = new Ext.data.JsonStore({
             restful: true,
             url: XDMoD.REST.url + '/warehouse/search/jobs',
             root: 'results',
             autoLoad: true,
             totalProperty: 'totalCount',
             baseParams: {
-                start_date: start_date,
-                end_date: end_date,
-                realm: 'SUPREMM',
-                limit: 20,
+                start_date: date.start.format('Y-m-d'),
+                end_date: date.end.format('Y-m-d'),
+                realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
+                limit: page_size,
                 start: 0,
                 verbose: true,
-                params: JSON.stringify({
-                    person: [
-                        CCR.xdmod.ui.mappedPID
-                    ]
-                })
+                params: JSON.stringify(defaultParams)
             },
             fields: [
                 { name: 'dtype', mapping: 'dtype', type: 'string' },
@@ -93,40 +105,76 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
             ]
         });
 
-        this.items = [{
+        /* Set new search parameters for the job store and reset the
+         * paging to the beginning. Note that it is necessary to modify
+         * the baseParams because the paging toolbar is used. */
+        var resetStore = function (newParams) {
+            jobStore.setBaseParam('params', JSON.stringify(newParams));
+            jobStore.load({
+                params: {
+                    start: 0,
+                    limit: page_size
+                }
+            });
+        };
+
+        var columns = [{
+            header: 'Job Identifier',
+            width: 140,
+            dataIndex: 'text'
+        }, {
+            header: 'Start',
+            renderer: formatDateWithTimezone,
+            width: 115,
+            fixed: true,
+            dataIndex: 'start_time_ts'
+        }, {
+            header: 'End',
+            renderer: formatDateWithTimezone,
+            width: 115,
+            fixed: true,
+            dataIndex: 'end_time_ts'
+        }, {
+            header: 'CPU',
+            renderer: jobEfficiency,
+            width: 40,
+            fixed: true,
+            dataIndex: 'cpu_user'
+        }];
+
+        if (this.config.multiuser) {
+            columns.splice(0, 0, {
+                header: 'Person',
+                width: 90,
+                sortable: true,
+                dataIndex: 'name'
+            });
+        }
+
+        var gridpanel = {
             xtype: 'grid',
-            region: 'center',
-            store: this.jobStore,
+            frame: true,
+            store: jobStore,
+            enableHdMenu: false,
             loadMask: true,
+            stripeRows: true,
+            cls: 'job-portlet-grid',
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: true
                 },
-                columns: [{
-                    header: 'Job',
-                    renderer: formatJobInfo,
-                    width: 250,
-                    sortable: true,
-                    dataIndex: 'text'
-                }, {
-                    header: 'Efficiency',
-                    renderer: jobEfficiency,
-                    width: 35,
-                    sortable: true,
-                    dataIndex: 'cpu_user'
-                }, {
-                    header: 'End Time',
-                    renderer: formatDateWithTimezone,
-                    width: 70,
-                    sortable: true,
-                    dataIndex: 'end_time_ts'
-                }]
+                columns: columns
             }),
             viewConfig: {
-                deferEmptyText: true,
-                emptyText: '<div class="grid-data-empty"><div class="empty-grid-heading">No Job Data available.</div><div class="empty-grid-body">There are no data in the XDMoD datwarehouse for HPC jobs that ran in the previous 30 days.</div></div>',
+                emptyText: 'No Job Records found for the specified time range',
                 forceFit: true
             },
+            bbar: new Ext.PagingToolbar({
+                store: jobStore,
+                displayInfo: true,
+                pageSize: page_size,
+                prependButtons: true
+            }),
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: true
             }),
@@ -142,22 +190,71 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
                     Ext.History.add('job_viewer?' + Ext.urlEncode(params));
                 }
             }
-        }];
+        };
 
-        this.height = this.width * (11.0 / 17.0);
+        if (this.config.multiuser) {
+            gridpanel.tbar = {
+                items: [
+                    'Filter: ',
+                    ' ',
+                    new Ext.form.ClearableComboBox({
+                        emptyText: 'Filter by Person...',
+                        triggerAction: 'all',
+                        selectOnFocus: true,
+                        displayField: 'long_name',
+                        valueField: 'id',
+                        typeAhead: true,
+                        mode: 'local',
+                        forceSelection: true,
+                        enableKeyEvents: true,
+                        store: new Ext.data.JsonStore({
+                            url: XDMoD.REST.url + '/warehouse/dimensions/person',
+                            restful: true,
+                            autoLoad: true,
+                            baseParams: {
+                                realm: CCR.xdmod.ui.rawDataAllowedRealms[0]
+                            },
+                            root: 'results',
+                            fields: [
+                                { name: 'id', type: 'string' },
+                                { name: 'name', type: 'string' },
+                                { name: 'short_name', type: 'string' },
+                                { name: 'long_name', type: 'string' }
+                            ],
+                            listeners: {
+                                exception: function (proxy, type, action, exception, response) {
+                                    switch (response.status) {
+                                        case 403:
+                                        case 500:
+                                            var details = Ext.decode(response.responseText);
+                                            Ext.Msg.alert('Error ' + response.status + ' ' + response.statusText, details.message);
+                                            break;
+                                        case 401:
+                                            // Do nothing
+                                            break;
+                                        default:
+                                            Ext.Msg.alert(response.status + ' ' + response.statusText, response.responseText);
+                                    }
+                                }
+                            }
+                        }),
+                        listeners: {
+                            select: function (combo, record) {
+                                resetStore({ person: [record.id] });
+                            },
+                            reset: function () {
+                                resetStore(defaultParams);
+                            }
+                        }
+                    })
+                ]
+            };
+        }
+        this.items = [gridpanel];
+
+        this.height = (this.width * 11.0) / 17.0;
 
         XDMoD.Modules.SummaryPortlets.JobPortlet.superclass.initComponent.apply(this, arguments);
-    },
-
-    listeners: {
-        duration_change: function (timeframe) {
-            this.jobStore.load({
-                params: {
-                    start_date: timeframe.start_date,
-                    end_date: timeframe.end_date
-                }
-            });
-        }
     }
 });
 

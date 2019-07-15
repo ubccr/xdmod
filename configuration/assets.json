@@ -8,7 +8,7 @@
                 "gui/js/modules/summary/ReportThumbnailsPortlet.js"
             ],
             "css": [
-                "gui/css/SummaryTab.css",
+                "gui/css/JobPortlet.css",
                 "gui/css/ReportThumbnailsPortlet.css"
             ]
         }
