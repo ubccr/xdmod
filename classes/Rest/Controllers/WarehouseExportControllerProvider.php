@@ -87,7 +87,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         return $app->json(
             [
                 'success' => true,
-                'data' => $realms,
+                'data' => array_values($realms),
                 'total' => count($realms)
             ]
         );
