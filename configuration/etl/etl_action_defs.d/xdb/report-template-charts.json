@@ -4,5 +4,44 @@
         {
             "$ref": "${table_definition_dir}/xdb/report-template-charts.json#/table_definition"
         }
-    ]
+    ],
+    "destination_record_map": {
+        "ReportTemplateCharts": {
+            "template_id": "template_id",
+            "chart_id": "chart_id",
+            "ordering": "ordering",
+            "chart_date_description": "chart_date_description",
+            "chart_title": "chart_title",
+            "chart_drill_details": "chart_drill_details",
+            "timeframe_type": "timeframe_type"
+        }
+    },
+    "source_query": {
+        "records": {
+            "template_id": "rtcs.template_id",
+            "chart_id": "rtcs.chart_id",
+            "ordering": "rtcs.ordering",
+            "chart_date_description": "rtcs.chart_date_description",
+            "chart_title": "rtcs.chart_title",
+            "chart_drill_details": "rtcs.chart_drill_details",
+            "timeframe_type": "rtcs.timeframe_type"
+        },
+        "joins": [
+            {
+                "name": "ReportTemplateChartsStaging",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rtcs"
+            },
+            {
+                "name": "ReportTemplateCharts",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rtc",
+                "type": "left outer",
+                "on": "rtcs.template_id=rtc.template_id",
+                "where": [
+                    "rtc.template_id IS NULL"
+                ]
+            }
+        ]
+    }
 }

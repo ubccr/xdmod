@@ -121,6 +121,7 @@ class MetricExplorer {
             catalog: {
                 panel: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]',
                 collapseButton: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]//div[contains(@class,"x-tool-collapse-west")]',
+                expandButton: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//div[contains(@class,"x-tool-expand-west")]',
                 container: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder)',
                 tree: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder) .x-tree-root-ct',
                 rootNodeByName: function (name) {
@@ -342,8 +343,11 @@ class MetricExplorer {
         browser.waitForVisible(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.click(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.waitForVisible(this.selectors.load.dialog);
-        browser.waitAndClick(this.selectors.load.chartByName(name));
-        browser.waitForInvisible(this.selectors.load.dialog);
+        this.waitForChartToChange(function () {
+            browser.waitAndClick(this.selectors.load.chartByName(name));
+            browser.waitForInvisible(this.selectors.load.dialog);
+        });
+        browser.waitUntilAnimEnd(this.selectors.catalog.expandButton, 5000, 50);
     }
     checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         browser.waitForVisible(this.selectors.chart.titleByText(chartTitle));

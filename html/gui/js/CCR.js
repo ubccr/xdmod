@@ -255,6 +255,13 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
         }
     ];
 
+    if (CCR.xdmod.publicUser !== true) {
+        menuItems.push({
+            text: 'View XDMoD User Tour',
+            id: 'global-toolbar-help-new-user-tour'
+        });
+    }
+
     if (CCR.xdmod.features.xsede) {
         menuItems.splice(1, 0, {
             text: 'FAQ',
