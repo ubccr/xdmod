@@ -8,179 +8,12 @@ Ext.namespace('XDMoD.Modules.SummaryPortlets');
 XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
     layout: 'fit',
     header: false,
-    itemId: 'testid',
     cls: 'images-view',
-    tbar: {
-        items: [
-            {
-                xtype: 'button',
-                text: 'Time Range',
-                menu: [{
-                    text: '30 day',
-                    listeners: {
-                        click: function (comp) {
-                            var today = new Date();
-                            var lastMonth = today.add(Date.DAY, -30);
-                            var start = lastMonth;
-                            var end = today;
-                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
-                        }
-                    }
-                },
-                {
-                    text: 'Previous Year',
-                    listeners: {
-                        click: function () {
-                            var today = new Date();
-                            var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
-                            var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
-                            var start = oneYearAgoStart;
-                            var end = oneYearAgoEnd;
-                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
-                        }
-                    }
-                },
-                {
-                    text: '5 Year',
-                    listeners: {
-                        click: function () {
-                            var today = new Date();
-                            var last5Year = today.add(Date.YEAR, -5);
-                            var start = last5Year;
-                            var end = today;
-                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
-                        }
-                    }
-                },
-                {
-                    text: 'Report Default',
-                    listeners: {
-                        click: function (comp) {
-                            this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change');
-                        }
-                    }
-                }]
-            },
-            ' ',
-            '|',
-            ' ',
-            {
-                text: 'Download Report',
-                icon: 'gui/images/report_generator/pdf_icon.png',
-                cls: 'x-btn-text-icon',
-                listeners: {
-                    click: function () {
-                        var viewer = CCR.xdmod.ui.Viewer.getViewer();
-                        viewer.el.mask(
-                            '<center>Preparing report for download<br /><b>' +
-                            '</b><br /><img src="gui/images/progbar_2.gif">' +
-                            '<br />Please Wait</center>'
-                        );
-                        var report_id = this.ownerCt.ownerCt.store.data.items[0].data.report_id;
-                        var start_date = this.ownerCt.ownerCt.timeframe.start_date;
-                        var end_date = this.ownerCt.ownerCt.timeframe.end_date;
-                        var format = 'pdf';
-                        var conn = new Ext.data.Connection({
-                            // allow for generous 'execution time' so that lengthy
-                            // reports can be compiled (10 min.)
-                            timeout: 600000
-                        });
-                        conn.request({
-                            url: 'controllers/report_builder.php',
-
-                            params: {
-                                operation: 'send_report',
-                                report_id: report_id,
-                                build_only: true,
-                                export_format: format,
-                                start_date: start_date,
-                                end_date: end_date
-                            },
-
-                            method: 'POST',
-
-                            callback: function (options, success, response) {
-                                if (success) {
-                                    var responseData = CCR.safelyDecodeJSONResponse(response);
-                                    var successResponse = CCR.checkDecodedJSONResponseSuccess(responseData);
-                                    if (successResponse) {
-                                        var location = 'controllers/report_builder.php/' +
-                                            responseData.report_name +
-                                            '?operation=download_report&report_loc=' +
-                                            responseData.report_loc + '&format=' + format;
-
-                                        var w = new Ext.Window({
-                                            title: 'Report Built',
-                                            width: 220,
-                                            height: 120,
-                                            resizable: false,
-                                            closeAction: 'destroy',
-                                            layout: 'border',
-                                            cls: 'wnd_report_built',
-
-                                            listeners: {
-                                                show: function () {
-                                                    if (viewer.el) {
-                                                        viewer.el.mask();
-                                                    }
-                                                },
-                                                destroy: function () {
-                                                    viewer.el.unmask();
-                                                }
-                                            },
-
-                                            items: [
-                                                new Ext.Panel({
-                                                    region: 'west',
-                                                    width: 70,
-                                                    html: '<img src="gui/images/report_icon_wnd.png">',
-                                                    baseCls: 'x-plain'
-                                                }),
-                                                new Ext.Panel({
-                                                    region: 'center',
-                                                    width: 150,
-                                                    layout: 'border',
-                                                    margins: '5 5 5 5',
-                                                    items: [
-                                                        new Ext.Panel({
-                                                            region: 'center',
-                                                            html: 'Your report has been built and can now be viewed.',
-                                                            baseCls: 'x-plain'
-                                                        }),
-                                                        new Ext.Button({
-                                                            region: 'south',
-                                                            text: 'View Report',
-                                                            handler: function () {
-                                                                XDMoD.TrackEvent(
-                                                                    'Report Generator',
-                                                                    'Clicked on View Report button in Report Built window'
-                                                                );
-                                                                window.open(location);
-                                                            }
-                                                        })
-                                                    ]
-                                                })
-                                            ]
-                                        });
-                                        w.show();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        ]
-    },
     /**
      *
      */
     initComponent: function () {
         var self = this;
-        function isPrimary(item) {
-            return item.is_primary === '1';
-        }
-        var role = CCR.xdmod.ui.allRoles.filter(isPrimary)[0].param_value.split(':')[0];
 
         function filterRange(arr, label) {
             var dateRange = {};
@@ -195,8 +28,13 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
             return dateRange;
         }
         var ranges = CCR.xdmod.ui.DurationToolbar.getDateRanges();
-        var timeframe_label = this.config[role];
+        var timeframe_label = this.config.timeframe;
         this.timeframe = filterRange(ranges, timeframe_label);
+        if (Object.keys(this.timeframe).length === 0) {
+            this.timeframe.start_date = null;
+            this.timeframe.end_date = null;
+            timeframe_label = 'Report default';
+        }
 
         this.store = new Ext.data.JsonStore({
             url: XDMoD.REST.url + '/summary/rolereport',
@@ -370,6 +208,176 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
             }
         });
         this.items = [this.panel];
+        this.tbar = {
+            items: [
+                {
+                    xtype: 'button',
+                    text: 'Time Range',
+                    menu: [{
+                        text: '30 day',
+                        checked: timeframe_label === '30 day',
+                        group: 'timeframe',
+                        listeners: {
+                            click: function (comp) {
+                                var today = new Date();
+                                var lastMonth = today.add(Date.DAY, -30);
+                                var start = lastMonth;
+                                var end = today;
+                                this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                            }
+                        }
+                    },
+                    {
+                        text: 'Previous year',
+                        checked: timeframe_label === 'Previous year',
+                        group: 'timeframe',
+                        listeners: {
+                            click: function () {
+                                var today = new Date();
+                                var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
+                                var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
+                                var start = oneYearAgoStart;
+                                var end = oneYearAgoEnd;
+                                this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                            }
+                        }
+                    },
+                    {
+                        text: '5 year',
+                        checked: timeframe_label === '5 year',
+                        group: 'timeframe',
+                        listeners: {
+                            click: function () {
+                                var today = new Date();
+                                var last5Year = today.add(Date.YEAR, -5);
+                                var start = last5Year;
+                                var end = today;
+                                this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                            }
+                        }
+                    },
+                    {
+                        text: 'Report default',
+                        checked: timeframe_label === 'Report default',
+                        group: 'timeframe',
+                        listeners: {
+                            click: function (comp) {
+                                this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change');
+                            }
+                        }
+                    }]
+                },
+                ' ',
+                '|',
+                ' ',
+                {
+                    text: 'Download Report',
+                    icon: 'gui/images/report_generator/pdf_icon.png',
+                    cls: 'x-btn-text-icon',
+                    listeners: {
+                        click: function () {
+                            var viewer = CCR.xdmod.ui.Viewer.getViewer();
+                            viewer.el.mask(
+                                '<center>Preparing report for download<br /><b>' +
+                                '</b><br /><img src="gui/images/progbar_2.gif">' +
+                                '<br />Please Wait</center>'
+                            );
+                            var report_id = this.ownerCt.ownerCt.store.data.items[0].data.report_id;
+                            var start_date = this.ownerCt.ownerCt.timeframe.start_date;
+                            var end_date = this.ownerCt.ownerCt.timeframe.end_date;
+                            var format = 'pdf';
+                            var conn = new Ext.data.Connection({
+                                // allow for generous 'execution time' so that lengthy
+                                // reports can be compiled (10 min.)
+                                timeout: 600000
+                            });
+                            conn.request({
+                                url: 'controllers/report_builder.php',
+
+                                params: {
+                                    operation: 'send_report',
+                                    report_id: report_id,
+                                    build_only: true,
+                                    export_format: format,
+                                    start_date: start_date,
+                                    end_date: end_date
+                                },
+
+                                method: 'POST',
+
+                                callback: function (options, success, response) {
+                                    if (success) {
+                                        var responseData = CCR.safelyDecodeJSONResponse(response);
+                                        var successResponse = CCR.checkDecodedJSONResponseSuccess(responseData);
+                                        if (successResponse) {
+                                            var location = 'controllers/report_builder.php/' +
+                                                responseData.report_name +
+                                                '?operation=download_report&report_loc=' +
+                                                responseData.report_loc + '&format=' + format;
+
+                                            var w = new Ext.Window({
+                                                title: 'Report Built',
+                                                width: 220,
+                                                height: 120,
+                                                resizable: false,
+                                                closeAction: 'destroy',
+                                                layout: 'border',
+                                                cls: 'wnd_report_built',
+
+                                                listeners: {
+                                                    show: function () {
+                                                        if (viewer.el) {
+                                                            viewer.el.mask();
+                                                        }
+                                                    },
+                                                    destroy: function () {
+                                                        viewer.el.unmask();
+                                                    }
+                                                },
+
+                                                items: [
+                                                    new Ext.Panel({
+                                                        region: 'west',
+                                                        width: 70,
+                                                        html: '<img src="gui/images/report_icon_wnd.png">',
+                                                        baseCls: 'x-plain'
+                                                    }),
+                                                    new Ext.Panel({
+                                                        region: 'center',
+                                                        width: 150,
+                                                        layout: 'border',
+                                                        margins: '5 5 5 5',
+                                                        items: [
+                                                            new Ext.Panel({
+                                                                region: 'center',
+                                                                html: 'Your report has been built and can now be viewed.',
+                                                                baseCls: 'x-plain'
+                                                            }),
+                                                            new Ext.Button({
+                                                                region: 'south',
+                                                                text: 'View Report',
+                                                                handler: function () {
+                                                                    XDMoD.TrackEvent(
+                                                                        'Report Generator',
+                                                                        'Clicked on View Report button in Report Built window'
+                                                                    );
+                                                                    window.open(location);
+                                                                }
+                                                            })
+                                                        ]
+                                                    })
+                                                ]
+                                            });
+                                            w.show();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            ]
+        };
         XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet.superclass.initComponent.apply(this, arguments);
     },
     listeners: {

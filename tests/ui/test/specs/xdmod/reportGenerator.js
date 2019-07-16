@@ -236,7 +236,7 @@ describe('Report Generator', function () {
         {
             name: expected.centerdirector.report_templates[1].name,
             chartsPerPage: 1,
-            schedule: 'Quarterly',
+            schedule: 'Once',
             deliveryFormat: 'PDF',
             charts: [
                 {

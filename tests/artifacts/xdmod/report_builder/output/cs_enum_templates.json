@@ -4,8 +4,8 @@
   "templates": [
     {
       "id": "3",
-      "name": "Center Staff",
-      "description": "Center Staff",
+      "name": "Summary Page Report",
+      "description": "Summary Page Report",
       "use_submenu": "0"
     }
   ],
