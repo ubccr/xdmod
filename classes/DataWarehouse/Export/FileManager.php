@@ -159,6 +159,10 @@ class FileManager extends Loggable
                 $header[] = $datum['key'];
             }
 
+            $this->logger->debug([
+                'message' => 'Writing header',
+                'header' => json_encode($header)
+            ]);
             $fileWriter->writeRecord($header);
 
             foreach ($dataSet->getResults() as $result) {
