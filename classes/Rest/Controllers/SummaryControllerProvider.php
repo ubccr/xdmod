@@ -28,7 +28,7 @@ class SummaryControllerProvider extends BaseControllerProvider
         $controller->delete("$root/layout", "$class::resetLayout");
 
         $controller->get("$root/rolereport", "$class::getRoleReport");
-        $controller->get("$root/recentchartsreports", "$class::getRecentChartsReports");
+        $controller->get("$root/savedchartsreports", "$class::getSavedChartsReports");
 
         $controller->post("$root/viewedUserTour", "$class::setViewedUserTour");
         $controller->get("$root/viewedUserTour", "$class::getViewedUserTour");
@@ -299,9 +299,9 @@ class SummaryControllerProvider extends BaseControllerProvider
         ));
     }
     /**
-     * Get recent charts and reports.
+     * Get saved charts and reports.
      **/
-    public function getRecentChartsReports(Request $request, Application $app)
+    public function getSavedChartsReports(Request $request, Application $app)
     {
         $user = $this->authorize($request);
         if (isset($user)) {

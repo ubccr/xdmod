@@ -208,11 +208,54 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
             }
         });
         this.items = [this.panel];
+        this.tools = [
+            {
+                id: 'help',
+                qtip: [
+                    '<ul>',
+                    '<li style="padding-top:6px;margin-bottom:6px;">',
+                    '<span style="width:20px;background:#ff0000;display:inline-block">&nbsp;</span>',
+                    '<span><b>Failed Runs</b></span>',
+                    '<ul>',
+                    '<li style="margin-left:6px;">A run in which the app kernel failed to complete successfully.</li>',
+                    '</ul>',
+                    '</li>',
+                    '<li style="margin-top:6px;margin-bottom:6px;">',
+                    '<span style="width: 20px;background:#ffb336;display:inline-block">&nbsp;</span>',
+                    '<span><b>Under Performing Runs</b></span>',
+                    '<ul>',
+                    '<li style="margin-left:6px;">A run in which the app kernel completed successfully but performed below the established control region.</li>',
+                    '</ul>',
+                    '</li>',
+                    '<li style="margin-top:6px;margin-bottom:6px;">',
+                    '<span style="width: 20px;background:#50b432;display:inline-block ">&nbsp;</span>',
+                    '<span><b>In Control Runs</b></span>',
+                    '<ul>',
+                    '<li style="margin-left:6px;">A run in which the app kernel completed successfully and performed within the established control region.</li>',
+                    '</ul>',
+                    '</li>',
+                    '<li style="margin-top:6px;padding-bottom:6px;">',
+                    '<span style="width: 20px;background:#3c86ff;display:inline-block">&nbsp;</span>',
+                    '<span><b>Over Performing Runs</b></span>',
+                    '<ul>',
+                    '<li style="margin-left:6px;">A run in which the app kernel completed successfully and performed better than the established control region.</li>',
+                    '</ul>',
+                    '</li>',
+                    '</ul>'
+                ].join(' '),
+                qwidth: 60
+            }
+        ];
         this.tbar = {
             items: [
                 {
+                    xtype: 'tbtext',
+                    text: 'Time Range'
+                },
+                {
                     xtype: 'button',
-                    text: 'Time Range',
+                    text: timeframe_label,
+                    iconCls: 'custom_date',
                     menu: [{
                         text: '30 day',
                         checked: timeframe_label === '30 day',
@@ -224,6 +267,8 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var start = lastMonth;
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('30 day');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -239,6 +284,8 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var start = oneYearAgoStart;
                                 var end = oneYearAgoEnd;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Previous year');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -253,6 +300,8 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var start = last5Year;
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
+                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('5 year');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -263,13 +312,17 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                         listeners: {
                             click: function (comp) {
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change');
+                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Report default');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report</b>');
                             }
                         }
                     }]
                 },
-                ' ',
-                '|',
-                ' ',
+                {
+                    xtype: 'tbtext',
+                    text: '<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>'
+                },
+                '->',
                 {
                     text: 'Download Report',
                     icon: 'gui/images/report_generator/pdf_icon.png',
@@ -293,7 +346,6 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                             });
                             conn.request({
                                 url: 'controllers/report_builder.php',
-
                                 params: {
                                     operation: 'send_report',
                                     report_id: report_id,
@@ -302,9 +354,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                     start_date: start_date,
                                     end_date: end_date
                                 },
-
                                 method: 'POST',
-
                                 callback: function (options, success, response) {
                                     if (success) {
                                         var responseData = CCR.safelyDecodeJSONResponse(response);
