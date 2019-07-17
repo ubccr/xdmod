@@ -107,10 +107,10 @@ to the `xdmod.portal.js` array.
 Similarly the `roles.d/summary.json` file would be edited to add the portlet to the roles that
 will see it. In the example below the portlet is added to the summary page for
 the center director role (`cd`). The `type` setting should match the xtype string
-in the `Ext.reg` call in the javascript.  The `name` setting should be set to a
-human understandable description of the portlet. The `config` setting  may
-contain any valid json and is available to the portlet as the `this.config`
-property.
+in the `Ext.reg` call in the javascript.  The `name` setting must be set to a
+unique value. It is recommended to set this to a human understandable
+description of the portlet. The `config` setting  may contain any valid json
+and is available to the portlet as the `this.config` property.
 
 ```json
 {
@@ -119,6 +119,10 @@ property.
             "summary_portlets": [{
                 "name": "Example Developer Portlet",
                 "type": "DeveloperPortlet",
+                "location": {
+                    "row": 2,
+                    "column": 1
+                },
                 "config": {
                     "property1": "any valid json",
                     "property2": 3
@@ -128,3 +132,12 @@ property.
     }
 }
 ```
+
+The default position of the portlet is specified in the `location` property.
+The `location` setting has two mandatory properties the zero indexed row (`row`)
+and zero indexed column (`column`). The row value should be less than 1024.
+The summary page does not support gaps between the portlets so the row number
+specifies the relative order of the portlets not their absolute position.
+If multiple portlets specify the same location then they will be placed
+in the specified column and their relative row position will be in alphabetical
+order by the `name` property. All portlets must have unique names.
