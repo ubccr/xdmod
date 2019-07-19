@@ -9,7 +9,11 @@ Ext.namespace('XDMoD.Modules.SummaryPortlets');
 XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
-    title: 'Recent Jobs',
+    collapsible: false,
+    title: 'Jobs',
+    tools: [{
+        id: 'help'
+    }],
 
     initComponent: function () {
         var page_size = 9;
@@ -65,11 +69,13 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
             return element.text === timeframe;
         }, this);
 
-        this.title += ' (' + timeframe + ')';
+        this.title += ' - ' + date.start.format('Y-m-d') + ' to ' + date.end.format('Y-m-d');
 
         if (!this.config.multiuser) {
-            this.title += ' for ' + CCR.xdmod.ui.mappedPName;
+            this.tools[0].qtip = 'This panel shows a list of your HPC jobs for which there is data in XDMoD. Click on a row to view the detailed information about a job.';
             page_size = 10;
+        } else {
+            this.tools[0].qtip = 'This panel shows a list of the HPC jobs that ran under your account for which there is data in XDMoD. Click on a row to view the detailed information about a job.';
         }
 
         // The default search parameters are set to all jobs - this
@@ -121,22 +127,26 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
         var columns = [{
             header: 'Job Identifier',
             width: 140,
+            tooltip: 'The job identifier includes the resource that ran the job and the id provided by the resource manager.',
             dataIndex: 'text'
         }, {
             header: 'Start',
             renderer: formatDateWithTimezone,
+            tooltip: 'The start time of the job',
             width: 115,
             fixed: true,
             dataIndex: 'start_time_ts'
         }, {
             header: 'End',
             renderer: formatDateWithTimezone,
+            tooltip: 'The end time of the job',
             width: 115,
             fixed: true,
             dataIndex: 'end_time_ts'
         }, {
             header: 'CPU',
             renderer: jobEfficiency,
+            tooltip: 'The average CPU usage for the job. The text NA indicates that the metric is unavailable.',
             width: 40,
             fixed: true,
             dataIndex: 'cpu_user'
