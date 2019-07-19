@@ -188,7 +188,16 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     }
                 },
                 request_refresh: function () {
-                    this.needsRefresh = true;
+                    var tabPanel = Ext.getCmp('main_tab_panel');
+                    if (this === tabPanel.getActiveTab()) {
+                        // This is the case where the 'Reset to defaults' button is
+                        // clicked in the Profile dialog and the user is already on the
+                        // summary page
+                        portletStore.load();
+                    } else {
+                        // The refresh will happen the next time the tab is activated
+                        this.needsRefresh = true;
+                    }
                 }
             }
         });
