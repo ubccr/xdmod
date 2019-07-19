@@ -30,7 +30,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     var portal = new Ext.ux.Portal({
                         items: [],
-                        width: Math.max(portletWidth * portalColumns, self.getWidth()),
+                        width: portletWidth * portalColumns,
                         border: false,
                         listeners: {
                             drop: function () {
@@ -63,8 +63,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                         }
                     });
 
-                    var portalColumnsCount = Math.max(portalColumns, Math.floor(self.getWidth() / portletWidth));
-                    for (i = 0; i < portalColumnsCount; i++) {
+                    for (i = 0; i < portalColumns; i++) {
                         portal.add(new Ext.ux.PortalColumn({
                             width: portletWidth,
                             style: 'padding: 1px'
@@ -177,6 +176,9 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         Ext.apply(this, {
             items: [{
                 region: 'center',
+                bodyStyle: {
+                    'background-color': '#dcdcdc'
+                },
                 itemId: 'portalwindow',
                 autoScroll: true
             }],
