@@ -3,7 +3,7 @@
 namespace DataWarehouse\Export;
 
 use CCR\Loggable;
-use DataWarehouse\Data\RawDataset;
+use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
 use Log;
@@ -127,12 +127,12 @@ class FileManager extends Loggable
     /**
      * Write a data set to a temporary file.
      *
-     * @param \DataWarehouse\Data\RawDataset $dataSet
+     * @param \DataWarehouse\Data\BatchDataset $dataSet
      * @param string $format
      * @return string Path to file that was written to.
      * @throws \Exception If writing the data fails.
      */
-    public function writeDataSetToFile(RawDataset $dataSet, $format)
+    public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
         $this->logger->info([
             'message' => 'Writing data to file',
@@ -151,22 +151,10 @@ class FileManager extends Loggable
                 'file_writer' => $fileWriter
             ]);
 
-            $header = [];
+            $fileWriter->writeRecord($dataSet->getHeader())
 
-            // The `export` function returns the first result along with the
-            // necessary metadata.
-            foreach ($dataSet->export() as $datum) {
-                $header[] = $datum['key'];
-            }
-
-            $this->logger->debug([
-                'message' => 'Writing header',
-                'header' => json_encode($header)
-            ]);
-            $fileWriter->writeRecord($header);
-
-            foreach ($dataSet->getResults() as $result) {
-                $fileWriter->writeRecord(array_values($result));
+            foreach ($dataSet as $record) {
+                $fileWriter->writeRecord($record);
             }
 
             $fileWriter->close();
