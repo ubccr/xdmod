@@ -4,8 +4,8 @@
   "templates": [
     {
       "id": "3",
-      "name": "Summary Page Report",
-      "description": "Summary Page Report",
+      "name": "Summary Tab Report",
+      "description": "Summary Tab Report",
       "use_submenu": "0"
     }
   ],

@@ -1,6 +1,6 @@
 [
     ["id", "name", "description", "template", "title", "header", "footer", "format", "font", "schedule", "delivery", "charts_per_page", "use_submenu"],
     [1, "Quarterly Report - Center Director", "Quarterly Report - Center Director", "GenericReportTemplate", "Quarterly Report - Center Director", "", "", "Pdf", "Arial", "Quarterly", "E-mail", 1, 0],
-    [2, "Summary Page Report", "Summary Page Report", "GenericReportTemplate", "Summary Page Report", "", "", "Pdf", "Arial", "Once", "E-mail", 1, 0],
-    [3, "Summary Page Report", "Summary Page Report", "GenericReportTemplate", "Summary Page Report", "", "", "Pdf", "Arial", "Once", "E-mail", 1, 0]
+    [2, "Summary Tab Report", "Summary Tab Report", "GenericReportTemplate", "Summary Tab Report", "", "", "Pdf", "Arial", "Once", "E-mail", 1, 0],
+    [3, "Summary Tab Report", "Summary Tab Report", "GenericReportTemplate", "Summary Tab Report", "", "", "Pdf", "Arial", "Once", "E-mail", 1, 0]
 ]

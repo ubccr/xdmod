@@ -25,15 +25,7 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
                 'config',
                 'type',
                 { name: 'recordid', type: 'int' },
-                {
-                    name: 'ts',
-                    convert: function (v, rec) {
-                        if (rec.ts === '0') {
-                            return 'Unknown';
-                        }
-                        return Ext.util.Format.date(new Date(rec.ts * 1000).toString(), 'Y-m-d h:i:s');
-                    }
-                }
+                'ts'
             ],
             sortInfo: {
                 field: 'ts',
@@ -90,7 +82,16 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
                 columns: [
                     { header: 'Name', dataIndex: 'name', width: 250 },
                     { header: 'Type', dataIndex: 'type' },
-                    { header: 'Last Modified', dataIndex: 'ts' }
+                    {
+                        header: 'Last Modified',
+                        dataIndex: 'ts',
+                        renderer: function (value) {
+                            if (value === '0') {
+                                return 'Unknown';
+                            }
+                            return Ext.util.Format.date(new Date(value * 1000).toString(), 'Y-m-d h:i:s');
+                        }
+                    }
                 ],
                 defaults: {
                     sortable: true,

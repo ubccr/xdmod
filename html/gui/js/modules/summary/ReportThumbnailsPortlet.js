@@ -165,6 +165,12 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                             this.tmpHpc.store.setBaseParam('start_date', self.timeframe.start_date);
                             this.tmpHpc.store.setBaseParam('end_date', self.timeframe.end_date);
                             this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
+                        } else {
+                            var timeframe = filterRange(ranges, config.timeframe_label);
+                            config.start_date = timeframe.start_date;
+                            config.end_date = timeframe.end_date;
+                            this.tmpHpc.store.setBaseParam('start_date', timeframe.start_date);
+                            this.tmpHpc.store.setBaseParam('end_date', timeframe.end_date);
                         }
 
                         this.tmpHpc.store.setBaseParam('operation', 'get_data');
@@ -268,7 +274,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('30 day');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -285,7 +291,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var end = oneYearAgoEnd;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Previous year');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -301,7 +307,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('5 year');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -313,14 +319,14 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                             click: function (comp) {
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change');
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Report default');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>Summary Report</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('');
                             }
                         }
                     }]
                 },
                 {
                     xtype: 'tbtext',
-                    text: '<b>Summary Report - ' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>'
+                    text: (self.timeframe.start_date !== null && self.timeframe.end_date !== null ? '<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>' : '')
                 },
                 '->',
                 {
