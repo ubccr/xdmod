@@ -8,7 +8,7 @@ namespace DataWarehouse\Export;
 use CCR\DB;
 use CCR\Loggable;
 use CCR\MailWrapper;
-use DataWarehouse\Data\RawDataset;
+use DataWarehouse\Data\BatchDataset;
 use Exception;
 use Log;
 use XDUser;
@@ -210,7 +210,7 @@ class BatchProcessor extends Loggable
      *
      * @param array $request
      * @param \XDUser $user
-     * @return \DataWarehouse\Data\RawDataset;
+     * @return \DataWarehouse\Data\BatchDataset;
      * @throws \Exception
      */
     private function getDataSet(array $request, XDUser $user)
@@ -237,23 +237,15 @@ class BatchProcessor extends Loggable
                 ],
                 'accounting'
             );
-            $dataSet = new RawDataset($query, $user);
-
-            $this->logger->debug('Executing query');
-
-            // Data are fetched from the database as a side effect of checking
-            // for results.
-            if ($dataSet->hasResults()) {
-                $this->logger->debug('Data set has results');
-            }
-
+            $dataSet = new BatchDataset($query, $user);
+            $dataSet->setLogger($this->logger);
             return $dataSet;
         } catch (Exception $e) {
             $this->logger->err([
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
-            throw new Exception('Failed to execute batch export query', 0, $e);
+            throw new Exception('Failed to create batch export query', 0, $e);
         }
     }
 

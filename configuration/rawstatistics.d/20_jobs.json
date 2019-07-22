@@ -11,7 +11,8 @@
             "name": "Local Job Id",
             "dtype": "accounting",
             "group": "Administration",
-            "documentation": "The unique identifier assigned to the job by the job scheduler."
+            "documentation": "The unique identifier assigned to the job by the job scheduler.",
+            "batch_export": true
         },
         {
             "key": "resource_id",
@@ -22,7 +23,8 @@
                 "schema": "modw",
                 "table": "resourcefact"
             },
-            "documentation": "The resource that ran the job."
+            "documentation": "The resource that ran the job.",
+            "batch_export": true
         },
         {
             "key": "systemaccount_id",
@@ -34,7 +36,8 @@
                 "table": "systemaccount",
                 "column": "username"
             },
-            "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource."
+            "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
+            "batch_export": false
         },
         {
             "key": "person_id",
@@ -46,7 +49,8 @@
                 "table": "person",
                 "column": "long_name"
             },
-            "documentation": "The name of the job owner."
+            "documentation": "The name of the job owner.",
+            "batch_export": "anonymize"
         },
         {
             "key": "person_organization_id",
@@ -57,14 +61,16 @@
                 "schema": "modw",
                 "table": "organization"
             },
-            "documentation": "The organization of the person who ran the task"
+            "documentation": "The organization of the person who ran the task",
+            "batch_export": true
         },
         {
             "key": "name",
             "name": "Name",
             "documentation": "The name of the job as reported by the job scheduler.",
             "dtype": "accounting",
-            "group": "Executable"
+            "group": "Executable",
+            "batch_export": false
         },
         {
             "key": "submit_time_ts",
@@ -72,7 +78,8 @@
             "dtype": "accounting",
             "group": "Timing",
             "units": "ts",
-            "documentation": "Task submission time"
+            "documentation": "Task submission time",
+            "batch_export": true
         },
         {
             "key": "start_time_ts",
@@ -80,7 +87,8 @@
             "dtype": "accounting",
             "group": "Timing",
             "units": "ts",
-            "documentation": "The time that the job started running."
+            "documentation": "The time that the job started running.",
+            "batch_export": true
         },
         {
             "key": "end_time_ts",
@@ -88,7 +96,8 @@
             "units": "ts",
             "dtype": "accounting",
             "group": "Timing",
-            "documentation": "The time that the job ended."
+            "documentation": "The time that the job ended.",
+            "batch_export": true
         },
         {
             "key": "eligible_time_ts",
@@ -96,7 +105,8 @@
             "units": "ts",
             "dtype": "accounting",
             "group": "Timing",
-            "documentation": "The time that the job was eligible for scheduling by the resource manager."
+            "documentation": "The time that the job was eligible for scheduling by the resource manager.",
+            "batch_export": true
         },
         {
             "key": "node_count",
@@ -108,14 +118,16 @@
                 "table": "nodecount",
                 "column": "nodes"
             },
-            "documentation": "The number of nodes that were assigned to the job."
+            "documentation": "The number of nodes that were assigned to the job.",
+            "batch_export": true
         },
         {
             "key": "processor_count",
             "name": "Cores",
             "dtype": "accounting",
             "group": "Allocated Resource",
-            "documentation": "The number of cores that were assigned to the job."
+            "documentation": "The number of cores that were assigned to the job.",
+            "batch_export": true
         },
         {
             "key": "memory_kb",
@@ -123,7 +135,8 @@
             "dtype": "accounting",
             "group": "Allocated resource",
             "units": "kilobyte",
-            "documentation": "Memory consumed as reported by the resource manager."
+            "documentation": "Memory consumed as reported by the resource manager.",
+            "batch_export": true
         },
         {
             "key": "wallduration",
@@ -131,7 +144,8 @@
             "dtype": "accounting",
             "group": "Timing",
             "units": "seconds",
-            "documentation": "Overall job duration."
+            "documentation": "Overall job duration.",
+            "batch_export": true
         },
         {
             "key": "waitduration",
@@ -139,7 +153,8 @@
             "dtype": "accounting",
             "group": "Timing",
             "units": "seconds",
-            "documentation": "Time the job waited in the queue"
+            "documentation": "Time the job waited in the queue",
+            "batch_export": true
         },
         {
             "key": "cpu_time",
@@ -147,49 +162,56 @@
             "dtype": "accounting",
             "group": "Allocated resource",
             "units": "seconds",
-            "documentation": "The amount of CPU core time (Core Count * Wall Time)"
+            "documentation": "The amount of CPU core time (Core Count * Wall Time)",
+            "batch_export": true
         },
         {
             "key": "group_name",
             "name": "UNIX group name",
             "dtype": "accounting",
             "group": "Administration",
-            "documentation": "The name of the group that ran the job."
+            "documentation": "The name of the group that ran the job.",
+            "batch_export": false
         },
         {
             "key": "gid_number",
             "name": "UNIX group GID",
             "dtype": "accounting",
             "group": "Administration",
-            "documentation": "The GID of the group that ran the job."
+            "documentation": "The GID of the group that ran the job.",
+            "batch_export": false
         },
         {
             "key": "uid_number",
             "name": "UNIX UID",
             "dtype": "accounting",
             "group": "Administration",
-            "documentation": "The UID of the user that ran the job."
+            "documentation": "The UID of the user that ran the job.",
+            "batch_export": false
         },
         {
             "key": "exit_code",
             "name": "Exit Code",
             "dtype": "accounting",
             "group": "Executable",
-            "documentation": "The code that the job exited with."
+            "documentation": "The code that the job exited with.",
+            "batch_export": true
         },
         {
             "key": "exit_state",
             "name": "Exit State",
             "dtype": "accounting",
             "group": "Executable",
-            "documentation": "The state of the job when it completed."
+            "documentation": "The state of the job when it completed.",
+            "batch_export": true
         },
         {
             "key": "cpu_req",
             "name": "Requested Cores",
             "dtype": "accounting",
             "group": "Requested resource",
-            "documentation": "The number of CPUs required by the job."
+            "documentation": "The number of CPUs required by the job.",
+            "batch_export": true
         },
         {
             "key": "mem_req",
@@ -197,7 +219,8 @@
             "dtype": "accounting",
             "group": "Requested resource",
             "units": "bytes",
-            "documentation": "The amount of memory required by the job."
+            "documentation": "The amount of memory required by the job.",
+            "batch_export": true
         },
         {
             "key": "timelimit",
@@ -205,7 +228,8 @@
             "dtype": "accounting",
             "group": "Requested resource",
             "units": "seconds",
-            "documentation": "The time limit of the job."
+            "documentation": "The time limit of the job.",
+            "batch_export": true
         }
     ]
 }
