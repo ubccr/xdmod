@@ -3,10 +3,12 @@
         "portal": {
             "js": [
                 "gui/js/modules/summary/ChartPortlet.js",
+                "gui/js/modules/summary/JobPortlet.js",
                 "gui/js/modules/summary/RecentChartsReportsPortlet.js",
                 "gui/js/modules/summary/ReportThumbnailsPortlet.js"
             ],
             "css": [
+                "gui/css/SummaryTab.css",
                 "gui/css/ReportThumbnailsPortlet.css"
             ]
         }

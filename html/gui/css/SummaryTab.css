@@ -1,0 +1,35 @@
+.empty-grid-heading {
+    background-image: url("../images/exclamation.png");
+    background-color: white;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    font-size: 16px;
+}
+
+.empty-grid-body {
+    margin: 10px;
+    font-size: 12px;
+}
+
+.author {
+    color:#333;
+}
+
+.topic {
+    padding-left:20px;
+    background:transparent url(../images/new_tab.gif) no-repeat 0 2px;
+}
+
+.circle {
+    width: 14px;
+    height: 14px;
+    border: solid 1px #555;
+    background-color: #eed;
+    box-shadow: 1px 1px rgba(0,0,0,0.6);
+    -moz-box-shadow: 1px 1px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 1px 1px rgba(0,0,0,0.6);
+    -o-box-shadow: 1px 1px rgba(0,0,0,0.6);
+    border-radius: 14px;
+    display: inline-block;
+    margin-left: 20px;
+}

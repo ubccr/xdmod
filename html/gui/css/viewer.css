@@ -352,6 +352,9 @@ h3 {
 .blank {
     background-image: url(../images/s.gif) !important;
 }
+.chart_bar_link {
+    background-image: url(../images/chart_bar_link.png) !important;
+}
 .xd-toolbar {
 	background-color:#ffffff !important;
 	background-image: none !important;
