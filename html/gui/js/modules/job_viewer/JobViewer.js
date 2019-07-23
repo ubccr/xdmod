@@ -610,34 +610,12 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             fields: [
                                 {name: 'key', mapping: 'key', type: 'string'},
                                 {name: 'value', mapping: 'value', type: 'string'},
-                                {name: 'full_value', mapping: 'value', type: 'string'},
                                 {name: 'units', mapping: 'units', type: 'string'},
                                 {name: 'group', mapping: 'group', type: 'string'},
                                 {name: 'help', mapping: 'help', type: 'string'},
                                 {name: 'documentation', mapping: 'documentation', type: 'string'}
                             ]
                         }),
-                        listeners: {
-                            /**
-                             * Fires after the records have been loaded.
-                             *
-                             * @param {Ext.data.Store} store
-                             * @param {Array} records
-                             * @param {Object} options
-                             */
-                            load: function (store, records, options) {
-                                var exists = CCR.exists;
-
-                                for (var i = 0; i < records.length; i++) {
-                                    var record = records[i];
-
-                                    var value = record.get('value');
-                                    var units = record.get('units');
-                                    var fullValue = self.formatData(value, units, 4);
-                                    record.set('full_value', fullValue);
-                                }
-                            }
-                        },
                         groupField: 'group'
                     }),
                     columnLines: true,
@@ -659,9 +637,15 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             "header": "Value",
                             "width": 150,
                             "sortable": true,
-                            "dataIndex": "full_value",
+                            dataIndex: 'value',
                             id: valueColumnId,
-                            renderer: {fn: self.renderFullValue, scope: self},
+                            renderer: function (value, metadata, record) {
+                                var fmt = String(self.formatData(value, record.get('units')));
+                                if (fmt.indexOf(value) !== 0) {
+                                    metadata.attr = 'ext:qtip="' + value + ' ' + record.get('units') + '"';
+                                }
+                                return fmt;
+                            },
                             editor: new Ext.form.TextField({
                                 allowBlank: false
                             })
@@ -1405,20 +1389,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         }, // node_selected
 
     }, // listeners ===========================================================
-
-    /**
-     * Handles rendering the 'full_value' column of the 'keyvaluepair' grid.
-     *
-     * @param {Object}          value
-     * @param {Object}          metadata
-     * @param {Ext.data.Record} record
-     * @param {Number}          rowIndex
-     * @param {Number}          colIndex
-     * @param {Ext.data.Store}  store
-     */
-    renderFullValue: function (value, metadata, record, rowIndex, colIndex, store) {
-       return value;
-    }, // renderFullValue
 
     /**
      * Create a history token from the provided `node`.
