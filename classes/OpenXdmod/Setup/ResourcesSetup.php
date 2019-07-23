@@ -6,7 +6,6 @@
 
 namespace OpenXdmod\Setup;
 
-use \CCR\Json;
 use Configuration\XdmodConfiguration;
 
 /**
@@ -159,5 +158,15 @@ class ResourcesSetup extends SubMenuSetupItem
     {
         $this->saveJsonConfig($this->resources,     'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');
+
+        $this->updateAcls();
+    }
+
+    /**
+     * Execute all ACL actions.
+     */
+    private function updateAcls()
+    {
+        passthru('acl-config');
     }
 }

@@ -141,6 +141,27 @@ function main()
     // Role Retrieval
     $allRoles = Roles::getRoleNames($blacklist);
 
+    $resourceTypesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
+    $resourceConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
+
+    $enabledResourceTypes = array_unique(
+        array_reduce(
+            $resourceConfig,
+            function ($carry, $item) {
+                $carry [] = $item['resource_type'];
+                return $carry;
+            },
+            array()
+        )
+    );
+
+    $enabledRealms = array();
+    foreach($enabledResourceTypes as $enabledResourceType) {
+        $realms = $resourceTypesConfig['resource_types'][$enabledResourceType]['realms'];
+        $enabledRealms = array_merge($enabledRealms, $realms);
+    }
+    $enabledRealms = array_unique($enabledRealms);
+
     // Configuration Files
     $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
     $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
@@ -183,12 +204,14 @@ function main()
         // Process the realms provided by this module, if any.
         if (property_exists($realms, 'realms')) {
             foreach ($realms->realms as $realm => $data) {
-                $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
-                $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
-                $results[$module]['realms'][$realm] = array(
-                    'group_bys' => json_decode(json_encode($groupBys), true),
-                    'statistics' => json_decode(json_encode($statistics), true)
-                );
+                if (in_array($realm, $enabledRealms)) {
+                    $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
+                    $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
+                    $results[$module]['realms'][$realm] = array(
+                        'group_bys' => json_decode(json_encode($groupBys), true),
+                        'statistics' => json_decode(json_encode($statistics), true)
+                    );
+                }
             }
         }
     }
