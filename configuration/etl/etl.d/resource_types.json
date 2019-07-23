@@ -36,7 +36,16 @@
                   "type": "jsonfile",
                   "name": "Resource types",
                   "path": "${base_dir}/../resource_types.json",
-                  "record_schema_path": "common/resource-types.schema.json"
+                  "record_schema_path": "common/resource-types.schema.json",
+                  "filters": [
+                      {
+                          "#": "Reformat config file for ETLs purposes.",
+                          "type": "external",
+                          "name": "jq",
+                          "path": "jq",
+                          "arguments": "'[ .resource_types | to_entries[]| {abbrev: .key, description:.value.description} ] '"
+                      }
+                  ]
               },
               "destination": {
                   "type": "mysql",

@@ -1,62 +1,73 @@
-[
-    {
-        "id": 0,
-        "abbrev": "UNK",
-        "description": "Unknown"
-    },
-    {
-        "id": 1,
-        "abbrev": "HPC",
-        "description": "High-performance computing"
-    },
-    {
-        "id": 2,
-        "abbrev": "HTC",
-        "description": "High-throughput computing"
-    },
-    {
-        "id": 3,
-        "abbrev": "DIC",
-        "description": "Data-intensive computing"
-    },
-    {
-        "id": 4,
-        "abbrev": "Grid",
-        "description": "Grid of resources"
-    },
-    {
-        "id": 5,
-        "abbrev": "Cloud",
-        "description": "Cloud resource"
-    },
-    {
-        "id": 6,
-        "abbrev": "Vis",
-        "description": "Visualization system"
-    },
-    {
-        "id": 7,
-        "abbrev": "VM",
-        "description": "Virtual Machine system"
-    },
-    {
-        "id": 8,
-        "abbrev": "Tape",
-        "description": "Tape storage resource"
-    },
-    {
-        "id": 9,
-        "abbrev": "Disk",
-        "description": "Disk storage resource"
-    },
-    {
-        "id": 10,
-        "abbrev": "StGrid",
-        "description": "Storage grid"
-    },
-    {
-        "id": 11,
-        "abbrev": "US",
-        "description": "User Support"
+{
+    "resource_types": {
+        "UNK": {
+            "description": "Unknown",
+            "realms": [
+            ]
+        },
+        "HPC": {
+            "description": "High-performance computing",
+            "realms": [
+                "Jobs"
+            ]
+        },
+        "HTC": {
+            "description": "High-throughput computing",
+            "realms": [
+                "Jobs"
+            ]
+        },
+        "DIC": {
+            "description": "Data-intensive computing",
+            "realms": [
+                "Jobs"
+            ]
+        },
+        "Grid": {
+            "description": "Grid of resources",
+            "realms": [
+            ]
+        },
+        "Cloud": {
+            "description": "Cloud resource",
+            "realms": [
+                "Cloud"
+            ]
+        },
+        "Vis": {
+            "description": "Visualization system",
+            "realms": [
+                "Jobs"
+            ]
+        },
+        "VM": {
+            "description": "Virtual Machine system",
+            "realms": [
+                "Cloud"
+            ]
+        },
+        "Tape": {
+            "description": "Tape storage resource",
+            "realms": [
+                "Storage"
+            ]
+        },
+        "Disk": {
+            "description": "Disk storage resource",
+            "realms": [
+                "Storage"
+            ]
+        },
+        "StGrid": {
+            "description": "Storage grid",
+            "realms": [
+                "Storage"
+            ]
+        },
+        "US": {
+            "description": "User Support",
+            "realms": [
+            ]
+        }
     }
-]
+}

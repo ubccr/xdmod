@@ -5,7 +5,7 @@
     "source_query": {
         "records": {
             "resource_id": "r.resource_id",
-            "resource_type_id": "COALESCE(rc.type_id, 0)",
+            "resource_type_id": "COALESCE(srt.resource_type_id, 1)",
             "organization_id": "1",
             "resource_name": "rc.name",
             "resource_code": "rc.resource",
@@ -25,6 +25,13 @@
                 "name": "staging_resource_config",
                 "alias": "rc",
                 "on": "r.resource_name = rc.resource"
+            },
+            {
+                "type": "LEFT",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_type",
+                "alias": "srt",
+                "on": "rc.type_abbrev = srt.resource_type_abbrev"
             }
         ]
     }

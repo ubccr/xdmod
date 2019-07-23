@@ -43,7 +43,7 @@
                     "resource",
                     "name",
                     "description",
-                    "resource_type_id",
+                    "resource_type",
                     "pi_column",
                     "shared_jobs",
                     "timezone"

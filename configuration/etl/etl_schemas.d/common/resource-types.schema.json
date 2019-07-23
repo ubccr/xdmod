@@ -3,11 +3,6 @@
     "title": "Resource types",
     "type": "object",
     "properties": {
-        "id": {
-            "type": "integer",
-            "description": "Resource type ID",
-            "minimum": 0
-        },
         "abbrev": {
             "type": "string",
             "description": "Resource type abbreviation",
@@ -20,7 +15,6 @@
         }
     },
     "required": [
-        "id",
         "abbrev",
         "description"
     ]

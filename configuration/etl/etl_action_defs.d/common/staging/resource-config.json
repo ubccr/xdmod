@@ -9,7 +9,7 @@
             "description": "description",
             "shared_jobs": "shared_jobs",
             "timezone": "timezone",
-            "type_id": "resource_type_id"
+            "type_abbrev": "resource_type"
         }
     }
 }

@@ -502,14 +502,18 @@ EOF;
         $expectedValue = $options['expected']['value'];
         $expectedXpath = isset($options['expected']['xpath']) ? $options['expected']['xpath'] : null;
 
-        $results = $helper->post('controllers/user_interface.php', null, $data);
+        $originalResults = $helper->post('controllers/user_interface.php', null, $data);
 
         if ($expectedXpath !== null) {
-            $xml = simplexml_load_string($results[0]);
+            $xml = simplexml_load_string($originalResults[0]);
 
             $results = $xml->xpath($expectedXpath);
 
             $actualValue = is_array($expectedValue) ? $results : array_pop($results);
+
+            $expectedCount = count($expectedValue);
+            $actualCount = count($actualValue);
+            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . print_r($data, true));
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];
@@ -517,7 +521,7 @@ EOF;
                 $this->assertEquals($expected, (string)$actual);
             }
         } else {
-            $actual = $results[0];
+            $actual = $originalResults[0];
 
             foreach($expectedValue as $key => $value) {
                 $this->assertArrayHasKey($key, $actual);

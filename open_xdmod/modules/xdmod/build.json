@@ -71,6 +71,7 @@
         "etc": [
             "configuration/colors1.json",
             "configuration/datawarehouse.json",
+            "configuration/datawarehouse.d",
             "configuration/etl",
             "configuration/hierarchy.json",
             "configuration/internal_dashboard.json",
