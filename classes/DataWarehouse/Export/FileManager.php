@@ -151,7 +151,7 @@ class FileManager extends Loggable
                 'file_writer' => $fileWriter
             ]);
 
-            $fileWriter->writeRecord($dataSet->getHeader())
+            $fileWriter->writeRecord($dataSet->getHeader());
 
             foreach ($dataSet as $record) {
                 $fileWriter->writeRecord($record);
