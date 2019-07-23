@@ -409,6 +409,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             case 'megabyte':
                 return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0 * 1024.0, 'byte', 4);
                 break;
+            case 'joules':
+                return Ext.util.Format.number(val / 3.6e6, '0,000.000') + ' kWh';
             default:
                 return XDMoD.utils.format.convertToSiPrefix(val, units, 4);
                 break;
