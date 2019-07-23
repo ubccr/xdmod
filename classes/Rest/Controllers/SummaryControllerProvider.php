@@ -81,7 +81,12 @@ class SummaryControllerProvider extends BaseControllerProvider
                     $chartLocation = 'FW' . $portlet['name'];
                     $column = -1;
                 } else {
-                    list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name']);
+                    $defaultLayout = null;
+                    if (isset($portlet['location']) && isset($portlet['location']['row']) && isset($portlet['location']['column'])) {
+                        $defaultLayout = array($portlet['location']['row'], $portlet['location']['column']);
+                    }
+
+                    list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name'], $defaultLayout);
                 }
 
                 $summaryPortlets[$chartLocation] = array(

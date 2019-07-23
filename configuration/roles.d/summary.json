@@ -3,11 +3,16 @@
     "+cd": {
       "summary_portlets": [
         {
-          "name": "Summary Statistics",
-          "type": "SummaryStatisticsPortlet",
-          "region": "top",
-          "config": {
-            "timeframe": "Quarter to date"
+          "name": "Chart Thumbnails",
+          "type": "ReportThumbnailsPortlet",
+          "region": "top"
+        },
+        {
+          "name": "Recents",
+          "type": "RecentChartsReportsPortlet",
+          "location": {
+            "row": 0,
+            "column": 0
           }
         }
       ]
@@ -15,11 +20,47 @@
     "+cs": {
       "summary_portlets": [
         {
-          "name": "Summary Statistics",
-          "type": "SummaryStatisticsPortlet",
-          "region": "top",
+          "name": "Chart Thumbnails",
+          "type": "ReportThumbnailsPortlet",
+          "region": "top"
+        },
+        {
+          "name": "Recents",
+          "type": "RecentChartsReportsPortlet",
+          "location": {
+            "row": 0,
+            "column": 0
+          }
+        }
+      ]
+    },
+    "+pi": {
+      "summary_portlets": [
+        {
+          "name": "Job Portlet",
+          "type": "JobPortlet",
+          "location": {
+            "row": 0,
+            "column": 0
+          },
           "config": {
-            "timeframe": "Month to date"
+            "timeframe": "30 day",
+            "multiuser": true
+          }
+        }
+      ]
+    },
+    "+usr": {
+      "summary_portlets": [
+        {
+          "name": "Job Portlet",
+          "type": "JobPortlet",
+          "location": {
+            "row": 0,
+            "column": 0
+          },
+          "config": {
+            "timeframe": "30 day"
           }
         }
       ]
