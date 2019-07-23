@@ -136,7 +136,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                     Ext.Msg.show({
                                         cls: 'new-user-tour-dialog-container',
                                         title: 'New User Tour',
-                                        msg: "Welcome to XDMoD. It seems that you haven't viewed our User Tour yet. The User Tour is a short series of information tips giving an overview of some basic components of XDMoD. Would you like to view the New User Tour now?<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show this message again.",
+                                        msg: "Welcome to XDMoD. It seems that you haven't viewed our User Tour yet. The User Tour is a short series of information tips giving an overview of some basic components of XDMoD. Would you like to view the User Tour now?<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show this message again.",
                                         buttons: {no: "No, don't show me the User Tour", yes: "Yes, Show me the User Tour"},
                                         icon: Ext.Msg.INFO,
                                         fn: function (buttonValue, inputText, showConfig) {
