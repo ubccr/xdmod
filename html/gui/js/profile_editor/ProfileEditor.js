@@ -83,13 +83,68 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
       var self = this;
 
       this.general_settings = new XDMoD.ProfileGeneralSettings({parentWindow: self});
-      this.role_delegation = new XDMoD.ProfileRoleDelegation({parentWindow: self, id: 'tab_role_delegation' });
 
       // ------------------------------------------------
 
       this.on('beforeclose', self.handleProfileClose);
 
       // ------------------------------------------------
+
+        var tabItems = [
+            this.general_settings
+        ];
+
+        if (CCR.xdmod.ui.isCenterDirector) {
+            tabItems.push(new XDMoD.ProfileRoleDelegation({
+                parentWindow: self
+            }));
+        }
+
+        if (!CCR.xdmod.ui.tgSummaryViewer.usesToolbar) {
+            tabItems.push({
+                title: 'Settings',
+                height: 320,
+                layout: 'fit',
+                border: false,
+                frame: true,
+                items: [{
+                    items: [{
+                        title: 'User Interface',
+                        xtype: 'form',
+                        bodyStyle: 'padding:5px',
+                        labelWidth: 230,
+                        frame: true,
+                        items: [{
+                            xtype: 'compositefield',
+                            items: [{
+                                xtype: 'button',
+                                fieldLabel: 'Summary Tab Panel Layout',
+                                text: 'Reset to Default',
+                                handler: function (button) {
+                                    Ext.Ajax.request({
+                                        url: XDMoD.REST.url + '/summary/layout',
+                                        method: 'DELETE',
+                                        success: function () {
+                                            button.setDisabled(true);
+                                            CCR.xdmod.ui.tgSummaryViewer.fireEvent('request_refresh');
+                                        },
+                                        failure: function (response, opts) {
+                                            Ext.MessageBox.alert('Error', response.message);
+                                        }
+                                    });
+                                }
+                            }]
+                        }]
+                    }]
+                }],
+                bbar: {
+                    items: [
+                        '->',
+                        self.getCloseButton()
+                    ]
+                }
+            });
+        }
 
       var tabPanel = new Ext.TabPanel({
 
@@ -101,10 +156,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
             tabCls: 'tab-strip'
          },
 
-         items: [
-            this.general_settings,
-            this.role_delegation
-         ],
+         items: tabItems,
 
          listeners: {
             tabchange: function (thisTabPanel, tab) {
@@ -128,22 +180,6 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
          }
 
       });//tabPanel
-
-      // ------------------------------------------------
-
-      if (CCR.xdmod.ui.isCenterDirector == false) {
-
-         tabPanel.on('afterrender', function(tp) {
-
-            var role_delegation_tab = tp.id + '__tab_role_delegation';
-
-            var tab = document.getElementById(role_delegation_tab);
-
-            tab.style.display = 'none';
-
-         });//afterrender
-
-      }//if (CCR.xdmod.ui.isCenterDirector == false)
 
       // ------------------------------------------------
 
