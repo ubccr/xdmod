@@ -4,8 +4,8 @@
   "templates": [
     {
       "id": "3",
-      "name": "Center Staff",
-      "description": "Center Staff",
+      "name": "Summary Tab Report",
+      "description": "Summary Tab Report",
       "use_submenu": "0"
     }
   ],
