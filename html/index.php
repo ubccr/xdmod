@@ -220,6 +220,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
+    <script type="text/javascript" src="gui/lib/ClearableComboBox.js"></script>
 
     <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
     <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>

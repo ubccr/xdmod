@@ -24,6 +24,29 @@
         }
       ]
     },
+    "+usr": {
+      "summary_portlets": [
+        {
+          "name": "Job Portlet",
+          "type": "JobPortlet",
+          "config": {
+            "timeframe": "30 day"
+          }
+        }
+      ]
+    },
+    "+pi": {
+      "summary_portlets": [
+        {
+          "name": "Job Portlet",
+          "type": "JobPortlet",
+          "config": {
+            "timeframe": "30 day",
+            "multiuser": true
+          }
+        }
+      ]
+    },
     "+pub": {
       "summary_portlets": [
         {
