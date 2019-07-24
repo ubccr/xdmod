@@ -651,7 +651,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
         foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
             $field = new TableField($this->attributeTable, $attributeKey, $this->qualifyColumnName($attributeKey));
-            $where = new WhereCondition($f, '=', new TableField($query->getDataTable(), $aggregateKey));
+            $where = new WhereCondition($field, '=', new TableField($query->getDataTable(), $aggregateKey));
             $query->addField($field);
             $query->addWhereCondition($where);
             $query->addGroup($field);
@@ -659,17 +659,17 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
 
         $formula = $this->attributeValuesQuery->getRecord('short_name');
-        $query->addField( new TableField($this->attributeTable, $formula, $this->qualifyColumnName($formula)) );
+        $query->addField(new TableField($this->attributeTable, $formula, $this->qualifyColumnName($formula)));
 
         $formula = $this->attributeValuesQuery->getRecord('long_name');
-        $query->addField( new TableField($this->attributeTable, $formula, $this->qualifyColumnName($formula)) );
+        $query->addField(new TableField($this->attributeTable, $formula, $this->qualifyColumnName($formula)));
 
         // Add a field for each ORDER BY column
 
         $queryConfig = $this->attributeValuesQuery->toStdClass();
         if ( isset($queryConfig->orderby) ) {
             foreach ( $queryConfig->orderby as $orderByField ) {
-                $query->addField( new TableField($this->attributeTable, $orderByField, $this->qualifyColumnName($orderByField)) );
+                $query->addField(new TableField($this->attributeTable, $orderByField, $this->qualifyColumnName($orderByField)));
             }
         }
 

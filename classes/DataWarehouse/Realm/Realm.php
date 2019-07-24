@@ -182,7 +182,7 @@ class Realm extends \CCR\Loggable implements iRealm
             case self::SORT_ON_NAME:
                 uasort(
                     $configList,
-                    function($a, $b) {
+                    function ($a, $b) {
                         return strcmp($a->name, $b->name);
                     }
                 );
@@ -191,7 +191,7 @@ class Realm extends \CCR\Loggable implements iRealm
             case self::SORT_ON_ORDER:
                 uasort(
                     $configList,
-                    function($a, $b) {
+                    function ($a, $b) {
                         // Order is optional so default to 0 if the order is not specified
                         $orderA = ( isset($a->order) ? $a->order : 0 );
                         $orderB = ( isset($b->order) ? $b->order : 0 );
@@ -595,6 +595,4 @@ class Realm extends \CCR\Loggable implements iRealm
     {
         return sprintf('%s(%s)', get_class($this), $this->id);
     }
-
 }
-
