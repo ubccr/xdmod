@@ -30,7 +30,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     var portal = new Ext.ux.Portal({
                         items: [],
-                        width: Math.max(portletWidth * portalColumns, self.getWidth()),
+                        width: portletWidth * portalColumns,
                         border: false,
                         listeners: {
                             drop: function () {
@@ -63,8 +63,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                         }
                     });
 
-                    var portalColumnsCount = Math.max(portalColumns, Math.floor(self.getWidth() / portletWidth));
-                    for (i = 0; i < portalColumnsCount; i++) {
+                    for (i = 0; i < portalColumns; i++) {
                         portal.add(new Ext.ux.PortalColumn({
                             width: portletWidth,
                             style: 'padding: 1px'
@@ -177,6 +176,9 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         Ext.apply(this, {
             items: [{
                 region: 'center',
+                bodyStyle: {
+                    'background-color': '#dcdcdc'
+                },
                 itemId: 'portalwindow',
                 autoScroll: true
             }],
@@ -188,7 +190,16 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     }
                 },
                 request_refresh: function () {
-                    this.needsRefresh = true;
+                    var tabPanel = Ext.getCmp('main_tab_panel');
+                    if (this === tabPanel.getActiveTab()) {
+                        // This is the case where the 'Reset to defaults' button is
+                        // clicked in the Profile dialog and the user is already on the
+                        // summary page
+                        portletStore.load();
+                    } else {
+                        // The refresh will happen the next time the tab is activated
+                        this.needsRefresh = true;
+                    }
                 }
             }
         });

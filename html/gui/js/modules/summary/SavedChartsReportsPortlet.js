@@ -1,10 +1,10 @@
 Ext.namespace('XDMoD.Modules.SummaryPortlets');
 
-XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.ui.Portlet, {
 
     layout: 'fit',
     autoScroll: true,
-    title: 'Recent Charts and Reports',
+    title: 'Saved Charts and Reports',
     width: 1000,
 
     initComponent: function () {
@@ -13,7 +13,7 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
             autoDestroy: true,
-            url: XDMoD.REST.url + '/summary/recentchartsreports',
+            url: XDMoD.REST.url + '/summary/savedchartsreports',
             // reader configs
             root: 'data',
             idProperty: 'name',
@@ -25,12 +25,7 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
                 'config',
                 'type',
                 { name: 'recordid', type: 'int' },
-                {
-                    name: 'ts',
-                    convert: function (v, rec) {
-                        return Ext.util.Format.date(new Date(rec.ts * 1000).toString(), 'Y-m-d h:i:s');
-                    }
-                }
+                'ts'
             ],
             sortInfo: {
                 field: 'ts',
@@ -87,7 +82,16 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
                 columns: [
                     { header: 'Name', dataIndex: 'name', width: 250 },
                     { header: 'Type', dataIndex: 'type' },
-                    { header: 'Last Modified', dataIndex: 'ts' }
+                    {
+                        header: 'Last Modified',
+                        dataIndex: 'ts',
+                        renderer: function (value) {
+                            if (value === '0') {
+                                return 'Unknown';
+                            }
+                            return Ext.util.Format.date(new Date(value * 1000).toString(), 'Y-m-d h:i:s');
+                        }
+                    }
                 ],
                 defaults: {
                     sortable: true,
@@ -125,7 +129,14 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
 
         this.height = this.width * aspectRatio;
         this.items = [this.chartReportGrid];
-        XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
+        this.tools = [
+            {
+                id: 'help',
+                qtip: 'Porlet shows a list of saved charts and reports.',
+                qwidth: 60
+            }
+        ];
+        XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
     }
 });
 
@@ -133,4 +144,4 @@ XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet = Ext.extend(Ext.ux.Por
 * The Ext.reg call is used to register an xtype for this class so it
 * can be dynamically instantiated
 */
-Ext.reg('RecentChartsReportsPortlet', XDMoD.Modules.SummaryPortlets.RecentChartsReportsPortlet);
+Ext.reg('SavedChartsReportsPortlet', XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet);
