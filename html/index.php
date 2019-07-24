@@ -220,6 +220,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
+    <script type="text/javascript" src="gui/lib/ClearableComboBox.js"></script>
 
     <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
     <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
@@ -457,7 +458,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <?php if (isset($features['novice_user']) && filter_var($features['novice_user'], FILTER_VALIDATE_BOOLEAN)): ?>
+    <?php if ($userLoggedIn && isset($features['novice_user']) && filter_var($features['novice_user'], FILTER_VALIDATE_BOOLEAN)): ?>
         <script type="text/javascript" src="gui/js/modules/NoviceUser.js"></script>
     <?php else: ?>
         <script type="text/javascript" src="gui/js/modules/Summary.js"></script>

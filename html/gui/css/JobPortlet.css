@@ -1,0 +1,17 @@
+.job-portlet-grid td {
+    padding-top: 1px;
+}
+
+div.circle {
+    width: 14px;
+    height: 14px;
+    border: solid 1px #555;
+    background-color: #eed;
+    box-shadow: 1px 1px rgba(0,0,0,0.6);
+    -moz-box-shadow: 1px 1px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 1px 1px rgba(0,0,0,0.6);
+    -o-box-shadow: 1px 1px rgba(0,0,0,0.6);
+    border-radius: 14px;
+    display: inline-block;
+    margin-left: 5px;
+}
