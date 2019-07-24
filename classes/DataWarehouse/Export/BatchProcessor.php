@@ -237,8 +237,7 @@ class BatchProcessor extends Loggable
                 ],
                 'accounting'
             );
-            $dataSet = new BatchDataset($query, $user);
-            $dataSet->setLogger($this->logger);
+            $dataSet = new BatchDataset($query, $user, $this->logger);
             return $dataSet;
         } catch (Exception $e) {
             $this->logger->err([

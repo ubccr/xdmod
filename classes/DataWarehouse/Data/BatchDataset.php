@@ -3,11 +3,13 @@
 namespace DataWarehouse\Data;
 
 use CCR\DB;
+use CCR\Loggable;
 use DataWarehouse\Query\RawQuery;
+use Exception;
 use Iterator;
 use PDO;
 use XDUser;
-use CCR\Loggable
+use Log;
 
 /**
  * Data set for batch export queries.
@@ -56,34 +58,56 @@ class BatchDataset extends Loggable implements Iterator
     private $header = [];
 
     /**
-     * @var string[]
+     * Fields that need to be anonymized.
+     *
+     * Keys correspond to the field name.
+     *
+     * @var array
      */
     private $anonymousFields = [];
 
     /**
+     * @param mixed $name Description.
+     * @param \XDUser $user
+     * @param \Log $logger
      */
-    public function __construct(RawQuery $query, XDUser $user)
+    public function __construct(RawQuery $query, XDUser $user, Log $logger = null)
     {
+        parent::__construct($logger);
+
         $this->query = $query;
         $this->docs = $query->getColumnDocumentation();
         $this->dbh = DB::factory($query->_db_profile);
 
-        foreach ($this->docs as $doc) {
-            switch ($doc['batch_export']) {
+        foreach ($this->docs as $key => $doc) {
+            $export = isset($doc['batch_export']) ? $doc['batch_export'] : false;
+            $name = $doc['name'];
+
+            if (isset($doc['units']) && $doc['units'] === 'ts') {
+                $name .= ' (Timestamp)';
+            }
+
+            switch ($export) {
                 case true:
-                    $this->header[] = $doc['name'];
+                    $this->header[$key] = $name;
                     break;
                 case 'anonymize':
-                    $this->anonymousFields[] = $doc['name'];
-                    $this->header[] = $doc['name'];
+                    $this->header[$key] = $name . ' (Deidentified)';
+                    $this->anonymousFields[$key] = true;
                     break;
                 case false:
+                    break;
                 default:
-                    // Don't include fields by default.
+                    throw new Exception(sprintf(
+                        'Unknown "batch_export" option %s',
+                        var_export($export, true)
+                    ));
                     break;
             }
         }
 
+        $this->logger->debug(sprintf('Header: %s', json_encode($this->header)));
+        $this->logger->debug(sprintf('Anonymous fields: %s', json_encode($this->anonymousFields)));
     }
 
     /**
@@ -93,7 +117,7 @@ class BatchDataset extends Loggable implements Iterator
      */
     public function getHeader()
     {
-        return $this->header;
+        return array_values($this->header);
     }
 
     /**
@@ -101,7 +125,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * @return mixed[]
      */
-    public current()
+    public function current()
     {
         return $this->currentRow;
     }
@@ -111,7 +135,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * @return int
      */
-    public key()
+    public function key()
     {
         return $this->currentRowIndex;
     }
@@ -121,7 +145,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * Fetches the next row.
      */
-    public next()
+    public function next()
     {
         $this->currentRowIndex++;
         $this->currentRow = $this->getNextRow();
@@ -132,7 +156,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * Executes the underlying raw query.
      */
-    public rewind()
+    public function rewind()
     {
         $this->logger->debug('Executing query');
         $this->sth = $this->query->getRawStatement();
@@ -165,13 +189,36 @@ class BatchDataset extends Loggable implements Iterator
     /**
      * @return bool
      */
-    public valid()
+    public function valid()
     {
         return $this->currentRow !== false;
     }
 
+    /**
+     */
+    private function anonymizeField($field)
+    {
+        return md5($field);
+    }
+
+    /**
+     */
     private function getNextRow()
     {
         $rawRow = $this->sth->fetch(PDO::FETCH_ASSOC);
+
+        if ($rawRow === false) {
+            return false;
+        }
+
+        $row = [];
+
+        foreach (array_keys($this->header) as $key) {
+            $row[] = isset($this->anonymousFields[$key])
+                ? $this->anonymizeField($rawRow[$key])
+                : $rawRow[$key];
+        }
+
+        return $row;
     }
 }
