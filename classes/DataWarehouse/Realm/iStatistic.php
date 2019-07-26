@@ -17,9 +17,10 @@ interface iStatistic
     /**
      * Instantiate a Statistic class using the specified options or realm name.
      *
-     * @param mixed $specificaiton A stdClass contaning the realm definition or a string specifying
-     *   a realm name.
-     * @param Realm $realm The realm object that this GroupBy is associated with.
+     * @param string $shortName The short internal identifier for the statistic that will be
+     *   instantiated.
+     * @param stdClass $config An object containing the configuration for this GroupBy
+     * @param Realm $realm Realm object that this Statistic will belong to.
      * @param Log|null $logger A Log instance that will be utilized during processing.
      *
      * @return Statistic A Statistic class.
@@ -27,7 +28,7 @@ interface iStatistic
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($specification, Realm $realm = null, Logger $log = null);
+    public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
      * @return string The short internal identifier. This is often used as an alias in SQL queries.
@@ -79,8 +80,9 @@ interface iStatistic
      * @param Query $query The target Query that this formula will be embedded in. Note that the
      *   formula will not actually be added to the query by this function.
      *
-     * @return string The statistic formula, which is an SQL fragment that can be embedded into an
-     *   SELECT statement.
+     * @return string The statistic formula and alias, which is an SQL fragment that can be embedded
+     *   into an SELECT statement. For example:
+     *   "COALESCE(SUM(jf.cpu_time),0)/3600.0 AS jobs_total_cpu_hours"
      */
 
     public function getFormula(Query $query = null);
@@ -90,7 +92,7 @@ interface iStatistic
      * @return int The number of significant digits to display
      */
 
-    public function getDecimals();
+    public function getPrecision();
 
     /**
      * Note: was setOrderbyStat()
@@ -112,17 +114,17 @@ interface iStatistic
     public function getSortOder();
 
     /**
-     * Note: Replaces isVisible() but returns the opposite value (isVisible() == ! isDisabled())
-     *
-     * @return boolean TRUE if this statistic has been disabled.
+     * @return int The order to advise how elements should be displayed visually in reference to one
+     *   another.
      */
 
-    public function isDisabled();
+    public function getOrder();
 
     /**
      * Note: Returns null except where overriden by the JobViewer code
      *
-     * @return WhereCondition Any additional WhereConditions defined for this statistic
+     * @return WhereCondition A single additional WhereCondition to be added to the query containing
+     *   this statistic.
      */
 
     public function getAdditionalWhereCondition();
@@ -138,7 +140,8 @@ interface iStatistic
     public function usesTimePeriodTablesForAggregate();
 
     /**
-     * @return string The name of the weighting statistic.
+     * @return string The name of the weighting statistic. It is likely that this is not currently
+     *   used.
      */
 
     public function getWeightStatName();
