@@ -22,6 +22,12 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $moduleName = null;
 
     /**
+     * @var string The database alias to use with the formula when querying the data.
+     */
+
+    protected $dbAlias = null;
+
+    /**
      * @var string The short identifier.
      */
 
@@ -135,6 +141,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
         $this->id = $shortName;
         $this->realm = $realm;
+        $this->dbAlias = sprintf('%s_%s', $realm->getId(), $this->id);
         $this->moduleName = $realm->getModuleName();
 
         if ( empty($shortName) ) {
@@ -293,14 +300,14 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     sprintf("Key 'formula' not specified for statistic %s and Query not provided to getFormula()", $this)
                 );
             }
-            return $this->formula;
+            return sprintf('%s AS %s', $this->formula, $this->dbAlias);
         } else {
             if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
                 return $query->getVariableStore()->substitute($this-formula);
             } elseif ( $query->isAggregate() ) {
-                return $query->getVariableStore()->substitute($this->aggregateFormula);
+                return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->aggregateFormula), $this->dbAlias);
             } elseif ( $query->isTimeseries() ) {
-                return $query->getVariableStore()->substitute($this->timeseriesFormula);
+                return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->timeseriesFormula), $this->dbAlias);
             }
         }
     }

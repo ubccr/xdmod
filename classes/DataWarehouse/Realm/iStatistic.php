@@ -80,8 +80,9 @@ interface iStatistic
      * @param Query $query The target Query that this formula will be embedded in. Note that the
      *   formula will not actually be added to the query by this function.
      *
-     * @return string The statistic formula, which is an SQL fragment that can be embedded into an
-     *   SELECT statement.
+     * @return string The statistic formula and alias, which is an SQL fragment that can be embedded
+     *   into an SELECT statement. For example:
+     *   "COALESCE(SUM(jf.cpu_time),0)/3600.0 AS jobs_total_cpu_hours"
      */
 
     public function getFormula(Query $query = null);
