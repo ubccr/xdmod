@@ -15,9 +15,10 @@ interface iGroupBy
     /**
      * Instantiate a GroupBy class using the specified options or realm name.
      *
-     * @param mixed $specificaiton A stdClass contaning the realm definition or a string specifying
-     *   a realm name.
-     * @param Realm $realm The realm object that this GroupBy is associated with.
+     * @param string $shortName The short internal identifier for the group by that will be
+     *   instantiated.
+     * @param stdClass $config An object containing the configuration for this GroupBy
+     * @param Realm $realm Realm object that this GroupBy will belong to.
      * @param Log|null $logger A Log instance that will be utilized during processing.
      *
      * @return GroupBy A GroupBy class.
@@ -25,7 +26,7 @@ interface iGroupBy
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($specification, Realm $realm = null, Logger $log = null);
+    public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
      * @return string The short internal identifier.
@@ -75,17 +76,17 @@ interface iGroupBy
     /**
      * @param boolean $includeSchema TRUE to include the schema in the table name.
      *
-     * @return string The aggregate table for realm data.
+     * @return string The aggregate table prefix for realm data.
      */
 
-    public function getAggregateTable($includeSchema = true);
+    public function getAggregateTablePrefix($includeSchema = true);
 
     /**
      * @return array An array containing the names of the key columns in the aggregate table. This
      *   is also used to map data between the attribute and aggregate tables.
      */
 
-    public function getAggregateKey();
+    public function getAggregateKeys();
 
     /**
      * @return string The name of the module that defined this Realm. The default is "xdmod", the
@@ -95,11 +96,11 @@ interface iGroupBy
     public function getModuleName();
 
     /**
-     * @return boolean TRUE if the realm is disabled and should not be visible at all to the
-     *   system.
+     * @return int The order to advise how elements should be displayed visually in reference to one
+     *   another.
      */
 
-    public function isDisabled();
+    public function getOrder();
 
     /**
      * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
@@ -165,7 +166,7 @@ interface iGroupBy
      * @return array An arrray of \DataWarehouse\Query\Model\Parameter objects
      */
 
-    public function generateQueryFilters(array $request);
+    public function generateQueryFiltersFromRequest(array $request);
 
     /**
      * Was pullQueryParameterDescriptions()
@@ -198,7 +199,7 @@ interface iGroupBy
      * Note: $data_table is not needed here was we can use Query::getDataTable()
      */
 
-    public function applyTo(Query $query, $multi_group = false);
+    public function applyTo(DataWarehouse\Query $query, $multi_group = false);
 
     /**
      * Add a WHERE condition to the specified query. This will perform the following operations:
@@ -208,6 +209,8 @@ interface iGroupBy
      *     constrained according to the value supplied.
      *
      * @param Query $query The query that this GroupBy will be added to.
+     * @param string The full name of the aggregate table including aggregation unit (e.g.,
+     *   jobfact_by_day)
      * @param string $operation The comparison operation used by the WHERE condition (e.g., "IN",
      *   "=", etc.)
      * @param string $value The acceptable values of the WHERE condition
@@ -215,7 +218,7 @@ interface iGroupBy
      * Note: $multi_join is not needed here as it is only ever called at Query.php:1044 with "true"
      */
 
-    public function addWhereJoin(Query $query, $operation, $whereConstraint);
+    public function addWhereJoin(DataWarehouse\Query $query, $aggregateTableName, $operation, $whereConstraint);
 
     /**
      * Add an ORDER BY clause to the specified query.
@@ -227,7 +230,7 @@ interface iGroupBy
      * @param boolean $prepend TRUE to insert this ORDER BY at the start of the list
      */
 
-    public function addOrder(Query $query, $multi_group = false, $dir = 'asc', $prepend = false);
+    public function addOrder(DataWarehouse\Query $query, $multi_group = false, $direction = 'ASC', $prepend = false);
 
     /**
      * Execute the query to retrieve the list of possible values for this descriptive attribute
@@ -242,7 +245,7 @@ interface iGroupBy
      *   following keys: (id, short_name, long_name)
      */
 
-    public function getPossibleValues(array $restrictions = null);
+    public function getAttributeValues(array $restrictions = null);
 
     /**
      * Generate a string representation of the object
@@ -251,9 +254,15 @@ interface iGroupBy
     public function __toString();
 
     /**
-     * Static accessors used to create usage chart settings in DataWarehouse/Access/Usage.php and
+     * Accessors used to create usage chart settings in DataWarehouse/Access/Usage.php and
      * DataWarehouse/Query/GroupBy.php
      */
+
+    /**
+     * @return stdClass A class containing all of the default values for a group by class.
+     */
+
+    public function getChartSettings($isMultiChartPage = false);
 
     /**
      * @return string
