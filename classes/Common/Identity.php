@@ -15,7 +15,7 @@ class Identity
      *
      * @var string
      */
-    private $_name;
+    protected $_name;
 
     /**
      * Simple constructor that sets the name.
