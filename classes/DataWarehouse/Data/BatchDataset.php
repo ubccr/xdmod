@@ -87,22 +87,18 @@ class BatchDataset extends Loggable implements Iterator
                 $name .= ' (Timestamp)';
             }
 
-            switch ($export) {
-                case true:
-                    $this->header[$key] = $name;
-                    break;
-                case 'anonymize':
-                    $this->header[$key] = $name . ' (Deidentified)';
-                    $this->anonymousFields[$key] = true;
-                    break;
-                case false:
-                    break;
-                default:
-                    throw new Exception(sprintf(
-                        'Unknown "batch_export" option %s',
-                        var_export($export, true)
-                    ));
-                    break;
+            if ($export === true) {
+                $this->header[$key] = $name;
+            } elseif ($export === 'anonymize') {
+                $this->header[$key] = $name . ' (Deidentified)';
+                $this->anonymousFields[$key] = true;
+            } elseif ($export === false) {
+                // Skip field.
+            } else {
+                throw new Exception(sprintf(
+                    'Unknown "batch_export" option %s',
+                    var_export($export, true)
+                ));
             }
         }
 
