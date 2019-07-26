@@ -59,6 +59,17 @@ class SummaryControllerProvider extends BaseControllerProvider
         return new \CCR\ColumnLayout($defaultColumnCount, $defaultLayout);
     }
 
+    private function getConfigVariables($user)
+    {
+        $person_id = $user->getPersonID(true);
+        $obj_warehouse = new \XDWarehouse();
+
+        return array(
+            'PERSON_ID' => $person_id,
+            'PERSON_NAME' => $obj_warehouse->resolveName($person_id)
+        );
+    }
+
     /**
      */
     public function getPortlets(Request $request, Application $app)
@@ -71,7 +82,13 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $layout = $this->getLayout($user);
 
-        $roleConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+        $roleConfig = \Configuration\XdmodConfiguration::assocArrayFactory(
+            'roles.json',
+            CONFIG_DIR,
+            null,
+            array('config_variables' => $this->getConfigVariables($user))
+        );
+
         $presets = $roleConfig['roles'][$mostPrivilegedAcl];
 
         if (isset($presets['summary_portlets'])) {
