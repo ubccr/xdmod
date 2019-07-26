@@ -25,6 +25,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
     closable: true,
     offset: [0, 0],
     anchorOffset: 0,
+    constrainPosition: true,
     initComponent: function () {
         var anchor = this.position.split('-');
         this.tipAnchorPos = anchor[0];
@@ -96,6 +97,41 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
                 break;
         }
         this.anchorEl.alignTo(this.el, anchorPos + '-' + this.tipAnchorPos, offset);
+    },
+
+    getWindowXY: function () {
+        var xPos = window.innerHeight / 2;
+        var yPos = window.innerWidth / 2;
+
+        return {x: xPos, y: yPos}
+    },
+
+    findScrollableParent: function (el) {
+        var elem = Ext.get(el);
+        var parentId = elem.dom.parentNode.id;
+
+        if(parentId !== null || parentId !== undefined) {
+            var p = Ext.get(parentId);
+            if(p.isScrollable() === true) {
+                return p;
+            }
+            else {
+                return this.findScrollableParent(p);
+            }
+        }
+
+        return null;
+    },
+    setTipLocation: function (el) {
+        var elem = Ext.get(el);
+        var centerXYPosition = this.getWindowXY();
+        var elPos = elem.getXY();
+
+        if (elPos[0] < 0 || elPos[1] < 0) {
+            var s = this.findScrollableParent(el);
+            elem.scrollIntoView(s);
+        }
+
     },
 
     showBy: function (el) {
