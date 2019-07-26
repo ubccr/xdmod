@@ -55,6 +55,17 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         // Reload the requests every time a new request is submitted.
         this.requestForm.on('actioncomplete', this.requestsStore.reload, this.requestsStore);
 
+        // Display alert every time a new request is submitted.
+        this.requestForm.on(
+            'actioncomplete',
+            function () {
+                Ext.Msg.alert(
+                    'Request Submitted',
+                    XDMoD.Module.DataExport.requestSubmittedText
+                );
+            }
+        );
+
         this.items = [
             {
                 xtype: 'panel',
@@ -457,6 +468,10 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         scope: this,
                         success: function () {
                             this.store.reload();
+                            Ext.Msg.alert(
+                                'Request Submitted',
+                                XDMoD.Module.DataExport.requestSubmittedText
+                            );
                         },
                         failure: function (response) {
                             Ext.Msg.alert(
@@ -539,6 +554,11 @@ XDMoD.Module.DataExport.exportStatusHelpText =
 '<b>Expired</b>: Requested data has expired and is no longer available.<br>' +
 '<b>Failed</b>: Data export failed. Submit a support request for more ' +
 'information.';
+
+XDMoD.Module.DataExport.requestSubmittedText =
+'Your bulk data export request has been successfully submitted.  Requests ' +
+'are typically fulfilled in 24 hours.  You will recieve an email notifying ' +
+'you when your data is available.';
 
 /**
  * Data warehouse export batch requests data store.
