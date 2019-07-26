@@ -89,7 +89,6 @@ try {
     // Check that the user has at least one role authorized to view this data.
     MetricExplorer::checkDataAccess(
         $user,
-        'tg_usage',
         $data_description->realm,
         'none',
         $data_description->metric
@@ -105,10 +104,7 @@ try {
             $end_date,
             null,
             $data_description->metric,
-            array(),
-            'tg_usage',
-            array(),
-            false
+            array()
         );
 
         $groupedRoleParameters = array();

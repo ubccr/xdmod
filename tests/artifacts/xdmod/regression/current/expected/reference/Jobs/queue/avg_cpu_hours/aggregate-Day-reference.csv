@@ -1,14 +1,27 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"CPU Hours: Per Job: by Queue"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+roti,1244.07001543,
+pikelet,657.08909329,
+cornbread,249.03877778,41.70324903190007
+crumpet,247.38450980,89.08320735238685
+focaccia,236.92098291,26.6108956407919
+brioche,186.33193056,
+brown,154.59506643,41.104792843063635
+barm,138.49833333,
+chapti,71.73458333,25.81135523381282
+panettone,65.51148148,37.94894414137108
+bannock,56.47858025,13.419997925806559
+pumpernickel,41.59687500,8.792253378250166
+pita,39.76185185,
+white,30.72319343,1.576019047989531
+croutons,22.13566106,2.193319495548494
+nann,13.85848617,0.21603874775956594
+black,4.96075667,0.39050731312870735
+potbrood,4.18053268,0.45111331069582705
+---------

@@ -7,7 +7,13 @@
       "name": "Quarterly Report - Center Director",
       "description": "Quarterly Report - Center Director",
       "use_submenu": "0"
+    },
+    {
+      "id": "2",
+      "name": "Summary Tab Report",
+      "description": "Summary Tab Report",
+      "use_submenu": "0"
     }
   ],
-  "count": 1
+  "count": 2
 }

@@ -112,8 +112,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var selected_user_id = -1;
         var selected_username = '';
 
-        var cached_user_type = null;
-
         var user_update_callback;
 
         self.setCallback = function (callback) {
@@ -255,7 +253,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             triggerAction: 'all',
             valueField: 'id',
             emptyText: 'No User Type Selected',
-            listeners: { change: comboChangeHandler, select: comboChangeHandler }
+            listeners: { change: updateSaveIndicator, select: updateSaveIndicator }
         });
 
         cmbUserType.on('disable', function () {
@@ -433,6 +431,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             cmbUserType.setDisabled(true);
             btnSaveChanges.setDisabled(true);
             existingUserEmailField.setValue('');
+            cmbUserType.setValue('');
 
             if (self.initFlag === 1) {
                 document.getElementById('txtAccountTimestamps').innerText = '';
@@ -536,6 +535,41 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         });
 
         this.groupToggle = usersTypeSplitButton;
+
+        var resetNewUserTour = function () {
+            Ext.Ajax.request({
+                url: XDMoD.REST.url + '/admin/reset_user_tour_viewed',
+                params: {
+                    viewedTour: 0,
+                    uid: selected_user_id
+                },
+                method: 'POST',
+
+                callback: function (options, success, response) {
+                    var json;
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+
+                        // eslint-disable-next-line no-param-reassign
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'User operation failed.'
+                        });
+                        return;
+                    }
+
+                    var displayedMessage = json.message ? json.message : json.status;
+                    CCR.xdmod.ui.userManagementMessage(
+                        displayedMessage,
+                        json.success
+                    );
+                }
+            }); // Ext.Ajax.request
+        };
 
         // ------------------------------------------
 
@@ -665,11 +699,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             maxLengthText: 'Maximum length (' + maxEmailLength + ' characters) exceeded.',
 
             validator: function (value) {
-                // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
-                    return true;
-                }
-
                 // Return validity of value in the field.
                 // (Other validators will check the remaining criteria.)
                 return XDMoD.validator.email(value);
@@ -896,11 +925,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
-                // When we are working on a 'Single Sign On' user the cmbUserType will
-                // not have a value ( as it's hidden ). In that case use the
-                // cached_user_type variable which is populated when we fetch
-                // the users details.
-                var userType = cmbUserType.isVisible() ? cmbUserType.getValue() : cached_user_type;
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
@@ -910,7 +934,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '-1' :
                         cmbUserMapping.getValue(),
                     institution: cmbInstitution.getValue(),
-                    user_type: userType,
+                    user_type: cmbUserType.getValue(),
                     sticky: stickyCheckbox.getValue()
                 };
 
@@ -999,6 +1023,10 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 {
                     text: 'Empty Report Image Cache',
                     handler: actionEmptyReportImageCache
+                },
+                {
+                    text: 'Reset New User Tour',
+                    handler: resetNewUserTour
                 }
             ]
         });
@@ -1212,24 +1240,24 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
                         cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
-                        if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
-                            // XSEDE-derived User: Can't change user type
-                            cmbUserType.hide();
-                            lblXSEDEUser.show();
+                        var userType = parseInt(json.user_information.user_type, 10);
+                        cmbUserType.setValue(userType);
+                        cmbUserType.originalValue = cmbUserType.getValue();
 
+                        if (userType === CCR.xdmod.SSO_USER_TYPE) {
+                            // XSEDE-derived User: Can't change user type so we
+                            // instead show the `lblXSEDEUser` element and hide
+                            // the `cmbUserType`.
+                            lblXSEDEUser.show();
+                            cmbUserType.hide();
                             mnuItemPasswordReset.hide();
                         } else {
                             // All other (non-XSEDE-derived) users
                             lblXSEDEUser.hide();
                             cmbUserType.show();
-
                             mnuItemPasswordReset.show();
-
-                            cmbUserType.setDisabled(false);
-                            cached_user_type = String(json.user_information.user_type);
-                            cmbUserType.setValue(cached_user_type);
-                            cmbUserType.originalValue = cmbUserType.getValue();
                         }
+
                         var sticky = Boolean(json.user_information.sticky);
                         stickyCheckbox.originalValue = sticky;
                         stickyCheckbox.setValue(sticky);

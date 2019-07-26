@@ -1,14 +1,16 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"CPU Hours: Per Job: by Decanal Unit"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"CPU Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+Engineering,378.41627884,57.328177197170056
+Humanities/Arts,188.13274411,16.44278594480015
+"Biological Sciences",61.98054777,20.50229784028209
+"Mathematical and Physical Sciences",39.82065205,5.553821375301377
+"Computer and Information Science and Engineering",27.72618823,0.516814891598504
+Geosciences,17.24043389,1.4179492534823879
+"Social, Behavioral, and Economic Sciences",2.82983496,0.03098245418859181
+---------

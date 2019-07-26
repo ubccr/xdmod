@@ -1,0 +1,262 @@
+{
+  "+roles": {
+    "+default": {
+      "statistics_formats": [
+        {
+          "title": "Activity",
+          "items": [
+            {
+              "title": "Users",
+              "fieldName": "active_person_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "PIs",
+              "fieldName": "active_pi_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Allocations",
+              "fieldName": "active_allocation_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Institutions",
+              "fieldName": "active_institution_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            }
+          ]
+        },
+        {
+          "title": "Jobs",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "job_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Gateway",
+              "fieldName": "gateway_job_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            }
+          ]
+        },
+        {
+          "title": "Service (XD SU)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_su",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_su",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "CPU Time (h)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_cpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_cpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "Wait Time (h)",
+          "items": [
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_waitduration_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "Wall Time (h)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_wallduration_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_wallduration_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "Processors",
+          "items": [
+            {
+              "title": "Max",
+              "fieldName": "max_processors",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_processors",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            }
+          ]
+        }
+      ]
+    },
+    "+pub": {
+      "statistics_formats": [
+        {
+          "title": "Activity",
+          "items": [
+            {
+              "title": "Users",
+              "fieldName": "active_person_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "PIs",
+              "fieldName": "active_pi_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Allocations",
+              "fieldName": "active_allocation_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Institutions",
+              "fieldName": "active_institution_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            }
+          ]
+        },
+        {
+          "title": "Jobs",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "job_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Gateway",
+              "fieldName": "gateway_job_count",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            }
+          ]
+        },
+        {
+          "title": "Service (XD SU)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_su",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_su",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "CPU Time (h)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_cpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_cpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "Wait Time (h)",
+          "items": [
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_waitduration_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "Wall Time (h)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_wallduration_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_wallduration_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "Processors",
+          "items": [
+            {
+              "title": "Max",
+              "fieldName": "max_processors",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_processors",
+              "numberType": "int",
+              "numberFormat": "#,#"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

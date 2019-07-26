@@ -152,6 +152,7 @@
                     "show_filters": true,
                     "start": 0,
                     "timeseries": true,
+                    "timeframe": "Year to date",
                     "title": "Total CPU Hours By Resource (Top 10)"
                 },
                 {

@@ -1,14 +1,27 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Job Size: Normalized (% of Total Cores): by Queue"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Job Size: Normalized (% of Total Cores)\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Job Size: Normalized (% of Total Cores)"
+roti,0.756944444
+crumpet,0.717647059
+bannock,0.533333333
+panettone,0.500000000
+potbrood,0.470000000
+chapti,0.300000000
+nann,0.300000000
+pikelet,0.272169811
+brown,0.266304348
+croutons,0.204549951
+cornbread,0.171111111
+white,0.143177842
+pumpernickel,0.125000000
+focaccia,0.101923077
+brioche,0.092500000
+black,0.059157103
+barm,0.050000000
+pita,0.050000000
+---------

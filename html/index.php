@@ -142,6 +142,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     </script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
+    <link rel="stylesheet" type="text/css" href="gui/css/helptour.css">
 
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
@@ -199,6 +200,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
     <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTip.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTipTour.js"></script>
 
     <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
     <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
@@ -217,6 +220,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
+    <script type="text/javascript" src="gui/lib/ClearableComboBox.js"></script>
 
     <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
     <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
@@ -403,7 +407,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/lib/Portal.js"></script>
     <script type="text/javascript" src="gui/lib/PortalColumn.js"></script>
     <script type="text/javascript" src="gui/lib/Portlet.js"></script>
-
+    <script type="text/javascript" src="gui/js/Portlet.js"></script>
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
         <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
@@ -433,7 +437,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
     <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
     <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
-
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/Spotlight.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
         <script type="text/javascript" src="gui/js/AddDataPanel.js"></script>
@@ -454,7 +458,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <?php if (isset($features['novice_user']) && filter_var($features['novice_user'], FILTER_VALIDATE_BOOLEAN)): ?>
+    <?php if ($userLoggedIn && isset($features['novice_user']) && filter_var($features['novice_user'], FILTER_VALIDATE_BOOLEAN)): ?>
         <script type="text/javascript" src="gui/js/modules/NoviceUser.js"></script>
     <?php else: ?>
         <script type="text/javascript" src="gui/js/modules/Summary.js"></script>

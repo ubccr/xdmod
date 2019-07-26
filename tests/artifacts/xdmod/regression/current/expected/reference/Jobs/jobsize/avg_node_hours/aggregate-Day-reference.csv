@@ -1,14 +1,19 @@
-{
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [
+title
+"Node Hours: Per Job: by Job Size"
+parameters
 
-    ],
-    "data": [
-
-    ],
-    "message": "{\"statistic\":\"Node Hours: Per Job\",\"instructions\":\"Try again as timeseries\",\"description\":\"Aggregate View not supported\"}",
-    "code": 104
-}
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+1,13.31620066,0.07932011778295477
+2,7.74754252,0.2327321569124126
+"3 - 4",1.76281952,0.1754979364227012
+"5 - 8",0.28744094,0.006652437573048864
+"9 - 16",0.74635573,0.015336188426172804
+"17 - 32",14.49213462,1.1742521773769417
+"33 - 64",29.99184268,5.400957690681392
+"65 - 128",176.90854099,
+"129 - 256",568.59277778,
+"257 - 512",529.04055556,36.107357328399715
+---------

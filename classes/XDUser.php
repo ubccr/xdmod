@@ -2606,4 +2606,59 @@ SQL;
     {
         return $this->sticky;
     }
+
+    /**
+     * Retrieves the resources that this user has access to. Specifically, it retrieves the resources
+     * that are associated with this User's `organization_id`.
+     *
+     * **NOTE:** This function does not utilize the standard method of retrieving / filtering data,
+     * i.e. via a code path that ends up utilizing `Query.php` because we do not currently restrict
+     * access to resources. Also, the methods of filtering used in conjunction with `Query.php` are
+     * either hard coded in the `GroupBy` classes, or are indirectly setup via the `modw_filters`
+     * tables && the roles.json::acl::dimensions property ( via the `FilterListBuilder` class ).
+     *
+     * @param array $resourceNames [optional|default array()] an array of resourcefact.code values
+     *                             that should optionally further constrain the resources returned.
+     * @return integer[] an array of the resourcefact.id values
+     *
+     * @throws Exception if there is a problem connecting to / querying the database.
+     * @throws Exception if the user this function is called for is not a Center [Director|Staff]
+     */
+    public function getResources($resourceNames = array())
+    {
+        // We need to make sure that this function is only called for Center [Director|Staff]
+        if ( ! ( $this->hasAcl(ROLE_ID_CENTER_DIRECTOR) ||  $this->hasAcl(ROLE_ID_CENTER_STAFF) ) ) {
+            throw new Exception('Unable to complete action. User is not authorized.');
+        }
+
+        $db = DB::factory('database');
+
+        $query = <<<SQL
+        SELECT rf.id,
+              replace(rf.code, '-', ' ') as name,
+              replace(rf.code, '-', ' ') as short_name
+        FROM modw.resourcefact rf
+        WHERE   rf.organization_id =  :organization_id
+SQL;
+        $params = array(':organization_id' => $this->getOrganizationID());
+
+        // If we have resource names then update the query / params accordingly
+        if (count($resourceNames) > 0) {
+            $query .= "AND rf.code IN (:resource_codes)";
+
+            $handle = $db->handle();
+            $resourceNames = array_map(
+                function ($value) use ($handle) {
+                    return $handle->quote($value);
+                },
+                $resourceNames
+            );
+            $params[':resource_codes'] = implode(
+                ',',
+                $resourceNames
+            );
+        } // if (count($resourceNames) > 0) {
+
+        return $db->query($query, $params);
+    } // public function getResources($resourceNames = array())
 }//XDUser
