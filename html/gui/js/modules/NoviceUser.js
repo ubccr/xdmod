@@ -209,8 +209,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
     createNewUserTour: function () {
         var self = this;
-        if(self.userTour) {
-          return self.userTour;
+        if (self.userTour) {
+            return self.userTour;
         }
 
         self.userTour = new Ext.ux.HelpTipTour({
