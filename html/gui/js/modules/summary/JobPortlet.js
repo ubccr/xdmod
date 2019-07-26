@@ -176,7 +176,7 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
                 columns: columns
             }),
             viewConfig: {
-                emptyText: 'No Job Records found for the specified time range',
+                emptyText: '<div class="no-data-alert">No Job Records Found</div><div class="no-data-info">Job information only shows in XDMoD once the job has finished and there is a short delay between a job finishing and the job&apos;s data being available in XDMoD.</div>',
                 forceFit: true
             },
             bbar: new Ext.PagingToolbar({
