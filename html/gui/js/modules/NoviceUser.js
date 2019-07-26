@@ -208,7 +208,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
     },
 
     createNewUserTour: function () {
-        var userTour = new Ext.ux.HelpTipTour({
+        var self = this;
+        if(self.userTour) {
+          return self.userTour;
+        }
+
+        self.userTour = new Ext.ux.HelpTipTour({
             title: 'New User Tour',
             items: [
                 {
@@ -314,12 +319,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                 Ext.get('global-toolbar-help-new-user-tour').on('click', function () {
                     Ext.History.add('main_tab_panel:tg_summary');
                     new Ext.util.DelayedTask(function () {
-                        userTour.startTour();
+                        self.userTour.startTour();
                     }).delay(10);
                 });
             });
         }
 
-        return userTour;
+        return self.userTour;
     }
 });
