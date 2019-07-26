@@ -23,10 +23,7 @@ XDMoD.Modules.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
     initComponent: function () {
         var self = this;
 
-        this.title = this.config.chart.title;
-        if (this.title.length > 60) {
-            this.title = this.title.substring(0, 57) + '...';
-        }
+        this.title = Ext.util.Format.ellipsis(this.config.chart.title, 60, true);
 
         // Sync date ranges
         var dateRanges = CCR.xdmod.ui.DurationToolbar.getDateRanges();
@@ -39,6 +36,8 @@ XDMoD.Modules.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
             this.config.chart.start_date = date.start.format('Y-m-d');
             this.config.chart.end_date = date.end.format('Y-m-d');
         }
+
+        this.title += ' - ' + this.config.chart.start_date + ' to ' + this.config.chart.end_date;
 
         var highchartConfig = {};
         jQuery.extend(true, highchartConfig, this.config.chart);
