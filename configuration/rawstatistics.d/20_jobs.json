@@ -37,7 +37,7 @@
                 "column": "username"
             },
             "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
-            "batch_export": false
+            "batch_export": "anonymize"
         },
         {
             "key": "person_id",
