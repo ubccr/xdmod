@@ -227,6 +227,9 @@ h3 {
 .menu {
     background-image: url(../images/menu.png) !important;
 }
+.json_file {
+    background-image: url(../images/file_extension_bin.png) !important;
+}
 .drill {
     background-image: url(../images/drill2.png) !important;
 }

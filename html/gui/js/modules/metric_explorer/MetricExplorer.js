@@ -393,6 +393,60 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 ]
 
             }); //menu
+
+            if (CCR.xdmod.ui.isDeveloper) {
+                var filterConfigForExport = function (config) {
+                    var result = JSON.parse(JSON.stringify(config));
+
+                    delete result.featured;
+                    delete result.defaultDatasetConfig;
+
+                    var i;
+                    var keys = ['x_axis', 'y_axis', 'legend'];
+                    for (i = 0; i < keys.length; i++) {
+                        if (Object.keys(result[keys[i]]).length === 0) {
+                            delete result[keys[i]];
+                        }
+                    }
+
+                    if (result.timeframe_label !== 'User Defined') {
+                        delete result.start_date;
+                        delete result.end_date;
+                    }
+
+                    if (result.global_filters.total === 0) {
+                        delete result.global_filters;
+                    }
+
+                    for (i = 0; i < result.data_series.data.length; i++) {
+                        delete result.data_series.data[i].category;
+                        if (!result.data_series.data[i].std_err) {
+                            delete result.data_series.data[i].std_err_labels;
+                        }
+                    }
+
+                    return result;
+                };
+                menu.add({
+                    text: 'View chart json',
+                    iconCls: 'json_file',
+                    handler: function () {
+                        var win = new Ext.Window({
+                            title: 'Chart Json',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4)) + '</pre>'
+                            }]
+                        });
+                        win.show();
+                    }
+                });
+            }
         }
 
         if(newchart){
