@@ -26,8 +26,8 @@ interface iRealm
     /**
      * Instantiate a Realm class using the specified configuration or realm name.
      *
-     * @param mixed $specificaiton A stdClass contaning the realm definition or a string specifying
-     *   a realm name.
+     * @param string $shortName The short internal identifier for the realm that will be
+     *   instantiated.
      * @param Log|null $logger A Log instance that will be utilized during processing.
      *
      * @return Realm A Realm class.
@@ -35,7 +35,7 @@ interface iRealm
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($specification, Logger $logger = null);
+    public static function factory($shortName, Logger $logger = null);
 
     /**
      * Initialize data for all realms from the definition source. This can mean constructing the
@@ -56,11 +56,12 @@ interface iRealm
      *
      * @param int $order A specification on how the realm list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     * @param Log|null $logger A Log instance that will be utilized during processing.
      *
      * @return array An associative array of realm ids and names, ordered as specified.
      */
 
-    public static function getRealmNames($order = SORT_ON_ORDER);
+    public static function getRealmNames($order = self::SORT_ON_ORDER, Logger $logger = null);
 
     /**
      * Return an associative array where the array keys are realm short identifier (id) and the values
@@ -68,11 +69,12 @@ interface iRealm
      *
      * @param int $order A specification on how the realm list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     * @param Log|null $logger A Log instance that will be utilized during processing.
      *
      * @return array An associative array of realm ids and Realm objects, ordered as specified.
      */
 
-    public static function getRealmObjects($order = SORT_ON_ORDER);
+    public static function getRealmObjects($order = self::SORT_ON_ORDER, Logger $logger = null);
 
     /**
      * @return string The short internal identifier.
@@ -81,18 +83,25 @@ interface iRealm
     public function getId();
 
     /**
-     * @return string The isplay name.
+     * @return string The display name.
      */
 
     public function getName();
 
     /**
-     * @param boolean $includeSchema TRUE to include the schema in the table name.
-     *
-     * @return string The aggregate table that the Realm draws its data from.
+     * @return string The schema where the aggregate table resides.
      */
 
-    public function getAggregateTable($includeSchema = true);
+    public function getAggregateTableSchema();
+
+    /**
+     * @param boolean $includeSchema TRUE to include the schema in the table name.
+     *
+     * @return string The aggregate table prefix that the Realm draws its data from. The aggregation
+     *   period is expected to be added to this value.
+     */
+
+    public function getAggregateTablePrefix($includeSchema = true);
 
     /**
      * @return string The data source or sources used to generate the Realm data. For example,
@@ -116,13 +125,15 @@ interface iRealm
     public function isDisabled();
 
     /**
-     * @return int The order to advise how realms should be displayed visually in reference to one
+     * @return int The order to advise how elements should be displayed visually in reference to one
      *   another.
      */
 
     public function getOrder();
 
     /**
+     * Note that disabled GroupBy names are not included.
+     *
      * @param int $order A specification on how the list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
@@ -130,9 +141,11 @@ interface iRealm
      *   is the short identifier and the value is the human readable name.
      */
 
-    public function getGroupByNames($order = SORT_ON_ORDER);
+    public function getGroupByNames($order = self::SORT_ON_ORDER);
 
     /**
+     * Note that disabled Statistic names are not included.
+     *
      * @param int $order A specification on how the list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
@@ -140,9 +153,11 @@ interface iRealm
      *   key is the short identifier and the value is the human readable name.
      */
 
-    public function getStatisticNames($order = SORT_ON_ORDER);
+    public function getStatisticNames($order = self::SORT_ON_ORDER);
 
     /**
+     * Note that disabled GroupBy objects are not included.
+     *
      * @param int $order A specification on how the list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
@@ -150,9 +165,11 @@ interface iRealm
      *   key is the GroupBy short identifier and the value is the associated object.
      */
 
-    public function getGroupByObjects($order = SORT_ON_ORDER);
+    public function getGroupByObjects($order = self::SORT_ON_ORDER);
 
     /**
+     * Note that disabled Statistic objects are not included.
+     *
      * @param int $order A specification on how the list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      *
@@ -160,9 +177,11 @@ interface iRealm
      *   key is the Statistic short identifier and the value is the associated object.
      */
 
-    public function getStatisticObjects($order = SORT_ON_ORDER);
+    public function getStatisticObjects($order = self::SORT_ON_ORDER);
 
     /**
+     * Note that disabled GroupBys are not available.
+     *
      * @param string $id The internal GroupBy identifier to locate.
      *
      * @return GroupBy|null The GroupBy class associated with this realm that has the specified
@@ -172,6 +191,8 @@ interface iRealm
     public function getGroupByObject($id);
 
     /**
+     * Note that disabled Statistics are not available.
+     *
      * @param string $id The internal Statistic identifier to locate.
      *
      * @return Statistic|null The Statistic class associated with this realm that has the specified
