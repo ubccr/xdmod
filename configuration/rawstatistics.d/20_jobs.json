@@ -50,7 +50,7 @@
                 "column": "long_name"
             },
             "documentation": "The name of the job owner.",
-            "batch_export": "anonymize"
+            "batch_export": true
         },
         {
             "key": "person_organization_id",
