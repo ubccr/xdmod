@@ -293,9 +293,12 @@ class Realm extends \CCR\Loggable implements iRealm
                     );
                 }
                 $factoryClassName = $configObj->class;
+            } elseif ( false === strpos($factoryClassName, '\\') ) {
+                $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
             $factory = sprintf('%s::factory', $factoryClassName);
+            print "Factory = $factory\n";
 
             if ( 'Realm' == $className ) {
                 // The Realm class already has the configuration and does not need it to be passed
@@ -478,6 +481,24 @@ class Realm extends \CCR\Loggable implements iRealm
     }
 
     /**
+     * @see iRealm::statisticExists()
+     */
+
+    public function statisticExists($id)
+    {
+        return isset($this->statisticConfigs->$id);
+    }
+
+    /**
+     * @see iRealm::groupByExists()
+     */
+
+    public function groupByExists($id)
+    {
+        return isset($this->groupByConfigs->$id);
+    }
+
+    /**
      * @see iRealm::getGroupByNames()
      */
 
@@ -585,6 +606,33 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getMinimumAggregationUnit()
     {
         return $this->minAggregationUnit;
+    }
+
+    /**
+     * @see iRealm::getDrillTargets()
+     */
+
+    public function getDrillTargets($statisticId, $groupById, $order = self::SORT_ON_ORDER)
+    {
+        // If the statistic id is not valid for this realm, do not provide any drill downs
+        if ( ! $this->statisticExists($statisticId) ) {
+            $this->logAndThrowException(
+                sprintf("Attempt to get drill-down targets for unknown statistic '%s'", $statisticId)
+            );
+        }
+
+        $drillTargets = array();
+        $groupByObjects = $this->getGroupByObjects($order);
+
+        foreach ( $groupByObjects as $gId => $groupByObj ) {
+            // Don't include the current group by or any group bys that are not available for drill
+            // down.
+            if ( $gId == $groupById || ! $groupByObj->isAvailableForDrilldown() ) {
+                continue;
+            }
+            $drillTargets[] = sprintf('%s-%s', $gId, $groupByObj->getName());
+        }
+        return $drillTargets;
     }
 
     /**

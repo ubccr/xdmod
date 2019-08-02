@@ -132,6 +132,22 @@ interface iRealm
     public function getOrder();
 
     /**
+     * @param string $id Statistic short identifier.
+     *
+     * @return TRUE if a Statistic with the specified ID exists and is not disabled.
+     */
+
+    public function statisticExists($id);
+
+    /**
+     * @param string $id GroupBy short identifier.
+     *
+     * @return TRUE if a Group By with the specified ID exists and is not disabled.
+     */
+
+    public function groupByExists($id);
+
+    /**
      * Note that disabled GroupBy names are not included.
      *
      * @param int $order A specification on how the list will be ordered. Possible values are:
@@ -214,6 +230,19 @@ interface iRealm
      */
 
     public function getMinimumAggregationUnit();
+
+    /**
+     * Generate a list of drilldowns that are available in this realm for the specified statistic
+     * and group by.  This will include all of the group bys defined for this realm except those
+     * marked as not available for drill down and the specified group by.
+     *
+     * @param string $statisticId The short identifier for the current statistic.
+     * @param string $groupById The short identifier for the current group by.
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     */
+
+    public function getDrillTargets($statisticId, $groupById, $order = self::SORT_ON_ORDER);
 
     /**
      * @return string A string representation of this object.

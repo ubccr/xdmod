@@ -113,6 +113,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $category = 'uncategorized';
 
     /**
+     * @var boolean Indicates that this dimension is available for drill-down in the user interface.
+     */
+
+    protected $availableForDrilldown = true;
+
+    /**
      * @var boolean Set to true if this group by should not be utilized.
      */
 
@@ -179,11 +185,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $optionalConfigTypes = array(
             'attribute_description_query' => 'int',
             'attribute_filter_map_query' => 'object',
+            'attribute_table_schema' => 'string',
+            'available_for_drilldown' => 'boolean',
             'category' => 'string',
             'disabled' => 'bool',
             'module' => 'string',
-            'order' => 'int',
-            'attribute_table_schema' => 'string'
+            'order' => 'int'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
@@ -217,6 +224,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'attribute_description_query':
                     $this->attributeDescriptionQuery = trim($value);
+                    break;
+                case 'available_for_drilldown':
+                    $this->availableForDrilldown = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 case 'category':
                     $this->category = trim($value);
@@ -349,6 +359,15 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * @see iGroupBy::isAvailableForDrilldown()
+     */
+
+    public function isAvailableForDrilldown()
+    {
+        return $this->availableForDrilldown;
     }
 
     /*

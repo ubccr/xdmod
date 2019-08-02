@@ -103,6 +103,13 @@ interface iGroupBy
     public function getOrder();
 
     /**
+     * @return boolean TRUE if the attribute represented by this GroupBy should be available as a
+     *   drill-down for a statistic in the user interface.
+     */
+
+    public function isAvailableForDrilldown();
+
+    /**
      * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
      *
      * @param boolean $multi TRUE to return a column name suitable for use in a query with multiple
