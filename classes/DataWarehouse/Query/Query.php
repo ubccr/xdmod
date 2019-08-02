@@ -654,9 +654,6 @@ class Query
         $groups = $this->getGroups();
 
         $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
-
-        $select_order_by = $this->getSelectOrderBy();
 
         $data_query = "select count(*) as row_count from (select sum(1) as total
                       from \n".implode(",\n", $select_tables)."\n
@@ -690,7 +687,6 @@ class Query
         $this->parameters = $parameters;
         foreach ($parameters as $parameter) {
             if ($parameter instanceof \DataWarehouse\Query\Model\Parameter) {
-                $paramName = $parameter->getName();
 
                 $leftField = new \DataWarehouse\Query\Model\TableField($this->_data_table, $parameter->getName());
                 if ($parameter->getOperator() == "=") {
@@ -759,7 +755,6 @@ class Query
 
         foreach ($parameters as $parameter) {
             if ($parameter instanceof \DataWarehouse\Query\Model\Parameter) {
-                $paramName = $parameter->getName();
 
                 $leftField = new \DataWarehouse\Query\Model\TableField($this->_data_table, $parameter->getName());
                 $rightField = $parameter->getValue();
@@ -1152,8 +1147,6 @@ class Query
 
     public function setStat($stat)
     {
-        $stat_name_to_classname = static::getRegisteredStatistics();
-
         $permitted_statistics = $this->_group_by->getPermittedStatistics();
 
 
