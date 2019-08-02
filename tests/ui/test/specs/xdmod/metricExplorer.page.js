@@ -110,11 +110,16 @@ class MetricExplorer {
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
                 titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
                 contextMenu: {
+                    menuByTitle: function (title) {
+                        return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul';
+                    },
+                    menuItemByText: function (menuTitle, itemText) {
+                        return module.exports.selectors.chart.contextMenu.menuByTitle(menuTitle) + '//li/a//span[text()="' + itemText + '"]';
+                    },
                     container: '#metric-explorer-chartoptions-context-menu',
                     legend: '#metric-explorer-chartoptions-legend',
                     addData: '#metric-explorer-chartoptions-add-data',
                     addFilter: '#metric-explorer-chartoptions-add-filter'
-
                 },
                 axis: '#metric_explorer .highcharts-yaxis-labels'
             },
@@ -241,7 +246,7 @@ class MetricExplorer {
     openDataSeriesDefinitionFromDataPoint() {
         this.clickLogoAndWaitForMask();
         this.clickFirstDataPoint();
-        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="Edit Dataset"]');
+        browser.waitUntilAnimEndAndClick(this.selectors.chart.contextMenu.menuItemByText('Data Series:', 'Edit Dataset'));
     }
     addFiltersFromDataSeriesDefinition(filter, name) {
         this.clickLogoAndWaitForMask();
