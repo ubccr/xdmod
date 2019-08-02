@@ -9,6 +9,7 @@ use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
 use ETL\VariableStore;
+use Realm\Realm;
 
 /*
 * @author Amin Ghadersohi
@@ -25,6 +26,12 @@ class Query
     private $pdoparams;
     private $pdoindex;
     private $log;
+
+    /**
+     * @var Realm The Realm that this query will provide data for.
+     */
+
+    protected $realm = null;
 
     /**
      * Tracks whether or not role restrictions have been applied to this query.
@@ -94,9 +101,7 @@ class Query
     private $leftJoins = array();
 
     public function __construct(
-        $realm_name,
-        $datatable_schema,
-        $datatable_name,
+        Realm $realm,
         array $control_stats,
         $aggregation_unit_name,
         $start_date,
@@ -112,11 +117,19 @@ class Query
 
         $this->pdoparams = array();
         $this->pdoindex = 0;
-        $this->setRealmName($realm_name);
+        $this->realm = $realm;
 
         $this->aggregationUnitName = $aggregation_unit_name;
-        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory($aggregation_unit_name, $start_date, $end_date, "{$datatable_schema}.{$datatable_name}_by_");
-        $this->setDataTable($datatable_schema, "{$datatable_name}_by_{$this->_aggregation_unit}");
+        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
+            $aggregation_unit_name,
+            $start_date,
+            $end_date,
+            $realm->getAggregateTablePrefix()
+        );
+        $this->setDataTable(
+            $realm->getAggregateTableSchema(),
+            sprintf('%s%s', $realm->getAggregateTablePrefix(false), $aggregation_unit_name)
+        );
 
         $this->setDuration($start_date, $end_date, $aggregation_unit_name);
 
@@ -164,18 +177,13 @@ class Query
 
     public $_db_profile = 'datawarehouse'; //The name of the db settings in portal_settings.ini
 
-    /*
-    * The query realm name defines what part of the data warehouse the query belongs to.
-    */
-    private $_realm_name = 'query_realm';
+    /**
+     * @return string The short identifier for the realm that this query is constructed for.
+     */
 
     public function getRealmName()
     {
-        return $this->_realm_name;
-    }
-    public function setRealmName($realm_name)
-    {
-        $this->_realm_name = $realm_name;
+        return $this->realm->getId();
     }
 
     protected $_data_table;
@@ -1497,7 +1505,7 @@ class Query
 
     public function __toString()
     {
-        return " realm_name: {$this->_realm_name} \n"
+        return " realm_name: {$this->getRealmName()} \n"
                 ." aggregation_unit: {$this->_aggregation_unit} \n"
                 ." data_table: {$this->_data_table} \n"
                 ." date_table: {$this->_date_table} \n"

@@ -441,7 +441,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getAggregateTablePrefix($includeSchema = true)
     {
-        return sprintf('%s%s', ( $includeSchema ? $this->aggregateSchema  . '.' : "" ), $this->aggregateTablePrefix);
+        return sprintf('%s%s', ( $includeSchema ? $this->aggregateTableSchema  . '.' : "" ), $this->aggregateTablePrefix);
     }
 
     /**
