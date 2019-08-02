@@ -59,6 +59,7 @@ class HighChart2
 
     protected $user;
 
+    protected $_colorGenerator;
     /**
      * The role restrictions string builder used by this chart.
      *
@@ -149,6 +150,8 @@ class HighChart2
                 'enabled' => false
             )
         );
+
+        $this->_colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
 
         $this->roleRestrictionsStringBuilder = new RoleRestrictionsStringBuilder();
         $this->user = $user;
@@ -759,9 +762,6 @@ class HighChart2
         $this->show_filters = $show_filters;
         $this->setMultiCategory($data_series);
 
-        // Instantiate the color generator:
-        $colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
-
         // Instantiate the ComplexDataset to plot
         $this->_dataset = new \DataWarehouse\Data\ComplexDataset();
 
@@ -839,11 +839,7 @@ class HighChart2
 
             $first_data_description = $yAxisObject->series[0]['data_description'];
 
-            // set initial dataset's plot color:
-            $yAxisColorValue = ($first_data_description->color == 'auto' || $first_data_description->color == 'FFFFFF')
-                                                                ? $colorGenerator->getColor()
-                                                                : $colorGenerator->getConfigColor(hexdec($first_data_description->color) );
-            $yAxisColor = '#'.str_pad(dechex($yAxisColorValue), 6, '0', STR_PAD_LEFT);
+            list($yAxisColor, $yAxisLineColor) = $this->getColorFromDataDescription($first_data_description);
 
             // set axis labels
             $defaultYAxisLabel = 'yAxis'.$yAxisIndex;
@@ -951,14 +947,12 @@ class HighChart2
                 //  ================ set color ================
 
                 // If the first data set in the series, pick up the yAxisColorValue.
-                if($data_description_index == 0)
-                {
-                        $color_value = $yAxisColorValue;
+                if($data_description_index == 0) {
+                    $color = $yAxisColor;
+                    $lineColor = $yAxisLineColor;
                 } else {
-                        $color_value = $colorGenerator->getColor();
+                    list($color, $lineColor) = $this->getColorFromDataDescription($data_description);
                 }
-                $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
-                $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                 $dataLabelsConfig = array(
@@ -992,7 +986,7 @@ class HighChart2
                             'name' => $this->_xAxisDataObject->getValue($index),
                             'y' => $value,
                             'color' => ($index == 0) ? $yAxisColor
-                                    : '#'.str_pad(dechex($colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT)
+                                    : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT)
                         );
 
                         // N.B.: These are drilldown labels.
@@ -1183,7 +1177,7 @@ class HighChart2
                 $this->buildErrorDataSeries(
                     $data_description,
                     $legend,
-                    $color_value,
+                    $lineColor,
                     $yAxisDataObject,
                     $formattedDataSeriesName,
                     $yAxisIndex,
@@ -1213,7 +1207,7 @@ class HighChart2
     protected function buildErrorDataSeries(
         &$data_description,
         &$legend,
-        $color_value,
+        $error_color,
         &$yAxisDataObject,
         $formattedDataSeriesName,
         $yAxisIndex,
@@ -1224,9 +1218,6 @@ class HighChart2
         // build error data series and add it to chart
         if($data_description->std_err == 1 && $data_description->display_type != 'pie')
         {
-            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
-            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
-
             $error_series = array();
             $errorCount = $yAxisDataObject->getErrorCount();
             for($i = 0; $i < $errorCount; $i++)
@@ -1369,5 +1360,19 @@ class HighChart2
             return $axis->{$origLabel};
         }
         return null;
+    }
+
+    protected function getColorFromDataDescription($data_description) {
+        $color_value = null;
+        if ($data_description->color == 'auto' || $data_description->color == 'FFFFFF') {
+            $color_value = $this->_colorGenerator->getColor();
+        } else {
+            $color_value = $this->_colorGenerator->getConfigColor(hexdec($data_description->color));
+        }
+
+        $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
+        $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
+
+        return array($color, $lineColor);
     }
 } // class HighChart2
