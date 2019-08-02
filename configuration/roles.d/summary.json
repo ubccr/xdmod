@@ -1,104 +1,510 @@
 {
-  "+roles": {
-    "+cd": {
-      "summary_portlets": [
-        {
-          "name": "Chart Thumbnails",
-          "type": "ReportThumbnailsPortlet",
-          "region": "top"
+    "+roles": {
+        "+cd": {
+            "summary_portlets": [
+                {
+                    "config": {
+                        "timeframe": "Previous year"
+                    },
+                    "name": "Chart Thumbnails",
+                    "region": "top",
+                    "type": "ReportThumbnailsPortlet"
+                },
+                {
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    },
+                    "name": "Saved Charts and Reports",
+                    "type": "SavedChartsReportsPortlet"
+                }
+            ]
         },
-        {
-          "name": "Recents",
-          "type": "RecentChartsReportsPortlet",
-          "location": {
-            "row": 0,
-            "column": 0
-          }
-        }
-      ]
-    },
-    "+cs": {
-      "summary_portlets": [
-        {
-          "name": "Chart Thumbnails",
-          "type": "ReportThumbnailsPortlet",
-          "region": "top"
+        "+cs": {
+            "summary_portlets": [
+                {
+                    "name": "Chart Thumbnails",
+                    "type": "ReportThumbnailsPortlet",
+                    "config": {
+                        "timeframe": "30 day"
+                    },
+                    "region": "top"
+                },
+                {
+                    "name": "Saved Charts and Reports",
+                    "type": "SavedChartsReportsPortlet",
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    }
+                },
+                {
+                    "name": "Job Portlet",
+                    "type": "JobPortlet",
+                    "config": {
+                        "multiuser": true,
+                        "timeframe": "7 day"
+                    },
+                    "location": {
+                        "column": 1,
+                        "row": 1
+                    }
+                }
+            ]
         },
-        {
-          "name": "Recents",
-          "type": "RecentChartsReportsPortlet",
-          "location": {
-            "row": 0,
-            "column": 0
-          }
+        "+pi": {
+            "summary_portlets": [
+                {
+                    "name": "Job Portlet",
+                    "type": "JobPortlet",
+                    "config": {
+                        "multiuser": true,
+                        "timeframe": "30 day"
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    }
+                },
+                {
+                    "name": "summary_0",
+                    "type": "ChartPortlet",
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "color": "33ABAB",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "person",
+                                        "has_std_err": false,
+                                        "id": 0.5505562939216301,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "total_cpu_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "value_desc",
+                                        "std_err": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    },
+                                    {
+                                        "color": "993333",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "person",
+                                        "has_std_err": false,
+                                        "id": 0.9958683615013885,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "job_count",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "value_desc",
+                                        "std_err": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 1
+                                    }
+                                ],
+                                "total": 2
+                            },
+                            "font_size": 1,
+                            "global_filters": {
+                                "data": [
+                                    {
+                                        "categories": "",
+                                        "checked": true,
+                                        "dimension_id": "pi",
+                                        "id": "pi=${PERSON_ID}",
+                                        "realms": [
+                                            "Jobs"
+                                        ],
+                                        "value_id": "${PERSON_ID}",
+                                        "value_name": "${PERSON_NAME}"
+                                    }
+                                ],
+                                "total": 1
+                            },
+                            "hide_tooltip": false,
+                            "legend_type": "off",
+                            "limit": 10,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "show_warnings": true,
+                            "start": 0,
+                            "swap_xy": false,
+                            "timeframe_label": "90 day",
+                            "timeseries": false,
+                            "title": "Usage for my projects",
+                            "trend_line": false
+                        }
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 1
+                    }
+                },
+                {
+                    "name": "summary_1",
+                    "type": "ChartPortlet",
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "category": "",
+                                        "color": "auto",
+                                        "combine_type": "side",
+                                        "display_type": "scatter",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [
+                                                {
+                                                    "checked": true,
+                                                    "dimension_id": "pi",
+                                                    "id": "pi=${PERSON_ID}",
+                                                    "realms": [
+                                                        "Jobs"
+                                                    ],
+                                                    "value_id": "${PERSON_ID}",
+                                                    "value_name": "${PERSON_NAME}"
+                                                }
+                                            ],
+                                            "total": 1
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 2e-14,
+                                        "ignore_global": false,
+                                        "line_type": "",
+                                        "line_width": "",
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": "",
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": "",
+                                        "value_labels": false,
+                                        "visibility": "",
+                                        "x_axis": false,
+                                        "z_index": 1
+                                    },
+                                    {
+                                        "category": "Jobs",
+                                        "color": "8BBC21",
+                                        "combine_type": "side",
+                                        "display_type": "bar",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 0.946262496142683,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    }
+                                ],
+                                "total": 2
+                            },
+                            "font_size": 2,
+                            "hide_tooltip": false,
+                            "legend": {
+                                "Std Err: Wait Hours: Per Job": {
+                                    "title": "Std Err"
+                                },
+                                "Std Err: Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
+                                    "title": "Std Err"
+                                },
+                                "Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
+                                    "title": "My Wait Hours: Per Job"
+                                }
+                            },
+                            "legend_type": "top_center",
+                            "limit": 20,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "start": 0,
+                            "swap_xy": true,
+                            "timeframe_label": "30 day",
+                            "timeseries": false,
+                            "title": "Wait Hours",
+                            "trend_line": false
+                        }
+                    },
+                    "location": {
+                        "column": 1,
+                        "row": 0
+                    }
+                }
+            ]
+        },
+        "+pub": {
+            "summary_portlets": [
+                {
+                    "config": {
+                        "timeframe": "Last month"
+                    },
+                    "name": "Summary Statistics",
+                    "region": "top",
+                    "type": "SummaryStatisticsPortlet"
+                }
+            ]
+        },
+        "+usr": {
+            "summary_portlets": [
+                {
+                    "config": {
+                        "timeframe": "30 day"
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    },
+                    "name": "Job Portlet",
+                    "type": "JobPortlet"
+                },
+                {
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "category": "",
+                                        "color": "auto",
+                                        "combine_type": "side",
+                                        "display_type": "scatter",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [
+                                                {
+                                                    "checked": true,
+                                                    "dimension_id": "person",
+                                                    "id": "person=${PERSON_ID}",
+                                                    "realms": [
+                                                        "Jobs"
+                                                    ],
+                                                    "value_id": "${PERSON_ID}",
+                                                    "value_name": "${PERSON_NAME}"
+                                                }
+                                            ],
+                                            "total": 1
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 2e-14,
+                                        "ignore_global": false,
+                                        "line_type": "",
+                                        "line_width": "",
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": "",
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": "",
+                                        "value_labels": false,
+                                        "visibility": "",
+                                        "x_axis": false,
+                                        "z_index": 1
+                                    },
+                                    {
+                                        "category": "Jobs",
+                                        "color": "8BBC21",
+                                        "combine_type": "side",
+                                        "display_type": "bar",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 0.946262496142683,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    }
+                                ],
+                                "total": 2
+                            },
+                            "font_size": 2,
+                            "hide_tooltip": false,
+                            "legend": {
+                                "Std Err: Wait Hours: Per Job": {
+                                    "title": "Std Err"
+                                },
+                                "Std Err: Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
+                                    "title": "Std Err"
+                                },
+                                "Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
+                                    "title": "My Wait Hours: Per Job"
+                                }
+                            },
+                            "legend_type": "top_center",
+                            "limit": 20,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "start": 0,
+                            "swap_xy": true,
+                            "timeframe_label": "30 day",
+                            "timeseries": false,
+                            "title": "Wait Hours",
+                            "trend_line": false
+                        }
+                    },
+                    "location": {
+                        "column": 1,
+                        "row": 0
+                    },
+                    "name": "summary_0",
+                    "type": "ChartPortlet"
+                },
+                {
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "color": "auto",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "queue",
+                                        "has_std_err": false,
+                                        "id": 0.44525853735566,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "none",
+                                        "std_err": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    }
+                                ],
+                                "total": 1
+                            },
+                            "font_size": 3,
+                            "global_filters": {
+                                "data": [
+                                    {
+                                        "categories": "",
+                                        "checked": true,
+                                        "dimension_id": "resource",
+                                        "id": "resource=13",
+                                        "realms": [
+                                            "Jobs"
+                                        ],
+                                        "value_id": "13",
+                                        "value_name": "ub hpc"
+                                    }
+                                ],
+                                "total": 1
+                            },
+                            "hide_tooltip": false,
+                            "legend_type": "off",
+                            "limit": 10,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "show_warnings": true,
+                            "start": 0,
+                            "swap_xy": true,
+                            "timeframe_label": "30 day",
+                            "timeseries": false,
+                            "title": "Wait times by queue",
+                            "trend_line": false,
+                            "y_axis": {
+                                "original0": {
+                                    "title": "Wait Time Per Job (hours)"
+                                }
+                            }
+                        }
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 1
+                    },
+                    "name": "summary_1",
+                    "type": "ChartPortlet"
+                }
+            ]
         }
-      ]
-    },
-    "+pi": {
-      "summary_portlets": [
-        {
-          "name": "Job Portlet",
-          "type": "JobPortlet",
-          "location": {
-            "row": 0,
-            "column": 0
-          },
-          "config": {
-            "timeframe": "30 day",
-            "multiuser": true
-          }
-        }
-      ]
-    },
-    "+usr": {
-      "summary_portlets": [
-        {
-          "name": "Job Portlet",
-          "type": "JobPortlet",
-          "location": {
-            "row": 0,
-            "column": 0
-          },
-          "config": {
-            "timeframe": "30 day"
-          }
-        }
-      ]
-    },
-    "+usr": {
-      "summary_portlets": [
-        {
-          "name": "Job Portlet",
-          "type": "JobPortlet",
-          "config": {
-            "timeframe": "30 day"
-          }
-        }
-      ]
-    },
-    "+pi": {
-      "summary_portlets": [
-        {
-          "name": "Job Portlet",
-          "type": "JobPortlet",
-          "config": {
-            "timeframe": "30 day",
-            "multiuser": true
-          }
-        }
-      ]
-    },
-    "+pub": {
-      "summary_portlets": [
-        {
-          "name": "Summary Statistics",
-          "type": "SummaryStatisticsPortlet",
-          "region": "top",
-          "config": {
-            "timeframe": "Last month"
-          }
-        }
-      ]
     }
-  }
 }
