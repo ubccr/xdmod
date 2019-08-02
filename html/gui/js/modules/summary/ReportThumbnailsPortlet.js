@@ -274,7 +274,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('30 day');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' to ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -291,7 +291,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var end = oneYearAgoEnd;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Previous year');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' to ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -307,7 +307,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
                                 this.ownerCt.ownerCt.ownerCt.items.items[1].setText('5 year');
-                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>');
+                                this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' to ' + self.timeframe.end_date + '</b>');
                             }
                         }
                     },
@@ -326,7 +326,7 @@ XDMoD.Modules.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                 },
                 {
                     xtype: 'tbtext',
-                    text: (self.timeframe.start_date !== null && self.timeframe.end_date !== null ? '<b>' + self.timeframe.start_date + ' - ' + self.timeframe.end_date + '</b>' : '')
+                    text: (self.timeframe.start_date !== null && self.timeframe.end_date !== null ? '<b>' + self.timeframe.start_date + ' to ' + self.timeframe.end_date + '</b>' : '')
                 },
                 '->',
                 {
