@@ -768,6 +768,20 @@ div.chart_thumb a {
     background-repeat: no-repeat;
 }
 
+div.no-data-alert {
+    height: 32px;
+    padding-left: 42px;
+    padding-top: 6px;
+    font-size: 14px;
+    background-image: url(../lib/extjs/resources/images/gray/window/icon-info.gif);
+    background-repeat: no-repeat;
+}
+
+div.no-data-info {
+    font-size: 12px;
+    text-align: justify;
+}
+
 .jobviewer_helpcontent {
     font-family: arial, "Times New Roman",Times,serif;
     font-size: 14px;
