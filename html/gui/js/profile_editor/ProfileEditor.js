@@ -103,7 +103,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
         if (!CCR.xdmod.ui.tgSummaryViewer.usesToolbar) {
             tabItems.push({
                 title: 'Settings',
-                height: 320,
+                height: 316,
                 layout: 'fit',
                 border: false,
                 frame: true,
@@ -115,25 +115,22 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
                         labelWidth: 230,
                         frame: true,
                         items: [{
-                            xtype: 'compositefield',
-                            items: [{
-                                xtype: 'button',
-                                fieldLabel: 'Summary Tab Panel Layout',
-                                text: 'Reset to Default',
-                                handler: function (button) {
-                                    Ext.Ajax.request({
-                                        url: XDMoD.REST.url + '/summary/layout',
-                                        method: 'DELETE',
-                                        success: function () {
-                                            button.setDisabled(true);
-                                            CCR.xdmod.ui.tgSummaryViewer.fireEvent('request_refresh');
-                                        },
-                                        failure: function (response, opts) {
-                                            Ext.MessageBox.alert('Error', response.message);
-                                        }
-                                    });
-                                }
-                            }]
+                            xtype: 'button',
+                            fieldLabel: 'Summary Tab Panel Layout',
+                            text: 'Reset to Default',
+                            handler: function (button) {
+                                Ext.Ajax.request({
+                                    url: XDMoD.REST.url + '/summary/layout',
+                                    method: 'DELETE',
+                                    success: function () {
+                                        button.setDisabled(true);
+                                        CCR.xdmod.ui.tgSummaryViewer.fireEvent('request_refresh');
+                                    },
+                                    failure: function (response, opts) {
+                                        Ext.MessageBox.alert('Error', response.message);
+                                    }
+                                });
+                            }
                         }]
                     }]
                 }],
