@@ -302,6 +302,9 @@ class Statistic extends \CCR\Loggable implements iStatistic
             }
             return sprintf('%s AS %s', $this->formula, $this->dbAlias);
         } else {
+            // Update the variable store with the most recent values in the query class as they may
+            // change dynamically.
+            $query->updateVariableStore();
             if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
                 return $query->getVariableStore()->substitute($this-formula);
             } elseif ( $query->isAggregate() ) {

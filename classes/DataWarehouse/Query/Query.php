@@ -8,6 +8,7 @@ use CCR\DB;
 use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
+use ETL\VariableStore;
 
 /*
 * @author Amin Ghadersohi
@@ -75,6 +76,19 @@ class Query
      */
     private $filterParameters = array();
 
+    /**
+     * @var VariableStore Collection of variable names and values available for substitution in SQL
+     *   (or other) strings.
+     */
+
+    protected $variableStore = null;
+
+    /**
+     * @var string The name of the aggregation unit for this query (e.g., day, month, etc.)
+     */
+
+    protected $aggregationUnitName = null;
+
     private static $config;
 
     private $leftJoins = array();
@@ -94,10 +108,13 @@ class Query
         static::registerStatistics();
         static::registerGroupBys();
 
+        $this->variableStore = new VariableStore();
+
         $this->pdoparams = array();
         $this->pdoindex = 0;
         $this->setRealmName($realm_name);
 
+        $this->aggregationUnitName = $aggregation_unit_name;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory($aggregation_unit_name, $start_date, $end_date, "{$datatable_schema}.{$datatable_name}_by_");
         $this->setDataTable($datatable_schema, "{$datatable_name}_by_{$this->_aggregation_unit}");
 
@@ -127,7 +144,23 @@ class Query
         ));
     }
 
+    /**
+     * Update the values of the internal VariableStore. Since the contents of the Query class are
+     * volitile and may be modified on the fly, this should be called prior to performing variable
+     * substitution. Note that rather than clearing and setting variables, we are using overwrite()
+     * so we do not clear variables that may be set elsewhere.
+     */
 
+    public function updateVariableStore()
+    {
+        $this->variableStore->overwrite('QUERY_TYPE', $this->getQueryType());
+        $this->variableStore->overwrite('MIN_DATE_ID', $this->getMinDateId());
+        $this->variableStore->overwrite('MAX_DATE_ID', $this->getMaxDateId());
+        $this->variableStore->overwrite('START_DATE_TS', $this->getStartDateTs());
+        $this->variableStore->overwrite('END_DATE_TS', $this->getEndDateTs());
+        $this->variableStore->overwrite('DURATION_FORMULA', $this->getDurationFormula());
+        $this->variableStore->overwrite('AGGREGATION_UNIT', $this->getAggregationUnitName());
+    }
 
     public $_db_profile = 'datawarehouse'; //The name of the db settings in portal_settings.ini
 
@@ -184,6 +217,11 @@ class Query
 
     protected $_aggregation_unit;
 
+    public function getAggregationUnitName()
+    {
+        return $this->aggregationUnitName;
+    }
+
     public function getAggregationUnit()
     {
         return $this->_aggregation_unit;
@@ -202,6 +240,15 @@ class Query
     public function getEndDate()
     {
         return $this->_end_date;
+    }
+
+    public function getStartDateTs()
+    {
+        return $this->_start_date_ts;
+    }
+    public function getEndDateTs()
+    {
+        return $this->_end_date_ts;
     }
 
     protected $_duration_formula;
@@ -463,6 +510,11 @@ class Query
     public function getMinDateId()
     {
         return $this->_min_date_id;
+    }
+
+    public function getMaxDateId()
+    {
+        return $this->_max_date_id;
     }
 
     public function getRawStatement($limit = null, $offset = null, $extraHavingClause = null)
