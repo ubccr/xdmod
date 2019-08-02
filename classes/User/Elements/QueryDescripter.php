@@ -77,11 +77,11 @@ class QueryDescripter
 
     public function getDrillTargets($statistic_name)
     {
-        $groupbyInstance = $this->getGroupByInstance();
-
-        return $groupbyInstance->getDrillTargets(
+        $realm = \Realm\Realm::factory($this->_realm_name);
+        return $realm->getDrillTargets(
             $statistic_name,
-            $this->getClassnamePrefix() . 'Aggregate'
+            $this->_group_by_name,
+            \Realm\Realm::SORT_ON_NAME
         );
     }
 
