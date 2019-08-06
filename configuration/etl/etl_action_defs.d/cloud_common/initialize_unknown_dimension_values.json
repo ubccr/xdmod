@@ -44,13 +44,19 @@
                 "name": "resourcefact",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "rf"
+            },
+            {
+                "name": "resourcetype",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rt",
+                "on": "rt.id = rf.resourcetype_id"
             }
         ],
 
         "#": "Limit the resources to DIC, and Cloud",
 
         "where": [
-            "resourcetype_id IN (3, 5)"
+            "rt.abbrev IN ('Cloud', 'DIC')"
         ]
     },
 

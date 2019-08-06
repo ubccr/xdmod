@@ -5,12 +5,14 @@
 
 namespace OpenXdmod\Migration\Version812To850;
 
+use CCR\DB;
 use CCR\Json;
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
+
     /**
      * Update portal_settings.ini with the new version number.
      */
@@ -36,6 +38,42 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             Json::saveFile($cloudRolesFilePath, $cloudRolesFile);
         }
 
+        // Updates the resources.json file by translating the `resource_type_id` to `resource_type`
+        $this->updateResources();
+
+        $modifiedResourceTypePath = CONFIG_DIR . '/resource_types.json';
+        $xdmodResourceTypesPath = $modifiedResourceTypePath. '.rpmnew';
+
+        // If the rpmnew path exists then we know that the user has modified resource_types and we need to take that
+        // into account.
+        if (file_exists($xdmodResourceTypesPath)) {
+            $xdmodResourceTypes = Json::loadFile($xdmodResourceTypesPath)['resource_types'];
+
+            $results = array();
+            $modifiedResourceTypes = Json::loadFile($modifiedResourceTypePath);
+
+            // Collecting information and formatting it so that it is inline with the new resource_types format.
+            foreach($modifiedResourceTypes as $resourceType) {
+                $abbrev = $resourceType['abbrev'];
+                $realms = array();
+
+                if (array_key_exists($abbrev, $xdmodResourceTypes)) {
+                    $realms = $xdmodResourceTypes[$abbrev]['realms'];
+                }
+
+                $results[$abbrev] = array(
+                    'description' => $resourceType['description'],
+                    'realms' => $realms
+                );
+            }
+
+            // Move their modified resource_types so that we don't overwrite them.
+            rename($modifiedResourceTypePath, $modifiedResourceTypePath . '.rpmsave');
+
+            // Save the re-formatted contents to the resource_types file.
+            @file_put_contents($modifiedResourceTypePath, json_encode(array('resource_types' => $results), JSON_PRETTY_PRINT));
+        }
+
         $this->assertPortalSettingsIsWritable();
 
         $console = Console::factory();
@@ -57,5 +95,43 @@ EOT
         $this->writePortalSettingsFile(array(
             'features_novice_user' => $novice_user
         ));
+    }
+
+    /**
+      *
+     * @throws \Exception
+     */
+    private function updateResources()
+    {
+        $resources = Json::loadFile(CONFIG_DIR . DIRECTORY_SEPARATOR . 'resources.json', true);
+        $resourceTypeIds = $this->retrieveResourceTypeIds();
+
+        foreach ($resources as &$resource) {
+            if (array_key_exists('resource_type_id', $resource)) {
+                $resourceTypeId = $resource['resource_type_id'];
+                $resource['resource_type'] = $resourceTypeIds[$resourceTypeId];
+                unset($resource['resource_type_id']);
+            }
+        }
+
+        $this->writeJsonConfigFile('resources', $resources);
+    }
+
+    /**
+     *
+     * @return array
+     * @throws \Exception
+     */
+    private function retrieveResourceTypeIds()
+    {
+        $db = DB::factory('database');
+
+        $rows = $db->query('SELECT rt.id, rt.abbrev FROM modw.resourcetype AS rt;');
+
+        $results = array();
+        foreach($rows as $row) {
+            $results[$row['id']] = $row['abbrev'];
+        }
+        return $results;
     }
 }

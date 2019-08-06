@@ -5,6 +5,8 @@
 
 namespace OpenXdmod\Setup;
 
+use Configuration\XdmodConfiguration;
+
 /**
  * Resources setup sub-step for adding resources.
  */
@@ -35,22 +37,15 @@ class AddResourceSetup extends SetupItem
     {
         $typeOptions = array();
         $typeDescriptionText = "";
-        $availableTypes = json_decode(file_get_contents(CONFIG_DIR . '/resource_types.json'), true);
+        $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
 
-        usort(
-            $availableTypes,
-            function ($a, $b) {
-                return strcmp($a['abbrev'], $b['abbrev']);
-            }
-        );
-
-        foreach ( $availableTypes as $type ) {
-            if ( 'UNK' == $type['abbrev'] ) {
+        foreach ( $availableTypes as $abbrev => $type ) {
+            if ( 'UNK' == $abbrev ) {
                 continue;
             }
             // Note that Console::prompt() expects lowercase values for options
-            $typeOptions[] = strtolower($type['abbrev']);
-            $typeDescriptionText .= sprintf("%-10s - %s", $type['abbrev'], $type['description']) . PHP_EOL;
+            $typeOptions[] = strtolower($abbrev);
+            $typeDescriptionText .= sprintf("%-10s - %s", $abbrev, $type['description']) . PHP_EOL;
         }
 
         $this->console->displaySectionHeader('Add A New Resource');

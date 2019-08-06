@@ -23,7 +23,7 @@ class Json
      */
     public static function loadFile($file, $assoc = true)
     {
-        $contents = file_get_contents($file);
+        $contents = @file_get_contents($file);
 
         if ($contents === false) {
             throw new Exception("Failed to read file '$file'");

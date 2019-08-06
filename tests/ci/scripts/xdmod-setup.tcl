@@ -46,7 +46,6 @@ answerQuestion {DB Admin Username} root
 providePassword {DB Admin Password:} {}
 confirmFileWrite yes
 enterToContinue
-provideInput {Do you want to see the output*} {no}
 
 selectMenuOption 3
 provideInput {Organization Name:} Screwdriver

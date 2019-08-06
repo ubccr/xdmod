@@ -521,7 +521,7 @@ class Configuration extends Loggable implements iConfiguration
         // cleared.
 
         clearstatcache();
-        $fileStats = stat($this->filename);
+        $fileStats = @stat($this->filename);
         if ( false === $fileStats ) {
             $err = error_get_last();
             $this->logAndThrowException(
