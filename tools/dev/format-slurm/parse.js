@@ -4,8 +4,7 @@ import { createReadStream, createWriteStream } from 'fs';
 const outputStreams = {};
 const timezone = 'America/New_York';
 const offsets = ['-0400', '-0500'];
-const outFormat = "YYYY-MM-DDTHH:mm:ss";
-const zone = tz.zone(timezone);
+const outFormat = 'YYYY-MM-DDTHH:mm:ss';
 
 const date = process.argv[2].split('-');
 const year = date[0];
@@ -19,13 +18,12 @@ const day = date[2] || '';
 let slurmLogPath = 'Put your base path here';
 
 let outPath = '/scratch/slurm';
-
+let inputFile = '';
 // We started to do daily logs at some point, if a day is specified change the input path
 if (day === '') {
     inputFile = `${slurmLogPath}/${year}/dumpstats-${year}-${month}.txt`;
     outPath = `${outPath}/${year}/`;
-}
-else {
+} else {
     inputFile = `${slurmLogPath}/${year}/${month}/dumpstats-${year}-${month}-${day}.txt`;
     outPath = `${outPath}/${year}/${month}/`;
 }
@@ -39,27 +37,27 @@ const parseSlurmDuration = (durationString) => {
     const match = /^(?:(?:(\d+)-)?(\d+):)?(\d+):(\d+)(?:\.\d+)?$/.exec(durationString);
     let durationParts = {};
     for (let i = 0; i < keys.length; i++) {
-        if ('string' === typeof keys[i]) {
-            durationParts[keys[i]] = parseInt(match[i + 1]) || 0;
+        if (typeof keys[i] === 'string') {
+            durationParts[keys[i]] = parseInt(match[i + 1], 10) || 0;
         }
     }
     return durationParts.days * 86400
         + durationParts.hours * 3600
         + durationParts.minutes * 60
-        + durationParts.seconds
-}
+        + durationParts.seconds;
+};
 
 const hasAmbiguousTime = (m) => {
     const t = [60, -60, 30, -30];
     const a = t.map(
         (x) => {
             return moment(m).add(x, 'm').format('HH:mm');
-        });
+        }
+    );
     return a.indexOf(m.format('HH:mm')) > -1;
 };
 
 const timefix = (start, end, duration /* in seconds */) => {
-
     let munged;
 
     let mstart = tz(start, timezone);
@@ -84,7 +82,7 @@ const timefix = (start, end, duration /* in seconds */) => {
         for (let i = 0; i < possible_starts.length; i++) {
             for (let j = 0; j < possible_ends.length; j++) {
                 interval = possible_ends[j].diff(possible_starts[i]);
-                if (interval == duration * 1000) {
+                if (interval === duration * 1000) {
                     return [possible_starts[i].format(outFormat), possible_ends[j].format(outFormat), 'both'];
                 }
             }
@@ -96,26 +94,23 @@ const timefix = (start, end, duration /* in seconds */) => {
         munged = 'start';
         mend = mend.utc();
         mstart = moment(mend).subtract(duration, 'seconds');
-    }
-    else if (hasAmbiguousTime(mend)) {
+    } else if (hasAmbiguousTime(mend)) {
         munged = 'end';
         mstart = mstart.utc();
         mend = moment(mstart).add(duration, 'seconds');
-    }
-    else {
+    } else {
         mstart.utc();
         mend.utc();
     }
     const retval = [mstart.format(outFormat), mend.format(outFormat), munged];
-    delete mstart;
-    delete mend;
     return retval;
-}
+};
 // https://stackoverflow.com/questions/14480345/how-to-get-the-nth-occurrence-in-a-string
 // https://stackoverflow.com/a/14482123
 const nthIndex = (str, pat, n) => {
     const len = str.length;
     let i = -1;
+    // eslint-disable-next-line no-param-reassign
     while (n-- && i++ < len) {
         i = str.indexOf(pat, i);
         if (i < 0) {
@@ -123,11 +118,10 @@ const nthIndex = (str, pat, n) => {
         }
     }
     return i;
-}
+};
 
 let lineNum = 0;
 let expectedColumns = 0;
-let count = 0;
 const requiredColumns = [
     'jobid', 'jobidraw', 'cluster', 'partition', 'account', 'group', 'gid',
     'user', 'uid', 'submit', 'eligible', 'start', 'end', 'elapsed', 'exitcode', 'state', 'nnodes', 'ncpus',
@@ -150,8 +144,7 @@ rl.on('line', function (line) {
             }
             readOrder.push(index);
         });
-    }
-    else {
+    } else {
         lineNum++;
         data = line.toString().split('|');
         const columnDiff = data.length - expectedColumns;
@@ -169,8 +162,7 @@ rl.on('line', function (line) {
                 console.error('Broke Something');
                 process.exit();
             }
-        }
-        else if (columnDiff < 0) {
+        } else if (columnDiff < 0) {
             console.error(data.length, '!=', expectedColumns, inputFile, lineNum);
             console.log(line);
             console.log(data);
@@ -180,8 +172,7 @@ rl.on('line', function (line) {
         const newDataObj = {};
         if (
             data[readOrder[0]].indexOf('.') === -1
-            &&
-            (
+            && (
                 data[readOrder[15]].startsWith('CANCELLED') || usedStates.indexOf(data[readOrder[15]]) > -1
             )
         ) {
@@ -189,7 +180,7 @@ rl.on('line', function (line) {
             readOrder.forEach((index) => {
                 let thisData = data[index];
                 newDataObj[requiredColumns[i]] = thisData;
-                newData.push(thisData)
+                newData.push(thisData);
                 i++;
             });
             /*
@@ -214,23 +205,22 @@ rl.on('line', function (line) {
                 console.log(newDataObj);
                 */
             }
-            if (newData[9] != 'Unknown') {
+            let submitTime;
+            if (newData[9] !== 'Unknown') {
                 submitTime = tz(newData[9], timezone);
                 if (submitTime.isValid()) {
-                    newData[9] = submitTime.utc().format("YYYY-MM-DDTHH:mm:ss");
-                }
-                else {
-                    //console.log('invalid submit Time:',newData[9], newData[1] );
+                    newData[9] = submitTime.utc().format('YYYY-MM-DDTHH:mm:ss');
+                } else {
+                    // console.log('invalid submit Time:',newData[9], newData[1] );
                 }
             }
-
-            if (newData[10] != 'Unknown') {
+            let elTime;
+            if (newData[10] !== 'Unknown') {
                 elTime = tz(newData[10], timezone);
                 if (elTime.isValid()) {
-                    newData[10] = elTime.utc().format("YYYY-MM-DDTHH:mm:ss");
-                }
-                else {
-                    //console.log('invalid el time:',newData[10], newData[1] );
+                    newData[10] = elTime.utc().format('YYYY-MM-DDTHH:mm:ss');
+                } else {
+                    // console.log('invalid el time:',newData[10], newData[1] );
                 }
             }
 
@@ -240,20 +230,21 @@ rl.on('line', function (line) {
             if (!outputStreams[cluster]) {
                 let outFile = `${outPath}${cluster}-${year}-${month}`;
                 if (day !== '') {
-                    outFile = `${outFile}-${day}.log`
-                }
-                else {
-                    outFile = `${outFile}.log`
+                    outFile = `${outFile}-${day}.log`;
+                } else {
+                    outFile = `${outFile}.log`;
                 }
                 outputStreams[cluster] = createWriteStream(outFile);
             }
-            //console.log(newData.join('|'));
+            // console.log(newData.join('|'));
             outputStreams[cluster].write(newData.join('|') + '\n');
-            newdata = [];
+            newData = [];
         }
     }
 });
 
 rl.on('end', () => {
-    Object.keys(outputStreams).forEach((v) => { v.end(); })
+    Object.keys(outputStreams).forEach((v) => {
+        v.end();
+    });
 });
