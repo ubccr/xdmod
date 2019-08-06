@@ -157,3 +157,5 @@ sacct = "[:slurm_sacct:]"
 export_directory = "[:data_warehouse_export_export_directory:]"
 ; Length of time in days that files will be retained before automatic deletion.
 retention_duration_days = [:data_warehouse_export_retention_duration_days:]
+; Salt used during deidentification.
+hash_salt = "[:data_warehouse_export_hash_salt:]"

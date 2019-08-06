@@ -7,9 +7,10 @@ use CCR\Loggable;
 use DataWarehouse\Query\RawQuery;
 use Exception;
 use Iterator;
+use Log;
 use PDO;
 use XDUser;
-use Log;
+use xd_utilities;
 
 /**
  * Data set for batch export queries.
@@ -67,6 +68,20 @@ class BatchDataset extends Loggable implements Iterator
     private $anonymousFields = [];
 
     /**
+     * Salt used during deidentification.
+     *
+     * @var string
+     */
+    private $hashSalt = '';
+
+    /**
+     * Cache for hashed values.
+     *
+     * @var array
+     */
+    private $hashCache = [];
+
+    /**
      * @param mixed $name Description.
      * @param \XDUser $user
      * @param \Log $logger
@@ -78,6 +93,15 @@ class BatchDataset extends Loggable implements Iterator
         $this->query = $query;
         $this->docs = $query->getColumnDocumentation();
         $this->dbh = DB::factory($query->_db_profile);
+
+        try {
+            $this->hashSalt = xd_utilities\getConfiguration(
+                'data_warehouse_export',
+                'hash_salt'
+            );
+        } catch (Exception $e) {
+            $this->logger->warn('data_warehouse_export hash_salt is not set');
+        }
 
         foreach ($this->docs as $key => $doc) {
             $export = isset($doc['batch_export']) ? $doc['batch_export'] : false;
@@ -183,6 +207,8 @@ class BatchDataset extends Loggable implements Iterator
     }
 
     /**
+     * Is this iterator valid?
+     *
      * @return bool
      */
     public function valid()
@@ -191,13 +217,27 @@ class BatchDataset extends Loggable implements Iterator
     }
 
     /**
+     * Anonymize a field.
+     *
+     * @param string $field
+     * @return string
      */
     private function anonymizeField($field)
     {
-        return md5($field);
+        if (array_key_exists($field, $this->hashCache)) {
+            return $this->hashCache[$field];
+        }
+
+        $hash = sha1($field . $this->hashSalt);
+        $this->hashCache[$field] = $hash;
+
+        return $hash;
     }
 
     /**
+     * Get the next row of data.
+     *
+     * @return array
      */
     private function getNextRow()
     {
