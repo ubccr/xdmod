@@ -1,0 +1,16 @@
+{
+    "name": "format-slurm",
+    "version": "1.0.0",
+    "description": "take old slurm logs and make them compat with new XDMoD",
+    "main": "parse.js",
+    "dependencies": {
+        "moment-timezone": "^0.5.21",
+        "pcre-to-regexp": "^0.0.4"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+}
