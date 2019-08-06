@@ -276,7 +276,7 @@ class BatchProcessor extends Loggable
                 'current_date' => date('Y-m-d'),
                 'expiration_date' => $expirationDate,
                 'download_url' => sprintf(
-                    '%srest/v1/warehouse/export/download/%d',
+                    '%s#data_export?action=download&id=%d',
                     xd_utilities\getConfigurationUrlBase('general', 'site_address'),
                     $request['id']
                 ),

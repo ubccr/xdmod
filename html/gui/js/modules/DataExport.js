@@ -47,6 +47,28 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         // Defer loading of realms so they are not loaded immediately.
         this.on('beforerender', this.realmsStore.load, this.realmsStore, { single: true });
 
+        // Open the download window if this is a download URL.
+        this.on('activate', function () {
+            var token = CCR.tokenize(document.location.hash);
+            var params = Ext.urlDecode(token.params);
+
+            if (params.action === 'download') {
+                // Update history so the download URL is no longer present.
+                Ext.History.add(this.id);
+
+                // A confirmation message is used because the download cannot
+                // be initiated automatically as it would be blocked as a
+                // pop-up.
+                Ext.Msg.confirm(
+                    'Data Export',
+                    'Download exported data now?',
+                    function () {
+                        XDMoD.Module.DataExport.openDownloadWindow(params.id);
+                    }
+                );
+            }
+        }, this, { single: true });
+
         // Load the requests after the realms have loaded.  This is necessary so
         // that the realm name can be determined from its ID when displayed in
         // the grid.
@@ -94,6 +116,13 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         XDMoD.Module.DataExport.superclass.initComponent.call(this);
     }
 });
+
+/**
+ * Open a new window to download the requested data.
+ */
+XDMoD.Module.DataExport.openDownloadWindow = function (requestId) {
+    window.open('rest/v1/warehouse/export/download/' + requestId);
+};
 
 /**
  * Data export request form.
@@ -513,7 +542,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
     },
 
     downloadRequest: function (record) {
-        window.open('rest/v1/warehouse/export/download/' + record.get('id'));
+        XDMoD.Module.DataExport.openDownloadWindow(record.get('id'));
     },
 
     resubmitRequest: function (record) {
