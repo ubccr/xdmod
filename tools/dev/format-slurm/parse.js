@@ -198,6 +198,12 @@ rl.on('line', function (line) {
             const fixedStartEnd = timefix(newData[11], newData[12], parseSlurmDuration(newData[13]));
             if (fixedStartEnd[2]) {
                 console.warn(`munged ${fixedStartEnd[2]} time(s) line: ${lineNum} jobid: ${newData[0]}`);
+
+                // The following code will output more data if you want to verify that the start and end times
+                // seem reasonable.
+                // if there was more time this and other console data should be using the debug package for
+                // better logging and debugging.
+
                 /*
                 console.log(newDataObj);
                 newDataObj.submit = moment.tz(newData[9], timezone).utc().format("YYYY-MM-DDTHH:mm:ss");
@@ -207,7 +213,6 @@ rl.on('line', function (line) {
                 console.log('after:');
                 console.log(newDataObj);
                 */
-                //count++;
             }
             if (newData[9] != 'Unknown') {
                 submitTime = tz(newData[9], timezone);
