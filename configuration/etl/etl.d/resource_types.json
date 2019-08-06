@@ -26,30 +26,48 @@
     },
 
     "ingest-resource-types": [
-      {
-          "name": "ResourceTypesStaging",
-          "description": "Ingest resource types file",
-          "class": "StructuredFileIngestor",
-          "definition_file": "common/staging/resource-type.json",
-          "endpoints": {
-              "source": {
-                  "type": "jsonfile",
-                  "name": "Resource types",
-                  "path": "${base_dir}/../resource_types.json",
-                  "record_schema_path": "common/resource-types.schema.json",
-                  "filters": [
-                      {
-                          "#": "Reformat config file for ETLs purposes.",
-                          "type": "external",
-                          "name": "jq",
-                          "path": "jq",
-                          "arguments": "'[ .resource_types | to_entries[]| {abbrev: .key, description:.value.description} ] '"
-                      }
-                  ]
-              },
-              "destination": {
-                  "type": "mysql",
-                  "name": "Shredder/Staging Database",
+        {
+            "name": "ResourceTypesStagingUnknown",
+            "description": "Populates the resource types table w/ the Unknown resource",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "cloud_openstack/unknown_resource_type.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "ResourceTypesStaging",
+            "description": "Ingest resource types file",
+            "class": "StructuredFileIngestor",
+            "definition_file": "common/staging/resource-type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource types",
+                    "path": "${base_dir}/../resource_types.json",
+                    "record_schema_path": "common/resource-types.schema.json",
+                    "filters": [
+                        {
+                            "#": "Reformat config file for ETLs purposes.",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[ .resource_types | to_entries[]| {abbrev: .key, description:.value.description} ] '"
+                        }
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
                   "config": "database",
                   "schema": "mod_shredder"
               }

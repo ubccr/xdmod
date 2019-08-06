@@ -141,8 +141,8 @@ function main()
     // Role Retrieval
     $allRoles = Roles::getRoleNames($blacklist);
 
-    $resourceTypesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
-    $resourceConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
+    $resourceConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR, $log);
+    $resourceTypesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR, $log);
 
     $enabledResourceTypes = array_unique(
         array_reduce(
@@ -155,12 +155,16 @@ function main()
         )
     );
 
-    $enabledRealms = array();
-    foreach($enabledResourceTypes as $enabledResourceType) {
-        $realms = $resourceTypesConfig['resource_types'][$enabledResourceType]['realms'];
-        $enabledRealms = array_merge($enabledRealms, $realms);
-    }
-    $enabledRealms = array_unique($enabledRealms);
+    $enabledRealms = array_unique(
+        array_reduce(
+            $enabledResourceTypes,
+            function ($carry, $item) use ($resourceTypesConfig) {
+                $realms = $resourceTypesConfig['resource_types'][$item]['realms'];
+                return array_merge($carry, $realms);
+            },
+            array()
+        )
+    );
 
     // Configuration Files
     $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
