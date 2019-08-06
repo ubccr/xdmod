@@ -114,7 +114,7 @@ EOT
             }
         }
 
-        $this->writeJsonConfigFile('resources',  $resources);
+        $this->writeJsonConfigFile('resources', $resources);
     }
 
     /**
