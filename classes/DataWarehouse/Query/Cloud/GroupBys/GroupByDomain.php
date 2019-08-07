@@ -99,7 +99,7 @@ class GroupByDomain extends GroupBy
         $fkField = new TableField($dataTable, 'domain_id');
         $query->addWhereCondition(new WhereCondition($idField, '=', $fkField));
 
-        $this->addOrderBys($query);
+        $this->addOrder($query);
     }
 
     /**
@@ -117,13 +117,14 @@ class GroupByDomain extends GroupBy
     }
 
     /**
-     * Add this GroupBy's `order_fields` to the provided $query as order by fields.
+     * Add this GroupBy's order by clauses to the provided `Query` instance.
      *
-     * @param Query $query  the query that this GroupBy's order fields to.
-     * @param string $dir   the
-     * @param bool $prepend if true, then prepend else append.
+     * @param Query $query      The query to add this GroupBy's order by clauses to.
+     * @param bool $multi_group Whether or not there are multiple Group By's?
+     * @param string $dir       Which direction the order by's are to sort.
+     * @param bool $prepend     Whether or not to prepend or append this Group By's order by clauses.
      */
-    private function addOrderBys(Query $query, $dir = 'asc', $prepend = false)
+    public function addOrder(Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         foreach($this->_order_fields as $orderFieldName) {
             $orderGroupBy = new OrderBy(new TableField($this->table, $orderFieldName), $dir, $this->getName());
