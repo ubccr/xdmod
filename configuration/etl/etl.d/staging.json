@@ -74,6 +74,28 @@
             }
         },
         {
+            "name": "resource-types",
+            "description": "Ingest resource types file",
+            "definition_file": "common/staging/resource-type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource types",
+                    "path": "${base_dir}/../resource_types.json",
+                    "record_schema_path": "common/resource-types.schema.json",
+                    "filters": [
+                        {
+                            "#": "Reformat config file for ETLs purposes.",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[ .resource_types | to_entries[]| {abbrev: .key, description:.value.description} ] '"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "name": "resource-config",
             "description": "Ingest resource configuration file",
             "definition_file": "common/staging/resource-config.json",
@@ -87,14 +109,15 @@
                         "resource",
                         "name",
                         "description",
-                        "resource_type_id",
                         "pi_column",
                         "shared_jobs",
-                        "timezone"
+                        "timezone",
+                        "resource_type"
                     ]
                 }
             }
         },
+
         {
             "class": "DatabaseIngestor",
             "name": "resources",
@@ -122,19 +145,6 @@
                         "percent_allocated",
                         "comments"
                     ]
-                }
-            }
-        },
-        {
-            "name": "resource-types",
-            "description": "Ingest resource types file",
-            "definition_file": "common/staging/resource-type.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "Resource types",
-                    "path": "${base_dir}/../resource_types.json",
-                    "record_schema_path": "common/resource-types.schema.json"
                 }
             }
         }

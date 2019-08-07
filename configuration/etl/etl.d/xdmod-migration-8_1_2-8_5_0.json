@@ -2,6 +2,31 @@
     "module": "xdmod",
     "migration-8_1_2-8_5_0": [
         {
+            "name": "create-tables",
+            "description": "Create HPCDB tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "#": "Table creation order is important due to foreign key constraints",
+            "definition_file_list": [
+                "common/hpcdb/resources.json"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregate tables",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
             "name": "update-modw_aggregates-tables",
             "description": "Update modw_aggregates tables",
             "namespace": "ETL\\Maintenance",

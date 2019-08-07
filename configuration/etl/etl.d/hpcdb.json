@@ -95,7 +95,10 @@
         {
             "name": "resource-types",
             "description": "Ingest resource types",
-            "definition_file": "common/hpcdb/resource-types.json"
+            "definition_file": "common/hpcdb/resource-types.json",
+            "hide_sql_warning_codes": [
+                1062
+            ]
         },
         {
             "name": "organizations",

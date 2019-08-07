@@ -18,10 +18,10 @@
             "description": "Description of the resource",
             "maxLength": 1000
         },
-        "resource_type_id": {
-            "type": "integer",
-            "description": "Resource type ID",
-            "minimum": 0
+        "resource_type": {
+            "type": "string",
+            "description": "Resource type",
+            "maxLength": 10
         },
         "pi_column": {
             "type": "string",

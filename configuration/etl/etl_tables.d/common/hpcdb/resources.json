@@ -103,15 +103,18 @@
                 ]
             },
             {
-                "name": "fk_resource_res_type",
+                "name": "fk_resource_res_type_upd",
                 "columns": [
                     "resource_type_id"
                 ],
                 "referenced_table": "hpcdb_resource_types",
                 "referenced_columns": [
                     "type_id"
-                ]
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
             }
+
         ]
     }
 }
