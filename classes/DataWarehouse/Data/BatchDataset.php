@@ -126,8 +126,14 @@ class BatchDataset extends Loggable implements Iterator
             }
         }
 
-        $this->logger->debug(sprintf('Header: %s', json_encode($this->header)));
-        $this->logger->debug(sprintf('Anonymous fields: %s', json_encode($this->anonymousFields)));
+        $this->logger->debug(sprintf(
+            'Header: %s',
+            json_encode(array_values($this->header))
+        ));
+        $this->logger->debug(sprintf(
+            'Anonymous fields: %s',
+            json_encode(array_keys($this->anonymousFields))
+        ));
     }
 
     /**
