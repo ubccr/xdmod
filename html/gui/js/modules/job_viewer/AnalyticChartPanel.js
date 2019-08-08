@@ -90,6 +90,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     // The instance of Highcharts used as this components primary display.
     chart: null,
 
+    // private member that stores the error message object
+    errorMsg: null,
+
     /**
      * This components 'constructor'.
      */
@@ -168,11 +171,37 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          * @param rawWidth
          * @param rawHeight
          */
-        resize: function(panel, adjWidth, adjHeight, rawWidth, rawHeight) {
-            if (this.chart && this.chart.series && this.chart.series.length > 0) this.chart.reflow();
+        resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
+            if (this.chart) {
+                this.chart.reflow();
+                if (this.errorMsg) {
+                    this.updateErrorMessage(this.errorMsg.text.textStr);
+                }
+            }
         } // resize
 
     }, // listeners
+
+    /* Add an error message or update an existing error message on the chart.
+     *
+     * @param errorStr the string to display. The message is displayed next to
+     * an alert icon. If the string is empty then the alert icon is not
+     * displayed
+     */
+    updateErrorMessage: function (errorStr) {
+        if (this.errorMsg) {
+            this.errorMsg.text.destroy();
+            this.errorMsg.image.destroy();
+            this.errorMsg = null;
+        }
+        if (errorStr) {
+            this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
+                .css({ width: this.chart.chartWidth - this.chart.plotLeft - 23 })
+                .add() };
+            var box = this.errorMsg.text.getBBox();
+            this.errorMsg.image = this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();
+        }
+    },
 
     /**
      * Helper function that handles the work of updating this HighCharts
@@ -204,12 +233,8 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 data: [data.value],
                 color: color
             }, true, true);
-
-        } else {
-            var text = this.chart.renderer.text(data.error, this.chart.plotLeft + 23, this.chart.plotTop + 10).add();
-            var box = text.getBBox();
-            this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();
         }
+        this.updateErrorMessage(data.error);
 
         this._updateTitle(data);
         this.ownerCt.doLayout(false, true);
