@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/acls/realms.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "display": "DISTINCT srtr.realm",
+            "name": "LOWER(srtr.realm)",
+            "module_id": 1
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_type_realms",
+                "alias": "srtr"
+            }
+        ]
+    }
+}

@@ -141,31 +141,6 @@ function main()
     // Role Retrieval
     $allRoles = Roles::getRoleNames($blacklist);
 
-    $resourceConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR, $log);
-    $resourceTypesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR, $log);
-
-    $enabledResourceTypes = array_unique(
-        array_reduce(
-            $resourceConfig,
-            function ($carry, $item) {
-                $carry [] = $item['resource_type'];
-                return $carry;
-            },
-            array()
-        )
-    );
-
-    $enabledRealms = array_unique(
-        array_reduce(
-            $enabledResourceTypes,
-            function ($carry, $item) use ($resourceTypesConfig) {
-                $realms = $resourceTypesConfig['resource_types'][$item]['realms'];
-                return array_merge($carry, $realms);
-            },
-            array()
-        )
-    );
-
     // Configuration Files
     $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
     $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
@@ -208,14 +183,12 @@ function main()
         // Process the realms provided by this module, if any.
         if (property_exists($realms, 'realms')) {
             foreach ($realms->realms as $realm => $data) {
-                if (in_array($realm, $enabledRealms)) {
-                    $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
-                    $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
-                    $results[$module]['realms'][$realm] = array(
-                        'group_bys' => json_decode(json_encode($groupBys), true),
-                        'statistics' => json_decode(json_encode($statistics), true)
-                    );
-                }
+                $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
+                $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
+                $results[$module]['realms'][$realm] = array(
+                    'group_bys' => json_decode(json_encode($groupBys), true),
+                    'statistics' => json_decode(json_encode($statistics), true)
+                );
             }
         }
     }
@@ -501,7 +474,7 @@ SQL;
     if (array_key_exists(DEFAULT_MODULE_NAME, $results)) {
         $xdmod = $results[DEFAULT_MODULE_NAME];
         unset($results[DEFAULT_MODULE_NAME]);
-        processResult($db, DEFAULT_MODULE_NAME, $xdmod, $modules);
+        processResult($db, DEFAULT_MODULE_NAME, $xdmod, $modules, true);
     }
 
     foreach ($results as $module => $moduleData) {
@@ -580,7 +553,8 @@ function wipeManagedTables(iDatabase $db)
         'statistics',
         'hierarchies',
         'realms',
-        'modules'
+        'modules',
+        'resource_type_realms'
     );
 
     foreach($tables as $table) {
@@ -733,6 +707,27 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
     $realms = ( isset($moduleData['realms']) ? $moduleData['realms'] : null );
 
     $log->info("Processing Module: $module");
+
+    $db = DB::factory('database');
+    $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
+    $stmt->execute();
+    $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+    $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
+    $enabledRealms = array_unique(
+        array_reduce(
+            $enabledResourceTypes,
+            function ($carry, $item) use ($resourceTypes) {
+                $realms = $resourceTypes['resource_types'][$item]['realms'];
+                return array_merge($carry, $realms);
+            },
+            array()
+        )
+    );
+    $filteredRealms = array_diff(array_keys($realms), $enabledRealms);
+    foreach($filteredRealms as $filteredRealm) {
+        unset($realms[$filteredRealm]);
+    }
 
     if ($modules === null) {
         $log->err("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
@@ -1744,6 +1739,7 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
 
         createGroupBys($db, $moduleName, strtolower($realm), $groupBys);
         createStatistics($db, $moduleName, strtolower($realm), $statistics);
+        updateResourceTypeRealms($db, $realm);
     }
 }
 
@@ -2219,6 +2215,27 @@ function dropTables(iDatabase $db, array $tables)
     $db->execute("DROP TABLE $tableList");
 
     $log->info("*** Tables Dropped!");
+}
+
+function updateResourceTypeRealms(iDatabase $db, $realm)
+{
+    global $dryRun, $log;
+
+    $log->info("*** Updating Resource Types -> Realm Associations");
+
+    $query = <<<SQL
+INSERT INTO moddb.resource_type_realms(resource_type_id, realm_id)
+SELECT 
+    rt.id as resource_type_id,
+    r.realm_id as realm_id
+FROM mod_shredder.staging_resource_type_realms srtr
+JOIN modw.resourcetype rt ON rt.abbrev = srtr.abbrev
+JOIN moddb.realms r ON r.display = srtr.realm
+WHERE r.display = :realm_display;
+SQL;
+    $db->execute($query, array(':realm_display' => $realm));
+
+    $log->info("*** Resource Types -> Realm Associated!");
 }
 
 /**

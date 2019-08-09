@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "name": "staging_resource_type_realms",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "staging_resource_type_realm_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "abbrev",
+                "type": "varchar(10)",
+                "nullable": false
+            },
+            {
+                "name": "realm",
+                "type": "varchar(16)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "staging_resource_type_realm_id"
+                ]
+            }
+        ]
+    }
+}

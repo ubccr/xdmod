@@ -1,0 +1,41 @@
+{
+    "table_definition": {
+        "name": "resource_type_realms",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "resource_type_realm_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_type_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "realm_id",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_type_realm_id"
+                ]
+            },
+            {
+                "name": "idx_resource_type_id_realm_name",
+                "columns": [
+                    "resource_type_id",
+                    "realm_id"
+                ]
+            }
+        ]
+    }
+}
