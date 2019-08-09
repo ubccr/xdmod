@@ -67,7 +67,7 @@ class Field
         $ret = $this->_def;
 
         if ($show_alias == true && $this->getAlias() != '') {
-            $ret .= ' as ' . $this->getAlias();
+            $ret .= " as '" . $this->getAlias() . "'";
         }
 
         return $ret;
