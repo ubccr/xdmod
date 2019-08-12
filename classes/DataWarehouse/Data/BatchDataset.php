@@ -104,7 +104,7 @@ class BatchDataset extends Loggable implements Iterator
         }
 
         foreach ($this->docs as $key => $doc) {
-            $export = isset($doc['batch_export']) ? $doc['batch_export'] : false;
+            $export = isset($doc['batchExport']) ? $doc['batchExport'] : false;
             $name = $doc['name'];
 
             if (isset($doc['units']) && $doc['units'] === 'ts') {
@@ -120,7 +120,7 @@ class BatchDataset extends Loggable implements Iterator
                 // Skip field.
             } else {
                 throw new Exception(sprintf(
-                    'Unknown "batch_export" option %s',
+                    'Unknown "batchExport" option %s',
                     var_export($export, true)
                 ));
             }

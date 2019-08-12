@@ -5,231 +5,342 @@
             "display": "Jobs"
         }
     ],
-    "modw.job_tasks": [
-        {
-            "key": "local_jobid",
-            "name": "Local Job Id",
-            "dtype": "accounting",
-            "group": "Administration",
-            "documentation": "The unique identifier assigned to the job by the job scheduler.",
-            "batch_export": true
-        },
-        {
-            "key": "resource_id",
-            "name": "Resource",
-            "group": "Administration",
-            "dtype": "foreignkey",
-            "join": {
-                "schema": "modw",
-                "table": "resourcefact"
+    "Jobs": {
+        "tables": [
+            {
+                "schema": "modw_aggregates",
+                "name": "jobfact_by_day_joblist",
+                "alias": "jl",
+                "join": {
+                    "primaryKey": "agg_id",
+                    "foreignTableAlias": "jf",
+                    "foreignKey": "id"
+                }
             },
-            "documentation": "The resource that ran the job.",
-            "batch_export": true
-        },
-        {
-            "key": "systemaccount_id",
-            "name": "System Username",
-            "group": "Administration",
-            "dtype": "foreignkey",
-            "join": {
+            {
                 "schema": "modw",
-                "table": "systemaccount",
-                "column": "username"
+                "name": "job_tasks",
+                "alias": "jt",
+                "join": {
+                    "primaryKey": "job_id",
+                    "foreignTableAlias": "jl",
+                    "foreignKey": "jobid"
+                }
             },
-            "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
-            "batch_export": "anonymize"
-        },
-        {
-            "key": "person_id",
-            "name": "User",
-            "group": "Administration",
-            "dtype": "foreignkey",
-            "join": {
+            {
                 "schema": "modw",
-                "table": "person",
-                "column": "long_name"
+                "name": "job_records",
+                "alias": "jr",
+                "join": {
+                    "primaryKey": "job_record_id",
+                    "foreignTableAlias": "jt",
+                    "foreignKey": "job_record_id"
+                }
             },
-            "documentation": "The name of the job owner.",
-            "batch_export": true
-        },
-        {
-            "key": "person_organization_id",
-            "name": "Organization",
-            "group": "Administration",
-            "dtype": "foreignkey",
-            "join": {
+            {
                 "schema": "modw",
-                "table": "organization"
+                "name": "resourcefact",
+                "alias": "rf",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jt",
+                    "foreignKey": "resource_id"
+                }
             },
-            "documentation": "The organization of the person who ran the task",
-            "batch_export": true
-        },
-        {
-            "key": "name",
-            "name": "Name",
-            "documentation": "The name of the job as reported by the job scheduler.",
-            "dtype": "accounting",
-            "group": "Executable",
-            "batch_export": false
-        },
-        {
-            "key": "submit_time_ts",
-            "name": "Submit Time",
-            "dtype": "accounting",
-            "group": "Timing",
-            "units": "ts",
-            "documentation": "Task submission time",
-            "batch_export": true
-        },
-        {
-            "key": "start_time_ts",
-            "name": "Start Time",
-            "dtype": "accounting",
-            "group": "Timing",
-            "units": "ts",
-            "documentation": "The time that the job started running.",
-            "batch_export": true
-        },
-        {
-            "key": "end_time_ts",
-            "name": "End Time",
-            "units": "ts",
-            "dtype": "accounting",
-            "group": "Timing",
-            "documentation": "The time that the job ended.",
-            "batch_export": true
-        },
-        {
-            "key": "eligible_time_ts",
-            "name": "Eligible Time",
-            "units": "ts",
-            "dtype": "accounting",
-            "group": "Timing",
-            "documentation": "The time that the job was eligible for scheduling by the resource manager.",
-            "batch_export": true
-        },
-        {
-            "key": "node_count",
-            "name": "Nodes",
-            "dtype": "foreignkey",
-            "group": "Allocated Resource",
-            "join": {
+            {
                 "schema": "modw",
-                "table": "nodecount",
-                "column": "nodes"
+                "name": "systemaccount",
+                "alias": "sa",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jt",
+                    "foreignKey": "systemaccount_id"
+                }
             },
-            "documentation": "The number of nodes that were assigned to the job.",
-            "batch_export": true
-        },
-        {
-            "key": "processor_count",
-            "name": "Cores",
-            "dtype": "accounting",
-            "group": "Allocated Resource",
-            "documentation": "The number of cores that were assigned to the job.",
-            "batch_export": true
-        },
-        {
-            "key": "memory_kb",
-            "name": "Memory Used",
-            "dtype": "accounting",
-            "group": "Allocated resource",
-            "units": "kilobyte",
-            "documentation": "Memory consumed as reported by the resource manager.",
-            "batch_export": true
-        },
-        {
-            "key": "wallduration",
-            "name": "Wall Time",
-            "dtype": "accounting",
-            "group": "Timing",
-            "units": "seconds",
-            "documentation": "Overall job duration.",
-            "batch_export": true
-        },
-        {
-            "key": "waitduration",
-            "name": "Wait Time",
-            "dtype": "accounting",
-            "group": "Timing",
-            "units": "seconds",
-            "documentation": "Time the job waited in the queue",
-            "batch_export": true
-        },
-        {
-            "key": "cpu_time",
-            "name": "Core Time",
-            "dtype": "accounting",
-            "group": "Allocated resource",
-            "units": "seconds",
-            "documentation": "The amount of CPU core time (Core Count * Wall Time)",
-            "batch_export": true
-        },
-        {
-            "key": "group_name",
-            "name": "UNIX group name",
-            "dtype": "accounting",
-            "group": "Administration",
-            "documentation": "The name of the group that ran the job.",
-            "batch_export": false
-        },
-        {
-            "key": "gid_number",
-            "name": "UNIX group GID",
-            "dtype": "accounting",
-            "group": "Administration",
-            "documentation": "The GID of the group that ran the job.",
-            "batch_export": false
-        },
-        {
-            "key": "uid_number",
-            "name": "UNIX UID",
-            "dtype": "accounting",
-            "group": "Administration",
-            "documentation": "The UID of the user that ran the job.",
-            "batch_export": false
-        },
-        {
-            "key": "exit_code",
-            "name": "Exit Code",
-            "dtype": "accounting",
-            "group": "Executable",
-            "documentation": "The code that the job exited with.",
-            "batch_export": true
-        },
-        {
-            "key": "exit_state",
-            "name": "Exit State",
-            "dtype": "accounting",
-            "group": "Executable",
-            "documentation": "The state of the job when it completed.",
-            "batch_export": true
-        },
-        {
-            "key": "cpu_req",
-            "name": "Requested Cores",
-            "dtype": "accounting",
-            "group": "Requested resource",
-            "documentation": "The number of CPUs required by the job.",
-            "batch_export": true
-        },
-        {
-            "key": "mem_req",
-            "name": "Requested memory",
-            "dtype": "accounting",
-            "group": "Requested resource",
-            "units": "bytes",
-            "documentation": "The amount of memory required by the job.",
-            "batch_export": true
-        },
-        {
-            "key": "timelimit",
-            "name": "Requested Wall Time",
-            "dtype": "accounting",
-            "group": "Requested resource",
-            "units": "seconds",
-            "documentation": "The time limit of the job.",
-            "batch_export": true
-        }
-    ]
+            {
+                "schema": "modw",
+                "name": "person",
+                "alias": "p",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jt",
+                    "foreignKey": "person_id"
+                }
+            },
+            {
+                "schema": "modw",
+                "name": "organization",
+                "alias": "o",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jt",
+                    "foreignKey": "person_organization_id"
+                }
+            },
+            {
+                "schema": "modw",
+                "name": "nodecount",
+                "alias": "nc",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jt",
+                    "foreignKey": "node_count"
+                }
+            },
+            {
+                "schema": "modw",
+                "name": "fieldofscience_hierarchy",
+                "alias": "fos",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jr",
+                    "foreignKey": "fos_id"
+                }
+            }
+        ],
+        "fields": [
+            {
+                "name": "Local Job Id",
+                "formula": "IF(jt.local_job_array_index = -1, jt.local_jobid, CONCAT(jt.local_jobid, '[', jt.local_job_array_index, ']'))",
+                "group": "Administration",
+                "documentation": "The unique identifier assigned to the job by the job scheduler.",
+                "batchExport": true
+            },
+            {
+                "name": "Resource",
+                "tableAlias": "rf",
+                "column": "name",
+                "group": "Administration",
+                "documentation": "The resource that ran the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Timezone",
+                "tableAlias": "rf",
+                "column": "timezone",
+                "group": "Administration",
+                "documentation": "The timezone of the resource.",
+                "batchExport": true
+            },
+            {
+                "name": "System Username",
+                "tableAlias": "sa",
+                "column": "username",
+                "group": "Administration",
+                "visibility": "non-public",
+                "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
+                "batchExport": "anonymize"
+            },
+            {
+                "name": "User",
+                "tableAlias": "p",
+                "column": "long_name",
+                "group": "Administration",
+                "documentation": "The name of the job owner.",
+                "batchExport": true
+            },
+            {
+                "name": "Organization",
+                "tableAlias": "o",
+                "column": "name",
+                "group": "Administration",
+                "documentation": "The organization of the person who ran the task",
+                "batchExport": true
+            },
+            {
+                "name": "Name",
+                "tableAlias": "jt",
+                "column": "name",
+                "documentation": "The name of the job as reported by the job scheduler.",
+                "group": "Executable",
+                "batchExport": false
+            },
+            {
+                "name": "Submit Time",
+                "tableAlias": "jt",
+                "column": "submit_time_ts",
+                "group": "Timing",
+                "units": "ts",
+                "documentation": "Task submission time",
+                "batchExport": true
+            },
+            {
+                "name": "Start Time",
+                "tableAlias": "jt",
+                "column": "start_time_ts",
+                "group": "Timing",
+                "units": "ts",
+                "documentation": "The time that the job started running.",
+                "batchExport": true
+            },
+            {
+                "name": "End Time",
+                "tableAlias": "jt",
+                "column": "end_time_ts",
+                "units": "ts",
+                "group": "Timing",
+                "documentation": "The time that the job ended.",
+                "batchExport": true
+            },
+            {
+                "name": "Eligible Time",
+                "tableAlias": "jt",
+                "column": "eligible_time_ts",
+                "units": "ts",
+                "group": "Timing",
+                "documentation": "The time that the job was eligible for scheduling by the resource manager.",
+                "batchExport": true
+            },
+            {
+                "name": "Nodes",
+                "tableAlias": "nc",
+                "column": "nodes",
+                "group": "Allocated Resource",
+                "documentation": "The number of nodes that were assigned to the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Cores",
+                "tableAlias": "jt",
+                "column": "processor_count",
+                "group": "Allocated Resource",
+                "documentation": "The number of cores that were assigned to the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Memory Used",
+                "tableAlias": "jt",
+                "column": "memory_kb",
+                "group": "Allocated Resource",
+                "units": "kilobyte",
+                "documentation": "Memory consumed as reported by the resource manager.",
+                "batchExport": true
+            },
+            {
+                "name": "Wall Time",
+                "tableAlias": "jt",
+                "column": "wallduration",
+                "group": "Timing",
+                "units": "seconds",
+                "documentation": "Overall job duration.",
+                "batchExport": true
+            },
+            {
+                "name": "Wait Time",
+                "tableAlias": "jt",
+                "column": "waitduration",
+                "group": "Timing",
+                "units": "seconds",
+                "documentation": "Time the job waited in the queue",
+                "batchExport": true
+            },
+            {
+                "name": "Core Time",
+                "tableAlias": "jt",
+                "column": "cpu_time",
+                "group": "Allocated Resource",
+                "units": "seconds",
+                "documentation": "The amount of CPU core time (Core Count * Wall Time)",
+                "batchExport": true
+            },
+            {
+                "name": "UNIX group name",
+                "tableAlias": "jt",
+                "column": "group_name",
+                "group": "Administration",
+                "documentation": "The name of the group that ran the job.",
+                "batchExport": false
+            },
+            {
+                "name": "UNIX group GID",
+                "tableAlias": "jt",
+                "column": "gid_number",
+                "group": "Administration",
+                "documentation": "The GID of the group that ran the job.",
+                "batchExport": false
+            },
+            {
+                "name": "UNIX UID",
+                "tableAlias": "jt",
+                "column": "uid_number",
+                "group": "Administration",
+                "documentation": "The UID of the user that ran the job.",
+                "batchExport": false
+            },
+            {
+                "name": "Exit Code",
+                "tableAlias": "jt",
+                "column": "exit_code",
+                "group": "Executable",
+                "documentation": "The code that the job exited with.",
+                "batchExport": true
+            },
+            {
+                "name": "Exit State",
+                "tableAlias": "jt",
+                "column": "exit_state",
+                "group": "Executable",
+                "documentation": "The state of the job when it completed.",
+                "batchExport": true
+            },
+            {
+                "name": "Requested Cores",
+                "tableAlias": "jt",
+                "column": "cpu_req",
+                "group": "Requested Resource",
+                "documentation": "The number of CPUs required by the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Requested memory",
+                "tableAlias": "jt",
+                "column": "mem_req",
+                "group": "Requested Resource",
+                "units": "bytes",
+                "documentation": "The amount of memory required by the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Requested Wall Time",
+                "tableAlias": "jt",
+                "column": "timelimit",
+                "group": "Requested Resource",
+                "units": "seconds",
+                "documentation": "The time limit of the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Queue",
+                "tableAlias": "jr",
+                "column": "queue",
+                "group": "Requested Resource",
+                "documentation": "The name of the queue to which the job was submitted.",
+                "batchExport": true
+            },
+            {
+                "name": "HIERARCHY_TOP_LEVEL_LABEL",
+                "tableAlias": "fos",
+                "column": "directorate_description",
+                "group": "Requested Resource",
+                "documentation": "HIERARCHY_TOP_LEVEL_INFO",
+                "batchExport": true
+            },
+            {
+                "name": "HIERARCHY_MIDDLE_LEVEL_LABEL",
+                "tableAlias": "fos",
+                "column": "parent_description",
+                "group": "Requested Resource",
+                "documentation": "HIERARCHY_MIDDLE_LEVEL_INFO",
+                "batchExport": true
+            },
+            {
+                "name": "HIERARCHY_BOTTOM_LEVEL_LABEL",
+                "tableAlias": "fos",
+                "column": "description",
+                "group": "Requested Resource",
+                "documentation": "HIERARCHY_BOTTOM_LEVEL_INFO",
+                "batchExport": true
+            }
+        ]
+    }
 }
