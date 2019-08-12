@@ -215,7 +215,6 @@ class HighChartTimeseries2 extends HighChart2
             // === mind you, this is also a big long loop ===
             foreach($yAxisDataDescriptions as $data_description_index => $data_description)
             {
-                //if($data_description->display_type == 'pie') $data_description->display_type = 'line';
                 $query_classname = '\\DataWarehouse\\Query\\'.$data_description->realm.'\\Timeseries';
 
                 $query = new $query_classname(
@@ -428,7 +427,6 @@ class HighChartTimeseries2 extends HighChart2
                         'labels' => $this->_swapXY ? array(
                             'enabled' => true,
                             'staggerLines' => 1,
-                            //'step' => round( ( $font_size < 0 ? 0 : $font_size + 5 ) / 11 ),
                             'format' => $xAxisLabelFormat,
                             'style' => array(
                                 'fontWeight'=> 'normal',
@@ -439,8 +437,6 @@ class HighChartTimeseries2 extends HighChart2
                         : array(
                             'enabled' => true,
                             'staggerLines' => 1,
-                            //'overflow' => 'justify',
-                            //'step' => ceil(($font_size<0?0:$font_size+11  ) / 11),
                             'rotation' => $xAxisData->getName() != 'Year'  && $expectedDataPointCount > 25 ? -90 : 0,
                             'format' => $xAxisLabelFormat,
                             'style' => array(
@@ -475,12 +471,6 @@ class HighChartTimeseries2 extends HighChart2
                 // thru dataset.
 
                 // Query for the top $limit categories in the realm, over the selected time period
-                //$datagroupDataObject = $dataset->getColumnSortedMax($data_description->metric,
-                //                                                        'dim_'.$data_description->group_by,
-                //                                                        $limit,
-                //                                                        $offset,
-                //                                                        $data_description->realm);
-                // Roll back to the 'old way' of getting top-n sorted dimension values:
                 $datagroupDataObject = $dataset->getColumnUniqueOrdered(
                     'dim_'.$data_description->group_by,
                     $limit,
@@ -620,9 +610,7 @@ class HighChartTimeseries2 extends HighChart2
                         if($data_description->display_type == 'pie')
                         {
                             throw new \Exception(get_class($this)." ERROR: chart display_type 'pie' reached in timeseries plot.");
-                        }
-                        else // ($data_description->display_type != 'pie')
-                        {
+                        } else {
                             if($this->_swapXY)
                             {
                                 $dataLabelsConfig  = array_merge(
@@ -728,7 +716,6 @@ class HighChartTimeseries2 extends HighChart2
                             'yAxis' => $yAxisIndex,
                             'lineWidth' =>  $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
                             'showInLegend' => $data_description->display_type != 'pie',
-                            //'innerSize' => min(100,(100.0/$totalSeries)*count($this->_chart['series'])).'%',
                             'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline',
                             'marker' => array(
                                 'enabled' => $showMarker,
