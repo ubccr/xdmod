@@ -1,15 +1,16 @@
 <?php
 
-namespace DataWarehouse\Data;
-
-use CCR\DB;
-
 /**
  * This class represents a set of timeseries data columns
  *
  * @author Amin Ghadersohi
  * @author Jeanette Sperhac
  */
+
+namespace DataWarehouse\Data;
+
+use CCR\DB;
+
 class SimpleTimeseriesDataset extends SimpleDataset
 {
     public function __construct(&$query)
@@ -76,11 +77,13 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $hasWhere ? "'" . $where_value . "'" : null  // where values
         );
 
-        $dataObject = $this->assembleDataObject($column_name,
-                                        $is_dimension, 
-                                        $hasWhere, 
-                                        $wherecolumn_name, 
-                                        $where_value); 
+        $dataObject = $this->assembleDataObject(
+            $column_name,
+            $is_dimension,
+            $hasWhere,
+            $wherecolumn_name,
+            $where_value
+        );
         return $dataObject;
     }
 
@@ -89,12 +92,13 @@ class SimpleTimeseriesDataset extends SimpleDataset
     //
     // @return \DataWarehouse\Data\SimpleTimeseriesData
     //-------------------------------------------------
-    public function assembleDataObject( $column_name, 
-                                        $is_dimension, 
-                                        $hasWhere, 
-                                        $wherecolumn_name, 
-                                        $where_value) 
-    {
+    public function assembleDataObject(
+        $column_name,
+        $is_dimension,
+        $hasWhere,
+        $wherecolumn_name,
+        $where_value
+    ) {
         // assign column names for returned data:
         $values_column_name    = null;
         $sem_column_name       = null;
@@ -102,7 +106,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $order_ids_column_name = null;
         $start_ts_column_name  = null; // timeseries only
 
-        $start_ts_column_name  = $this->_query->getAggregationUnit()->getUnitName() 
+        $start_ts_column_name  = $this->_query->getAggregationUnit()->getUnitName()
                                 . '_start_ts';
         // standard error
         if (isset($this->_query->_stats['sem_' . $column_name])) {
@@ -126,7 +130,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $values_column_name = $column_name;
         }
 
-        // accumulate the values in temp variables, then set everything at once. 
+        // accumulate the values in temp variables, then set everything at once.
         $dataErrors = array();
         $dataValues = array();
         $dataIds = array();
@@ -227,13 +231,14 @@ class SimpleTimeseriesDataset extends SimpleDataset
     // Use data object's statistic alias to determine
     // what operation will be used for data series
     // summarization beyond the top-n, for display.
-    // 
+    //
     // Summarization performed by database will consist
     // of SUM, MIN, MAX, or AVG by time aggregation unit
     //
     // @return String
     //-------------------------------------------------
-    public function getSummaryOperation($stat) {
+    public function getSummaryOperation($stat)
+    {
 
         // statistics alias for the data object
         //$stat = $dataObject->getStatistic()->getAlias();
@@ -254,7 +259,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
                 || strpos($stat, 'rate') !== false
                 || strpos($stat, 'expansion_factor') !== false;
 
-            $operation = $useMean ? "AVG" : "SUM";  
+            $operation = $useMean ? "AVG" : "SUM";
         } // if strpos
 
         return $operation;
@@ -263,16 +268,16 @@ class SimpleTimeseriesDataset extends SimpleDataset
     //-------------------------------------------------
     // public function getUniqueCount
     //
-    // Query for the total count of unique dimension values 
-    // in the chosen $realm, over the selected time period. 
-    // 
+    // Query for the total count of unique dimension values
+    // in the chosen $realm, over the selected time period.
+    //
     // Used by HighChartTimeseries2 configure()
     //
     // @return int
     //-------------------------------------------------
     public function getUniqueCount(
         $column_name,
-        $realm 
+        $realm
     ) {
         // Following are true but unneeded:
         //$is_dimension = true;
@@ -305,15 +310,15 @@ class SimpleTimeseriesDataset extends SimpleDataset
     //-------------------------------------------------
     // public function getColumnUniqueOrdered
     //
-    // Query for the highest average $limit dimension values 
-    // in the chosen $realm, over the selected time period. 
+    // Query for the highest average $limit dimension values
+    // in the chosen $realm, over the selected time period.
     //
     // This is the old way to fetch, order, and return
     // the "top n" values for a given dimension.
     // What "top" means varies by the type of column
-    // we are dealing with. Some are sorted by dimension label, 
+    // we are dealing with. Some are sorted by dimension label,
     // others by metric.
-    // 
+    //
     // Used by HighChartTimeseries2 configure() for
     // fetching the top $limit examples of a metric.
     //
@@ -387,7 +392,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         }
 
         $query_string = $agg_query->getQueryString($limit,  $offset);
-        
+
         $statement = DB::factory($agg_query->_db_profile)->query(
             $query_string,
             array(),
@@ -403,7 +408,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         }
 
         // accumulate the values in a temp variable, then set everything
-        // at once. 
+        // at once.
         $dataErrors = array();
         $dataValues = array();
         $dataIds = array();
@@ -477,8 +482,8 @@ class SimpleTimeseriesDataset extends SimpleDataset
         }
 
         return $dataObject;
-    } 
-        
+    }
+
 
     //-------------------------------------------------
     // public function getTimestamps
@@ -500,7 +505,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $start_ts_column_name  = 'start_ts';
 
         // JMS:  accumulate the values in a temp variable, then set everything
-        // at once. 
+        // at once.
         $dataErrors = array();
         $dataValues = array();
         $dataIds = array();
@@ -691,14 +696,14 @@ class SimpleTimeseriesDataset extends SimpleDataset
     //-------------------------------------------------
     // public function getSummarizedColumn
     //
-    // Query to summarize the non-top $limit timeseries metrics 
-    // for $column_name in the chosen $realm, over the selected 
-    // time period. 
+    // Query to summarize the non-top $limit timeseries metrics
+    // for $column_name in the chosen $realm, over the selected
+    // time period.
     //
     // Error values are not retained as they are not meaningful
     // here. This is consistent with the previous version of this
     // functionality.
-    // 
+    //
     // Used by HighChartTimeseries2 configure() for
     // fetching and summarizing the "other" examples of a metric.
     //
@@ -706,8 +711,8 @@ class SimpleTimeseriesDataset extends SimpleDataset
     // @param type and name of where clause column
     // @param count of values we are averaging over, if operation is AVG.
     // @param array of ids corresponding to top n. Exclude these in where clause
-    // @param name of data's realm 
-    // 
+    // @param name of data's realm
+    //
     // @return \DataWarehouse\Data\SimpleTimeseriesData
     // @author J.M. Sperhac
     //-------------------------------------------------
@@ -724,28 +729,15 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $aggunit_name = $this->_query->getAggregationUnit()->getUnitName();
 
         // assign column names for returned data:
-        $values_column_name    = $column_name; 
+        $values_column_name    = $column_name;
         $start_ts_column_name  = $aggunit_name . '_start_ts';
         $count_ts_column_name = 'count_by_ts_unit';
 
         $query_classname = '\\DataWarehouse\\Query\\' . $realm . '\\Timeseries';
 
-        // JMS test
-        /*
-        throw new \Exception(
-                        get_class($this) ." ".  __FUNCTION__
-                        ." column_name=$column_name,   
-                        where_name=$where_name,   
-                        whereExcludeArray=".implode(",",$whereExcludeArray).", 
-                        realm=$realm,   
-                        aggunit_name=$aggunit_name,   
-                        query_classname=$query_classname
-                        ");
-        */
-
-        // Construct a TS query using the selected time agg unit 
+        // Construct a TS query using the selected time agg unit
         // Group by the nothing in constructor call, so you *dont* roll up by time;
-        // later, add the where column name for the group by 
+        // later, add the where column name for the group by
         $q = new $query_classname(
             $aggunit_name,  // $this->_query->getAggregationUnit()->getUnitName(),
             $this->_query->getStartDate(),
@@ -784,29 +776,16 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $operation = $this->getSummaryOperation($statAlias);
 
         // Now perform the summarization, making use of the Query class query string, fetch:
-        //    * the timeseries unit appropriate to the time aggregation level, 
+        //    * the timeseries unit appropriate to the time aggregation level,
         //    * the actual count of values being summarized over (for normalizing averaging)
         //    * the averaged/min/max/summed data over the time aggregation unit.
-        $query_string = "SELECT t.$start_ts_column_name AS $start_ts_column_name, 
-                                count( t.$start_ts_column_name ) as $count_ts_column_name, 
+        $query_string = "SELECT t.$start_ts_column_name AS $start_ts_column_name,
+                                count( t.$start_ts_column_name ) as $count_ts_column_name,
                                 $operation( t.$column_name ) AS $column_name "
                         . " FROM ( "
                         .   $q->getQueryString()
                         . " ) t "
                         . " GROUP BY t.$start_ts_column_name";
-
-        // JMS test
-        /*
-        throw new \Exception(
-                        get_class($this) ." ".  __FUNCTION__ 
-                        ." statAlias ".$statAlias
-                        ." operation ".$operation 
-                        ." column_name ".$column_name
-                        ." where_name ".$where_name
-                        ." realm  ".$realm 
-                        ." aggunit_name ".$aggunit_name 
-                        ." final_qs: ". $query_string );
-        */
 
         $statement = DB::factory($q->_db_profile)->query(
             $query_string,
@@ -823,7 +802,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         }
 
         // accumulate the values in a temp variable, then set everything
-        // at once. 
+        // at once.
         $dataValues = array();
         $dataStartTs = array();
 
@@ -876,15 +855,15 @@ class SimpleTimeseriesDataset extends SimpleDataset
                             );
 
                             // if we are taking AVG, correct it to 'avg of n others', n is $normalizeBy value
-                            $dataCurrentValue = $dataCurrentValue * ($countTsCurrentValue / $normalizeBy); 
+                            $dataCurrentValue = $dataCurrentValue * ($countTsCurrentValue / $normalizeBy);
                         }
                     } // if AVG
 
                     // stuff it onto the array
                     $dataValues[] = $dataCurrentValue;
 
-                } // if (!array_key_exists($values_column_name, $row)) 
-            } // if ($values_column_name != NULL) 
+                } // if (!array_key_exists($values_column_name, $row))
+            } // if ($values_column_name != NULL)
         } // while
 
         $dataObject->setValues( $dataValues );
@@ -899,5 +878,4 @@ class SimpleTimeseriesDataset extends SimpleDataset
 
         return $dataObject;
     } // public function getSummarizedColumn
-
-} // class SimpleTimeseriesDataset extends SimpleDataset
+}
