@@ -1,6 +1,8 @@
 <?php
 
+use Log as Logger;  // CCR implementation of PEAR logger
 use CCR\DB;
+use CCR\Loggable;
 use CCR\DB\MySQLHelper;
 use DB\Exceptions\TableNotFoundException;
 use DataWarehouse\Query\GroupBy;
@@ -37,11 +39,9 @@ class FilterListBuilder extends Loggable
     /**
      * Construct filter list builder.
      */
-    public function __construct()
+    public function __construct(Logger $logger = null)
     {
-        if ($this->_logger === null) {
-            $this->_logger = Log::singleton('null');
-        }
+        parent::__construct($logger);
     }
 
     /**
@@ -52,7 +52,7 @@ class FilterListBuilder extends Loggable
         $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'datawarehouse.json',
             CONFIG_DIR,
-            $this->_logger
+            $this->logger
         );
 
         // Get the realms to be processed.
@@ -110,7 +110,7 @@ class FilterListBuilder extends Loggable
             try {
                 $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
             } catch (TableNotFoundException $e) {
-                $this->_logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
+                $this->logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
                 return;
             }
 
@@ -207,7 +207,7 @@ class FilterListBuilder extends Loggable
                     $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
                     $secondDimensionColumnType = $secondDimensionProperties['type'];
                 } catch (TableNotFoundException $e) {
-                    $this->_logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
+                    $this->logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
                     continue;
                 }
                 $db->execute(
@@ -329,7 +329,7 @@ class FilterListBuilder extends Loggable
     {
         $db = DB::factory('datawarehouse');
         $helper = MySQLHelper::factory($db);
-        $helper->setLogger($this->_logger);
+        $helper->setLogger($this->logger);
 
         // TODO After GroupBy is refactored, use GroupBy methods to get the
         // table and column names,
