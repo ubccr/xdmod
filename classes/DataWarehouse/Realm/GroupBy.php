@@ -266,6 +266,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     }
 
     /**
+     * Note: Was getName()
+     *
      * @see iGroupBy::getId()
      */
 

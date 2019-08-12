@@ -29,6 +29,8 @@ interface iGroupBy
     public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
+     * Note: Was getName()
+     *
      * @return string The short internal identifier.
      */
 
@@ -154,7 +156,7 @@ interface iGroupBy
     public function getOrderIdColumnName($multi = false);
 
     /**
-     * Was pullQueryParameters()
+     * Note: Was pullQueryParameters()
      *
      * Check the request for filters associated with attributes supported by this group by and
      * construct an array of Parameter objects that can be added to a query to restrict the results
@@ -176,7 +178,7 @@ interface iGroupBy
     public function generateQueryFiltersFromRequest(array $request);
 
     /**
-     * Was pullQueryParameterDescriptions()
+     * Note: Was pullQueryParameterDescriptions()
      *
      * Check the request for filters associated with attributes supported by this group by and
      * construct an array of human-readable strings that can be used to display the filters on a
@@ -192,7 +194,7 @@ interface iGroupBy
      *
      * @param array $request The HTTP request
      *
-     * @return array An arrray of filter strings
+     * @return array An arrray of label strings, typically of the form "label = string"
      */
 
     public function generateQueryParameterLabels(array $request);

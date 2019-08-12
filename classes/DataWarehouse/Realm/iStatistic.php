@@ -31,6 +31,8 @@ interface iStatistic
     public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
+     * Note: Was getName()
+     *
      * @return string The short internal identifier. This is often used as an alias in SQL queries.
      * For example, "total_cpu_hours".
      */
@@ -65,6 +67,7 @@ interface iStatistic
 
     /**
      * Note: The corresponding setUnit() is only called from the constructor.
+     *
      * @return string The unit of this statistic. For example, "Number of Jobs", "Number of PIs",
      *   "CPU Hour", etc.
      */
