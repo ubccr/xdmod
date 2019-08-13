@@ -78,14 +78,12 @@ foreach ($roles as $activeRole) {
 
                     $statsObjects = $query_descripter->getStatisticsClasses($stats);
                     foreach ($statsObjects as $realm_group_by_statistic => $statistic_object) {
-                        if ($statistic_object->isVisible()) {
-                            $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
-                                array(
-                                    'text' => $statistic_object->getLabel(),
-                                    'info' => $statistic_object->getInfo(),
-                                    'std_err' => in_array('sem_' . $realm_group_by_statistic, $permittedStatistics)
-                                );
-                        }
+                        $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
+                            array(
+                                'text' => $statistic_object->getLabel(),
+                                'info' => $statistic_object->getInfo(),
+                                'std_err' => in_array('sem_' . $realm_group_by_statistic, $permittedStatistics)
+                            );
                         $seenstats[] = $realm_group_by_statistic;
                     }
                 }
