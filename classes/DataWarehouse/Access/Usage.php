@@ -807,7 +807,7 @@ class Usage extends Common
                     $user,
                     $usageRealm,
                     $usageGroupBy,
-                    $meRequestMetric->getAlias()->getName()
+                    $meRequestMetric->getAlias()
                 );
                 $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getAlias());
                 $drillDowns = array_map(

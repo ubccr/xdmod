@@ -290,7 +290,7 @@ class Query extends Loggable
         $time_end = microtime(true);
         $return = array();
         if ($this->_main_stat_field != null) {
-            $stat = $this->_main_stat_field->getAlias()->getName();
+            $stat = $this->_main_stat_field->getAlias();
             $stat_weight = $this->_main_stat_field->getWeightStatName();
 
             $sort_option = $this->_group_by->getOrderByStatOption();
@@ -379,7 +379,7 @@ class Query extends Loggable
 
     public function addTable(\DataWarehouse\Query\Model\Table $table)
     {
-        $this->_tables[$table->getAlias()->getName()] = $table;
+        $this->_tables[$table->getAlias()] = $table;
     }
     public function getTables()
     {
@@ -388,12 +388,12 @@ class Query extends Loggable
 
     public function addLeftJoin(\DataWarehouse\Query\Model\Table $table, \DataWarehouse\Query\Model\WhereCondition $where)
     {
-        $this->leftJoins[$table->getAlias()->getName()] = array($table, $where);
+        $this->leftJoins[$table->getAlias()] = array($table, $where);
     }
 
     public function addField(\DataWarehouse\Query\Model\Field $field)
     {
-        $this->_fields[$field->getAlias()->getName()] = $field;
+        $this->_fields[$field->getAlias()] = $field;
     }
     public function getFields()
     {
@@ -454,7 +454,7 @@ class Query extends Loggable
 
     public function addGroup(\DataWarehouse\Query\Model\Field $field)
     {
-        $this->_groups[$field->getAlias()->getName()] = $field;
+        $this->_groups[$field->getAlias()] = $field;
     }
     public function getGroups()
     {

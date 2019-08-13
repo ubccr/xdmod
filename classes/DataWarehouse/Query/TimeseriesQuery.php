@@ -216,7 +216,7 @@ class TimeseriesQuery extends Query implements iQuery
             throw new \Exception('Timeseries: main_stat_field is null');
         }
 
-        $stat        = $this->_main_stat_field->getAlias()->getName();
+        $stat        = $this->_main_stat_field->getAlias();
         $stat_weight = $this->_main_stat_field->getWeightStatName();
 
         $sem_name = 'sem_' . $stat;

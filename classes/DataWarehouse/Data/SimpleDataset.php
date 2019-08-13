@@ -334,7 +334,7 @@ class SimpleDataset
 
         foreach ($stats as $stat) {
             $stat_unit  = $stat->getUnit();
-            $stat_alias = $stat->getAlias()->getName();
+            $stat_alias = $stat->getAlias();
 
             $data_unit = '';
             if (substr( $stat_unit, -1 ) == '%') {
@@ -374,8 +374,8 @@ class SimpleDataset
 
             $stats = $this->_query->getStats();
             foreach ($stats as $stat) {
-                $record[$stat->getAlias()->getName()]
-                    = $result[$stat->getAlias()->getName()];
+                $record[$stat->getAlias()]
+                    = $result[$stat->getAlias()];
             }
 
             $rows[] = $record;
@@ -437,7 +437,7 @@ class SimpleDataset
 
             foreach ($stats as $stat) {
                 $stat_unit = $stat->getUnit();
-                $stat_alias = $stat->getAlias()->getName();
+                $stat_alias = $stat->getAlias();
 
                 $data_unit = '';
                 if (substr( $stat_unit, -1 ) == '%') {
@@ -485,8 +485,8 @@ class SimpleDataset
 
                 $stats = $this->_query->getStats();
                 foreach ($stats as $stat) {
-                    $record[$stat->getAlias()->getName()]
-                        =  $result[$stat->getAlias()->getName()];
+                    $record[$stat->getAlias()]
+                        =  $result[$stat->getAlias()];
                 }
 
                 $records[] = $record;
