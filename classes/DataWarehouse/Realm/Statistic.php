@@ -175,6 +175,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
         $optionalConfigTypes = array(
             'additional_where_condition' => 'array',
             'aggregate_formula' => 'string',
+            'data_sort_order' => 'string',
             'disabled' => 'bool',
             'module' => 'string',
             'order' => 'int',
@@ -201,6 +202,13 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     break;
                 case 'aggregate_formula':
                     $this->aggregateFormula = trim($value);
+                    break;
+                case 'data_sort_order':
+                    // The sort order is specified in the JSON config file as the string
+                    // representation of a PHP constant so convert it to an integer in order to
+                    // properly use it. See https://php.net/manual/en/function.array-multisort.php
+                    eval('$sortOrder = $value');
+                    $this->setSortOrder($sortOrder);
                     break;
                 case 'description_html':
                     $this->description = trim($value);

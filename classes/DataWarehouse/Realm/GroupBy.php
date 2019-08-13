@@ -196,6 +196,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             'attribute_table_schema' => 'string',
             'available_for_drilldown' => 'boolean',
             'category' => 'string',
+            'data_sort_order' => 'string',
             'disabled' => 'bool',
             'module' => 'string',
             'order' => 'int'
@@ -238,6 +239,13 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'category':
                     $this->category = trim($value);
+                    break;
+                case 'data_sort_order':
+                    // The sort order is specified in the JSON config file as the string
+                    // representation of a PHP constant so convert it to an integer in order to
+                    // properly use it. See https://php.net/manual/en/function.array-multisort.php
+                    eval('$sortOrder = $value');
+                    $this->setSortOrder($sortOrder);
                     break;
                 case 'description_html':
                     $this->description = trim($value);
