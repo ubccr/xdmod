@@ -321,7 +321,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $column_type_and_name,
         $limit = null,
         $offset = null,
-        $realm = 'Jobs'
+        $realm = null
     ) {
         $column_type = substr($column_type_and_name, 0, 3);
         $column_name = substr($column_type_and_name, 4);
@@ -711,7 +711,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $normalizeBy, // should we report the mean for the summarized column?
                        // if so, normalize by this total.
         $whereExcludeArray, // array of top-n ids to exclude from query
-        $realm = 'Jobs'
+        $realm = null
     ) {
 
         // determine the selected time aggregation unit
