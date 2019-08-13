@@ -676,7 +676,7 @@ class Query
         $this->roleParameterDescriptions = $other->roleParameterDescriptions;
     }
 
-    private function getLeftJoinSql()
+    protected function getLeftJoinSql()
     {
         $stmt = '';
         foreach ($this->leftJoins as $joincond) {
