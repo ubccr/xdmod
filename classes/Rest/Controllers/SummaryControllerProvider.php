@@ -370,7 +370,7 @@ class SummaryControllerProvider extends BaseControllerProvider
         // Open XDMoD users.
         try {
             $query = new \DataWarehouse\Query\AggregateQuery(
-                'jobs',
+                'Jobs',
                 $aggregationUnit,
                 $startDate,
                 $endDate,

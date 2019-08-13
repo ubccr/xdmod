@@ -17,7 +17,7 @@ class AggregateTest extends BaseTest
     public function testGetDurrationResult($period, $start, $end, $groupby, $expected)
     {
         $q = new \DataWarehouse\Query\AggregateQuery(
-            'jobs',
+            'Jobs',
             $period,
             $start,
             $end,

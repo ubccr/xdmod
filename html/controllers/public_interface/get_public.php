@@ -26,7 +26,7 @@
       }
 
       $query = new \DataWarehouse\Query\AggregateQuery(
-          'jobs',
+          'Jobs',
           $aggregation_unit,
           $start_date,
           $end_date,

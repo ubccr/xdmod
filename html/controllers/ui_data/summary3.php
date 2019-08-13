@@ -51,7 +51,7 @@ try {
     $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
 
     $query = new \DataWarehouse\Query\AggregateQuery(
-        'jobs',
+        'Jobs',
         $aggregation_unit,
         $start_date,
         $end_date,
