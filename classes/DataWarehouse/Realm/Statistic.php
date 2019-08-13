@@ -278,10 +278,10 @@ class Statistic extends \CCR\Loggable implements iStatistic
     }
 
     /**
-     * @see iStatistic::getNameAndDescription()
+     * @see iStatistic::getHtmlNameAndDescription()
      */
 
-    public function getNameAndDescription()
+    public function getHtmlNameAndDescription()
     {
         return sprintf("<b>%s</b>: %s", $this->name, $this->description);
     }

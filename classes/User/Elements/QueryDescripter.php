@@ -127,7 +127,7 @@ class QueryDescripter
 
     public function getGroupByDescription()
     {
-        return $this->getGroupByInstance()->getDescription();
+        return $this->getGroupByInstance()->getHtmlNameAndDescription();
     }
 
     public function getMenuLabel()

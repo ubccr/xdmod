@@ -63,7 +63,7 @@ interface iStatistic
      * @return string The name and description together formatted for display in a web browser.
      */
 
-    public function getNameAndDescription();
+    public function getHtmlNameAndDescription();
 
     /**
      * Note: The corresponding setUnit() is only called from the constructor.

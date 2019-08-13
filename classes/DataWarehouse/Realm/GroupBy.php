@@ -317,10 +317,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     /**
      * Note: Was getDescription()
      *
-     * @see iGroupBy::getNameAndDescription()
+     * @see iGroupBy::getHtmlNameAndDescription()
      */
 
-    public function getNameAndDescription()
+    public function getHtmlNameAndDescription()
     {
         return sprintf("<b>%s</b>: %s", $this->name, $this->description);
     }

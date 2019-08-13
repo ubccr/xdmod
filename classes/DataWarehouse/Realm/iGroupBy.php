@@ -58,7 +58,7 @@ interface iGroupBy
      * @return string The name and description together formatted for display in a web browser.
      */
 
-    public function getNameAndDescription();
+    public function getHtmlNameAndDescription();
 
     /**
      * @param boolean $includeSchema TRUE to include the schema in the table name.

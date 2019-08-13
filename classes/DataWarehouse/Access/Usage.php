@@ -110,8 +110,8 @@ class Usage extends Common
                         'short_title' => $statsClass->getLabel(),
                         'random_id' => 'chart_' . mt_rand(),
                         'subnotes' => $usageSubnotes,
-                        'group_description' => $usageGroupByObject->getDescription(),
-                        'description' => $statsClass->getDescription($usageGroupByObject),
+                        'group_description' => $usageGroupByObject->getHtmlNameAndDescription(),
+                        'description' => $statsClass->getHtmlNameAndDescription(),
                         'chart_settings' => json_encode($statUsageChartSettings),
                 );
 
@@ -513,13 +513,13 @@ class Usage extends Common
 
                     // Get the dimension and metric descriptions.
                     $jsonStoreMessage = '<ul>';
-                    $jsonStoreMessage .= '<li>' . $usageGroupByObject->getDescription() . '</li>';
+                    $jsonStoreMessage .= '<li>' . $usageGroupByObject->getHtmlNameAndDescription() . '</li>';
 
                     $jsonStoreMessageMetricDescriptions = array();
                     foreach ($meRequest['data_series_unencoded'] as $meRequestDataSeries) {
                         $jsonStoreMessageMetricDescriptions[] = sprintf(
-                            '<li>%s</li>'
-                            $realm->getStatisticObject($meRequestDataSeries['metric'])->getDescription($usageGroupByObject)
+                            '<li>%s</li>',
+                            $realm->getStatisticObject($meRequestDataSeries['metric'])->getHtmlNameAndDescription()
                         );
                     }
                     sort($jsonStoreMessageMetricDescriptions);
@@ -642,8 +642,8 @@ class Usage extends Common
 
                 // Grab the dimension and metric and generate a formatted group
                 // and metric description.
-                $usageChartDimensionDescription = $usageGroupByObject->getDescription();
-                $usageChartMetricDescription = $meRequestMetric->getDescription($usageGroupByObject);
+                $usageChartDimensionDescription = $usageGroupByObject->getHtmlNameAndDescription();
+                $usageChartMetricDescription = $meRequestMetric->getHtmlNameAndDescription();
 
                 // If specified, use the given subtitle. Otherwise, get the
                 // subtitle from the title of the resulting chart.
