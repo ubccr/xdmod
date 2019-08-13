@@ -5,7 +5,7 @@ use CCR\DB;
 use CCR\Loggable;
 use CCR\DB\MySQLHelper;
 use DB\Exceptions\TableNotFoundException;
-use DataWarehouse\Query\GroupBy;
+use DataWarehouse\Realm\GroupBy;
 use DataWarehouse\Query\Query;
 use DataWarehouse\Query\TimeAggregationUnit;
 
@@ -37,7 +37,15 @@ class FilterListBuilder extends Loggable
     private static $rolesDimensionNames = null;
 
     /**
+     * @var Realm The Realm that we are currently operating on.
+     */
+
+    private $currentRealm = null;
+
+    /**
      * Construct filter list builder.
+     *
+     * @param Log|null $logger A Log instance that will be utilized during processing.
      */
     public function __construct(Logger $logger = null)
     {
@@ -49,18 +57,12 @@ class FilterListBuilder extends Loggable
      */
     public function buildAllLists()
     {
-        $config = \Configuration\XdmodConfiguration::assocArrayFactory(
-            'datawarehouse.json',
-            CONFIG_DIR,
-            $this->logger
-        );
-
-        // Get the realms to be processed.
-        $realmNames = array_keys($config['realms']);
+        // Get the ids of the realms to be processed.
+        $realmNames = array_keys(\DataWarehouse\Realm\Realm::getRealmNames());
 
         // Generate lists for each realm's dimensions.
-        foreach ($realmNames as $realmName) {
-            $this->buildRealmLists($realmName);
+        foreach ($realmNames as $realmId => $realmName) {
+            $this->buildRealmLists($realmId);
         }
     }
 
@@ -72,15 +74,20 @@ class FilterListBuilder extends Loggable
     public function buildRealmLists($realmName)
     {
         // Get a query for the given realm.
-        $realmClassName = "\\DataWarehouse\\Query\\$realmName\\Aggregate";
-        $realmQuery = new $realmClassName(FilterListHelper::getQueryAggregationUnit(), null, null, 'none');
+        $realmQuery = new \DataWarehouse\Query\AggregateQuery(
+            $realmName,
+            FilterListHelper::getQueryAggregationUnit(),
+            null,
+            null,
+            'none'
+        );
 
         // Get the dimensions in the given realm.
-        $groupBys = $realmQuery->getRegisteredGroupBys();
+        $this->currentRealm = \DataWarehouse\Realm\Realm::factory($realmName);
 
         // Generate the lists for each dimension and each pairing of dimensions.
-        foreach ($groupBys as $groupByName => $groupByClassName) {
-            $this->buildDimensionLists($realmQuery, $realmQuery->getGroupBy($groupByName));
+        foreach ($this->currentRealm->getGroupByObjects() as $groupById => $groupByObj) {
+            $this->buildDimensionLists($realmQuery, $groupByObj);
         }
     }
 
@@ -100,7 +107,7 @@ class FilterListBuilder extends Loggable
 
         // Generate the main list table. If the list table does not already
         // exist, create it.
-        $dimensionName = $groupBy->getName();
+        $dimensionId = $groupBy->getId();
         $mainTableName = FilterListHelper::getTableName($realmQuery, $groupBy);
 
         $db = DB::factory('datawarehouse');
@@ -118,8 +125,8 @@ class FilterListBuilder extends Loggable
 
             $db->execute(
                 "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
-                    `{$dimensionName}` {$dimensionColumnType} NOT NULL,
-                    PRIMARY KEY (`{$dimensionName}`)
+                    `{$dimensionId}` {$dimensionColumnType} NOT NULL,
+                    PRIMARY KEY (`{$dimensionId}`)
                 );"
             );
         }
@@ -158,17 +165,18 @@ class FilterListBuilder extends Loggable
 
         // Generate list tables pairing this dimension with every other
         // dimension in the realm that's associated with roles.
-        $realmGroupBys = $realmQuery->getRegisteredGroupBys();
-        foreach ($realmGroupBys as $realmDimensionName => $realmGroupByClassName) {
+        $realmGroupBys = $this->currentRealm->getGroupByNames();
+
+        foreach ($realmGroupBys as $realmGroupById => $realmGroupByNames) {
             // If this dimension is the given dimension, skip it.
-            $dimensionNameComparison = strcasecmp($dimensionName, $realmDimensionName);
+            $dimensionNameComparison = strcasecmp($dimensionId, $realmGroupById);
             if ($dimensionNameComparison === 0) {
                 continue;
             }
 
             // If this dimension does not have lists associated with it
             // or is not associated with any roles, skip it.
-            $realmGroupBy = $realmQuery->getGroupBy($realmDimensionName);
+            $realmGroupBy = $this->currentRealm->getGroupByObject($realmGroupById);
             if (!$this->checkDimensionForLists($realmGroupBy) || !$this->checkDimensionForRoles($realmGroupBy)) {
                 continue;
             }
@@ -179,17 +187,17 @@ class FilterListBuilder extends Loggable
             // this pairing will have been taken care of by the other dimension.
             if ($dimensionNameComparison < 0) {
                 $firstGroupBy = $groupBy;
-                $firstDimensionName = $dimensionName;
+                $firstDimensionName = $dimensionId;
                 $firstDimensionQuery = $dimensionQuery;
                 $secondGroupBy = $realmGroupBy;
-                $secondDimensionName = $realmDimensionName;
+                $secondDimensionName = $realmGroupById;
                 $secondDimensionQuery = $this->createDimensionQuery($realmQuery, $realmGroupBy);
             } else {
                 $firstGroupBy = $realmGroupBy;
-                $firstDimensionName = $realmDimensionName;
+                $firstDimensionName = $realmGroupById;
                 $firstDimensionQuery = $this->createDimensionQuery($realmQuery, $realmGroupBy);
                 $secondGroupBy = $groupBy;
-                $secondDimensionName = $dimensionName;
+                $secondDimensionName = $dimensionId;
                 $secondDimensionQuery = $dimensionQuery;
             }
             $pairTableName = FilterListHelper::getTableName($realmQuery, $firstGroupBy, $secondGroupBy);
@@ -266,9 +274,9 @@ class FilterListBuilder extends Loggable
      */
     private function checkDimensionForLists(GroupBy $groupBy)
     {
-        $dimensionName = $groupBy->getName();
+        $dimensionId = $groupBy->getId();
 
-        return $dimensionName !== 'none' && !TimeAggregationUnit::isTimeAggregationUnitName($dimensionName);
+        return $dimensionId !== 'none' && !TimeAggregationUnit::isTimeAggregationUnitName($dimensionId);
     }
 
     /**
@@ -300,7 +308,7 @@ class FilterListBuilder extends Loggable
         }
 
         // Check if the given dimension has roles associated with it.
-        return array_key_exists($groupBy->getName(), self::$rolesDimensionNames);
+        return array_key_exists($groupBy->getId(), self::$rolesDimensionNames);
     }
 
     /**
@@ -313,7 +321,7 @@ class FilterListBuilder extends Loggable
     private function createDimensionQuery(Query $realmQuery, GroupBy $groupBy)
     {
         $queryClassName = get_class($realmQuery);
-        return new $queryClassName(FilterListHelper::getQueryAggregationUnit(), null, null, $groupBy->getName());
+        return new $queryClassName(FilterListHelper::getQueryAggregationUnit(), null, null, $groupBy->getId());
     }
 
     /**
@@ -333,7 +341,7 @@ class FilterListBuilder extends Loggable
 
         // TODO After GroupBy is refactored, use GroupBy methods to get the
         // table and column names,
-        $dimensionName = $groupBy->getName();
+        $dimensionId = $groupBy->getId();
         $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
         $dimensionQueryTables = $dimensionQuery->getSelectTables();
         $dimensionQueryFields = $dimensionQuery->getSelectFields();
@@ -349,7 +357,7 @@ class FilterListBuilder extends Loggable
         $columnDescriptionResults = $db->query("DESCRIBE {$dimensionTable} {$dimensionColumn}");
         if (empty($columnDescriptionResults)) {
             $realmName = $realmQuery->getRealmName();
-            throw new Exception("Could not find column $dimensionColumn in table {$dimensionTable}. Realm: $realmName, Dimension: $dimensionName");
+            throw new Exception("Could not find column $dimensionColumn in table {$dimensionTable}. Realm: $realmName, Dimension: $dimensionId");
         }
 
         $columnDescriptionResult = $columnDescriptionResults[0];
