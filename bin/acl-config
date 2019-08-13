@@ -727,7 +727,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
             array()
         )
     );
-    $filteredRealms = array_diff(array_keys($realms), $enabledRealms);
+    $filteredRealms = array_intersect(array_keys($realms), $enabledRealms);
     foreach($filteredRealms as $filteredRealm) {
         unset($realms[$filteredRealm]);
     }
