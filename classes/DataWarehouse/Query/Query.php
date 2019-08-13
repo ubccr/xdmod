@@ -293,10 +293,10 @@ class Query extends Loggable
             $stat = $this->_main_stat_field->getAlias();
             $stat_weight = $this->_main_stat_field->getWeightStatName();
 
-            $sort_option = $this->_group_by->getOrderByStatOption();
+            $sort_option = $this->_group_by->getSortOrder();
 
             if (isset($sort_option)) {
-                $sort_option = $this->_main_stat_field->getOrderByStatOption();
+                $sort_option = $this->_main_stat_field->getSortOrder();
             }
             if (isset($sort_option)) {
                 $stat_column = array();

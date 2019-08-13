@@ -301,10 +301,10 @@ class TimeseriesQuery extends Query implements iQuery
             }
         }
 
-        $sort_option = $this->_group_by->getOrderByStatOption();
+        $sort_option = $this->_group_by->getSortOrder();
 
         if (isset($sort_option)) {
-            $sort_option = $this->_main_stat_field->getOrderByStatOption();
+            $sort_option = $this->_main_stat_field->getSortOrder();
 
             $datanames  = array();
             $datavalues = array();
