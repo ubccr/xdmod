@@ -2,13 +2,16 @@
 
 namespace User\Elements;
 
+use \DataWarehouse\Query\AggregateQuery;
+use \DataWarehouse\Query\TimeseriesQuery;
+
 class QueryDescripter
 {
 
     /**
-     * @var string
+     * @var Realm The Realm that we are querying.
      */
-    private $_realm_name;
+    private $realm = null;
 
     /**
      * @var string
@@ -58,27 +61,20 @@ class QueryDescripter
         $default_query_type = 'aggregate',
         $order_id = 0
     ) {
-        $this->_realm_name      = $realm_name;
-        $this->_group_by_name   = $group_by_name;
 
+        $this->realm = \DataWarehouse\Realm\Realm::factory($realm_name);
+        $this->_group_by_name   = $group_by_name;
         $this->_default_statisticname         = $default_statisticname;
         $this->_default_aggregation_unit_name = $default_aggregation_unit_name;
         $this->_default_query_type            = $default_query_type;
-
         $this->_order_id = $order_id;
-
         $this->_show_menu    = true;
         $this->_disable_menu = false;
-
-        $classname = $this->getClassnamePrefix() . 'Aggregate';
-        $classname::registerStatistics();
-        $classname::registerGroupBys();
     }
 
     public function getDrillTargets($statistic_name)
     {
-        $realm = \Realm\Realm::factory($this->_realm_name);
-        return $realm->getDrillTargets(
+        return $this->realm->getDrillTargets(
             $statistic_name,
             $this->_group_by_name,
             \Realm\Realm::SORT_ON_NAME
@@ -109,14 +105,9 @@ class QueryDescripter
         return $this->_show_menu;
     }
 
-    public function getClassnamePrefix()
-    {
-        return '\\DataWarehouse\\Query\\' . $this->getRealmName() . '\\';
-    }
-
     public function getRealmName()
     {
-        return $this->_realm_name;
+        return $this->realm->getId();
     }
 
     public function getGroupByName()
@@ -153,10 +144,7 @@ class QueryDescripter
     public function getGroupByInstance()
     {
         if (!isset($this->groupByInstance)) {
-            $classname = $this->getClassnamePrefix() . 'Aggregate';
-
-            $this->groupByInstance
-                = $classname::getGroupBy($this->getGroupByName());
+            $this->groupByInstance = $this->realm->getGroupByObject($this->getGroupByName());
         }
 
         return $this->groupByInstance;
@@ -169,9 +157,8 @@ class QueryDescripter
         $aggregation_unit_name = 'auto',
         array $parameters = array()
     ) {
-        $classname = $this->getClassnamePrefix() . 'Aggregate';
-
-        return new $classname(
+        return new AggregateQuery(
+            $this->realm,
             $aggregation_unit_name,
             $start_date,
             $end_date,
@@ -188,9 +175,8 @@ class QueryDescripter
         $aggregation_unit_name = 'auto',
         array $parameters = array()
     ) {
-        $classname =  $this->getClassnamePrefix() . 'Timeseries';
-
-        return new $classname(
+        return new TimeseriesQuery(
+            $this->realm,
             $aggregation_unit_name,
             $start_date,
             $end_date,
@@ -252,79 +238,81 @@ class QueryDescripter
     public function getStatisticsClasses(array $statslist)
     {
         $results = array();
-        $aggclass = $this->getDefaultQuery('2014-01-01', '2014-01-02');
+
         foreach($statslist as $statname)
         {
-            $results[$statname] = $aggclass->addStat($statname);
+            $results[$statname] = $this->realm->getStatisticObject($statname);
         }
 
         return $results;
     }
 
+    /**
+     * @return array A list of short identifiers for statistics that are available for this realm.
+     */
+
     public function getPermittedStatistics()
     {
-        $classname = $this->getClassnamePrefix() . 'Aggregate';
-
-        $groupByObject = $this->getGroupByInstance();
-
-        $permittedStatistics = $groupByObject->getPermittedStatistics();
-
-        return $permittedStatistics;
+        return $this->realm->getStatisticNames();
     }
 
     public function getStatistic($statistic_name)
     {
-        $classname =  $this->getClassnamePrefix() . 'Aggregate';
-
-        return $classname::getStatistic($statistic_name);
+        return $this->realm->getStatisticObject($statistic_name);
     }
+
+    /**
+     * Generate a list of query filter objects for all group-bys associated with the current realm
+     * based on the request.
+     *
+     * Note: This is currently only used by html/controllers/ui_data/summary3.php
+     *
+     * @param array $request An associative array of GET/POST request variables
+     *
+     * @return array An arrray of \DataWarehouse\Query\Model\Parameter objects
+     */
 
     public function pullQueryParameters(&$request)
     {
-        $classname = $this->getClassnamePrefix() . 'Aggregate';
-        $classname::registerGroupBys();
-        $registeredGroupBys = $classname::getRegisteredGroupBys();
-
         $parameters = array();
+        $groupByObjects = $this->realm->getGroupByObjects();
 
-        foreach (
-            $registeredGroupBys
-            as $registeredGroupByName => $registeredGroupByClassname
-        ) {
-            $group_by_instance = new $registeredGroupByClassname();
-
+        foreach ( $groupByObjects as $obj ) {
             $parameters = array_merge(
                 $parameters,
-                $group_by_instance->pullQueryParameters($request)
+                $obj->generateQueryFiltersFromRequest($request)
             );
         }
 
         return $parameters;
     }
 
+    /**
+     * Generate a list of query filter objects for all group-bys associated with the current realm
+     * based on the request.
+     *
+     * Note: This is currently only used in classes/DataWarehouse/QueryBuilder.php
+     *
+     * @param array $request An associative array of GET/POST request variables
+     *
+     * @return array An arrray of label strings
+     */
+
     public function pullQueryParameterDescriptions(&$request)
     {
-        $classname = $this->getClassnamePrefix().'Aggregate';
-        $classname::registerGroupBys();
-        $registeredGroupBys = $classname::getRegisteredGroupBys();
+        $labels = array();
+        $groupByObjects = $this->realm->getGroupByObjects();
 
-        $parameters = array();
-
-        foreach (
-            $registeredGroupBys
-            as $registeredGroupByName => $registeredGroupByClassname
-        ) {
-            $group_by_instance = new $registeredGroupByClassname();
-
+        foreach ( $groupByObjects as $obj ) {
             $parameters = array_merge(
-                $group_by_instance->pullQueryParameterDescriptions($request),
-                $parameters
+                $labels,
+                $obj->generateQueryParameterLabels($request)
             );
         }
 
-        sort($parameters);
+        sort($labels);
 
-        return $parameters;
+        return $labels;
     }
 
     public function getDefaultStatisticName()
@@ -345,30 +333,6 @@ class QueryDescripter
     public function getDefaultQueryType()
     {
         return $this->_default_query_type;
-    }
-
-    public function getDefaultQuery(
-        $start_date,
-        $end_date,
-        array $parameters = array()
-    ) {
-        if ($this->getDefaultQueryType() == 'timeseries') {
-            return $this->getTimeseries(
-                $start_date,
-                $end_date,
-                $this->getDefaultStatisticName(),
-                $this->getDefaultAggregationUnitName(),
-                $parameters
-            );
-        } else {
-            return $this->getAggregate(
-                $start_date,
-                $end_date,
-                $this->getDefaultStatisticName(),
-                $this->getDefaultAggregationUnitName(),
-                $parameters
-            );
-        }
     }
 
     public function getOrderId()

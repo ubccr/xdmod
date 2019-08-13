@@ -50,7 +50,15 @@ try {
 
     $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
 
-    $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
+    $query = new \DataWarehouse\Query\AggregateQuery(
+        'jobs',
+        $aggregation_unit,
+        $start_date,
+        $end_date,
+        'none',
+        'all',
+        $query_descripter->pullQueryParameters($raw_parameters)
+    );
 
     // This try/catch block is intended to replace the "Base table or
     // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'

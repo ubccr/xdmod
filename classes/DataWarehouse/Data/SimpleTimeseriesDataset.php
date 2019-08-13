@@ -279,19 +279,12 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $column_name,
         $realm
     ) {
-        // Following are true but unneeded:
-        //$is_dimension = true;
-        //$column_type = 'dim';
 
-        $query_classname = '\\DataWarehouse\\Query\\' . $realm . '\\Aggregate';
-
-        $agg_query = new $query_classname(
+        $agg_query = new \DataWarehouse\Query\AggregateQuery(
+            $realm,
             $this->_query->getAggregationUnit()->getUnitName(),
             $this->_query->getStartDate(),
-            $this->_query->getEndDate(),
-            null,
-            null,
-            array()
+            $this->_query->getEndDate()
         );
 
         $agg_query->addGroupBy($column_name);
@@ -340,15 +333,11 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $column_name = $this->_query->getAggregationUnit()->getUnitName();
         }
 
-        $query_classname = '\\DataWarehouse\\Query\\' . $realm . '\\Aggregate';
-
-        $agg_query = new $query_classname(
+        $agg_query = new \DataWarehouse\Query\AggregateQuery(
+            $realm,
             $this->_query->getAggregationUnit()->getUnitName(),
             $this->_query->getStartDate(),
-            $this->_query->getEndDate(),
-            null,
-            null,
-            array()
+            $this->_query->getEndDate()
         );
 
         $agg_query->addGroupBy($column_name);
@@ -733,18 +722,14 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $start_ts_column_name  = $aggunit_name . '_start_ts';
         $count_ts_column_name = 'count_by_ts_unit';
 
-        $query_classname = '\\DataWarehouse\\Query\\' . $realm . '\\Timeseries';
-
         // Construct a TS query using the selected time agg unit
         // Group by the nothing in constructor call, so you *dont* roll up by time;
         // later, add the where column name for the group by
-        $q = new $query_classname(
-            $aggunit_name,  // $this->_query->getAggregationUnit()->getUnitName(),
+        $q = new \DataWarehouse\Query\TimeseriesQuery(
+            $realm,
+            $aggunit_name,
             $this->_query->getStartDate(),
-            $this->_query->getEndDate(),
-            null,           // no group by in constructor
-            null,           // statname associated with query in constructor
-            array()         // params
+            $this->_query->getEndDate()
         );
 
         // add the stats

@@ -739,8 +739,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new AccessDeniedException('access denied to ' . json_encode($forbiddenStats));
         }
 
-        $query_classname = '\DataWarehouse\Query\\' . $config->realm . '\Aggregate';
-        $query = new $query_classname($config->aggregation_unit, $config->start_date, $config->end_date, $config->group_by);
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            $config->realm,
+            $config->aggregation_unit,
+            $config->start_date,
+            $config->end_date,
+            $config->group_by
+        );
 
         $allRoles = $user->getAllRoles();
         $query->setMultipleRoleParameters($allRoles, $user);
@@ -898,7 +903,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $serviceProviderDimensionId = 'provider';
         if ($multipleProvidersSupported) {
-            $serviceProviderGroupBy = \DataWarehouse\Query\Jobs\Aggregate::getGroupBy($serviceProviderDimensionId);
+            $jobsRealm = \DataWarehouse\Realm\Realm::factory('jobs');
+            $serviceProviderGroupBy = $jobsRealm->getGroupByObject($serviceProviderDimensionId);
             $serviceProviderDimensionName = $serviceProviderGroupBy->getLabel();
             $dimensionIdsToNames[$serviceProviderDimensionId] = $serviceProviderDimensionName;
             $serviceProviders = $serviceProviderGroupBy->getPossibleValues();

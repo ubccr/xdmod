@@ -169,10 +169,10 @@ class HighChartTimeseries2 extends HighChart2
 
             // Determine statistic name. In this case use the Aggregate classname to get the stat.
             // (Speculative). August 2015
-            $query_classname = '\\DataWarehouse\\Query\\'.$data_description->realm.'\\Aggregate';
             try
             {
-                $stat = $query_classname::getStatistic($data_description->metric);
+                $realm = \DataWarehouse\Realm\Realm::factory($data_description->realm);
+                $stat = $realm->getStatisticObject($data_description->metric);
             }
             catch(\Exception $ex)
             {
@@ -215,15 +215,11 @@ class HighChartTimeseries2 extends HighChart2
             // === mind you, this is also a big long loop ===
             foreach($yAxisDataDescriptions as $data_description_index => $data_description)
             {
-                $query_classname = '\\DataWarehouse\\Query\\'.$data_description->realm.'\\Timeseries';
-
-                $query = new $query_classname(
+                $query = new \DataWarehouse\Query\TimeseriesQuery(
+                    $data_description->realm,
                     $this->_aggregationUnit,
                     $this->_startDate,
-                    $this->_endDate,
-                    null,
-                    null,
-                    array()
+                    $this->_endDate
                 );
 
                 // @refer ComplexDataset::determineRoleParameters()

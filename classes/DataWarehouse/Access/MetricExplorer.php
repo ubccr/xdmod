@@ -19,7 +19,7 @@ use XDUser;
 
 class MetricExplorer extends Common
 {
-    public function get_data($user) 
+    public function get_data($user)
     {
         if(isset($this->request['config'])) {
             $config = json_decode($this->request['config'],true);
@@ -232,20 +232,16 @@ class MetricExplorer extends Common
             );
 
             foreach ($data_series as $data_description_index => $data_description) {
-                $query_classname
-                    = $timeseries
-                    ? '\\DataWarehouse\\Query\\' . $data_description->realm
-                    . '\\Timeseries'
-                    : '\\DataWarehouse\\Query\\' . $data_description->realm
-                    . '\\Aggregate';
+                $query_classname = sprintf(
+                    '\\DataWarehouse\\Query\\%sQuery',
+                    ( $timeseries ? 'Timeseries' : 'Aggregate' )
+                );
 
                 $query = new $query_classname(
+                    $data_description->realm,
                     $aggregation_unit,
                     $start_date,
-                    $end_date,
-                    null,
-                    null,
-                    array()
+                    $end_date
                 );
 
                 $query->addGroupBy($data_description->group_by);
@@ -296,7 +292,7 @@ class MetricExplorer extends Common
                 } else {
                     $datasetsRestrictedMessages[] = '';
                 }
-            } // foreach ($data_series as $data_description_index => $data_description) 
+            } // foreach ($data_series as $data_description_index => $data_description)
 
             if ($format === 'csv' || $format === 'xml' || $format === 'json') {
                 $exportedDatas = array();
@@ -314,7 +310,7 @@ class MetricExplorer extends Common
 
                 return \DataWarehouse\ExportBuilder::export($exportedDatas, $format, $inline, $filename);
 
-            } // if ($format === 'csv' || $format === 'xml') 
+            } // if ($format === 'csv' || $format === 'xml')
 
             elseif($format === 'jsonstore') {
                 $exportedDatas = array();
@@ -333,12 +329,12 @@ class MetricExplorer extends Common
                 );
 
                 return $result;
-            } // elseif($format === 'jsonstore') 
+            } // elseif($format === 'jsonstore')
 
-        } //  elseif ($format === 'jsonstore' || $format === 'csv' || $format === 'xml') 
+        } //  elseif ($format === 'jsonstore' || $format === 'csv' || $format === 'xml')
 
         throw new Exception("Internal Error");
-    } // function get_data($user) 
+    } // function get_data($user)
 
     private function getAggregationUnit()
     {
@@ -711,24 +707,21 @@ class MetricExplorer extends Common
         // Get a dimension values query for each valid realm.
         $dimensionValuesQueries = array();
         foreach ($realms as $realm) {
-            $query_classname =  '\\DataWarehouse\\Query\\'.$realm.'\\Aggregate';
 
             // Attempt to get the group by object for this realm to check that
             // the dimension exists for this realm.
-            try {
-                $query_classname::getGroupBy($dimension_id);
-            } catch (UnknownGroupByException $e) {
-                // If the group by does not exist and realms were explicitly
-                // specified, throw an exception. Otherwise, just continue to
-                // the next realm.
-                if ($realmsSpecified) {
-                    throw new UnknownGroupByException(
-                        "Dimension \"$dimension_id\" does not exist for realm \"$realm\".",
-                        UnknownGroupByException::defaultCode,
-                        $e
-                    );
-                }
-                continue;
+
+            if ( ! \DataWarehouse\Realm\Realm::groupByExists($dimension_id) ) {
+               if ( $realmsSpecified ) {
+                   // If the group by does not exist and realms were explicitly
+                   // specified, throw an exception. Otherwise, just continue to
+                   // the next realm.
+                   throw new UnknownGroupByException(
+                       sprintf("Dimension '%s' does not exist for realm '%s'.", $dimension_id, $realm)
+                   );
+               } else {
+                   continue;
+               }
             }
 
             // Get the user's roles that are authorized to view this data.
@@ -751,7 +744,8 @@ class MetricExplorer extends Common
             }
 
             // Generate the dimension values query for this realm.
-            $query = new $query_classname(
+            $query = new \DataWarehouse\Query\AggregateQuery(
+                $realm,
                 $queryAggregationUnit,
                 null,
                 null,
@@ -1031,11 +1025,9 @@ class MetricExplorer extends Common
         $realm,
         $dimension_id
     ) {
-        $queryClassname =  '\\DataWarehouse\\Query\\'.$realm.'\\Aggregate';
-
         // Get the group by object for this dimension in this realm.
         // This will throw an exception if the object cannot be found.
-        $groupBy = $queryClassname::getGroupBy($dimension_id);
+        $groupBy = \DataWarehouse\Realm\Realm::getGroupByObject($dimension_id);
 
         // Check that the user is allowed to view this dimension in this
         // realm. If not, an exception will be thrown.

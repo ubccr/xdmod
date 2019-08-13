@@ -74,8 +74,7 @@ class ComplexDataset
             // this is quite horrible, and I apologize, but it beats 900 lines of
             // redundant code, no? --JMS
             $query_classname = '\\DataWarehouse\\Query\\' .
-                $data_description->realm .  '\\' .
-                ( $query_type == "aggregate" ? "Aggregate" : "Timeseries");
+                ( $query_type == 'aggregate' ? 'Aggregate' : 'Timeseries');
 
             try {
                 $stat = $query_classname::getStatistic($data_description->metric);
@@ -92,12 +91,10 @@ class ComplexDataset
             }
 
             $query = new $query_classname(
+                $data_description->realm,
                 $aggregationUnit,
                 $startDate,
-                $endDate,
-                null,
-                null,
-                array()
+                $endDate
             );
 
             $dataSources[$query->getDataSource()] = 1;
@@ -464,12 +461,8 @@ class ComplexDataset
         foreach ($this->_dataDescripters as $data_description_index => $dataDescripterAndDataset) {
             $data_description = $dataDescripterAndDataset->data_description;
 
-            $query_classname
-                = '\\DataWarehouse\\Query\\'
-                . $data_description->realm
-                . '\\Aggregate';
-
-            $stat = $query_classname::getStatistic($data_description->metric);
+            $realm = \DataWarehouse\Realm\Realm::factory($data_description->realm);
+            $stat = $realm->getStatisticObject($data_description->metric);
 
             if ($shareYAxis) {
                 $axisId = 'sharedAxis';

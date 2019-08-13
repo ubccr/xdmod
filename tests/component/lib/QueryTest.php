@@ -5,7 +5,7 @@ namespace ComponentTests;
 use CCR\Json;
 
 /**
- * This test is designed for class \DataWarehouse\Query\Jobs\Aggregate
+ * This test is designed for class \DataWarehouse\Query\AggregateQuery
  */
 
 class AggregateTest extends BaseTest
@@ -16,7 +16,8 @@ class AggregateTest extends BaseTest
      */
     public function testGetDurrationResult($period, $start, $end, $groupby, $expected)
     {
-        $q = new \DataWarehouse\Query\Jobs\Aggregate(
+        $q = new \DataWarehouse\Query\AggregateQuery(
+            'jobs',
             $period,
             $start,
             $end,
