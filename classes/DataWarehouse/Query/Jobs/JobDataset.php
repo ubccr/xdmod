@@ -113,7 +113,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                         $field['column'],
                         $alias
                     ));
-                } else if (isset($field['formula'])) {
+                } elseif (isset($field['formula'])) {
                     $this->addField(new FormulaField($field['formula'], $alias));
                 } else {
                     throw new Exception(sprintf(
