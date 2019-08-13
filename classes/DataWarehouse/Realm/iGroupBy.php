@@ -105,6 +105,25 @@ interface iGroupBy
     public function getOrder();
 
     /**
+     * Note: was setOrderbyStat()
+     *
+     * Set the desired sort order as defined by the PHP array_multisort() function.
+     * @see https://php.net/manual/en/function.array-multisort.php
+     *
+     * @param int|null $sortOrder The desired sort order or NULL for no sorting
+     */
+
+    public function setSortOrder($sortOrder = SORT_DESC);
+
+    /**
+     * Note: was getOrderByStatOption()
+     *
+     * @return int|null The current sort order where NULL means no sorting.
+     */
+
+    public function getSortOder();
+
+    /**
      * @return boolean TRUE if the attribute represented by this GroupBy should be available as a
      *   drill-down for a statistic in the user interface.
      */

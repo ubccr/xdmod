@@ -351,7 +351,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
             SORT_NATURAL
         );
 
-        if ( ! in_array($sortOrder, $validSortOrders) ) {
+        if ( null !== $sortOrder && ! in_array($sortOrder, $validSortOrders) ) {
             $this->logAndThrowException(sprintf("Invalid sort option: %d", $sortOrder));
         }
 

@@ -119,6 +119,14 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $availableForDrilldown = true;
 
     /**
+     * @var int PHP order specificaiton to determine how the query should sort results containing
+     *   this GroupBy.
+     * @see http://php.net/manual/en/function.array-multisort.php
+     */
+
+    protected $sortOrder = SORT_DESC;
+
+    /**
      * @var boolean Set to true if this group by should not be utilized.
      */
 
@@ -361,6 +369,38 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * @see iGroupBy::setSortOrder()
+     */
+
+    public function setSortOrder($sortOrder = SORT_DESC)
+    {
+        $validSortOrders = array(
+            SORT_ASC,
+            SORT_DESC,
+            SORT_REGULAR,
+            SORT_NUMERIC,
+            SORT_STRING,
+            SORT_LOCALE_STRING,
+            SORT_NATURAL
+        );
+
+        if ( null !== $sortOrder && ! in_array($sortOrder, $validSortOrders) ) {
+            $this->logAndThrowException(sprintf("Invalid sort option: %d", $sortOrder));
+        }
+
+        $this->sortOrder = $sortOrder;
+    }
+
+    /**
+     * @see iGroupBy::getSortOder()
+     */
+
+    public function getSortOder()
+    {
+        return $this->sortOrder;
     }
 
     /**
