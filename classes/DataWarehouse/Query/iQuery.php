@@ -43,4 +43,23 @@ interface iQuery
      */
 
     public function getQueryType();
+
+    /**
+     * @return string The datasource associated with the query Realm. This is a required property
+     *   for a Realm.
+     */
+
+    public function getDataSource();
+
+    /**
+     * @return string A string representation of this class to be used in debugging log output.
+     */
+
+    public function getDebugName();
+
+    /**
+     * @return string A general string representation of this class.
+     */
+
+    public function __toString();
 }

@@ -17,6 +17,7 @@ use FilterListHelper;
 use Models\Services\Parameters;
 use ETL\VariableStore;
 use Datawarehouse\Realm\Realm;
+use Datawarehouse\Realm\Statistic;
 
 class Query extends Loggable
 {
@@ -398,9 +399,9 @@ class Query extends Loggable
     {
         return $this->_fields;
     }
-    public function addStatField(\DataWarehouse\Query\Statistic $field)
+    public function addStatField(Statistic $field)
     {
-        $this->_stat_fields[$field->getAlias()->getName()] = $field;
+        $this->_stat_fields[$field->getAlias()] = $field;
 
         $addnlwhere = $field->getAdditionalWhereCondition();
         if ($addnlwhere !== null) {
