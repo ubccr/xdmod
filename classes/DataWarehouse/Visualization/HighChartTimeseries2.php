@@ -93,8 +93,6 @@ class HighChartTimeseries2 extends HighChart2
     //-------------------------------------------------
     private function getDataname($stat, $limit) {
 
-            // use statistics alias for object
-            //$stat = $dataObj->getStatistic()->getAlias(); or $data_description->metric
             $useMean = $this->useMean($stat );
 
             $isMin = strpos($stat, 'min_') !== false ;

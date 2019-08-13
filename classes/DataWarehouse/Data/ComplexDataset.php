@@ -70,16 +70,12 @@ class ComplexDataset
 
         foreach ($data_series as $data_description_index => $data_description) {
 
-            // Determine query class, then instantiate it
-            // this is quite horrible, and I apologize, but it beats 900 lines of
-            // redundant code, no? --JMS
-            $query_classname = '\\DataWarehouse\\Query\\' .
-                ( $query_type == 'aggregate' ? 'Aggregate' : 'Timeseries');
+            $realm = \DataWarehouse\Realm\Realm::factory($data_description->realm);
 
             try {
-                $stat = $query_classname::getStatistic($data_description->metric);
-                $statLabel = $stat->getLabel(false);
-                $metrics[$statLabel] = $stat->getInfo();
+                $stat = $realm->getStatisticObject($data_description->metric);
+                $statLabel = $stat->getName(false);
+                $metrics[$statLabel] = $stat->getHtmlDescription();
             } catch (\Exception $ex) {
                 continue;
             }
@@ -89,6 +85,12 @@ class ComplexDataset
                     "Metric $statLabel cannot be used in aggregate form. Please switch to a timeseries chart or modify/delete the metric."
                 );
             }
+
+            // Determine query class, then instantiate it
+            // this is quite horrible, and I apologize, but it beats 900 lines of
+            // redundant code, no? --JMS
+            $query_classname = '\\DataWarehouse\\Query\\' .
+                ( $query_type == 'aggregate' ? 'Aggregate' : 'Timeseries');
 
             $query = new $query_classname(
                 $data_description->realm,

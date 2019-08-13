@@ -1,31 +1,29 @@
 <?php
+/**
+ * Base class for defining a data warehouse query.
+ *
+ * @see iQuery
+ */
+
 namespace DataWarehouse\Query;
 
 use Configuration\XdmodConfiguration;
 use Exception;
 
+use CCR\Loggable;
 use CCR\DB;
 use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
 use ETL\VariableStore;
-use Realm\Realm;
+use Datawarehouse\Realm\Realm;
 
-/*
-* @author Amin Ghadersohi
-* @date 2011-Jan-07
-*
-* Base class for defining a query.
-*
-*/
-
-class Query
+class Query extends Loggable
 {
     public $roleParameterDescriptions;
     public $filterParameterDescriptions;
     private $pdoparams;
     private $pdoindex;
-    private $log;
 
     /**
      * @var Realm The Realm that this query will provide data for.
@@ -96,65 +94,78 @@ class Query
 
     protected $aggregationUnitName = null;
 
-    private static $config;
-
     private $leftJoins = array();
 
     public function __construct(
-        Realm $realm,
-        array $control_stats,
-        $aggregation_unit_name,
-        $start_date,
-        $end_date,
-        $group_by,
-        $stat = 'job_count',
+        $realmName,
+        $aggregationUnitName,
+        $startDate,
+        $endDate,
+        $groupById = null,
+        Logger $logger = null,
+        $statisticId = null,
         array $parameters = array()
     ) {
-        static::registerStatistics();
-        static::registerGroupBys();
+        /* Original Aggregate query parameters:
+         * $aggregation_unit_name,
+         * $start_date,
+         * $end_date,
+         * $group_by,
+         * $stat = 'job_count',
+         * array $parameters = array(),
+         * $query_groupname = 'query_groupname',
+         * array $parameterDescriptions = array(),
+         * $single_stat = false
+         */
+
+        // If the logger was not passed in, create one specifically for the query logs
+
+        if ( null === $logger ) {
+            $logger = \CCR\Log::factory(
+                'datawarehouse.query',
+                array(
+                    'console' => false,
+                    'db' => false,
+                    'mail' => false,
+                    'file' => LOG_DIR . '/query.log',
+                    'fileLogLevel' => PEAR_LOG_INFO
+                )
+            );
+        }
+
+        parent::__construct($logger);
 
         $this->variableStore = new VariableStore();
 
         $this->pdoparams = array();
         $this->pdoindex = 0;
-        $this->realm = $realm;
+        $this->realm = \DataWarehouse\Realm\Realm::factory($realmName);
 
-        $this->aggregationUnitName = $aggregation_unit_name;
+        $this->aggregationUnitName = $aggregationUnitName;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
             $realm->getAggregateTablePrefix()
         );
         $this->setDataTable(
             $realm->getAggregateTableSchema(),
-            sprintf('%s%s', $realm->getAggregateTablePrefix(false), $aggregation_unit_name)
+            sprintf('%s%s', $realm->getAggregateTablePrefix(false), $aggregationUnitName)
         );
 
-        $this->setDuration($start_date, $end_date, $aggregation_unit_name);
+        $this->setDuration($startDate, $endDate, $aggregationUnitName);
 
-        if ($group_by != null) {
-            $this->setGroupBy($group_by);
+        if ($groupById != null) {
+            $this->setGroupBy($groupById);
         }
         $this->setParameters($parameters);
 
-        if ($stat != null) {
-            $this->setStat($stat);
-        }
-
-        foreach ($control_stats as $control_stat) {
-            $this->addStatField(static::getStatistic($control_stat, $this));
+        if ($statisticId != null) {
+            $this->setStat($statisticId);
         }
 
         $this->roleParameterDescriptions = array();
         $this->filterParameterDescriptions = array();
-        $this->log = \CCR\Log::factory('xms.query', array(
-            'console' => false,
-            'db' => false,
-            'mail' => false,
-            'file' => LOG_DIR . '/query.log',
-            'fileLogLevel' => PEAR_LOG_DEBUG
-        ));
     }
 
     /**
@@ -178,7 +189,8 @@ class Query
     public $_db_profile = 'datawarehouse'; //The name of the db settings in portal_settings.ini
 
     /**
-     * @return string The short identifier for the realm that this query is constructed for.
+     * @return string The short identifier for the realm that this query is constructed for. This is
+     *   named getRealmName() for historical reasons.
      */
 
     public function getRealmName()
@@ -261,8 +273,6 @@ class Query
 
     protected $_duration_formula;
 
-
-
     public function execute($limit = 10000000)
     {
         $query_string = $this->getQueryString($limit);
@@ -270,7 +280,7 @@ class Query
         $debug = PDODB::debugging();
         if ($debug == true) {
             $class = get_class($this);
-            $this->log->debug(sprintf("%s: \n%s", $class, $query_string));
+            $this->logger->debug(sprintf("%s: \n%s", $class, $query_string));
         }
 
         $time_start = microtime(true);
@@ -622,6 +632,10 @@ class Query
             $dimension_values_query .= " ORDER BY $order_by_str";
         }
 
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $dimension_values_query)
+        );
+
         return $dimension_values_query;
     }
 
@@ -653,6 +667,11 @@ class Query
         if ($limit !== null && $offset !== null) {
             $data_query .= " limit $limit offset $offset";
         }
+
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+        );
+
         return $data_query;
     }
 
@@ -672,6 +691,11 @@ class Query
         }
 
         $data_query .= ") as a WHERE a.total IS NOT NULL";
+
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+        );
+
         return $data_query;
     }
 
@@ -880,7 +904,7 @@ class Query
         $filterParameterDescriptions = array();
         foreach ($groupedFilters as $filter_parameter_dimension => $filterValues) {
             try {
-                $group_by_instance = static::getGroupBy($filter_parameter_dimension);
+                $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
                 $param = array($filter_parameter_dimension.'_filter' => implode(',', $filterValues));
                 $this->addParameters($group_by_instance->pullQueryParameters($param));
                 $filterParameters[$filter_parameter_dimension] = array(
@@ -945,7 +969,7 @@ class Query
                 // Get the group by object associated with this dimension.
                 // If it does not exist for this realm, skip this parameter.
                 try {
-                    $group_by_instance = static::getGroupBy($role_parameter_dimension);
+                    $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
                 } catch (Exceptions\UnknownGroupByException $e) {
                     continue;
                 }
@@ -1004,7 +1028,7 @@ class Query
         $roleParameterDescriptions = array();
         foreach ($role_parameters as $role_parameter_dimension => $role_parameter_value) {
             try {
-                $group_by_instance = static::getGroupBy($role_parameter_dimension);
+                $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
 
                 if (is_array($role_parameter_value)) {
                     $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
@@ -1042,14 +1066,14 @@ class Query
     }
     protected function setGroupBy($group_by)
     {
-        $this->_group_by = static::getGroupBy($group_by);
+        $this->_group_by = $this->realm->getGroupByObject($group_by);
 
         $this->_group_by->applyTo($this, $this->_data_table);
     }
     public function addGroupBy($group_by_name)
     {
         try {
-            $group_by = static::getGroupBy($group_by_name);
+            $group_by = $this->realm->getGroupByObject($group_by_name);
         } catch (Exceptions\UnavailableTimeAggregationUnitException $time_unit_exception) {
             $time_unit_exception->errorData['realm'] = $this->getRealmName();
             throw $time_unit_exception;
@@ -1063,7 +1087,7 @@ class Query
     public function addWhereAndJoin($where_col_name, $operation, $whereConstraint)
     {
         try {
-            $group_by = static::getGroupBy($where_col_name);
+            $group_by = $this->realm->getGroupByObject($where_col_name);
         } catch (Exceptions\UnavailableTimeAggregationUnitException $time_unit_exception) {
             $time_unit_exception->errorData['realm'] = $this->getRealmName();
             throw $time_unit_exception;
@@ -1077,7 +1101,7 @@ class Query
 
     public function addFilter($group_by_name)
     {
-        $group_by = static::getGroupBy($group_by_name);
+        $group_by = $this->realm->getGroupByObject($group_by_name);
 
         return $group_by->filterByGroup($this, $this->_data_table);
     }
@@ -1086,7 +1110,7 @@ class Query
         if ($stat_name == '') {
             return null;
         }
-        $statistic = static::getStatistic($stat_name, $this);
+        $statistic = $this->realm->getStatisticObject($stat_name);
         $this->_stats[$stat_name] = $statistic;
         $this->addStatField($statistic);
         return $statistic;
@@ -1161,16 +1185,16 @@ class Query
         if ($stat == 'all') {
             $this->_main_stat_field = null;
             foreach ($permitted_statistics as $stat_name) {
-                $this->addStatField(static::getStatistic($stat_name, $this));
+                $this->addStatField($this->realm->getStatisticObject($stat_name));
             }
         } else {
             if (!in_array($stat, $permitted_statistics)) {
                 throw new \Exception("$stat is not available for {$this->_group_by->getLabel()}");
             }
 
-            $this->_main_stat_field = static::getStatistic($stat, $this);
+            $this->_main_stat_field = $this->realm->getStatisticObject($stat);
             foreach ($permitted_statistics as $stat_name) {
-                $this->addStatField(static::getStatistic($stat_name, $this));
+                $this->addStatField($this->realm->getStatisticObject($stat_name));
             }
         }
     }
@@ -1234,274 +1258,55 @@ class Query
             new \DataWarehouse\Query\Model\WhereCondition(
                 $data_table_date_id_field,
                 'between',
-                new \DataWarehouse\Query\Model\Field("{$this->_min_date_id} and {$this->_max_date_id}")
+                new \DataWarehouse\Query\Model\Field(
+                    sprintf("%s and %s", $this->_min_date_id, $this->_max_date_id)
+                )
             )
         );
 
-        $duration_query = " select sum(dd.hours) as duration from modw.{$this->_aggregation_unit}s dd where  dd.id between {$this->_min_date_id} and {$this->_max_date_id} ";
+        $duration_query = sprintf(
+            "select sum(dd.hours) as duration from modw.%ss dd where dd.id between %s and %s",
+            $this->aggregationUnitName,
+            $this->_min_date_id,
+            $this->_max_date_id
+        );
 
         $duration_result = DB::factory($this->_db_profile)->query($duration_query);
 
-        $this->setDurationFormula(new \DataWarehouse\Query\Model\Field("(".($duration_result[0]['duration'] == ''?1:$duration_result[0]['duration']).")"));
+        $this->setDurationFormula(
+            new \DataWarehouse\Query\Model\Field(
+                "(" . ( $duration_result[0]['duration'] == '' ? 1 : $duration_result[0]['duration'] ) . ")"
+            )
+        );
     }
+
+    /**
+     * @see iQuery::getDataSource()
+     */
 
     public function getDataSource()
     {
-        $realm = static::getRealm();
-
-        try {
-            return self::getConfig($realm, 'datasource');
-        } catch (Exception $e) {
-            return 'Unk';
-        }
-    }
-
-    //////////////Static Members////////////////////////
-
-    private static $_group_by_name_to_instance = array();
-
-    public static function &get_group_by_name_to_instance()
-    {
-        $realm = static::getRealm();
-
-        self::initData($realm);
-
-        return self::$_group_by_name_to_instance[$realm];
-    }
-
-    private static $_group_by_name_to_class_name = array();
-
-    public static function &get_group_by_name_to_class_name()
-    {
-        $realm = static::getRealm();
-
-        self::initData($realm);
-
-        return self::$_group_by_name_to_class_name[$realm];
-    }
-
-    private static $_statistic_name_to_class_name = array();
-
-    public static function &get_statistic_name_to_class_name()
-    {
-        $realm = static::getRealm();
-
-        self::initData($realm);
-
-        return self::$_statistic_name_to_class_name[$realm];
+        return $this->realm->getDatasource();
     }
 
     /**
-     * This function checks to see if the stats have been initialized for the provided $realm and if
-     * not, it calls `registerStatistics`. It also checks if the group bys have been initialized and
-     * if not calls`registerGroupBys`.
-     *
-     * Note: This is required because of the public static functions above. Since they are
-     * `public static` they can be called without having to instantiate Query ( or calling
-     * `Query::getGroupBy` ). So this function provides an easy method of ensuring that the
-     * statistics / groupBys data structures are populated before use.
-     *
-     * @param string $realm
+     * @see iQuery::getDebugName()
      */
-    private static function initData($realm)
-    {
-        if (!isset(self::$_stats_initialized[$realm])) {
-            self::registerStatistics();
-        }
 
-        if (!isset(self::$_group_bys_initialized[$realm])) {
-            self::registerGroupBys();
-        }
+    public function getDebugName()
+    {
+        return sprintf(
+            "%s(%s, groupbys=(%s), statistics=(%s))",
+            get_class($this),
+            $this->realm->getId(),
+            implode(',', array_keys($this->_group_bys)),
+            implode(',', array_keys($this->_stat_fields))
+        );
     }
-
-    /*
-    *
-    * @param $group_by_name for example 'resource', 'person', ...
-    * @returns a subclass of GroupBy based on $group_by_name requested.
-    * @throws Exception if $group_by_name is not registered
-    *
-    * GroupBy subclasses must be registed using @registerGroup first
-    *
-    */
-    public static function getGroupBy($group_by_name)
-    {
-        $group_by_name_to_instance = &static::get_group_by_name_to_instance();
-
-        if (!isset($group_by_name_to_instance[$group_by_name])) {
-            static::registerStatistics();
-            static::registerGroupBys();
-            $classname = static::getGroupByClassname($group_by_name);
-            $group_by_name_to_instance[$group_by_name] = new $classname;
-
-            $realm = static::getRealm();
-            $config = static::getConfigData();
-            $found = array_pop(
-                array_filter(
-                    $config['realms'][$realm]['group_bys'],
-                    function ($value) use ($group_by_name) {
-                        return $value['name']=== $group_by_name;
-                    }
-                )
-            );
-            if (array_key_exists('visible', $found)) {
-                $group_by_name_to_instance[$group_by_name]->setAvailableOnDrilldown($found['visible']);
-            }
-        }
-        return $group_by_name_to_instance[$group_by_name];
-    } //getGroupBy
-
-    public static function getGroupByClassname($group_by_name)
-    {
-        $group_by_name_to_class_name = &static::get_group_by_name_to_class_name();
-        if (isset($group_by_name_to_class_name[$group_by_name])) {
-            return $group_by_name_to_class_name[$group_by_name];
-        } else {
-            if (TimeAggregationUnit::isTimeAggregationUnitName($group_by_name)) {
-                $time_exception = new Exceptions\UnavailableTimeAggregationUnitException("Query: Unavailable Time Aggregation Unit \"$group_by_name\" Specified");
-                $time_exception->errorData['unit'] = $group_by_name;
-                throw $time_exception;
-            }
-
-            throw new Exceptions\UnknownGroupByException("Query: Unknown Group By \"$group_by_name\" Specified");
-        }
-    } //getGroupByClassname
-
-
-    /*
-    * This function returns a copy of the array that maps the group by names to class names
-    */
-    public static function getRegisteredGroupBys()
-    {
-        $group_by_name_to_class_name = &static::get_group_by_name_to_class_name();
-        return  $group_by_name_to_class_name;
-    }//getRegisteredGroupBys
-
-    /*
-    *
-     * @param $statistic_name for example 'job_count', ...
-    * @returns a subclass of Statistic based on $statistic_name requested.
-    * @throws Exception if $statistic_name is not registered
-    *
-    * Statistic subclasses must be registed using @registerGroup first
-    *
-    */
-    public static function getStatistic($statistic_name, $query_instance = null)
-    {
-        $statistic_name_to_class_name = &static::get_statistic_name_to_class_name();
-        if (isset($statistic_name_to_class_name[$statistic_name])) {
-            $class_name = $statistic_name_to_class_name[$statistic_name];
-            return new $class_name($query_instance != null ? $query_instance : new static('day', '2001-01-01', '2001-01-02', 'none'));
-        } else {
-            throw new \Exception("Query: Statistic {$statistic_name} is unknown.");
-        }
-    } //getStatistic
-
-    /*
-    * This function returns a copy of the array that maps the statistic names to class names
-    */
-    public static function getRegisteredStatistics()
-    {
-        $statistic_name_to_class_name = &static::get_statistic_name_to_class_name();
-        return $statistic_name_to_class_name;
-    }//getRegisteredStatistics
-
-    private static $_group_bys_initialized = array();
 
     /**
-     * Register group bys for the current realm.
+     * @see iQuery::__toString()
      */
-    public static function registerGroupBys()
-    {
-        $realm = static::getRealm();
-
-        if (!isset(self::$_group_bys_initialized[$realm])) {
-            $group_bys = self::getConfig($realm, 'group_bys');
-
-            $classPrefix = "\\DataWarehouse\\Query\\$realm\\GroupBys\\";
-
-            $group_by_name_to_class_name = array();
-
-            foreach ($group_bys as $group_by) {
-                $group_by_name_to_class_name[$group_by['name']] = $classPrefix . $group_by['class'];
-            }
-
-            self::$_group_by_name_to_class_name[$realm] = $group_by_name_to_class_name;
-
-            self::$_group_bys_initialized[$realm] = true;
-        }
-    }
-
-    private static $_stats_initialized = array();
-
-    /**
-     * Register statistics for the current realm.
-     */
-    public static function registerStatistics()
-    {
-        $realm = static::getRealm();
-
-        if (!isset(self::$_stats_initialized[$realm])) {
-            $stats = self::getConfig($realm, 'statistics');
-
-            $classPrefix = "\\DataWarehouse\\Query\\$realm\\Statistics\\";
-
-            $statistic_name_to_class_name = array();
-
-            foreach ($stats as $stat) {
-                $statistic_name_to_class_name[$stat['name']] = $classPrefix . $stat['class'];
-            }
-
-            self::$_statistic_name_to_class_name[$realm] = $statistic_name_to_class_name;
-
-            self::$_stats_initialized[$realm] = true;
-        }
-    }
-
-    private static $_static_realm = array();
-
-    protected static function getRealm()
-    {
-        $class = get_called_class();
-
-        if (!isset(self::$_static_realm[$class])) {
-            if (preg_match('/DataWarehouse\\\\Query\\\\(\\w+)\\\\/', $class, $matches)) {
-                self::$_static_realm[$class] = $matches[1];
-            } else {
-                throw new \Exception("Failed to determine realm for class '$class'");
-            }
-        }
-
-        return self::$_static_realm[$class];
-    }
-
-    protected static function getConfigData()
-    {
-        if (!isset(self::$config)) {
-            self::$config = XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
-        }
-
-        return self::$config;
-    }
-
-    protected static function getConfig($realm, $section = null)
-    {
-        $configData = self::getConfigData();
-
-        foreach ($configData['realms'] as $key => $realmData) {
-            if ($key == $realm) {
-                if ($section === null) {
-                    return $realmData;
-                } elseif (array_key_exists($section, $realmData)) {
-                    return $realmData[$section];
-                } else {
-                    $msg = "Unknown section '$section' for realm '$realm'";
-                    throw new \Exception($msg);
-                }
-            }
-        }
-
-        throw new \Exception("Unknown realm '$realm'");
-    }
 
     public function __toString()
     {

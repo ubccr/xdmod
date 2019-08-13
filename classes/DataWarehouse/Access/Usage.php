@@ -1129,12 +1129,12 @@ class Usage extends Common
         $sortMechanism = SORT_DESC;
         $usageGroupBy = \xd_utilities\array_get($usageRequest, 'group_by', 'none');
         $usageMetric = \xd_utilities\array_get($usageRequest, 'statistic');
-        $usageGroupByObject = $realmAggregateClass::getGroupBy($usageGroupBy);
+        $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
         $usageGroupByOrder = $usageGroupByObject->getOrderByStatOption();
         if ($usageGroupByOrder !== SORT_DESC) {
             $sortMechanism = $usageGroupByOrder;
         } else {
-            $usageMetricObject = $realmAggregateClass::getStatistic($usageMetric);
+            $usageMetricObject = $realm->getStatisticObject($usageMetric);
             $sortMechanism = $usageMetricObject->getOrderByStatOption();
         }
 
