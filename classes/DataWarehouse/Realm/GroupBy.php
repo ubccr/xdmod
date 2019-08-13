@@ -570,11 +570,11 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     }
 
     /**
-     * @see iGroupBy::generateQueryParameterLabels()
+     * @see iGroupBy::generateQueryParameterLabelsFromRequest()
      * Was pullQueryParameterDescriptions()
      */
 
-    public function generateQueryParameterLabels(array $request)
+    public function generateQueryParameterLabelsFromRequest(array $request)
     {
         $labelList = array();
         $attributeKeyFilters = array();

@@ -216,7 +216,7 @@ interface iGroupBy
      * @return array An arrray of label strings, typically of the form "label = string"
      */
 
-    public function generateQueryParameterLabels(array $request);
+    public function generateQueryParameterLabelsFromRequest(array $request);
 
     // are these called with all arguments?
 
