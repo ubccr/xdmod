@@ -718,8 +718,11 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
         array_reduce(
             $enabledResourceTypes,
             function ($carry, $item) use ($resourceTypes) {
-                $realms = $resourceTypes['resource_types'][$item]['realms'];
-                return array_merge($carry, $realms);
+                if(!isset($resourceTypes['resource_types'][$item]['disabled'])) {
+                    $realms = $resourceTypes['resource_types'][$item]['realms'];
+                    return array_merge($carry, $realms);
+                }
+                return $carry;
             },
             array()
         )
@@ -2228,7 +2231,7 @@ INSERT INTO moddb.resource_type_realms(resource_type_id, realm_id)
 SELECT 
     rt.id as resource_type_id,
     r.realm_id as realm_id
-FROM mod_shredder.staging_resource_type_realms srtr
+FROM modw.staging_resource_type_realms srtr
 JOIN modw.resourcetype rt ON rt.abbrev = srtr.abbrev
 JOIN moddb.realms r ON r.display = srtr.realm
 WHERE r.display = :realm_display;
