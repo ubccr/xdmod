@@ -306,7 +306,7 @@ class QueryDescripter
         foreach ( $groupByObjects as $obj ) {
             $parameters = array_merge(
                 $labels,
-                $obj->generateQueryParameterLabels($request)
+                $obj->generateQueryParameterLabelsFromRequest($request)
             );
         }
 

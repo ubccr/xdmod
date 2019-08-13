@@ -907,12 +907,12 @@ class Query extends Loggable
             try {
                 $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
                 $param = array($filter_parameter_dimension.'_filter' => implode(',', $filterValues));
-                $this->addParameters($group_by_instance->pullQueryParameters($param));
+                $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
                 $filterParameters[$filter_parameter_dimension] = array(
                     'groupBy' => $group_by_instance,
                     'dimensionValues' => $filterValues,
                 );
-                $filterParameterDescriptions = array_merge($filterParameterDescriptions, $group_by_instance->pullQueryParameterDescriptions($param));
+                $filterParameterDescriptions = array_merge($filterParameterDescriptions, $group_by_instance->generateQueryParameterLabelsFromRequest($param));
             } catch (\Exception $ex) {
             }
         }
@@ -983,7 +983,7 @@ class Query extends Loggable
                     $role_parameter_values = array($role_parameter_value);
                 }
 
-                $rolewheres = $this->getParameters($group_by_instance->pullQueryParameters($param));
+                $rolewheres = $this->getParameters($group_by_instance->generateQueryFiltersFromRequest($param));
 
                 $allwheres[] = "(" . implode(" AND ", $rolewheres) . ")";
 
@@ -1039,7 +1039,7 @@ class Query extends Loggable
                     $role_parameter_values = array($role_parameter_value);
                 }
 
-                $this->addParameters($group_by_instance->pullQueryParameters($param));
+                $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
 
                 if (array_key_exists($role_parameter_dimension, $groupedRoleParameters)) {
                     $role_parameters_value_list = &$groupedRoleParameters[$role_parameter_dimension]['dimensionValues'];
@@ -1057,7 +1057,7 @@ class Query extends Loggable
                     );
                 }
 
-                $roleParameterDescriptions = array_merge($roleParameterDescriptions, $group_by_instance->pullQueryParameterDescriptions($param));
+                $roleParameterDescriptions = array_merge($roleParameterDescriptions, $group_by_instance->generateQueryParameterLabelsFromRequest($param));
             } catch (\Exception $ex) {
             }
         }
