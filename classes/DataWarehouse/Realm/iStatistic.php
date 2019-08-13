@@ -91,6 +91,13 @@ interface iStatistic
     public function getFormula(Query $query = null);
 
     /**
+     * @return string The database alias used by this statistic. This must be a unique identifier among
+     *   statistics in case multiple are used in a single query.
+     */
+
+    public function getAlias();
+
+    /**
      * Note: The corresponding setDecimals() is only called from the constructor.
      * @return int The number of significant digits to display
      */

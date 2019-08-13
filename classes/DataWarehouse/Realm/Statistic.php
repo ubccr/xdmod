@@ -22,7 +22,8 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $moduleName = null;
 
     /**
-     * @var string The database alias to use with the formula when querying the data.
+     * @var string The database alias to use with the formula when querying the data. This must be
+     *   unique.
      */
 
     protected $dbAlias = null;
@@ -141,6 +142,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
         $this->id = $shortName;
         $this->realm = $realm;
+        // Combine the realm and statistic id to generate a unique alias
         $this->dbAlias = sprintf('%s_%s', $realm->getId(), $this->id);
         $this->moduleName = $realm->getModuleName();
 
@@ -313,6 +315,15 @@ class Statistic extends \CCR\Loggable implements iStatistic
                 return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->timeseriesFormula), $this->dbAlias);
             }
         }
+    }
+
+    /**
+     * @see iStatistic::getAlias()
+     */
+
+    public function getAlias()
+    {
+        return $this->dbAlias;
     }
 
     /**
