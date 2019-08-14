@@ -70,7 +70,7 @@ class ComplexDataset
 
         foreach ($data_series as $data_description_index => $data_description) {
 
-            $realm = \DataWarehouse\Realm\Realm::factory($data_description->realm);
+            $realm = \Realm\Realm::factory($data_description->realm);
 
             try {
                 $stat = $realm->getStatisticObject($data_description->metric);
@@ -463,7 +463,7 @@ class ComplexDataset
         foreach ($this->_dataDescripters as $data_description_index => $dataDescripterAndDataset) {
             $data_description = $dataDescripterAndDataset->data_description;
 
-            $realm = \DataWarehouse\Realm\Realm::factory($data_description->realm);
+            $realm = \Realm\Realm::factory($data_description->realm);
             $stat = $realm->getStatisticObject($data_description->metric);
 
             if ($shareYAxis) {

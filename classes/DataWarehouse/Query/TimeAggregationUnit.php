@@ -295,7 +295,7 @@ abstract class TimeAggregationUnit
     public static function getMinUnitForRealm($realm)
     {
         try {
-            $realm = \DataWarehouse\Realm\Realm::factory($realm);
+            $realm = \Realm\Realm::factory($realm);
         } catch ( \Exception $e ) {
             // If the given realm could not be found, return null.
             return null;

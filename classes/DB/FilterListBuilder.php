@@ -58,7 +58,7 @@ class FilterListBuilder extends Loggable
     public function buildAllLists()
     {
         // Get the ids of the realms to be processed.
-        $realmNames = array_keys(\DataWarehouse\Realm\Realm::getRealmNames());
+        $realmNames = array_keys(\Realm\Realm::getRealmNames());
 
         // Generate lists for each realm's dimensions.
         foreach ($realmNames as $realmId => $realmName) {
@@ -83,7 +83,7 @@ class FilterListBuilder extends Loggable
         );
 
         // Get the dimensions in the given realm.
-        $this->currentRealm = \DataWarehouse\Realm\Realm::factory($realmName);
+        $this->currentRealm = \Realm\Realm::factory($realmName);
 
         // Generate the lists for each dimension and each pairing of dimensions.
         foreach ($this->currentRealm->getGroupByObjects() as $groupById => $groupByObj) {

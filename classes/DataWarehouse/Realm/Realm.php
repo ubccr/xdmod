@@ -36,7 +36,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     /**
      * @var string Prefix for the realm aggregate table. The aggregation period is appended to
-     *   define the table (e.g., “jobfact_by_” with aggregation period “day” creates “jobfact_by_day”`
+     *   define the table (e.g., "jobfact_by_" with aggregation period "day" creates "jobfact_by_day")
      */
 
     protected $aggregateTablePrefix = null;
@@ -49,7 +49,7 @@ class Realm extends \CCR\Loggable implements iRealm
     protected $order = 0;
 
     /**
-     * @var string Name of the module that defines this realm (default: “xdmod”)
+     * @var string Name of the module that defines this realm (default: "xdmod")
      */
 
     protected $module = 'xdmod';

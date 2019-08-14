@@ -149,7 +149,7 @@ class TimeseriesQuery extends Query implements iQuery
         }
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
         );
 
         return $data_query;
@@ -179,7 +179,7 @@ class TimeseriesQuery extends Query implements iQuery
                               order by id asc";
 
         $this->logger->debug(
-            sprintf("%s %s() Query date IDs\n%s", $this->getDebugName(), __FUNCTION__, $dateIdsQuery)
+            sprintf("%s %s() Query date IDs\n%s", $this->getLogString(), __FUNCTION__, $dateIdsQuery)
         );
 
         $dateIdsResults = DB::factory($this->_db_profile)->query($dateIdsQuery);

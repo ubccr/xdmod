@@ -16,8 +16,8 @@ use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
 use ETL\VariableStore;
-use Datawarehouse\Realm\Realm;
-use Datawarehouse\Realm\Statistic;
+use Realm\Realm;
+use Realm\Statistic;
 
 class Query extends Loggable
 {
@@ -140,7 +140,7 @@ class Query extends Loggable
 
         $this->pdoparams = array();
         $this->pdoindex = 0;
-        $this->realm = \DataWarehouse\Realm\Realm::factory($realmId);
+        $this->realm = Realm::factory($realmId);
 
         $this->aggregationUnitName = $aggregationUnitName;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
@@ -374,7 +374,7 @@ class Query extends Loggable
 
     public function addTable(\DataWarehouse\Query\Model\Table $table)
     {
-        $this->_tables[$table->getAlias()] = $table;
+        $this->_tables[$table->getAlias()->getName()] = $table;
     }
     public function getTables()
     {
@@ -383,7 +383,7 @@ class Query extends Loggable
 
     public function addLeftJoin(\DataWarehouse\Query\Model\Table $table, \DataWarehouse\Query\Model\WhereCondition $where)
     {
-        $this->leftJoins[$table->getAlias()] = array($table, $where);
+        $this->leftJoins[$table->getAlias()->getName()] = array($table, $where);
     }
 
     public function addField(\DataWarehouse\Query\Model\Field $field)
@@ -629,7 +629,7 @@ class Query extends Loggable
         }
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $dimension_values_query)
+            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $dimension_values_query)
         );
 
         return $dimension_values_query;
@@ -665,7 +665,7 @@ class Query extends Loggable
         }
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
         );
 
         return $data_query;
@@ -689,7 +689,7 @@ class Query extends Loggable
         $data_query .= ") as a WHERE a.total IS NOT NULL";
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
         );
 
         return $data_query;
@@ -1296,10 +1296,10 @@ class Query extends Loggable
     }
 
     /**
-     * @see iQuery::getDebugName()
+     * @see iQuery::getLogString()
      */
 
-    public function getDebugName()
+    public function getLogString()
     {
         return sprintf(
             "%s(%s, groupbys=(%s), statistics=(%s))",

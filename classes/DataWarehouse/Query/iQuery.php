@@ -54,7 +54,7 @@ interface iQuery
      * @return string A string representation of this class to be used in debugging log output.
      */
 
-    public function getDebugName();
+    public function getLogString();
 
     /**
      * @return string A general string representation of this class.

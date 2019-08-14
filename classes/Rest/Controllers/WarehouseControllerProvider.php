@@ -903,7 +903,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $serviceProviderDimensionId = 'provider';
         if ($multipleProvidersSupported) {
-            $jobsRealm = \DataWarehouse\Realm\Realm::factory('Jobs');
+            $jobsRealm = \Realm\Realm::factory('Jobs');
             $serviceProviderGroupBy = $jobsRealm->getGroupByObject($serviceProviderDimensionId);
             $serviceProviderDimensionName = $serviceProviderGroupBy->getName();
             $dimensionIdsToNames[$serviceProviderDimensionId] = $serviceProviderDimensionName;

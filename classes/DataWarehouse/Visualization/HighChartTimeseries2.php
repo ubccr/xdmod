@@ -169,7 +169,7 @@ class HighChartTimeseries2 extends HighChart2
             // (Speculative). August 2015
             try
             {
-                $realm = \DataWarehouse\Realm\Realm::factory($data_description->realm);
+                $realm = \Realm\Realm::factory($data_description->realm);
                 $stat = $realm->getStatisticObject($data_description->metric);
             }
             catch(\Exception $ex)

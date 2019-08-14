@@ -711,7 +711,7 @@ class MetricExplorer extends Common
             // Attempt to get the group by object for this realm to check that
             // the dimension exists for this realm.
 
-            if ( ! \DataWarehouse\Realm\Realm::groupByExists($dimension_id) ) {
+            if ( ! \Realm\Realm::groupByExists($dimension_id) ) {
                 if ( $realmsSpecified ) {
                     // If the group by does not exist and realms were explicitly
                     // specified, throw an exception. Otherwise, just continue to
@@ -1031,7 +1031,7 @@ class MetricExplorer extends Common
     ) {
         // Get the group by object for this dimension in this realm.
         // This will throw an exception if the object cannot be found.
-        $groupBy = \DataWarehouse\Realm\Realm::getGroupByObject($dimension_id);
+        $groupBy = \Realm\Realm::getGroupByObject($dimension_id);
 
         // Check that the user is allowed to view this dimension in this
         // realm. If not, an exception will be thrown.

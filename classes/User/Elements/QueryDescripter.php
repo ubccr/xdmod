@@ -62,7 +62,7 @@ class QueryDescripter
         $order_id = 0
     ) {
 
-        $this->realm = \DataWarehouse\Realm\Realm::factory($realm_name);
+        $this->realm = \Realm\Realm::factory($realm_name);
         $this->_group_by_name   = $group_by_name;
         $this->_default_statisticname         = $default_statisticname;
         $this->_default_aggregation_unit_name = $default_aggregation_unit_name;
