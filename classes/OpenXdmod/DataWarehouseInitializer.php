@@ -2,6 +2,7 @@
 
 namespace OpenXdmod;
 
+use CCR\DB;
 use Exception;
 use CCR\DB\iDatabase;
 use ETL\Configuration\EtlConfiguration;
@@ -9,6 +10,7 @@ use ETL\EtlOverseer;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 use FilterListBuilder;
+use PDO;
 
 class DataWarehouseInitializer
 {
@@ -441,19 +443,25 @@ class DataWarehouseInitializer
      */
     public function isRealmEnabled($realm)
     {
-        $sql = <<<SQL
-        SELECT 1
-        FROM moddb.acl_group_bys agb
-            JOIN moddb.realms r on agb.realm_id = r.realm_id
-        WHERE r.display = :realm AND
-              agb.enabled = TRUE AND
-              agb.visible = TRUE
-        LIMIT 1;
-SQL;
-        $params = array(
-            ':realm' => $realm
+        $db = DB::factory('database');
+        $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
+        $stmt->execute();
+        $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
+        $enabledRealms = array_unique(
+            array_reduce(
+                $enabledResourceTypes,
+                function ($carry, $item) use ($resourceTypes) {
+                    if(!isset($resourceTypes['resource_types'][$item]['disabled'])) {
+                        $realms = $resourceTypes['resource_types'][$item]['realms'];
+                        return array_merge($carry, $realms);
+                    }
+                    return $carry;
+                },
+                array()
+            )
         );
-        $realms = $this->warehouseDb->query($sql, $params);
-        return (count($realms) > 0);
+        return in_array($realm, $enabledRealms);
     }
 }
