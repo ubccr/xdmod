@@ -91,8 +91,8 @@ interface iGroupBy
     public function getAggregateKeys();
 
     /**
-     * @return string The name of the module that defined this Realm. The default is "xdmod", the
-     *   core XDMoD module.
+     * @return string The name of the module that defined this GroupBy. The default is the module
+     *   from the parent Realm.
      */
 
     public function getModuleName();

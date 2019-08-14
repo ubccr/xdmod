@@ -376,6 +376,15 @@ class Statistic extends \CCR\Loggable implements iStatistic
     }
 
     /**
+     * @see iStatistic::getModuleName()
+     */
+
+    public function getModuleName()
+    {
+        return $this->moduleName;
+    }
+
+    /**
      * @see iStatistic::getOrder()
      */
 

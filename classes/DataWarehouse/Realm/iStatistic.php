@@ -124,6 +124,13 @@ interface iStatistic
     public function getSortOder();
 
     /**
+     * @return string The name of the module that defined this Statistic. The default is the module
+     *   from the parent Realm.
+     */
+
+    public function getModuleName();
+
+    /**
      * @return int The order to advise how elements should be displayed visually in reference to one
      *   another.
      */
