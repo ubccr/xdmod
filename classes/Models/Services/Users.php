@@ -392,7 +392,7 @@ SQL;
 
         // If this user has no more center staff centers then remove the center
         // staff acl.
-        if (count(array_diff(array_values($currentCenters), array((string)$centerId))) === 0) {
+        if (empty($currentCenters) || count(array_diff(array_values($currentCenters), array((string)$centerId))) === 0) {
             // Remove the center staff acl from the user.
             $user->setRoles(array_diff($user->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
 

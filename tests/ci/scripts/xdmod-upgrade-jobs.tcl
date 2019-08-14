@@ -24,7 +24,7 @@ confirmUpgrade
 provideInput {Enable Novice User Tab*} {off}
 expect {
     -re "\nDo you want to run aggregation now.*\\\]" {
-        send no\n
+        send yes\n
     }
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1

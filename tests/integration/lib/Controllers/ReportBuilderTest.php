@@ -4,6 +4,7 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use TestHarness\TestFiles;
+use Models\Services\Realms;
 use TestHarness\XdmodTestHelper;
 
 /**
@@ -57,7 +58,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         'http_code' => 200
     );
 
-
+    
     /**
      * @return TestFiles
      * @throws \Exception
@@ -77,6 +78,13 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
             $this->verbose = false;
         }
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
+
+        $xdmod_realms = array();
+        $rawRealms = Realms::getRealms();
+        foreach($rawRealms as $item) {
+            array_push($xdmod_realms,$item->name);
+        }
+        $this->xdmod_realms = $xdmod_realms;
     }
 
     /**
@@ -86,6 +94,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumAvailableCharts(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $operation = 'enum_available_charts';
 
         $user = $options['user'];
@@ -142,6 +155,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumReports(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $operation = 'enum_reports';
 
         $user = $options['user'];
@@ -199,6 +217,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateReport(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $data = $options['data'];
         $user = $options['user'];
         $charts = $options['charts'];

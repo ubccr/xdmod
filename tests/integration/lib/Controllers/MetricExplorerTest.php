@@ -1,12 +1,20 @@
 <?php
 
 namespace IntegrationTests\Controllers;
+use Models\Services\Realms;
 
 class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
         $this->helper = new \TestHarness\XdmodTestHelper();
+        //Get current realms enabled
+        $xdmod_realms = array();
+        $rawRealms = Realms::getRealms();
+        foreach($rawRealms as $item) {
+            array_push($xdmod_realms,$item->name);
+        }
+        $this->xdmod_realms = $xdmod_realms;
     }
 
     /**
@@ -57,6 +65,11 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDimensionFilters()
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $this->helper->authenticate('usr');
 
         $params = array(

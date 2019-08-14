@@ -155,16 +155,11 @@ function main()
         )
     );
 
-    $enabledRealms = array_unique(
-        array_reduce(
-            $enabledResourceTypes,
-            function ($carry, $item) use ($resourceTypesConfig) {
-                $realms = $resourceTypesConfig['resource_types'][$item]['realms'];
-                return array_merge($carry, $realms);
-            },
-            array()
-        )
-    );
+    $rawEnabledRealms = getenv("XDMOD_REALMS");
+    $rawEnabledRealms = str_replace(' ', '', $rawEnabledRealms);
+    $rawEnabledRealms = explode(',', $rawEnabledRealms);
+
+    $enabledRealms = array_map('ucfirst', $rawEnabledRealms);
 
     // Configuration Files
     $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);

@@ -1,6 +1,7 @@
 <?php
 
 namespace IntegrationTests\REST\Warehouse;
+use Models\Services\Realms;
 
 class JobViewerTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,6 +11,12 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     {
         $xdmodConfig = array( 'decodetextasjson' => true );
         $this->xdmodhelper = new \TestHarness\XdmodTestHelper($xdmodConfig);
+        $xdmod_realms = array();
+        $rawRealms = Realms::getRealms();
+        foreach($rawRealms as $item) {
+            array_push($xdmod_realms,$item->name);
+        }
+        $this->xdmod_realms = $xdmod_realms;
     }
 
     private static function getDimensions() {
@@ -38,6 +45,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDimensions()
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $this->xdmodhelper->authenticate('cd');
         $queryparams = array(
             'realm' => 'Jobs'
@@ -80,6 +92,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDimensionValues($xdmodhelper, $dimension)
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $queryparams = array(
             'realm' => 'Jobs'
         );
@@ -96,6 +113,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
 
     public function testResourceEndPoint()
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $this->xdmodhelper->authenticate('cd');
 
         $queryparams = array(
@@ -124,6 +146,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
 
     public function testResourceNoAuth()
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $queryparams = array(
             'realm' => 'Jobs'
         );
@@ -134,6 +161,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
 
     private function validateSingleJobSearch($searchparams, $doAuth = true)
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         if ($doAuth) {
             $this->xdmodhelper->authenticate('cd');
         }
@@ -157,6 +189,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testBasicJobSearch() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $queryparams = array(
             'realm' => 'Jobs',
             'params' => json_encode(
@@ -170,6 +207,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testBasicJobSearchNoAuth() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $searchparams = array(
             'realm' => 'Jobs',
             'params' => json_encode(
@@ -191,6 +233,10 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testInvalidJobSearch() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
 
         $this->xdmodhelper->authenticate('cd');
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', array() );
@@ -203,6 +249,10 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testInvalidJobSearchJson() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
 
         $searchparams = array(
             'realm' => 'Jobs',
@@ -220,6 +270,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function missingParamsProvider() {
+        $this->setUp();
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
 
         $xdmodhelper = new \TestHarness\XdmodTestHelper(array('decodetextasjson' => true));
         $xdmodhelper->authenticate('cd');
@@ -316,6 +371,10 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider missingParamsProvider
      */
     public function testInvalidJobSearchMissingParams($xdmodhelper, $searchparams, $isfinal) {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
 
         $result = $xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
 
@@ -329,6 +388,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testAdvancedSearchInvalid() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $searchparams = array(
             'start_date' => '2015-01-01',
             'end_date' => '2015-01-01',
@@ -350,6 +414,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testAdvancedSearchNoParams() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $searchparams = array(
             'start_date' => '2016-12-31',
             'end_date' => '2016-12-31',
@@ -376,6 +445,11 @@ class JobViewerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testJobMetadata() {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $queryparams = array(
             'realm' => 'Jobs',
             'params' => json_encode(

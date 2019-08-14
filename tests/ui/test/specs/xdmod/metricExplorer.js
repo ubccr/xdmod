@@ -2,6 +2,7 @@ var expected = global.testHelpers.artifacts.getArtifact('metricExplorer');
 var logIn = require('./loginPage.page.js');
 var me = require('./metricExplorer.page.js');
 var cheerio = require('cheerio');
+var XDMOD_REALMS = process.env.XDMOD_REALMS;
 describe('Metric Explorer', function metricExplorer() {
     var baselineDate = {
         start: '2016-12-22',
@@ -71,129 +72,131 @@ describe('Metric Explorer', function metricExplorer() {
             browser.waitUntilAnimEnd(me.selectors.catalog.collapseButton);
         });
     });
-    describe('Create and save a chart', function () {
-        it('Add data via metric catalog', function () {
-            me.createNewChart(chartName, 'Timeseries', 'Line');
-            me.setDateRange('2016-12-30', '2017-01-02');
-            me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
-            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
-            me.saveChanges();
-            me.clear();
-        });
-    });
-    describe('Basic Scenarios', function basicScenarios() {
-        it('Add Filters in Toolbar', function () {
-            me.loadExistingChartByName(chartName);
-            me.addFiltersFromToolbar('PI');
-            me.cancelFiltersFromToolbar();
-        });
-        it('Edit Filters in Toolbar', function () {
-            me.editFiltersFromToolbar('Alpine');
-            me.clear();
-        });
-        it('Add/Edit Filters in Data Series Definition', function () {
-            me.clickLogoAndWaitForMask();
-            me.loadExistingChartByName(chartName);
-            me.addFiltersFromDataSeriesDefinition('PI', 'Alpine');
-            me.cancelFiltersFromDataSeriesDefinition();
-        });
-        it('Edit Filters in Data Series Definition', function () {
-            me.editFiltersFromDataSeriesDefinition('Alpine');
-            me.clear();
-        });
-        it('Has Instructions', function meConfirmInstructions() {
-            me.verifyInstructions();
-        });
-        it('Has three toolbars', function meConfirmToolbars() {
-            expect($container('.x-toolbar').length).to.equal(3);
-        });
-        it('Has one canned Date Picker', function meConfirmDatePicker() {
-            // TODO: Make Datepicker have a unique name
-            expect($container('table[id^=canned_dates]').length).to.equal(1);
-        });
-
-        it('Set a known start date', function meSetStartEnd() {
-            browser.waitForVisible(me.selectors.startDate, 10000);
-            browser.click(me.selectors.startDate);
-            browser.setValue(me.selectors.startDate, baselineDate.start);
-        });
-
-        it('Set a known end date', function meSetStartEnd() {
-            browser.waitForVisible(me.selectors.endDate, 10000);
-            browser.click(me.selectors.endDate);
-            browser.setValue(me.selectors.endDate, baselineDate.end);
-        });
-        it("'Add Data' via toolbar", function meAddData1() {
-            // click on CPU Hours: Total
-            me.addDataViaMenu('.ext-el-mask-msg', 'CPU Hours: Total');
-            me.addDataSeriesByDefinition();
-        });
-        it('Chart contains correct information', function () {
-            me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
-        });
-
-        it("'Add Data' again via toolbar", function meAddData2() {
-            me.waitForChartToChange(me.addDataViaToolbar);
-        });
-        it('Chart contains correct information', function () {
-            me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
-        });
-
-        it('Switch to aggregate chart', function () {
-            me.waitForChartToChange(me.switchToAggregate);
-        });
-        it('Chart contains correct information', function () {
-            me.checkChart('untitled query 1', 'CPU Hour', ['CPU Hours: Total', 'CPU Hours: Per Job']);
-        });
-        it('Undo Scratch Pad switch to aggregate', function () {
-            me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
-        });
-        it('Check first undo works', function () {
-            me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
-        });
-        it('Undo Scratch Pad second source', function meUndoScratchPad() {
-            me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
-        });
-        it('Check second undo works', function () {
-            me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
-        });
-        it('Attempt Delete Scratchpad Chart', function meDeleteScratchPad() {
-            me.attemptDeleteScratchpad();
-        });
-        it('Chart looks the same as previous run', function () {
-            me.verifyInstructions();
-        });
-        it('Open chart from load dialog', function meOpenChart() {
-            me.loadExistingChartByName(chartName);
-        });
-        it('Loaded chart looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
-        });
-        it('Open Chart Options', function meChartOptions() {
-            browser.waitAndClick(me.selectors.options.button);
-        });
-        it('Chart options looks the same as previous run', function () {
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "chart.options")
-            // browser.pause(1000);
-        });
-        it('Show Trend Line via Chart Options', function meAddTrendLine() {
-            me.waitForChartToChange(function () {
-                browser.waitAndClick(me.selectors.options.trendLine);
-                me.clickSelectorAndWaitForMask(me.selectors.options.button);
-                browser.waitForInvisible(me.selectors.options.trendLine);
+    //TODO: Add tests for storage and cloud realms
+    if (XDMOD_REALMS.includes("jobs")) {
+        describe('Create and save a chart', function () {
+            it('Add data via metric catalog', function () {
+                me.createNewChart(chartName, 'Timeseries', 'Line');
+                me.setDateRange('2016-12-30', '2017-01-02');
+                me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
+                me.checkChart(chartName, 'Node Hours: Total', expected.legend);
+                me.saveChanges();
+                me.clear();
             });
         });
-        it('Trend Line looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);
+        describe('Basic Scenarios', function basicScenarios() {
+            it('Add Filters in Toolbar', function () {
+                me.loadExistingChartByName(chartName);
+                me.addFiltersFromToolbar('PI');
+                me.cancelFiltersFromToolbar();
+            });
+            it('Edit Filters in Toolbar', function () {
+                me.editFiltersFromToolbar('Alpine');
+                me.clear();
+            });
+            it('Add/Edit Filters in Data Series Definition', function () {
+                me.clickLogoAndWaitForMask();
+                me.loadExistingChartByName(chartName);
+                me.addFiltersFromDataSeriesDefinition('PI', 'Alpine');
+                me.cancelFiltersFromDataSeriesDefinition();
+            });
+            it('Edit Filters in Data Series Definition', function () {
+                me.editFiltersFromDataSeriesDefinition('Alpine');
+                me.clear();
+            });
+            it('Has Instructions', function meConfirmInstructions() {
+                me.verifyInstructions();
+            });
+            it('Has three toolbars', function meConfirmToolbars() {
+                expect($container('.x-toolbar').length).to.equal(3);
+            });
+            it('Has one canned Date Picker', function meConfirmDatePicker() {
+                // TODO: Make Datepicker have a unique name
+                expect($container('table[id^=canned_dates]').length).to.equal(1);
+            });
+
+            it('Set a known start date', function meSetStartEnd() {
+                browser.waitForVisible(me.selectors.startDate, 10000);
+                browser.click(me.selectors.startDate);
+                browser.setValue(me.selectors.startDate, baselineDate.start);
+            });
+
+            it('Set a known end date', function meSetStartEnd() {
+                browser.waitForVisible(me.selectors.endDate, 10000);
+                browser.click(me.selectors.endDate);
+                browser.setValue(me.selectors.endDate, baselineDate.end);
+            });
+            it("'Add Data' via toolbar", function meAddData1() {
+                // click on CPU Hours: Total
+                me.addDataViaMenu('.ext-el-mask-msg', 'CPU Hours: Total');
+                me.addDataSeriesByDefinition();
+            });
+            it('Chart contains correct information', function () {
+                me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
+            });
+
+            it("'Add Data' again via toolbar", function meAddData2() {
+                me.waitForChartToChange(me.addDataViaToolbar);
+            });
+            it('Chart contains correct information', function () {
+                me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
+            });
+
+            it('Switch to aggregate chart', function () {
+                me.waitForChartToChange(me.switchToAggregate);
+            });
+            it('Chart contains correct information', function () {
+                me.checkChart('untitled query 1', 'CPU Hour', ['CPU Hours: Total', 'CPU Hours: Per Job']);
+            });
+            it('Undo Scratch Pad switch to aggregate', function () {
+                me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
+            });
+            it('Check first undo works', function () {
+                me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
+            });
+            it('Undo Scratch Pad second source', function meUndoScratchPad() {
+                me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
+            });
+            it('Check second undo works', function () {
+                me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
+            });
+            it('Attempt Delete Scratchpad Chart', function meDeleteScratchPad() {
+                me.attemptDeleteScratchpad();
+            });
+            it('Chart looks the same as previous run', function () {
+                me.verifyInstructions();
+            });
+            it('Open chart from load dialog', function meOpenChart() {
+                me.loadExistingChartByName(chartName);
+            });
+            it('Loaded chart looks the same as previous run', function () {
+                me.checkChart(chartName, 'Node Hours: Total', expected.legend);
+            });
+            it('Open Chart Options', function meChartOptions() {
+                browser.waitAndClick(me.selectors.options.button);
+            });
+            it('Chart options looks the same as previous run', function () {
+                // TODO: Determine Pass case for this without using screenshot
+                // browser.takeScreenshot(moduleName, me.selectors.container, "chart.options")
+                // browser.pause(1000);
+            });
+            it('Show Trend Line via Chart Options', function meAddTrendLine() {
+                me.waitForChartToChange(function () {
+                    browser.waitAndClick(me.selectors.options.trendLine);
+                    me.clickSelectorAndWaitForMask(me.selectors.options.button);
+                    browser.waitForInvisible(me.selectors.options.trendLine);
+                });
+            });
+            it('Trend Line looks the same as previous run', function () {
+                me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);
+            });
+            it('Undo Trend Line', function meUndoTrendLine() {
+                me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
+            });
+            it('Undo Trend Line looks the same as previous run', function () {
+                me.checkChart(chartName, 'Node Hours: Total', expected.legend);
+            });
         });
-        it('Undo Trend Line', function meUndoTrendLine() {
-            me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
-        });
-        it('Undo Trend Line looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
-        });
-    });
     /* The following tests are disabled until such a time as they can be changed to work
      * reliably without browser.pause()
 
@@ -444,5 +447,6 @@ describe('Metric Explorer', function metricExplorer() {
         });
     });
     */
+    };
     logIn.logout();
 });

@@ -4,6 +4,7 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use JsonSchema\Validator;
+use Models\Services\Realms;
 use TestHarness\TestFiles;
 
 class UserAdminTest extends BaseUserAdminTest
@@ -281,9 +282,17 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function provideTestUsersQuickFilters()
     {
-        return Json::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
-        );
+        $this->setUp();
+        # Handle special case where there's no PI data (Cloud Realm enabled only)
+        if ($this->xdmod_realms == array("cloud")) {
+            return Json::loadFile(
+                $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
+            );
+        }
+        else
+             return Json::loadFile(
+                $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
+            );
     }
 
     /**
@@ -317,10 +326,56 @@ class UserAdminTest extends BaseUserAdminTest
         $this->validateResponse($response);
 
         $actual = $response[0];
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', $output)
+        
+        # Check spec file
+        $schemaObject = JSON::loadFile(
+            $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
+            false
         );
+        $validator = new Validator();
+        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
+        }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
+        
+        # Check expected file
+        $expected = array();
+        foreach($this->xdmod_realms as $realm) {
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
 
+            if(!is_file($expectedOutputFile)) {
+                $newFile = array();
+                foreach ($actual as $arr) {
+                    if (isset($arr['realm'])) {
+                        if (strtolower($arr['realm']) == $realm) {
+                            array_push($newFile, $arr);
+                        }
+                    }
+                }
+                $separator = array(
+                    "text" => "",
+                    "id" => "-111",
+                    "node_type" => "separator",
+                    "iconCls" => "blank",
+                    "leaf" => true,
+                    "disabled" => true
+                );
+                array_push($newFile, $separator);
+                $filePath = dirname($expectedOutputFile);
+                if (!is_dir($filePath)){
+                    mkdir($filePath);
+                }
+                file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
+                echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
+            }
+
+            $resource = JSON::loadFile($expectedOutputFile);
+            foreach($resource as $item) {
+                array_push($expected, $item);
+            }
+        }
         $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
 
         if ($username !== self::PUBLIC_USER_NAME) {

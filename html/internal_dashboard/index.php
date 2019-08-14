@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../../configuration/linker.php';
 require_once 'user_check.php';
 
+$XDMOD_REALMS=getenv("XDMOD_REALMS");
+
 if (isset($_POST['direct_to'])) {
   header('Location: ' . $_POST['direct_to']);
   exit;
@@ -154,6 +156,10 @@ if (isset($_POST['direct_to'])) {
 
   <script type="text/javascript" src="js/admin_panel/RoleGrid.js"></script>
   <script type="text/javascript" src="js/admin_panel/AclGrid.js"></script>
+  <script>
+            var XDMOD_REALMS = "<?php echo $XDMOD_REALMS; ?>";
+  </script>
+
   <script type="text/javascript" src="js/admin_panel/SectionNewUser.js"></script>
   <script type="text/javascript" src="js/admin_panel/SectionExistingUsers.js"></script>
   <script type="text/javascript" src="js/admin_panel/AdminPanel.js"></script>

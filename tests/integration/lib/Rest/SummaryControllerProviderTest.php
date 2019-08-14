@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use Models\Services\Realms;
 
 class SummaryControllerProviderTest extends BaseUserAdminTest
 {
@@ -16,6 +17,11 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
      */
     public function testGetStatistics(array $options)
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $username = $options['username'];
         $startDate = \xd_utilities\array_get($options, 'start_date', '2016-12-22');
         $endDate = \xd_utilities\array_get($options, 'end_date', '2017-01-01');

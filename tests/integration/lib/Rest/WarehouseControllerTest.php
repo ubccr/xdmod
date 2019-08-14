@@ -1,10 +1,21 @@
 <?php
 
 namespace IntegrationTests\Rest;
+use Models\Services\Realms;
 
 class WarehouseControllerTest extends \PHPUnit_Framework_TestCase
 {
     protected static $helpers = array();
+
+    protected function setUp()
+    {
+        $xdmod_realms = array();
+        $rawRealms = Realms::getRealms();
+        foreach($rawRealms as $item) {
+            array_push($xdmod_realms,$item->name);
+        }
+        $this->xdmod_realms = $xdmod_realms;
+    }
 
     public static function setUpBeforeClass()
     {
@@ -102,6 +113,11 @@ class WarehouseControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAggregateData()
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        
         $params = $this->getAggDataParameterGenerator();
 
         $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);

@@ -6,6 +6,7 @@ use CCR\DB;
 use CCR\Json;
 use Models\Acl;
 use Models\Services\Users;
+use Models\Services\Realms;
 use ReflectionClass;
 use TestHarness\UserHelper;
 use \XDUser;
@@ -20,6 +21,17 @@ use TestHarness\TestFiles;
 class XDUserTest extends BaseTest
 {
     private static $users = array();
+
+    protected function setUp()
+    {
+        $xdmod_realms = array();
+        $rawRealms = Realms::getRealms();
+        foreach($rawRealms as $item) {
+            array_push($xdmod_realms,$item->name);
+        }
+        $this->xdmod_realms = $xdmod_realms;
+    }
+
 
     /**
      * @dataProvider provideGetUserByUserName
@@ -629,6 +641,11 @@ class XDUserTest extends BaseTest
      */
     public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $expected = JSON::loadFile($this->getTestFiles()->getFile('acls', $expectedFile));
         $user = XDUser::getUserByUserName($userName);
 
@@ -780,6 +797,11 @@ class XDUserTest extends BaseTest
      */
     public function testIsCenterDirectorOfOrganizationValidCenter($userName, $organizationId, $expected)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", $this->xdmod_realms)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->isCenterDirectorOfOrganization($organizationId);
         $this->assertEquals($expected, $actual);
