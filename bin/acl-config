@@ -33,6 +33,7 @@ $opts = array(
 $dryRun = false;
 $logLevel = Log::ERR;
 $recover = false;
+$isXSEDE = false;
 
 try {
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
@@ -94,7 +95,7 @@ try {
  **/
 function main()
 {
-    global $dryRun, $log, $verify, $logLevel, $recover;
+    global $dryRun, $log, $verify, $logLevel, $recover, $isXSEDE;
 
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
@@ -127,6 +128,8 @@ function main()
 
     // Module Retrieval
     $modules = Configuration::assocArrayFactory('modules.json', CONFIG_DIR, $log);
+
+    $isXSEDE = array_key_exists('XSEDE', $modules);
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
@@ -727,7 +730,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
             array()
         )
     );
-    $filteredRealms = array_intersect(array_keys($realms), $enabledRealms);
+    $filteredRealms = array_diff(array_keys($realms), $enabledRealms);
     foreach($filteredRealms as $filteredRealm) {
         unset($realms[$filteredRealm]);
     }
@@ -2222,21 +2225,32 @@ function dropTables(iDatabase $db, array $tables)
 
 function updateResourceTypeRealms(iDatabase $db, $realm)
 {
-    global $dryRun, $log;
+    global $dryRun, $log, $isXSEDE;
 
     $log->info("*** Updating Resource Types -> Realm Associations");
+
+    $stagingSchema = 'mod_shredder';
+    if ($isXSEDE === true) {
+        $stagingSchema = 'modw';
+    }
 
     $query = <<<SQL
 INSERT INTO moddb.resource_type_realms(resource_type_id, realm_id)
 SELECT 
     rt.id as resource_type_id,
     r.realm_id as realm_id
-FROM modw.staging_resource_type_realms srtr
+FROM $stagingSchema.staging_resource_type_realms srtr
 JOIN modw.resourcetype rt ON rt.abbrev = srtr.abbrev
 JOIN moddb.realms r ON r.display = srtr.realm
 WHERE r.display = :realm_display;
 SQL;
-    $db->execute($query, array(':realm_display' => $realm));
+
+    if ($dryRun === true) {
+        $log->info(sprintf("Would have Executed: \n%s\n", $query));
+    } else {
+        $db->execute($query, array(':realm_display' => $realm));
+    }
+
 
     $log->info("*** Resource Types -> Realm Associated!");
 }
