@@ -129,7 +129,7 @@ function main()
     // Module Retrieval
     $modules = Configuration::assocArrayFactory('modules.json', CONFIG_DIR, $log);
 
-    $isXSEDE = array_key_exists('XSEDE', $modules);
+    $isXSEDE = array_key_exists('xsede', $modules);
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
