@@ -154,7 +154,7 @@ class Query extends Loggable
             sprintf('%s%s', $this->realm->getAggregateTablePrefix(false), $aggregationUnitName)
         );
 
-        $this->setDuration($startDate, $endDate, $aggregationUnitName);
+        $this->setDuration($startDate, $endDate);
 
         if ($groupById != null) {
             $this->setGroupBy($groupById);
