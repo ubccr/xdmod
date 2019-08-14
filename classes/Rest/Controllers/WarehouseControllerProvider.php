@@ -1253,12 +1253,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         if (count($params) != count($searchParams)) {
             throw new BadRequestException('Invalid search parameters specified in params object');
         } else {
-            $query = new \DataWarehouse\Query\RawDataQuery(
-                $realm,
-                'day',
-                $startDate,
-                $endDate
-            );
+            $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
+            $query = new $QueryClass("day", $startDate, $endDate, null, "", array());
 
             $allRoles = $user->getAllRoles();
             $query->setMultipleRoleParameters($allRoles, $user);

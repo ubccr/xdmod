@@ -96,13 +96,15 @@ try {
 
     if ($format === 'jsonstore') {
 
-        $query = new \DataWarehouse\Query\RawDataQuery(
-            $data_description->realm,
+        $query_classname = '\\DataWarehouse\\Query\\' . $data_description->realm . '\\RawData';
+
+        $query = new $query_classname(
             'day',
             $start_date,
             $end_date,
             null,
-            $data_description->metric
+            $data_description->metric,
+            array()
         );
 
         $groupedRoleParameters = array();
