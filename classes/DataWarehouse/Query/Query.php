@@ -818,21 +818,21 @@ class Query extends Loggable
 
     public function getTitle($group_info_only = false)
     {
-        $group_label = $this->groupBy()->getLabel();
+        $groupById = $this->groupBy()->getId();
+        $groupByName = $this->groupBy()->getName();
 
         if ( $group_info_only ) {
             return sprintf(
                 '%s stats%s%s',
-                $group_label,
-                ( $this->groupBy()->getId() === 'none' ? ' Summary' : ': by ' . $this->groupBy()->getLabel() )
+                $groupByName,
+                ( $groupById === 'none' ? ' Summary' : ': by ' . $groupByName )
             );
         } else {
             return sprintf(
                 '%s%s',
-                $this->_main_stat_field->getLabel(),
-                ( $this->groupBy()->getId() === 'none' ? '' : ': by ' . $this->groupBy()->getLabel() )
+                $this->_main_stat_field->getName(),
+                ( $groupById === 'none' ? '' : ': by ' . $groupByName )
             );
-
         }
     }
 
@@ -1200,7 +1200,7 @@ class Query extends Loggable
             }
         } else {
             if (!in_array($stat, $permitted_statistics)) {
-                throw new \Exception("$stat is not available for {$this->_group_by->getLabel()}");
+                throw new \Exception("$stat is not available for {$this->_group_by->getName()}");
             }
 
             $this->_main_stat_field = $this->realm->getStatisticObject($stat);

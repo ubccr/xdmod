@@ -107,7 +107,7 @@ class Usage extends Common
                 $usageChart = array(
                         'hc_jsonstore' => array('title' => array('text' => '')),
                         'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
-                        'short_title' => $statsClass->getLabel(),
+                        'short_title' => $statsClass->getName(),
                         'random_id' => 'chart_' . mt_rand(),
                         'subnotes' => $usageSubnotes,
                         'group_description' => $usageGroupByObject->getHtmlNameAndDescription(),
@@ -258,7 +258,7 @@ class Usage extends Common
                         throw new \DataWarehouse\Query\Exceptions\BadRequestException(
                             json_encode(
                                 array(
-                                    'statistic' => $userStatisticObject->getLabel(),
+                                    'statistic' => $userStatisticObject->getName(),
                                     'instructions' =>  'Try again as timeseries',
                                     'description' => 'Aggregate View not supported'
                                 )
@@ -317,12 +317,12 @@ class Usage extends Common
                 // Generate the title now, as we can't use the Metric Explorer
                 // response's properties to easily generate the title.
                 if ($isSingleMetricQuery) {
-                    $specialFormatChartTitle = $realm->getStatisticObject($this->request['statistic'])->getLabel();
+                    $specialFormatChartTitle = $realm->getStatisticObject($this->request['statistic'])->getName();
                 } else {
                     $specialFormatChartTitle = $usageRealm;
                 }
                 if ($usageGroupBy !== 'none') {
-                    $specialFormatChartTitle .= ': by ' . $usageGroupByObject->getLabel();
+                    $specialFormatChartTitle .= ': by ' . $usageGroupByObject->getName();
                 }
                 $firstMeRequest['title'] = $specialFormatChartTitle;
 
@@ -653,13 +653,13 @@ class Usage extends Common
                 $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['title']['text'];
 
                 // Generate the title and short title of this chart.
-                $usageChartShortTitle = $meRequestMetric->getLabel();
+                $usageChartShortTitle = $meRequestMetric->getName();
                 if ($usageTitle !== null) {
                     $usageChartTitle = $usageTitle;
                 } else {
                     $usageChartTitle = $usageChartShortTitle;
                     if ($usageGroupBy !== 'none') {
-                        $usageChartTitle .= ': by ' . $usageGroupByObject->getLabel();
+                        $usageChartTitle .= ': by ' . $usageGroupByObject->getName();
                     }
                 }
 

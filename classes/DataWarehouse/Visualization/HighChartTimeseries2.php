@@ -176,7 +176,7 @@ class HighChartTimeseries2 extends HighChart2
             {
                 continue;
             }
-            $this->_chart['metrics'][$stat->getLabel(false)] = $stat->getHtmlDescription();
+            $this->_chart['metrics'][$stat->getName(false)] = $stat->getHtmlDescription();
 
             // determine axisId
             if($this->_shareYAxis)
@@ -259,7 +259,7 @@ class HighChartTimeseries2 extends HighChart2
                 // @refer ComplexDataset::init()
                 $dataSources[$query->getDataSource()] = 1;
                 $group_by = $query->addGroupBy($data_description->group_by);
-                $this->_chart['dimensions'][$group_by->getLabel()] = $group_by->getHtmlDescription();
+                $this->_chart['dimensions'][$group_by->getName()] = $group_by->getHtmlDescription();
                 $query->addStat($data_description->metric);
                 if (
                     $data_description->std_err == 1

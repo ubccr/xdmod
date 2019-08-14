@@ -67,7 +67,7 @@ foreach ($roles as $activeRole) {
                         'object' => $group_by_object,
                         'permittedStats' => $permittedStatistics);
                     $realms[$query_descripter_realm]['dimensions'][$groupByName] = array(
-                        'text' => $groupByName == 'none' ? 'None' : $group_by_object->getLabel(),
+                        'text' => $groupByName == 'none' ? 'None' : $group_by_object->getName(),
                         'info' => $group_by_object->getHtmlDescription()
                     );
 
@@ -80,7 +80,7 @@ foreach ($roles as $activeRole) {
                     foreach ($statsObjects as $realm_group_by_statistic => $statistic_object) {
                         $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
                             array(
-                                'text' => $statistic_object->getLabel(),
+                                'text' => $statistic_object->getName(),
                                 'info' => $statistic_object->getHtmlDescription(),
                                 'std_err' => in_array('sem_' . $realm_group_by_statistic, $permittedStatistics)
                             );

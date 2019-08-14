@@ -114,7 +114,7 @@ class SimpleDataset
         } else {
             $statistic = $this->_query->_stats[$column_name];
 
-            return $statistic->getLabel();
+            return $statistic->getName();
         }
     } // function getColumnLabel()
 
@@ -128,7 +128,7 @@ class SimpleDataset
         if ($is_dimension === true) {
             $group_by = $this->_query->_group_bys[$column_name];
 
-            return $group_by->getLabel();
+            return $group_by->getName();
         } else {
             $statistic = $this->_query->_stats[$column_name];
 
@@ -329,7 +329,7 @@ class SimpleDataset
             $headers[]
                 = $group_by->getId() === 'none'
                 ? 'Summary'
-                : $group_by->getLabel();
+                : $group_by->getName();
         }
 
         foreach ($stats as $stat) {
@@ -341,7 +341,7 @@ class SimpleDataset
                 $data_unit = '%';
             }
 
-            $column_header = $stat->getLabel();
+            $column_header = $stat->getName();
 
             if (
                 $column_header != $stat_unit
@@ -426,7 +426,7 @@ class SimpleDataset
                 $columns[] = array(
                     "header"    => $group_by->getId() === 'none'
                                  ? 'Source'
-                                 : $group_by->getLabel(),
+                                 : $group_by->getName(),
                     "width"     => 150,
                     "dataIndex" => $group_by->getId(),
                     "sortable"  => true,
@@ -444,7 +444,7 @@ class SimpleDataset
                     $data_unit = '%';
                 }
 
-                $column_header = $stat->getLabel();
+                $column_header = $stat->getName();
 
                 if (
                     $column_header != $stat_unit

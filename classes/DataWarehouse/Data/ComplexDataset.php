@@ -101,7 +101,7 @@ class ComplexDataset
 
             $dataSources[$query->getDataSource()] = 1;
             $group_by = $query->addGroupBy($data_description->group_by);
-            $dimensions[$group_by->getLabel()] = $group_by->getHtmlDescription();
+            $dimensions[$group_by->getName()] = $group_by->getHtmlDescription();
             $query->addStat($data_description->metric);
 
             if (

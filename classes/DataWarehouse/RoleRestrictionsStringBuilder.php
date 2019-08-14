@@ -43,7 +43,7 @@ class RoleRestrictionsStringBuilder
                 if (count($parameterValueNames) > 1) {
                     $parameterValueNamesString = "($parameterValueNamesString)";
                 }
-                $parameterLabel = $parameterGroupBy->getLabel();
+                $parameterLabel = $parameterGroupBy->getName();
                 $parameterStrings[$parameterLabel] = $parameterLabel . ' = ' . $parameterValueNamesString;
             }
             ksort($parameterStrings);

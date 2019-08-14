@@ -906,7 +906,7 @@ class MetricExplorer extends Common
                 continue;
             }
 
-            return $groupBy->getLabel();
+            return $groupBy->getName();
         }
 
         return null;

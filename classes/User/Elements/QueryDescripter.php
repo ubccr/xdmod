@@ -117,7 +117,7 @@ class QueryDescripter
 
     public function getGroupByLabel()
     {
-        return $this->getGroupByInstance()->getLabel();
+        return $this->getGroupByInstance()->getName();
     }
 
     public function getGroupByCategory()

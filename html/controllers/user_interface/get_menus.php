@@ -201,7 +201,7 @@ try {
                             $chartSettings = json_encode($chartSettingsArray);
                         }
                         $returnData[] = array(
-                            'text'                 => $statistic_object->getLabel(false),
+                            'text'                 => $statistic_object->getName(false),
                             'id'                   => 'statistic_'
                             . $realm_name
                             . '_'
@@ -210,7 +210,7 @@ try {
                             . $statName,
                             'statistic'            => $statName,
                             'group_by'             => $group_by_name,
-                            'group_by_label'       => $group_by->getLabel(),
+                            'group_by_label'       => $group_by->getName(),
                             'query_group'          => $query_group_name,
                             'category'             => $categoryName,
                             'realm'                => $realm_name,
