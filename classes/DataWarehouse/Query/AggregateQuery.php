@@ -52,9 +52,9 @@ class AggregateQuery extends Query implements iQuery
         $startDate,
         $endDate,
         $groupById = null,
-        Logger $logger = null,
         $statisticId = null,
-        array $parameters = array()
+        array $parameters = array(),
+        Logger $logger = null
     ) {
         // If there are statistics that should always be added for a specific Realm, specify them in
         // the Realm configuration and add them in the Query constructor. These don't appear to be
@@ -96,9 +96,9 @@ class AggregateQuery extends Query implements iQuery
             $startDate,
             $endDate,
             $groupById,
-            $logger,
             $statisticId,
-            $parameters
+            $parameters,
+            $logger
         );
     }
 

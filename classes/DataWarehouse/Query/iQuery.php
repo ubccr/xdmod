@@ -7,7 +7,6 @@
 
 namespace DataWarehouse\Query;
 
-use Datawarehouse\Realm\Realm;
 use Log as Logger;  // CCR implementation of PEAR logger
 
 interface iQuery
@@ -33,9 +32,9 @@ interface iQuery
         $startDate,
         $endDate,
         $groupById = null,
-        Logger $logger = null,
-        $statisticId = '',
-        array $parameters = array()
+        $statisticId = null,
+        array $parameters = array(),
+        Logger $logger = null
     );
 
     /**

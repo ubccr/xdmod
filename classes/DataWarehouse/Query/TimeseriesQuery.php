@@ -76,9 +76,9 @@ class TimeseriesQuery extends Query implements iQuery
         $startDate,
         $endDate,
         $groupById = null,
-        Logger $logger = null,
         $statisticId = null,
-        array $parameters = array()
+        array $parameters = array(),
+        Logger $logger = null
     ) {
         parent::__construct(
             $realmName,
@@ -86,9 +86,9 @@ class TimeseriesQuery extends Query implements iQuery
             $startDate,
             $endDate,
             $groupById,
-            $logger,
             $statisticId,
-            $parameters
+            $parameters,
+            $logger
         );
 
         $this->addGroupBy($aggregationUnitName);

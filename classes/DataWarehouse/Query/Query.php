@@ -103,9 +103,9 @@ class Query extends Loggable
         $startDate,
         $endDate,
         $groupById = null,
-        Logger $logger = null,
         $statisticId = null,
-        array $parameters = array()
+        array $parameters = array(),
+        Logger $logger = null
     ) {
         /* Original Aggregate query parameters:
          * $aggregation_unit_name,
@@ -222,11 +222,6 @@ class Query extends Loggable
     }
 
     protected $_main_stat_field;
-
-    public function getQueryType()
-    {
-        return 'aggregate';
-    }
 
     private $_tables = array();
     private $_fields = array();
