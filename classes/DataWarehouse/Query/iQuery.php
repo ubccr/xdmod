@@ -12,7 +12,7 @@ use Log as Logger;  // CCR implementation of PEAR logger
 interface iQuery
 {
     /**
-     * @param string $realmName The short identifier for the realm that we will be generating data for.
+     * @param string $realmId The short identifier for the realm that we will be generating data for.
      * @param string $aggregationUnitName The aggregation unit to use for this query (e.g., day,
      *   month, year, etc.)
      * @param string $startDate The start date for this query (e.g., '2019-01-01').
@@ -27,7 +27,7 @@ interface iQuery
      */
 
     public function __construct(
-        $realmName,
+        $realmId,
         $aggregationUnitName,
         $startDate,
         $endDate,

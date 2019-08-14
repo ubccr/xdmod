@@ -98,7 +98,7 @@ class Query extends Loggable
     private $leftJoins = array();
 
     public function __construct(
-        $realmName,
+        $realmId,
         $aggregationUnitName,
         $startDate,
         $endDate,
@@ -140,7 +140,7 @@ class Query extends Loggable
 
         $this->pdoparams = array();
         $this->pdoindex = 0;
-        $this->realm = \DataWarehouse\Realm\Realm::factory($realmName);
+        $this->realm = \DataWarehouse\Realm\Realm::factory($realmId);
 
         $this->aggregationUnitName = $aggregationUnitName;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(

@@ -71,7 +71,7 @@ class TimeseriesQuery extends Query implements iQuery
     }
 
     public function __construct(
-        $realmName,
+        $realmId,
         $aggregationUnitName,
         $startDate,
         $endDate,
@@ -81,7 +81,7 @@ class TimeseriesQuery extends Query implements iQuery
         Logger $logger = null
     ) {
         parent::__construct(
-            $realmName,
+            $realmId,
             $aggregationUnitName,
             $startDate,
             $endDate,

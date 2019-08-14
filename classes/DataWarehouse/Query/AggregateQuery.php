@@ -47,7 +47,7 @@ class AggregateQuery extends Query implements iQuery
      */
 
     public function __construct(
-        $realmName,
+        $realmId,
         $aggregationUnitName,
         $startDate,
         $endDate,
@@ -91,7 +91,7 @@ class AggregateQuery extends Query implements iQuery
         // $controlStats = array('started_job_count', 'running_job_count')
 
         parent::__construct(
-            $realmName,
+            $realmId,
             $aggregationUnitName,
             $startDate,
             $endDate,
