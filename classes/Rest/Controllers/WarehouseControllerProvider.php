@@ -907,7 +907,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $serviceProviderGroupBy = $jobsRealm->getGroupByObject($serviceProviderDimensionId);
             $serviceProviderDimensionName = $serviceProviderGroupBy->getName();
             $dimensionIdsToNames[$serviceProviderDimensionId] = $serviceProviderDimensionName;
-            $serviceProviders = $serviceProviderGroupBy->getPossibleValues();
+            $serviceProviders = $serviceProviderGroupBy->getAttributeValues();
             foreach ($serviceProviders as $serviceProvider) {
                 $filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']] = array(
                     'valueName' => $serviceProvider['short_name'],

@@ -981,7 +981,7 @@ class MetricExplorer extends Common
             }
 
             // Attempt to look up the value.
-            $possibleValues = $groupBy->getPossibleValues(array(
+            $possibleValues = $groupBy->getAttributeValues(array(
                 'id' => $value_id,
             ));
             foreach ($possibleValues as $possibleValue) {
