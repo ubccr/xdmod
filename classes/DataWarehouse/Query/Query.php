@@ -588,7 +588,7 @@ class Query extends Loggable
 
         $restriction_wheres = array();
         $dimension_group_by = $this->groupBy();
-        $dimension_group_by_name = $dimension_group_by->getName();
+        $dimension_group_by_id = $dimension_group_by->getId();
         $id_field_without_alias = preg_replace($as_clause_regex, '', $id_field);
         if ($this->restrictedByRoles) {
             foreach ($this->roleRestrictions as $restriction_dimension_name => $restriction_data) {
@@ -598,7 +598,7 @@ class Query extends Loggable
 
                 $restriction_wheres[] = "$id_field_without_alias IN (
                     SELECT
-                        $filter_table.$dimension_group_by_name
+                        $filter_table.$dimension_group_by_id
                     FROM
                         $filter_table
                     WHERE
@@ -609,7 +609,7 @@ class Query extends Loggable
             $filter_table = FilterListHelper::getFullTableName($this, $dimension_group_by);
             $restriction_wheres[] = "$id_field_without_alias IN (
                 SELECT
-                    $filter_table.$dimension_group_by_name
+                    $filter_table.$dimension_group_by_id
                 FROM
                     $filter_table
             )";
@@ -819,11 +819,21 @@ class Query extends Loggable
     public function getTitle($group_info_only = false)
     {
         $group_label = $this->groupBy()->getLabel();
-        return $group_info_only?
-                $group_label.' stats'.($this->groupBy()->getName()==='none'?
-                        ' Summary':
-                        ': by '.$this->groupBy()->getLabel()):
-             $this->_main_stat_field->getLabel().($this->groupBy()->getName()==='none'?'':': by '.$this->groupBy()->getLabel());
+
+        if ( $group_info_only ) {
+            return sprintf(
+                '%s stats%s%s',
+                $group_label,
+                ( $this->groupBy()->getId() === 'none' ? ' Summary' : ': by ' . $this->groupBy()->getLabel() )
+            );
+        } else {
+            return sprintf(
+                '%s%s',
+                $this->_main_stat_field->getLabel(),
+                ( $this->groupBy()->getId() === 'none' ? '' : ': by ' . $this->groupBy()->getLabel() )
+            );
+
+        }
     }
 
     public function getFilterParametersTitle()

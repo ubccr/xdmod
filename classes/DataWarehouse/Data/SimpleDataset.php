@@ -327,7 +327,7 @@ class SimpleDataset
 
         foreach ($group_bys as $group_by) {
             $headers[]
-                = $group_by->getName() === 'none'
+                = $group_by->getId() === 'none'
                 ? 'Summary'
                 : $group_by->getLabel();
         }
@@ -368,7 +368,7 @@ class SimpleDataset
         foreach ($this->getResults() as $result) {
             $record = array();
             foreach ($group_bys as $group_by) {
-                $record[$group_by->getName()]
+                $record[$group_by->getId()]
                     = $result[$group_by->getLongNameColumnName(true)];
             }
 
@@ -418,17 +418,17 @@ class SimpleDataset
 
             foreach ($group_bys as $group_by) {
                 $fields[] = array(
-                    "name"    => $group_by->getName(),
+                    "name"    => $group_by->getId(),
                     "type"    => 'string',
                     'sortDir' => 'DESC',
                 );
 
                 $columns[] = array(
-                    "header"    => $group_by->getName() === 'none'
+                    "header"    => $group_by->getId() === 'none'
                                  ? 'Source'
                                  : $group_by->getLabel(),
                     "width"     => 150,
-                    "dataIndex" => $group_by->getName(),
+                    "dataIndex" => $group_by->getId(),
                     "sortable"  => true,
                     'editable'  => false,
                     'locked'    => $has_stats,
@@ -479,7 +479,7 @@ class SimpleDataset
             foreach ($results as $result) {
                 $record = array();
                 foreach ($group_bys as $group_by) {
-                    $record[$group_by->getName()]
+                    $record[$group_by->getId()]
                         = $result[$group_by->getLongNameColumnName(true)];
                 }
 

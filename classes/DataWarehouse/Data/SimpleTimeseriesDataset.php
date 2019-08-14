@@ -610,14 +610,14 @@ class SimpleTimeseriesDataset extends SimpleDataset
         // Order the dimensions as requested.
         $queryGroupByName = 'none';
         foreach ($this->_query->getGroupBys() as $groupBy) {
-            $groupByName = $groupBy->getName();
+            $groupById = $groupBy->getId();
             if (
-                $groupByName !== 'day'
-                && $groupByName !== 'month'
-                && $groupByName !== 'quarter'
-                && $groupByName !== 'year'
+                $groupById !== 'day'
+                && $groupById !== 'month'
+                && $groupById !== 'quarter'
+                && $groupById !== 'year'
             ) {
-                $queryGroupByName = $groupByName;
+                $queryGroupById = $groupByName;
                 break;
             }
         }
