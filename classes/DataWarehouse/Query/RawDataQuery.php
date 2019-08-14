@@ -1,6 +1,7 @@
 <?php
-namespace DataWarehouse\Query\Jobs;
+namespace DataWarehouse\Query;
 
+use Log as Logger;  // CCR implementation of PEAR logger
 use \DataWarehouse\Query\Model\Table;
 use \DataWarehouse\Query\Model\TableField;
 use \DataWarehouse\Query\Model\WhereCondition;
@@ -11,29 +12,28 @@ use \DataWarehouse\Query\Model\Schema;
  * the set of fact table rows given the where conditions on the aggregate
  * table.
  */
-class RawData extends \DataWarehouse\Query\Query
+class RawDataQuery extends Query implements iQuery
 {
     public function __construct(
-        $aggregation_unit_name,
-        $start_date,
-        $end_date,
-        $group_by,
-        $stat = 'jl.jobid',
-        array $parameters = array()
+        $realmName,
+        $aggregationUnitName,
+        $startDate,
+        $endDate,
+        $groupById = null,
+        $statisticId = null,
+        array $parameters = array(),
+        Logger $logger = null
     ) {
         parent::__construct(
-            'Jobs',
-            'modw_aggregates',
-            'jobfact',
-            array(),
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
-            null,
-            null,
-            $parameters
+            $realmName,
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            $groupById,
+            $statisticId,
+            $parameters,
+            $logger
         );
-
 
         $dataTable = $this->getDataTable();
         $joblistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_joblist", "jl");
@@ -122,6 +122,11 @@ class RawData extends \DataWarehouse\Query\Query
         if ($limit !== null && $offset !== null) {
             $data_query .= " LIMIT $limit OFFSET $offset";
         }
+
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+        );
+
         return $data_query;
     }
 
@@ -145,6 +150,22 @@ class RawData extends \DataWarehouse\Query\Query
         if (count($groups) > 0) {
             $data_query .= " GROUP BY \n".implode(",\n", $groups);
         }
-        return $data_query . ') as a';
+
+        $data_query .= ') as a';
+
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+        );
+
+        return $data_query;
+    }
+
+    /**
+     * @see iQuery::getQueryType()
+     */
+
+    public function getQueryType()
+    {
+        return 'aggregate';
     }
 }
