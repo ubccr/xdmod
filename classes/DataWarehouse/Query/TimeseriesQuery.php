@@ -179,7 +179,7 @@ class TimeseriesQuery extends Query implements iQuery
                               order by id asc";
 
         $this->logger->debug(
-            sprintf("%s %s() Query date IDs\n%s", $this->getDebugName(), __FUNCTION__, $data_query)
+            sprintf("%s %s() Query date IDs\n%s", $this->getDebugName(), __FUNCTION__, $dateIdsQuery)
         );
 
         $dateIdsResults = DB::factory($this->_db_profile)->query($dateIdsQuery);
@@ -194,7 +194,6 @@ class TimeseriesQuery extends Query implements iQuery
         foreach ($dateIdsResults as $dateIdResult) {
             $period_id        = $dateIdResult['id'];
             $period_start_ts  = $dateIdResult["{$this->aggregationUnitName}_start_ts"];
-            $period_middle_ts = $dateIdResult["{$this->aggregationUnitName}_middle_ts"];
 
             $data_labels[]        = $period_start_ts;
             $empty_data[]         = 0;

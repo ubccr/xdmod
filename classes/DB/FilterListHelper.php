@@ -56,7 +56,7 @@ class FilterListHelper
         $realmName = $realmQuery->getRealmName();
         $tableName = "{$realmName}_";
         if (!$secondDimensionGiven || $groupByComparison === 0) {
-            $tableName .= $groupBy1Name;
+            $tableName .= $groupBy1Id;
         } else {
             if ($groupByComparison < 0) {
                 $firstId = $groupBy1Id;

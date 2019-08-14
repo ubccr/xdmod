@@ -304,7 +304,7 @@ class QueryDescripter
         $groupByObjects = $this->realm->getGroupByObjects();
 
         foreach ( $groupByObjects as $obj ) {
-            $parameters = array_merge(
+            $labels = array_merge(
                 $labels,
                 $obj->generateQueryParameterLabelsFromRequest($request)
             );

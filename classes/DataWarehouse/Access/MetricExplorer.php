@@ -22,8 +22,8 @@ class MetricExplorer extends Common
     public function get_data($user)
     {
         if(isset($this->request['config'])) {
-            $config = json_decode($this->request['config'],true);
-            $this->request = array_merge($config,$this->request);
+            $config = json_decode($this->request['config'], true);
+            $this->request = array_merge($config, $this->request);
         }
 
         $format = \DataWarehouse\ExportBuilder::getFormat(
@@ -712,16 +712,16 @@ class MetricExplorer extends Common
             // the dimension exists for this realm.
 
             if ( ! \DataWarehouse\Realm\Realm::groupByExists($dimension_id) ) {
-               if ( $realmsSpecified ) {
-                   // If the group by does not exist and realms were explicitly
-                   // specified, throw an exception. Otherwise, just continue to
-                   // the next realm.
-                   throw new UnknownGroupByException(
-                       sprintf("Dimension '%s' does not exist for realm '%s'.", $dimension_id, $realm)
-                   );
-               } else {
-                   continue;
-               }
+                if ( $realmsSpecified ) {
+                    // If the group by does not exist and realms were explicitly
+                    // specified, throw an exception. Otherwise, just continue to
+                    // the next realm.
+                    throw new UnknownGroupByException(
+                        sprintf("Dimension '%s' does not exist for realm '%s'.", $dimension_id, $realm)
+                    );
+                } else {
+                    continue;
+                }
             }
 
             // Get the user's roles that are authorized to view this data.
@@ -826,7 +826,8 @@ class MetricExplorer extends Common
                 try {
                     $schemaCheckResults = $db->query("SHOW SCHEMAS LIKE 'modw_filters'");
                     $missingSchema = empty($schemaCheckResults);
-                } catch (Exception $schemaCheckException) {}
+                } catch (Exception $schemaCheckException) {
+                }
 
                 if ($missingSchema) {
                     throw new MissingFilterListTableException();
@@ -841,10 +842,13 @@ class MetricExplorer extends Common
         if ($searchText !== null) {
             $searchComponents = preg_split('/\s+/', $searchText, null, PREG_SPLIT_NO_EMPTY);
             foreach ($searchComponents as $searchComponent) {
-                $dimensionValues = array_filter($dimensionValues, function($dimensionValue) use ($searchComponent) {
-                    return stripos($dimensionValue['short_name'], $searchComponent) !== false
-                        || stripos($dimensionValue['name'], $searchComponent) !== false;
-                });
+                $dimensionValues = array_filter(
+                    $dimensionValues,
+                    function($dimensionValue) use ($searchComponent) {
+                        return stripos($dimensionValue['short_name'], $searchComponent) !== false
+                            || stripos($dimensionValue['name'], $searchComponent) !== false;
+                    }
+                );
             }
         }
 
@@ -1040,7 +1044,4 @@ class MetricExplorer extends Common
         // Return the group by object.
         return $groupBy;
     }
-
 } // class MetricExplorer extends Common
-
-?>

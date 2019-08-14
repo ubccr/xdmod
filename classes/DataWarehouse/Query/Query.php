@@ -147,11 +147,11 @@ class Query extends Loggable
             $aggregationUnitName,
             $startDate,
             $endDate,
-            $realm->getAggregateTablePrefix()
+            $this->realm->getAggregateTablePrefix()
         );
         $this->setDataTable(
-            $realm->getAggregateTableSchema(),
-            sprintf('%s%s', $realm->getAggregateTablePrefix(false), $aggregationUnitName)
+            $this->realm->getAggregateTableSchema(),
+            sprintf('%s%s', $this->realm->getAggregateTablePrefix(false), $aggregationUnitName)
         );
 
         $this->setDuration($startDate, $endDate, $aggregationUnitName);

@@ -1075,7 +1075,7 @@ class Usage extends Common
 
         $meFilters = array();
         $realm = Realm::factory($usageRealm);
-        $realmGrouByNames = array_values($realm->getGroupByNames());
+        $realmGroupByNames = array_values($realm->getGroupByNames());
 
         // Extract the supported filter values from $usageRequest
         foreach ($usageRequest as $usageKey => $usageValue) {

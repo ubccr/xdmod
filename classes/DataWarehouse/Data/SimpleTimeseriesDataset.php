@@ -608,7 +608,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         sort($dates);
 
         // Order the dimensions as requested.
-        $queryGroupByName = 'none';
+        $queryGroupById = 'none';
         foreach ($this->_query->getGroupBys() as $groupBy) {
             $groupById = $groupBy->getId();
             if (
@@ -617,15 +617,15 @@ class SimpleTimeseriesDataset extends SimpleDataset
                 && $groupById !== 'quarter'
                 && $groupById !== 'year'
             ) {
-                $queryGroupById = $groupByName;
+                $queryGroupById = $groupById;
                 break;
             }
         }
-        if ($queryGroupByName !== 'none') {
+        if ($queryGroupById !== 'none') {
             $datasetIterator = $this->getColumnIteratorBy(
                 'met_' . reset($this->_query->getStats())->getAlias(),
                 $this->getColumnUniqueOrdered(
-                    'dim_' . $queryGroupByName,
+                    'dim_' . $queryGroupById,
                     null,
                     null,
                     $this->_query->getRealmName()
