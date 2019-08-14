@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "get-menus",
+    "type": "array",
+    "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type":"string"
+        },
+        "id": {
+          "type":"string"
+        },
+        "group_by": {
+          "type":"string"
+        },
+        "query_group": {
+          "type":"string"
+        },
+        "category": {
+          "type":"string"
+        },
+        "realm": {
+          "type":"string"
+        },
+        "defaultChartSettings": {
+          "type":"string"
+        },
+        "chartSettings": {
+          "type":"string"
+        },
+        "node_type": {
+          "type":"string"
+        },
+        "iconCls": {
+          "type":"string"
+        },
+        "description": {
+          "type":"string"
+        },
+        "leaf": {
+          "type":"boolean"
+        },
+        "disabled": {
+          "type":"boolean"
+        }
+      },
+      "required": [
+        "text",
+        "id",
+        "node_type",
+        "iconCls",
+        "leaf"
+      ]
+    }
+  }
