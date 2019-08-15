@@ -100,7 +100,7 @@ class BatchDataset extends Loggable implements Iterator
                 'hash_salt'
             );
         } catch (Exception $e) {
-            $this->logger->warn('data_warehouse_export hash_salt is not set');
+            $this->logger->warning('data_warehouse_export hash_salt is not set');
         }
 
         foreach ($this->docs as $key => $doc) {
