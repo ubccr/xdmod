@@ -45,11 +45,11 @@ class RealmManager
      */
     public function getRealms()
     {
-        // The "display" values from rawstatistics match those in
-        // moddb.realms.display`, but the "name" values do not.
+        // The "name" values from rawstatistics match those in
+        // moddb.realms.display`.
         $exportable = array_map(
             function ($realm) {
-                return $realm['display'];
+                return $realm['name'];
             },
             $this->config['realms']
         );
