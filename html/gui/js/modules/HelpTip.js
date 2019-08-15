@@ -25,7 +25,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
     closable: true,
     offset: [0, 0],
     anchorOffset: 0,
-    initComponent: function() {
+    initComponent: function () {
         // Adding a question make to the end of the supplied posiion makes sure
         // the tip will show up on the viewable area of the page.
         if (this.position[this.position.length - 1] !== '?') {
@@ -35,12 +35,12 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         Ext.ToolTip.superclass.initComponent.call(this);
     },
     listeners: {
-        hide: function() {
+        hide: function () {
             this.spotlight.hide();
             this.position = this.originalAnchorPosition;
         }
     },
-    onShow: function() {
+    onShow: function () {
         if (this.anchorEl !== undefined) {
             Ext.destroy(this.anchorEl);
         }
@@ -65,7 +65,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         Ext.ToolTip.superclass.onShow.call(this);
     },
-    syncAnchor: function() {
+    syncAnchor: function () {
         var anchorPos;
         var offset;
         switch (this.tipAnchorPos) {
@@ -104,7 +104,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         }
         this.anchorEl.alignTo(this.el, anchorPos + '-' + this.tipAnchorPos, offset);
     },
-    findScrollableParent: function(el) {
+    findScrollableParent: function (el) {
         var parentEl = el.findParentNode('', 1, true);
 
         if (parentEl !== null && parentEl !== undefined) {
@@ -113,9 +113,8 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         return null;
     },
-    getElementAnchorPositions: function(el, constrainOffset) {
+    getElementAnchorPositions: function (el, constrainOffset) {
         var elementRegion = el.getRegion();
-
         var horizontalCenter = Math.round(elementRegion.left + ((elementRegion.right - elementRegion.left) / 2))
         var verticalCenter = Math.round(elementRegion.top + ((elementRegion.bottom - elementRegion.top) / 2));
 
@@ -130,7 +129,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             elementRegion.right + ',' + verticalCenter
         ];
     },
-    getConstraintOffset: function(el) {
+    getConstraintOffset: function (el) {
         var nonConstrainedPosition = (this.position[this.position.length - 1] === '?') ? this.position.slice(0, -1) : this.position;
         var nonConstrainedXY = this.el.getAlignToXY(el, nonConstrainedPosition);
         var constrainedXY = this.el.getAlignToXY(el, this.position);
@@ -142,7 +141,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         return constrainOffset;
     },
-    setAnchorPosition: function(el) {
+    setAnchorPosition: function (el) {
         var anchorPositionMap = ['tl', 'tr', 'bl', 'br', 't', 'b', 'l', 'r'];
         var targetElementXY = this.getElementAnchorPositions(Ext.Element.get(el), 0);
         var tipXY = this.getElementAnchorPositions(this.el, this.getConstraintOffset(el));
@@ -181,7 +180,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             this.position = anchorPositionMatch[0] + '?';
         }
     },
-    getOffset: function() {
+    getOffset: function () {
         var p = this.position.split('-');
         var alignmentOffsets = {
             bl: [-10, -7],
@@ -200,7 +199,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         return offset;
     },
-    showBy: function(el) {
+    showBy: function (el) {
         if (!this.rendered) {
             this.render(Ext.getBody());
         }
@@ -227,11 +226,11 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
         this.syncAnchor();
     },
 
-    hideTip: function() {
+    hideTip: function () {
         this.hide();
     },
 
-    createSpotlight: function() {
+    createSpotlight: function () {
         if (this.spotlight === null) {
             this.spotlight = new Ext.ux.Spotlight({
                 easing: 'easeOut',
