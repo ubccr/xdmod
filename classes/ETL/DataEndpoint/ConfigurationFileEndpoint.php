@@ -24,6 +24,4 @@ class ConfigurationFileEndpoint extends JsonFile implements iStructuredFile, iCo
 
         return $retVal;
     }
-
-
 }

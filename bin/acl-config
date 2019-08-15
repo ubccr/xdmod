@@ -2222,7 +2222,7 @@ function updateResourceTypeRealms(iDatabase $db, $realm)
 
     $query = <<<SQL
 INSERT INTO moddb.resource_type_realms(resource_type_id, realm_id)
-SELECT 
+SELECT
     rt.id as resource_type_id,
     r.realm_id as realm_id
 FROM $stagingSchema.staging_resource_type_realms srtr
