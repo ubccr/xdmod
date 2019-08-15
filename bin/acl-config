@@ -186,6 +186,7 @@ function main()
         // Process the realms provided by this module, if any.
         if (property_exists($realms, 'realms')) {
             foreach ($realms->realms as $realm => $data) {
+
                 $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
                 $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
                 $results[$module]['realms'][$realm] = array(
@@ -711,25 +712,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
 
     $log->info("Processing Module: $module");
 
-    $db = DB::factory('database');
-    $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
-    $stmt->execute();
-    $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-
-    $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
-    $enabledRealms = array_unique(
-        array_reduce(
-            $enabledResourceTypes,
-            function ($carry, $item) use ($resourceTypes) {
-                if(!isset($resourceTypes['resource_types'][$item]['disabled'])) {
-                    $realms = $resourceTypes['resource_types'][$item]['realms'];
-                    return array_merge($carry, $realms);
-                }
-                return $carry;
-            },
-            array()
-        )
-    );
+    $enabledRealms = getEnabledRealms();
     $filteredRealms = array_diff(array_keys($realms), $enabledRealms);
     foreach($filteredRealms as $filteredRealm) {
         unset($realms[$filteredRealm]);
@@ -747,7 +730,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
     }
 
     if ($acls !== null) {
-        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
+        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls, $enabledRealms);
     } else {
         $log->info("No acl information for module $module skipping...");
     }
@@ -1044,7 +1027,7 @@ function processModules(iDatabase $db, array $modules)
  *                          db.
  * @return void
  **/
-function processAcls(iDatabase $db, $module, array $realms, array $acls)
+function processAcls(iDatabase $db, $module, array $realms, array $acls, array $enabledRealms)
 {
     global $dryRun, $log;
 
@@ -1063,7 +1046,7 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls)
 
         if (null !== $permittedModules && count($permittedModules) > 0) {
             $log->info("Processing tabs for Acl [$acl]");
-            processTabs($db, $module, $acl, $permittedModules);
+            processTabs($db, $module, $acl, $permittedModules, $enabledRealms);
         } elseif (null === $permittedModules) {
             $log->info("Acl $acl has no tabs to process.");
         }
@@ -1393,11 +1376,14 @@ SQL;
  *
  * @return void
  **/
-function processTabs(iDatabase $db, $module, $acl, array $tabs)
+function processTabs(iDatabase $db, $module, $acl, array $tabs, array $enabledRealms)
 {
     global $dryRun, $log;
 
     foreach ($tabs as $tab) {
+        if (isset($tab['supported_realms']) && count(array_intersect($enabledRealms, $tab['supported_realms'])) === 0){
+            continue;
+        }
         $name = $tab['name'];
         createTab($db, $module, $name);
         relateAclAndTab($db, $acl, $name);
@@ -2253,6 +2239,29 @@ SQL;
 
 
     $log->info("*** Resource Types -> Realm Associated!");
+}
+
+function getEnabledRealms()
+{
+    $db = DB::factory('database');
+    $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
+    $stmt->execute();
+    $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+    $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
+    return array_unique(
+        array_reduce(
+            $enabledResourceTypes,
+            function ($carry, $item) use ($resourceTypes) {
+                if(isset($resourceTypes['resource_types'][$item]) && !isset($resourceTypes['resource_types'][$item]['disabled'])) {
+                    $realms = $resourceTypes['resource_types'][$item]['realms'];
+                    return array_merge($carry, $realms);
+                }
+                return $carry;
+            },
+            array()
+        )
+    );
 }
 
 /**

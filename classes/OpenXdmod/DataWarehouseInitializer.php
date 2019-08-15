@@ -453,7 +453,7 @@ class DataWarehouseInitializer
             array_reduce(
                 $enabledResourceTypes,
                 function ($carry, $item) use ($resourceTypes) {
-                    if(!isset($resourceTypes['resource_types'][$item]['disabled'])) {
+                    if(isset($resourceTypes['resource_types'][$item]) && !isset($resourceTypes['resource_types'][$item]['disabled'])) {
                         $realms = $resourceTypes['resource_types'][$item]['realms'];
                         return array_merge($carry, $realms);
                     }

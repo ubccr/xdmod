@@ -379,8 +379,11 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
         $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
+        if (!is_file($expectedFileName)) {
+            @file_put_contents($expectedFileName, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
+            $this->markTestSkipped();
+        }
         $expected = file_get_contents($expectedFileName);
-
         $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);
 
         if (!$isPublicUser) {
