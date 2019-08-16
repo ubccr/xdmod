@@ -118,7 +118,7 @@ SQLF;
         if ($searchFragment !== null) {
             $whereClauses [] = <<<SQLF
 (
-  u.username  LIKE CONCAT('%', :filter ,'%') OR
+  u.username  LIKE CONCAT('%', :filter ,'%') OR 
   u.first_name LIKE CONCAT('%', :filter, '%') OR
   u.last_name LIKE CONCAT('%', :filter, '%')
 )
@@ -234,8 +234,8 @@ FROM Users u
     ) src
   ) co ON uo.organization_id = co.organization_id
   -- This left join retrieves all users that have a 'cd' record and the associated center id (value)
-  -- The reason we need this information is so that we can exclude all users who are center
-  -- directors for the center of the user running this query. ( Center Directors cannot demote
+  -- The reason we need this information is so that we can exclude all users who are center 
+  -- directors for the center of the user running this query. ( Center Directors cannot demote 
   -- other center directors ).
   LEFT JOIN
   (
@@ -339,8 +339,8 @@ SQL;
     public static function getCentersFor(XDUser $user)
     {
         $query = <<<SQL
-SELECT DISTINCT
-  uagbp.value
+SELECT DISTINCT 
+  uagbp.value 
 FROM moddb.user_acl_group_by_parameters uagbp
 WHERE uagbp.user_id = :user_id
 SQL;

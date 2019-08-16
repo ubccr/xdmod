@@ -44,17 +44,6 @@
         "userManualSectionName": "Report Generator"
     },
     {
-        "tab": "job_viewer",
-        "isDefault": false,
-        "title": "Job Viewer",
-        "pos": 5000,
-        "permitted_modules": null,
-        "javascriptClass": "XDMoD.Module.JobViewer",
-        "javascriptReference": "CCR.xdmod.ui.jobViewer",
-        "tooltip": "View detailed job-level metrics",
-        "userManualSectionName": "Job Viewer"
-    },
-    {
         "tab": "about_xdmod",
         "isDefault": false,
         "title": "About",
