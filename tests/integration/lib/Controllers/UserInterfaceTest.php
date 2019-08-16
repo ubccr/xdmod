@@ -67,10 +67,10 @@ class UserInterfaceTest extends BaseUserAdminTest
             $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
         }
         $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
-        
+
         # Check expected file
         $expected = array();
-        foreach($this->xdmod_realms as $realm) {
+        foreach(self::$XDMOD_REALMS as $realm) {
             $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, "output/$realm");
 
             # Create missing files/directories
@@ -99,7 +99,7 @@ class UserInterfaceTest extends BaseUserAdminTest
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
                 echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
             }
-            
+
             $expected = array_merge($expected, json_decode(file_get_contents($expectedOutputFile), true));
 
         }

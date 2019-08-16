@@ -27,6 +27,16 @@
 
     "ingest-resource-types": [
         {
+            "name": "ResourceTypesStagingTableManagement",
+            "description": "Manage the staging_resource_types table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "common/staging/resource-type.json"
+            ]
+        },
+        {
             "name": "ResourceTypesStagingUnknown",
             "description": "Populates the resource types table w/ the Unknown resource",
             "namespace": "ETL\\Maintenance",

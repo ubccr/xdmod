@@ -7,12 +7,13 @@ use CCR\Json;
 use PHPUnit_Framework_TestCase;
 use TestHarness\TestFiles;
 use JsonSchema\Validator;
-use Models\Services\Realms;
+use IntegrationTests\BaseTest;
+use Configuration\XdmodConfiguration;
 
 /**
  * Test the "shared_jobs" values in the database.
  */
-class SharedJobsTest extends PHPUnit_Framework_TestCase
+class SharedJobsTest extends BaseTest
 {
     private $db;
 
@@ -22,12 +23,6 @@ class SharedJobsTest extends PHPUnit_Framework_TestCase
     {
         $this->db = DB::factory('datawarehouse');
         $this->testFiles = new TestFiles(__DIR__ . '/../../../');
-        $xdmod_realms = array();
-        $rawRealms = Realms::getRealms();
-        foreach($rawRealms as $item) {
-            array_push($xdmod_realms,$item->name);
-        }
-        $this->xdmod_realms = $xdmod_realms;
     }
 
     public function testResourcesSharedJobsValues()
@@ -48,18 +43,18 @@ class SharedJobsTest extends PHPUnit_Framework_TestCase
         $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
 
         # Check expected file
-        foreach($this->xdmod_realms as $realm) {
+        foreach(self::$XDMOD_REALMS as $realm) {
             $expectedOutputFile = $this->testFiles->getFile('integration/database', 'shared_jobs', "output/$realm");
 
             # Create missing files/directories
             if(!is_file($expectedOutputFile)) {
                 $resourceConversions = $this->db->query('SELECT modw.resourcefact.code, modw.resourcetype.abbrev FROM modw.resourcefact
                 INNER JOIN modw.resourcetype ON modw.resourcefact.resourcetype_id=modw.resourcetype.id;');
-                $resource_types = Json::loadFile(__DIR__ . "/../../../../configuration/resource_types.json", false);
+                $resource_types = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
 
                 $usedTypes = array();
-                foreach($resource_types->resource_types as $id => $items) {
-                    foreach($items->realms as $rlm) {
+                foreach($resource_types['resource_types'] as $id => $items) {
+                    foreach($items['realms'] as $rlm) {
                         if ($rlm == ucfirst($realm)) {
                             array_push($usedTypes, $id);
                         }
@@ -74,7 +69,7 @@ class SharedJobsTest extends PHPUnit_Framework_TestCase
                         }
                     }
                 }
-                
+
                 $newFile = array();
                 foreach($usedCodes as $code) {
                     foreach($actual as $item) {
@@ -83,7 +78,7 @@ class SharedJobsTest extends PHPUnit_Framework_TestCase
                         }
                     }
                 }
-                
+
                 $filePath = dirname($expectedOutputFile);
                 if (!is_dir($filePath)){
                     mkdir($filePath);

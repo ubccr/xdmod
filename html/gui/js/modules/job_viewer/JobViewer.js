@@ -128,11 +128,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         this.on('role_selection_change', this.noOpt);
         this.on('duration_change', this.noOpt);
 
-        // Disable Job Viewer tab if there is no Jobs realm enabled
-        if (!XDMOD_REALMS.includes("jobs")) {
-            this.setDisabled(true);
-        }
-
         this.addEvents(
                 'record_loaded',
                 'data_account_loaded',

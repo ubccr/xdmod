@@ -7,7 +7,6 @@ ini_set('memory_limit', '2048M');
 use CCR\Json;
 use DataWarehouse\Access\MetricExplorer;
 use Models\Services\Acls;
-use Models\Services\Realms;
 use User\Elements\QueryDescripter;
 use XDUser;
 
@@ -26,7 +25,7 @@ User:            %s
     Role:        %s
 
     aRole::%s: %s
-*****************************************    
+*****************************************
     Acls::%s:  %s
 
 TXT;
@@ -55,16 +54,6 @@ TXT;
         '_disable_menu'
     );
 
-    protected function setUp()
-    {
-        $xdmod_realms = array();
-        $rawRealms = Realms::getRealms();
-        foreach($rawRealms as $item) {
-            array_push($xdmod_realms,$item->name);
-        }
-        $this->xdmod_realms = $xdmod_realms;
-    }
-
     /**
      * Tests that the Acls::hasDataAccess function operates the same as aRole::hasDataAccess. Also
      * checks that MetricExplorer::checkDataAccess returns what we would expect.
@@ -76,7 +65,7 @@ TXT;
     public function testHasDataAccess(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", $this->xdmod_realms)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $userName = $options['username'];
@@ -181,10 +170,10 @@ TXT;
     public function testGetQueryDescripters(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", $this->xdmod_realms)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        
+
         $username = $options['username'];
         $realm = $options['realm'];
         $groupBy = $options['group_by'];
@@ -324,7 +313,7 @@ TXT;
     public function testAclsGetDisabledMenus(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", $this->xdmod_realms)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $username = $options['username'];

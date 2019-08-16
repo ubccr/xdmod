@@ -103,6 +103,9 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
                     update_data: function (data) {
                         this.getComponent('chart').fireEvent('update_data', data);
                         this.getTool('help').dom.qtip = data.documentation;
+                    },
+                    resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
+                        this.getComponent('chart').fireEvent('resize', panel, adjWidth, adjHeight, rawWidth, rawHeight);
                     }
                 }
             };

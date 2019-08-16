@@ -18,7 +18,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
     public function testGetStatistics(array $options)
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", $this->xdmod_realms)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

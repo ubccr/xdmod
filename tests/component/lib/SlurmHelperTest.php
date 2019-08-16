@@ -13,7 +13,7 @@ use Models\Services\Realms;
  * @group XDMoD-shredder
  * Test the xdmod-slurm-helper executable.
  */
-class SlurmHelperTest extends \PHPUnit_Framework_TestCase
+class SlurmHelperTest extends BaseTest
 {
     /**
      * Database handle for `mod_shredder`.
@@ -49,15 +49,8 @@ class SlurmHelperTest extends \PHPUnit_Framework_TestCase
         $outputRegex,
         $exitStatus
     ) {
-        //Get current realms enabled
-        $xdmod_realms = array();
-        $rawRealms = Realms::getRealms();
-        foreach($rawRealms as $item) {
-            array_push($xdmod_realms,$item->name);
-        }
-        $this->xdmod_realms = $xdmod_realms;
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", $this->xdmod_realms)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

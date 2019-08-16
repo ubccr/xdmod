@@ -162,5 +162,7 @@ EOT
             $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
             $tpg->generateMainTable(DB::factory('datawarehouse'), new \DateTime('2000-01-01'), new \DateTime('2038-01-18'));
         }
+
+        passthru('acl-config');
     }
 }

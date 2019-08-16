@@ -86,14 +86,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             }
         ]
     },
-    isType: function(value, type) {
-        if (typeof type === 'string') {
-            return Object.prototype.toString.call(value) === type;
-        } else {
-            return Object.prototype.toString.call(value) ===
-                Object.prototype.toString.call(type);
-        }
-    },
 
     // The instance of Highcharts used as this components primary display.
     chart: null,
@@ -102,10 +94,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * This components 'constructor'.
      */
     initComponent: function() {
-
-        this.addEvents(
-            'update_data'
-        );
 
         this.colorSteps = Ext.apply(
                 this.colorSteps || [],
@@ -131,34 +119,12 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 
             this.chartOptions.chart.renderTo = this.id;
 
-            var seriesColor = this._getSeriesColor(this.chartOptions.series);
-            if (seriesColor !== null) {
-                this.chartOptions.chart.options.colors = [seriesColor];
-            }
-
             if (this.chart) {
                 this.chart.destroy();
             }
             this.chart = new Highcharts.Chart(this.chartOptions);
-            if (CCR.exists(this.chart.series)
-                && CCR.exists(this.chart.series[0])
-                && CCR.exists(this.chart.series.data)
-                && CCR.exists(this.chart.series[0].data[0])) {
-
-                this._updateTitle(this.chart.series[0].data[0]);
-            }
 
         }, // render
-
-        /**
-         * Event that is fired after this component has completely rendered to
-         * the page. We take care of attaching our resize listeners which are
-         * responsible for resizing the HighCharts instance whenever the window
-         * is resized here.
-         */
-        afterrender: function() {
-           this._attachResizeListener();
-        }, // afterrender
 
         /**
          * Attempt to execute an update of this components' data ensuring that
@@ -168,45 +134,16 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          *                              component.
          */
         update_data: function(data) {
-            var isType = this.isType;
-            if (isType(data, CCR.Types.Array) && data.length > 0) {
-                this._updateData(data[0]);
-            } else if (typeof data === 'number') {
-                this._updateData(data);
-            } else if (isType(data, CCR.Types.Object)) {
-                this._updateData(data);
-            } else {
-                console.log('Updating with I dont know...');
-            }
+            this._updateData(data);
             this.chart.redraw(true);
         }, // update_data
-
-        /**
-         * This even indicates that no data was retrieved for this chart and that
-         * the appropriate steps should be taken. This includes setting a default
-         * message to communicate to the users that no data was returned.
-         *
-         */
-        no_data: function() {
-            this.chart.setTitle({
-                text: 'No Data Returned',
-                align: "center",
-                verticalAlign: "middle",
-                style: {
-                    color: "#60606a",
-                    fontWeight: "bold",
-                    fontSize: '12px'
-                }
-            });
-        },
 
         /**
          * Attempt to reset this components' data ensuring that the HighCharts
          * instance updates correctly to reflect the change, if any.
          */
         reset: function() {
-            var exists = CCR.exists;
-            if (exists(this.chart)) {
+            if (this.chart) {
                 while (this.chart.series.length > 0) {
                     this.chart.series[0].remove(false);
                 }
@@ -238,24 +175,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     }, // listeners
 
     /**
-     * Attach a new listener to this components parent 'resize' event that will
-     * will fire a 'resize' event for this component.
-     *
-     * @private
-     */
-    _attachResizeListener: function() {
-        var self = this;
-        var target = this.ownerCt;
-        target.on('resize', function(panel,
-                                     adjWidth,
-                                     adjHeight,
-                                     rawWidth,
-                                     rawHeight) {
-            self.fireEvent('resize', self, adjWidth, adjHeight, rawWidth, rawHeight);
-        });
-    }, // _attachResizeListener
-
-    /**
      * Helper function that handles the work of updating this HighCharts
      * instance with new data.
      *
@@ -278,7 +197,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 
             color = this._getDataColor(data.value);
             nColor = new Highcharts.Color(color).brighten(brightFactor);
-            this.chart.options.chart.plotBackgroundColor = this._rgbToHex(nColor.rgba);
+            this.chart.options.chart.plotBackgroundColor = 'rgba(' + nColor.rgba + ')';
 
             this.chart.addSeries({
                 name: data.name ? data.name : '',
@@ -309,31 +228,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     }, // _updateTitle
 
     /**
-     * Both set the color for the provided series and return it if the requisite
-     * properties could be found.
-     *
-     * @param {Array} series
-     * @returns {*}
-     * @private
-     */
-    _getSeriesColor: function(series) {
-        var isType = this.isType;
-        if (isType(series,'[object Array]')) {
-            for (var i = 0; i < series.length; i++) {
-                var record = series[i];
-                if ( record && record.data &&
-                     isType(record.data,'[object Array]')) {
-                    var data = record.data[0];
-                    var color = this._getDataColor(data);
-                    record.color = color;
-                    return color;
-                }
-            }
-        }
-        return null;
-    }, // _getSeriesColor
-
-    /**
      * Attempt to retrieve the color step for the provided data point.
      *
      * @param {Number} data
@@ -356,39 +250,5 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             return steps[steps.length - 1];
         }
         return color;
-    }, // _getDataColor
-
-    /**
-     * Helper function that converts an array of 4 numbers (R,G,B,A) to a hex
-     * color string representation.
-     *
-     * @param {Array} data
-     * @returns {String}
-     * @private
-     */
-    _rgbToHex: function(data) {
-        var isType = CCR.isType;
-        var toHex = this._numberToHex;
-        return isType(data, CCR.Types.Array) && data.length === 4
-                ? "#" + toHex(data[0]) + toHex(data[1]) + toHex(data[2])
-                : '';
-
-    }, // _rgbToHex
-
-    /**
-     * Helper function that converts a number value to its equivalent
-     * hexadecimal value.
-     *
-     * @param {Number} value
-     * @returns {String}
-     * @private
-     */
-    _numberToHex: function(value) {
-        var isType = CCR.isType;
-        if (isType(value, CCR.Types.Number)) {
-            return ('0' + new Number(value).toString(16)).slice(-2);
-        }
-        return '00';
-    } // _numberToHex
-
+    }
 }); // XDMoD.Module.JobViewer.AnalyticChartPanel

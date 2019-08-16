@@ -163,7 +163,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         // If we are not supporting multiple service providers then pre-fetch
         // the default service provider.
         // TODO: Only works with jobs realm enabled
-        if (CCR.xdmod.features.multiple_service_providers === false && XDMOD_REALMS.includes("jobs")) {
+        if (CCR.xdmod.features.multiple_service_providers === false) {
             Ext.Ajax.request({
                 url: '../controllers/user_admin.php',
                 params: {

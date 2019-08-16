@@ -8,7 +8,8 @@ describe('Usage', function () {
         start: '2016-12-25',
         end: '2017-01-02'
     };
-    if (XDMOD_REALMS.includes("jobs")) { //TODO: Add tests for storage and cloud realms
+    // TODO: Add tests for storage and cloud realms
+    if (XDMOD_REALMS.includes('jobs')) {
         describe('(Center Director)', function xdmod() {
             it('Select "Usage" tab', function () {
                 usg.selectTab();

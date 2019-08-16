@@ -7,9 +7,9 @@ use Exception;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 use TestHarness\PeopleHelper;
-use Models\Services\Realms;
+use IntegrationTests\BaseTest;
 
-abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
+abstract class BaseUserAdminTest extends BaseTest
 {
 
     const MIN_USERS = 1;
@@ -59,15 +59,9 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $xdmod_realms = array();
         $this->helper = new XdmodTestHelper();
         $this->testFiles = new TestFiles(__DIR__ . '/../../../');
         $this->peopleHelper = new PeopleHelper();
-        $rawRealms = Realms::getRealms();
-        foreach($rawRealms as $item) {
-            array_push($xdmod_realms,$item->name);
-        }
-        $this->xdmod_realms = $xdmod_realms;
     }
 
     public function getTestFiles()

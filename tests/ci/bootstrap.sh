@@ -10,7 +10,7 @@ REF_DIR=/var/tmp/referencedata
 CONF_WH=/etc/xdmod
 
 if [ -z $XDMOD_REALMS ]; then
-    export XDMOD_REALMS=$(echo `mysql -Ne "SELECT name FROM moddb.realms"` | tr ' ' ',')
+    export XDMOD_REALMS=jobs,storage,cloud
 fi
 
 cp -r $REF_SOURCE /var/tmp/
@@ -29,13 +29,13 @@ then
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
 
-    #TODO: Replace diff files with hard fixes
+    # TODO: Replace diff files with hard fixes
     if [[ $XDMOD_REALMS != *"jobs"* ]];
     then
         # -- Remove jobs realm
         patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-usr-share-xdmod.diff
-        # -- Remove Job Viewer Listener (When Job Viewer tab has no data)
-        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/rm_job_viewer_listener.diff
+        # -- Patch Users.php
+        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-users.php.diff
     fi
 
     # Modify integration sso tests to work with cloud realm
@@ -103,14 +103,13 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
 
-    #TODO: Replace diff files with hard fixes
+    # TODO: Replace diff files with hard fixes
     if [[ $XDMOD_REALMS != *"jobs"* ]];
     then
         # -- Remove jobs realm
         patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-usr-share-xdmod.diff
-        #patch -up2 --directory=/etc/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-configuration.diff
-        # -- Remove Job Viewer Listener (When Job Viewer tab has no data)
-        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/rm_job_viewer_listener.diff
+        # -- Patch Users.php
+        patch -up1 --directory=/usr/share/xdmod < $SRCDIR/xdmod/tests/ci/diff/nojobs-users.php.diff
     fi
 
     # Modify integration sso tests to work with cloud realm

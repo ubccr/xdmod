@@ -72,8 +72,8 @@ describe('Metric Explorer', function metricExplorer() {
             browser.waitUntilAnimEnd(me.selectors.catalog.collapseButton);
         });
     });
-    //TODO: Add tests for storage and cloud realms
-    if (XDMOD_REALMS.includes("jobs")) {
+    // TODO: Add tests for storage and cloud realms
+    if (XDMOD_REALMS.includes('jobs')) {
         describe('Create and save a chart', function () {
             it('Add data via metric catalog', function () {
                 me.createNewChart(chartName, 'Timeseries', 'Line');
@@ -447,6 +447,6 @@ describe('Metric Explorer', function metricExplorer() {
         });
     });
     */
-    };
+    }
     logIn.logout();
 });

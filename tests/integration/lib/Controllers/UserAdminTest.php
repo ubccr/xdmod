@@ -282,17 +282,16 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function provideTestUsersQuickFilters()
     {
-        $this->setUp();
         # Handle special case where there's no PI data (Cloud Realm enabled only)
-        if ($this->xdmod_realms == array("cloud")) {
+        if (self::getRealms() == array("cloud")) {
             return Json::loadFile(
                 $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
             );
-        }
-        else
-             return Json::loadFile(
+        } else {
+            return Json::loadFile(
                 $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
             );
+        }
     }
 
     /**
@@ -326,7 +325,7 @@ class UserAdminTest extends BaseUserAdminTest
         $this->validateResponse($response);
 
         $actual = $response[0];
-        
+
         # Check spec file
         $schemaObject = JSON::loadFile(
             $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
@@ -339,10 +338,10 @@ class UserAdminTest extends BaseUserAdminTest
             $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
         }
         $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
-        
+
         # Check expected file
         $expected = array();
-        foreach($this->xdmod_realms as $realm) {
+        foreach(self::$XDMOD_REALMS as $realm) {
             $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
 
             if(!is_file($expectedOutputFile)) {
@@ -434,8 +433,11 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
         $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
+        if (!is_file($expectedFileName)) {
+            @file_put_contents($expectedFileName, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
+            $this->markTestSkipped();
+        }
         $expected = file_get_contents($expectedFileName);
-
         $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);
 
         if (!$isPublicUser) {

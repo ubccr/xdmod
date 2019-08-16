@@ -11,8 +11,6 @@ use Models\Services\Realms;
 
 @session_start();
 
-$XDMOD_REALMS=getenv("XDMOD_REALMS");
-
 // Fix to the 'trailing slash' issue -------------------------------
 
 // Get URL ------------
@@ -493,9 +491,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <script type="text/javascript" src="gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
-        <script>
-            var XDMOD_REALMS = "<?php echo $XDMOD_REALMS; ?>";
-        </script>
     <?php endif; ?>
     <?php endif; ?>
 

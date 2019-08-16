@@ -35,7 +35,8 @@
         "acls/tabs.json",
         "acls/acl_tabs.json",
         "acls/user_acl_group_by_parameters.json",
-        "acls/report_template_acls.json"
+        "acls/report_template_acls.json",
+        "common/hpcdb/resource-type-realms.json"
       ],
       "enabled": true
     },
