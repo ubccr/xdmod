@@ -10,6 +10,7 @@ use ETL\EtlOverseer;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 use FilterListBuilder;
+use Models\Services\Realms;
 use PDO;
 
 class DataWarehouseInitializer
@@ -443,25 +444,6 @@ class DataWarehouseInitializer
      */
     public function isRealmEnabled($realm)
     {
-        $db = DB::factory('database');
-        $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
-        $stmt->execute();
-        $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-
-        $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
-        $enabledRealms = array_unique(
-            array_reduce(
-                $enabledResourceTypes,
-                function ($carry, $item) use ($resourceTypes) {
-                    if(isset($resourceTypes['resource_types'][$item]) && !isset($resourceTypes['resource_types'][$item]['disabled'])) {
-                        $realms = $resourceTypes['resource_types'][$item]['realms'];
-                        return array_merge($carry, $realms);
-                    }
-                    return $carry;
-                },
-                array()
-            )
-        );
-        return in_array($realm, $enabledRealms);
+        return in_array($realm, Realms::getEnabledRealms());
     }
 }

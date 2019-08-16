@@ -30,14 +30,6 @@ then
     FLUSH PRIVILEGES;"
 
     # TODO: Replace diff files with hard fixes
-    if [[ $XDMOD_REALMS != *"jobs"* ]];
-    then
-        # -- Remove jobs realm
-        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-usr-share-xdmod.diff
-        # -- Patch Users.php
-        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-users.php.diff
-    fi
-
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
         if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
@@ -104,14 +96,6 @@ then
     ~/bin/services start
 
     # TODO: Replace diff files with hard fixes
-    if [[ $XDMOD_REALMS != *"jobs"* ]];
-    then
-        # -- Remove jobs realm
-        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-usr-share-xdmod.diff
-        # -- Patch Users.php
-        patch -up1 --directory=/usr/share/xdmod < $SRCDIR/xdmod/tests/ci/diff/nojobs-users.php.diff
-    fi
-
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
         if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
