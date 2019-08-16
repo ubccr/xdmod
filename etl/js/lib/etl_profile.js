@@ -713,6 +713,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                 var dtype = columns[c].dtype ? columns[c].dtype : (columns[c].queries ? "foreignkey" : "statistic" );
                 var group = columns[c].group ? columns[c].group : "misc";
                 var visibility = columns[c].visibility ? columns[c].visibility : 'public';
+                var batchExport = columns[c].batchExport ? columns[c].batchExport : false;
 
                 var name = extractandsubst(columns[c], "name");
                 if(!name) {
@@ -727,6 +728,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     documentation: columns[c].comments,
                     dtype: dtype,
                     visibility: visibility,
+                    batchExport: batchExport,
                     group: group
                 });
             }
