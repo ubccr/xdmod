@@ -7,6 +7,11 @@
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
 REF_DIR=/var/tmp/referencedata
+CONF_WH=/etc/xdmod
+
+if [ -z $XDMOD_REALMS ]; then
+    export XDMOD_REALMS=jobs,storage,cloud
+fi
 
 cp -r $REF_SOURCE /var/tmp/
 
@@ -23,28 +28,108 @@ then
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
-    expect $BASEDIR/scripts/xdmod-setup.tcl | col -b
+
+    # TODO: Replace diff files with hard fixes
+    if [[ $XDMOD_REALMS != *"jobs"* ]];
+    then
+        # -- Remove jobs realm
+        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-usr-share-xdmod.diff
+        # -- Patch Users.php
+        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-users.php.diff
+    fi
+
+    # Modify integration sso tests to work with cloud realm
+    if [ "$XDMOD_REALMS" = "cloud" ]; then
+        if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+            # -- Fix users searched in SSO test
+            patch -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+        fi
+    else
+        if patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+            # -- Reverse previous patch
+            patch -R -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+        fi
+    fi
+
+    expect $BASEDIR/scripts/xdmod-setup-start.tcl | col -b
+
+    if [[ "$XDMOD_REALMS" == *"jobs"* ]]; then
+        expect $BASEDIR/scripts/xdmod-setup-jobs.tcl | col -b
+    fi
+    if [[ "$XDMOD_REALMS" == *"storage"* ]]; then
+        expect $BASEDIR/scripts/xdmod-setup-storage.tcl | col -b
+    fi
+    if [[  "$XDMOD_REALMS" == *"cloud"* ]]; then
+        expect $BASEDIR/scripts/xdmod-setup-cloud.tcl | col -b
+    fi
+
+    expect $BASEDIR/scripts/xdmod-setup-finish.tcl | col -b
+
+
     xdmod-import-csv -t hierarchy -i $REF_DIR/hierarchy.csv
     xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
-    for resource in $REF_DIR/*.log; do
-        sudo -u xdmod xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
-    done
-    sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+
+    if [[ "$XDMOD_REALMS" == *"jobs"* ]];
+    then
+        for resource in $REF_DIR/*.log; do
+            sudo -u xdmod xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
+        done
+    fi
+
+    if [[ "$XDMOD_REALMS" == *"cloud"* ]];
+    then
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+    fi
     sudo -u xdmod xdmod-ingestor
-    for storage_dir in $REF_DIR/storage/*; do
-        sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
-    done
-    last_modified_start_date=$(date +'%F %T')
-    sudo -u xdmod xdmod-ingestor --datatype storage
-    sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
+
+    if [[ "$XDMOD_REALMS" == *"storage"* ]];
+    then
+        for storage_dir in $REF_DIR/storage/*; do
+            sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
+        done
+        last_modified_start_date=$(date +'%F %T')
+        sudo -u xdmod xdmod-ingestor --datatype storage
+        sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
+    fi
+
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
     php $BASEDIR/scripts/create_xdmod_users.php
+
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
-    expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
+
+    # TODO: Replace diff files with hard fixes
+    if [[ $XDMOD_REALMS != *"jobs"* ]];
+    then
+        # -- Remove jobs realm
+        patch -up1 --directory=/usr/share/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/nojobs-usr-share-xdmod.diff
+        # -- Patch Users.php
+        patch -up1 --directory=/usr/share/xdmod < $SRCDIR/xdmod/tests/ci/diff/nojobs-users.php.diff
+    fi
+
+    # Modify integration sso tests to work with cloud realm
+    if [ "$XDMOD_REALMS" = "cloud" ]; then
+        if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+            # -- Fix users searched in SSO test
+            patch -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+        fi
+    else
+        if patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+            # -- Reverse previous patch
+            patch -R -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+        fi
+    fi
+
+    if [[ $XDMOD_REALMS == *"jobs"* ]];
+    then
+        expect $BASEDIR/scripts/xdmod-upgrade-jobs.tcl | col -b
+    else
+        expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
+    fi
+
 fi

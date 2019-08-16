@@ -629,6 +629,11 @@ class XDUserTest extends BaseTest
      */
     public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $expected = JSON::loadFile($this->getTestFiles()->getFile('acls', $expectedFile));
         $user = XDUser::getUserByUserName($userName);
 
@@ -780,6 +785,11 @@ class XDUserTest extends BaseTest
      */
     public function testIsCenterDirectorOfOrganizationValidCenter($userName, $organizationId, $expected)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->isCenterDirectorOfOrganization($organizationId);
         $this->assertEquals($expected, $actual);
