@@ -1,0 +1,30 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/resource-type-realms.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_type_id": "rt.id",
+            "realm_id": "r.realm_id"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_type_realms",
+                "alias": "srtr"
+            },
+            {
+                "schema": "modw",
+                "name": "resourcetype",
+                "alias": "rt",
+                "on": "rt.abbrev = srtr.abbrev"
+            },
+            {
+                "schema": "moddb",
+                "name": "realms",
+                "alias": "r",
+                "on": "r.display = srtr.realm"
+            }
+        ]
+    }
+}

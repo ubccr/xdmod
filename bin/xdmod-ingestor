@@ -274,6 +274,8 @@ function main()
                     $dwi->ingestStorageData();
                 }
             }
+
+            passthru('acl-config');
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Ingestion failed: ' . $e->getMessage(),
