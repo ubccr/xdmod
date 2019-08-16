@@ -478,7 +478,7 @@ SQL;
     if (array_key_exists(DEFAULT_MODULE_NAME, $results)) {
         $xdmod = $results[DEFAULT_MODULE_NAME];
         unset($results[DEFAULT_MODULE_NAME]);
-        processResult($db, DEFAULT_MODULE_NAME, $xdmod, $modules, true);
+        processResult($db, DEFAULT_MODULE_NAME, $xdmod, $modules);
     }
 
     foreach ($results as $module => $moduleData) {
