@@ -9,6 +9,8 @@ use CCR\DB;
 use CCR\Json;
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;
+use OpenXdmod\Setup\WarehouseExportSetup;
+use xd_utilities;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
@@ -92,11 +94,21 @@ EOT
             array('on', 'off')
         );
 
-        $this->writePortalSettingsFile(array(
-            'data_warehouse_export_export_directory' => '/var/spool/xdmod/export',
-            'data_warehouse_export_retention_duration_days' => 30,
-            'data_warehouse_export_hash_salt' => bin2hex(random_bytes(32)),
-            'features_novice_user' => $novice_user
+        $console->displayMessage(<<<"EOT"
+This release of XDMoD includes support for batch exporting of data from the
+data warehouse.
+EOT
+        );
+        $console->displayBlankLine();
+		$exportSetup = new OpenXdmod\Setup\WarehouseExportSetup($console);
+        $exportSettings = $exportSetup->promptForSettings([
+            'data_warehouse_export_export_directory' => xd_utilities\getConfiguration('data_warehouse_export', 'export_directory'),
+            'data_warehouse_export_retention_duration_days' => xd_utilities\getConfiguration('data_warehouse_export', 'retention_duration_days')
+        ]);
+
+        $this->writePortalSettingsFile(array_merge(
+            ['features_novice_user' => $novice_user],
+            $exportSettings
         ));
     }
 

@@ -31,6 +31,11 @@
             "handler": "HierarchySetup"
         },
         {
+            "position": 65,
+            "label": "Data Warehouse Batch Export",
+            "handler": "WarehouseExportSetup"
+        },
+        {
             "position": 70,
             "label": "Automatically Check for Updates",
             "handler": "UpdateCheckSetup"

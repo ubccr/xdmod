@@ -149,10 +149,6 @@ EOT
             array('on', 'off')
         );
 
-        if (empty($settings['data_warehouse_export_hash_salt'])) {
-            $settings['data_warehouse_export_hash_salt'] = bin2hex(random_bytes(32));
-        }
-
         $this->saveIniConfig($settings, 'portal_settings');
     }
 }
