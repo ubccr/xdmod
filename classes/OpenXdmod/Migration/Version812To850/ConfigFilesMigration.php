@@ -100,7 +100,7 @@ data warehouse.
 EOT
         );
         $console->displayBlankLine();
-		$exportSetup = new OpenXdmod\Setup\WarehouseExportSetup($console);
+        $exportSetup = new OpenXdmod\Setup\WarehouseExportSetup($console);
         $exportSettings = $exportSetup->promptForSettings([
             'data_warehouse_export_export_directory' => xd_utilities\getConfiguration('data_warehouse_export', 'export_directory'),
             'data_warehouse_export_retention_duration_days' => xd_utilities\getConfiguration('data_warehouse_export', 'retention_duration_days')
