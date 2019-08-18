@@ -1,0 +1,15 @@
+diff --git a/classes/Models/Services/Users.php b/classes/Models/Services/Users.php
+index 6c3fd649..9d665494 100644
+--- a/classes/Models/Services/Users.php
++++ b/classes/Models/Services/Users.php
+@@ -390,6 +390,10 @@ SQL;
+     {
+         $currentCenters = array_pop(array_values(Users::getCentersFor($user)));
+
++        if (empty($currentCenters)) {
++            $currentCenters = array($user->getOrganizationID());
++        }
++
+         // If this user has no more center staff centers then remove the center
+         // staff acl.
+         if (count(array_diff(array_values($currentCenters), array((string)$centerId))) === 0) {

@@ -25,7 +25,7 @@ User:            %s
     Role:        %s
 
     aRole::%s: %s
-*****************************************    
+*****************************************
     Acls::%s:  %s
 
 TXT;
@@ -64,6 +64,10 @@ TXT;
      */
     public function testHasDataAccess(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
         $userName = $options['username'];
 
         $realm = !empty($options['realm']) ? $options['realm'] : null;
@@ -165,6 +169,11 @@ TXT;
      */
     public function testGetQueryDescripters(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $username = $options['username'];
         $realm = $options['realm'];
         $groupBy = $options['group_by'];
@@ -303,6 +312,10 @@ TXT;
      */
     public function testAclsGetDisabledMenus(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
         $username = $options['username'];
         $realm = $options['realm'];
 

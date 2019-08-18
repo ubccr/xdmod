@@ -1,11 +1,12 @@
 #!/bin/sh
 set -e
 
-echo "Integration tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
+echo "Integration tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 
 UATCU=""
 UATXCU=""
 
+# Set output directory
 if [ "$1" = "--junit-output-dir" ];
 then
     UATCU="--log-junit $2/xdmod-int-uat-cu.xml"

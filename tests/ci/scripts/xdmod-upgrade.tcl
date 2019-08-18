@@ -26,7 +26,7 @@ provideInput {Export Directory:} {}
 provideInput {Export File Retention Duration (Days):} {31}
 expect {
     -re "\nDo you want to run aggregation now.*\\\]" {
-        send yes\n
+        send no\n
     }
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1

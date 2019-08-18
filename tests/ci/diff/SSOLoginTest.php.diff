@@ -1,0 +1,203 @@
+diff --git a/tests/integration/lib/Controllers/SSOLoginTest.php b/tests/integration/lib/Controllers/SSOLoginTest.php
+index ba560083..836baa1a 100644
+--- a/tests/integration/lib/Controllers/SSOLoginTest.php
++++ b/tests/integration/lib/Controllers/SSOLoginTest.php
+@@ -318,16 +318,16 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'UB CCR',
+-                    'firstName' => 'Alpine',
+-                    'lastName' => 'Swift',
+-                    'email' => 'alpsw@example.com'
++                    'firstName' => 'Calandra',
++                    'lastName' => 'Lark',
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -361,7 +361,7 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'UB CCR',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+@@ -453,7 +453,7 @@ class SSOLoginTest extends BaseUserAdminTest
+                     'orgId' => 'Screwdriver',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+-                    'email' => 'alpsw@example.com'
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+@@ -497,7 +497,7 @@ class SSOLoginTest extends BaseUserAdminTest
+                     'orgId' => 'Screwdriver',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+-                    'email' => 'alpsw@example.com'
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+@@ -537,16 +537,16 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+-                    'email' => 'alpsw@example.com'
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+                     'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -915,16 +915,16 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+-                    'firstName' => 'Alpine',
+-                    'lastName' => 'Swift',
+-                    'email' => 'alpsw@example.com'
++                    'firstName' => 'Calandra',
++                    'lastName' => 'Lark',
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -936,7 +936,7 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+@@ -944,8 +944,8 @@ class SSOLoginTest extends BaseUserAdminTest
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -958,16 +958,16 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+-                    'firstName' => 'Alpine',
+-                    'lastName' => 'Swift',
+-                    'email' => 'alpsw@example.com'
++                    'firstName' => 'Calandra',
++                    'lastName' => 'Lark',
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -981,7 +981,7 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+@@ -989,8 +989,8 @@ class SSOLoginTest extends BaseUserAdminTest
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -1004,16 +1004,16 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+-                    'firstName' => 'Alpine',
+-                    'lastName' => 'Swift',
+-                    'email' => 'alpsw@example.com'
++                    'firstName' => 'Calandra',
++                    'lastName' => 'Lark',
++                    'email' => 'calla@example.com'
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
+@@ -1026,7 +1026,7 @@ class SSOLoginTest extends BaseUserAdminTest
+             array(
+                 array(
+                     'itname' => 'testy',
+-                    'system_username' => 'alpsw',
++                    'system_username' => 'calla',
+                     'orgId' => 'Screwdriver',
+                     'firstName' => 'Testy',
+                     'lastName' => 'McTesterson',
+@@ -1034,8 +1034,8 @@ class SSOLoginTest extends BaseUserAdminTest
+                 ),
+                 array(
+                     'CCR.xdmod.ui.username' => "'testy'",
+-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
+-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
++                    'CCR.xdmod.ui.fullName' => '"Calandra Lark"',
++                    'CCR.xdmod.ui.mappedPName' => '"Lark, Calandra"',
+                     'CCR.xdmod.org_name' => '"Screwdriver"'
+                 ),
+                 array(
