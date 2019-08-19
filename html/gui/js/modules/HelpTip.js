@@ -115,7 +115,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
     },
     getElementAnchorPositions: function (el, constrainOffset) {
         var elementRegion = el.getRegion();
-        var horizontalCenter = Math.round(elementRegion.left + ((elementRegion.right - elementRegion.left) / 2))
+        var horizontalCenter = Math.round(elementRegion.left + ((elementRegion.right - elementRegion.left) / 2));
         var verticalCenter = Math.round(elementRegion.top + ((elementRegion.bottom - elementRegion.top) / 2));
 
         return [
@@ -148,32 +148,32 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         // Find a [x,y] that matches between the possible anchor points for the
         // HelpTip and the target element it is being anchored to
-        var anchorPositionMatch = targetElementXY.map(function(value, key) {
+        var anchorPositionMatch = targetElementXY.map( function(value, key) {
             return (tipXY.includes(value)) ? anchorPositionMap[tipXY.indexOf(value)] + '-' + anchorPositionMap[key] : false;
-        }).filter(function(el) {
-            return el !== false;
+        }).filter( function(element) {
+            return element !== false;
         });
 
         // If no matching [x,y] pair is found in the statement above look for a matching
         // point between the two elements and use that point as an anchor position
-        if (anchorPositionMatch.length == 0) {
+        if (anchorPositionMatch.length === 0) {
             var tipElementRegions = this.el.getRegion();
             var targetElementRegions = Ext.Element.get(el).getRegion();
-            if (tipElementRegions.top == targetElementRegions.top) {
+            if (tipElementRegions.top === targetElementRegions.top) {
                 this.position = 't-t?';
-            } else if (tipElementRegions.top == targetElementRegions.bottom) {
+            } else if (tipElementRegions.top === targetElementRegions.bottom) {
                 this.position = 't-b?';
-            } else if (tipElementRegions.bottom == targetElementRegions.top) {
+            } else if (tipElementRegions.bottom === targetElementRegions.top) {
                 this.position = 'b-t?';
-            } else if (tipElementRegions.bottom == targetElementRegions.bottom) {
+            } else if (tipElementRegions.bottom === targetElementRegions.bottom) {
                 this.position = 'b-b?';
-            } else if (tipElementRegions.right == targetElementRegions.right) {
+            } else if (tipElementRegions.right === targetElementRegions.right) {
                 this.position = 'r-r?';
-            } else if (tipElementRegions.right == targetElementRegions.left) {
+            } else if (tipElementRegions.right === targetElementRegions.left) {
                 this.position = 'r-l?';
-            } else if (tipElementRegions.left == targetElementRegions.left) {
+            } else if (tipElementRegions.left === targetElementRegions.left) {
                 this.position = 'l-l?';
-            } else if (tipElementRegions.left == targetElementRegions.right) {
+            } else if (tipElementRegions.left === targetElementRegions.right) {
                 this.position = 'l-r?';
             }
         } else {
@@ -193,7 +193,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             r: [-7, 0]
         };
 
-        var offset = alignmentOffsets[p[0]].map(function(v, k) {
+        var offset = alignmentOffsets[p[0]].map( function(v, k) {
             return v + this.offset[k];
         }, this);
 
@@ -215,10 +215,15 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         // Help tips are aligned to the specified target element relative to specific
         // anchor points. In order to correctly anchor the help tip, the help tip must
-        // has a height and width which it does not have until iti si rendered on the
+        // have a height and width which it does not have until it is rendered on the
         // page. The help tip is first shown off the screen with the statement below so
-        // it has a height and width and then the showAt() function is called again
-        // to show it in the correct location relative to its target element.
+        // it has a height and width. The Help Tip is shown a second time without any
+        // offsets so that we can see what position the Help Tip aligns to in case it
+        // is shown in a different location than specified because the original location
+        // would have show the tip outside of the viewing area. After that we are able
+        // to get the correct offsets to for the Help tip and then the showAt() function
+        // is called again to show the tip in the correct location relative to its
+        // target element.
         this.showAt([-1000, -1000]);
         this.showAt(this.el.getAlignToXY(el, this.position));
         this.setAnchorPosition(el);
