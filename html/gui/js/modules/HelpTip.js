@@ -148,9 +148,9 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
 
         // Find a [x,y] that matches between the possible anchor points for the
         // HelpTip and the target element it is being anchored to
-        var anchorPositionMatch = targetElementXY.map( function(value, key) {
+        var anchorPositionMatch = targetElementXY.map(function (value, key) {
             return (tipXY.includes(value)) ? anchorPositionMap[tipXY.indexOf(value)] + '-' + anchorPositionMap[key] : false;
-        }).filter( function(element) {
+        }).filter(function (element) {
             return element !== false;
         });
 
@@ -193,7 +193,7 @@ Ext.ux.HelpTip = Ext.extend(Ext.Tip, {
             r: [-7, 0]
         };
 
-        var offset = alignmentOffsets[p[0]].map( function(v, k) {
+        var offset = alignmentOffsets[p[0]].map(function (v, k) {
             return v + this.offset[k];
         }, this);
 
