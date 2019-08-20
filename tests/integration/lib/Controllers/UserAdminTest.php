@@ -367,7 +367,7 @@ class UserAdminTest extends BaseUserAdminTest
                     mkdir($filePath);
                 }
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
-                $this->markTestSkipped();;
+                $this->markTestSkipped();
             }
 
             $resource = JSON::loadFile($expectedOutputFile);
