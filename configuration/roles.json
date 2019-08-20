@@ -31,6 +31,15 @@
                     "tooltip": ""
                 },
                 {
+                    "name": "data_export",
+                    "title": "Data Export",
+                    "position": 500,
+                    "javascriptClass": "XDMoD.Module.DataExport",
+                    "javascriptReference": "CCR.xdmod.ui.dataExport",
+                    "userManualSectionName": "Data Export",
+                    "tooltip": "Data Warehouse Batch Export"
+                },
+                {
                     "name": "report_generator",
                     "title": "Report Generator",
                     "position": 1000,
@@ -56,15 +65,6 @@
                     "javascriptClass": "XDMoD.Module.About",
                     "javascriptReference": "CCR.xdmod.ui.aboutXD",
                     "userManualSectionName": "About",
-                    "tooltip": ""
-                },
-                {
-                    "name": "data_export",
-                    "title": "Data Export",
-                    "position": 400,
-                    "javascriptClass": "XDMoD.Module.DataExport",
-                    "javascriptReference": "CCR.xdmod.ui.dataExport",
-                    "userManualSectionName": "Data Export",
                     "tooltip": ""
                 }
             ],
