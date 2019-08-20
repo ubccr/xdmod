@@ -18,6 +18,7 @@ use CCR\Json;
 
 use Configuration\Configuration;
 use ETL\Utilities;
+use Models\Services\Realms;
 use User\Roles;
 
 const SCHEMA = 'moddb';
@@ -712,7 +713,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
 
     $log->info("Processing Module: $module");
 
-    $enabledRealms = getEnabledRealms();
+    $enabledRealms = Realms::getEnabledRealms();
     $filteredRealms = array_diff(array_keys($realms), $enabledRealms);
     foreach($filteredRealms as $filteredRealm) {
         unset($realms[$filteredRealm]);
@@ -2239,29 +2240,6 @@ SQL;
 
 
     $log->info("*** Resource Types -> Realm Associated!");
-}
-
-function getEnabledRealms()
-{
-    $db = DB::factory('database');
-    $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
-    $stmt->execute();
-    $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-
-    $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
-    return array_unique(
-        array_reduce(
-            $enabledResourceTypes,
-            function ($carry, $item) use ($resourceTypes) {
-                if(isset($resourceTypes['resource_types'][$item]) && !isset($resourceTypes['resource_types'][$item]['disabled'])) {
-                    $realms = $resourceTypes['resource_types'][$item]['realms'];
-                    return array_merge($carry, $realms);
-                }
-                return $carry;
-            },
-            array()
-        )
-    );
 }
 
 /**

@@ -48,25 +48,28 @@ try {
         }
     }
 
-    $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
+    if (in_array('Jobs', \Models\Services\Realms::getEnabledRealms())) {
+        $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
 
-    $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
+        $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
 
-    // This try/catch block is intended to replace the "Base table or
-    // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
-    // doesn't exist" error message with something more informative for
-    // Open XDMoD users.
+        // This try/catch block is intended to replace the "Base table or
+        // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
+        // doesn't exist" error message with something more informative for
+        // Open XDMoD users.
 
-    try {
-        $result = $query->execute();
-    } catch (PDOException $e) {
-        if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
-            $msg = 'Aggregate table not found, have you ingested your data?';
-            throw new Exception($msg);
-        } else {
-            throw $e;
+        try {
+            $result = $query->execute();
+        } catch (PDOException $e) {
+            if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
+                $msg = 'Aggregate table not found, have you ingested your data?';
+                throw new Exception($msg);
+            } else {
+                throw $e;
+            }
         }
     }
+
     $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($logged_in_user);
 
     $rolesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);

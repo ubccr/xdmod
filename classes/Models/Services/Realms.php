@@ -2,6 +2,7 @@
 
 use CCR\DB;
 use Models\Realm;
+use PDO;
 
 class Realms
 {
@@ -48,5 +49,34 @@ SQL;
             $carry[] = $item['realm'];
             return $carry;
         }, array());
+    }
+
+    /**
+     * Retrieve the Realms that are currently considered "enabled" for the current installation.
+     *
+     * @return array containing the realm `abbrev` values.
+     * @throws \Exception if there is a problem connecting to or executing a query against the `database` db.
+     */
+    public static function getEnabledRealms()
+    {
+        $db = DB::factory('database');
+        $stmt = $db->prepare('SELECT DISTINCT rt.abbrev FROM modw.resourcetype rt JOIN modw.resourcefact rf ON rt.id = rf.resourcetype_id;');
+        $stmt->execute();
+        $enabledResourceTypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
+        return array_unique(
+            array_reduce(
+                $enabledResourceTypes,
+                function ($carry, $item) use ($resourceTypes) {
+                    if(isset($resourceTypes['resource_types'][$item]) && !isset($resourceTypes['resource_types'][$item]['disabled'])) {
+                        $realms = $resourceTypes['resource_types'][$item]['realms'];
+                        return array_merge($carry, $realms);
+                    }
+                    return $carry;
+                },
+                array()
+            )
+        );
     }
 }
