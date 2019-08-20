@@ -2,6 +2,7 @@
 
 use CCR\DB;
 use Models\Realm;
+use PDO;
 
 class Realms
 {
