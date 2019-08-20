@@ -23,7 +23,7 @@
             },
             {
                 "name": "username",
-                "type": "varchar(30)",
+                "type": "varchar(255)",
                 "charset": "utf8",
                 "collation": "utf8_unicode_ci",
                 "nullable": false

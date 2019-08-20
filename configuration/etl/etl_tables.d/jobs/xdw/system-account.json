@@ -30,7 +30,7 @@
             },
             {
                 "name": "username",
-                "type": "varchar(30)",
+                "type": "varchar(255)",
                 "nullable": false,
                 "comment": "The username to log on to the resource."
             },
