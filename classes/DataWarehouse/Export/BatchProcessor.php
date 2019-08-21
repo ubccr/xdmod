@@ -235,7 +235,7 @@ class BatchProcessor extends Loggable
                     'start_date' => $request['start_date'],
                     'end_date' => $request['end_date']
                 ],
-                'accounting'
+                'batch'
             );
             $dataSet = new BatchDataset($query, $user, $this->logger);
             return $dataSet;

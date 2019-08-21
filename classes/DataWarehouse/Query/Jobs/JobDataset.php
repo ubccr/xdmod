@@ -96,7 +96,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             throw new Exception('invalid query parameters');
         }
 
-        if ($stat == "accounting") {
+        if ($stat == "accounting" || $stat == 'batch') {
             foreach ($config['fields'] as $field) {
                 // Replace hierarchy constants.
                 foreach (['name', 'documentation'] as $key) {
