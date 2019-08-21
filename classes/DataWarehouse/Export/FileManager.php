@@ -214,10 +214,10 @@ class FileManager extends Loggable
             }
 
             // Override the name of the temporary data file with the proper
-            // name that will, be used in the archive file.
+            // name that will be used in the archive file.
             $localName = $this->getDataFileName($request);
 
-            if ($zip->addFile($dataFile, $localName) === false) {
+            if (!$zip->addFile($dataFile, $localName)) {
                 throw new Exception(sprintf(
                     'Failed to add file "%s" to zip file "%s"',
                     $dataFile,
@@ -225,7 +225,12 @@ class FileManager extends Loggable
                 ));
             }
 
-            $zip->close();
+            if (!$zip->close()) {
+                throw new Exception(sprintf(
+                    'Failed to close zip file "%s"',
+                    $zipFile
+                ));
+            }
 
             return $zipFile;
         } catch (Exception $e) {
