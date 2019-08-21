@@ -55,6 +55,20 @@ class FileManager extends Loggable
             ]);
             throw new Exception('Export directory is not configured', 0, $e);
         }
+
+        if (!is_dir($this->exportDir)) {
+            throw new Exception(sprintf(
+                'Export directory "%s" does not exist',
+                $this->exportDir
+            ));
+        }
+
+        if (!is_readable($this->exportDir)) {
+            throw new Exception(sprintf(
+                'Export directory "%s" is not readable',
+                $this->exportDir
+            ));
+        }
     }
 
     /**
