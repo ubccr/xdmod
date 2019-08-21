@@ -45,7 +45,7 @@ class RealmManager
     public function getRealms()
     {
         // The "name" values from rawstatistics match those in
-        // moddb.realms.display`.
+        // the moddb.realms.display column.
         $exportable = array_map(
             function ($realm) {
                 return $realm['name'];
