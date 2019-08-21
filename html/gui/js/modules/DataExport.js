@@ -439,19 +439,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     disabled: true,
                     scope: this,
                     handler: this.deleteExpiredRequests
-                },
-                '->'
-                /*
-                ,
-                {
-                    xtype: 'paging',
-                    store: this.store,
-                    pageSize: this.pageSize,
-                    displayInfo: true,
-                    displayMsg: 'Displaying export requests {0} - {1} of {2}',
-                    emptyMsg: 'No export requests to display'
                 }
-                */
             ]
         });
 

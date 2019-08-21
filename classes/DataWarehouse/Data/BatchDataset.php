@@ -186,28 +186,6 @@ class BatchDataset extends Loggable implements Iterator
     {
         $this->logger->debug('Executing query');
         $this->sth = $this->query->getRawStatement();
-        // Set query to be unbuffered so results are not all loaded into memory.
-        // @see ETL\Ingestor\pdoIngestor::multiDatabaseIngest()
-        /*
-        $this->sth->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-        $result = $this->dbh->query(
-            "SHOW SESSION VARIABLES WHERE Variable_name = 'net_write_timeout'"
-        );
-
-        $currentTimeout = 0;
-        if ( 0 != count($result) ) {
-            $currentTimeout = $result[0]['Value'];
-            $this->logger->debug("Current net_write_timeout = $currentTimeout");
-        }
-
-        $newTimeout = $numDestinationTables * $this->netWriteTimeoutSecondsPerFileChunk;
-
-        if ( $newTimeout > $currentTimeout ) {
-            $sql = sprintf('SET SESSION net_write_timeout = %d', $newTimeout);
-            $this->executeSqlList(array($sql), $this->sourceEndpoint);
-        }
-         */
-
         $this->currentRowIndex = 1;
         $this->currentRow = $this->getNextRow();
     }
