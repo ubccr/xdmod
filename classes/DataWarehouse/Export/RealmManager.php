@@ -1,7 +1,4 @@
 <?php
-/**
- * Manage data regarding realms available for batch export.
- */
 
 namespace DataWarehouse\Export;
 
@@ -12,6 +9,7 @@ use Models\Services\Realms;
 use XDUser;
 
 /**
+ * Manage data regarding realms available for batch export.
  */
 class RealmManager
 {
@@ -28,6 +26,7 @@ class RealmManager
     private $config;
 
     /**
+     * Prepare database connection and load configuration.
      */
     public function __construct()
     {
