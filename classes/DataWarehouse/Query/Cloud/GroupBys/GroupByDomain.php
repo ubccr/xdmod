@@ -92,28 +92,12 @@ class GroupByDomain extends GroupBy
         $query->addField(new TableField($this->table, $this->_short_name_field_name, $this->getColumnName('short_name', $multiGroup)));
         $query->addField(new TableField($this->table, $this->_id_field_name, $this->getColumnName('order_id', $multiGroup)));
 
-        $this->addOrderFields($query, $multiGroup);
-
         $query->addGroup($idField);
 
         $fkField = new TableField($dataTable, 'domain_id');
         $query->addWhereCondition(new WhereCondition($idField, '=', $fkField));
 
         $this->addOrder($query);
-    }
-
-    /**
-     * Add this GroupBy's `order_fields` to the provided $query's fields.
-     *
-     * @param Query $query the query that this GroupBy's order fields should be added to.
-     * @param bool $multiGroup whether or not this query has multiple group bys.
-     */
-    private function addOrderFields(Query &$query, $multiGroup = false)
-    {
-        foreach ($this->_order_fields as $orderFieldName) {
-            $orderField = new TableField($this->table, $orderFieldName, $this->getColumnName($orderFieldName, $multiGroup));
-            $query->addField($orderField);
-        }
     }
 
     /**
