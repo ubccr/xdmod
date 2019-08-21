@@ -186,6 +186,10 @@ class BatchDataset extends Loggable implements Iterator
     {
         $this->logger->debug('Executing query');
         $this->sth = $this->query->getRawStatement();
+        $this->logger->debug(sprintf(
+            'Raw query string: %s',
+            $this->sth->queryString
+        ));
         $this->currentRowIndex = 1;
         $this->currentRow = $this->getNextRow();
     }
