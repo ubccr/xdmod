@@ -38,10 +38,40 @@ interface iQuery
     );
 
     /**
+     * Update the values of the internal VariableStore. Since the contents of the Query class are
+     * volitile and may be modified on the fly, this should be called prior to performing variable
+     * substitution. Note that rather than clearing and setting variables, we are using overwrite()
+     * so we do not clear variables that may be set elsewhere.
+     *
+     * @return VariableStore The updated variable store object
+     */
+
+    public function updateVariableStore();
+
+    /**
+     * @return VariableStore The current variable store for this query. Note that it is safer to
+     *    access the variable store via updateVariableStore() so that its data is updated.
+     */
+
+    public function getVariableStore();
+
+    /**
      * @return string The query type, for example 'aggreage' or 'timeseries'.
      */
 
     public function getQueryType();
+
+    /**
+     * @return bool TRUE if this query is an aggregate query.
+     */
+
+    public function isAggregate();
+
+    /**
+     * @return bool TRUE if this query is a timeseries query.
+     */
+
+    public function isTimeseries();
 
     /**
      * @return string The datasource associated with the query Realm. This is a required property
@@ -54,7 +84,7 @@ interface iQuery
      * @return string A string representation of this class to be used in debugging log output.
      */
 
-    public function getLogString();
+    public function getDebugInfo();
 
     /**
      * @return string A general string representation of this class.

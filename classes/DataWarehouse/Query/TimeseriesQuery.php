@@ -128,25 +128,26 @@ class TimeseriesQuery extends Query implements iQuery
             $select_group_by[] = $group->getQualifiedName(false);
         }
 
-        $data_query = "select \n" . implode(",\n", $select_fields) . "
-                         from \n" . implode(",\n", $select_tables) . "
-                        where \n" . implode("\n and ", $wheres);
+        $format = <<<SQL
+SELECT
+  %s
+FROM
+  %s
+WHERE
+  %s
+%s%s%s%s
+SQL;
 
-        if (count($select_group_by) > 0) {
-            $data_query .= " group by \n" . implode(",\n", $select_group_by);
-        }
-
-        if ($extraHavingClause != null) {
-            $data_query .= " having " . $extraHavingClause . "\n";
-        }
-
-        if (count($select_order_by) > 0) {
-            $data_query .= " order by \n" . implode(",\n", $select_order_by);
-        }
-
-        if ($limit !== null && $offset !== null) {
-            $data_query .= " limit $limit offset $offset";
-        }
+        $data_query = sprintf(
+            $format,
+            implode(",\n  ", $select_fields),
+            implode(",\n  ", $select_tables),
+            implode("\n  AND ", $wheres),
+            ( count($select_group_by) > 0 ? "GROUP BY " . implode(",\n  ", $select_group_by) : "" ),
+            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset ? " \nLIMIT $limit OFFSET $offset" : "" )
+        );
 
         $this->logger->debug(
             sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
@@ -157,15 +158,31 @@ class TimeseriesQuery extends Query implements iQuery
 
     public function getTimestamps()
     {
-        $dateIdsQuery = $this->_group_bys[$this->aggregationUnitName]->getPossibleValuesQuery();
+        // Obtain the attribute values \ETL\DbModel\Query object from the GroupBy and modify it to
+        // add a WHERE clause restricting the values to those between the minn and max date of this
+        // query. This should only be used for aggregation time period GroupBys (day, month, etc.)
 
-        $dateIdsQuery = str_ireplace(
-            'where ',
-            "where gt.id >= {$this->_min_date_id} and gt.id <= {$this->_max_date_id} and ",
-            $dateIdsQuery
+        $dateIdsQuery = $this->_group_bys[$this->aggregationUnitName]->getAttributeValuesQuery();
+        $queryConfig = $dateIdsQuery->toStdClass();
+        $idFormula = $dateIdsQuery->getRecord('id');
+
+        $whereConditions = array(
+            sprintf('%s BETWEEN %s AND %s', $idFormula, $this->_min_date_id, $this->_max_date_id)
         );
 
-        return DB::factory($this->_db_profile)->query($dateIdsQuery);
+        if ( ! isset($queryConfig->where) || ! is_array($queryConfig->where) ) {
+            $queryConfig->where = $whereConditions;
+        } else {
+            $queryConfig->where = array_merge($queryConfig->where, $whereConditions);
+        }
+
+        $queryObj = new Query($queryConfig, '`', $this->logger);
+        $sql = $queryObj->getSql();
+
+        $this->logger->debug(sprintf("%s %s()\n%s", $this, __FUNCTION__, $sql));
+
+        return DB::factory($this->_db_profile)->query($sql);
+
     }
 
     public function execute($limit = 10000000)

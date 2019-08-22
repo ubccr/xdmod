@@ -2,6 +2,9 @@
 /**
  * Base class for defining a data warehouse query.
  *
+ * NOTE: This class is NOT meant to be instantiated directly, but through a child class such as
+ *       AggregateQuery or TimeseriesQuery.
+ *
  * @see iQuery
  */
 
@@ -10,6 +13,7 @@ namespace DataWarehouse\Query;
 use Configuration\XdmodConfiguration;
 use Exception;
 
+use Log as Logger;  // PEAR logger
 use CCR\Loggable;
 use CCR\DB;
 use CCR\DB\PDODB;
@@ -129,7 +133,7 @@ class Query extends Loggable
                     'db' => false,
                     'mail' => false,
                     'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => PEAR_LOG_INFO
+                    'fileLogLevel' => PEAR_LOG_TRACE
                 )
             );
         }
@@ -137,10 +141,11 @@ class Query extends Loggable
         parent::__construct($logger);
 
         $this->variableStore = new VariableStore();
-
         $this->pdoparams = array();
         $this->pdoindex = 0;
-        $this->realm = Realm::factory($realmId);
+        $this->realm = Realm::factory($realmId, $logger);
+
+        $this->logger->debug(sprintf("Created Query %s", $this));
 
         $this->aggregationUnitName = $aggregationUnitName;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
@@ -156,12 +161,12 @@ class Query extends Loggable
 
         $this->setDuration($startDate, $endDate);
 
-        if ($groupById != null) {
+        if ( ! empty($groupById) ) {
             $this->setGroupBy($groupById);
         }
         $this->setParameters($parameters);
 
-        if ($statisticId != null) {
+        if ( ! empty($statisticId) ) {
             $this->setStat($statisticId);
         }
 
@@ -170,10 +175,7 @@ class Query extends Loggable
     }
 
     /**
-     * Update the values of the internal VariableStore. Since the contents of the Query class are
-     * volitile and may be modified on the fly, this should be called prior to performing variable
-     * substitution. Note that rather than clearing and setting variables, we are using overwrite()
-     * so we do not clear variables that may be set elsewhere.
+     * @see iQuery::updateVariableStore()
      */
 
     public function updateVariableStore()
@@ -183,8 +185,19 @@ class Query extends Loggable
         $this->variableStore->overwrite('MAX_DATE_ID', $this->getMaxDateId());
         $this->variableStore->overwrite('START_DATE_TS', $this->getStartDateTs());
         $this->variableStore->overwrite('END_DATE_TS', $this->getEndDateTs());
-        $this->variableStore->overwrite('DURATION_FORMULA', $this->getDurationFormula());
+        $this->variableStore->overwrite('DURATION_FORMULA', (string) $this->getDurationFormula());
         $this->variableStore->overwrite('AGGREGATION_UNIT', $this->getAggregationUnitName());
+
+        return $this->variableStore;
+    }
+
+    /**
+     * @see iQuery::getVariableStore()
+     */
+
+    public function getVariableStore()
+    {
+        return $this->variableStore;
     }
 
     public $_db_profile = 'datawarehouse'; //The name of the db settings in portal_settings.ini
@@ -202,12 +215,20 @@ class Query extends Loggable
     protected $_data_table;
     protected $_date_table;
 
-    protected $_group_by;
+    /**
+     * @var GroupBy|null The primary group by passed in via the constructor and set by setGroupBy().
+     */
+
+    protected $_group_by = null;
 
     public function groupBy()
     {
         return $this->_group_by;
     }
+
+    /**
+     * @var array An array of additional GroupBy objects added via addGroupBy()
+     */
 
     public $_group_bys = array();
     public function getGroupBys()
@@ -221,10 +242,19 @@ class Query extends Loggable
         return $this->_stats;
     }
 
-    protected $_main_stat_field;
+    /**
+     * @var Statistic|null The primary statistic by passed in via the constructor and set by setStat().
+     */
+
+    protected $_main_stat_field = null;
 
     private $_tables = array();
     private $_fields = array();
+
+    /**
+     * @var array An array of additional Statistic objects added via addStatField()
+     */
+
     protected $_stat_fields = array();
     private $_where_conditions = array();
     private $_stat_where_conditions = array();
@@ -388,7 +418,7 @@ class Query extends Loggable
 
     public function addField(\DataWarehouse\Query\Model\Field $field)
     {
-        $this->_fields[$field->getAlias()] = $field;
+        $this->_fields[$field->getAlias()->getName()] = $field;
     }
     public function getFields()
     {
@@ -396,6 +426,8 @@ class Query extends Loggable
     }
     public function addStatField(Statistic $field)
     {
+        $this->logger->debug(sprintf("%s Add statistic: '%s'", $this, $field->getId()));
+
         $this->_stat_fields[$field->getAlias()] = $field;
 
         $addnlwhere = $field->getAdditionalWhereCondition();
@@ -449,7 +481,7 @@ class Query extends Loggable
 
     public function addGroup(\DataWarehouse\Query\Model\Field $field)
     {
-        $this->_groups[$field->getAlias()] = $field;
+        $this->_groups[$field->getAlias()->getName()] = $field;
     }
     public function getGroups()
     {
@@ -483,7 +515,7 @@ class Query extends Loggable
             $select_fields[$field_key] = $field->getQualifiedName(true);
         }
         foreach ($stat_fields as $field_key => $stat_field) {
-            $select_fields[$field_key] = $stat_field->getQualifiedName(true);
+            $select_fields[$field_key] = $stat_field->getFormula($this);
         }
         return $select_fields;
     }
@@ -553,15 +585,26 @@ class Query extends Loggable
     {
         $groups = $this->getGroups();
         if (empty($groups)) {
-            throw new Exception("Cannot get dimension values without specifying dimension.");
+            $this->logAndThrowException("Cannot build dimension values query without specifying a dimension.");
         }
 
         $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
 
-        $id_field = $select_fields['id'];
-        $name_field = $select_fields['name'];
-        $short_name_field = $select_fields['short_name'];
+        // MetricExplorer::getDimensionValues() expects the fields returned by this query to be
+        // named "id", "name", "short_name".  Construct the list of dimension fields without the
+        // alias so we can add our own. We do not call getSelectFields() because that generates
+        // values with the alias of the form "<field> AS <alias>" and the alias is qualified with
+        // the dimension name (e.g., "person.id AS person_id").
+
+        $select_fields = array();
+        foreach ($this->getFields() as $field_key => $field) {
+            $select_fields[$field_key] = $field->getQualifiedName();
+        }
+
+        $primaryGroupById = $this->_group_by->getId();
+        $id_field = $select_fields[ sprintf('%s_id', $primaryGroupById) ];
+        $name_field = $select_fields[ sprintf('%s_name', $primaryGroupById) ];
+        $short_name_field = $select_fields[ sprintf('%s_short_name', $primaryGroupById) ];
 
         $groups_str = implode(', ', $groups);
 
@@ -579,7 +622,9 @@ class Query extends Loggable
             }
         }
 
-        $dimension_table = $select_tables[1];
+        // Relying on the table index seems awefully fragile for a dynamic query class. Note that
+        // changing the order in which setStat() or setGroupBy() are called will change this index.
+        $dimension_table = $select_tables[2];
 
         $restriction_wheres = array();
         $dimension_group_by = $this->groupBy();
@@ -591,45 +636,56 @@ class Query extends Loggable
 
                 $filter_table = FilterListHelper::getFullTableName($this, $dimension_group_by, $restriction_data['groupBy']);
 
-                $restriction_wheres[] = "$id_field_without_alias IN (
-                    SELECT
-                        $filter_table.$dimension_group_by_id
-                    FROM
-                        $filter_table
-                    WHERE
-                        $filter_table.$restriction_dimension_name IN ($restriction_dimension_values_str)
-                )";
+                $restriction_wheres[] = sprintf(
+                    "%s IN ( SELECT %.% FROM %s WHERE %.% IN (%s) )",
+                    $id_field_without_alias,
+                    $filter_table,
+                    $dimension_group_by_id,
+                    $filter_table,
+                    $filter_table,
+                    $restriction_dimension_name,
+                    $restriction_dimension_values_str
+                );
+
             }
         } else {
             $filter_table = FilterListHelper::getFullTableName($this, $dimension_group_by);
-            $restriction_wheres[] = "$id_field_without_alias IN (
-                SELECT
-                    $filter_table.$dimension_group_by_id
-                FROM
-                    $filter_table
-            )";
+            $restriction_wheres[] = sprintf(
+                "%s IN ( SELECT %s.%s FROM %s )",
+                $id_field_without_alias,
+                $filter_table,
+                $dimension_group_by_id,
+                $filter_table
+            );
         }
 
         $restriction_wheres_str = implode(' OR ', $restriction_wheres);
 
-        $dimension_values_query = "
-            SELECT
-                $id_field,
-                $name_field,
-                $short_name_field,
-                $orders_field
-            FROM $dimension_table
-            WHERE $restriction_wheres_str
-            GROUP BY $groups_str
-        ";
-
-        if ($orders_exist) {
-            $order_by_str = implode(', ', $this->getSelectOrderBy());
-            $dimension_values_query .= " ORDER BY $order_by_str";
-        }
+        $format = <<<SQL
+SELECT
+  %s AS id,
+  %s AS name,
+  %s AS short_name,
+  %s
+FROM %s
+WHERE %s
+GROUP BY %s
+%s
+SQL;
+        $dimension_values_query = sprintf(
+            $format,
+            $id_field,
+            $name_field,
+            $short_name_field,
+            $orders_field,
+            $dimension_table,
+            $restriction_wheres_str,
+            $groups_str,
+            ( $orders_exist ? "ORDER BY " . implode(', ', $this->getSelectOrderBy()) : "" )
+        );
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $dimension_values_query)
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $dimension_values_query)
         );
 
         return $dimension_values_query;
@@ -643,29 +699,36 @@ class Query extends Loggable
         $select_tables = $this->getSelectTables();
         $select_fields = $this->getSelectFields();
 
+        if ( 0 == count($select_fields) ) {
+            $this->logAndThrowException("Cannot generate query string with no select fields");
+        }
+
         $select_order_by = $this->getSelectOrderBy();
 
-        $data_query = "select \n".implode(", \n", $select_fields)."\n
-                      from \n".implode(",\n", $select_tables)."\n
-                      ". $this->getLeftJoinSql()."\n
-                        where \n".implode("\n and ", $wheres);
+        $format = <<<SQL
+SELECT
+  %s
+FROM
+  %s%s
+WHERE
+  %s
+%s%s%s%s
+SQL;
 
-        if (count($groups) > 0) {
-            $data_query .= " group by \n".implode(",\n", $groups);
-        }
-        if ($extraHavingClause != null) {
-            $data_query .= " having " . $extraHavingClause . "\n";
-        }
-        if (count($select_order_by) > 0) {
-            $data_query .= " order by \n".implode(",\n", $select_order_by);
-        }
-
-        if ($limit !== null && $offset !== null) {
-            $data_query .= " limit $limit offset $offset";
-        }
+        $data_query = sprintf(
+            $format,
+            implode(",\n  ", $select_fields),
+            implode(",\n  ", $select_tables),
+            ( "" == $this->getLeftJoinSql() ? "" : "\n" . $this->getLeftJoinSql() ),
+            implode("\n  AND ", $wheres),
+            ( count($groups) > 0 ? "GROUP BY " . implode(",\n  ", $groups) : "" ),
+            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset ? " \nLIMIT $limit OFFSET $offset" : "" )
+        );
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
         );
 
         return $data_query;
@@ -682,14 +745,34 @@ class Query extends Loggable
                       from \n".implode(",\n", $select_tables)."\n
                         where \n".implode("\n and ", $wheres);
 
-        if (count($groups) > 0) {
-            $data_query .= " group by \n".implode(",\n", $groups);
-        }
-
         $data_query .= ") as a WHERE a.total IS NOT NULL";
 
+        if (count($groups) > 0) {
+            $data_query .= "\nGROUP BY\n".implode(",\n", $groups);
+        }
+
+        $format = <<<SQL
+SELECT
+  COUNT(*) AS row_count
+FROM (
+  SELECT
+  SUM(1) AS total
+  FROM
+    %s
+  WHERE
+    %s
+  %s
+) AS a WHERE a.total IS NOT NULL
+SQL;
+        $data_query = sprintf(
+            $format, // "SELECT\nCOUNT(*) AS row_count\nFROM (\nSELECT\nSUM(1) AS total\nFROM\n%s\nWHERE\n%s%s\n) AS a WHERE a.total IS NOT NULL",
+            implode(",\n    ", $select_tables),
+            implode("\n    AND ", $wheres),
+            ( count($groups) > 0 ? "GROUP BY\n    " . implode(",\n    ", $groups) : "" )
+        );
+
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
         );
 
         return $data_query;
@@ -799,7 +882,12 @@ class Query extends Loggable
     }
     protected function setDataTable($schemaname, $tablename, $join_index = '')
     {
-        $this->_data_table = new \DataWarehouse\Query\Model\Table(new \DataWarehouse\Query\Model\Schema($schemaname), $tablename, 'jf', $join_index);
+        $this->_data_table = new \DataWarehouse\Query\Model\Table(
+            new \DataWarehouse\Query\Model\Schema($schemaname),
+            $tablename,
+            $this->realm->getAggregateTableAlias(),
+            $join_index
+        );
         $this->addTable($this->_data_table);
     }
     public function getDataTable()
@@ -1070,14 +1158,23 @@ class Query extends Loggable
         $this->roleParameters = $groupedRoleParameters;
         $this->roleParameterDescriptions = $roleParameterDescriptions;
     }
+
     protected function setGroupBy($group_by)
     {
-        $this->_group_by = $this->realm->getGroupByObject($group_by);
+        $this->logger->debug(
+            sprintf("%s: Set primary group by: %s", $this, $group_by)
+        );
 
+        $this->_group_by = $this->realm->getGroupByObject($group_by);
         $this->_group_by->applyTo($this, $this->_data_table);
     }
+
     public function addGroupBy($group_by_name)
     {
+        $this->logger->debug(
+            sprintf("%s: Add group by: %s", $this, $group_by_name)
+        );
+
         try {
             $group_by = $this->realm->getGroupByObject($group_by_name);
         } catch (Exceptions\UnavailableTimeAggregationUnitException $time_unit_exception) {
@@ -1183,10 +1280,19 @@ class Query extends Loggable
         } // switch ($data_description->sort_type)
     }
 
+    /**
+     * Set the primary statistic and add all available statistics for the query realm as stat fields
+     * in the generated query. If 'all' is provided as the statistic name, all available statistics
+     * will be added to the query but no primary statistic will be set.
+     *
+     * @param string $stat The name of the statistic to set as the primary statistic.
+     *
+     * Note: 2019-08-15 This is currently only called from Query::__construct().
+     */
+
     public function setStat($stat)
     {
-        $permitted_statistics = $this->_group_by->getPermittedStatistics();
-
+        $permitted_statistics = array_keys($this->realm->getStatisticNames());
 
         if ($stat == 'all') {
             $this->_main_stat_field = null;
@@ -1197,6 +1303,10 @@ class Query extends Loggable
             if (!in_array($stat, $permitted_statistics)) {
                 throw new \Exception("$stat is not available for {$this->_group_by->getName()}");
             }
+
+            $this->logger->debug(
+                sprintf("%s: Set primary statistic field: %s", $this, $stat)
+            );
 
             $this->_main_stat_field = $this->realm->getStatisticObject($stat);
             foreach ($permitted_statistics as $stat_name) {
@@ -1296,18 +1406,21 @@ class Query extends Loggable
     }
 
     /**
-     * @see iQuery::getLogString()
+     * @see iQuery::isAggregate()
      */
 
-    public function getLogString()
+    public function isAggregate()
     {
-        return sprintf(
-            "%s(%s, groupbys=(%s), statistics=(%s))",
-            get_class($this),
-            $this->realm->getId(),
-            implode(',', array_keys($this->_group_bys)),
-            implode(',', array_keys($this->_stat_fields))
-        );
+        return ($this instanceof AggregateQuery);
+    }
+
+    /**
+     * @see iQuery::isTimeseries()
+     */
+
+    public function isTimeseries()
+    {
+        return ($this instanceof TimeseriesQuery);
     }
 
     /**
@@ -1315,6 +1428,31 @@ class Query extends Loggable
      */
 
     public function __toString()
+    {
+        $primaryGroupById = array();
+        if ( null !== $this->_group_by ) {
+            $primaryGroupById[] = $this->_group_by->getId();
+        }
+        $primaryStatisticId = array();
+        if ( null !== $this->_main_stat_field ) {
+            $primaryStatisticId[] = $this->_main_stat_field->getId();
+        }
+
+        return sprintf(
+            "%s(%s, groupbys=(%s), statistics=(%s))",
+            get_class($this),
+            $this->realm->getId(),
+            implode(',', array_merge($primaryGroupById, array_keys($this->_group_bys))),
+            implode(',', array_keys($this->_stat_fields))
+            // implode(',', array_merge($primaryStatisticId, array_keys($this->_stat_fields)))
+        );
+    }
+
+    /**
+     * @see iQuery::getDebugInfo()
+     */
+
+    public function getDebugInfo()
     {
         return " realm_name: {$this->getRealmName()} \n"
                 ." aggregation_unit: {$this->_aggregation_unit} \n"
