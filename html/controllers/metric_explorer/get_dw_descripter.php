@@ -61,7 +61,7 @@ foreach ($roles as $activeRole) {
 
                     $groupByName = $query_descripter->getGroupByName();
                     $group_by_object = $query_descripter->getGroupByInstance();
-                    $permittedStatistics = $group_by_object->getPermittedStatistics();
+                    $permittedStatistics = array_keys($group_by_object->getRealm()->getStatisticNames());
 
                     $groupByObjects[$query_descripter_realm . '_' . $groupByName] = array(
                         'object' => $group_by_object,

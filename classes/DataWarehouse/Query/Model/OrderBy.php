@@ -25,4 +25,8 @@ class OrderBy
     {
         return $this->_column_name;
     }
+    public function __toString()
+    {
+        return sprintf("%s %s", $this->_field, $this->_order);
+    }
 }

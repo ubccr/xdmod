@@ -1,6 +1,6 @@
 <?php
 
-use DataWarehouse\Query\GroupBy;
+use \Realm\GroupBy;
 use DataWarehouse\Query\Query;
 
 /**
