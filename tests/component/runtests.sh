@@ -55,6 +55,8 @@ if [ 0 -ne ${#INCLUDE_GROUPS[@]} ]; then
     INCLUDE_GROUP_OPTION="--group "$(implode_array , ${INCLUDE_ONLY_GROUPS[@]})
 fi
 
+$phpunit ${PHPUNITARGS} --testsuite=Export -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
+
 # This test suite runs everything in lib/Roles
 $phpunit ${PHPUNITARGS} --testsuite=Roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
 

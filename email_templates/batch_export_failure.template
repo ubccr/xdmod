@@ -1,0 +1,10 @@
+Dear [:first_name:],
+
+Your batch export request failed on [:current_date:] for the following reason:
+
+    [:failure_reason:]
+
+The technical staff has been notified and will investigate the issue.
+
+Sincerely,
+[:maintainer_signature:]

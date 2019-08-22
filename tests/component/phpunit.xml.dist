@@ -18,6 +18,11 @@
          stopOnSkipped="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          verbose="true">
+    <testsuite name="Export">
+        <directory>lib/Export</directory>
+        <exclude>lib/ETL</exclude>
+        <exclude>lib/Roles</exclude>
+    </testsuite>
     <testsuite name="Roles">
         <directory>lib/Roles</directory>
         <exclude>lib/ETL</exclude>

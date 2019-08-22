@@ -32,6 +32,12 @@ provideInput {Bottom Level Description:} {PI Group}
 confirmFileWrite yes
 enterToContinue
 
+selectMenuOption 7
+provideInput {Export Directory*} {}
+provideInput {Export File Retention Duration*} 31
+confirmFileWrite yes
+enterToContinue
+
 selectMenuOption q
 
 lassign [wait] pid spawnid os_error_flag value

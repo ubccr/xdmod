@@ -1,11 +1,13 @@
 <?php
 namespace DataWarehouse\Query\Jobs;
 
-use \DataWarehouse\Query\Model\Table;
-use \DataWarehouse\Query\Model\TableField;
-use \DataWarehouse\Query\Model\FormulaField;
-use \DataWarehouse\Query\Model\WhereCondition;
-use \DataWarehouse\Query\Model\Schema;
+use Configuration\XdmodConfiguration;
+use DataWarehouse\Query\Model\FormulaField;
+use DataWarehouse\Query\Model\Schema;
+use DataWarehouse\Query\Model\Table;
+use DataWarehouse\Query\Model\TableField;
+use DataWarehouse\Query\Model\WhereCondition;
+use Exception;
 
 /**
   * @see DataWarehouse::Query::RawQuery
@@ -20,29 +22,35 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     ) {
         parent::__construct('Jobs', 'modw_aggregates', 'jobfact_by_day', array());
 
-        $config = \Configuration\XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
+        $config = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR)['Jobs'];
 
-        $dataTable = $this->getDataTable();
-        $joblistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_joblist", "jl");
-        $factTable = new Table(new Schema('modw'), 'job_tasks', 'jt');
+        // The data table is always aliased to "jf".
+        $tables = ['jf' => $this->getDataTable()];
 
-        $this->addTable($joblistTable);
-        $this->addTable($factTable);
+        foreach ($config['tables'] as $tableDef) {
+            $alias = $tableDef['alias'];
+            $table = new Table(
+                new Schema($tableDef['schema']),
+                $tableDef['name'],
+                $alias
+            );
+            $tables[$alias] = $table;
+            $this->addTable($table);
 
-        $this->addWhereCondition(new WhereCondition(
-            new TableField($joblistTable, "agg_id"),
-            "=",
-            new TableField($dataTable, "id")
-        ));
-        $this->addWhereCondition(new WhereCondition(
-            new TableField($joblistTable, "jobid"),
-            "=",
-            new TableField($factTable, "job_id")
-        ));
+            $join = $tableDef['join'];
+            $this->addWhereCondition(new WhereCondition(
+                new TableField($table, $join['primaryKey']),
+                '=',
+                new TableField($tables[$join['foreignTableAlias']], $join['foreignKey'])
+            ));
+        }
+
+        // This table is defined in the configuration file, but used in the section below.
+        $factTable = $tables['jt'];
 
         if (isset($parameters['primary_key'])) {
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'job_id'), "=", $parameters['primary_key']));
-        } else {
+        } elseif (isset($parameters['job_identifier'])) {
             $matches = array();
             if (preg_match('/^(\d+)(?:[\[_](\d+)\]?)?$/', $parameters['job_identifier'], $matches)) {
                 $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'resource_id'), '=', $parameters['resource_id']));
@@ -53,41 +61,70 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                     $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'local_job_id_raw'), '=', $matches[1]));
                 }
             } else {
-                throw new \Exception('invalid query parameters');
+                throw new Exception('invalid "job_identifier" query parameter');
             }
+        } elseif (isset($parameters['start_date']) && isset($parameters['end_date'])) {
+            date_default_timezone_set('UTC');
+            $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
+            $startDateTs = mktime(
+                0,
+                0,
+                0,
+                $startDate['month'],
+                $startDate['day'],
+                $startDate['year']
+            );
+            if ($startDateTs === false) {
+                throw new Exception('invalid "start_date" query parameter');
+            }
+
+            $endDate = date_parse_from_format('Y-m-d', $parameters['end_date']);
+            $endDateTs = mktime(
+                23,
+                59,
+                59,
+                $endDate['month'],
+                $endDate['day'],
+                $endDate['year']
+            );
+            if ($startDateTs === false) {
+                throw new Exception('invalid "end_date" query parameter');
+            }
+
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), ">=", $startDateTs));
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), "<=", $endDateTs));
+        } else {
+            throw new Exception('invalid query parameters');
         }
 
-        if ($stat == "accounting") {
-            $i = 0;
-            foreach ($config['modw.job_tasks'] as $sdata) {
-                $sfield = $sdata['key'];
-                if ($sdata['dtype'] == 'accounting') {
-                    $this->addField(new TableField($factTable, $sfield));
-                    $this->documentation[$sfield] = $sdata;
-                } elseif ($sdata['dtype'] == 'foreignkey') {
-                    if (isset($sdata['join'])) {
-                        $info = $sdata['join'];
-                        $i += 1;
-                        $tmptable = new Table(new Schema($info['schema']), $info['table'], "ft$i");
-                        $this->addTable($tmptable);
-                        $this->addWhereCondition(new WhereCondition(new TableField($factTable, $sfield), '=', new TableField($tmptable, "id")));
-                        $fcol = isset($info['column']) ? $info['column'] : 'name';
-                        $this->addField(new TableField($tmptable, $fcol, $sdata['name']));
-
-                        $this->documentation[ $sdata['name'] ] = $sdata;
+        if ($stat == "accounting" || $stat == 'batch') {
+            foreach ($config['fields'] as $field) {
+                // Replace hierarchy constants.
+                foreach (['name', 'documentation'] as $key) {
+                    $value = $field[$key];
+                    if (strpos($value, 'HIERARCHY_') === 0 && defined($value)) {
+                        $field[$key] = constant($value);
                     }
                 }
+
+                $alias = $field['name'];
+                if (isset($field['tableAlias']) && isset($field['column'])) {
+                    $this->addField(new TableField(
+                        $tables[$field['tableAlias']],
+                        $field['column'],
+                        $alias
+                    ));
+                } elseif (isset($field['formula'])) {
+                    $this->addField(new FormulaField($field['formula'], $alias));
+                } else {
+                    throw new Exception(sprintf(
+                        'Missing tableAlias and column or formula for "%s", definition: %s',
+                        $alias,
+                        json_encode($field)
+                    ));
+                }
+                $this->documentation[$alias] = $field;
             }
-            $rf = new Table(new Schema('modw'), 'resourcefact', 'rf');
-            $this->addTable($rf);
-            $this->addWhereCondition(new WhereCondition(new TableField($factTable, 'resource_id'), '=', new TableField($rf, 'id')));
-            $this->addField(new TableField($rf, 'timezone'));
-            $this->documentation['timezone'] = array(
-                "name" => "Timezone",
-                "documentation" => "The timezone of the resource.",
-                "group" => "Administration",
-                'visibility' => 'public',
-                "per" => "resource");
         } else {
             $this->addField(new TableField($factTable, "job_id", "jobid"));
             $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
