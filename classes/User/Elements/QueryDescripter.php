@@ -72,10 +72,9 @@ class QueryDescripter
         $this->_disable_menu = false;
     }
 
-    public function getDrillTargets($statistic_name)
+    public function getDrillTargets()
     {
         return $this->realm->getDrillTargets(
-            $statistic_name,
             $this->_group_by_name,
             \Realm\Realm::SORT_ON_NAME
         );

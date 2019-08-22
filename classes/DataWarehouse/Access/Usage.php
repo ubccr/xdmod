@@ -803,7 +803,7 @@ class Usage extends Common
                     $usageGroupBy,
                     $meRequestMetric->getAlias()
                 );
-                $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getAlias());
+                $drillTargets = $queryDescripter->getDrillTargets();
                 $drillDowns = array_map(
                     function ($drillTarget) {
                         return explode('-', $drillTarget, 2);

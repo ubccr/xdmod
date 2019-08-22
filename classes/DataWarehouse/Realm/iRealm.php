@@ -29,13 +29,17 @@ interface iRealm
      * @param string $shortName The short internal identifier for the realm that will be
      *   instantiated.
      * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param stdclass|null $options An object containing additional configuration options.
+     *   Currently supported options are:
+     *     - config_file_name: The name of the configuration file to use, useful for testing.
+     *     - config_base_dir: The base directory of the configuration file, useful for testing.
      *
      * @return Realm A Realm class.
      *
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($shortName, Logger $logger = null);
+    public static function factory($shortName, Logger $logger = null, \stdClass $options = null);
 
     /**
      * Initialize data for all realms from the definition source. This can mean constructing the
@@ -44,6 +48,7 @@ interface iRealm
      * a Realm object can be accessed.
      *
      * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param stdclass|null $options An object containing additional configuration options.
      *
      * @throws Exception If there was an error loading the realm data.
      */
@@ -242,13 +247,12 @@ interface iRealm
      * and group by.  This will include all of the group bys defined for this realm except those
      * marked as not available for drill down and the specified group by.
      *
-     * @param string $statisticId The short identifier for the current statistic.
      * @param string $groupById The short identifier for the current group by.
      * @param int $order A specification on how the list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
      */
 
-    public function getDrillTargets($statisticId, $groupById, $order = self::SORT_ON_ORDER);
+    public function getDrillTargets($groupById, $order = self::SORT_ON_ORDER);
 
     /**
      * @return string A string representation of this object.

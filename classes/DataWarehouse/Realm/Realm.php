@@ -113,12 +113,29 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::initialize()
      */
 
-    public static function initialize(Logger $logger = null)
+    /**
+     * Initialize data for all realms from the definition source. This can mean constructing the
+     * list of realms from a configuration file, loading from the database or an object cache, or
+     * some other mechanism. This method must be called once, either directly or indirectly, before
+     * a Realm object can be accessed.
+     *
+     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param stdclass|null $options An object containing additional configuration options.
+     *
+     * @throws Exception If there was an error loading the realm data.
+     *
+     * @see iRealm::factory()
+     */
+
+    public static function initialize(Logger $logger = null, \stdClass $options = null)
     {
+        $filename = ( isset($options->config_file_name) ? $options->config_file_name : 'datawarehouse.json' );
+        $configDir = ( isset($options->config_base_dir) ? $options->config_base_dir : CONFIG_DIR );
+
         if ( null === self::$dataWarehouseConfig ) {
             self::$dataWarehouseConfig = Configuration::factory(
-                'datawarehouse2.json',
-                CONFIG_DIR,
+                $filename,
+                $configDir,
                 $logger
             );
         }
@@ -148,9 +165,9 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::factory()
      */
 
-    public static function factory($shortName, Logger $logger = null)
+    public static function factory($shortName, Logger $logger = null, \stdClass $options = null)
     {
-        self::initialize($logger);
+        self::initialize($logger, $options);
         $configObj = self::$dataWarehouseConfig->getSectionData($shortName);
 
         if ( false === $configObj ) {
@@ -645,15 +662,8 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::getDrillTargets()
      */
 
-    public function getDrillTargets($statisticId, $groupById, $order = self::SORT_ON_ORDER)
+    public function getDrillTargets($groupById, $order = self::SORT_ON_ORDER)
     {
-        // If the statistic id is not valid for this realm, do not provide any drill downs
-        if ( ! $this->statisticExists($statisticId) ) {
-            $this->logAndThrowException(
-                sprintf("Attempt to get drill-down targets for unknown statistic '%s'", $statisticId)
-            );
-        }
-
         $drillTargets = array();
         $groupByObjects = $this->getGroupByObjects($order);
 
