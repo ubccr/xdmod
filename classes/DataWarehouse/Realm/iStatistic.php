@@ -31,13 +31,22 @@ interface iStatistic
     public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
+     * @return Realm The realm that this Statistic is associated with.
+     */
+
+    public function getRealm();
+
+    /**
      * Note: Was getName()
+     *
+     * @param bool $includeRealmId TRUE if the Realm id should be added to the statistic name to
+     *   ensure that the statistic is unique across all realms. Default: TRUE.
      *
      * @return string The short internal identifier. This is often used as an alias in SQL queries.
      * For example, "total_cpu_hours".
      */
 
-    public function getId();
+    public function getId($includeRealmId = true);
 
     /**
      * Note: Was getLabel()
@@ -88,7 +97,7 @@ interface iStatistic
      *   "COALESCE(SUM(jf.cpu_time),0)/3600.0 AS jobs_total_cpu_hours"
      */
 
-    public function getFormula(Query $query = null);
+    public function getFormula(\DataWarehouse\Query\iQuery $query = null);
 
     /**
      * @return string The database alias used by this statistic. This must be a unique identifier among
@@ -140,8 +149,8 @@ interface iStatistic
     /**
      * Note: Returns null except where overriden by the JobViewer code
      *
-     * @return WhereCondition A single additional WhereCondition to be added to the query containing
-     *   this statistic.
+     * @return WhereCondition|null A single additional WHERE condition to be added to the query
+     *   containing this statistic or NULL if no additional WHERE condition was defined.
      */
 
     public function getAdditionalWhereCondition();

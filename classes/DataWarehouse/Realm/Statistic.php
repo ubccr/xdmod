@@ -103,7 +103,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      *   example: array('netdrv_panasas_rx', 'IS NOT', 'NULL').
      */
 
-    protected $whereConditionDefinition = null;
+    protected $additionalWhereConditionDefinition = null;
 
     /**
      * @var boolean Set to false if this statistic cannot use tables where data is rolled up by time
@@ -198,7 +198,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
                             sprintf('Expected an array of 3 elements, got %d elements', count($value))
                         );
                     }
-                    $this->whereConditionDefinition = $value;
+                    $this->additionalWhereConditionDefinition = $value;
                     break;
                 case 'aggregate_formula':
                     $this->aggregateFormula = trim($value);
@@ -242,22 +242,34 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     $this->useTimeseriesAggregateTables = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 default:
+                    $this->logger->notice(
+                        sprintf("Unknown key in definition for realm '%s' statistic '%s': '%s'", $this->realm->getName(), $this->id, $key)
+                    );
                     break;
             }
         }
     }
 
     /**
-     * @see iRealm::getId()
+     * @see iStatistic::getRealm()
      */
 
-    public function getId()
+    public function getRealm()
     {
-        return $this->id;
+        return $this->realm;
     }
 
     /**
-     * @see iRealm::getName()
+     * @see iStatistic::getId()
+     */
+
+    public function getId($includeRealmId = true)
+    {
+        return ( $includeRealmId ? sprintf("%s_%s", $this->realm->getId(), $this->id) : $this->id );
+    }
+
+    /**
+     * @see iStatistic::getName()
      */
 
     public function getName($includeUnit = true)
@@ -300,7 +312,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @see iStatistic::getFormula()
      */
 
-    public function getFormula(Query $query = null)
+    public function getFormula(\DataWarehouse\Query\iQuery $query = null)
     {
         // If no query was specified return the unmodified formula. If a query was specified, return
         // the appropriate formula based on whether this is an aggregate or timeseries query.
@@ -315,13 +327,13 @@ class Statistic extends \CCR\Loggable implements iStatistic
         } else {
             // Update the variable store with the most recent values in the query class as they may
             // change dynamically.
-            $query->updateVariableStore();
+            $vStore = $query->updateVariableStore();
             if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
-                return $query->getVariableStore()->substitute($this-formula);
+                return $vStore->substitute($this-formula);
             } elseif ( $query->isAggregate() ) {
-                return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->aggregateFormula), $this->dbAlias);
+                return sprintf('%s AS %s', $vStore->substitute($this->aggregateFormula), $this->dbAlias);
             } elseif ( $query->isTimeseries() ) {
-                return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->timeseriesFormula), $this->dbAlias);
+                return sprintf('%s AS %s', $vStore->substitute($this->timeseriesFormula), $this->dbAlias);
             }
         }
     }
@@ -400,8 +412,12 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getAdditionalWhereCondition()
     {
-        list($leftCol, $operation, $rightCol) = $this->whereConditionDefinition;
-        return new \DataWarehouse\Query\Model\WhereCondition($leftCol, $operation, $rightCol);
+        if ( null === $this->additionalWhereConditionDefinition ) {
+            return null;
+        } else {
+            list($leftCol, $operation, $rightCol) = $this->whereConditionDefinition;
+            return new \DataWarehouse\Query\Model\WhereCondition($leftCol, $operation, $rightCol);
+        }
     }
 
     /**

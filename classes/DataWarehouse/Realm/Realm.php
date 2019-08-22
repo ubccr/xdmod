@@ -42,6 +42,13 @@ class Realm extends \CCR\Loggable implements iRealm
     protected $aggregateTablePrefix = null;
 
     /**
+     * @var string Alias to be used for the aggregate alias. GroupBy and Statistic definitions
+     * should use this alias when referring to the aggregate data table.
+     */
+
+    protected $aggregateTableAlias = 'agg';
+
+    /**
      * @var int A numerical ordering hint as to how this realm should be displayed visually relative
      *   to other realms. Lower numbers are displayed first. If no order is specified, 0 is assumed.
      */
@@ -134,7 +141,7 @@ class Realm extends \CCR\Loggable implements iRealm
     public static function getRealmObjects($order = self::SORT_ON_ORDER, Logger $logger = null)
     {
         self::initialize($logger);
-        return static::getSortedObjectList('Realm', self::$dataWarehouseConfig->toStdClass(), $order, null, $logger);
+        return static::getSortedObjectList('Realm', self::$dataWarehouseConfig->toStdClass(), $order, false, null, $logger);
     }
 
     /**
@@ -224,13 +231,16 @@ class Realm extends \CCR\Loggable implements iRealm
      *   configurations.
      * @param int $order A specification on how the realm list will be ordered. See iRealm for a
      *   list of possible values.
+     * @param Realm A Realm object needed for the factory method of GroupBys and Statistics
+     * @param bool $includeRealmId TRUE if the Realm ID should be added to the key to ensure that it
+     *   is unique across all Realms. Default: FALSE.
      *
      * @return array An associative array where the keys are entity short names and the values are
      * configuration objects for those entities. The array is sorted according to the order
      * specified.
      */
 
-    private static function getSortedNameList(\stdClass $configObj, $order)
+    private static function getSortedNameList(\stdClass $configObj, $order, Realm $realmObj = null, $includeRealmId = false)
     {
         $list = array();
 
@@ -238,7 +248,10 @@ class Realm extends \CCR\Loggable implements iRealm
         foreach ( $sorted as $shortName => $config ) {
             // Skip disabled configs
             if ( ! isset($config->disabled) || false === $config->disabled ) {
-                $list[$shortName] = $config->name;
+                if ( $includeRealmId && null !== $realmObj ) {
+                    $shortName = sprintf("%s_%s", $realmObj->id, $shortName);
+                }
+                $list[ $shortName] = $config->name;
             }
         }
 
@@ -255,6 +268,8 @@ class Realm extends \CCR\Loggable implements iRealm
      *   configurations.
      * @param int $order A specification on how the realm list will be ordered. See iRealm for a
      *   list of possible values.
+     * @param bool $includeRealmId TRUE if the Realm ID should be added to the key to ensure that it
+     *   is unique across all Realms. Default: FALSE.
      * @param Realm A Realm object needed for the factory method of GroupBys and Statistics
      * @param Log|null $logger A Log instance that will be utilized during processing.
      *
@@ -267,6 +282,7 @@ class Realm extends \CCR\Loggable implements iRealm
         $className,
         \stdClass $configObj,
         $order,
+        $includeRealmId = false,
         Realm $realmObj = null,
         Logger $logger = null
     ) {
@@ -279,6 +295,10 @@ class Realm extends \CCR\Loggable implements iRealm
 
             if ( isset($config->disabled) && $config->disabled ) {
                 continue;
+            }
+
+            if ( $includeRealmId ) {
+                $shortName = sprintf("%s_%s", $this->id, $shortName);
             }
 
             // The method that we cann is determined by the class we are instantiating. For Realms
@@ -298,7 +318,6 @@ class Realm extends \CCR\Loggable implements iRealm
             }
 
             $factory = sprintf('%s::factory', $factoryClassName);
-            print "Factory = $factory\n";
 
             if ( 'Realm' == $className ) {
                 // The Realm class already has the configuration and does not need it to be passed
@@ -355,6 +374,7 @@ class Realm extends \CCR\Loggable implements iRealm
         }
 
         $optionalConfigTypes = array(
+            'aggregate_table_alias' => 'string',
             'class' => 'string',
             'disabled' => 'bool',
             'min_aggregation_unit' => 'string',
@@ -377,6 +397,9 @@ class Realm extends \CCR\Loggable implements iRealm
                     break;
                 case 'aggregate_table_prefix':
                     $this->aggregateTablePrefix = trim($value);
+                    break;
+                case 'aggregate_table_alias':
+                    $this->aggregateTableAlias = trim($value);
                     break;
                 case 'datasource':
                     $this->datasource = trim($value);
@@ -403,6 +426,7 @@ class Realm extends \CCR\Loggable implements iRealm
                     $this->statisticConfigs = $value;
                     break;
                 default:
+                    $this->logger->notice(sprintf("Unknown key in realm by definition for '%s': '%s'", $this->id, $key));
                     break;
             }
         }
@@ -442,6 +466,15 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getAggregateTablePrefix($includeSchema = true)
     {
         return sprintf('%s%s', ( $includeSchema ? $this->aggregateTableSchema  . '.' : "" ), $this->aggregateTablePrefix);
+    }
+
+    /**
+     * @see iRealm::getAggregateTableAlias()
+     */
+
+    public function getAggregateTableAlias()
+    {
+        return $this->aggregateTableAlias;
     }
 
     /**
@@ -513,7 +546,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticNames($order = self::SORT_ON_ORDER)
     {
-        return static::getSortedNameList($this->statisticConfigs, $order);
+        return static::getSortedNameList($this->statisticConfigs, $order, $this, true);
     }
 
     /**
@@ -522,7 +555,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getGroupByObjects($order = self::SORT_ON_ORDER)
     {
-        return static::getSortedObjectList('GroupBy', $this->groupByConfigs, $order, $this, $this->logger);
+        return static::getSortedObjectList('GroupBy', $this->groupByConfigs, $order, false, $this, $this->logger);
     }
 
     /**
@@ -531,7 +564,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObjects($order = self::SORT_ON_ORDER)
     {
-        return static::getSortedObjectList('Statistic', $this->statisticConfigs, $order, $this, $this->logger);
+        return static::getSortedObjectList('Statistic', $this->statisticConfigs, $order, true, $this, $this->logger);
     }
 
     /**

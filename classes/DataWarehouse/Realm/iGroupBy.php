@@ -29,6 +29,12 @@ interface iGroupBy
     public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
+     * @return Realm The realm that this GroupBy is associated with.
+     */
+
+    public function getRealm();
+
+    /**
      * Note: Was getName()
      *
      * @return string The short internal identifier.
@@ -131,50 +137,6 @@ interface iGroupBy
     public function isAvailableForDrilldown();
 
     /**
-     * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
-     *
-     * @param boolean $multi TRUE to return a column name suitable for use in a query with multiple
-     *   data series. This ensures that we don't end up with two columns with the same name.
-     *
-     * @return string The name of the attribute id column in the possible values query
-     */
-
-    public function getIdColumnName($multi = false);
-
-    /**
-     * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
-     *
-     * @param boolean $multi TRUE to return a column name suitable for use in a query with multiple
-     *   data series. This ensures that we don't end up with two columns with the same name.
-     *
-     * @return string The name of the "long name" column in the possible values query
-     */
-
-    public function getLongNameColumnName($multi = false);
-
-    /**
-     * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
-     *
-     * @param boolean $multi TRUE to return a column name suitable for use in a query with multiple
-     *   data series. This ensures that we don't end up with two columns with the same name.
-     *
-     * @return string The name of the "short name" column in the possible values query
-     */
-
-    public function getShortNameColumnName($multi = false);
-
-    /**
-     * This column name is typcially used in the "AS" clause of an SQL SELECT statement.
-     *
-     * @param boolean $multi TRUE to return a column name suitable for use in a query with multiple
-     *   data series. This ensures that we don't end up with two columns with the same name.
-     *
-     * @return string The name of the "order id" column in the possible values query
-     */
-
-    public function getOrderIdColumnName($multi = false);
-
-    /**
      * Note: Was pullQueryParameters()
      *
      * Check the request for filters associated with attributes supported by this group by and
@@ -224,10 +186,12 @@ interface iGroupBy
      * Apply the current GroupBy to the specified Query.
      *
      * @param Query $query The query that this GroupBy will be added to.
-     * Note: $data_table is not needed here was we can use Query::getDataTable()
+     * @param bool $multi_group TRUE if this query can have multiple group bys. This is only set to
+     *   TRUE in Query::addGroupBy() and set to FALSE if a group by/dimension is specified in the
+     *   Query class constructor.
      */
 
-    public function applyTo(DataWarehouse\Query $query, $multi_group = false);
+    public function applyTo(\DataWarehouse\Query\iQuery $query, $multi_group = false);
 
     /**
      * Add a WHERE condition to the specified query. This will perform the following operations:
@@ -246,19 +210,20 @@ interface iGroupBy
      * Note: $multi_join is not needed here as it is only ever called at Query.php:1044 with "true"
      */
 
-    public function addWhereJoin(DataWarehouse\Query $query, $aggregateTableName, $operation, $whereConstraint);
+    public function addWhereJoin(\DataWarehouse\Query\iQuery $query, $aggregateTableName, $operation, $whereConstraint);
 
     /**
      * Add an ORDER BY clause to the specified query.
      *
      * @param Query $query The query that this GroupBy will be added to.
-     * @param boolean $multi_group NOTE: This parameter may not be needed after all addOrder()
-     *   methods are checked.
+     * @param bool $multi_group TRUE if this query can have multiple group bys. This is only set to
+     *   TRUE in Query::addGroupBy() and set to FALSE if a group by/dimension is specified in the
+     *   Query class constructor.
      * @param string $direction The sort order (ASC or DESC)
      * @param boolean $prepend TRUE to insert this ORDER BY at the start of the list
      */
 
-    public function addOrder(DataWarehouse\Query $query, $multi_group = false, $direction = 'ASC', $prepend = false);
+    public function addOrder(\DataWarehouse\Query\iQuery $query, $multi_group = false, $direction = 'ASC', $prepend = false);
 
     /**
      * Execute the query to retrieve the list of possible values for this descriptive attribute
@@ -276,10 +241,11 @@ interface iGroupBy
     public function getAttributeValues(array $restrictions = null);
 
     /**
-     * Generate a string representation of the object
+     * @return \ETL\DbModel\Query The Query object used to generate SQL for obtaining the values of
+     * the descriptive attribute that this GroupBy represents.
      */
 
-    public function __toString();
+    public function getAttributeValuesQuery();
 
     /**
      * Accessors used to create usage chart settings in DataWarehouse/Access/Usage.php and
@@ -385,4 +351,10 @@ interface iGroupBy
      */
 
     public function getCategory();
+
+    /**
+     * Generate a string representation of the object
+     */
+
+    public function __toString();
 }

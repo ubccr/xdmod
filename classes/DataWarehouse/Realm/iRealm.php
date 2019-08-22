@@ -104,6 +104,12 @@ interface iRealm
     public function getAggregateTablePrefix($includeSchema = true);
 
     /**
+     * @return string The alias to use when referencing the aggregate table.
+     */
+
+    public function getAggregateTableAlias();
+
+    /**
      * @return string The data source or sources used to generate the Realm data. For example,
      *   XDCDB, XDMoD Data Warehouse, etc.
      */
