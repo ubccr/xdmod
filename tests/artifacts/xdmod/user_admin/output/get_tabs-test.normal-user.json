@@ -40,7 +40,7 @@
         "permitted_modules": null,
         "javascriptClass": "XDMoD.Module.DataExport",
         "javascriptReference": "CCR.xdmod.ui.dataExport",
-        "tooltip": "",
+        "tooltip": "Data Warehouse Batch Export",
         "userManualSectionName": "Data Export"
     },
     {
