@@ -36,7 +36,7 @@
         "tab": "data_export",
         "isDefault": false,
         "title": "Data Export",
-        "pos": 400,
+        "pos": 500,
         "permitted_modules": null,
         "javascriptClass": "XDMoD.Module.DataExport",
         "javascriptReference": "CCR.xdmod.ui.dataExport",
