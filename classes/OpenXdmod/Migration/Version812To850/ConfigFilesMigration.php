@@ -10,7 +10,6 @@ use CCR\Json;
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;
 use OpenXdmod\Setup\WarehouseExportSetup;
-use xd_utilities;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
@@ -102,8 +101,8 @@ EOT
         $console->displayBlankLine();
         $exportSetup = new WarehouseExportSetup($console);
         $exportSettings = $exportSetup->promptForSettings([
-            'data_warehouse_export_export_directory' => xd_utilities\getConfiguration('data_warehouse_export', 'export_directory'),
-            'data_warehouse_export_retention_duration_days' => xd_utilities\getConfiguration('data_warehouse_export', 'retention_duration_days')
+            'data_warehouse_export_export_directory' => '/var/spool/xdmod/export',
+            'data_warehouse_export_retention_duration_days' => 30
         ]);
 
         $this->writePortalSettingsFile(array_merge(
