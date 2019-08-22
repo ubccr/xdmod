@@ -22,8 +22,8 @@ set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
 provideInput {Enable Novice User Tab*} {off}
-answerQuestion {Export Directory} {}
-answerQuestion {Export File Retention Duration in Days} {31}
+provideInput {Export Directory*} {}
+provideInput {Export File Retention Duration*} 31
 expect {
     -re "\nDo you want to run aggregation now.*\\\]" {
         send no\n
