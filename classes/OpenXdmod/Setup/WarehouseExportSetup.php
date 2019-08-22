@@ -78,7 +78,7 @@ MSG
 
         while (!$haveResponse) {
             $retentionDuration = $this->console->prompt(
-                'Export File Retention Duration (Days):',
+                'Export File Retention Duration in Days:',
                 $defaultDuration
             );
 

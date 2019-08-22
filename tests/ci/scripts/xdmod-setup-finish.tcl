@@ -33,8 +33,8 @@ confirmFileWrite yes
 enterToContinue
 
 selectMenuOption 7
-provideInput {Export Directory:} {}
-provideInput {Export File Retention Duration (Days):} {31}
+answerQuestion {Export Directory} {}
+answerQuestion {Export File Retention Duration in Days} {31}
 confirmFileWrite yes
 enterToContinue
 
