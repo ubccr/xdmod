@@ -71,6 +71,7 @@ then
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
     fi
     sudo -u xdmod xdmod-ingestor
 
