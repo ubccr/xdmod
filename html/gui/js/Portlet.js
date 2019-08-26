@@ -36,27 +36,29 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
     helpTour: null,
     helpTourDetails: [],
     initComponent: function () {
-        this.helpTourDetails.tips.forEach(function (value, index, arr) {
-            arr[index].target = (value.target.slice(0, 1) !== '/') ? '#' + this.id + ' ' + value.target : value.target.slice(1, value.target.length);
-        }, this);
+        if (this.helpTourDetails.tips !== undefined && this.helpTourDetails.tips.length > 0) {
+            this.helpTourDetails.tips.forEach(function (value, index, arr) {
+                arr[index].target = (value.target.slice(0, 1) !== '/') ? '#' + this.id + ' ' + value.target : value.target.slice(1, value.target.length);
+            }, this);
 
-        this.helpTour = new Ext.ux.HelpTipTour({
-            title: this.helpTourDetails.title,
-            items: this.helpTourDetails.tips
-        });
+            this.helpTour = new Ext.ux.HelpTipTour({
+                title: this.helpTourDetails.title,
+                items: this.helpTourDetails.tips
+            });
 
-        if (this.tools === undefined) {
-            this.tools = [];
-        }
-
-        this.tools.push({
-            id: 'maximize',
-            qtip: 'View Portlet Help Tour',
-            scope: this,
-            handler: function (event, toolEl, panel) {
-                this.helpTour.startTour();
+            if (this.tools === undefined) {
+                this.tools = [];
             }
-        });
+
+            this.tools.push({
+                id: 'maximize',
+                qtip: 'View Portlet Help Tour',
+                scope: this,
+                handler: function (event, toolEl, panel) {
+                    this.helpTour.startTour();
+                }
+            });
+        }
 
         Ext.ux.Portlet.superclass.initComponent.apply(this, arguments);
     }
