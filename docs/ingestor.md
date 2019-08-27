@@ -27,27 +27,27 @@ Start and End Date
 
 If you have changed any data in the Open XDMoD database it is necessary
 to re-ingest that data.  This can be accomplished by specifying a start
-and end date, formatted as YYYY-MM-DD,  that include the dates
+and end date, formatted as YYYY-MM-DD, that include the dates
 associated with the modified data.
 
     $ xdmod-ingestor --start-date *start-date* --end-date *end-date*
-
 
 Last Modified Start Date
 ------------------
 
 When aggregating data use this date as the basis of what jobs to include.
-Only jobs ingested on or after this date will be aggregated
+Only jobs ingested on or after this date will be aggregated.
 This defaults to the start of the ingest and aggregation process.
 
-    $ xdmod-ingestor --last-modified-start-date "TIME"
+    $ xdmod-ingestor --last-modified-start-date *date*
 
-The value specified to `TIME` **must** be a MySQL server clock time.
+The value specified for the `date` **must** be an ISO 8601 date or date and
+time (e.g. "2019-01-01" or "2019-01-01 12:00:00").
 
-Advanced Usage 
----------------
+Advanced Usage
+--------------
 
-The ingestor may be set to only ingest specific realms or timeframes.  You
+The ingestor may be set to only ingest specific realms or time frames.  You
 must also set the last modified start date for aggregation to work properly.
 
 **Jobs:**
@@ -55,19 +55,20 @@ must also set the last modified start date for aggregation to work properly.
 The following is an example of only aggregating the jobs realm.
 
 Set timestamp:
+
     $ last_modified_start_date=$(date +'%F %T')
 
 Ingest shredded jobs to staging table:
 
     $ xdmod-ingestor --ingest-shredded
 
-Ingest staging table jobs to HpcDB:
+Ingest staging table jobs to HPcDB:
 
     $ xdmod-ingestor --ingest-staging
 
-Ingest all HpcDB jobs:
+Ingest all HPcDB jobs to the data warehouse:
 
-    $ xdmod-ingestor --ingestHpcdb
+    $ xdmod-ingestor --ingest-hpcdb
 
 Aggregate:
 
@@ -75,10 +76,10 @@ Aggregate:
 
 **Cloud:**
 
-If you do not have jobs data and/or wish to break down your ingestion process to 
-exclusively ingest cloud data, you may do so as such. 
+If you do not have jobs data and/or wish to break down your ingestion process to
+exclusively ingest cloud data, you may do so as such.
 
-You will need to specify the type of cloud data (generic, openstack):
+You will need to specify the type of cloud data (`genericcloud`, `openstack`):
 
 Set timestamp:
 
@@ -88,7 +89,7 @@ Ingest Generic logs:
 
     $ xdmod-ingestor --datatype=genericcloud
 
-Ingest Openstack logs:
+Ingest OpenStack logs:
 
     $ xdmod-ingestor --datatype=openstack
 
@@ -132,4 +133,3 @@ output about what is being performed, use the verbose option:
 Debugging output is also available:
 
     $ xdmod-ingestor --debug
-
