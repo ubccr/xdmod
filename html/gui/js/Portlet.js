@@ -34,7 +34,7 @@
  */
 CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
     helpTour: null,
-    helpTourDetails: [],
+    helpTourDetails: {},
     initComponent: function () {
         if (this.helpTourDetails.tips !== undefined && this.helpTourDetails.tips.length > 0) {
             this.helpTourDetails.tips.forEach(function (value, index, arr) {
