@@ -154,10 +154,14 @@ class FileManager extends Loggable
         ]);
 
         try {
-            $dataFile = tempnam(sys_get_temp_dir(), 'batch-export-');
+            $tmpDir = sys_get_temp_dir();
+            $dataFile = tempnam($tmpDir, 'batch-export-');
 
             if ($dataFile === false) {
-                throw new Exception('Failed to create temporary file');
+                throw new Exception(sprintf(
+                    'Failed to create temporary file in directory "%s"',
+                    $tmpDir
+                ));
             }
 
             $fileWriter = $this->fileWriterFactory->createFileWriter(
