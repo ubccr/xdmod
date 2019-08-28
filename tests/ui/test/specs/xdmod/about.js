@@ -24,7 +24,7 @@ describe('About', function about() {
             it('SUPReMM', function checkNavEntrySUPReMM() {
                 Abt.checkTab('SUPReMM');
             });
-            it('Roadmap', function checkNavEntryXDMoD() {
+            it.skip('Roadmap', function checkNavEntryXDMoD() {
                 Abt.checkRoadmap();
             });
             it('Team', function checkNavEntryXDMoD() {
@@ -73,7 +73,7 @@ describe('About', function about() {
             it('SUPReMM', function checkNavEntrySUPReMM() {
                 Abt.checkTab('SUPReMM');
             });
-            it('Roadmap', function checkNavEntryXDMoD() {
+            it.skip('Roadmap', function checkNavEntryXDMoD() {
                 Abt.checkRoadmap();
             });
             it('Team', function checkNavEntryXDMoD() {
