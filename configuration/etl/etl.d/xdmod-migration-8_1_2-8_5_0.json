@@ -198,31 +198,7 @@
                 }
             }
         },
-        {
-            "name": "OpenStackUnknownDomainStagingIngestor",
-            "description": "The default 'Unknown' domain.",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/domains_unknown_staging.json",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "truncate_destination": true,
-            "endpoints": {
-                "source": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
-            }
-        },
+
         {
             "name": "OpenStackDomainStagingIngestor",
             "description": "Open Stack cloud domain_staging data",
@@ -247,7 +223,26 @@
                     "create_schema_if_not_exists": true
                 }
             }
-
+        },
+        {
+            "name": "OpenStackUnknownDomainIngestor",
+            "description": "The default 'Unknown' domain.",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_openstack/unknown_domain.sql"
+            ],
+            "truncate_destination": true,
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            }
         },
         {
             "name": "OpenStackDomainIngestor",
@@ -274,6 +269,7 @@
                 }
             }
         },
+
         {
             "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",
             "description": "Load schema version history",
@@ -327,6 +323,8 @@
                 }
             }
         },
+
+
         {
             "#": "Events must be ingested after all other dimensions",
             "name": "OpenStackCloudStagingEventIngestor",
@@ -496,6 +494,143 @@
             }
         },
         {
+            "name": "resource-types",
+            "description": "Ingest resource types file",
+            "definition_file": "common/staging/resource-type.json",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource types",
+                    "path": "${base_dir}/../resource_types.json",
+                    "record_schema_path": "common/resource-types.schema.json",
+                    "filters": [
+                        {
+                            "#": "Reformat config file for ETLs purposes.",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[ .resource_types | to_entries[]| {abbrev: .key, description:.value.description} ] '"
+                        }
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "resource-config",
+            "description": "Ingest resource configuration file",
+            "definition_file": "common/staging/resource-config.json",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resources configuration",
+                    "path": "${base_dir}/../resources.json",
+                    "record_schema_path": "common/resources.schema.json",
+                    "field_names": [
+                        "resource",
+                        "name",
+                        "description",
+                        "pi_column",
+                        "shared_jobs",
+                        "timezone",
+                        "resource_type"
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+
+        {
+            "class": "DatabaseIngestor",
+            "name": "resources",
+            "truncate_destination": false,
+            "description": "Ingest resource names from resource config",
+            "definition_file": "common/staging/resource.json",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "HpcdbIngestResources",
+            "description": "Ingest resources from staging table to table in modw_hpcdb. Modeled after action in hpcdb-ingest-common.resources",
+            "definition_file": "common/hpcdb/resources.json",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "IngestResourcefact",
+            "definition_file": "jobs/xdw/resource-fact.json",
+            "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest-common.resource",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
+
+        },
+        {
             "class": "DatabaseIngestor",
             "name": "IngestResourcefactRealmRelations",
             "namespace": "ETL\\Ingestor",
@@ -517,5 +652,6 @@
                 }
             }
         }
+
     ]
 }

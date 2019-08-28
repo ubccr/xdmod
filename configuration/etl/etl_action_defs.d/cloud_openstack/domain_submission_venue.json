@@ -5,7 +5,7 @@
   "source_query": {
     "records": {
       "resource_id": "rf.id",
-      "domain_id": "COALESCE(d.id, -1)",
+      "domain_id": "COALESCE(d.id, 1)",
       "submission_venue_id": "sv.submission_venue_id"
     },
     "joins": [

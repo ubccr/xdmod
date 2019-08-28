@@ -5,5 +5,6 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Quarter
+Quarter,"[Unknown] Average Wall Hours per Session"
+"2018 Q2",23.14954403
 ---------

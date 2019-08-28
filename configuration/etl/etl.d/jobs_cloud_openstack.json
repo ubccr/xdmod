@@ -252,24 +252,28 @@
             "definition_file": "cloud_openstack/instance.json"
         },
         {
-            "name": "OpenStackUnknownDomainStagingIngestor",
-            "description": "The default 'Unknown' domain.",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/domains_unknown_staging.json",
-            "truncate_destination": true
-        },
-        {
             "name": "OpenStackDomainStagingIngestor",
             "description": "Open Stack cloud domain_staging data",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/domains_staging.json"
         },
         {
+            "name": "OpenStackUnknownDomainIngestor",
+            "description": "The default 'Unknown' domain.",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_openstack/unknown_domain.sql"
+            ],
+            "truncate_destination": true
+        },
+        {
             "name": "OpenStackDomainIngestor",
             "description": "Open Stack cloud domains data",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/domains.json",
-            "truncate_destination": true
+            "truncate_destination": false
         },
         {
             "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",

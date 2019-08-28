@@ -15,7 +15,7 @@
             "host_id": "staging.host_id",
             "person_id": "staging.person_id",
             "systemaccount_id": "sa.id",
-            "domain_id": "COALESCE(staging.domain_id, -1)",
+            "domain_id": "COALESCE(staging.domain_id, 1)",
             "#": "The default value of '3' corresponds to the 'OpenStack API' modw.submission_venue record.",
             "submission_venue_id": "COALESCE(dsv.submission_venue_id, 3)"
         },
