@@ -143,6 +143,14 @@ class BatchProcessor extends Loggable
             $dataFile = $this->fileManager->writeDataSetToFile($dataSet, $format);
             $this->fileManager->createZipFile($dataFile, $request);
 
+            // Delete file that was added to zip archive.
+            if (!unlink($dataFile)) {
+                $this->logger->err(sprintf(
+                    'Failed to delete temporary data file "%s"',
+                    $dataFile
+                ));
+            }
+
             // Query for same record to get expiration date.
             $request = $this->queryHandler->getRequestRecord($request['id']);
             $this->sendExportSuccessEmail($user, $request);
