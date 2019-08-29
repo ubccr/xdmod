@@ -67,6 +67,8 @@ toc:
         url: /cloud.html
       - page: Storage Metrics (Beta)
         url: /storage.html
+      - page: Data Warehouse Export (Beta)
+        url: /dw-export.html
   - title: Resource Manager Notes
     subfolderitems:
       - page: Slurm
