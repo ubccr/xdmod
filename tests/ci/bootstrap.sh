@@ -6,8 +6,8 @@
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
+REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
-CONF_WH=/etc/xdmod
 
 if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=jobs,storage,cloud
@@ -32,14 +32,14 @@ then
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
-        if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
             # -- Fix users searched in SSO test
-            patch -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+            patch -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
     else
-        if patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
             # -- Reverse previous patch
-            patch -R -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+            patch -R -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
     fi
 
