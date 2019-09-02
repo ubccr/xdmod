@@ -39,14 +39,11 @@ interface iStatistic
     /**
      * Note: Was getName()
      *
-     * @param bool $includeRealmId TRUE if the Realm id should be added to the statistic name to
-     *   ensure that the statistic is unique across all realms. Default: TRUE.
-     *
      * @return string The short internal identifier. This is often used as an alias in SQL queries.
      * For example, "total_cpu_hours".
      */
 
-    public function getId($includeRealmId = true);
+    public function getId();
 
     /**
      * Note: Was getLabel()
@@ -100,13 +97,6 @@ interface iStatistic
     public function getFormula(\DataWarehouse\Query\iQuery $query = null);
 
     /**
-     * @return string The database alias used by this statistic. This must be a unique identifier among
-     *   statistics in case multiple are used in a single query.
-     */
-
-    public function getAlias();
-
-    /**
      * Note: The corresponding setDecimals() is only called from the constructor.
      * @return int The number of significant digits to display
      */
@@ -130,7 +120,7 @@ interface iStatistic
      * @return int|null The current sort order where NULL means no sorting.
      */
 
-    public function getSortOder();
+    public function getSortOrder();
 
     /**
      * @return string The name of the module that defined this Statistic. The default is the module

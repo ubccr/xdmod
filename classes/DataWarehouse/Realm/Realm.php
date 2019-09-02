@@ -86,6 +86,9 @@ class Realm extends \CCR\Loggable implements iRealm
      * @var stdClass|null An associative array of statistic configuration objects where the key is
      *   the short identifier and the value is a stdClass containing the configuration. These are
      *   used to create Statistic objects on demand.
+     *
+     * Note: The Realm id is added to the beginning of each statistic id so that the statistic
+     *   names are guaranteed unique and can be used as identifiers in database queries and the UI.
      */
 
     protected $statisticConfigs = null;
@@ -158,7 +161,7 @@ class Realm extends \CCR\Loggable implements iRealm
     public static function getRealmObjects($order = self::SORT_ON_ORDER, Logger $logger = null)
     {
         self::initialize($logger);
-        return static::getSortedObjectList('Realm', self::$dataWarehouseConfig->toStdClass(), $order, false, null, $logger);
+        return static::getSortedObjectList('Realm', self::$dataWarehouseConfig->toStdClass(), $order, null, $logger);
     }
 
     /**
@@ -248,16 +251,13 @@ class Realm extends \CCR\Loggable implements iRealm
      *   configurations.
      * @param int $order A specification on how the realm list will be ordered. See iRealm for a
      *   list of possible values.
-     * @param Realm A Realm object needed for the factory method of GroupBys and Statistics
-     * @param bool $includeRealmId TRUE if the Realm ID should be added to the key to ensure that it
-     *   is unique across all Realms. Default: FALSE.
      *
      * @return array An associative array where the keys are entity short names and the values are
      * configuration objects for those entities. The array is sorted according to the order
      * specified.
      */
 
-    private static function getSortedNameList(\stdClass $configObj, $order, Realm $realmObj = null, $includeRealmId = false)
+    private static function getSortedNameList(\stdClass $configObj, $order)
     {
         $list = array();
 
@@ -265,10 +265,7 @@ class Realm extends \CCR\Loggable implements iRealm
         foreach ( $sorted as $shortName => $config ) {
             // Skip disabled configs
             if ( ! isset($config->disabled) || false === $config->disabled ) {
-                if ( $includeRealmId && null !== $realmObj ) {
-                    $shortName = sprintf("%s_%s", $realmObj->id, $shortName);
-                }
-                $list[ $shortName] = $config->name;
+                $list[$shortName] = $config->name;
             }
         }
 
@@ -285,8 +282,6 @@ class Realm extends \CCR\Loggable implements iRealm
      *   configurations.
      * @param int $order A specification on how the realm list will be ordered. See iRealm for a
      *   list of possible values.
-     * @param bool $includeRealmId TRUE if the Realm ID should be added to the key to ensure that it
-     *   is unique across all Realms. Default: FALSE.
      * @param Realm A Realm object needed for the factory method of GroupBys and Statistics
      * @param Log|null $logger A Log instance that will be utilized during processing.
      *
@@ -299,7 +294,6 @@ class Realm extends \CCR\Loggable implements iRealm
         $className,
         \stdClass $configObj,
         $order,
-        $includeRealmId = false,
         Realm $realmObj = null,
         Logger $logger = null
     ) {
@@ -314,10 +308,6 @@ class Realm extends \CCR\Loggable implements iRealm
                 continue;
             }
 
-            if ( $includeRealmId ) {
-                $shortName = sprintf("%s_%s", $this->id, $shortName);
-            }
-
             // The method that we cann is determined by the class we are instantiating. For Realms
             // use late static binding. For other classes use the class name specified unless the
             // configuration explicitly provides a class name.
@@ -325,9 +315,11 @@ class Realm extends \CCR\Loggable implements iRealm
             $factoryClassName = ('Realm' == $className ? 'static' : $className);
             if ( 'Realm' != $className && isset($configObj->class) ) {
                 if ( ! class_exists($configObj->class) ) {
-                    $this->logAndThrowException(
-                        sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class)
-                    );
+                    $msg = sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class);
+                    if ( null !== $logger ) {
+                        $logger->error($msg);
+                    }
+                    throw new \Exception($msg);
                 }
                 $factoryClassName = $configObj->class;
             } elseif ( false === strpos($factoryClassName, '\\') ) {
@@ -447,6 +439,16 @@ class Realm extends \CCR\Loggable implements iRealm
                     break;
             }
         }
+
+        // If the Statistic id does not already start with the Realm id then add it here.
+
+        foreach ( $this->statisticConfigs as $statisticId => $statisticConfig ) {
+            if ( 0 !== strpos($statisticId, $this->id) ) {
+                $qualifiedId = sprintf("%s_%s", $this->id, $statisticId);
+                $this->statisticConfigs->$qualifiedId = $statisticConfig;
+                unset($this->statisticConfigs->$statisticId);
+            }
+        }
     }
 
     /**
@@ -536,6 +538,13 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function statisticExists($id)
     {
+        // As a convienence, if the requested statistic does not start with the realm id, add it
+        // here.
+
+        if ( 0 !== strpos($id, $this->id) ) {
+            $id = sprintf("%s_%s", $this->id, $id);
+        }
+
         return isset($this->statisticConfigs->$id);
     }
 
@@ -563,7 +572,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticNames($order = self::SORT_ON_ORDER)
     {
-        return static::getSortedNameList($this->statisticConfigs, $order, $this, true);
+        return static::getSortedNameList($this->statisticConfigs, $order);
     }
 
     /**
@@ -572,7 +581,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getGroupByObjects($order = self::SORT_ON_ORDER)
     {
-        return static::getSortedObjectList('GroupBy', $this->groupByConfigs, $order, false, $this, $this->logger);
+        return static::getSortedObjectList('GroupBy', $this->groupByConfigs, $order, $this, $this->logger);
     }
 
     /**
@@ -581,7 +590,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObjects($order = self::SORT_ON_ORDER)
     {
-        return static::getSortedObjectList('Statistic', $this->statisticConfigs, $order, true, $this, $this->logger);
+        return static::getSortedObjectList('Statistic', $this->statisticConfigs, $order, $this, $this->logger);
     }
 
     /**
@@ -592,7 +601,7 @@ class Realm extends \CCR\Loggable implements iRealm
     {
         if ( ! isset($this->groupByConfigs->$shortName) ) {
             $this->logAndThrowException(sprintf("No GroupBy found with id '%s'", $shortName));
-        } elseif ( isset($this->groupByConfigs->disabled) && $this->groupByConfigs->disabled ) {
+        } elseif ( isset($this->groupByConfigs->$shortName->disabled) && $this->groupByConfigs->$shortName->disabled ) {
             $this->logAndThrowException(sprintf("Attempt to access disabled GroupBy '%s'", $shortName));
         }
 
@@ -618,9 +627,16 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObject($shortName)
     {
+        // As a convienence, if the requested statistic does not start with the realm id, add it
+        // here.
+
+        if ( 0 !== strpos($shortName, $this->id) ) {
+            $shortName = sprintf("%s_%s", $this->id, $shortName);
+        }
+
         if ( ! isset($this->statisticConfigs->$shortName) ) {
             $this->logAndThrowException(sprintf("No Statistic found with id '%s'", $shortName));
-        } elseif ( isset($this->groupByConfigs->disabled) && $this->groupByConfigs->disabled ) {
+        } elseif ( isset($this->statisticConfigs->$shortName->disabled) && $this->statisticConfigs->$shortName->disabled ) {
             $this->logAndThrowException(sprintf("Attempt to access disabled Statistic '%s'", $shortName));
         }
 

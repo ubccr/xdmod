@@ -22,14 +22,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $moduleName = null;
 
     /**
-     * @var string The database alias to use with the formula when querying the data. This must be
-     *   unique.
-     */
-
-    protected $dbAlias = null;
-
-    /**
-     * @var string The short identifier.
+     * @var string The short identifier. Must be unique among all statistics across all realms.
      */
 
     protected $id = null;
@@ -142,8 +135,6 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
         $this->id = $shortName;
         $this->realm = $realm;
-        // Combine the realm and statistic id to generate a unique alias
-        $this->dbAlias = sprintf('%s_%s', $realm->getId(), $this->id);
         $this->moduleName = $realm->getModuleName();
 
         if ( empty($shortName) ) {
@@ -161,7 +152,6 @@ class Statistic extends \CCR\Loggable implements iStatistic
         $messages = array();
         $configTypes = array(
             'description_html' => 'string',
-            'formula' => 'string',
             'name' => 'string',
             'unit' => 'string'
         );
@@ -172,11 +162,16 @@ class Statistic extends \CCR\Loggable implements iStatistic
             );
         }
 
+        // Note that either formula or both aggregate_formula and timeseries_formula fields must be
+        // defined. We are treating them as optional only to verify their types and will verify
+        // their presense later.
+
         $optionalConfigTypes = array(
             'additional_where_condition' => 'array',
             'aggregate_formula' => 'string',
             'data_sort_order' => 'string',
             'disabled' => 'bool',
+            'formula' => 'string',
             'module' => 'string',
             'order' => 'int',
             'precision' => 'int',
@@ -248,6 +243,15 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     break;
             }
         }
+
+        // Ensure the formulas are set properly
+
+        if (
+            (null === $this->formula && (null === $this->aggregateFormula || null === $this->timeseriesFormula)) ||
+            (null !== $this->formula && (null !== $this->aggregateFormula || null !== $this->timeseriesFormula))
+        ){
+            $this->logAndThrowException("Must define either 'formula' or ('aggregate_formula' and 'timeseries_formula')");
+        }
     }
 
     /**
@@ -263,9 +267,9 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @see iStatistic::getId()
      */
 
-    public function getId($includeRealmId = true)
+    public function getId()
     {
-        return ( $includeRealmId ? sprintf("%s_%s", $this->realm->getId(), $this->id) : $this->id );
+        return $this->id;
     }
 
     /**
@@ -323,28 +327,21 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     sprintf("Key 'formula' not specified for statistic %s and Query not provided to getFormula()", $this)
                 );
             }
-            return sprintf('%s AS %s', $this->formula, $this->dbAlias);
+            return sprintf('%s AS %s', $this->formula, $this->id);
         } else {
             // Update the variable store with the most recent values in the query class as they may
             // change dynamically.
             $vStore = $query->updateVariableStore();
+            $formla = null;
             if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
-                return $vStore->substitute($this-formula);
+               $formula = $this->formula;
             } elseif ( $query->isAggregate() ) {
-                return sprintf('%s AS %s', $vStore->substitute($this->aggregateFormula), $this->dbAlias);
+               $formula = $this->aggregateFormula;
             } elseif ( $query->isTimeseries() ) {
-                return sprintf('%s AS %s', $vStore->substitute($this->timeseriesFormula), $this->dbAlias);
+               $formula = $this->timeseriesFormula;
             }
+            return sprintf('%s AS %s', $vStore->substitute($formula), $this->id);
         }
-    }
-
-    /**
-     * @see iStatistic::getAlias()
-     */
-
-    public function getAlias()
-    {
-        return $this->dbAlias;
     }
 
     /**
@@ -380,10 +377,10 @@ class Statistic extends \CCR\Loggable implements iStatistic
     }
 
     /**
-     * @see iStatistic::getSortOder()
+     * @see iStatistic::getSortOrder()
      */
 
-    public function getSortOder()
+    public function getSortOrder()
     {
         return $this->sortOrder;
     }
