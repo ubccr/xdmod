@@ -209,7 +209,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             'attribute_description_query' => 'int',
             'attribute_filter_map_query' => 'object',
             'attribute_table_schema' => 'string',
-            'available_for_drilldown' => 'boolean',
+            'available_for_drilldown' => 'bool',
             'category' => 'string',
             'data_sort_order' => 'string',
             'disabled' => 'bool',
@@ -382,15 +382,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     }
 
     /**
-     * @see iGroupBy::getAggregateTablePrefix()
-     */
-
-    public function getAggregateTablePrefix($includeSchema = true)
-    {
-        return $this->realm->getAggregateTablePrefix($includeSchema);
-    }
-
-    /**
      * @see iGroupBy::getAggregateKeys()
      */
 
@@ -441,10 +432,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     }
 
     /**
-     * @see iGroupBy::getSortOder()
+     * @see iGroupBy::getSortOrder()
      */
 
-    public function getSortOder()
+    public function getSortOrder()
     {
         return $this->sortOrder;
     }
@@ -723,12 +714,13 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $query->addTable($this->attributeTableObj);
 
         foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-            $field = new TableField($this->attributeTableObj, $attributeKey, $this->qualifyColumnName($attributeKey, $multi_group));
+            $alias = $this->qualifyColumnName($attributeKey, $multi_group);
+            $field = new TableField($this->attributeTableObj, $attributeKey, $alias);
             $where = new WhereCondition($field, '=', new TableField($query->getDataTable(), $aggregateKey));
             $query->addField($field);
             $query->addWhereCondition($where);
             $query->addGroup($field);
-            $this->logger->trace(sprintf("Add ID field '%s' and WHERE condition '%s'", $field, $where));
+            $this->logger->trace(sprintf("%s Add ID field '%s AS %s' and WHERE condition '%s'", $this, $field, $alias, $where));
         }
 
         // We use the short and long name fields specified in the attribute_values_query. Note that
@@ -751,11 +743,15 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         //         }
         //     ]
 
+        // Note that start_ts is used by SimpleTimeseriesDataset and must be present for aggregation
+        // unit group bys such as GroupByDay, GroupByMonth, etc.
+
+        $fieldList = array('short_name', 'name', 'order_id', 'start_ts');
+
         // If we find that there is an aliased column name (alias.column) in the formula, ensure
         // that the aliased table is the attribute table for this group by. Fully qualified
         // (schema.table.column) column names will be unchanged.
 
-        $fieldList = array('short_name', 'name', 'order_id');
         foreach ($fieldList as $fieldName) {
 
             // Note that the formula specified as part of the attribute values query can be as
@@ -774,22 +770,19 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             // become "table.CONCAT(name, '-', code)".  Here we use Field and include the table
             // alias ourselves.
 
-            $field = new Field($this->verifyAndReplaceTableAlias($formula), $this->qualifyColumnName($fieldName, $multi_group));
-            $this->logger->debug(sprintf("Add field: %s", $field));
+            // Specifically for aggregation unit group bys, add the aggregation unit to the field
+            // alias.
+
+            $alias = (
+                'start_ts' != $fieldName
+                ? $this->qualifyColumnName($fieldName, $multi_group)
+                : sprintf('%s_%s', $query->getAggregationUnit(), $fieldName)
+            );
+
+            $field = new Field($this->verifyAndReplaceTableAlias($formula), $alias);
+            $this->logger->debug(sprintf("%s Add field: %s AS %s", $this, $field, $alias));
             $query->addField($field);
         }
-
-        // Add a field for each ORDER BY column. Do we need this??? Is it actually referenced
-        // anywhere?
-
-        /*
-        if ( isset($this->attributeValuesQueryAsStdClass->orderby) ) {
-            foreach ( $this->attributeValuesQueryAsStdClass->orderby as $orderByField ) {
-                // What about queries with multiple order by fields?
-                $query->addField(new Field($this->verifyAndReplaceTableAlias($orderByField), $this->qualifyColumnName('order_id', $multi_group)));
-            }
-        }
-        */
 
         // Note that there are a few GroupBys that used $prepend = true such as GroupByJobTime,
         // GroupByJobWaitTime, and GroupByNodeCount. Are these really necessary? If so we will need
@@ -895,7 +888,11 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
 
         foreach ( $attributeKeyConstraints as $attributeKey => $valueList ) {
-            $where = new WhereCondition($attributeKey, $operation, sprintf('(%s)', implode(',', $valueList)));
+            $where = new WhereCondition(
+                sprintf('%s.%s', $this->attributeTableName, $attributeKey),
+                $operation,
+                sprintf('(%s)', implode(',', $valueList))
+            );
             $this->logger->debug(sprintf('%s Add where condition: %s', $this, $where));
             $query->addWhereCondition($where);
         }

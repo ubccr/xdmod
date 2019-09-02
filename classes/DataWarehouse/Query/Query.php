@@ -181,12 +181,14 @@ class Query extends Loggable
     public function updateVariableStore()
     {
         $this->variableStore->overwrite('QUERY_TYPE', $this->getQueryType());
+        $this->variableStore->overwrite('DATE_TABLE_ID_FIELD', sprintf('%s.id', $this->getDateTable()));
         $this->variableStore->overwrite('MIN_DATE_ID', $this->getMinDateId());
         $this->variableStore->overwrite('MAX_DATE_ID', $this->getMaxDateId());
         $this->variableStore->overwrite('START_DATE_TS', $this->getStartDateTs());
         $this->variableStore->overwrite('END_DATE_TS', $this->getEndDateTs());
         $this->variableStore->overwrite('DURATION_FORMULA', (string) $this->getDurationFormula());
         $this->variableStore->overwrite('AGGREGATION_UNIT', $this->getAggregationUnitName());
+        $this->variableStore->overwrite('ORGANIZATION_NAME', ORGANIZATION_NAME);
 
         return $this->variableStore;
     }
@@ -315,7 +317,7 @@ class Query extends Loggable
         $time_end = microtime(true);
         $return = array();
         if ($this->_main_stat_field != null) {
-            $stat = $this->_main_stat_field->getAlias();
+            $stat = $this->_main_stat_field->getId();
             $stat_weight = $this->_main_stat_field->getWeightStatName();
 
             $sort_option = $this->_group_by->getSortOrder();
@@ -428,7 +430,7 @@ class Query extends Loggable
     {
         $this->logger->debug(sprintf("%s Add statistic: '%s'", $this, $field->getId()));
 
-        $this->_stat_fields[$field->getAlias()] = $field;
+        $this->_stat_fields[$field->getId()] = $field;
 
         $addnlwhere = $field->getAdditionalWhereCondition();
         if ($addnlwhere !== null) {
@@ -1198,7 +1200,7 @@ SQL;
 
         // Use the group by instance specific to the situation to
         // construct where clause and add it to the current query object
-        $whereObj = $group_by->addWhereJoin($this, $this->_data_table, true, $operation, $whereConstraint);
+        $whereObj = $group_by->addWhereJoin($this, $this->_data_table, $operation, $whereConstraint);
         return $whereObj;
     } // public function addWhereAndJoin($group_by_name)
 
@@ -1444,7 +1446,6 @@ SQL;
             $this->realm->getId(),
             implode(',', array_merge($primaryGroupById, array_keys($this->_group_bys))),
             implode(',', array_keys($this->_stat_fields))
-            // implode(',', array_merge($primaryStatisticId, array_keys($this->_stat_fields)))
         );
     }
 

@@ -82,14 +82,6 @@ interface iGroupBy
     public function getAttributeKeys();
 
     /**
-     * @param boolean $includeSchema TRUE to include the schema in the table name.
-     *
-     * @return string The aggregate table prefix for realm data.
-     */
-
-    public function getAggregateTablePrefix($includeSchema = true);
-
-    /**
      * @return array An array containing the names of the key columns in the aggregate table. This
      *   is also used to map data between the attribute and aggregate tables.
      */
@@ -127,7 +119,7 @@ interface iGroupBy
      * @return int|null The current sort order where NULL means no sorting.
      */
 
-    public function getSortOder();
+    public function getSortOrder();
 
     /**
      * @return boolean TRUE if the attribute represented by this GroupBy should be available as a

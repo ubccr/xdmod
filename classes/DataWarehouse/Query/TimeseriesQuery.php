@@ -96,10 +96,9 @@ class TimeseriesQuery extends Query implements iQuery
 
     protected function setDuration(
         $start_date,
-        $end_date,
-        $aggregation_unit_name
+        $end_date
     ) {
-        parent::setDuration($start_date, $end_date, $aggregation_unit_name);
+        parent::setDuration($start_date, $end_date);
 
         $this->setDurationFormula(
             new \DataWarehouse\Query\Model\TableField(
