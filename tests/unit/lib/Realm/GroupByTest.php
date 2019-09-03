@@ -37,7 +37,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
 
     /**
      * (1) Invalid realm name.
-     * 
+     *
      * @expectedException Exception
      */
 
@@ -87,6 +87,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
             $generated[$id] = $obj->getName();
         }
         $expected = array(
+            'alternate_groupby_class' => 'Alternate GroupBy Class Example',
             'configuration' => 'Instance Type',
             'quarter' => 'Quarter',
             'username' => 'System Username'
@@ -356,5 +357,29 @@ SQL;
 
         $generated = $obj->getCategory();
         $this->assertEquals($generated, 'uncategorized', 'getCategory()');
+    }
+
+    /**
+     * (9) Test using an alternate GroupBy class specified in the configuration. At the moment this
+     * simply tests that the infrastructure attempts to instantiate the specified class.
+     */
+
+    public function testAlternateGroupByClass()
+    {
+        $realm = Realm::factory('Cloud', self::$logger);
+        try {
+            $obj = $realm->getGroupByObject('alternate_groupby_class');
+            $this->assertTrue(false, 'Alternate GroupBy class returned object');
+        } catch ( \Exception $e ) {
+            $message = $e->getMessage();
+            $expected = '\Realm\GroupBy\AlternateGroupBy.php';
+            $length = strlen($expected);
+            $generated = null;
+            $position = strpos($message, $expected);
+            if ( false !== $position ) {
+                $generated = substr($message, $position, $length);
+            }
+            $this->assertEquals($expected, $generated, sprintf('Alternate GroupBy class does not match: %s', $message));
+        }
     }
 }

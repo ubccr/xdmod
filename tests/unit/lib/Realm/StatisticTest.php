@@ -83,6 +83,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
             $generated[$id] = $obj->getName(false);
         }
         $expected = array(
+            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
             'Cloud_core_time' => 'Core Hours: Total',
             'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
         );
@@ -215,5 +216,29 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($generated, "statisticExists(job_count)");
 
         $obj = $realm->getStatisticObject('job_count');
+    }
+
+    /**
+     * (9) Test using an alternate Statistic class specified in the configuration. At the moment this
+     * simply tests that the infrastructure attempts to instantiate the specified class.
+     */
+
+    public function testAlternateStatisticClass()
+    {
+        $realm = Realm::factory('Cloud', self::$logger);
+        try {
+            $obj = $realm->getStatisticObject('alternate_statistic_class');
+            $this->assertTrue(false, 'Alternate Statistic class returned object');
+        } catch ( \Exception $e ) {
+            $message = $e->getMessage();
+            $expected = '\Realm\Statistic\AlternateStatistic.php';
+            $length = strlen($expected);
+            $generated = null;
+            $position = strpos($message, $expected);
+            if ( false !== $position ) {
+                $generated = substr($message, $position, $length);
+            }
+            $this->assertEquals($expected, $generated, sprintf('Alternate Statistic class does not match: %s', $message));
+        }
     }
 }
