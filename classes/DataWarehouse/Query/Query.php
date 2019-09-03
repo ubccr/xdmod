@@ -604,9 +604,9 @@ class Query extends Loggable
         }
 
         $primaryGroupById = $this->_group_by->getId();
-        $id_field = $select_fields[ sprintf('%s_id', $primaryGroupById) ];
-        $name_field = $select_fields[ sprintf('%s_name', $primaryGroupById) ];
-        $short_name_field = $select_fields[ sprintf('%s_short_name', $primaryGroupById) ];
+        $id_field = $select_fields['id'];
+        $name_field = $select_fields['name'];
+        $short_name_field = $select_fields['short_name'];
 
         $groups_str = implode(', ', $groups);
 
@@ -1303,7 +1303,7 @@ SQL;
             }
         } else {
             if (!in_array($stat, $permitted_statistics)) {
-                throw new \Exception("$stat is not available for {$this->_group_by->getName()}");
+                throw new \Exception("Statistic $stat is not available for Group By {$this->_group_by->getId()}");
             }
 
             $this->logger->debug(

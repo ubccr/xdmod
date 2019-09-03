@@ -19,6 +19,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
     public static function setupBeforeClass()
     {
         // Set up a logger so we can get warnings and error messages
+
         $conf = array(
             'file' => false,
             'db' => false,
@@ -26,6 +27,9 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
             'consoleLogLevel' => Logger::EMERG
         );
         self::$logger = Logger::factory('PHPUnit', $conf);
+
+        // In order to use a non-standard location for datawarehouse.json we must manually
+        // initialize the Realm class.
 
         $options = (object) array(
             'config_file_name' => 'datawarehouse.json',
