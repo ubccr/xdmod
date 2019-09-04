@@ -205,6 +205,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         });
 
         XDMoD.Module.Summary.superclass.initComponent.apply(this, arguments);
+        this.title = 'Dashboard';
     },
 
     createNewUserTour: function () {
@@ -214,87 +215,90 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         }
 
         self.userTour = new Ext.ux.HelpTipTour({
-            title: 'New User Tour',
+            title: 'XDMoD Tour',
             items: [
                 {
-                    html: 'Welcome to Open XDMoD! Open XDMoD is an open source tool to facilitate the management of ' +
-                      'high performance computing resources. <br /><br />Open XDMoD’s management capabilities ' +
-                      'include monitoring standard metrics such as utilization, providing quality of service ' +
-                      'metrics designed to proactively identify underperforming system hardware and software.',
+                    html: 'Welcome to XDMoD! This tour will guide you through some of the features of XDMoD.',
                     target: '#tg_summary',
                     position: 't-t'
                 },
                 {
-                    html: 'The XDMoD User Interface contains a wealth of information and has been organized into tabs ' +
-                      'to compartmentalize the data.<ul> ' +
-                      '<li> ' +
-                      'The Summary tab provides a dashboard that presents summary statistics and selected charts ' +
-                      'that are useful to the role of the current user. ' +
-                      '</li> ' +
-                      '<li> ' +
-                      'The Usage tab provides a convenient way to browse all the realms present in XDMoD. ' +
-                      'Interacting with the chart selection tree or “chart thumbnails” allows you to view charts ' +
-                      'in more detail.' +
-                      '</li> ' +
-                      '<li> ' +
-                      'The Metric Explorer tab allows one to create complex plots containing multiple metrics. It ' +
-                      'has many point & click features that allow the user to easily add, filter, and modify ' +
-                      'the data and the format in which it is presented. ' +
-                      '</li> ' +
-                      '<li> ' +
-                      'The Report Generator tab displays any charts you have chosen to make available for ' +
-                      'building a report. It shows the the title of the chart, the delivery schedule, the ' +
-                      'delivery format and the number of charts. ' +
-                      '</li></ul>',
-                    target: '#main_tab_panel .x-tab-panel-header',
+                    html: 'XDMoD provides a wealth of information. Different functionality is provided by individual tabs listed below.' +
+                        '<ul>' +
+                        '<li>' +
+                        'Dashboard - Pre-selected statistics, charts, and components tailored to you.' +
+                        '</li>' +
+                        '<li>' +
+                        'Usage - A convenient way to browse all available statistics.' +
+                        '</li>' +
+                        '<li>' +
+                        'Metric Explorer - Allows you to create complex charts containing multiple statistics and optionally apply filters.' +
+                        '</li>' +
+                        '<li>' +
+                        'Report Generator - Create reports that may contain multiple charts. Reports may be downloaded directly or scheduled to be emailed periodically.' +
+                        '</li>' +
+                        '<li>' +
+                        'Job Viewer - A detailed view of individual jobs that provides an overall summary of job accounting data, job performance, and a temporal view of a job\'s CPU, network, and disk I/O utilization.' +
+                        '</li>' +
+                        '</ul>' +
+                        '* Additional modules might provide additional tabs not mentioned here.',
                     position: 'tl-bl',
                     maxWidth: 400,
                     offset: [20, 0]
                 },
                 {
-                    html: 'Your are currently on the Summary tab which provides a snapshot overview of selected ' +
-                      'data with several small summary charts. These charts display information such as the ' +
-                      'number of jobs run, average CPU time per job, and the average number of processors per ' +
-                      'job.',
+                    html: 'The Dashboard tab presents individual component and summary charts that provide an overview of information that is available throughout XDMoD as well as the ability to access more detailed information. ' +
+                        'In order to provide relevant information, XDMoD accounts have an assigned role (set by the XDMoD system administrator), the content of the dashboard is tailored to your role.' +
+                        '<ul>' +
+                        '<li>' +
+                        'User - Information such as a list of all jobs that you have run as well as other useful information such as queue wait times. ' +
+                        '</li>' +
+                        '<li>' +
+                        'Principal Investigator - Information about all the jobs running under your projects. ' +
+                        '</li>' +
+                        '<li>' +
+                        'Center Staff - Information on all user jobs run at the center as well as information you can use to gauge how well the center is running. ' +
+                        '</li>' +
+                        '</ul>' +
+                        'For more information on XDMoD roles, please refer to the XDMoD User Manual available from the Help menu.',
                     target: '#tg_summary',
                     position: 't-t'
                 },
                 {
-                    html: 'The Summary tab is made up of several informational boxes called portlets. Each portlet ' +
-                      'contains summary statistics, selected charts or other pieces of information that are ' +
-                      'useful to the role of the current user.',
-                    target: '.x-portlet:first',
-                    position: 'l-r'
-                },
-                {
-                    html: 'From left to right, this toolbar provides a button for collapsing the portlet, a button ' +
-                      'to configure information in the portlet, and a button that when hovered over will present ' +
-                      'a tooltip to describe the the information in the portlet.',
+                    html: 'Each component provides a toolbar that is customized to provide controls relevant to that component. ' +
+                        'Hovering over each control with your mouse will display a tool-tip describing what that control does.' +
+                        '<ul>' +
+                        '<li>' +
+                        '"?" - Display additional information about a component' +
+                        '</li>' +
+                        '<li>' +
+                        '"*" - Open a chart in the Metric Explorer.' +
+                        '</li>' +
+                        '</ul>',
                     target: '.x-portlet:first .x-panel-header:first',
                     position: 'tl-br',
                     offset: [-10, 0]
                 },
                 {
-                    html: 'The Help button is located in the upper right corner of the screen and clicking on it ' +
-                      'will provide you with the following options: User Manual, FAQ and YouTube ' +
-                      'Channel.<br /><br />Clicking on User Manual will direct the user to the XDMoD User Manual. ' +
-                      'If help is available for the section of XDMoD you currently are visiting, the User Manual ' +
-                      'will automatically navigate to the respective section when it loads. Clicking on FAQ ' +
-                      'will take you to a page containing Frequently Asked Questions.',
+                    html: 'The Help button provides you with the following options:' +
+                        '<ul>' +
+                        '<li>User Manual - A detailed help document for XDMoD.  If help is available for the section of XDMoD you currently are visiting, this' +
+                        'will automatically navigate to the respective section.' +
+                        '</li>' +
+                        '<li>XDMoD Tour - start this tour again' +
+                        '</li>' +
+                        '</ul>',
                     target: '#help_button',
                     position: 'tr-bl'
                 },
                 {
-                    html: 'The My Profile button allows you to view and update general settings pertaining to your ' +
-                      'account. Your current role will be displayed in the title bar of the My Profile window. ' +
-                      '<br /><br />Information you can update includes data such as your First Name, Last Name, ' +
-                      'Email Address and Password.',
+                    html: 'The My Profile button allows you to view and update your account settings. Your role will be displayed in the title bar of the My Profile window.' +
+                        '<br /><br />>Information you can update includes your Name, Email Address and Password.',
                     target: '#global-toolbar-profile',
                     position: 'tl-bl'
                 },
                 {
-                    html: 'Thank you for viewing the XDMoD User Tour. If you want to view this tour again you can ' +
-                      'find it by clicking on the Help button in the upper right corner.',
+                    html: 'Thank you for viewing the XDMoD Tour. If you want to view this tour again you can find it by clicking the Help button.',
                     target: '#tg_summary',
                     position: 't-t',
                     listeners: {
