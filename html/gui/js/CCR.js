@@ -243,21 +243,13 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
                 XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + searchTerms || "no" + " tab selected");
                 window.open('user_manual.php?t=' + encodeURIComponent(searchTerms));
             }
-        },
-        {
-            text: 'YouTube Channel',
-            iconCls: 'youtube_16',
-            id: 'global-toolbar-help-youtube',
-            handler: function () {
-                XDMoD.TrackEvent("Portal", "Help -> YouTube Channel Button Clicked");
-                window.open('https://www.youtube.com/channel/UChm_AbEcBryCdIfebN5Kkrg');
-            }
         }
     ];
 
     if (CCR.xdmod.publicUser !== true) {
         menuItems.push({
             text: 'View XDMoD User Tour',
+            iconCls: 'tour_16',
             id: 'global-toolbar-help-new-user-tour'
         });
     }
