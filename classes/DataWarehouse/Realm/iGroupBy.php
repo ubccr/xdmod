@@ -129,6 +129,13 @@ interface iGroupBy
     public function isAvailableForDrilldown();
 
     /**
+     * @return boolean TRUE if the attribute represented by this GroupBy is an aggregation unit such
+     *   as day, month, quarter, or year.
+     */
+
+    public function isAggregationUnit();
+
+    /**
      * Note: Was pullQueryParameters()
      *
      * Check the request for filters associated with attributes supported by this group by and

@@ -145,11 +145,11 @@ SQL;
             ( count($select_group_by) > 0 ? "GROUP BY " . implode(",\n  ", $select_group_by) : "" ),
             ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
             ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
-            ( null !== $limit && null !== $offset ? " \nLIMIT $limit OFFSET $offset" : "" )
+            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
         );
 
         $this->logger->debug(
-            sprintf("%s %s()\n%s", $this->getLogString(), __FUNCTION__, $data_query)
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
         );
 
         return $data_query;
@@ -195,7 +195,7 @@ SQL;
                               order by id asc";
 
         $this->logger->debug(
-            sprintf("%s %s() Query date IDs\n%s", $this->getLogString(), __FUNCTION__, $dateIdsQuery)
+            sprintf("%s %s() Query date IDs\n%s", $this, __FUNCTION__, $dateIdsQuery)
         );
 
         $dateIdsResults = DB::factory($this->_db_profile)->query($dateIdsQuery);
