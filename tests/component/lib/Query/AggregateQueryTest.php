@@ -73,15 +73,16 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
         $generated = $query->getQueryString();
         $expected  =<<<SQL
 SELECT
-  person.id as 'id',
-  person.short_name as short_name,
-  person.long_name as name
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.person person
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY person.id
@@ -112,17 +113,18 @@ SQL;
         $generated = $query->getQueryString();
         $expected  =<<<SQL
 SELECT
-  person.id as 'id',
-  person.short_name as short_name,
-  person.long_name as name,
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count,
   SUM(agg.running_job_count) AS Jobs_running_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.person person
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY person.id
@@ -161,9 +163,9 @@ SELECT
   SUM(agg.running_job_count) AS Jobs_running_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d
+  modw.days duration
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
 
 SQL;
@@ -188,16 +190,17 @@ SQL;
         $generated = $query->getQueryString();
         $expected  =<<<SQL
 SELECT
-  person.id as 'id',
-  person.short_name as short_name,
-  person.long_name as name,
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.person person
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY person.id
@@ -221,23 +224,36 @@ SQL;
         );
         $query->addStat('Jobs_job_count');
 
-        $generated = $query->getQueryString();
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // prepends the metric to the ORDER BY clause. Simulate that here.
+
+        $data_description = (object) array(
+            'sort_type' => 'value_desc',
+            'group_by'  => 'person',
+            'metric'    => 'Jobs_job_count'
+        );
+        $query->addOrderByAndSetSortInfo($data_description);
+
+        $generated = $query->getQueryString(10, 0); // Also test limit=10 and offset=0
         $expected  =<<<SQL
 SELECT
-  person.id as 'id',
-  person.short_name as short_name,
-  person.long_name as name,
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.person person
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY person.id
-ORDER BY person.order_id ASC
+ORDER BY Jobs_job_count desc,
+  person.order_id ASC
+LIMIT 10 OFFSET 0
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query with group by add statistic');
 
@@ -250,10 +266,10 @@ FROM (
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,
-    modw.days d,
+    modw.days duration,
     modw.person person
   WHERE
-    d.id = agg.day_id
+    duration.id = agg.day_id
     AND agg.day_id between 201600357 and 201700001
     AND person.id = agg.person_id
   GROUP BY
@@ -281,17 +297,17 @@ SQL;
         $generated = $query->getQueryString();
         $expected  =<<<SQL
 SELECT
-  resourcefact.id as 'id',
-  resourcefact.code as 'code',
-  resourcefact.code as short_name,
-  CONCAT(resourcefact.name, '-', resourcefact.code) as name,
+  resourcefact.id as 'resource_id',
+  resourcefact.code as 'resource_code',
+  resourcefact.code as resource_short_name,
+  CONCAT(resourcefact.name, '-', resourcefact.code) as resource_name,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.resourcefact resourcefact
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND resourcefact.id = agg.resource_id
   AND resourcefact.code = agg.resource_code
@@ -327,10 +343,10 @@ FROM (
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,
-    modw.days d,
+    modw.days duration,
     modw.person person
   WHERE
-    d.id = agg.day_id
+    duration.id = agg.day_id
     AND agg.day_id between 201600357 and 201700001
     AND person.id = agg.person_id
   GROUP BY
@@ -341,16 +357,20 @@ SQL;
     }
 
     /**
-     * Test the dimension values query.
+     * Test the dimension values query. Note that the dimension values query does not prefix id,
+     * name, or short_name with the group by id.
      */
 
     public function testAggregateQueryDimensionValues()
     {
+        // Note that calling getDimensionValuesQuery() on a query class that specifies start and end
+        // dates will fail due to a hard-coded array index reference.
+
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
             'day',
-            '2016-12-01',
-            '2017-01-31',
+            null,
+            null,
             'person'
         );
         $query->addStat('Jobs_job_count');
@@ -369,5 +389,4 @@ ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query dimension values');
     }
-
 }

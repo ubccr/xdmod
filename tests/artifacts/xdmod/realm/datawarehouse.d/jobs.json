@@ -8,6 +8,34 @@
         "aggregate_table_alias": "agg",
         "order": 1,
         "group_bys": {
+            "day": {
+                "name": "Day",
+                "description_html": "Day",
+                "attribute_table_schema": "modw",
+                "attribute_table": "days",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [
+                    { "id": "day_id" }
+                ],
+                "attribute_values_query": {
+                    "records": {
+                        "id": "id",
+                        "#": "Note that we must alias the column when using SQL functions so that",
+                        "#": "we can properly add the attribute table when constructing queries",
+                        "short_name": "DATE(days.day_start)",
+                        "name": "DATE(days.day_start)",
+                        "start_ts": "day_start_ts"
+                    },
+                    "joins": [
+                        {
+                            "name": "days"
+                        }
+                    ],
+                    "orderby": [
+                        "id"
+                    ]
+                }
+            },
             "person": {
                 "name": "User",
                 "description_html": "A person who is on a PIs allocation, hence able run jobs on resources.",
@@ -23,7 +51,8 @@
                     "records": {
                         "id": "id",
                         "short_name": "short_name",
-                        "name": "long_name"
+                        "name": "long_name",
+                        "order_id": "order_id"
                     },
                     "joins": [
                         {
