@@ -535,7 +535,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $aggregateFilters = array();
         $requestFilters = $this->pullFilterValuesFromRequest($request);
 
-        if ( 0 == count($requestFilters) ) {
+        if ( ($this->isAggregationUnit && 'none' == $this->id) || 0 == count($requestFilters) ) {
             return $filterList;
         }
 
@@ -596,7 +596,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $requestFilters = $this->pullFilterValuesFromRequest($request);
         $filterCount = count($requestFilters);
 
-        if ( 0 == $filterCount ) {
+        if ( ($this->isAggregationUnit && 'none' == $this->id) ||  0 == $filterCount ) {
             return $labelList;
         }
 
@@ -738,16 +738,27 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $query->addTable($this->attributeTableObj);
         }
 
-        foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-            $alias = $this->qualifyColumnName($attributeKey, true);
-            $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
-            $field = new TableField($tableObj, $attributeKey, $alias);
-            $where = new WhereCondition($field, '=', new TableField($query->getDataTable(), $aggregateKey));
+        // Group by none is a special case of time aggregation where there is no group by. Here, we
+        // do not use the attribute_to_aggregate_key_map at all for the id fields, but rather use
+        // the id field from the attribute_values_query.
+
+        if ( $this->isAggregationUnit && 'none' == $this->id ) {
+            $alias = $this->qualifyColumnName('id', true);
+            $formula = $this->attributeValuesQuery->getRecord('id');
+            $field = new Field($formula, $alias);
             $query->addField($field);
-            $query->addGroup($field);
-            if ( ! $this->isAggregationUnit ) {
-                $query->addWhereCondition($where);
-                $this->logger->trace(sprintf("%s Add ID field '%s AS %s' and WHERE condition '%s'", $this, $field, $alias, $where));
+        } else {
+            foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
+                $alias = $this->qualifyColumnName($attributeKey, true);
+                $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
+                $field = new TableField($tableObj, $attributeKey, $alias);
+                $query->addField($field);
+                $query->addGroup($field);
+                if ( ! $this->isAggregationUnit ) {
+                    $where = new WhereCondition($field, '=', new TableField($query->getDataTable(), $aggregateKey));
+                    $query->addWhereCondition($where);
+                    $this->logger->trace(sprintf("%s Add ID field '%s AS %s' and WHERE condition '%s'", $this, $field, $alias, $where));
+                }
             }
         }
 
@@ -837,6 +848,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     protected function verifyAndReplaceTableAlias($formula, \DataWarehouse\Query\iQuery $query)
     {
+        if ( $this->isAggregationUnit && 'none' == $this->id ) {
+            return $formula;
+        }
+
         $matches = array();
         if ( 0 === preg_match_all('/([a-zA-Z0-9$_]+\.)?([a-zA-Z0-9$_]+\.[a-zA-Z0-9$_]+)/', $formula, $matches, PREG_SET_ORDER) ) {
             // The formula did not contain an aliased column name, assume that it is only a column
@@ -893,6 +908,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function addWhereJoin(\DataWarehouse\Query\iQuery $query, $aggregateTableName, $operation, $whereConstraint)
     {
+        // Group by none is a special case where this method is a no-op
+
+        if ( $this->isAggregationUnit && 'none' == $this->id ) {
+            return;
+        }
+
         $attributeKeyConstraints = array();
 
         // JOIN with the attribute table in the query
@@ -1053,7 +1074,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultDatasetType()
     {
-        return 'aggregate';
+        return ( $this->isAggregationUnit && 'none' == $this->id ? 'timeseries' : 'aggregate' );
     }
 
     /**

@@ -320,6 +320,35 @@ SQL;
     }
 
     /**
+     * Test using group by none, which is a special case of aggregation unit group-by.
+     */
+
+    public function testAggregateQueryGroupByNone()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31'
+        );
+        $query->addGroupBy('none');
+        $query->addStat('Jobs_job_count');
+
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // prepends the metric to the ORDER BY clause. Simulate that here.
+
+        $data_description = (object) array(
+            'sort_type' => 'value_desc',
+            'group_by'  => 'none',
+            'metric'    => 'Jobs_job_count'
+        );
+        $query->addOrderByAndSetSortInfo($data_description);
+        $generated = $query->getQueryString();
+
+        print_r($generated);
+    }
+
+    /**
      * Test the count query.
      */
 
