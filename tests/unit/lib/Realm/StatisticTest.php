@@ -115,7 +115,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     public function testGetDisabledStatisticObject()
     {
         $realm = Realm::factory('Cloud', self::$logger);
-        $obj = $realm->getStatisticObject('disabled_core_time');
+        $realm->getStatisticObject('disabled_core_time');
     }
 
     /**
@@ -219,7 +219,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->statisticExists('job_count');
         $this->assertTrue($generated, "statisticExists(job_count)");
 
-        $obj = $realm->getStatisticObject('job_count');
+        $realm->getStatisticObject('job_count');
     }
 
     /**
@@ -231,7 +231,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     {
         $realm = Realm::factory('Cloud', self::$logger);
         try {
-            $obj = $realm->getStatisticObject('alternate_statistic_class');
+            $realm->getStatisticObject('alternate_statistic_class');
             $this->assertTrue(false, 'Alternate Statistic class returned object');
         } catch ( \Exception $e ) {
             $message = $e->getMessage();

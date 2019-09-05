@@ -88,11 +88,11 @@ class RawData extends \DataWarehouse\Query\Query
             new TableField($factTable, "job_id")
         ));
 
-        switch ($stat) {
-            case "job_count":
+        switch ($statisticId) {
+            case "Jobs_job_count":
                 $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
                 break;
-            case "started_job_count":
+            case "Jobs_started_job_count":
                 $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
                 break;
             default:

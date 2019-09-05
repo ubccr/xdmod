@@ -372,7 +372,7 @@ SQL;
     {
         $realm = Realm::factory('Cloud', self::$logger);
         try {
-            $obj = $realm->getGroupByObject('alternate_groupby_class');
+            $realm->getGroupByObject('alternate_groupby_class');
             $this->assertTrue(false, 'Alternate GroupBy class returned object');
         } catch ( \Exception $e ) {
             $message = $e->getMessage();
