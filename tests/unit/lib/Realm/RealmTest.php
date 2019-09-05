@@ -43,7 +43,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidRealmName()
     {
-        $realm = Realm::factory('RealmDoesNotExist', self::$logger);
+        Realm::factory('RealmDoesNotExist', self::$logger);
     }
 
     /**
@@ -208,5 +208,4 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->getMinimumAggregationUnit();
         $this->assertNull($generated, "getMinimumAggregationUnit()");
     }
-
 }

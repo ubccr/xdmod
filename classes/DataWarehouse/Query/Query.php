@@ -145,7 +145,7 @@ class Query extends Loggable
         $this->pdoindex = 0;
         $this->realm = Realm::factory($realmId, $logger);
 
-        $this->logger->debug(sprintf("Created Query %s", $this));
+        $this->logger->debug(sprintf('Start creating Query %s', $this));
 
         $this->aggregationUnitName = $aggregationUnitName;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
@@ -172,6 +172,7 @@ class Query extends Loggable
 
         $this->roleParameterDescriptions = array();
         $this->filterParameterDescriptions = array();
+        $this->logger->debug(sprintf('Created Query %s', $this));
     }
 
     /**
@@ -604,9 +605,9 @@ class Query extends Loggable
         }
 
         $primaryGroupById = $this->_group_by->getId();
-        $id_field = $select_fields['id'];
-        $name_field = $select_fields['name'];
-        $short_name_field = $select_fields['short_name'];
+        $id_field = $select_fields[ sprintf('%s_id', $primaryGroupById) ];
+        $name_field = $select_fields[ sprintf('%s_name', $primaryGroupById) ];
+        $short_name_field = $select_fields[ sprintf('%s_short_name', $primaryGroupById) ];
 
         $groups_str = implode(', ', $groups);
 
@@ -624,9 +625,14 @@ class Query extends Loggable
             }
         }
 
+        // This method is only called from MetricExplorer::getDimensionValues() which constructs an
+        // aggregate query with start and end dates of NULL, meaning that the duration table is
+        // never added to the query by setDuration() leaving only the data and dimension tables.
         // Relying on the table index seems awefully fragile for a dynamic query class. Note that
-        // changing the order in which setStat() or setGroupBy() are called will change this index.
-        $dimension_table = $select_tables[2];
+        // changing the order in which setStat() or setGroupBy() are called will change the table
+        // order.
+
+        $dimension_table = $select_tables[1];
 
         $restriction_wheres = array();
         $dimension_group_by = $this->groupBy();
@@ -726,7 +732,7 @@ SQL;
             ( count($groups) > 0 ? "GROUP BY " . implode(",\n  ", $groups) : "" ),
             ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
             ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
-            ( null !== $limit && null !== $offset ? " \nLIMIT $limit OFFSET $offset" : "" )
+            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
         );
 
         $this->logger->debug(
@@ -1358,7 +1364,7 @@ SQL;
             return;
         }
 
-        $this->_date_table = new \DataWarehouse\Query\Model\Table(new \DataWarehouse\Query\Model\Schema('modw'), $this->_aggregation_unit.'s', 'd');
+        $this->_date_table = new \DataWarehouse\Query\Model\Table(new \DataWarehouse\Query\Model\Schema('modw'), $this->_aggregation_unit.'s', 'duration');
 
         $this->addTable($this->_date_table);
 
