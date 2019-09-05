@@ -1,12 +1,12 @@
 /**
- * XDMoD.Module.SummaryPortlets.SummaryStatisticsPortlet
+ * XDMoD.Module.Dashboard.SummaryStatisticsComponent
  *
  *
  */
 
-Ext.namespace('XDMoD.Module.SummaryPortlets');
+Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.Dashboard.SummaryStatisticsComponent = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     autoScroll: true,
@@ -116,7 +116,7 @@ XDMoD.Module.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portle
             }) // proxy: new Ext.data.HttpProxy({
         }); // this.summaryStatisticsStore
 
-        XDMoD.Module.SummaryPortlets.SummaryStatisticsPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.Dashboard.SummaryStatisticsComponent.superclass.initComponent.apply(this, arguments);
     }, // initComponent
 
     listeners: {
@@ -199,10 +199,10 @@ XDMoD.Module.SummaryPortlets.SummaryStatisticsPortlet = Ext.extend(Ext.ux.Portle
     formatDate: function (date) {
         return date.getFullYear() + '-' + ('' + (date.getMonth() + 1)).padStart(2, '0') + '-' + ('' + date.getDate()).padStart(2, '0');
     } // formatDate: function(date) {
-}); // XDMoD.Module.SummaryPortlets.CenterHealthPortlet = Ext.extend(Ext.ux.Portlet, {
+}); // XDMoD.Module.Dashboard.CenterHealthComponent = Ext.extend(Ext.ux.Component, {
 
 /**
  * The Ext.reg call is used to register an xtype for this class so it
  * can be dynamically instantiated
  */
-Ext.reg('SummaryStatisticsPortlet', XDMoD.Module.SummaryPortlets.SummaryStatisticsPortlet);
+Ext.reg('xdmod-dash-summarystat-cmp', XDMoD.Module.Dashboard.SummaryStatisticsComponent);

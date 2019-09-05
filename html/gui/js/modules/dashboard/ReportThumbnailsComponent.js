@@ -1,11 +1,11 @@
 /**
- * XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet
+ * XDMoD.Module.Dashboard.ReportThumbnailsComponent
  *
  */
 
-Ext.namespace('XDMoD.Module.SummaryPortlets');
+Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
+XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
     layout: 'fit',
     header: false,
     cls: 'images-view',
@@ -37,7 +37,7 @@ XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
         }
 
         this.store = new Ext.data.JsonStore({
-            url: XDMoD.REST.url + '/summary/rolereport',
+            url: XDMoD.REST.url + '/dashboard/rolereport',
             root: 'data.queue',
             fields: [
                 'chart_title',
@@ -434,7 +434,7 @@ XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
                 }
             ]
         };
-        XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.Dashboard.ReportThumbnailsComponent.superclass.initComponent.apply(this, arguments);
     },
     listeners: {
         timeframe_change: function (start_date, end_date) {
@@ -455,4 +455,4 @@ XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet = Ext.extend(Ext.Panel, {
  * The Ext.reg call is used to register an xtype for this class so it
  * can be dynamically instantiated
  */
-Ext.reg('ReportThumbnailsPortlet', XDMoD.Module.SummaryPortlets.ReportThumbnailsPortlet);
+Ext.reg('xdmod-dash-reportthumb-cmp', XDMoD.Module.Dashboard.ReportThumbnailsComponent);

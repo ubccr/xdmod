@@ -1,11 +1,11 @@
 /**
- * XDMoD.Module.SummaryPortlets.ChartPortlet
+ * XDMoD.Module.DashboardComponent.Chart
  *
  */
 
-Ext.namespace('XDMoD.Module.SummaryPortlets');
+Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.Dashboard.ChartComponent = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     tools: [{
@@ -44,7 +44,7 @@ XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
         highchartConfig.title = '';
 
         this.store = new CCR.xdmod.CustomJsonStore({
-            portlet: self,
+            chartcmp: self,
             listeners: {
                 load: function (store) {
                     var dimensions = store.getAt(0).get('dimensions');
@@ -64,7 +64,7 @@ XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
                             mets += '<li><b>' + metric + ':</b> ' + metrics[metric] + '</li>';
                         }
                     }
-                    var help = this.portlet.getTool('help');
+                    var help = this.chartcmp.getTool('help');
                     if (help && help.dom) {
                         help.dom.qtip = '<ul>' + dims + '</ul><hr/><ul>' + mets + '</ul>';
                     }
@@ -75,7 +75,7 @@ XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
                         var errorCode = data.code;
 
                         if (errorCode === XDMoD.Error.QueryUnavailableTimeAggregationUnit) {
-                            var hcp = this.portlet.items.get(0);
+                            var hcp = this.chartcmp.items.get(0);
 
                             var errorMessageExtraData = '';
                             var errorData = data.errorData;
@@ -166,7 +166,7 @@ XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
 
         this.height = (this.width * 11.0) / 17.0;
 
-        XDMoD.Module.SummaryPortlets.ChartPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.Dashboard.ChartComponent.superclass.initComponent.apply(this, arguments);
     },
 
     listeners: {
@@ -181,4 +181,4 @@ XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
     }
 });
 
-Ext.reg('ChartPortlet', XDMoD.Module.SummaryPortlets.ChartPortlet);
+Ext.reg('xdmod-dash-chart-cmp', XDMoD.Module.Dashboard.ChartComponent);

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Models\Services\Acls;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class SummaryControllerProvider extends BaseControllerProvider
+class DashboardControllerProvider extends BaseControllerProvider
 {
     /**
      * @see BaseControllerProvider::setupRoutes
@@ -22,7 +22,7 @@ class SummaryControllerProvider extends BaseControllerProvider
         $root = $this->prefix;
         $class = get_class($this);
 
-        $controller->get("$root/portlets", "$class::getPortlets");
+        $controller->get("$root/components", "$class::getComponents");
 
         $controller->post("$root/layout", "$class::setLayout");
         $controller->delete("$root/layout", "$class::resetLayout");
@@ -72,11 +72,11 @@ class SummaryControllerProvider extends BaseControllerProvider
 
     /**
      */
-    public function getPortlets(Request $request, Application $app)
+    public function getComponents(Request $request, Application $app)
     {
         $user = $this->getUserFromRequest($request);
 
-        $summaryPortlets = array();
+        $dashboardComponents = array();
 
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user)->getName();
 
@@ -91,25 +91,25 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $presets = $roleConfig['roles'][$mostPrivilegedAcl];
 
-        if (isset($presets['summary_portlets'])) {
+        if (isset($presets['dashboard_components'])) {
 
-            foreach($presets['summary_portlets'] as $portlet) {
-                if (isset($portlet['region']) && $portlet['region'] === 'top') {
-                    $chartLocation = 'FW' . $portlet['name'];
+            foreach($presets['dashboard_components'] as $component) {
+                if (isset($component['region']) && $component['region'] === 'top') {
+                    $chartLocation = 'FW' . $component['name'];
                     $column = -1;
                 } else {
                     $defaultLayout = null;
-                    if (isset($portlet['location']) && isset($portlet['location']['row']) && isset($portlet['location']['column'])) {
-                        $defaultLayout = array($portlet['location']['row'], $portlet['location']['column']);
+                    if (isset($component['location']) && isset($component['location']['row']) && isset($component['location']['column'])) {
+                        $defaultLayout = array($component['location']['row'], $component['location']['column']);
                     }
 
-                    list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name'], $defaultLayout);
+                    list($chartLocation, $column) = $layout->getLocation('PP' . $component['name'], $defaultLayout);
                 }
 
-                $summaryPortlets[$chartLocation] = array(
-                        'name' => 'PP' . $portlet['name'],
-                        'type' => $portlet['type'],
-                        'config' => isset($portlet['config']) ? $portlet['config'] : array(),
+                $dashboardComponents[$chartLocation] = array(
+                        'name' => 'PP' . $component['name'],
+                        'type' => $component['type'],
+                        'config' => isset($component['config']) ? $component['config'] : array(),
                         'column' => $column
                 );
             }
@@ -124,9 +124,9 @@ class SummaryControllerProvider extends BaseControllerProvider
             $presetChart['timeframe_label'] = 'Previous month';
 
             list($chartLocation, $column) = $layout->getLocation('PC' . $index);
-            $summaryPortlets[$chartLocation] = array(
+            $dashboardComponents[$chartLocation] = array(
                 'name' => 'PC' . $index,
-                'type' => 'ChartPortlet',
+                'type' => 'xdmod-dash-chart-cmp',
                 'config' => array(
                     'name' => 'summary_' . $index,
                     'chart' => $presetChart
@@ -162,9 +162,9 @@ class SummaryControllerProvider extends BaseControllerProvider
 
                     list($chartLocation, $column) = $layout->getLocation($name);
 
-                    $summaryPortlets[$chartLocation] = array(
+                    $dashboardComponents[$chartLocation] = array(
                         'name' => $name,
-                        'type' => 'ChartPortlet',
+                        'type' => 'xdmod-dash-chart-cmp',
                         'config' => array(
                             'name' => $query['name'],
                             'chart' => $queryConfig
@@ -175,13 +175,13 @@ class SummaryControllerProvider extends BaseControllerProvider
             }
         }
 
-        ksort($summaryPortlets);
+        ksort($dashboardComponents);
 
         return $app->json(array(
             'success' => true,
-            'total' => count($summaryPortlets),
+            'total' => count($dashboardComponents),
             'portalConfig' => array('columns' => $layout->getColumnCount()),
-            'data' => array_values($summaryPortlets)
+            'data' => array_values($dashboardComponents)
         ));
     }
 

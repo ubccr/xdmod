@@ -1,12 +1,12 @@
 /* global moment */
 /**
- * XDMoD.Module.SummaryPortlets.JobPortlet
+ * XDMoD.Module.Dashboard.JobComponent
  *
  */
 
-Ext.namespace('XDMoD.Module.SummaryPortlets');
+Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.Dashboard.JobComponent = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     collapsible: false,
@@ -168,7 +168,7 @@ XDMoD.Module.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
             enableHdMenu: false,
             loadMask: true,
             stripeRows: true,
-            cls: 'job-portlet-grid',
+            cls: 'job-component-grid',
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: true
@@ -264,8 +264,8 @@ XDMoD.Module.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
 
         this.height = (this.width * 11.0) / 17.0;
 
-        XDMoD.Module.SummaryPortlets.JobPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.Dashboard.JobComponent.superclass.initComponent.apply(this, arguments);
     }
 });
 
-Ext.reg('JobPortlet', XDMoD.Module.SummaryPortlets.JobPortlet);
+Ext.reg('xdmod-dash-job-cmp', XDMoD.Module.Dashboard.JobComponent);

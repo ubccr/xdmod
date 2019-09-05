@@ -17,7 +17,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
         var portletStore = new Ext.data.JsonStore({
             restful: true,
-            url: XDMoD.REST.url + '/summary/portlets',
+            url: XDMoD.REST.url + '/dashboard/components',
             baseParams: {
                 token: XDMoD.REST.token
             },
@@ -53,7 +53,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                     }
                                 }
                                 Ext.Ajax.request({
-                                    url: XDMoD.REST.url + '/summary/layout',
+                                    url: XDMoD.REST.url + '/dashboard/layout',
                                     params: {
                                         data: Ext.encode({
                                             columns: this.items.getCount(),
@@ -123,7 +123,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     if (CCR.xdmod.publicUser !== true) {
                         var conn = new Ext.data.Connection();
                         conn.request({
-                            url: XDMoD.REST.url + '/summary/viewedUserTour',
+                            url: XDMoD.REST.url + '/dashboard/viewedUserTour',
                             params: {
                                 uid: CCR.xdmod.ui.mappedPID,
                                 token: XDMoD.REST.token
@@ -149,7 +149,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                             } else if (buttonValue === 'no' && newUserTourCheckbox.elements[0].checked === true) {
                                                 var connection = new Ext.data.Connection();
                                                 connection.request({
-                                                    url: XDMoD.REST.url + '/summary/viewedUserTour',
+                                                    url: XDMoD.REST.url + '/dashboard/viewedUserTour',
                                                     params: {
                                                         viewedTour: 1,
                                                         token: XDMoD.REST.token
