@@ -1,11 +1,11 @@
 /**
- * XDMoD.Modules.SummaryPortlets.ChartPortlet
+ * XDMoD.Module.SummaryPortlets.ChartPortlet
  *
  */
 
-Ext.namespace('XDMoD.Modules.SummaryPortlets');
+Ext.namespace('XDMoD.Module.SummaryPortlets');
 
-XDMoD.Modules.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     tools: [{
@@ -97,9 +97,9 @@ XDMoD.Modules.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
                             }
 
                             hcp.displayError(
-                                    'Data not available for the selected aggregation unit.',
-                                    errorMessageExtraData
-                                );
+                                'Data not available for the selected aggregation unit.',
+                                errorMessageExtraData
+                            );
                         }
                     }
                 }
@@ -166,7 +166,7 @@ XDMoD.Modules.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
 
         this.height = (this.width * 11.0) / 17.0;
 
-        XDMoD.Modules.SummaryPortlets.ChartPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.SummaryPortlets.ChartPortlet.superclass.initComponent.apply(this, arguments);
     },
 
     listeners: {
@@ -181,4 +181,4 @@ XDMoD.Modules.SummaryPortlets.ChartPortlet = Ext.extend(Ext.ux.Portlet, {
     }
 });
 
-Ext.reg('ChartPortlet', XDMoD.Modules.SummaryPortlets.ChartPortlet);
+Ext.reg('ChartPortlet', XDMoD.Module.SummaryPortlets.ChartPortlet);

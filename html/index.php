@@ -458,8 +458,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <?php if ($userLoggedIn && isset($features['novice_user']) && filter_var($features['novice_user'], FILTER_VALIDATE_BOOLEAN)): ?>
-        <script type="text/javascript" src="gui/js/modules/NoviceUser.js"></script>
+    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN)): ?>
+        <script type="text/javascript" src="gui/js/modules/UserDashboard.js"></script>
     <?php else: ?>
         <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
     <?php endif; ?>

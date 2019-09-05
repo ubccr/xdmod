@@ -81,14 +81,13 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
 
         $console->displayMessage(<<<"EOT"
 This release of XDMoD features an optional replacement for the summary
-tab that is intended to provide easier access to XDMoD's many features
-for new or inexperienced (novice) users. Detailed information is available
-as https://open.xdmod.org/novice_user.html
+tab that is intended to provide easier access to XDMoD's many features.
+Detailed information is available at https://open.xdmod.org/user_dashboard.html
 EOT
         );
         $console->displayBlankLine();
-        $novice_user = $console->prompt(
-            'Enable Novice User Tab?',
+        $dashboard = $console->prompt(
+            'Enable Dashboard Tab?',
             'off',
             array('on', 'off')
         );
@@ -106,7 +105,7 @@ EOT
         ]);
 
         $this->writePortalSettingsFile(array_merge(
-            ['features_novice_user' => $novice_user],
+            ['features_user_dashboard' => $dashboard],
             $exportSettings
         ));
     }

@@ -1,6 +1,6 @@
-Ext.namespace('XDMoD.Modules.SummaryPortlets');
+Ext.namespace('XDMoD.Module.SummaryPortlets');
 
-XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.ui.Portlet, {
+XDMoD.Module.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.ui.Portlet, {
 
     layout: 'fit',
     autoScroll: true,
@@ -136,7 +136,7 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
                 qwidth: 60
             }
         ];
-        XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.SummaryPortlets.SavedChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
     }
 });
 
@@ -144,4 +144,4 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
 * The Ext.reg call is used to register an xtype for this class so it
 * can be dynamically instantiated
 */
-Ext.reg('SavedChartsReportsPortlet', XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet);
+Ext.reg('SavedChartsReportsPortlet', XDMoD.Module.SummaryPortlets.SavedChartsReportsPortlet);

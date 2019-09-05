@@ -1,12 +1,12 @@
 /* global moment */
 /**
- * XDMoD.Modules.SummaryPortlets.JobPortlet
+ * XDMoD.Module.SummaryPortlets.JobPortlet
  *
  */
 
-Ext.namespace('XDMoD.Modules.SummaryPortlets');
+Ext.namespace('XDMoD.Module.SummaryPortlets');
 
-XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     collapsible: false,
@@ -264,8 +264,8 @@ XDMoD.Modules.SummaryPortlets.JobPortlet = Ext.extend(Ext.ux.Portlet, {
 
         this.height = (this.width * 11.0) / 17.0;
 
-        XDMoD.Modules.SummaryPortlets.JobPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.SummaryPortlets.JobPortlet.superclass.initComponent.apply(this, arguments);
     }
 });
 
-Ext.reg('JobPortlet', XDMoD.Modules.SummaryPortlets.JobPortlet);
+Ext.reg('JobPortlet', XDMoD.Module.SummaryPortlets.JobPortlet);

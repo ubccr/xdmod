@@ -1,11 +1,11 @@
 ---
-title: Novice User (Beta)
+title: User Dashboard (Beta)
 ---
 
 Developer Guide
 ---------------
 
-New portlets can be added to the novice user panel as follows:
+New portlets can be added to the user dashboard as follows:
 
 1. Create a javascript class that inherits from `Ext.ui.Portlet`. Conventionally this should be placed in `html/gui/js/modules/summary`
 1. Edit the `etc/assets.json` file to include the new javascript artifact (and any other artifacts such as css files).
@@ -17,14 +17,14 @@ An example Portlet javascript class is shown below.
 ```javascript
 
 /**
- * XDMoD.Modules.SummaryPortlets.DeveloperPortlet
+ * XDMoD.Module.SummaryPortlets.DeveloperPortlet
  *
  * This is an example panel that can be used as a template.
  */
 
-Ext.namespace('XDMoD.Modules.SummaryPortlets');
+Ext.namespace('XDMoD.Module.SummaryPortlets');
 
-XDMoD.Modules.SummaryPortlets.DeveloperPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.SummaryPortlets.DeveloperPortlet = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     autoScroll: true,
@@ -53,7 +53,7 @@ XDMoD.Modules.SummaryPortlets.DeveloperPortlet = Ext.extend(Ext.ux.Portlet, {
             html: '<pre>' + JSON.stringify(this.config, null, 4) + '</pre>'
         }];
 
-        XDMoD.Modules.SummaryPortlets.DeveloperPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.SummaryPortlets.DeveloperPortlet.superclass.initComponent.apply(this, arguments);
     },
 
     listeners: {
