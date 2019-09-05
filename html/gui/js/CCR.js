@@ -228,6 +228,133 @@ XDMoD.GlobalToolbar.Contact = function () {
 
 // -------------------------------------------------
 
+XDMoD.createTour = function () {
+    if (XDMoD.tour) {
+        return;
+    }
+    // TODO: have this pull each of the 'UI' modules for their descriptions
+    // instead of hard coding these.
+    var dashboardDescription = 'Dashboard - Pre-selected statistics and components tailored to you.';
+    if (CCR.xdmod.ui.tgSummaryViewer.title === 'Summary') {
+        dashboardDescription = 'Summary - Pre-selected statistics providing a general overview';
+    }
+    var tourItems = [
+        {
+            html: 'Welcome to XDMoD! This tour will guide you through some of the features of XDMoD.  This tour will change if you are signed in.',
+            target: '#tg_summary',
+            position: 't-t'
+        },
+        {
+            html: 'XDMoD provides a wealth of information. Different functionality is provided by individual tabs listed below (some will only be available after sign in).' +
+                '<ul>' +
+                '<li>' +
+                dashboardDescription +
+                '</li>' +
+                '<li>' +
+                'Usage - A convenient way to browse all available statistics.' +
+                '</li>' +
+                '<li>' +
+                'Metric Explorer - Allows you to create complex charts containing multiple statistics and optionally apply filters.' +
+                '</li>' +
+                '<li>' +
+                'Report Generator - Create reports that may contain multiple charts. Reports may be downloaded directly or scheduled to be emailed periodically.' +
+                '</li>' +
+                '<li>' +
+                'Job Viewer - A detailed view of individual jobs that provides an overall summary of job accounting data, job performance, and a temporal view of a job\'s CPU, network, and disk I/O utilization.' +
+                '</li>' +
+                '</ul>' +
+                '* Additional modules might provide additional tabs not mentioned here.',
+            target: '#main_tab_panel .x-tab-panel-header',
+            position: 'tl-bl',
+            maxWidth: 400,
+            offset: [20, 0]
+        }
+    ];
+    if (CCR.xdmod.ui.tgSummaryViewer.title !== 'Summary') {
+        tourItems.push(
+            {
+                html: 'The Dashboard tab presents individual component and summary charts that provide an overview of information that is available throughout XDMoD as well as the ability to access more detailed information. ' +
+                    'In order to provide relevant information, XDMoD accounts have an assigned role (set by the XDMoD system administrator), the content of the dashboard is tailored to your role.' +
+                    '<ul>' +
+                    '<li>' +
+                    'User - Information such as a list of all jobs that you have run as well as other useful information such as queue wait times. ' +
+                    '</li>' +
+                    '<li>' +
+                    'Principal Investigator - Information about all the jobs running under your projects. ' +
+                    '</li>' +
+                    '<li>' +
+                    'Center Staff - Information on all user jobs run at the center as well as information you can use to gauge how well the center is running. ' +
+                    '</li>' +
+                    '</ul>' +
+                    'For more information on XDMoD roles, please refer to the XDMoD User Manual available from the Help menu.',
+                target: '#tg_summary',
+                position: 't-t'
+            }
+        );
+    }
+    tourItems.push(
+        {
+            html: 'Each component provides a toolbar that is customized to provide controls relevant to that component. ' +
+                'Hovering over each control with your mouse will display a tool-tip describing what that control does.' +
+                '<ul>' +
+                '<li>' +
+                '"?" - Display additional information about a component' +
+                '</li>' +
+                '<li>' +
+                '"*" - Open a chart in the Metric Explorer.' +
+                '</li>' +
+                '</ul>',
+            target: '.x-panel-header:first',
+            position: 'tl-br',
+            offset: [-10, 0]
+        },
+        {
+            html: 'The Help button provides you with the following options:' +
+                '<ul>' +
+                '<li>User Manual - A detailed help document for XDMoD.  If help is available for the section of XDMoD you currently are visiting, this' +
+                'will automatically navigate to the respective section.' +
+                '</li>' +
+                '<li>XDMoD Tour - start this tour again' +
+                '</li>' +
+                '</ul>',
+            target: '#help_button',
+            position: 'tr-bl'
+        }
+    );
+    if (CCR.xdmod.publicUser !== true) {
+        tourItems.push({
+            html: 'The My Profile button allows you to view and update your account settings. Your role will be displayed in the title bar of the My Profile window.' +
+                '<br /><br />>Information you can update includes your Name, Email Address and Password.',
+            target: '#global-toolbar-profile',
+            position: 'tl-bl'
+        });
+    }
+    tourItems.push({
+        html: 'Thank you for viewing the XDMoD Tour. If you want to view this tour again you can find it by clicking the Help button.',
+        target: '#tg_summary',
+        position: 't-t',
+        listeners: {
+            show: function () {
+                if (CCR.xdmod.publicUser !== true) {
+                    var conn = new Ext.data.Connection();
+                    conn.request({
+                        url: XDMoD.REST.url + '/summary/viewedUserTour',
+                        params: {
+                            viewedTour: 1,
+                            token: XDMoD.REST.token
+                        },
+                        method: 'POST'
+                    }); // conn.request
+                }
+            }
+        }
+    });
+    XDMoD.tour = new Ext.ux.HelpTipTour({
+        title: 'XDMoD Tour',
+        items: tourItems
+    });
+};
+
 XDMoD.GlobalToolbar.Help = function (tabPanel) {
     var menuItems = [
         {
@@ -243,16 +370,21 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
                 XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + searchTerms || "no" + " tab selected");
                 window.open('user_manual.php?t=' + encodeURIComponent(searchTerms));
             }
-        }
-    ];
-
-    if (CCR.xdmod.publicUser !== true) {
-        menuItems.push({
+        },
+        {
             text: 'View XDMoD User Tour',
             iconCls: 'tour_16',
-            id: 'global-toolbar-help-new-user-tour'
-        });
-    }
+            id: 'global-toolbar-help-new-user-tour',
+            handler: function () {
+                XDMoD.TrackEvent('Portal', 'Help -> Tour');
+                XDMoD.createTour();
+                Ext.History.add('main_tab_panel:tg_summary');
+                new Ext.util.DelayedTask(function () {
+                    XDMoD.tour.startTour();
+                }).delay(10);
+            }
+        }
+    ];
 
     if (CCR.xdmod.features.xsede) {
         menuItems.splice(1, 0, {
