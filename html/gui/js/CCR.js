@@ -229,7 +229,7 @@ XDMoD.GlobalToolbar.Contact = function () {
 // -------------------------------------------------
 
 XDMoD.createTour = function () {
-    if (typeof XDMoD.tour !== 'undefined') {
+    if (XDMoD.tour) {
         return;
     }
     // TODO: have this pull each of the 'UI' modules for their descriptions
