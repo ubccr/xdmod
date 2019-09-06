@@ -5,7 +5,7 @@
  *
  * Creates a new portlet that includes a help tour tips are added to the helpTourDetails
  * property. Example json object below.
- * XDMoD.Module.Dashboard.AllocationsPortlet = Ext.extend(CCR.xdmod.ui.Portlet, {
+ * XDMoD.Module.Dashboard.AllocationsComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
  *  layout: 'fit',
  *  autoScroll: true,
  *  title: 'example portlet',
