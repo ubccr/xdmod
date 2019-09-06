@@ -51,8 +51,8 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(Ext.ux.Portlet, {
                 return color;
             };
 
-            if (record.data.cpu_user < 0) {
-                return 'N/A';
+            if (record.data.cpu_user === null || record.data.cpu_user < 0) {
+                return '<div class="job-metric-na">N/A</div>';
             }
 
             metadata.attr = 'ext:qtip="CPU Usage ' + (record.data.cpu_user * 100.0).toFixed(1) + '%"';
