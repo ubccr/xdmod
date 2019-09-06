@@ -8,6 +8,7 @@ use Exception;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
+use DataWarehouse\Realm\Realm;
 use Models\Services\Acls;
 use PDO;
 use XDChartPool;
@@ -49,10 +50,10 @@ class Usage extends Common
         $requestedRealms = array_map('trim', explode(',', $this->request['realm']));
         foreach ($requestedRealms as $usageRealm) {
 
+            $realm = Realm::factory($usageRealm);
             $usageGroupBy = \xd_utilities\array_get($this->request, 'group_by', 'none');
 
-            $usageRealmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
-            $usageGroupByObject = $usageRealmAggregateClass::getGroupBy($usageGroupBy);
+            $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
 
             $usageSubnotes = array();
             if ($usageGroupBy === 'resource' || array_key_exists('resource', $this->request)) {
@@ -88,11 +89,8 @@ class Usage extends Common
 
             foreach ($userStatistics as $userStatistic) {
 
-                $statsClass = $usageRealmAggregateClass::getStatistic($userStatistic);
+                $statsClass = $realm->getStatisticObject($userStatistic);
 
-                if (!$statsClass->isVisible()) {
-                    continue;
-                }
                 $statUsageChartSettings = $usageChartSettings;
 
                 if(!$statsClass->usesTimePeriodTablesForAggregate()){
@@ -101,7 +99,7 @@ class Usage extends Common
                     $statUsageChartSettings['swap_xy'] = false;
                 }
                 $errorstat = 'sem_' . $userStatistic;
-                if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
+                if (in_array($errorstat, $realm->getStatisticNames()) ) {
                     $statUsageChartSettings['enable_errors'] = 'y';
                 }
                 $statUsageChartSettings['statistic'] = $userStatistic;
@@ -109,11 +107,11 @@ class Usage extends Common
                 $usageChart = array(
                         'hc_jsonstore' => array('title' => array('text' => '')),
                         'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
-                        'short_title' => $statsClass->getLabel(),
+                        'short_title' => $statsClass->getName(),
                         'random_id' => 'chart_' . mt_rand(),
                         'subnotes' => $usageSubnotes,
-                        'group_description' => $usageGroupByObject->getDescription(),
-                        'description' => $statsClass->getDescription($usageGroupByObject),
+                        'group_description' => $usageGroupByObject->getHtmlNameAndDescription(),
+                        'description' => $statsClass->getHtmlNameAndDescription(),
                         'chart_settings' => json_encode($statUsageChartSettings),
                 );
 
@@ -164,9 +162,7 @@ class Usage extends Common
             // Set the realm on the request object for functions that look
             // at the request directly.
             $this->request['realm'] = $usageRealm;
-
-            // Get the realm's query class.
-            $usageRealmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
+            $realm = Realm::factory($usageRealm);
 
             // If present, move the dimension value into statistic.
             if (array_key_exists('dimension', $this->request)) {
@@ -176,7 +172,7 @@ class Usage extends Common
 
             // Get the request's group by.
             $usageGroupBy = \xd_utilities\array_get($this->request, 'group_by', 'none');
-            $usageGroupByObject = $usageRealmAggregateClass::getGroupBy($usageGroupBy);
+            $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
 
             // Get whether or not the request is for a timeseries chart.
             $usageIsTimeseries = \xd_utilities\array_get($this->request, 'dataset_type') === 'timeseries';
@@ -257,12 +253,12 @@ class Usage extends Common
             $userStatistics = Acls::getPermittedStatistics($user, $usageRealm, $usageGroupBy);
             if ($isSingleMetricQuery) {
                 if (!$usageIsTimeseries) {
-                    $userStatisticObject = $usageRealmAggregateClass::getStatistic($this->request['statistic']);
+                    $userStatisticObject = $realm->getStatisticObject($this->request['statistic']);
                     if (!$userStatisticObject->usesTimePeriodTablesForAggregate()) {
                         throw new \DataWarehouse\Query\Exceptions\BadRequestException(
                             json_encode(
                                 array(
-                                    'statistic' => $userStatisticObject->getLabel(),
+                                    'statistic' => $userStatisticObject->getName(),
                                     'instructions' =>  'Try again as timeseries',
                                     'description' => 'Aggregate View not supported'
                                 )
@@ -273,10 +269,7 @@ class Usage extends Common
                 $meRequests[] = $this->convertChartRequest($this->request, $isTextExport);
             } else {
                 foreach ($userStatistics as $userStatistic) {
-                    $userStatisticObject = $usageRealmAggregateClass::getStatistic($userStatistic);
-                    if (!$userStatisticObject->isVisible()) {
-                        continue;
-                    }
+                    $userStatisticObject = $realm->getStatisticObject($userStatistic);
 
                     $statisticRequest = $this->request;
                     $statisticRequest['statistic'] = $userStatistic;
@@ -324,12 +317,12 @@ class Usage extends Common
                 // Generate the title now, as we can't use the Metric Explorer
                 // response's properties to easily generate the title.
                 if ($isSingleMetricQuery) {
-                    $specialFormatChartTitle = $usageRealmAggregateClass::getStatistic($this->request['statistic'])->getLabel();
+                    $specialFormatChartTitle = $realm->getStatisticObject($this->request['statistic'])->getName();
                 } else {
                     $specialFormatChartTitle = $usageRealm;
                 }
                 if ($usageGroupBy !== 'none') {
-                    $specialFormatChartTitle .= ': by ' . $usageGroupByObject->getLabel();
+                    $specialFormatChartTitle .= ': by ' . $usageGroupByObject->getName();
                 }
                 $firstMeRequest['title'] = $specialFormatChartTitle;
 
@@ -520,11 +513,14 @@ class Usage extends Common
 
                     // Get the dimension and metric descriptions.
                     $jsonStoreMessage = '<ul>';
-                    $jsonStoreMessage .= '<li>' . $usageGroupByObject->getDescription() . '</li>';
+                    $jsonStoreMessage .= '<li>' . $usageGroupByObject->getHtmlNameAndDescription() . '</li>';
 
                     $jsonStoreMessageMetricDescriptions = array();
                     foreach ($meRequest['data_series_unencoded'] as $meRequestDataSeries) {
-                        $jsonStoreMessageMetricDescriptions[] = '<li>' . $usageRealmAggregateClass::getStatistic($meRequestDataSeries['metric'])->getDescription($usageGroupByObject) . '</li>';
+                        $jsonStoreMessageMetricDescriptions[] = sprintf(
+                            '<li>%s</li>',
+                            $realm->getStatisticObject($meRequestDataSeries['metric'])->getHtmlNameAndDescription()
+                        );
                     }
                     sort($jsonStoreMessageMetricDescriptions);
                     $jsonStoreMessage .= implode('', $jsonStoreMessageMetricDescriptions);
@@ -627,10 +623,10 @@ class Usage extends Common
                 $meRequestIsTimeseries = $meRequest['timeseries'];
 
                 // Get the statistic object used by this chart request.
-                $meRequestMetric = $usageRealmAggregateClass::getStatistic($meRequest['data_series_unencoded'][0]['metric']);
+                $meRequestMetric = $realm->getStatisticObject($meRequest['data_series_unencoded'][0]['metric']);
 
                 $errorstat = 'sem_' . $meRequest['data_series_unencoded'][0]['metric'];
-                if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
+                if (in_array($errorstat, $realm->getStatisticNames()) ) {
                     $usageChartSettings['enable_errors'] = 'y';
                 }
 
@@ -646,8 +642,8 @@ class Usage extends Common
 
                 // Grab the dimension and metric and generate a formatted group
                 // and metric description.
-                $usageChartDimensionDescription = $usageGroupByObject->getDescription();
-                $usageChartMetricDescription = $meRequestMetric->getDescription($usageGroupByObject);
+                $usageChartDimensionDescription = $usageGroupByObject->getHtmlNameAndDescription();
+                $usageChartMetricDescription = $meRequestMetric->getHtmlNameAndDescription();
 
                 // If specified, use the given subtitle. Otherwise, get the
                 // subtitle from the title of the resulting chart.
@@ -657,13 +653,13 @@ class Usage extends Common
                 $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['title']['text'];
 
                 // Generate the title and short title of this chart.
-                $usageChartShortTitle = $meRequestMetric->getLabel();
+                $usageChartShortTitle = $meRequestMetric->getName();
                 if ($usageTitle !== null) {
                     $usageChartTitle = $usageTitle;
                 } else {
                     $usageChartTitle = $usageChartShortTitle;
                     if ($usageGroupBy !== 'none') {
-                        $usageChartTitle .= ': by ' . $usageGroupByObject->getLabel();
+                        $usageChartTitle .= ': by ' . $usageGroupByObject->getName();
                     }
                 }
 
@@ -805,9 +801,9 @@ class Usage extends Common
                     $user,
                     $usageRealm,
                     $usageGroupBy,
-                    $meRequestMetric->getAlias()->getName()
+                    $meRequestMetric->getAlias()
                 );
-                $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getAlias());
+                $drillTargets = $queryDescripter->getDrillTargets();
                 $drillDowns = array_map(
                     function ($drillTarget) {
                         return explode('-', $drillTarget, 2);
@@ -1076,15 +1072,10 @@ class Usage extends Common
         $usageRealm = \xd_utilities\array_get($usageRequest, 'realm');
 
         // Create global filters from any Usage drilldowns.
-        $realmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
-        $realmAggregateClass::registerGroupBys();
-        $realmGroupByClasses = $realmAggregateClass::getRegisteredGroupBys();
-        $realmGroupByNames = array_map(function ($realmGroupByClass) {
-            $realmGroupBy = new $realmGroupByClass();
-            return $realmGroupBy->getName();
-        }, $realmGroupByClasses);
 
         $meFilters = array();
+        $realm = Realm::factory($usageRealm);
+        $realmGroupByNames = array_values($realm->getGroupByNames());
 
         // Extract the supported filter values from $usageRequest
         foreach ($usageRequest as $usageKey => $usageValue) {
@@ -1132,13 +1123,13 @@ class Usage extends Common
         $sortMechanism = SORT_DESC;
         $usageGroupBy = \xd_utilities\array_get($usageRequest, 'group_by', 'none');
         $usageMetric = \xd_utilities\array_get($usageRequest, 'statistic');
-        $usageGroupByObject = $realmAggregateClass::getGroupBy($usageGroupBy);
-        $usageGroupByOrder = $usageGroupByObject->getOrderByStatOption();
+        $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
+        $usageGroupByOrder = $usageGroupByObject->getSortOrder();
         if ($usageGroupByOrder !== SORT_DESC) {
             $sortMechanism = $usageGroupByOrder;
         } else {
-            $usageMetricObject = $realmAggregateClass::getStatistic($usageMetric);
-            $sortMechanism = $usageMetricObject->getOrderByStatOption();
+            $usageMetricObject = $realm->getStatisticObject($usageMetric);
+            $sortMechanism = $usageMetricObject->getSortOrder();
         }
 
         switch ($sortMechanism) {

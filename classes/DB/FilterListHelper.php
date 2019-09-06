@@ -1,6 +1,6 @@
 <?php
 
-use DataWarehouse\Query\GroupBy;
+use \Realm\GroupBy;
 use DataWarehouse\Query\Query;
 
 /**
@@ -44,28 +44,28 @@ class FilterListHelper
      * @return string              The short name of the dimensions' table.
      */
     public static function getTableName(Query $realmQuery, GroupBy $groupBy1, GroupBy $groupBy2 = null) {
-        $groupBy1Name = $groupBy1->getName();
+        $groupBy1Id = $groupBy1->getId();
 
         $secondDimensionGiven = $groupBy2 !== null;
         if ($secondDimensionGiven) {
-            $groupBy2Name = $groupBy2->getName();
+            $groupBy2Id = $groupBy2->getId();
 
-            $groupByComparison = strcasecmp($groupBy1Name, $groupBy2Name);
+            $groupByComparison = strcasecmp($groupBy1Id, $groupBy2Id);
         }
 
         $realmName = $realmQuery->getRealmName();
         $tableName = "{$realmName}_";
         if (!$secondDimensionGiven || $groupByComparison === 0) {
-            $tableName .= $groupBy1Name;
+            $tableName .= $groupBy1Id;
         } else {
             if ($groupByComparison < 0) {
-                $firstName = $groupBy1Name;
-                $secondName = $groupBy2Name;
+                $firstId = $groupBy1Id;
+                $secondId = $groupBy2Id;
             } else {
-                $firstName = $groupBy2Name;
-                $secondName = $groupBy1Name;
+                $firstId = $groupBy2Id;
+                $secondId = $groupBy1Id;
             }
-            $tableName .= "${firstName}___{$secondName}";
+            $tableName .= "${firstId}___{$secondId}";
         }
 
         return $tableName;

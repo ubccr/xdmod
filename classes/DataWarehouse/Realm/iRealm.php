@@ -29,13 +29,17 @@ interface iRealm
      * @param string $shortName The short internal identifier for the realm that will be
      *   instantiated.
      * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param stdclass|null $options An object containing additional configuration options.
+     *   Currently supported options are:
+     *     - config_file_name: The name of the configuration file to use, useful for testing.
+     *     - config_base_dir: The base directory of the configuration file, useful for testing.
      *
      * @return Realm A Realm class.
      *
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($shortName, Logger $logger = null);
+    public static function factory($shortName, Logger $logger = null, \stdClass $options = null);
 
     /**
      * Initialize data for all realms from the definition source. This can mean constructing the
@@ -44,6 +48,7 @@ interface iRealm
      * a Realm object can be accessed.
      *
      * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param stdclass|null $options An object containing additional configuration options.
      *
      * @throws Exception If there was an error loading the realm data.
      */
@@ -104,6 +109,12 @@ interface iRealm
     public function getAggregateTablePrefix($includeSchema = true);
 
     /**
+     * @return string The alias to use when referencing the aggregate table.
+     */
+
+    public function getAggregateTableAlias();
+
+    /**
      * @return string The data source or sources used to generate the Realm data. For example,
      *   XDCDB, XDMoD Data Warehouse, etc.
      */
@@ -130,6 +141,22 @@ interface iRealm
      */
 
     public function getOrder();
+
+    /**
+     * @param string $id Statistic short identifier.
+     *
+     * @return TRUE if a Statistic with the specified ID exists and is not disabled.
+     */
+
+    public function statisticExists($id);
+
+    /**
+     * @param string $id GroupBy short identifier.
+     *
+     * @return TRUE if a Group By with the specified ID exists and is not disabled.
+     */
+
+    public function groupByExists($id);
 
     /**
      * Note that disabled GroupBy names are not included.
@@ -214,6 +241,25 @@ interface iRealm
      */
 
     public function getMinimumAggregationUnit();
+
+    /**
+     * @return VariableStore The VariableStore object for this realm to support variable
+     *   substitution in GroupBy and Statistics classes.
+     */
+
+    public function getVariableStore();
+
+    /**
+     * Generate a list of drilldowns that are available in this realm for the specified statistic
+     * and group by.  This will include all of the group bys defined for this realm except those
+     * marked as not available for drill down and the specified group by.
+     *
+     * @param string $groupById The short identifier for the current group by.
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     */
+
+    public function getDrillTargets($groupById, $order = self::SORT_ON_ORDER);
 
     /**
      * @return string A string representation of this object.

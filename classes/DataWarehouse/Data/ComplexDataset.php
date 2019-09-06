@@ -70,17 +70,12 @@ class ComplexDataset
 
         foreach ($data_series as $data_description_index => $data_description) {
 
-            // Determine query class, then instantiate it
-            // this is quite horrible, and I apologize, but it beats 900 lines of
-            // redundant code, no? --JMS
-            $query_classname = '\\DataWarehouse\\Query\\' .
-                $data_description->realm .  '\\' .
-                ( $query_type == "aggregate" ? "Aggregate" : "Timeseries");
+            $realm = \Realm\Realm::factory($data_description->realm);
 
             try {
-                $stat = $query_classname::getStatistic($data_description->metric);
-                $statLabel = $stat->getLabel(false);
-                $metrics[$statLabel] = $stat->getInfo();
+                $stat = $realm->getStatisticObject($data_description->metric);
+                $statLabel = $stat->getId();
+                $metrics[$statLabel] = $stat->getHtmlDescription();
             } catch (\Exception $ex) {
                 continue;
             }
@@ -91,18 +86,22 @@ class ComplexDataset
                 );
             }
 
+            // Determine query class, then instantiate it
+            // this is quite horrible, and I apologize, but it beats 900 lines of
+            // redundant code, no? --JMS
+            $query_classname = '\\DataWarehouse\\Query\\' .
+                ( $query_type == 'aggregate' ? 'Aggregate' : 'Timeseries');
+
             $query = new $query_classname(
+                $data_description->realm,
                 $aggregationUnit,
                 $startDate,
-                $endDate,
-                null,
-                null,
-                array()
+                $endDate
             );
 
             $dataSources[$query->getDataSource()] = 1;
             $group_by = $query->addGroupBy($data_description->group_by);
-            $dimensions[$group_by->getLabel()] = $group_by->getInfo();
+            $dimensions[$group_by->getName()] = $group_by->getHtmlDescription();
             $query->addStat($data_description->metric);
 
             if (
@@ -464,12 +463,8 @@ class ComplexDataset
         foreach ($this->_dataDescripters as $data_description_index => $dataDescripterAndDataset) {
             $data_description = $dataDescripterAndDataset->data_description;
 
-            $query_classname
-                = '\\DataWarehouse\\Query\\'
-                . $data_description->realm
-                . '\\Aggregate';
-
-            $stat = $query_classname::getStatistic($data_description->metric);
+            $realm = \Realm\Realm::factory($data_description->realm);
+            $stat = $realm->getStatisticObject($data_description->metric);
 
             if ($shareYAxis) {
                 $axisId = 'sharedAxis';
