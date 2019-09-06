@@ -11,6 +11,7 @@
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "systemaccount_id" }
                 ],
+                "order": 4,
                 "attribute_values_query": {
                     "records": {
                         "id": "username",
@@ -35,7 +36,8 @@
                 "formula": "SUM(agg.core_time)",
                 "name": "Alternate Statistic Class Example",
                 "description_html": "Alternate Statistic Class Example.",
-                "unit": "Hours"
+                "unit": "Hours",
+                "order": 3
             }
         }
     }

@@ -84,7 +84,7 @@ SELECT
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
-  modw.days days
+  modw.person person
 WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001

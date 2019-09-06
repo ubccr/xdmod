@@ -58,21 +58,21 @@ class RealmTest extends \PHPUnit_Framework_TestCase
             'Jobs' => 'Jobs',
             'Cloud' => 'Cloud'
         );
-        $this->assertEquals($generated, $expected, "Sort realm names on order");
+        $this->assertEquals($expected, $generated, "Sort realm names on order");
 
         $generated = Realm::getRealmNames(Realm::SORT_ON_SHORT_ID);
         $expected = array(
             'Cloud' => 'Cloud',
             'Jobs' => 'Jobs'
         );
-        $this->assertEquals($generated, $expected, "Sort realm names on short id");
+        $this->assertEquals($expected, $generated, "Sort realm names on short id");
 
         $generated = Realm::getRealmNames(Realm::SORT_ON_NAME);
         $expected = array(
             'Cloud' => 'Cloud',
             'Jobs' => 'Jobs'
         );
-        $this->assertEquals($generated, $expected, "Sort realm names on name");
+        $this->assertEquals($expected, $generated, "Sort realm names on name");
     }
 
     /**
@@ -85,24 +85,30 @@ class RealmTest extends \PHPUnit_Framework_TestCase
 
         $generated = $realm->getGroupByNames(); // Default sort order is SORT_ON_ORDER
         $expected = array(
+            'none' => 'None',
+            'day' => 'Day',
             'resource' => 'Resource',
             'person' => 'User'
         );
-        $this->assertEquals($generated, $expected, "getGroupByNames(SORT_ON_ORDER)");
+        $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_ORDER)");
 
         $generated = $realm->getGroupByNames(Realm::SORT_ON_SHORT_ID);
         $expected = array(
+            'day' => 'Day',
+            'none' => 'None',
             'person' => 'User',
             'resource' => 'Resource'
         );
-        $this->assertEquals($generated, $expected, "getGroupByNames(SORT_ON_SHORT_ID)");
+        $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_SHORT_ID)");
 
         $generated = $realm->getGroupByNames(Realm::SORT_ON_NAME);
         $expected = array(
+            'day' => 'Day',
+            'none' => 'None',
             'resource' => 'Resource',
             'person' => 'User'
         );
-        $this->assertEquals($generated, $expected, "getGroupByNames(SORT_ON_NAME)");
+        $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_NAME)");
     }
 
     /**
@@ -116,23 +122,26 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->getStatisticNames(); // Default sort order is SORT_ON_ORDER
         $expected = array(
             'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
-            'Cloud_core_time' => 'Core Hours: Total'
+            'Cloud_core_time' => 'Core Hours: Total',
+            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example'
         );
-        $this->assertEquals($generated, $expected, "getStatisticNames(SORT_ON_ORDER)");
+        $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_ORDER)");
 
         $generated = $realm->getStatisticNames(Realm::SORT_ON_SHORT_ID);
         $expected = array(
+            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
             'Cloud_core_time' => 'Core Hours: Total',
             'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
         );
-        $this->assertEquals($generated, $expected, "getStatisticNames(SORT_ON_SHORT_ID)");
+        $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_SHORT_ID)");
 
         $generated = $realm->getStatisticNames(Realm::SORT_ON_NAME);
         $expected = array(
             'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
+            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
             'Cloud_core_time' => 'Core Hours: Total'
         );
-        $this->assertEquals($generated, $expected, "getStatisticNames(SORT_ON_NAME)");
+        $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_NAME)");
     }
 
     /**
@@ -144,17 +153,21 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $realm = Realm::factory('Jobs', self::$logger);
         $generated = $realm->getDrillTargets('person');
         $expected = array(
+            'none-None',
+            'day-Day',
             'resource-Resource'
         );
-        $this->assertEquals($generated, $expected, "getDrillTargets('person')");
+        $this->assertEquals($expected, $generated, "getDrillTargets('person')");
 
         $realm = Realm::factory('Cloud', self::$logger);
-        $generated = $realm->getDrillTargets('none');
+        $generated = $realm->getDrillTargets('none');  // Will be returned using SORT_ON_ORDER
         $expected = array(
+            'day-Day',
             'configuration-Instance Type',
-            'username-System Username'
+            'username-System Username',
+            'alternate_groupby_class-Alternate GroupBy Class Example'
         );
-        $this->assertEquals($generated, $expected, "getDrillTargets('none')");
+        $this->assertEquals($expected, $generated, "getDrillTargets('none')");
     }
 
     /**
@@ -167,43 +180,43 @@ class RealmTest extends \PHPUnit_Framework_TestCase
 
         $generated = $realm->getId();
         $expected = 'Jobs';
-        $this->assertEquals($generated, $expected, "getId()");
+        $this->assertEquals($expected, $generated, "getId()");
 
         $generated = $realm->getName();
         $expected = 'Jobs';
-        $this->assertEquals($generated, $expected, "getName()");
+        $this->assertEquals($expected, $generated, "getName()");
 
         $generated = $realm->getAggregateTableSchema();
         $expected = 'modw_aggregates';
-        $this->assertEquals($generated, $expected, "getAggregateTableSchema()");
+        $this->assertEquals($expected, $generated, "getAggregateTableSchema()");
 
         $generated = $realm->getAggregateTablePrefix();
         $expected = 'modw_aggregates.jobfact_by_';
-        $this->assertEquals($generated, $expected, "getAggregateTablePrefix()");
+        $this->assertEquals($expected, $generated, "getAggregateTablePrefix()");
 
         $generated = $realm->getAggregateTablePrefix(false);
         $expected = 'jobfact_by_';
-        $this->assertEquals($generated, $expected, "getAggregateTablePrefix(false)");
+        $this->assertEquals($expected, $generated, "getAggregateTablePrefix(false)");
 
         $generated = $realm->getAggregateTableAlias();
         $expected = 'agg';
-        $this->assertEquals($generated, $expected, "getAggregateTableAlias()");
+        $this->assertEquals($expected, $generated, "getAggregateTableAlias()");
 
         $generated = $realm->getDatasource();
         $expected = 'Slurm';
-        $this->assertEquals($generated, $expected, "getDatasource()");
+        $this->assertEquals($expected, $generated, "getDatasource()");
 
         $generated = $realm->getModuleName();
         $expected = 'xdmod';
-        $this->assertEquals($generated, $expected, "getModuleName()");
+        $this->assertEquals($expected, $generated, "getModuleName()");
 
         $generated = $realm->getOrder();
         $expected = 1;
-        $this->assertEquals($generated, $expected, "getOrder()");
+        $this->assertEquals($expected, $generated, "getOrder()");
 
         $generated = $realm->getDefaultWeighgtStatName();
         $expected = 'weight';
-        $this->assertEquals($generated, $expected, "getDefaultWeighgtStatName()");
+        $this->assertEquals($expected, $generated, "getDefaultWeighgtStatName()");
 
         $generated = $realm->getMinimumAggregationUnit();
         $this->assertNull($generated, "getMinimumAggregationUnit()");

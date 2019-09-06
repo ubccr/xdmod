@@ -80,9 +80,11 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         }
         $expected = array(
             'resource' => 'Resource',
-            'person' => 'User'
+            'person' => 'User',
+            'none' => 'None',
+            'day' => 'Day'
         );
-        $this->assertEquals($generated, $expected, "getGroupByObjects('Jobs')");
+        $this->assertEquals($expected, $generated, "getGroupByObjects('Jobs')");
 
         $realm = Realm::factory('Cloud', self::$logger);
         $objectList = $realm->getGroupByObjects(Realm::SORT_ON_NAME);
@@ -93,10 +95,10 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'alternate_groupby_class' => 'Alternate GroupBy Class Example',
             'configuration' => 'Instance Type',
-            'quarter' => 'Quarter',
-            'username' => 'System Username'
+            'username' => 'System Username',
+            'day' => 'Day'
         );
-        $this->assertEquals($generated, $expected, "getGroupByObjects('Cloud'), SORT_ON_NAME");
+        $this->assertEquals($expected, $generated, "getGroupByObjects('Cloud'), SORT_ON_NAME");
     }
 
     /**
@@ -130,7 +132,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
 
         $generated = array_shift($parameters);
         $expected = "person_id IN ('20','30','10')";
-        $this->assertEquals($generated, $expected, 'generateQueryFiltersFromRequest()');
+        $this->assertEquals($expected, $generated, 'generateQueryFiltersFromRequest()');
 
         // GroupBy with a multi-column key (2 columns in attribute table and 2 in aggregate table).
         // Multi-column keys use a carat (^) to separate the keys in filters.
@@ -144,11 +146,11 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
 
         $generated = array_shift($parameters);
         $expected = "resource_id IN ('20','30','10')";
-        $this->assertEquals($generated, $expected, 'generateQueryFiltersFromRequest()');
+        $this->assertEquals($expected, $generated, 'generateQueryFiltersFromRequest()');
 
         $generated = array_shift($parameters);
         $expected = "resource_code IN ('25','35','15')";
-        $this->assertEquals($generated, $expected, 'generateQueryFiltersFromRequest()');
+        $this->assertEquals($expected, $generated, 'generateQueryFiltersFromRequest()');
     }
 
     /**
@@ -161,15 +163,16 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
     {
         $expected =<<<SQL
 SELECT
-  person.id as 'id',
-  person.short_name as short_name,
-  person.long_name as name
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.person person
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY person.id
@@ -184,7 +187,7 @@ SQL;
             'person'
         );
         $generated = $query->getQueryString();
-        $this->assertEquals($generated, $expected, 'AggregateQuery applyTo()');
+        $this->assertEquals($expected, $generated, 'AggregateQuery applyTo()');
 
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -194,7 +197,7 @@ SQL;
         );
         $query->addGroupBy('person');
         $generated = $query->getQueryString();
-        $this->assertEquals($generated, $expected, 'AggregateQuery::addGroupBy()');
+        $this->assertEquals($expected, $generated, 'AggregateQuery::addGroupBy()');
     }
 
     /**
@@ -207,15 +210,16 @@ SQL;
     {
         $expected =<<<SQL
 SELECT
-  person.id as 'id',
-  person.short_name as short_name,
-  person.long_name as name
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id
 FROM
   modw_aggregates.jobfact_by_day agg,
-  modw.days d,
+  modw.days duration,
   modw.person person
 WHERE
-  d.id = agg.day_id
+  duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
   AND person.id > (constraint)
@@ -233,68 +237,68 @@ SQL;
         $query->addWhereAndJoin('person', '>', 'constraint');
 
         $generated = $query->getQueryString();
-        $this->assertEquals($generated, $expected, 'AggregateQuery::addWhereJoin()');
+        $this->assertEquals($expected, $generated, 'AggregateQuery::addWhereJoin()');
     }
 
     /**
      * (8) Test group by metadata.
      */
 
-    public function testRealmMetadata()
+    public function testGroupByMetadata()
     {
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('username');
 
         $generated = $obj->getRealm()->getId();
         $expected = 'Cloud';
-        $this->assertEquals($generated, $expected, 'getRealm()->getId()');
+        $this->assertEquals($expected, $generated, 'getRealm()->getId()');
 
         $generated = $obj->getId();
         $expected = 'username';
-        $this->assertEquals($generated, $expected, 'getId()');
+        $this->assertEquals($expected, $generated, 'getId()');
 
         $generated = $obj->getName();
         $expected = 'System Username';
-        $this->assertEquals($generated, $expected, 'getName()');
+        $this->assertEquals($expected, $generated, 'getName()');
 
         $generated = $obj->getHtmlDescription();
         $expected = 'The specific system username associated with a running session of a virtual machine.';
-        $this->assertEquals($generated, $expected, 'getHtmlDescription()');
+        $this->assertEquals($expected, $generated, 'getHtmlDescription()');
 
         $generated = $obj->getHtmlNameAndDescription();
         $expected = '<b>System Username</b>: The specific system username associated with a running session of a virtual machine.';
-        $this->assertEquals($generated, $expected, 'getHtmlNameAndDescription()');
+        $this->assertEquals($expected, $generated, 'getHtmlNameAndDescription()');
 
         $generated = $obj->getAttributeTable();
         $expected = 'modw.systemaccount';
-        $this->assertEquals($generated, $expected, 'getAttributeTable()');
+        $this->assertEquals($expected, $generated, 'getAttributeTable()');
 
         $generated = $obj->getAttributeTable(false);
         $expected = 'systemaccount';
-        $this->assertEquals($generated, $expected, 'getAttributeTable(false)');
+        $this->assertEquals($expected, $generated, 'getAttributeTable(false)');
 
         $generated = $obj->getAttributeKeys();
         $expected = array(
             'id'
         );
-        $this->assertEquals($generated, $expected, 'getAttributeKeys()');
+        $this->assertEquals($expected, $generated, 'getAttributeKeys()');
         $generated = $obj->getAggregateKeys();
         $expected = array(
             'systemaccount_id'
         );
-        $this->assertEquals($generated, $expected, 'getAggregateKeys()');
+        $this->assertEquals($expected, $generated, 'getAggregateKeys()');
 
         $generated = $obj->getModuleName();
         $expected = 'cloud';
-        $this->assertEquals($generated, $expected, 'getModuleName()');
+        $this->assertEquals($expected, $generated, 'getModuleName()');
 
         $generated = $obj->getOrder();
-        $expected = 0;
-        $this->assertEquals($generated, $expected, 'getOrder()');
+        $expected = 3;
+        $this->assertEquals($expected, $generated, 'getOrder()');
 
         $generated = $obj->getSortOrder();
         $expected = SORT_DESC;
-        $this->assertEquals($generated, $expected, 'getSortOrder()');
+        $this->assertEquals($expected, $generated, 'getSortOrder()');
 
         $generated = $obj->isAvailableForDrilldown();
         $this->assertTrue($generated, 'isAvailableForDrilldown()');
@@ -309,7 +313,7 @@ username AS `order_id`
 FROM `systemaccount`
 ORDER BY username
 SQL;
-        $this->assertEquals($generated, $expected, 'getAttributeValuesQuery()->getSql()');
+        $this->assertEquals($expected, $generated, 'getAttributeValuesQuery()->getSql()');
 
         $generated = $obj->getDefaultDatasetType();
         $this->assertEquals($generated, 'aggregate', 'getDefaultDatasetType()');

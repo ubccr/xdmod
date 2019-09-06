@@ -75,10 +75,10 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
             $generated[$id] = $obj->getName(false);
         }
         $expected = array(
-            'Jobs_job_count' => '${ORGANIZATION_NAME} Number of Jobs Ended',
-            'Jobs_running_job_count' => '${ORGANIZATION_NAME} Number of Running Jobs'
+            'Jobs_job_count' => sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME),
+            'Jobs_running_job_count' => sprintf('%s Number of Running Jobs', ORGANIZATION_NAME)
         );
-        $this->assertEquals($generated, $expected, "getStatisticObjects('Jobs')");
+        $this->assertEquals($expected, $generated, "getStatisticObjects('Jobs')");
 
         $realm = Realm::factory('Cloud', self::$logger);
         $objectList = $realm->getStatisticObjects(Realm::SORT_ON_SHORT_ID);
@@ -89,9 +89,9 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
             'Cloud_core_time' => 'Core Hours: Total',
-            'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
+            'Cloud_num_sessions_running' => sprintf('%s Number of Active Sessions', ORGANIZATION_NAME)
         );
-        $this->assertEquals($generated, $expected, "getStatisticObjects('Cloud'), SORT_ON_SHORT_ID");
+        $this->assertEquals($expected, $generated, "getStatisticObjects('Cloud'), SORT_ON_SHORT_ID");
     }
 
     /**
@@ -103,7 +103,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getStatisticObject('Cloud_num_sessions_running');
 
-        $this->assertEquals($obj->getName(), '${ORGANIZATION_NAME} Number of Active Sessions', 'getName()');
+        $this->assertEquals($obj->getName(), sprintf('%s Number of Active Sessions', ORGANIZATION_NAME), 'getName()');
     }
 
     /**
@@ -137,7 +137,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $statistic = $realm->getStatisticObject('Cloud_num_sessions_running');
         $generated = $statistic->getFormula($query);
         $expected = 'COALESCE(SUM(CASE days.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS Cloud_num_sessions_running';
-        $this->assertEquals($generated, $expected, 'getFormula()');
+        $this->assertEquals($expected, $generated, 'getFormula()');
     }
 
     /**
@@ -151,58 +151,58 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
 
         $generated = $obj->getRealm()->getId();
         $expected = 'Jobs';
-        $this->assertEquals($generated, $expected, 'getRealm()->getId()');
+        $this->assertEquals($expected, $generated, 'getRealm()->getId()');
 
         $generated = $obj->getId();
         $expected = 'Jobs_job_count';
-        $this->assertEquals($generated, $expected, "getId()");
+        $this->assertEquals($expected, $generated, "getId()");
 
         $generated = $obj->getId(false);
         $expected = 'Jobs_job_count';
-        $this->assertEquals($generated, $expected, "getId(false)");
+        $this->assertEquals($expected, $generated, "getId(false)");
 
         $generated = $obj->getName();
-        $expected = '${ORGANIZATION_NAME} Number of Jobs Ended (Number of Jobs)';
-        $this->assertEquals($generated, $expected, "getName()");
+        $expected = sprintf('%s Number of Jobs Ended (Number of Jobs)', ORGANIZATION_NAME);
+        $this->assertEquals($expected, $generated, "getName()");
 
         $generated = $obj->getName(false);
-        $expected = '${ORGANIZATION_NAME} Number of Jobs Ended';
-        $this->assertEquals($generated, $expected, "getName(false)");
+        $expected = sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME);
+        $this->assertEquals($expected, $generated, "getName(false)");
 
         $generated = $obj->getHtmlDescription();
-        $expected = 'The total number of ${ORGANIZATION_NAME} jobs that ended.';
-        $this->assertEquals($generated, $expected, "getHtmlDescription()");
+        $expected = sprintf('The total number of %s jobs that ended.', ORGANIZATION_NAME);
+        $this->assertEquals($expected, $generated, "getHtmlDescription()");
 
         $generated = $obj->getHtmlNameAndDescription();
-        $expected = '<b>${ORGANIZATION_NAME} Number of Jobs Ended</b>: The total number of ${ORGANIZATION_NAME} jobs that ended.';
-        $this->assertEquals($generated, $expected, "getHtmlNameAndDescription()");
+        $expected = sprintf('<b>%s Number of Jobs Ended</b>: The total number of %s jobs that ended.', ORGANIZATION_NAME, ORGANIZATION_NAME);
+        $this->assertEquals($expected, $generated, "getHtmlNameAndDescription()");
 
         $generated = $obj->getUnit();
         $expected = 'Number of Jobs';
-        $this->assertEquals($generated, $expected, "getUnit()");
+        $this->assertEquals($expected, $generated, "getUnit()");
 
         $generated = $obj->getPrecision();
         $expected = 2;
-        $this->assertEquals($generated, $expected, "getPrecision()");
+        $this->assertEquals($expected, $generated, "getPrecision()");
 
         $generated = $obj->getSortOrder();
         $expected = SORT_DESC;
-        $this->assertEquals($generated, $expected, "getSortOrder()");
+        $this->assertEquals($expected, $generated, "getSortOrder()");
 
         $generated = $obj->getModuleName();
         $expected = 'xdmod';
-        $this->assertEquals($generated, $expected, "getModuleName()");
+        $this->assertEquals($expected, $generated, "getModuleName()");
 
         $generated = $obj->getOrder();
-        $expected = 1;
-        $this->assertEquals($generated, $expected, "getOrder()");
+        $expected = 2;
+        $this->assertEquals($expected, $generated, "getOrder()");
 
         $generated = $obj->getAdditionalWhereCondition();
         $this->assertNull($generated, "getAdditionalWhereCondition()");
 
         $generated = $obj->getWeightStatName();
         $expected = 'weight_is_not_used';
-        $this->assertEquals($generated, $expected, "getWeightStatName()");
+        $this->assertEquals($expected, $generated, "getWeightStatName()");
 
         $generated = $obj->usesTimePeriodTablesForAggregate();
         $this->assertTrue($generated, "usesTimePeriodTablesForAggregate()");

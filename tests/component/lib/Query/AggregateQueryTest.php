@@ -99,7 +99,8 @@ SQL;
     public function testAggregateQueryGroupByAndStatistic()
     {
         // Specifying the statistic in the constructor calls Query::setStat() which adds all
-        // available statistics.
+        // available statistics. Note that the order of the statistics in the query are dependent on
+        // the oder specified in the config file.
 
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -117,8 +118,8 @@ SELECT
   person.short_name as person_short_name,
   person.long_name as person_name,
   person.order_id as person_order_id,
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count,
-  SUM(agg.running_job_count) AS Jobs_running_job_count
+  SUM(agg.running_job_count) AS Jobs_running_job_count,
+  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -140,7 +141,8 @@ SQL;
     public function testAggregateQueryStatisticNoGroupBy()
     {
         // Specifying the statistic in the constructor calls Query::setStat() which adds all
-        // available statistics.
+        // available statistics. Note that the order of the statistics in the query are dependent on
+        // the oder specified in the config file.
 
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -159,8 +161,8 @@ SQL;
 
         $expected  =<<<SQL
 SELECT
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count,
-  SUM(agg.running_job_count) AS Jobs_running_job_count
+  SUM(agg.running_job_count) AS Jobs_running_job_count,
+  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration
@@ -344,8 +346,23 @@ SQL;
         );
         $query->addOrderByAndSetSortInfo($data_description);
         $generated = $query->getQueryString();
+        $expected =<<<SQL
+SELECT
+  -9999 as none_id,
+  'Screwdriver' as none_short_name,
+  'Screwdriver' as none_name,
+  'Screwdriver' as none_order_id,
+  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+FROM
+  modw_aggregates.jobfact_by_day agg,
+  modw.days duration
+WHERE
+  duration.id = agg.day_id
+  AND agg.day_id between 201600357 and 201700001
 
-        print_r($generated);
+ORDER BY Jobs_job_count desc
+SQL;
+        $this->assertEquals($expected, $generated, 'Aggregate query group by none');
     }
 
     /**
