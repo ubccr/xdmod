@@ -5,7 +5,7 @@ title: User Dashboard (Beta)
 Developer Guide
 ---------------
 
-New components can be added to ths dashboard as follows:
+New components can be added to the dashboard as follows:
 
 1. Create a javascript class that inherits from `Ext.ui.Portlet`. Conventionally this should be placed in `html/gui/js/modules/dashboard`
 1. Edit the `etc/assets.json` file to include the new javascript artifact (and any other artifacts such as css files).
