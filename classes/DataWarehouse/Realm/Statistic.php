@@ -279,9 +279,9 @@ class Statistic extends \CCR\Loggable implements iStatistic
     public function getName($includeUnit = true)
     {
         if ( $includeUnit && strpos($this->name, $this->unit) ) {
-            return sprintf("%s (%s)", $this->name, $this->unit);
+            return $this->realm->getVariableStore()->substitute(sprintf("%s (%s)", $this->name, $this->unit));
         } else {
-            return $this->name;
+            return $this->realm->getVariableStore()->substitute($this->name);
         }
     }
 
@@ -291,7 +291,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getHtmlDescription()
     {
-        return $this->description;
+        return $this->realm->getVariableStore()->substitute($this->description);
     }
 
     /**
@@ -300,7 +300,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getHtmlNameAndDescription()
     {
-        return sprintf("<b>%s</b>: %s", $this->name, $this->description);
+        return sprintf("<b>%s</b>: %s", $this->getName(false), $this->getHtmlDescription());
     }
 
     /**

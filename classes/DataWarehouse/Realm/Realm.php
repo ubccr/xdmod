@@ -7,6 +7,7 @@ namespace Realm;
 
 use Log as Logger;  // CCR implementation of PEAR logger
 use Configuration\Configuration;
+use ETL\VariableStore;
 
 class Realm extends \CCR\Loggable implements iRealm
 {
@@ -111,6 +112,13 @@ class Realm extends \CCR\Loggable implements iRealm
      */
 
     protected static $dataWarehouseConfig = null;
+
+    /**
+     * @var VariableStore Collection of variable names and values available for substitution in
+     *   various properties.
+     */
+
+    protected $variableStore = null;
 
     /**
      * @see iRealm::initialize()
@@ -449,6 +457,15 @@ class Realm extends \CCR\Loggable implements iRealm
                 unset($this->statisticConfigs->$statisticId);
             }
         }
+
+        $this->variableStore = new VariableStore(
+            array(
+                'ORGANIZATION_NAME' => ORGANIZATION_NAME,
+                'REALM_ID' => $this->id,
+                'REALM_NAME' => $this->name
+            ),
+            $logger
+        );
     }
 
     /**
@@ -672,6 +689,15 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getMinimumAggregationUnit()
     {
         return $this->minAggregationUnit;
+    }
+
+    /**
+     * @see iRealm::getVariableStore()
+     */
+
+    public function getVariableStore()
+    {
+        return $this->variableStore;
     }
 
     /**

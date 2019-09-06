@@ -243,6 +243,13 @@ interface iRealm
     public function getMinimumAggregationUnit();
 
     /**
+     * @return VariableStore The VariableStore object for this realm to support variable
+     *   substitution in GroupBy and Statistics classes.
+     */
+
+    public function getVariableStore();
+
+    /**
      * Generate a list of drilldowns that are available in this realm for the specified statistic
      * and group by.  This will include all of the group bys defined for this realm except those
      * marked as not available for drill down and the specified group by.

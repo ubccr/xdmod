@@ -349,7 +349,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getName()
     {
-        return $this->name;
+        return $this->realm->getVariableStore()->substitute($this->name);
     }
 
     /**
@@ -360,7 +360,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getHtmlDescription()
     {
-        return $this->description;
+        return $this->realm->getVariableStore()->substitute($this->description);
     }
 
     /**
@@ -371,7 +371,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getHtmlNameAndDescription()
     {
-        return sprintf("<b>%s</b>: %s", $this->name, $this->description);
+        return sprintf("<b>%s</b>: %s", $this->getName(), $this->getHtmlDescription());
     }
 
     /**
@@ -848,6 +848,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     protected function verifyAndReplaceTableAlias($formula, \DataWarehouse\Query\iQuery $query)
     {
+        $formula = $this->realm->getVariableStore()->substitute($formula);
         if ( $this->isAggregationUnit && 'none' == $this->id ) {
             return $formula;
         }
