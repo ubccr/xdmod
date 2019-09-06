@@ -1,5 +1,5 @@
 /**
- * XDMoD.Module.DashboardComponent.Chart
+ * XDMoD.Module.Dashboard.ChartComponent
  *
  */
 
