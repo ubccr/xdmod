@@ -44,7 +44,7 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(Ext.ux.Portlet, {
         highchartConfig.title = '';
 
         this.store = new CCR.xdmod.CustomJsonStore({
-            chartcmp: self,
+            chartCmp: self,
             listeners: {
                 load: function (store) {
                     var dimensions = store.getAt(0).get('dimensions');
@@ -64,7 +64,7 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(Ext.ux.Portlet, {
                             mets += '<li><b>' + metric + ':</b> ' + metrics[metric] + '</li>';
                         }
                     }
-                    var help = this.chartcmp.getTool('help');
+                    var help = this.chartCmp.getTool('help');
                     if (help && help.dom) {
                         help.dom.qtip = '<ul>' + dims + '</ul><hr/><ul>' + mets + '</ul>';
                     }
@@ -75,7 +75,7 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(Ext.ux.Portlet, {
                         var errorCode = data.code;
 
                         if (errorCode === XDMoD.Error.QueryUnavailableTimeAggregationUnit) {
-                            var hcp = this.chartcmp.items.get(0);
+                            var hcp = this.chartCmp.items.get(0);
 
                             var errorMessageExtraData = '';
                             var errorData = data.errorData;
