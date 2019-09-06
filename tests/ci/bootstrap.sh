@@ -98,14 +98,14 @@ then
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
-        if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
             # -- Fix users searched in SSO test
-            patch -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+            patch -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
     else
-        if patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
             # -- Reverse previous patch
-            patch -R -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+            patch -R -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
     fi
 
