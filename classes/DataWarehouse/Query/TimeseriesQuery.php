@@ -1,15 +1,69 @@
 <?php
+/**
+ * Query the data warehouse for timeseries data specific to a given Realm. A timeseries query
+ * returns statistics grouped by aggregation unit and a specific value for a dimensional attribute.
+ * This is typically used in conjunction with an aggregate query to obtain the values of the
+ * dimensions followed by one query for each of the dimensional values to obtain the statistics for
+ * each aggregation unit.
+ *
+ * For example, the following aggregate query would be executed to obtain the dimensional values
+ *
+ * select
+ * rf.code as 'resource_order_id',
+ * rf.id as 'resource_id',
+ * coalesce(sum(jf.cpu_time),0)/3600.0 as total_cpu_hours
+ * from modw_aggregates.jobfact_by_day jf,
+ * modw.days d,
+ * modw.resourcefact rf
+ * where d.id = jf.day_id
+ * and jf.day_id between 201600357 and 201700001
+ * and rf.id = jf.task_resource_id
+ * group by rf.id
+ * order by total_cpu_hours desc, rf.code asc;
+ *
+ * +-------------------+-------------+-----------------+
+ * | resource_order_id | resource_id | total_cpu_hours |
+ * +-------------------+-------------+-----------------+
+ * | robertson         |           5 |     461887.9808 |
+ * | frearson          |           1 |     217650.7417 |
+ * | mortorq           |           2 |      77264.8497 |
+ * | pozidriv          |           4 |      71984.2764 |
+ * | phillips          |           3 |      11767.9883 |
+ * +-------------------+-------------+-----------------+
+ *
+ * And then the following query would be executed for each value of the id returned above
+ *
+ * select
+ * jf.day_id as 'day_id',
+ * rf.id as 'resource_id',
+ * coalesce(sum(jf.cpu_time),0)/3600.0 as total_cpu_hours
+ * from modw_aggregates.jobfact_by_day jf,
+ * modw.days d,
+ * modw.resourcefact rf
+ * where d.id = jf.day_id
+ *  and jf.day_id between 201600357 and 201700001
+ *  and rf.id = jf.task_resource_id
+ * group by jf.day_id, rf.id having resource_id = '5'
+ * order by total_cpu_hours desc, jf.day_id asc, rf.code asc
+ *
+ * +-----------+-------------+-----------------+
+ * | day_id    | resource_id | total_cpu_hours |
+ * +-----------+-------------+-----------------+
+ * | 201600365 |           5 |     148413.6153 |
+ * | 201600364 |           5 |     110834.4219 |
+ * | 201600366 |           5 |     103231.2444 |
+ * | 201700001 |           5 |      45876.6008 |
+ * | 201600363 |           5 |      42740.1569 |
+ * | 201600362 |           5 |      10791.9414 |
+ * +-----------+-------------+-----------------+
+ */
 
 namespace DataWarehouse\Query;
 
+use Log as Logger;  // CCR implementation of PEAR logger
 use CCR\DB;
 
-/**
- * Base class for a timeseries query.
- *
- * @author Amin Ghadersohi
- */
-class Timeseries extends \DataWarehouse\Query\Query
+class TimeseriesQuery extends Query implements iQuery
 {
     public function getQueryType()
     {
@@ -17,39 +71,34 @@ class Timeseries extends \DataWarehouse\Query\Query
     }
 
     public function __construct(
-        $realm_name,
-        $datatable_schema,
-        $datatable_name,
-        array $control_stats,
-        $aggregation_unit_name,
-        $start_date,
-        $end_date,
-        $group_by,
-        $stat = 'total_cpu_hours',
-        array $parameters = array()
+        $realmId,
+        $aggregationUnitName,
+        $startDate,
+        $endDate,
+        $groupById = null,
+        $statisticId = null,
+        array $parameters = array(),
+        Logger $logger = null
     ) {
         parent::__construct(
-            $realm_name,
-            $datatable_schema,
-            $datatable_name,
-            $control_stats,
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
-            $group_by,
-            $stat,
-            $parameters
+            $realmId,
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            $groupById,
+            $statisticId,
+            $parameters,
+            $logger
         );
 
-        $this->addGroupBy($this->_aggregation_unit->getUnitName());
+        $this->addGroupBy($aggregationUnitName);
     }
 
     protected function setDuration(
         $start_date,
-        $end_date,
-        $aggregation_unit_name
+        $end_date
     ) {
-        parent::setDuration($start_date, $end_date, $aggregation_unit_name);
+        parent::setDuration($start_date, $end_date);
 
         $this->setDurationFormula(
             new \DataWarehouse\Query\Model\TableField(
@@ -78,51 +127,76 @@ class Timeseries extends \DataWarehouse\Query\Query
             $select_group_by[] = $group->getQualifiedName(false);
         }
 
-        $data_query = "select \n" . implode(",\n", $select_fields) . "
-                         from \n" . implode(",\n", $select_tables) . "
-                        where \n" . implode("\n and ", $wheres);
+        $format = <<<SQL
+SELECT
+  %s
+FROM
+  %s
+WHERE
+  %s
+%s%s%s%s
+SQL;
 
-        if (count($select_group_by) > 0) {
-            $data_query .= " group by \n" . implode(",\n", $select_group_by);
-        }
+        $data_query = sprintf(
+            $format,
+            implode(",\n  ", $select_fields),
+            implode(",\n  ", $select_tables),
+            implode("\n  AND ", $wheres),
+            ( count($select_group_by) > 0 ? "GROUP BY " . implode(",\n  ", $select_group_by) : "" ),
+            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
+        );
 
-        if ($extraHavingClause != null) {
-            $data_query .= " having " . $extraHavingClause . "\n";
-        }
-
-        if (count($select_order_by) > 0) {
-            $data_query .= " order by \n" . implode(",\n", $select_order_by);
-        }
-
-        if ($limit !== null && $offset !== null) {
-            $data_query .= " limit $limit offset $offset";
-        }
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
+        );
 
         return $data_query;
     }
 
     public function getTimestamps()
     {
-        $dateIdsQuery = $this->_group_bys[$this->_aggregation_unit->getUnitName()]->getPossibleValuesQuery();
+        // Obtain the attribute values \ETL\DbModel\Query object from the GroupBy and modify it to
+        // add a WHERE clause restricting the values to those between the minn and max date of this
+        // query. This should only be used for aggregation time period GroupBys (day, month, etc.)
 
-        $dateIdsQuery = str_ireplace(
-            'where ',
-            "where gt.id >= {$this->_min_date_id} and gt.id <= {$this->_max_date_id} and ",
-            $dateIdsQuery
+        $dateIdsQuery = $this->_group_bys[$this->aggregationUnitName]->getAttributeValuesQuery();
+        $queryConfig = $dateIdsQuery->toStdClass();
+        $idFormula = $dateIdsQuery->getRecord('id');
+
+        $whereConditions = array(
+            sprintf('%s BETWEEN %s AND %s', $idFormula, $this->_min_date_id, $this->_max_date_id)
         );
 
-        return DB::factory($this->_db_profile)->query($dateIdsQuery);
+        if ( ! isset($queryConfig->where) || ! is_array($queryConfig->where) ) {
+            $queryConfig->where = $whereConditions;
+        } else {
+            $queryConfig->where = array_merge($queryConfig->where, $whereConditions);
+        }
+
+        $queryObj = new Query($queryConfig, '`', $this->logger);
+        $sql = $queryObj->getSql();
+
+        $this->logger->debug(sprintf("%s %s()\n%s", $this, __FUNCTION__, $sql));
+
+        return DB::factory($this->_db_profile)->query($sql);
+
     }
 
     public function execute($limit = 10000000)
     {
         $dateIdsQuery = "select id,
-                            {$this->_aggregation_unit}_start_ts,
-                            {$this->_aggregation_unit}_middle_ts
-                         from modw.{$this->_aggregation_unit}s
+                            {$this->aggregationUnitName}_start_ts,
+                            {$this->aggregationUnitName}_middle_ts
+                         from modw.{$this->aggregationUnitName}s
                             where
                               id between {$this->_min_date_id} and {$this->_max_date_id}
                               order by id asc";
+
+        $this->logger->debug(
+            sprintf("%s %s() Query date IDs\n%s", $this, __FUNCTION__, $dateIdsQuery)
+        );
 
         $dateIdsResults = DB::factory($this->_db_profile)->query($dateIdsQuery);
 
@@ -135,8 +209,7 @@ class Timeseries extends \DataWarehouse\Query\Query
 
         foreach ($dateIdsResults as $dateIdResult) {
             $period_id        = $dateIdResult['id'];
-            $period_start_ts  = $dateIdResult["{$this->_aggregation_unit}_start_ts"];
-            $period_middle_ts = $dateIdResult["{$this->_aggregation_unit}_middle_ts"];
+            $period_start_ts  = $dateIdResult["{$this->aggregationUnitName}_start_ts"];
 
             $data_labels[]        = $period_start_ts;
             $empty_data[]         = 0;
@@ -158,7 +231,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             throw new \Exception('Timeseries: main_stat_field is null');
         }
 
-        $stat        = $this->_main_stat_field->getAlias()->getName();
+        $stat        = $this->_main_stat_field->getAlias();
         $stat_weight = $this->_main_stat_field->getWeightStatName();
 
         $sem_name = 'sem_' . $stat;
@@ -243,10 +316,10 @@ class Timeseries extends \DataWarehouse\Query\Query
             }
         }
 
-        $sort_option = $this->_group_by->getOrderByStatOption();
+        $sort_option = $this->_group_by->getSortOrder();
 
         if (isset($sort_option)) {
-            $sort_option = $this->_main_stat_field->getOrderByStatOption();
+            $sort_option = $this->_main_stat_field->getSortOrder();
 
             $datanames  = array();
             $datavalues = array();
@@ -289,15 +362,15 @@ class Timeseries extends \DataWarehouse\Query\Query
         $statement->execute();
 
         while ($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
-            $data_by_group[$result['name']][$period_id_lookup[$result["{$this->_aggregation_unit}_id"]]] = $result[$stat];
+            $data_by_group[$result['name']][$period_id_lookup[$result["{$this->aggregationUnitName}_id"]]] = $result[$stat];
 
             // running_job_count will never be zero, but just in case
-            $data_by_group[$result['name'] . '-weights'][$period_id_lookup[$result["{$this->_aggregation_unit}_id"]]]
+            $data_by_group[$result['name'] . '-weights'][$period_id_lookup[$result["{$this->aggregationUnitName}_id"]]]
                 = $result[$stat_weight] <= 0
                 ? 1
                 : $result[$stat_weight];
 
-            $data_by_group[$result['name'] . '-sem'][$period_id_lookup[$result["{$this->_aggregation_unit}_id"]]]
+            $data_by_group[$result['name'] . '-sem'][$period_id_lookup[$result["{$this->aggregationUnitName}_id"]]]
                 = isset($result[$sem_name])
                 ? $result[$sem_name]
                 : 0;

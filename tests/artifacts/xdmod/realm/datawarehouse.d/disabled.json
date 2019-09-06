@@ -1,0 +1,13 @@
+{
+    "DisabledRealm": {
+        "disabled": true,
+        "name": "This realm is disabled and should not be considered at all",
+        "datasource": "XDCDB",
+        "aggregate_schema": "modw_aggregates",
+        "aggregate_table_prefix": "jobfact_by_",
+        "group_bys": {
+        },
+        "statistics": {
+        }
+    }
+}
