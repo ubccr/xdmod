@@ -461,6 +461,7 @@ class Realm extends \CCR\Loggable implements iRealm
         $this->variableStore = new VariableStore(
             array(
                 'ORGANIZATION_NAME' => ORGANIZATION_NAME,
+                'ORGANIZATION_NAME_ABBREV' => ORGANIZATION_NAME_ABBREV,
                 'REALM_ID' => $this->id,
                 'REALM_NAME' => $this->name
             ),

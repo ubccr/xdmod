@@ -366,6 +366,93 @@ SQL;
     }
 
     /**
+     * Test the results of getQueryString() with the group by specified in the constructor and
+     * separately by calling addGroupBy(). The results should be the same.
+     */
+
+    public function testAggregateQuerySpecifyGroupBy()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31',
+            'person'
+        );
+        $generated1 = $query->getQueryString();
+
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31'
+        );
+        $query->addGroupBy('person');
+        $generated2 = $query->getQueryString();
+        $this->assertEquals($generated1, $generated2, 'AggregateQuery getQueryString() depending on how group by is applied');
+    }
+
+    /**
+     * Test the addWhereJoin() method.
+     */
+
+    public function testAddWhereJoin()
+    {
+        $expected =<<<SQL
+SELECT
+  person.id as 'person_id',
+  person.short_name as person_short_name,
+  person.long_name as person_name,
+  person.order_id as person_order_id
+FROM
+  modw_aggregates.jobfact_by_day agg,
+  modw.days duration,
+  modw.person person
+WHERE
+  duration.id = agg.day_id
+  AND agg.day_id between 201600357 and 201700001
+  AND person.id = agg.person_id
+  AND person.id > (constraint)
+GROUP BY person.id
+ORDER BY person.order_id ASC
+SQL;
+
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31',
+            'person'
+        );
+        $query->addWhereAndJoin('person', '>', 'constraint');
+
+        $generated = $query->getQueryString();
+        $this->assertEquals($expected, $generated, 'AggregateQuery::addWhereJoin()');
+    }
+
+    /**
+     * Test the Statistic::getFormula() method where macros in the formula are replaced with values from
+     * the Query class.
+     */
+
+    public function testGetFormula()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Cloud',
+            'day',
+            '2017-12-01',
+            '2019-01-31',
+            'configuration'
+        );
+
+        $realm = \Realm\Realm::factory('Cloud', self::$logger);
+        $statistic = $realm->getStatisticObject('Cloud_num_sessions_running');
+        $generated = $statistic->getFormula($query);
+        $expected = 'COALESCE(SUM(CASE days.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS Cloud_num_sessions_running';
+        $this->assertEquals($expected, $generated, 'getFormula()');
+    }
+
+    /**
      * Test the count query.
      */
 

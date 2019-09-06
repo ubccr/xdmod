@@ -119,28 +119,6 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * (6) Test the getFormula() method where macros in the formula are repalced with values from
-     * the Query class.
-     */
-
-    public function testGetFormula()
-    {
-        $query = new \DataWarehouse\Query\AggregateQuery(
-            'Cloud',
-            'day',
-            '2017-12-01',
-            '2019-01-31',
-            'configuration'
-        );
-
-        $realm = Realm::factory('Cloud', self::$logger);
-        $statistic = $realm->getStatisticObject('Cloud_num_sessions_running');
-        $generated = $statistic->getFormula($query);
-        $expected = 'COALESCE(SUM(CASE days.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS Cloud_num_sessions_running';
-        $this->assertEquals($expected, $generated, 'getFormula()');
-    }
-
-    /**
      * (7) Test statistic metadata.
      */
 
