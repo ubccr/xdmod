@@ -82,7 +82,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         $console->displayMessage(<<<"EOT"
 This release of XDMoD features an optional replacement for the summary
 tab that is intended to provide easier access to XDMoD's many features.
-Detailed information is available at https://open.xdmod.org/user_dashboard.html
+Detailed information is available at https://open.xdmod.org/dashboard.html
 EOT
         );
         $console->displayBlankLine();

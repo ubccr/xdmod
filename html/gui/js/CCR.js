@@ -240,12 +240,14 @@ XDMoD.createTour = function () {
     }
     var tourItems = [
         {
-            html: 'Welcome to XDMoD! This tour will guide you through some of the features of XDMoD.  This tour will change if you are signed in.',
+            html: 'Welcome to XDMoD! This tour will guide you through some of the features of XDMoD.' +
+                ((CCR.xdmod.publicUser) ? ' This tour has additional information after you sign in.' : ''),
             target: '#tg_summary',
             position: 't-t'
         },
         {
-            html: 'XDMoD provides a wealth of information. Different functionality is provided by individual tabs listed below (some will only be available after sign in).' +
+            html: 'XDMoD provides a wealth of information. Different functionality is provided by individual tabs listed below.' +
+                ((CCR.xdmod.publicUser) ? ' Some tabs are only visible after you sign in.' : '') +
                 '<ul>' +
                 '<li>' +
                 dashboardDescription +

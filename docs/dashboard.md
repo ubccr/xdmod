@@ -5,26 +5,26 @@ title: User Dashboard (Beta)
 Developer Guide
 ---------------
 
-New portlets can be added to the user dashboard as follows:
+New components can be added to ths dashboard as follows:
 
-1. Create a javascript class that inherits from `Ext.ui.Portlet`. Conventionally this should be placed in `html/gui/js/modules/summary`
+1. Create a javascript class that inherits from `Ext.ui.Portlet`. Conventionally this should be placed in `html/gui/js/modules/dashboard`
 1. Edit the `etc/assets.json` file to include the new javascript artifact (and any other artifacts such as css files).
 1. Edit the `etc/roles.d/summary.json` file to add the portlet information for the roles that should see it.
 
 
-An example Portlet javascript class is shown below.
+An example component javascript class is shown below.
 
 ```javascript
 
 /**
- * XDMoD.Module.SummaryPortlets.DeveloperPortlet
+ * XDMoD.Module.Dashboard.DeveloperComponent
  *
  * This is an example panel that can be used as a template.
  */
 
-Ext.namespace('XDMoD.Module.SummaryPortlets');
+Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.SummaryPortlets.DeveloperPortlet = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.Dashboard.DeveloperComponent = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
     autoScroll: true,
@@ -53,7 +53,7 @@ XDMoD.Module.SummaryPortlets.DeveloperPortlet = Ext.extend(Ext.ux.Portlet, {
             html: '<pre>' + JSON.stringify(this.config, null, 4) + '</pre>'
         }];
 
-        XDMoD.Module.SummaryPortlets.DeveloperPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.Dashboard.DeveloperComponent.superclass.initComponent.apply(this, arguments);
     },
 
     listeners: {
@@ -84,10 +84,10 @@ XDMoD.Module.SummaryPortlets.DeveloperPortlet = Ext.extend(Ext.ux.Portlet, {
  * The Ext.reg call is used to register an xtype for this class so it
  * can be dynamically instantiated
  */
-Ext.reg('DeveloperPortlet', XDMoD.Modules.SummaryPortlets.DeveloperPortlet);
+Ext.reg('xdmod-dash-developer-cmp', XDMoD.Modules.Dashboard.DeveloperComponent);
 ```
 
-In this example the javascript class would be put in the file `html/gui/js/modules/summary/DeveloperPortlet.js`
+In this example the javascript class would be put in the file `html/gui/js/modules/dashboard/DeveloperComponent.js`
 The `etc/assets.json` would then be updated to add the path to the javascript file
 to the `xdmod.portal.js` array.
 
@@ -96,7 +96,7 @@ to the `xdmod.portal.js` array.
     "xdmod": {
         "portal": {
             "js": [
-                "gui/js/modules/summary/DeveloperPortlet.js"
+                "gui/js/modules/dashboard/DeveloperComponent.js"
                 ...
             ]
         }
@@ -117,8 +117,8 @@ and is available to the portlet as the `this.config` property.
     "roles": {
         "cd": {
             "summary_portlets": [{
-                "name": "Example Developer Portlet",
-                "type": "DeveloperPortlet",
+                "name": "Example Developer Component",
+                "type": "xdmod-dash-developer-cmp",
                 "location": {
                     "row": 2,
                     "column": 1

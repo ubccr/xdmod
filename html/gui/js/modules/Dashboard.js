@@ -135,7 +135,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                     Ext.Msg.show({
                                         cls: 'new-user-tour-dialog-container',
                                         title: 'XDMoD Tour',
-                                        msg: "Welcome to XDMoD. The XDMoD Tour is a short series of information tips giving an overview of some basic components of XDMoD. Would you like to view the User Tour now?<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show this message again.",
+                                        msg: "Welcome to XDMoD! The XDMoD Tour is a short series of informational tips giving an overview of some basic components of XDMoD. Would you like to view the tour now?<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show this message again.",
                                         buttons: { no: 'Close', yes: 'Start Tour' },
                                         icon: Ext.Msg.INFO,
                                         fn: function (buttonValue, inputText, showConfig) {
@@ -156,7 +156,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                                     },
                                                     method: 'POST',
                                                     callback: function (opt, suc, resp) {
-                                                        Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the User Tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
+                                                        Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
                                                     } // callback
                                                 }); // conn.request
                                             }
