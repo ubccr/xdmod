@@ -5,10 +5,10 @@ namespace IntegrationTests\Controllers;
 use CCR\Json;
 use Models\Services\Realms;
 
-class SummaryControllerProviderTest extends BaseUserAdminTest
+class DashboardControllerProviderTest extends BaseUserAdminTest
 {
     /**
-     * Exercises the `summary/statistics` REST endpoint.
+     * Exercises the `dashboard/statistics` REST endpoint.
      *
      * @dataProvider provideTestGetStatistics
      *
@@ -38,7 +38,7 @@ class SummaryControllerProviderTest extends BaseUserAdminTest
             $this->helper->authenticate($username);
         }
 
-        $response = $this->helper->get('rest/v0.1/summary/statistics', $params);
+        $response = $this->helper->get('rest/v0.1/dashboard/statistics', $params);
         if ($username !== ROLE_ID_PUBLIC) {
             $this->helper->logout();
         }

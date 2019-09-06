@@ -1,6 +1,8 @@
-/*
- * Summary page of XDMoD.
+/**
+ * User Dashboard
  *
+ * Currently this defines `XDMoD.Module.Summary` because it is a drop in replacement for the summary tab
+ * while it is still in beta.  This should be moved at a later date
  */
 
 XDMoD.Module.Summary = function (config) {
@@ -15,7 +17,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
         var portletStore = new Ext.data.JsonStore({
             restful: true,
-            url: XDMoD.REST.url + '/summary/portlets',
+            url: XDMoD.REST.url + '/dashboard/components',
             baseParams: {
                 token: XDMoD.REST.token
             },
@@ -51,7 +53,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                     }
                                 }
                                 Ext.Ajax.request({
-                                    url: XDMoD.REST.url + '/summary/layout',
+                                    url: XDMoD.REST.url + '/dashboard/layout',
                                     params: {
                                         data: Ext.encode({
                                             columns: this.items.getCount(),
@@ -121,7 +123,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     if (CCR.xdmod.publicUser !== true) {
                         var conn = new Ext.data.Connection();
                         conn.request({
-                            url: XDMoD.REST.url + '/summary/viewedUserTour',
+                            url: XDMoD.REST.url + '/dashboard/viewedUserTour',
                             params: {
                                 uid: CCR.xdmod.ui.mappedPID,
                                 token: XDMoD.REST.token
@@ -132,8 +134,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                 if (serverResp.data.length === 0 || !serverResp.data[0].viewedTour) {
                                     Ext.Msg.show({
                                         cls: 'new-user-tour-dialog-container',
-                                         title: 'XDMoD Tour',
-                                        msg: "Welcome to XDMoD. The XDMoD Tour is a short series of information tips giving an overview of some basic components of XDMoD. Would you like to view the User Tour now?<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show this message again.",
+                                        title: 'XDMoD Tour',
+                                        msg: "Welcome to XDMoD! The XDMoD Tour is a short series of informational tips giving an overview of some basic components of XDMoD. Would you like to view the tour now?<br /><br /><input type='checkbox' id='new-user-tour-checkbox' /> Please don't show this message again.",
                                         buttons: { no: 'Close', yes: 'Start Tour' },
                                         icon: Ext.Msg.INFO,
                                         fn: function (buttonValue, inputText, showConfig) {
@@ -147,14 +149,14 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                             } else if (buttonValue === 'no' && newUserTourCheckbox.elements[0].checked === true) {
                                                 var connection = new Ext.data.Connection();
                                                 connection.request({
-                                                    url: XDMoD.REST.url + '/summary/viewedUserTour',
+                                                    url: XDMoD.REST.url + '/dashboard/viewedUserTour',
                                                     params: {
                                                         viewedTour: 1,
                                                         token: XDMoD.REST.token
                                                     },
                                                     method: 'POST',
                                                     callback: function (opt, suc, resp) {
-                                                        Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the User Tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
+                                                        Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
                                                     } // callback
                                                 }); // conn.request
                                             }

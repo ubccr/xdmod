@@ -21,7 +21,7 @@ proc confirmUpgrade { } {
 set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
-provideInput {Enable Novice User Tab*} {off}
+provideInput {Enable Dashboard Tab*} {off}
 provideInput {Export Directory*} {}
 provideInput {Export File Retention Duration*} 31
 expect {

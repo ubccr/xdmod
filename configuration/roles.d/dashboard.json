@@ -1,14 +1,14 @@
 {
     "+roles": {
         "+cd": {
-            "summary_portlets": [
+            "dashboard_components": [
                 {
                     "config": {
                         "timeframe": "Previous year"
                     },
                     "name": "Chart Thumbnails",
                     "region": "top",
-                    "type": "ReportThumbnailsPortlet"
+                    "type": "xdmod-dash-reportthumb-cmp"
                 },
                 {
                     "location": {
@@ -16,15 +16,15 @@
                         "row": 0
                     },
                     "name": "Saved Charts and Reports",
-                    "type": "SavedChartsReportsPortlet"
+                    "type": "xdmod-dash-savedchart-cmp"
                 }
             ]
         },
         "+cs": {
-            "summary_portlets": [
+            "dashboard_components": [
                 {
                     "name": "Chart Thumbnails",
-                    "type": "ReportThumbnailsPortlet",
+                    "type": "xdmod-dash-reportthumb-cmp",
                     "config": {
                         "timeframe": "30 day"
                     },
@@ -32,15 +32,15 @@
                 },
                 {
                     "name": "Saved Charts and Reports",
-                    "type": "SavedChartsReportsPortlet",
+                    "type": "xdmod-dash-savedchart-cmp",
                     "location": {
                         "column": 0,
                         "row": 1
                     }
                 },
                 {
-                    "name": "Job Portlet",
-                    "type": "JobPortlet",
+                    "name": "Job Component",
+                    "type": "xdmod-dash-job-cmp",
                     "config": {
                         "multiuser": true,
                         "timeframe": "7 day"
@@ -53,10 +53,10 @@
             ]
         },
         "+pi": {
-            "summary_portlets": [
+            "dashboard_components": [
                 {
-                    "name": "Job Portlet",
-                    "type": "JobPortlet",
+                    "name": "Job Component",
+                    "type": "xdmod-dash-job-cmp",
                     "config": {
                         "multiuser": true,
                         "timeframe": "30 day"
@@ -68,7 +68,7 @@
                 },
                 {
                     "name": "summary_0",
-                    "type": "ChartPortlet",
+                    "type": "xdmod-dash-chart-cmp",
                     "config": {
                         "chart": {
                             "aggregation_unit": "Auto",
@@ -172,7 +172,7 @@
                 },
                 {
                     "name": "summary_1",
-                    "type": "ChartPortlet",
+                    "type": "xdmod-dash-chart-cmp",
                     "config": {
                         "chart": {
                             "aggregation_unit": "Auto",
@@ -286,19 +286,19 @@
             ]
         },
         "+pub": {
-            "summary_portlets": [
+            "dashboard_components": [
                 {
                     "config": {
                         "timeframe": "Last month"
                     },
                     "name": "Summary Statistics",
                     "region": "top",
-                    "type": "SummaryStatisticsPortlet"
+                    "type": "xdmod-dash-summarystat-cmp"
                 }
             ]
         },
         "+usr": {
-            "summary_portlets": [
+            "dashboard_components": [
                 {
                     "config": {
                         "timeframe": "30 day"
@@ -307,8 +307,8 @@
                         "column": 0,
                         "row": 0
                     },
-                    "name": "Job Portlet",
-                    "type": "JobPortlet"
+                    "name": "Job Component",
+                    "type": "xdmod-dash-job-cmp"
                 },
                 {
                     "config": {
@@ -421,7 +421,7 @@
                         "row": 0
                     },
                     "name": "summary_0",
-                    "type": "ChartPortlet"
+                    "type": "xdmod-dash-chart-cmp"
                 },
                 {
                     "config": {
@@ -502,7 +502,7 @@
                         "row": 1
                     },
                     "name": "summary_1",
-                    "type": "ChartPortlet"
+                    "type": "xdmod-dash-chart-cmp"
                 }
             ]
         }

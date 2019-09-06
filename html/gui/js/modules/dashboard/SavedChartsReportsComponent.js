@@ -1,6 +1,6 @@
-Ext.namespace('XDMoD.Modules.SummaryPortlets');
+Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.ui.Portlet, {
+XDMoD.Module.Dashboard.SavedChartsReportsComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
     layout: 'fit',
     autoScroll: true,
@@ -13,7 +13,7 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
             autoDestroy: true,
-            url: XDMoD.REST.url + '/summary/savedchartsreports',
+            url: XDMoD.REST.url + '/dashboard/savedchartsreports',
             // reader configs
             root: 'data',
             idProperty: 'name',
@@ -136,7 +136,7 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
                 qwidth: 60
             }
         ];
-        XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
+        XDMoD.Module.Dashboard.SavedChartsReportsComponent.superclass.initComponent.apply(this, arguments);
     }
 });
 
@@ -144,4 +144,4 @@ XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet = Ext.extend(CCR.xdmod.u
 * The Ext.reg call is used to register an xtype for this class so it
 * can be dynamically instantiated
 */
-Ext.reg('SavedChartsReportsPortlet', XDMoD.Modules.SummaryPortlets.SavedChartsReportsPortlet);
+Ext.reg('xdmod-dash-savedchart-cmp', XDMoD.Module.Dashboard.SavedChartsReportsComponent);
