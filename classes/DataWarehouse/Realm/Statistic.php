@@ -22,13 +22,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $moduleName = null;
 
     /**
-     * @var string The database alias to use with the formula when querying the data.
-     */
-
-    protected $dbAlias = null;
-
-    /**
-     * @var string The short identifier.
+     * @var string The short identifier. Must be unique among all statistics across all realms.
      */
 
     protected $id = null;
@@ -102,7 +96,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      *   example: array('netdrv_panasas_rx', 'IS NOT', 'NULL').
      */
 
-    protected $whereConditionDefinition = null;
+    protected $additionalWhereConditionDefinition = null;
 
     /**
      * @var boolean Set to false if this statistic cannot use tables where data is rolled up by time
@@ -141,7 +135,6 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
         $this->id = $shortName;
         $this->realm = $realm;
-        $this->dbAlias = sprintf('%s_%s', $realm->getId(), $this->id);
         $this->moduleName = $realm->getModuleName();
 
         if ( empty($shortName) ) {
@@ -159,7 +152,6 @@ class Statistic extends \CCR\Loggable implements iStatistic
         $messages = array();
         $configTypes = array(
             'description_html' => 'string',
-            'formula' => 'string',
             'name' => 'string',
             'unit' => 'string'
         );
@@ -170,10 +162,16 @@ class Statistic extends \CCR\Loggable implements iStatistic
             );
         }
 
+        // Note that either formula or both aggregate_formula and timeseries_formula fields must be
+        // defined. We are treating them as optional only to verify their types and will verify
+        // their presense later.
+
         $optionalConfigTypes = array(
             'additional_where_condition' => 'array',
             'aggregate_formula' => 'string',
+            'data_sort_order' => 'string',
             'disabled' => 'bool',
+            'formula' => 'string',
             'module' => 'string',
             'order' => 'int',
             'precision' => 'int',
@@ -195,10 +193,18 @@ class Statistic extends \CCR\Loggable implements iStatistic
                             sprintf('Expected an array of 3 elements, got %d elements', count($value))
                         );
                     }
-                    $this->whereConditionDefinition = $value;
+                    $this->additionalWhereConditionDefinition = $value;
                     break;
                 case 'aggregate_formula':
                     $this->aggregateFormula = trim($value);
+                    break;
+                case 'data_sort_order':
+                    // The sort order is specified in the JSON config file as the string
+                    // representation of a PHP constant so convert it to an integer in order to
+                    // properly use it. See https://php.net/manual/en/function.array-multisort.php
+                    $sortOrder = null;
+                    eval('$sortOrder = $value');
+                    $this->setSortOrder($sortOrder);
                     break;
                 case 'description_html':
                     $this->description = trim($value);
@@ -231,13 +237,34 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     $this->useTimeseriesAggregateTables = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 default:
+                    $this->logger->notice(
+                        sprintf("Unknown key in definition for realm '%s' statistic '%s': '%s'", $this->realm->getName(), $this->id, $key)
+                    );
                     break;
             }
+        }
+
+        // Ensure the formulas are set properly
+
+        if (
+            (null === $this->formula && (null === $this->aggregateFormula || null === $this->timeseriesFormula)) ||
+            (null !== $this->formula && (null !== $this->aggregateFormula || null !== $this->timeseriesFormula))
+        ){
+            $this->logAndThrowException("Must define either 'formula' or ('aggregate_formula' and 'timeseries_formula')");
         }
     }
 
     /**
-     * @see iRealm::getId()
+     * @see iStatistic::getRealm()
+     */
+
+    public function getRealm()
+    {
+        return $this->realm;
+    }
+
+    /**
+     * @see iStatistic::getId()
      */
 
     public function getId()
@@ -246,15 +273,15 @@ class Statistic extends \CCR\Loggable implements iStatistic
     }
 
     /**
-     * @see iRealm::getName()
+     * @see iStatistic::getName()
      */
 
     public function getName($includeUnit = true)
     {
         if ( $includeUnit && strpos($this->name, $this->unit) ) {
-            return sprintf("%s (%s)", $this->name, $this->unit);
+            return $this->realm->getVariableStore()->substitute(sprintf("%s (%s)", $this->name, $this->unit));
         } else {
-            return $this->name;
+            return $this->realm->getVariableStore()->substitute($this->name);
         }
     }
 
@@ -264,16 +291,16 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getHtmlDescription()
     {
-        return $this->description;
+        return $this->realm->getVariableStore()->substitute($this->description);
     }
 
     /**
-     * @see iStatistic::getNameAndDescription()
+     * @see iStatistic::getHtmlNameAndDescription()
      */
 
-    public function getNameAndDescription()
+    public function getHtmlNameAndDescription()
     {
-        return sprintf("<b>%s</b>: %s", $this->name, $this->description);
+        return sprintf("<b>%s</b>: %s", $this->getName(false), $this->getHtmlDescription());
     }
 
     /**
@@ -289,7 +316,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @see iStatistic::getFormula()
      */
 
-    public function getFormula(Query $query = null)
+    public function getFormula(\DataWarehouse\Query\iQuery $query = null)
     {
         // If no query was specified return the unmodified formula. If a query was specified, return
         // the appropriate formula based on whether this is an aggregate or timeseries query.
@@ -300,15 +327,20 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     sprintf("Key 'formula' not specified for statistic %s and Query not provided to getFormula()", $this)
                 );
             }
-            return sprintf('%s AS %s', $this->formula, $this->dbAlias);
+            return sprintf('%s AS %s', $this->formula, $this->id);
         } else {
+            // Update the variable store with the most recent values in the query class as they may
+            // change dynamically.
+            $vStore = $query->updateVariableStore();
+            $formula = null;
             if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
-                return $query->getVariableStore()->substitute($this-formula);
+                $formula = $this->formula;
             } elseif ( $query->isAggregate() ) {
-                return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->aggregateFormula), $this->dbAlias);
+                $formula = $this->aggregateFormula;
             } elseif ( $query->isTimeseries() ) {
-                return sprintf('%s AS %s', $query->getVariableStore()->substitute($this->timeseriesFormula), $this->dbAlias);
+                $formula = $this->timeseriesFormula;
             }
+            return sprintf('%s AS %s', $vStore->substitute($formula), $this->id);
         }
     }
 
@@ -337,7 +369,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
             SORT_NATURAL
         );
 
-        if ( ! in_array($sortOrder, $validSortOrders) ) {
+        if ( null !== $sortOrder && ! in_array($sortOrder, $validSortOrders) ) {
             $this->logAndThrowException(sprintf("Invalid sort option: %d", $sortOrder));
         }
 
@@ -345,12 +377,21 @@ class Statistic extends \CCR\Loggable implements iStatistic
     }
 
     /**
-     * @see iStatistic::getSortOder()
+     * @see iStatistic::getSortOrder()
      */
 
-    public function getSortOder()
+    public function getSortOrder()
     {
         return $this->sortOrder;
+    }
+
+    /**
+     * @see iStatistic::getModuleName()
+     */
+
+    public function getModuleName()
+    {
+        return $this->moduleName;
     }
 
     /**
@@ -368,8 +409,12 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getAdditionalWhereCondition()
     {
-        list($leftCol, $operation, $rightCol) = $this->whereConditionDefinition;
-        return new \DataWarehouse\Query\Model\WhereCondition($leftCol, $operation, $rightCol);
+        if ( null === $this->additionalWhereConditionDefinition ) {
+            return null;
+        } else {
+            list($leftCol, $operation, $rightCol) = $this->whereConditionDefinition;
+            return new \DataWarehouse\Query\Model\WhereCondition($leftCol, $operation, $rightCol);
+        }
     }
 
     /**

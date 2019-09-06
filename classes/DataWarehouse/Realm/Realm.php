@@ -7,6 +7,7 @@ namespace Realm;
 
 use Log as Logger;  // CCR implementation of PEAR logger
 use Configuration\Configuration;
+use ETL\VariableStore;
 
 class Realm extends \CCR\Loggable implements iRealm
 {
@@ -36,10 +37,17 @@ class Realm extends \CCR\Loggable implements iRealm
 
     /**
      * @var string Prefix for the realm aggregate table. The aggregation period is appended to
-     *   define the table (e.g., “jobfact_by_” with aggregation period “day” creates “jobfact_by_day”`
+     *   define the table (e.g., "jobfact_by_" with aggregation period "day" creates "jobfact_by_day")
      */
 
     protected $aggregateTablePrefix = null;
+
+    /**
+     * @var string Alias to be used for the aggregate alias. GroupBy and Statistic definitions
+     * should use this alias when referring to the aggregate data table.
+     */
+
+    protected $aggregateTableAlias = 'agg';
 
     /**
      * @var int A numerical ordering hint as to how this realm should be displayed visually relative
@@ -49,7 +57,7 @@ class Realm extends \CCR\Loggable implements iRealm
     protected $order = 0;
 
     /**
-     * @var string Name of the module that defines this realm (default: “xdmod”)
+     * @var string Name of the module that defines this realm (default: "xdmod")
      */
 
     protected $module = 'xdmod';
@@ -79,6 +87,9 @@ class Realm extends \CCR\Loggable implements iRealm
      * @var stdClass|null An associative array of statistic configuration objects where the key is
      *   the short identifier and the value is a stdClass containing the configuration. These are
      *   used to create Statistic objects on demand.
+     *
+     * Note: The Realm id is added to the beginning of each statistic id so that the statistic
+     *   names are guaranteed unique and can be used as identifiers in database queries and the UI.
      */
 
     protected $statisticConfigs = null;
@@ -103,15 +114,39 @@ class Realm extends \CCR\Loggable implements iRealm
     protected static $dataWarehouseConfig = null;
 
     /**
+     * @var VariableStore Collection of variable names and values available for substitution in
+     *   various properties.
+     */
+
+    protected $variableStore = null;
+
+    /**
      * @see iRealm::initialize()
      */
 
-    public static function initialize(Logger $logger = null)
+    /**
+     * Initialize data for all realms from the definition source. This can mean constructing the
+     * list of realms from a configuration file, loading from the database or an object cache, or
+     * some other mechanism. This method must be called once, either directly or indirectly, before
+     * a Realm object can be accessed.
+     *
+     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param stdclass|null $options An object containing additional configuration options.
+     *
+     * @throws Exception If there was an error loading the realm data.
+     *
+     * @see iRealm::factory()
+     */
+
+    public static function initialize(Logger $logger = null, \stdClass $options = null)
     {
+        $filename = ( isset($options->config_file_name) ? $options->config_file_name : 'datawarehouse.json' );
+        $configDir = ( isset($options->config_base_dir) ? $options->config_base_dir : CONFIG_DIR );
+
         if ( null === self::$dataWarehouseConfig ) {
             self::$dataWarehouseConfig = Configuration::factory(
-                'datawarehouse2.json',
-                CONFIG_DIR,
+                $filename,
+                $configDir,
                 $logger
             );
         }
@@ -141,9 +176,9 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::factory()
      */
 
-    public static function factory($shortName, Logger $logger = null)
+    public static function factory($shortName, Logger $logger = null, \stdClass $options = null)
     {
-        self::initialize($logger);
+        self::initialize($logger, $options);
         $configObj = self::$dataWarehouseConfig->getSectionData($shortName);
 
         if ( false === $configObj ) {
@@ -288,11 +323,15 @@ class Realm extends \CCR\Loggable implements iRealm
             $factoryClassName = ('Realm' == $className ? 'static' : $className);
             if ( 'Realm' != $className && isset($configObj->class) ) {
                 if ( ! class_exists($configObj->class) ) {
-                    $this->logAndThrowException(
-                        sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class)
-                    );
+                    $msg = sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class);
+                    if ( null !== $logger ) {
+                        $logger->error($msg);
+                    }
+                    throw new \Exception($msg);
                 }
                 $factoryClassName = $configObj->class;
+            } elseif ( false === strpos($factoryClassName, '\\') ) {
+                $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
             $factory = sprintf('%s::factory', $factoryClassName);
@@ -352,6 +391,7 @@ class Realm extends \CCR\Loggable implements iRealm
         }
 
         $optionalConfigTypes = array(
+            'aggregate_table_alias' => 'string',
             'class' => 'string',
             'disabled' => 'bool',
             'min_aggregation_unit' => 'string',
@@ -374,6 +414,9 @@ class Realm extends \CCR\Loggable implements iRealm
                     break;
                 case 'aggregate_table_prefix':
                     $this->aggregateTablePrefix = trim($value);
+                    break;
+                case 'aggregate_table_alias':
+                    $this->aggregateTableAlias = trim($value);
                     break;
                 case 'datasource':
                     $this->datasource = trim($value);
@@ -400,9 +443,30 @@ class Realm extends \CCR\Loggable implements iRealm
                     $this->statisticConfigs = $value;
                     break;
                 default:
+                    $this->logger->notice(sprintf("Unknown key in realm by definition for '%s': '%s'", $this->id, $key));
                     break;
             }
         }
+
+        // If the Statistic id does not already start with the Realm id then add it here.
+
+        foreach ( $this->statisticConfigs as $statisticId => $statisticConfig ) {
+            if ( 0 !== strpos($statisticId, $this->id) ) {
+                $qualifiedId = sprintf("%s_%s", $this->id, $statisticId);
+                $this->statisticConfigs->$qualifiedId = $statisticConfig;
+                unset($this->statisticConfigs->$statisticId);
+            }
+        }
+
+        $this->variableStore = new VariableStore(
+            array(
+                'ORGANIZATION_NAME' => ORGANIZATION_NAME,
+                'ORGANIZATION_NAME_ABBREV' => ORGANIZATION_NAME_ABBREV,
+                'REALM_ID' => $this->id,
+                'REALM_NAME' => $this->name
+            ),
+            $logger
+        );
     }
 
     /**
@@ -438,7 +502,16 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getAggregateTablePrefix($includeSchema = true)
     {
-        return sprintf('%s%s', ( $includeSchema ? $this->aggregateSchema  . '.' : "" ), $this->aggregateTablePrefix);
+        return sprintf('%s%s', ( $includeSchema ? $this->aggregateTableSchema  . '.' : "" ), $this->aggregateTablePrefix);
+    }
+
+    /**
+     * @see iRealm::getAggregateTableAlias()
+     */
+
+    public function getAggregateTableAlias()
+    {
+        return $this->aggregateTableAlias;
     }
 
     /**
@@ -475,6 +548,31 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * @see iRealm::statisticExists()
+     */
+
+    public function statisticExists($id)
+    {
+        // As a convienence, if the requested statistic does not start with the realm id, add it
+        // here.
+
+        if ( 0 !== strpos($id, $this->id) ) {
+            $id = sprintf("%s_%s", $this->id, $id);
+        }
+
+        return isset($this->statisticConfigs->$id);
+    }
+
+    /**
+     * @see iRealm::groupByExists()
+     */
+
+    public function groupByExists($id)
+    {
+        return isset($this->groupByConfigs->$id);
     }
 
     /**
@@ -521,7 +619,7 @@ class Realm extends \CCR\Loggable implements iRealm
     {
         if ( ! isset($this->groupByConfigs->$shortName) ) {
             $this->logAndThrowException(sprintf("No GroupBy found with id '%s'", $shortName));
-        } elseif ( isset($this->groupByConfigs->disabled) && $this->groupByConfigs->disabled ) {
+        } elseif ( isset($this->groupByConfigs->$shortName->disabled) && $this->groupByConfigs->$shortName->disabled ) {
             $this->logAndThrowException(sprintf("Attempt to access disabled GroupBy '%s'", $shortName));
         }
 
@@ -547,9 +645,16 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObject($shortName)
     {
+        // As a convienence, if the requested statistic does not start with the realm id, add it
+        // here.
+
+        if ( 0 !== strpos($shortName, $this->id) ) {
+            $shortName = sprintf("%s_%s", $this->id, $shortName);
+        }
+
         if ( ! isset($this->statisticConfigs->$shortName) ) {
             $this->logAndThrowException(sprintf("No Statistic found with id '%s'", $shortName));
-        } elseif ( isset($this->groupByConfigs->disabled) && $this->groupByConfigs->disabled ) {
+        } elseif ( isset($this->statisticConfigs->$shortName->disabled) && $this->statisticConfigs->$shortName->disabled ) {
             $this->logAndThrowException(sprintf("Attempt to access disabled Statistic '%s'", $shortName));
         }
 
@@ -585,6 +690,35 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getMinimumAggregationUnit()
     {
         return $this->minAggregationUnit;
+    }
+
+    /**
+     * @see iRealm::getVariableStore()
+     */
+
+    public function getVariableStore()
+    {
+        return $this->variableStore;
+    }
+
+    /**
+     * @see iRealm::getDrillTargets()
+     */
+
+    public function getDrillTargets($groupById, $order = self::SORT_ON_ORDER)
+    {
+        $drillTargets = array();
+        $groupByObjects = $this->getGroupByObjects($order);
+
+        foreach ( $groupByObjects as $gId => $groupByObj ) {
+            // Don't include the current group by or any group bys that are not available for drill
+            // down.
+            if ( $gId == $groupById || ! $groupByObj->isAvailableForDrilldown() ) {
+                continue;
+            }
+            $drillTargets[] = sprintf('%s-%s', $gId, $groupByObj->getName());
+        }
+        return $drillTargets;
     }
 
     /**

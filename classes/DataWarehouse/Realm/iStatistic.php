@@ -31,6 +31,14 @@ interface iStatistic
     public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
 
     /**
+     * @return Realm The realm that this Statistic is associated with.
+     */
+
+    public function getRealm();
+
+    /**
+     * Note: Was getName()
+     *
      * @return string The short internal identifier. This is often used as an alias in SQL queries.
      * For example, "total_cpu_hours".
      */
@@ -61,10 +69,11 @@ interface iStatistic
      * @return string The name and description together formatted for display in a web browser.
      */
 
-    public function getNameAndDescription();
+    public function getHtmlNameAndDescription();
 
     /**
      * Note: The corresponding setUnit() is only called from the constructor.
+     *
      * @return string The unit of this statistic. For example, "Number of Jobs", "Number of PIs",
      *   "CPU Hour", etc.
      */
@@ -85,7 +94,7 @@ interface iStatistic
      *   "COALESCE(SUM(jf.cpu_time),0)/3600.0 AS jobs_total_cpu_hours"
      */
 
-    public function getFormula(Query $query = null);
+    public function getFormula(\DataWarehouse\Query\iQuery $query = null);
 
     /**
      * Note: The corresponding setDecimals() is only called from the constructor.
@@ -111,7 +120,14 @@ interface iStatistic
      * @return int|null The current sort order where NULL means no sorting.
      */
 
-    public function getSortOder();
+    public function getSortOrder();
+
+    /**
+     * @return string The name of the module that defined this Statistic. The default is the module
+     *   from the parent Realm.
+     */
+
+    public function getModuleName();
 
     /**
      * @return int The order to advise how elements should be displayed visually in reference to one
@@ -123,8 +139,8 @@ interface iStatistic
     /**
      * Note: Returns null except where overriden by the JobViewer code
      *
-     * @return WhereCondition A single additional WhereCondition to be added to the query containing
-     *   this statistic.
+     * @return WhereCondition|null A single additional WHERE condition to be added to the query
+     *   containing this statistic or NULL if no additional WHERE condition was defined.
      */
 
     public function getAdditionalWhereCondition();

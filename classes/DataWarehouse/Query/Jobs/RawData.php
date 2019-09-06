@@ -14,26 +14,37 @@ use \DataWarehouse\Query\Model\Schema;
 class RawData extends \DataWarehouse\Query\Query
 {
     public function __construct(
-        $aggregation_unit_name,
-        $start_date,
-        $end_date,
-        $group_by,
-        $stat = 'jl.jobid',
+        $aggregationUnitName,
+        $startDate,
+        $endDate,
+        $groupById = null,
+        $statisticId = null,
         array $parameters = array()
     ) {
+        $realmId = 'Jobs';
+        $schema = 'modw_aggregates';
+        $dataTablePrefix = 'jobfact_by';
+
         parent::__construct(
-            'Jobs',
-            'modw_aggregates',
-            'jobfact',
-            array(),
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
-            null,
-            null,
+            $realmId,
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            $groupById,
+            $statisticId,
             $parameters
         );
 
+        // Override values set in Query::__construct() to use the fact table rather than the
+        // aggregation table prefix from the Realm configuration.
+
+        $this->setDataTable($schema, sprintf("%s%s", $dataTablePrefix, $aggregationUnitName));
+        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            sprintf("%s.%s", $schema, $dataTablePrefix)
+        );
 
         $dataTable = $this->getDataTable();
         $joblistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_joblist", "jl");
@@ -77,11 +88,11 @@ class RawData extends \DataWarehouse\Query\Query
             new TableField($factTable, "job_id")
         ));
 
-        switch ($stat) {
-            case "job_count":
+        switch ($statisticId) {
+            case "Jobs_job_count":
                 $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
                 break;
-            case "started_job_count":
+            case "Jobs_started_job_count":
                 $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
                 break;
             default:

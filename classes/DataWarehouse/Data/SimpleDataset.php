@@ -35,21 +35,21 @@ class SimpleDataset
 
     // --------------------------------------------------------
     // __toString()
-    // 
-    // Helper function for debugging 
+    //
+    // Helper function for debugging
     // JMS Oct 2015
     // --------------------------------------------------------
     public function __toString() {
 
         return "SimpleDataset: \n"
             . "Total Possible Count: {$this->getTotalPossibleCount()}\n"
-            . "Export: ". print_r( $this->export() ) . "\n" 
+            . "Export: ". print_r( $this->export() ) . "\n"
             . "JsonStore:  {$this->exportJsonStore() }";
-    } // __toString() 
+    } // __toString()
 
     // --------------------------------------------------------
     // getResults()
-    // 
+    //
     // Fetch result set of specified size ($limit) for specified
     // where clause ($where_column, $where_value).
     //
@@ -58,7 +58,7 @@ class SimpleDataset
     // This allows us to assign the colnames straightforwardly
     // from the resultset!
     //
-    // @return array 
+    // @return array
     // --------------------------------------------------------
     public function getResults(
         $limit = null,
@@ -91,14 +91,6 @@ class SimpleDataset
                 }
             }
         }
-            // JMS testing Oct 15
-            /*
-                throw new \Exception( get_class($this)." 
-                    where_value=$where_value ;
-                    count(_results) = ". count($this->_results).
-                    "full remainder query is: ". 
-                    $this->_query->getQueryString($limit, $offset, $having));
-            */
 
         return $this->_results;
     } // function getResults()
@@ -122,7 +114,7 @@ class SimpleDataset
         } else {
             $statistic = $this->_query->_stats[$column_name];
 
-            return $statistic->getLabel();
+            return $statistic->getName();
         }
     } // function getColumnLabel()
 
@@ -136,7 +128,7 @@ class SimpleDataset
         if ($is_dimension === true) {
             $group_by = $this->_query->_group_bys[$column_name];
 
-            return $group_by->getLabel();
+            return $group_by->getName();
         } else {
             $statistic = $this->_query->_stats[$column_name];
 
@@ -146,7 +138,7 @@ class SimpleDataset
 
     // --------------------------------------------------------
     // convertSQLtoPHP()
-    // 
+    //
     // Convert supplied value from SQL precision to PHP int or float
     //
     // @return value as int or float
@@ -178,10 +170,10 @@ class SimpleDataset
 
     // --------------------------------------------------------
     // getColumn()
-    // 
-    // Construct and return column of data from Query 
     //
-    // @return SimpleData object 
+    // Construct and return column of data from Query
+    //
+    // @return SimpleData object
     // --------------------------------------------------------
     public function getColumn(
         $column_type_and_name,
@@ -199,7 +191,6 @@ class SimpleDataset
         $sem_column_name       = null;
         $ids_column_name       = null;
         $order_ids_column_name = null;
-        //$start_ts_column_name  = null; // timeseries only
 
         $dataObject = new \DataWarehouse\Data\SimpleData(
             $this->getColumnLabel($column_name, $is_dimension)
@@ -227,7 +218,7 @@ class SimpleDataset
         $columnTypes = $this->_columnTypes;
 
         // Accumulate the values in a temp variable, then set everything
-        // at once. 
+        // at once.
         $dataErrors = array();
         $dataValues = array();
         $dataIds = array();
@@ -242,7 +233,6 @@ class SimpleDataset
                         . " exist in the dataset."
                     );
                 } else {
-                    //$dataObject->values[] = $this->convertSQLtoPHP(
                     $dataValues[] = $this->convertSQLtoPHP(
                         $row[$values_column_name],
                         $columnTypes[$values_column_name]['native_type'],
@@ -253,10 +243,8 @@ class SimpleDataset
 
             if ($sem_column_name != NULL) {
                 if (!array_key_exists($sem_column_name, $row)) {
-                    //$dataObject->errors[] = 0;
                     $dataErrors[] = 0;
                 } else {
-                    //$dataObject->errors[] = $this->convertSQLtoPHP(
                     $dataErrors[] = $this->convertSQLtoPHP(
                         $row[$sem_column_name],
                         $columnTypes[$sem_column_name]['native_type'],
@@ -274,7 +262,6 @@ class SimpleDataset
                         . " in the dataset."
                     );
                 } else {
-                    //$dataObject->ids[] = $row[$ids_column_name];
                     $dataIds[] = $row[$ids_column_name];
                 }
             }
@@ -288,7 +275,6 @@ class SimpleDataset
                         . " not exist in the dataset."
                     );
                 } else {
-                    //$dataObject->order_ids[] = $row[$order_ids_column_name];
                     $dataOrderIds[] = $row[$order_ids_column_name];
                 }
             }
@@ -307,8 +293,8 @@ class SimpleDataset
 
     // --------------------------------------------------------
     // export()
-    // 
-    // Export column of data from Query 
+    //
+    // Export column of data from Query
     //
     // @return array(
     //            'title'    => $title,
@@ -341,21 +327,21 @@ class SimpleDataset
 
         foreach ($group_bys as $group_by) {
             $headers[]
-                = $group_by->getName() === 'none'
+                = $group_by->getId() === 'none'
                 ? 'Summary'
-                : $group_by->getLabel();
+                : $group_by->getName();
         }
 
         foreach ($stats as $stat) {
             $stat_unit  = $stat->getUnit();
-            $stat_alias = $stat->getAlias()->getName();
+            $stat_alias = $stat->getAlias();
 
             $data_unit = '';
             if (substr( $stat_unit, -1 ) == '%') {
                 $data_unit = '%';
             }
 
-            $column_header = $stat->getLabel();
+            $column_header = $stat->getName();
 
             if (
                 $column_header != $stat_unit
@@ -382,14 +368,14 @@ class SimpleDataset
         foreach ($this->getResults() as $result) {
             $record = array();
             foreach ($group_bys as $group_by) {
-                $record[$group_by->getName()]
+                $record[$group_by->getId()]
                     = $result[$group_by->getLongNameColumnName(true)];
             }
 
             $stats = $this->_query->getStats();
             foreach ($stats as $stat) {
-                $record[$stat->getAlias()->getName()]
-                    = $result[$stat->getAlias()->getName()];
+                $record[$stat->getAlias()]
+                    = $result[$stat->getAlias()];
             }
 
             $rows[] = $record;
@@ -406,7 +392,7 @@ class SimpleDataset
 
     // --------------------------------------------------------
     // exportJsonStore()
-    // 
+    //
     // Export JSON describing the present SimpleDataset object.
     // Used by e.g. DataWarehouse/Access/MetricExplorer.php
     //
@@ -432,17 +418,17 @@ class SimpleDataset
 
             foreach ($group_bys as $group_by) {
                 $fields[] = array(
-                    "name"    => $group_by->getName(),
+                    "name"    => $group_by->getId(),
                     "type"    => 'string',
                     'sortDir' => 'DESC',
                 );
 
                 $columns[] = array(
-                    "header"    => $group_by->getName() === 'none'
+                    "header"    => $group_by->getId() === 'none'
                                  ? 'Source'
-                                 : $group_by->getLabel(),
+                                 : $group_by->getName(),
                     "width"     => 150,
-                    "dataIndex" => $group_by->getName(),
+                    "dataIndex" => $group_by->getId(),
                     "sortable"  => true,
                     'editable'  => false,
                     'locked'    => $has_stats,
@@ -451,14 +437,14 @@ class SimpleDataset
 
             foreach ($stats as $stat) {
                 $stat_unit = $stat->getUnit();
-                $stat_alias = $stat->getAlias()->getName();
+                $stat_alias = $stat->getAlias();
 
                 $data_unit = '';
                 if (substr( $stat_unit, -1 ) == '%') {
                     $data_unit = '%';
                 }
 
-                $column_header = $stat->getLabel();
+                $column_header = $stat->getName();
 
                 if (
                     $column_header != $stat_unit
@@ -493,14 +479,14 @@ class SimpleDataset
             foreach ($results as $result) {
                 $record = array();
                 foreach ($group_bys as $group_by) {
-                    $record[$group_by->getName()]
+                    $record[$group_by->getId()]
                         = $result[$group_by->getLongNameColumnName(true)];
                 }
 
                 $stats = $this->_query->getStats();
                 foreach ($stats as $stat) {
-                    $record[$stat->getAlias()->getName()]
-                        =  $result[$stat->getAlias()->getName()];
+                    $record[$stat->getAlias()]
+                        =  $result[$stat->getAlias()];
                 }
 
                 $records[] = $record;
