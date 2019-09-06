@@ -1,0 +1,6 @@
+{
+    "dashboard": {
+        "prefix": "dashboard",
+        "controller": "Rest\\Controllers\\DashboardControllerProvider"
+    }
+}
