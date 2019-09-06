@@ -2,6 +2,11 @@
     padding-top: 1px;
 }
 
+div.job-metric-na {
+    height: 19px;
+    color: #666;
+}
+
 div.circle {
     width: 14px;
     height: 14px;
