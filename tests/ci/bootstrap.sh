@@ -32,12 +32,12 @@ then
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
-        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
+        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
             # -- Fix users searched in SSO test
             patch -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
     else
-        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
+        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
             # -- Reverse previous patch
             patch -R -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
@@ -98,12 +98,12 @@ then
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
-        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
+        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
             # -- Fix users searched in SSO test
             patch -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
     else
-        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff; then
+        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
             # -- Reverse previous patch
             patch -R -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
         fi
