@@ -171,7 +171,6 @@
                 }
             },
             "truncate_destination": true
-<<<<<<< HEAD
         },
         {
             "name": "IngestResourceTypeRealmRelationsStaging",
@@ -253,8 +252,6 @@
                     "schema": "moddb"
                 }
             }
-=======
->>>>>>> Update feature branch from xdmod8.5 (#996)
         }
     ]
 }
