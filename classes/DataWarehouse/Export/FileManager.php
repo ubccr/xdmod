@@ -271,4 +271,33 @@ class FileManager extends Loggable
             throw new Exception(sprintf('Failed to delete "%s"', $zipFile));
         }
     }
+
+    /**
+     * Remove all data files corresponding to deleted requests.
+     *
+     * @param array $availableRequestIds Request IDs for "Available" export
+     *   files.  These correspond to data files that should not be deleted.
+     */
+    public function removeDeletedRequests(array $availableRequestIds)
+    {
+        $availableFiles = array_map(
+            [$this, 'getExportDataFilePath'],
+            $availableRequestIds
+        );
+
+        foreach (glob($this->exportDir . '/*.zip') as $exportFile) {
+            if (!in_array($exportFile, $availableFiles)) {
+                $this->logger->info([
+                    'message' => 'Removing export file',
+                    'zip_file' => $exportFile
+                ]);
+                if (!unlink($exportFile)) {
+                    throw new Exception(sprintf(
+                        'Failed to delete "%s"',
+                        $exportFile
+                    ));
+                }
+            }
+        }
+    }
 }
