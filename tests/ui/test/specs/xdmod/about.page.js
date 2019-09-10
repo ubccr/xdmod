@@ -24,8 +24,7 @@ class About {
             expect(err).to.be.a('undefined');
             expect(result).to.not.be.a('null');
         });
-        browser.waitForExist('.trello-lists', 30000);
-        browser.waitForText('.trello-lists', 30000);
+        browser.waitForExist('.board-tile-container', 30000);
         browser.frameParent();
     }
 
