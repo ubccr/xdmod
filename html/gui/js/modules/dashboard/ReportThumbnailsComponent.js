@@ -154,7 +154,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                         for (var key in config) {
                             if (key === 'data_series') {
                                 this.tmpHpc.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
-                                let data_series = {};
+                                var data_series = {};
                                 data_series.data = config[key];
                                 data_series.total = config[key].length;
                                 config.data_series = data_series;
