@@ -11,4 +11,3 @@ LEFT JOIN ${DESTINATION_SCHEMA}.`staging_resource_type` cur
               AND cur.resource_type_description = inc.resource_type_description
               AND cur.resource_type_abbrev = inc.resource_type_abbrev
 WHERE cur.resource_type_id IS NULL;
-
