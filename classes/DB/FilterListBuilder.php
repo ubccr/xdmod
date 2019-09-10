@@ -5,9 +5,9 @@ use CCR\DB;
 use CCR\Loggable;
 use CCR\DB\MySQLHelper;
 use DB\Exceptions\TableNotFoundException;
-use DataWarehouse\Realm\GroupBy;
-use DataWarehouse\Query\Query;
-use DataWarehouse\Query\TimeAggregationUnit;
+use Realm\GroupBy;
+use Query\Query;
+use Query\TimeAggregationUnit;
 
 /**
  * Builds lists of filters for every realm's dimensions.
