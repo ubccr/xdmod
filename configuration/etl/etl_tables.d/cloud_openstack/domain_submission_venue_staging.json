@@ -1,5 +1,5 @@
 {
-  "#": "Assets are specific to a resource and include volumes, ip addresses, etc.",
+  "#": "The staging table for `domain_submission_venues`.",
 
   "table_definition": {
     "name": "domain_submission_venues_staging",

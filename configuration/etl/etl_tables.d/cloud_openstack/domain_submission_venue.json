@@ -1,5 +1,5 @@
 {
-  "#": "Assets are specific to a resource and include volumes, ip addresses, etc.",
+  "#": "A bridge table for relating `domains` and `submission_venues`",
 
   "table_definition": {
     "name": "domain_submission_venues",
