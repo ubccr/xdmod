@@ -51,7 +51,7 @@ class GroupByDomain extends GroupBy
      */
     public function getInfo()
     {
-        return "A domain is defined as .... ";
+        return "A domain is a high-level container for projects, users and groups";
     }
 
     public function __construct()
