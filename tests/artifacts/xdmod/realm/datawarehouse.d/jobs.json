@@ -68,7 +68,7 @@
                 "order": 3,
                 "#": "Multi-column key",
                 "attribute_to_aggregate_table_key_map": [
-                    { "id": "resource_id" },
+                    { "id": "record_resource_id" },
                     { "code": "resource_code" }
                 ],
                 "#": "Attribute values query with multiple tables and table aliases in the field values",
