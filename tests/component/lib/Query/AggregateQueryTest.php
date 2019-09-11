@@ -74,9 +74,9 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
         $expected  =<<<SQL
 SELECT
   person.id as 'person_id',
-  person.short_name as person_short_name,
-  person.long_name as person_name,
-  person.order_id as person_order_id
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id'
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -115,9 +115,9 @@ SQL;
         $expected  =<<<SQL
 SELECT
   person.id as 'person_id',
-  person.short_name as person_short_name,
-  person.long_name as person_name,
-  person.order_id as person_order_id,
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id',
   SUM(agg.running_job_count) AS Jobs_running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
@@ -193,9 +193,9 @@ SQL;
         $expected  =<<<SQL
 SELECT
   person.id as 'person_id',
-  person.short_name as person_short_name,
-  person.long_name as person_name,
-  person.order_id as person_order_id,
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id',
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -240,9 +240,9 @@ SQL;
         $expected  =<<<SQL
 SELECT
   person.id as 'person_id',
-  person.short_name as person_short_name,
-  person.long_name as person_name,
-  person.order_id as person_order_id,
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id',
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -301,8 +301,8 @@ SQL;
 SELECT
   resourcefact.id as 'resource_id',
   resourcefact.code as 'resource_code',
-  resourcefact.code as resource_short_name,
-  CONCAT(resourcefact.name, '-', resourcefact.code) as resource_name,
+  resourcefact.code as 'resource_short_name',
+  CONCAT(resourcefact.name, '-', resourcefact.code) as 'resource_name',
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -311,7 +311,7 @@ FROM
 WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
-  AND resourcefact.id = agg.resource_id
+  AND resourcefact.id = agg.record_resource_id
   AND resourcefact.code = agg.resource_code
 GROUP BY resourcefact.id,
   resourcefact.code
@@ -348,10 +348,10 @@ SQL;
         $generated = $query->getQueryString();
         $expected =<<<SQL
 SELECT
-  -9999 as none_id,
-  'Screwdriver' as none_short_name,
-  'Screwdriver' as none_name,
-  'Screwdriver' as none_order_id,
+  -9999 as 'none_id',
+  'Screwdriver' as 'none_short_name',
+  'Screwdriver' as 'none_name',
+  'Screwdriver' as 'none_order_id',
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -401,9 +401,9 @@ SQL;
         $expected =<<<SQL
 SELECT
   person.id as 'person_id',
-  person.short_name as person_short_name,
-  person.long_name as person_name,
-  person.order_id as person_order_id
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id'
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,

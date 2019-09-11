@@ -145,7 +145,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $parameters = $obj->generateQueryFiltersFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
-        $expected = "resource_id IN ('20','30','10')";
+        $expected = "record_resource_id IN ('20','30','10')";
         $this->assertEquals($expected, $generated, 'generateQueryFiltersFromRequest()');
 
         $generated = array_shift($parameters);

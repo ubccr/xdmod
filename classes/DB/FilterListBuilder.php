@@ -6,8 +6,8 @@ use CCR\Loggable;
 use CCR\DB\MySQLHelper;
 use DB\Exceptions\TableNotFoundException;
 use Realm\GroupBy;
-use Query\Query;
-use Query\TimeAggregationUnit;
+use DataWarehouse\Query\iQuery;
+use DataWarehouse\Query\TimeAggregationUnit;
 
 /**
  * Builds lists of filters for every realm's dimensions.
@@ -94,10 +94,13 @@ class FilterListBuilder extends Loggable
     /**
      * Build filter lists for the given dimension.
      *
+     * NOTE: This function does not support dimensions with multi-column keys even though the
+     *       GroupBy classes do. It must be refactored in order to support them. -SMG 2019-09-09
+     *
      * @param Query   $realmQuery A query for the realm the dimension is in.
      * @param GroupBy $groupBy    The dimension's GroupBy to build lists for.
      */
-    public function buildDimensionLists(Query $realmQuery, GroupBy $groupBy)
+    public function buildDimensionLists(iQuery $realmQuery, GroupBy $groupBy)
     {
         // Check that the given dimension has associated filter lists.
         // If it does not, stop.
@@ -140,7 +143,7 @@ class FilterListBuilder extends Loggable
             $selectFields = $dimensionQuery->getSelectFields();
             $wheres = $dimensionQuery->getWhereConditions();
 
-            $idField = $selectFields['id'];
+            $idField = $selectFields[ sprintf('%s_id', $groupBy->getId()) ];
 
             $selectTablesStr = implode(', ', $selectTables);
             $wheresStr = implode(' AND ', $wheres);
@@ -187,17 +190,17 @@ class FilterListBuilder extends Loggable
             // this pairing will have been taken care of by the other dimension.
             if ($dimensionNameComparison < 0) {
                 $firstGroupBy = $groupBy;
-                $firstDimensionName = $dimensionId;
+                $firstDimensionId = $dimensionId;
                 $firstDimensionQuery = $dimensionQuery;
                 $secondGroupBy = $realmGroupBy;
-                $secondDimensionName = $realmGroupById;
+                $secondDimensionId = $realmGroupById;
                 $secondDimensionQuery = $this->createDimensionQuery($realmQuery, $realmGroupBy);
             } else {
                 $firstGroupBy = $realmGroupBy;
-                $firstDimensionName = $realmGroupById;
+                $firstDimensionId = $realmGroupById;
                 $firstDimensionQuery = $this->createDimensionQuery($realmQuery, $realmGroupBy);
                 $secondGroupBy = $groupBy;
-                $secondDimensionName = $dimensionId;
+                $secondDimensionId = $dimensionId;
                 $secondDimensionQuery = $dimensionQuery;
             }
             $pairTableName = FilterListHelper::getTableName($realmQuery, $firstGroupBy, $secondGroupBy);
@@ -220,10 +223,10 @@ class FilterListBuilder extends Loggable
                 }
                 $db->execute(
                     "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
-                        `{$firstDimensionName}` {$firstDimensionColumnType} NOT NULL,
-                        `{$secondDimensionName}` {$secondDimensionColumnType} NOT NULL,
-                        PRIMARY KEY (`{$firstDimensionName}`, `{$secondDimensionName}`),
-                        INDEX `idx_second_dimension` (`{$secondDimensionName}` ASC)
+                        `{$firstDimensionId}` {$firstDimensionColumnType} NOT NULL,
+                        `{$secondDimensionId}` {$secondDimensionColumnType} NOT NULL,
+                        PRIMARY KEY (`{$firstDimensionId}`, `{$secondDimensionId}`),
+                        INDEX `idx_second_dimension` (`{$secondDimensionId}` ASC)
                     )"
                 );
             }
@@ -238,8 +241,8 @@ class FilterListBuilder extends Loggable
                 $secondSelectFields = $secondDimensionQuery->getSelectFields();
                 $secondWheres = $secondDimensionQuery->getWhereConditions();
 
-                $firstIdField = $firstSelectFields['id'];
-                $secondIdField = $secondSelectFields['id'];
+                $firstIdField = $firstSelectFields[ sprintf('%s_id', $firstDimensionId) ];
+                $secondIdField = $secondSelectFields[ sprintf('%s_id', $secondDimensionId) ];
 
                 $selectTablesStr = implode(', ', array_unique(array_merge($firstSelectTables, $secondSelectTables)));
                 $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
@@ -318,10 +321,16 @@ class FilterListBuilder extends Loggable
      * @param  GroupBy $groupBy    The GroupBy to construct the Query around.
      * @return Query               A Query constructed around $groupBy.
      */
-    private function createDimensionQuery(Query $realmQuery, GroupBy $groupBy)
+    private function createDimensionQuery(iQuery $realmQuery, GroupBy $groupBy)
     {
         $queryClassName = get_class($realmQuery);
-        return new $queryClassName(FilterListHelper::getQueryAggregationUnit(), null, null, $groupBy->getId());
+        return new $queryClassName(
+            $realmQuery->getRealmName(),
+            FilterListHelper::getQueryAggregationUnit(),
+            null,
+            null,
+            $groupBy->getId()
+        );
     }
 
     /**
@@ -333,7 +342,7 @@ class FilterListBuilder extends Loggable
      *                              * type: The data type used to represent IDs
      *                                      for the dimension.
      */
-    private function getDimensionDatabaseProperties(Query $realmQuery, GroupBy $groupBy)
+    private function getDimensionDatabaseProperties(iQuery $realmQuery, GroupBy $groupBy)
     {
         $db = DB::factory('datawarehouse');
         $helper = MySQLHelper::factory($db);

@@ -73,13 +73,13 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
         $expected  =<<<SQL
 SELECT
   duration.id as 'day_id',
-  DATE(duration.day_start) as day_short_name,
-  DATE(duration.day_start) as day_name,
-  duration.day_start_ts as day_start_ts,
+  DATE(duration.day_start) as 'day_short_name',
+  DATE(duration.day_start) as 'day_name',
+  duration.day_start_ts as 'day_start_ts',
   person.id as 'person_id',
-  person.short_name as person_short_name,
-  person.long_name as person_name,
-  person.order_id as person_order_id,
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id',
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
