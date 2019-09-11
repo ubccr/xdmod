@@ -6,7 +6,7 @@
 
 Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.Dashboard.JobComponent = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
     layout: 'fit',
     collapsible: false,

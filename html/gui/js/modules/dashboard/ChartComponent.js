@@ -5,7 +5,7 @@
 
 Ext.namespace('XDMoD.Module.Dashboard');
 
-XDMoD.Module.Dashboard.ChartComponent = Ext.extend(Ext.ux.Portlet, {
+XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
     layout: 'fit',
     tools: [{
