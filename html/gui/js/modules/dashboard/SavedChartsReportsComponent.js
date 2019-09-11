@@ -106,6 +106,7 @@ XDMoD.Module.Dashboard.SavedChartsReportsComponent = Ext.extend(CCR.xdmod.ui.Por
                         text: 'Refresh',
                         scope: this,
                         handler: function () {
+                            searchField.onTrigger1Click();
                             this.chartReportStore.reload();
                         }
                     }
