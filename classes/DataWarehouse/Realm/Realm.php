@@ -178,6 +178,10 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public static function factory($shortName, Logger $logger = null, \stdClass $options = null)
     {
+        if ( ! is_string($shortName) ) {
+            $e = new \Exception(print_r($shortName, true));
+            throw new \Exception($e->getTraceAsString());
+        }
         self::initialize($logger, $options);
         $configObj = self::$dataWarehouseConfig->getSectionData($shortName);
 
@@ -330,7 +334,7 @@ class Realm extends \CCR\Loggable implements iRealm
                     throw new \Exception($msg);
                 }
                 $factoryClassName = $configObj->class;
-            } elseif ( false === strpos($factoryClassName, '\\') ) {
+            } elseif ( false === strpos($factoryClassName, '\\')  && 'static' != $factoryClassName ) {
                 $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 

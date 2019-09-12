@@ -90,7 +90,7 @@ class ComplexDataset
             // this is quite horrible, and I apologize, but it beats 900 lines of
             // redundant code, no? --JMS
             $query_classname = '\\DataWarehouse\\Query\\' .
-                ( $query_type == 'aggregate' ? 'Aggregate' : 'Timeseries');
+                ( $query_type == 'aggregate' ? 'AggregateQuery' : 'TimeseriesQuery');
 
             $query = new $query_classname(
                 $data_description->realm,
@@ -606,7 +606,7 @@ class ComplexDataset
                     = $dataDescripterAndDataset->data_description->log_scale
                     || $yAxisObject->log_scale;
 
-                $decimals = $statisticObject->getDecimals();
+                $decimals = $statisticObject->getPrecision();
 
                 $yAxisObject->decimals = max($yAxisObject->decimals, $decimals);
                 $yAxisDataObject->setValues($newValues);
@@ -627,7 +627,7 @@ class ComplexDataset
                                                        ->metric
                         ];
 
-                    $semDecimals = $semStatisticObject->getDecimals();
+                    $semDecimals = $semStatisticObject->getPrecision();
                 }
 
                 $yAxisObject->series[] = array(

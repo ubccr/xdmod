@@ -147,16 +147,17 @@ class Query extends Loggable
 
         $this->logger->debug(sprintf('Start creating Query %s', $this));
 
-        $this->aggregationUnitName = $aggregationUnitName;
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
             $aggregationUnitName,
             $startDate,
             $endDate,
             $this->realm->getAggregateTablePrefix()
         );
+        $this->aggregationUnitName = $this->_aggregation_unit->getUnitName();
+
         $this->setDataTable(
             $this->realm->getAggregateTableSchema(),
-            sprintf('%s%s', $this->realm->getAggregateTablePrefix(false), $aggregationUnitName)
+            sprintf('%s%s', $this->realm->getAggregateTablePrefix(false), $this->aggregationUnitName)
         );
 
         $this->setDuration($startDate, $endDate);
@@ -182,7 +183,7 @@ class Query extends Loggable
     public function updateVariableStore()
     {
         $this->variableStore->overwrite('QUERY_TYPE', $this->getQueryType());
-        $this->variableStore->overwrite('DATE_TABLE_ID_FIELD', sprintf('%s.id', $this->getDateTable()));
+        $this->variableStore->overwrite('DATE_TABLE_ID_FIELD', sprintf('%s.id', $this->getDateTable()->getAlias()));
         $this->variableStore->overwrite('MIN_DATE_ID', $this->getMinDateId());
         $this->variableStore->overwrite('MAX_DATE_ID', $this->getMaxDateId());
         $this->variableStore->overwrite('START_DATE_TS', $this->getStartDateTs());

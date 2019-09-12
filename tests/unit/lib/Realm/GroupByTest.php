@@ -82,7 +82,8 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
             'resource' => 'Resource',
             'person' => 'User',
             'none' => 'None',
-            'day' => 'Day'
+            'day' => 'Day',
+            'month' => 'Month'
         );
         $this->assertEquals($expected, $generated, "getGroupByObjects('Jobs')");
 
@@ -96,7 +97,9 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
             'alternate_groupby_class' => 'Alternate GroupBy Class Example',
             'configuration' => 'Instance Type',
             'username' => 'System Username',
-            'day' => 'Day'
+            'day' => 'Day',
+            'month' => 'Month',
+            'none' => 'None'
         );
         $this->assertEquals($expected, $generated, "getGroupByObjects('Cloud'), SORT_ON_NAME");
     }

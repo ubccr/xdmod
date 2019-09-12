@@ -8,7 +8,7 @@ use Exception;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
-use DataWarehouse\Realm\Realm;
+use Realm\Realm;
 use Models\Services\Acls;
 use PDO;
 use XDChartPool;
@@ -801,7 +801,7 @@ class Usage extends Common
                     $user,
                     $usageRealm,
                     $usageGroupBy,
-                    $meRequestMetric->getAlias()
+                    $meRequestMetric->getId()
                 );
                 $drillTargets = $queryDescripter->getDrillTargets();
                 $drillDowns = array_map(
@@ -889,7 +889,7 @@ class Usage extends Common
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
                         $meDataSeries['drilldown']['drilldowns'] = $drillDowns;
                         $meDataSeries['drilldown']['realm'] = $usageRealm;
-                        $meDataSeries['drilldown']['groupUnit'] = array($usageGroupBy, $usageGroupByObject->getUnit());
+                        $meDataSeries['drilldown']['groupUnit'] = array($usageGroupBy, $usageGroupByObject->getName());
                     }
 
                     // Set properties that are different.

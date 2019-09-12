@@ -453,7 +453,7 @@ class SimpleDataset
                     $column_header .= ' (' . $stat_unit . ')';
                 }
 
-                $decimals = $stat->getDecimals();
+                $decimals = $stat->getPrecision();
 
                 $fields[] = array(
                     "name"    => $stat_alias,

@@ -175,7 +175,7 @@ SQL;
             $queryConfig->where = array_merge($queryConfig->where, $whereConditions);
         }
 
-        $queryObj = new Query($queryConfig, '`', $this->logger);
+        $queryObj = new \ETL\DbModel\Query($queryConfig, '`', $this->logger);
         $sql = $queryObj->getSql();
 
         $this->logger->debug(sprintf("%s %s()\n%s", $this, __FUNCTION__, $sql));

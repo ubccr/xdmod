@@ -58,7 +58,7 @@ class FilterListBuilder extends Loggable
     public function buildAllLists()
     {
         // Get the ids of the realms to be processed.
-        $realmNames = array_keys(\Realm\Realm::getRealmNames());
+        $realmNames = \Realm\Realm::getRealmNames();
 
         // Generate lists for each realm's dimensions.
         foreach ($realmNames as $realmId => $realmName) {

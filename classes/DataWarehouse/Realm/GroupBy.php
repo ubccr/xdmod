@@ -748,8 +748,19 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $field = new Field($formula, $alias);
             $query->addField($field);
         } else {
+            $firstIteration = true;
             foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-                $alias = $this->qualifyColumnName($attributeKey, true);
+
+                // While the GroupBy class supports multi-column keys in dimension tables via the
+                // attribute_value_map, the rest of XDMoD does not. Many places in XDMoD expect a single
+                // 'id' column to be added to the SQL query by a group by prefixed by the name of the
+                // group by (e.g., sprintf('%s_id', $groupById)).
+                // Until the rest of the code base can be updated, ensure that the first key specified
+                // in the attribute_value_map is treated as the 'id' column.  -SMG 2019-09-11
+
+                $alias = $this->qualifyColumnName( ($firstIteration ? 'id' : $attributeKey), true);
+                $firstIteration = false;
+
                 $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
                 $field = new TableField($tableObj, $attributeKey, $alias);
                 $query->addField($field);

@@ -252,7 +252,7 @@ class QueryDescripter
 
     public function getPermittedStatistics()
     {
-        return $this->realm->getStatisticNames();
+        return array_keys($this->realm->getStatisticNames());
     }
 
     public function getStatistic($statistic_name)

@@ -8,6 +8,29 @@
         "min_aggregation_unit": "quarter",
         "order": 2,
         "group_bys": {
+            "none": {
+                "name": "None",
+                "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database (excludes non-${ORGANIZATION_NAME} usage).",
+                "attribute_table_schema": "modw",
+                "attribute_table": "dual",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [
+                ],
+                "order": 1,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "-9999",
+                        "short_name": "'${ORGANIZATION_NAME}'",
+                        "name": "'${ORGANIZATION_NAME}'",
+                        "order_id": "'${ORGANIZATION_NAME}'"
+                    },
+                    "joins": [
+                        {
+                            "name": "dual"
+                        }
+                    ]
+                }
+            },
             "day": {
                 "name": "Day",
                 "description_html": "Day",
@@ -37,6 +60,35 @@
                     ]
                 }
             },
+            "month": {
+                "name": "Month",
+                "description_html": "Month",
+                "attribute_table_schema": "modw",
+                "attribute_table": "months",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [
+                    { "id": "month_id" }
+                ],
+                "order": 2,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "id",
+                        "#": "Note that we must alias the column when using SQL functions so that",
+                        "#": "we can properly add the attribute table when constructing queries",
+                        "short_name": "DATE_FORMAT(months.month_start, '%Y-%m')",
+                        "name": "DATE_FORMAT(months.month_start, '%Y-%m')",
+                        "start_ts": "month_start_ts"
+                    },
+                    "joins": [
+                        {
+                            "name": "months"
+                        }
+                    ],
+                    "orderby": [
+                        "id"
+                    ]
+                }
+            },
             "configuration": {
                 "name": "Instance Type",
                 "description_html": "The instance type of a virtual machine.",
@@ -48,7 +100,7 @@
                 "order": 2,
                 "attribute_values_query": {
                     "records": {
-                        "id": "id",
+                        "id": "instance_type_id",
                         "short_name": "instance_type",
                         "name": "display",
                         "order_id": "instance_type_id"
