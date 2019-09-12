@@ -11,7 +11,7 @@
                     { "id": "systemaccount_id" }
                 ],
                 "module": "cloud",
-                "order": 3,
+                "order": 5,
                 "attribute_values_query": {
                     "records": {
                         "id": "username",

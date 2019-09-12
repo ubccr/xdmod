@@ -209,7 +209,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $generated, 'getModuleName()');
 
         $generated = $obj->getOrder();
-        $expected = 3;
+        $expected = 5;
         $this->assertEquals($expected, $generated, 'getOrder()');
 
         $generated = $obj->getSortOrder();
