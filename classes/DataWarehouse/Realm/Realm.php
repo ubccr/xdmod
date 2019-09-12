@@ -1,6 +1,8 @@
 <?php
 /**
  * A Realm is a collection of data, descriptive attributes, and statistics.
+ *
+ * ToDo: Use APCu to store a cache of realm objects and possibly group by and statistic objects.
  */
 
 namespace Realm;
