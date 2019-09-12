@@ -9,7 +9,10 @@
  *  layout: 'fit',
  *  autoScroll: true,
  *  title: 'example portlet',
- *  id: 'example_portlet',
+ *  help: {
+ *     html: 'The html for the help window',
+ *     title: 'The title for the help window'
+ *  },
  *  helpTourDetails: {
  *   startAt: '#some-css-selector',
  *   title: Title for help tips',
@@ -33,9 +36,64 @@
  * }
  */
 CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
+    collapsible: false,
     helpTour: null,
     helpTourDetails: {},
     initComponent: function () {
+        if (!this.tools) {
+            this.tools = [];
+        }
+
+        if (this.help) {
+            var helpText = this.help.html;
+            var helpTitle = 'Help for ' + this.help.title;
+
+            // Store a reference to the window to prevent multiple windows
+            // being created if the user clicks the help button multiple times.
+            var helpwin;
+
+            this.tools.push({
+                id: 'help',
+                qtip: 'Display help dialog',
+                handler: function () {
+                    if (!helpwin) {
+                        helpwin = new Ext.Window({
+                            layout: 'fit',
+                            width: 720,
+                            height: 580,
+                            title: helpTitle,
+                            items: {
+                                html: helpText
+                            },
+                            listeners: {
+                                close: function () {
+                                    helpwin = null;
+                                }
+                            },
+                            bbar: {
+                                items: [
+                                    {
+                                        text: 'More Information',
+                                        handler: function () {
+                                            window.open('user_manual.php?t=Dashboard');
+                                        }
+                                    },
+                                    '->',
+                                    {
+                                        text: 'Close',
+                                        handler: function () {
+                                            helpwin.close();
+                                        }
+                                    }
+                                ]
+                            }
+                        });
+                    }
+                    helpwin.show();
+                }
+            });
+        }
+
         if (this.helpTourDetails.tips !== undefined && this.helpTourDetails.tips.length > 0) {
             this.helpTourDetails.tips.forEach(function (value, index, arr) {
                 arr[index].target = (value.target.slice(0, 1) !== '/') ? '#' + this.id + ' ' + value.target : value.target.slice(1, value.target.length);
@@ -45,10 +103,6 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
                 title: this.helpTourDetails.title,
                 items: this.helpTourDetails.tips
             });
-
-            if (this.tools === undefined) {
-                this.tools = [];
-            }
 
             this.tools.push({
                 id: 'maximize',
