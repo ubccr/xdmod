@@ -100,7 +100,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
             }));
         }
 
-        if (!CCR.xdmod.ui.tgSummaryViewer.usesToolbar) {
+        if (CCR.xdmod.ui.tgSummaryViewer.title === 'Dashboard') {
             tabItems.push({
                 title: 'Settings',
                 height: 316,
@@ -116,11 +116,11 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
                         frame: true,
                         items: [{
                             xtype: 'button',
-                            fieldLabel: 'Summary Tab Panel Layout',
+                            fieldLabel: 'Dashboard Layout',
                             text: 'Reset to Default',
                             handler: function (button) {
                                 Ext.Ajax.request({
-                                    url: XDMoD.REST.url + '/summary/layout',
+                                    url: XDMoD.REST.url + '/dashboard/layout',
                                     method: 'DELETE',
                                     success: function () {
                                         button.setDisabled(true);
