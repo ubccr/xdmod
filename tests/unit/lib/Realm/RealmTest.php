@@ -157,8 +157,8 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->getDrillTargets('person');
         $expected = array(
             'none-None',
-            'month-Month',
             'day-Day',
+            'month-Month',
             'resource-Resource'
         );
         $this->assertEquals($expected, $generated, "getDrillTargets('person')");
@@ -167,10 +167,10 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->getDrillTargets('none');  // Will be returned using SORT_ON_ORDER
         $expected = array(
             'day-Day',
-            'configuration-Instance Type',
             'month-Month',
-            'username-System Username',
-            'alternate_groupby_class-Alternate GroupBy Class Example'
+            'alternate_groupby_class-Alternate GroupBy Class Example',
+            'configuration-Instance Type',
+            'username-System Username'
         );
         $this->assertEquals($expected, $generated, "getDrillTargets('none')");
     }

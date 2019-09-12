@@ -40,7 +40,7 @@
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "day_id" }
                 ],
-                "order": 1,
+                "order": 2,
                 "attribute_values_query": {
                     "records": {
                         "id": "id",
@@ -69,7 +69,7 @@
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "month_id" }
                 ],
-                "order": 2,
+                "order": 3,
                 "attribute_values_query": {
                     "records": {
                         "id": "id",
@@ -97,7 +97,7 @@
                 "attribute_to_aggregate_table_key_map": [
                     { "instance_type_id": "instance_type_id" }
                 ],
-                "order": 2,
+                "order": 4,
                 "attribute_values_query": {
                     "records": {
                         "id": "instance_type_id",
