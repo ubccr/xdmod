@@ -412,7 +412,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
         if ( null === $this->additionalWhereConditionDefinition ) {
             return null;
         } else {
-            list($leftCol, $operation, $rightCol) = $this->whereConditionDefinition;
+            list($leftCol, $operation, $rightCol) = $this->additionalWhereConditionDefinition;
             return new \DataWarehouse\Query\Model\WhereCondition($leftCol, $operation, $rightCol);
         }
     }

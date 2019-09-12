@@ -60,6 +60,35 @@
                     ]
                 }
             },
+            "month": {
+                "name": "Month",
+                "description_html": "Month",
+                "attribute_table_schema": "modw",
+                "attribute_table": "months",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [
+                    { "id": "month_id" }
+                ],
+                "order": 2,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "id",
+                        "#": "Note that we must alias the column when using SQL functions so that",
+                        "#": "we can properly add the attribute table when constructing queries",
+                        "short_name": "DATE_FORMAT(months.month_start, '%Y-%m')",
+                        "name": "DATE_FORMAT(months.month_start, '%Y-%m')",
+                        "start_ts": "month_start_ts"
+                    },
+                    "joins": [
+                        {
+                            "name": "months"
+                        }
+                    ],
+                    "orderby": [
+                        "id"
+                    ]
+                }
+            },
             "resource": {
                 "name": "Resource",
                 "description_html": "A resource is a remote computer that can run jobs.",
@@ -76,7 +105,8 @@
                     "records": {
                         "id": "rf.id",
                         "short_name": "rf.code",
-                        "name": "CONCAT(rf.name, '-', rf.code)"
+                        "name": "CONCAT(rf.name, '-', rf.code)",
+			"order_id": "id"
                     },
                     "joins": [
                         {
@@ -151,8 +181,8 @@
             },
             "running_job_count": {
                 "#": "Support different formulas for aggregate and timeseries queries",
-                "aggregate_formula": "SUM(agg.running_job_count)",
-                "timeseries_formula": "SUM(agg.started_job_count)",
+                "timeseries_formula": "SUM(agg.running_job_count)",
+                "aggregate_formula": "COALESCE(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
                 "name": "${ORGANIZATION_NAME} Number of Running Jobs",
                 "description_html": "The total number of ${ORGANIZATION_NAME} jobs that are running.",
                 "unit": "Number of Jobs",

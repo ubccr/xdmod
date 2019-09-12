@@ -191,7 +191,7 @@ try {
 
                     foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
                         $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
-                        $statName = $statistic_object->getAlias();
+                        $statName = $statistic_object->getId();
                         $chartSettings = $query_descripter->getChartSettings();
                         if(!$statistic_object->usesTimePeriodTablesForAggregate()){
                             $chartSettingsArray = json_decode($chartSettings, true);

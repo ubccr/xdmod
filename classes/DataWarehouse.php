@@ -365,17 +365,12 @@ class DataWarehouse
      */
     public static function getCategories()
     {
-        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
-
+        $realmNames = \Realm\Realm::getRealmNames();
         $categories = array();
-        foreach ($dwConfig['realms'] as $realmName => $realm) {
-            $category = (
-                isset($realm['category'])
-                ? $realm['category']
-                : $realmName
-            );
-            $categories[$category][] = $realmName;
+        foreach ( $realmNames as $realmId => $realmName ) {
+            $categories[$realmId] = array($realmId);
         }
+
         return $categories;
     }
 

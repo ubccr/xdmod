@@ -292,7 +292,7 @@ class HighChartTimeseries2 extends HighChart2
                 // JMS: to here we have the ComplexDataset::init() function
 
                 $statisticObject = $query->_stats[$data_description->metric];
-                $decimals = $statisticObject->getDecimals();
+                $decimals = $statisticObject->getPrecision();
 
                 $defaultYAxisLabel = 'yAxis'.$yAxisIndex;
                 $yAxisLabel = ($data_description->combine_type=='percent'? '% of ':'').(
@@ -450,7 +450,7 @@ class HighChartTimeseries2 extends HighChart2
                 if($data_description->std_err == 1)
                 {
                     $semStatisticObject = $query->_stats['sem_'.$data_description->metric];
-                    $semDecimals = $semStatisticObject->getDecimals();
+                    $semDecimals = $semStatisticObject->getPrecision();
                 }
 
                 // get the full dataset count: how many unique values in the dimension we group by?

@@ -240,8 +240,6 @@ class SimpleTimeseriesDataset extends SimpleDataset
     public function getSummaryOperation($stat)
     {
 
-        // statistics alias for the data object
-        //$stat = $dataObject->getStatistic()->getAlias();
         $operation = "SUM";
 
         // Determine operation for summarizing the dataset
@@ -623,7 +621,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         }
         if ($queryGroupById !== 'none') {
             $datasetIterator = $this->getColumnIteratorBy(
-                'met_' . reset($this->_query->getStats())->getAlias(),
+                'met_' . reset($this->_query->getStats())->getId(),
                 $this->getColumnUniqueOrdered(
                     'dim_' . $queryGroupById,
                     null,
@@ -757,7 +755,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         // perform the summarization right in the database
 
         // Take AVG, MIN, MAX, or SUM of the column_name, grouped by time aggregation unit
-        $statAlias =  $dataObject->getStatistic()->getAlias();
+        $statAlias =  $dataObject->getStatistic()->getId();
         $operation = $this->getSummaryOperation($statAlias);
 
         // Now perform the summarization, making use of the Query class query string, fetch:

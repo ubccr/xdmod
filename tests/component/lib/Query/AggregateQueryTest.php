@@ -118,7 +118,7 @@ SELECT
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
   person.order_id as 'person_order_id',
-  SUM(agg.running_job_count) AS Jobs_running_job_count,
+  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS Jobs_running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -161,7 +161,7 @@ SQL;
 
         $expected  =<<<SQL
 SELECT
-  SUM(agg.running_job_count) AS Jobs_running_job_count,
+  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS Jobs_running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -303,6 +303,7 @@ SELECT
   resourcefact.code as 'resource_code',
   resourcefact.code as 'resource_short_name',
   CONCAT(resourcefact.name, '-', resourcefact.code) as 'resource_name',
+  resourcefact.id as 'resource_order_id',
   COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -448,7 +449,7 @@ SQL;
         $realm = \Realm\Realm::factory('Cloud', self::$logger);
         $statistic = $realm->getStatisticObject('Cloud_num_sessions_running');
         $generated = $statistic->getFormula($query);
-        $expected = 'COALESCE(SUM(CASE days.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS Cloud_num_sessions_running';
+        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS Cloud_num_sessions_running';
         $this->assertEquals($expected, $generated, 'getFormula()');
     }
 
