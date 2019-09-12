@@ -758,7 +758,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 // Until the rest of the code base can be updated, ensure that the first key specified
                 // in the attribute_value_map is treated as the 'id' column.  -SMG 2019-09-11
 
-                $alias = $this->qualifyColumnName( ($firstIteration ? 'id' : $attributeKey), true);
+                $alias = $this->qualifyColumnName(($firstIteration ? 'id' : $attributeKey), true);
                 $firstIteration = false;
 
                 $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
