@@ -67,7 +67,7 @@
                     }
                 },
                 {
-                    "name": "summary_0",
+                    "name": "DashBoardChart_PiWallHoursByPerson",
                     "type": "xdmod-dash-chart-cmp",
                     "config": {
                         "chart": {
@@ -171,7 +171,7 @@
                     }
                 },
                 {
-                    "name": "summary_1",
+                    "name": "DashBoardChart_PiWaitHoursByJobSize",
                     "type": "xdmod-dash-chart-cmp",
                     "config": {
                         "chart": {
@@ -223,7 +223,7 @@
                                         "category": "Jobs",
                                         "color": "8BBC21",
                                         "combine_type": "side",
-                                        "display_type": "bar",
+                                        "display_type": "column",
                                         "enabled": true,
                                         "filters": {
                                             "data": [],
@@ -254,17 +254,6 @@
                             },
                             "font_size": 2,
                             "hide_tooltip": false,
-                            "legend": {
-                                "Std Err: Wait Hours: Per Job": {
-                                    "title": "Std Err"
-                                },
-                                "Std Err: Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
-                                    "title": "Std Err"
-                                },
-                                "Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
-                                    "title": "My Wait Hours: Per Job"
-                                }
-                            },
                             "legend_type": "top_center",
                             "limit": 20,
                             "share_y_axis": false,
@@ -361,7 +350,7 @@
                                         "category": "Jobs",
                                         "color": "8BBC21",
                                         "combine_type": "side",
-                                        "display_type": "bar",
+                                        "display_type": "column",
                                         "enabled": true,
                                         "filters": {
                                             "data": [],
@@ -392,17 +381,6 @@
                             },
                             "font_size": 2,
                             "hide_tooltip": false,
-                            "legend": {
-                                "Std Err: Wait Hours: Per Job": {
-                                    "title": "Std Err"
-                                },
-                                "Std Err: Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
-                                    "title": "Std Err"
-                                },
-                                "Wait Hours: Per Job {User =  ${PERSON_NAME}}": {
-                                    "title": "My Wait Hours: Per Job"
-                                }
-                            },
                             "legend_type": "top_center",
                             "limit": 20,
                             "share_y_axis": false,
@@ -420,7 +398,7 @@
                         "column": 1,
                         "row": 0
                     },
-                    "name": "summary_0",
+                    "name": "DashBoardChart_WaitHoursByJobSize",
                     "type": "xdmod-dash-chart-cmp"
                 },
                 {
@@ -461,22 +439,6 @@
                                 "total": 1
                             },
                             "font_size": 3,
-                            "global_filters": {
-                                "data": [
-                                    {
-                                        "categories": "",
-                                        "checked": true,
-                                        "dimension_id": "resource",
-                                        "id": "resource=13",
-                                        "realms": [
-                                            "Jobs"
-                                        ],
-                                        "value_id": "13",
-                                        "value_name": "ub hpc"
-                                    }
-                                ],
-                                "total": 1
-                            },
                             "hide_tooltip": false,
                             "legend_type": "off",
                             "limit": 10,
@@ -501,7 +463,7 @@
                         "column": 0,
                         "row": 1
                     },
-                    "name": "summary_1",
+                    "name": "DashBoardChart_WaitHoursByQueue",
                     "type": "xdmod-dash-chart-cmp"
                 }
             ]
