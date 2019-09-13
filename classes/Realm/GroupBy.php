@@ -738,37 +738,44 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $query->addTable($this->attributeTableObj);
         }
 
-        // Group by none is a special case of time aggregation where there is no group by. Here, we
-        // do not use the attribute_to_aggregate_key_map at all for the id fields, but rather use
-        // the id field from the attribute_values_query.
-
         if ( $this->isAggregationUnit && 'none' == $this->id ) {
+
+            // Group by none is a special case of time aggregation where there is no group by. Here,
+            // we do not use the attribute_to_aggregate_key_map at all for the id fields, but rather
+            // use the id field from the attribute_values_query.
+
             $alias = $this->qualifyColumnName('id', true);
             $formula = $this->attributeValuesQuery->getRecord('id');
             $field = new Field($formula, $alias);
             $query->addField($field);
+
         } else {
-            $firstIteration = true;
+
+            // Add the id field. XDMoD expects a single ID field that is always aliased to
+            // sprintf('%s_id', $groupById)
+
+            $alias = $this->qualifyColumnName('id', true);
+            $formula = $this->verifyAndReplaceTableAlias($this->attributeValuesQuery->getRecord('id'), $query);
+            $field = new Field($formula, $alias);
+            $query->addField($field);
+            $this->logger->trace(sprintf("%s Add ID field '%s AS %s'", $this, $field, $alias));
+
+            // Add a GroupBy and Where condition for each field that is part of the key that maps a
+            // dimensional attribute to the aggregate table.
+
             foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-
-                // While the GroupBy class supports multi-column keys in dimension tables via the
-                // attribute_value_map, the rest of XDMoD does not. Many places in XDMoD expect a single
-                // 'id' column to be added to the SQL query by a group by prefixed by the name of the
-                // group by (e.g., sprintf('%s_id', $groupById)).
-                // Until the rest of the code base can be updated, ensure that the first key specified
-                // in the attribute_value_map is treated as the 'id' column.  -SMG 2019-09-11
-
-                $alias = $this->qualifyColumnName(($firstIteration ? 'id' : $attributeKey), true);
-                $firstIteration = false;
-
+                $alias = $this->qualifyColumnName($attributeKey, true);
                 $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
                 $field = new TableField($tableObj, $attributeKey, $alias);
-                $query->addField($field);
                 $query->addGroup($field);
+                $this->logger->trace(sprintf("%s Add GROUP BY '%s'", $this, $field));
+
+                // The aggregation unit where condition is already added by Query::setDuration()
+
                 if ( ! $this->isAggregationUnit ) {
                     $where = new WhereCondition($field, '=', new TableField($query->getDataTable(), $aggregateKey));
                     $query->addWhereCondition($where);
-                    $this->logger->trace(sprintf("%s Add ID field '%s AS %s' and WHERE condition '%s'", $this, $field, $alias, $where));
+                    $this->logger->trace(sprintf("%s Add WHERE condition '%s'", $this, $where));
                 }
             }
         }
@@ -827,7 +834,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             );
 
             $field = new Field($this->verifyAndReplaceTableAlias($formula, $query), $alias);
-            $this->logger->debug(sprintf("%s Add field: %s AS %s", $this, $field, $alias));
+            $this->logger->trace(sprintf("%s Add field: %s AS %s", $this, $field, $alias));
             $query->addField($field);
         }
 
@@ -1009,9 +1016,20 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $whereConditions = array();
         $queryParameters = array();
 
+        // Use the attribute values query as a template so we don't modify the original object
+        $queryConfig = $this->attributeValuesQuery->toStdClass();
+
+        // To handle possible ambiguous columns in the attribute values query, be sure to alias the
+        // where conditions with the attribute table (first table).
+
+        $alias = (isset($queryConfig->joins[0]->alias) ? $queryConfig->joins[0]->alias : $this->attributeTableName);
+
         if ( isset($restrictions['id']) ) {
-            $whereConditions[] = sprintf('(%s = :id)', $this->attributeValuesQuery->getRecord('id'));
-            $queryParameters[':id'] = $restrictions['id'];
+            $list = explode(self::FILTER_DELIMITER, $restrictions['id']);
+            foreach ( array_keys($this->attributeToAggregateKeyMap) as $attributeKey ) {
+                $whereConditions[] = sprintf('(%s.%s = :%s)', $alias, $attributeKey, $attributeKey);
+                $queryParameters[ sprintf(':%s', $attributeKey) ] = array_shift($list);
+            }
         }
 
         if ( isset($restrictions['name']) ) {
@@ -1023,9 +1041,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $queryParameters[':name'] = $restrictions['name'];
         }
 
-        // Use the attribute values query as a template so we don't modify the original object
-        $queryConfig = $this->attributeValuesQuery->toStdClass();
-
         if ( ! isset($queryConfig->where) || ! is_array($queryConfig->where) ) {
             $queryConfig->where = $whereConditions;
         } else {
@@ -1036,6 +1051,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $sql = $queryObj->getSql();
 
         $this->logger->debug(sprintf("%s: Fetch attribute values with query\n%s", $this, $sql));
+        $this->logger->trace(sprintf("Values: %s", print_r($queryParameters, true)));
 
         return \DataWarehouse::connect()->query($sql, $queryParameters);
     }

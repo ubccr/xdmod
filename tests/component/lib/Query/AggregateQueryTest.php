@@ -299,8 +299,7 @@ SQL;
         $generated = $query->getQueryString();
         $expected  =<<<SQL
 SELECT
-  resourcefact.id as 'resource_id',
-  resourcefact.code as 'resource_code',
+  CONCAT(resourcefact.id, '^', resourcefact.code) as 'resource_id',
   resourcefact.code as 'resource_short_name',
   CONCAT(resourcefact.name, '-', resourcefact.code) as 'resource_name',
   resourcefact.id as 'resource_order_id',

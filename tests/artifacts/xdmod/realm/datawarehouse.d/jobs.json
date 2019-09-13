@@ -103,7 +103,7 @@
                 "#": "Attribute values query with multiple tables and table aliases in the field values",
                 "attribute_values_query": {
                     "records": {
-                        "id": "rf.id",
+                        "id": "CONCAT(rf.id, '^', rf.code)",
                         "short_name": "rf.code",
                         "name": "CONCAT(rf.name, '-', rf.code)",
                         "order_id": "id"
