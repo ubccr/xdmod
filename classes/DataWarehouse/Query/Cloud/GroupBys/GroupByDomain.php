@@ -3,6 +3,7 @@
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
 use DataWarehouse\Query\Cloud\GroupBy as GroupBy;
+use DataWarehouse\Query\Model\FormulaField;
 use DataWarehouse\Query\Model\OrderBy;
 use DataWarehouse\Query\Model\Schema as Schema;
 use DataWarehouse\Query\Model\Table as Table;
@@ -65,14 +66,14 @@ class GroupByDomain extends GroupBy
                     d.name as short_name,
                     d.name as long_name
                 FROM modw_cloud.domains d
-                ORDER BY resource_id, domain_id, name
+                ORDER BY resource_id, name
             '
         );
 
         $this->_id_field_name = 'id';
         $this->_long_name_field_name = 'name';
         $this->_short_name_field_name = 'name';
-        $this->_order_fields = array('resource_id', 'domain_id', 'name');
+        $this->_order_fields = array('resource_id','name');
 
         $this->schema = new Schema('modw_cloud');
         $this->table = new Table($this->schema, 'domains', 'dm');
@@ -83,19 +84,28 @@ class GroupByDomain extends GroupBy
      */
     public function applyTo(Query &$query, Table $dataTable, $multiGroup = false)
     {
+        $resourceTable = new Table(new Schema('modw'), 'resourcefact', 'rf');
+        $resourceIdField = new TableField($resourceTable, 'id');
+        $resourceNameField = new TableField($resourceTable, 'name');
+
         $query->addTable($this->table);
+        $query->addTable($resourceTable);
 
-        $idField = new TableField($this->table, $this->_id_field_name, $this->getColumnName('id', $multiGroup));
+        $domainIdField = new TableField($this->table, $this->_id_field_name, $this->getColumnName('id', $multiGroup));
+        $domainNameField = new TableField($this->table, $this->_long_name_field_name, $this->getColumnName('name', $multiGroup));
 
-        $query->addField($idField);
-        $query->addField(new TableField($this->table, $this->_long_name_field_name, $this->getColumnName('name', $multiGroup)));
+        $query->addField($domainIdField);
+        $query->addField(new FormulaField("CONCAT({$domainNameField->getQualifiedName()}, ' - ', {$resourceNameField->getQualifiedName()})", $this->getColumnName('name', $multiGroup)));
         $query->addField(new TableField($this->table, $this->_short_name_field_name, $this->getColumnName('short_name', $multiGroup)));
         $query->addField(new TableField($this->table, $this->_id_field_name, $this->getColumnName('order_id', $multiGroup)));
 
-        $query->addGroup($idField);
+        $query->addGroup($domainIdField);
 
         $fkField = new TableField($dataTable, 'domain_id');
-        $query->addWhereCondition(new WhereCondition($idField, '=', $fkField));
+        $resourceFkField = new TableField($this->table, 'resource_id');
+
+        $query->addWhereCondition(new WhereCondition($domainIdField, '=', $fkField));
+        $query->addWhereCondition(new WhereCondition($resourceIdField, '=', $resourceFkField));
 
         $this->addOrder($query);
     }
