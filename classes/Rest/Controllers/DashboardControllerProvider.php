@@ -71,7 +71,26 @@ class DashboardControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * The individual dashboard components have a namespace prefix to simplify
+     * the implementation of the algorithm that determines which
+     * components to display. There are two sources of configuration data for
+     * the components. The roles configuration file and the user configuration
+     * (in the database). The user configuration only contains chart components.
+     * The user configuration is handled via the "Show in Summary tab" checkbox
+     * in the metric explorer.
+     *
+     * Non-chart components and the full-width components are defined in the roles
+     * configuration file and are not overrideable.
+     *
+     * Chart components are handled as follows:
+     * - All user charts with "show in summary tab" checked will be displayed
+     * - If a user chart has the same name as a chart in the role configuration
+     *   then its settings will be used in place of the role chart.
      */
+    const TOP_COMPONENT = 't.';
+    const CHART_COMPONENT = 'c.';
+    const NON_CHART_COMPONENT = 'p.';
+
     public function getComponents(Request $request, Application $app)
     {
         $user = $this->getUserFromRequest($request);
@@ -94,45 +113,35 @@ class DashboardControllerProvider extends BaseControllerProvider
         if (isset($presets['dashboard_components'])) {
 
             foreach($presets['dashboard_components'] as $component) {
+
+                $componentType = self::NON_CHART_COMPONENT;
+
                 if (isset($component['region']) && $component['region'] === 'top') {
-                    $chartLocation = 'FW' . $component['name'];
+                    $componentType = self::TOP_COMPONENT;
+                    $chartLocation = $componentType . $component['name'];
                     $column = -1;
                 } else {
+                    if ($component['type'] === 'xdmod-dash-chart-cmp') {
+                        $componentType = self::CHART_COMPONENT;
+                        $component['config']['name'] = $component['name'];
+                        $component['config']['chart']['featured'] = true;
+                    }
+
                     $defaultLayout = null;
                     if (isset($component['location']) && isset($component['location']['row']) && isset($component['location']['column'])) {
                         $defaultLayout = array($component['location']['row'], $component['location']['column']);
                     }
 
-                    list($chartLocation, $column) = $layout->getLocation('PP' . $component['name'], $defaultLayout);
+                    list($chartLocation, $column) = $layout->getLocation($componentType . $component['name'], $defaultLayout);
                 }
 
                 $dashboardComponents[$chartLocation] = array(
-                        'name' => 'PP' . $component['name'],
+                        'name' => $componentType . $component['name'],
                         'type' => $component['type'],
                         'config' => isset($component['config']) ? $component['config'] : array(),
                         'column' => $column
                 );
             }
-        }
-
-        $presetCharts = isset($presets['summary_charts']) ? $presets['summary_charts'] : $roleConfig['roles']['default']['summary_charts'];
-
-        foreach ($presetCharts as $index => $presetChart)
-        {
-            $presetChart['featured'] = true;
-            $presetChart['aggregation_unit'] = 'Auto';
-            $presetChart['timeframe_label'] = 'Previous month';
-
-            list($chartLocation, $column) = $layout->getLocation('PC' . $index);
-            $dashboardComponents[$chartLocation] = array(
-                'name' => 'PC' . $index,
-                'type' => 'xdmod-dash-chart-cmp',
-                'config' => array(
-                    'name' => 'summary_' . $index,
-                    'chart' => $presetChart
-                ),
-                'column' => $column
-            );
         }
 
         if ($user->isPublicUser() === false)
@@ -152,13 +161,7 @@ class DashboardControllerProvider extends BaseControllerProvider
                         continue;
                     }
 
-                    $name = 'UC' . $query['name'];
-
-                    if (preg_match('/summary_(?P<index>\S+)/', $query['name'], $matches) > 0) {
-                        if ($layout->hasLayout('PC' . $matches['index'])) {
-                            $name = 'PC' . $matches['index'];
-                        }
-                    }
+                    $name = self::CHART_COMPONENT . $query['name'];
 
                     list($chartLocation, $column) = $layout->getLocation($name);
 

@@ -2,6 +2,17 @@
 title: User Dashboard (Beta)
 ---
 
+Known Issues
+------------
+
+* Edit In Metric Explorer for Dashboard Charts
+
+The "Edit In Metric Explorer" button on a dashboard chart will not load the
+dashboard chart if there already exists a chart with an identical name saved in
+the metric explorer.  The workaround for this is to change the name of
+ the existing saved chart in the metric explorer so that it does not
+match the dashboard chart name.
+
 Developer Guide
 ---------------
 
