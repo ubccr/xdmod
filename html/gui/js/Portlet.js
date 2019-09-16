@@ -45,9 +45,6 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
         }
 
         if (this.help) {
-            var helpText = this.help.html;
-            var helpTitle = 'Help for ' + this.help.title;
-
             // Store a reference to the window to prevent multiple windows
             // being created if the user clicks the help button multiple times.
             var helpwin;
@@ -55,15 +52,17 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
             this.tools.push({
                 id: 'help',
                 qtip: 'Display help dialog',
-                handler: function () {
+                handler: function (evt, tool, panel) {
                     if (!helpwin) {
+                        var height = Math.min(CCR.xdmod.ui.Viewer.getViewer().getHeight(), 648);
+
                         helpwin = new Ext.Window({
                             layout: 'fit',
-                            width: 720,
-                            height: 580,
-                            title: helpTitle,
+                            width: Math.round((4.0 * (height - 44)) / 3.0),
+                            height: height,
+                            title: 'Help for ' + panel.help.title,
                             items: {
-                                html: helpText
+                                html: panel.help.html
                             },
                             listeners: {
                                 close: function () {

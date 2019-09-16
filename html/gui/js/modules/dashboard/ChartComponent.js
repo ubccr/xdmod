@@ -16,12 +16,15 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
         handler: function (event, toolEl, panel) {
             XDMoD.Module.MetricExplorer.setConfig(panel.config.chart, panel.config.name, false);
         }
-    }, {
-        id: 'help'
     }],
 
     initComponent: function () {
         var self = this;
+
+        this.help = {
+            html: '',
+            title: 'Chart'
+        };
 
         this.title = Ext.util.Format.ellipsis(this.config.chart.title, 60, true);
 
@@ -52,7 +55,7 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
                     var dimension;
                     for (dimension in dimensions) {
                         if (dimensions.hasOwnProperty(dimension)) {
-                            dims += '<li><b>' + dimension + ':</b> ' + dimensions[dimension] + '</li>';
+                            dims += '<li><i>' + dimension + ':</i> ' + dimensions[dimension] + '</li>';
                         }
                     }
                     var metrics = store.getAt(0).get('metrics');
@@ -61,13 +64,14 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
                     var metric;
                     for (metric in metrics) {
                         if (metrics.hasOwnProperty(metric)) {
-                            mets += '<li><b>' + metric + ':</b> ' + metrics[metric] + '</li>';
+                            mets += '<li><i>' + metric + ':</i> ' + metrics[metric] + '</li>';
                         }
                     }
-                    var help = this.chartCmp.getTool('help');
-                    if (help && help.dom) {
-                        help.dom.qtip = '<ul>' + dims + '</ul><hr/><ul>' + mets + '</ul>';
-                    }
+                    self.help.html = '<div class="dashboard-help-win" style="position: absolute; z-index: 1">' +
+                        '<p>A description of the data in the chart is shown below.</p>' +
+                        '<p><b>Dimensions:</b></p><ul>' + dims + '</ul>' +
+                        '<p><b>Metrics:</b></p><ul>' + mets + '</ul></div>' +
+                        '<div style="position: absolute; width: 100%; z-index: 0"><img src="/gui/images/help/chart-component.svg" /></div>';
                 },
                 exception: function (thisProxy, type, action, options, response) {
                     if (type === 'response') {

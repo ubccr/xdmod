@@ -9,6 +9,7 @@
             ],
             "css": [
                 "gui/css/JobComponent.css",
+                "gui/css/ChartComponent.css",
                 "gui/css/ReportThumbnailsComponent.css"
             ]
         }
