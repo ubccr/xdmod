@@ -42,7 +42,7 @@ XDMoD.Module.Dashboard.SavedChartsReportsComponent = Ext.extend(CCR.xdmod.ui.Por
             trigger2Class: 'x-form-search-trigger',
             hideTrigger1: true,
             enableKeyEvents: true,
-            emptyText: 'Search',
+            emptyText: 'Filter by name ...',
             store: this.chartReportStore,
             onTrigger1Click: function () {
                 this.store.clearFilter();
