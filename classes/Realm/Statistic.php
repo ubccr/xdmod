@@ -278,7 +278,8 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getName($includeUnit = true)
     {
-        if ( $includeUnit && strpos($this->name, $this->unit) ) {
+        // Include the unit if the unit is not found in the statistic name
+        if ( $includeUnit && false === strpos($this->name, $this->unit) ) {
             return $this->realm->getVariableStore()->substitute(sprintf("%s (%s)", $this->name, $this->unit));
         } else {
             return $this->realm->getVariableStore()->substitute($this->name);
