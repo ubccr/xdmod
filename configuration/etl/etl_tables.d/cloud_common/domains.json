@@ -22,12 +22,6 @@
         "comment": "Resource to which this domain belongs"
       },
       {
-        "name": "domain_id",
-        "type": "int(11)",
-        "nullable": false,
-        "comment": "Unknown = 1"
-      },
-      {
         "name": "name",
         "type": "varchar(64)",
         "nullable": false,
@@ -39,14 +33,6 @@
         "name": "PRIMARY",
         "columns": [
           "id"
-        ],
-        "is_unique": true
-      },
-      {
-        "name": "idx_resource_id_domain_id",
-        "columns": [
-          "resource_id",
-          "domain_id"
         ],
         "is_unique": true
       }

@@ -252,12 +252,6 @@
             "definition_file": "cloud_openstack/instance.json"
         },
         {
-            "name": "OpenStackDomainStagingIngestor",
-            "description": "Open Stack cloud domain_staging data",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/domains_staging.json"
-        },
-        {
             "name": "OpenStackUnknownDomainIngestor",
             "description": "The default 'Unknown' domain.",
             "namespace": "ETL\\Maintenance",
