@@ -10,6 +10,11 @@ XDMoD.Module.Dashboard.SavedChartsReportsComponent = Ext.extend(CCR.xdmod.ui.Por
     initComponent: function () {
         var aspectRatio = 11 / 17;
 
+        this.help = {
+            title: this.title,
+            html: '<img src="/gui/images/help/chartsreports-component.svg" />'
+        };
+
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
             autoDestroy: true,
@@ -130,13 +135,7 @@ XDMoD.Module.Dashboard.SavedChartsReportsComponent = Ext.extend(CCR.xdmod.ui.Por
 
         this.height = this.width * aspectRatio;
         this.items = [this.chartReportGrid];
-        this.tools = [
-            {
-                id: 'help',
-                qtip: 'Porlet shows a list of saved charts and reports.',
-                qwidth: 60
-            }
-        ];
+
         XDMoD.Module.Dashboard.SavedChartsReportsComponent.superclass.initComponent.apply(this, arguments);
     }
 });

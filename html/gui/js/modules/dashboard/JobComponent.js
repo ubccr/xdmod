@@ -9,11 +9,7 @@ Ext.namespace('XDMoD.Module.Dashboard');
 XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
     layout: 'fit',
-    collapsible: false,
     title: 'Jobs',
-    tools: [{
-        id: 'help'
-    }],
 
     initComponent: function () {
         var page_size = 9;
@@ -21,6 +17,16 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
         var formatDateWithTimezone = function (value) {
             return moment(value * 1000).format('Y-MM-DD HH:mm:ss z');
         };
+
+        this.help = {
+            title: 'Jobs'
+        };
+
+        if (this.config.multiuser) {
+            this.help.html = '<img src="/gui/images/help/job-multi-component.svg" />';
+        } else {
+            this.help.html = '<img src="/gui/images/help/job-component.svg" />';
+        }
 
         var jobEfficiency = function (value, metadata, record) {
             var getDataColor = function (data) {
@@ -70,13 +76,6 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
         }, this);
 
         this.title += ' - ' + date.start.format('Y-m-d') + ' to ' + date.end.format('Y-m-d');
-
-        if (!this.config.multiuser) {
-            this.tools[0].qtip = 'This panel shows a list of your HPC jobs for which there is data in XDMoD. Click on a row to view the detailed information about a job.';
-            page_size = 10;
-        } else {
-            this.tools[0].qtip = 'This panel shows a list of the HPC jobs that ran under your account for which there is data in XDMoD. Click on a row to view the detailed information about a job.';
-        }
 
         // The default search parameters are set to all jobs - this
         // will result in all of the jobs that the user has permission to
