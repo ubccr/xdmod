@@ -357,7 +357,8 @@ class DataWarehouse
      * Get a mapping of categories to realms.
      *
      * If a realm does not explicitly declare a category, its name is used
-     * as the category.
+     * as the category. If a realm has the show_in_catalog property set to false
+     * then it does not appear in the list of categories.
      *
      * @return array An associative array mapping categories to the realms
      *               they contain.
@@ -369,6 +370,9 @@ class DataWarehouse
 
         $categories = array();
         foreach ($dwConfig['realms'] as $realmName => $realm) {
+            if (isset($realm['show_in_catalog']) && $realm['show_in_catalog'] === false) {
+                continue;
+            }
             $category = (
                 isset($realm['category'])
                 ? $realm['category']
@@ -387,11 +391,18 @@ class DataWarehouse
      *
      * @param  string $realmName The name of the realm to get
      *                           the category for.
-     * @return string            The category the realm belongs to.
+     * @return string            The category the realm belongs to or null if
+     *                           the realm has the show_in_catalog flag set to false.
      */
     public static function getCategoryForRealm($realmName)
     {
         $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
+
+        if (isset($dwConfig['realms'][$realmName]['show_in_catalog'])
+            && $dwConfig['realms'][$realmName]['show_in_catalog'] === false
+        ) {
+            return null;
+        }
 
         if (isset($dwConfig['realms'][$realmName]['category'])) {
             return $dwConfig['realms'][$realmName]['category'];
