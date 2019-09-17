@@ -32,7 +32,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
             'consoleLogLevel' => Log::WARNING
         );
         $logger = Log::factory('PHPUnit', $conf);
-        
+
         // Configuration is used in the transformer to qualify relative paths
         self::$config = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
         self::$transformer = new IncludeTransformer($logger);
@@ -75,14 +75,14 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
         $key = '$include';
         $value = 'etl_sql.d/query.sql';
         $obj = (object) array($key => $value);
-        $expected = json_encode(file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/' . $value));
+        $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/' . $value);
         self::$transformer->transform($key, $value, $obj, self::$config);
 
         // A null key means replace the entire value object with the transformed value
         $this->assertNull($key);
         $this->assertEquals($expected, $value, "JSON-encoded value");
     }
-    
+
     /**
      * Test variables in the include URL.
      */
@@ -97,7 +97,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
         $obj = (object) array($key => $value);
         self::$transformer->transform($key, $value, $obj, self::$config);
 
-        $expected = json_encode(file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/etl_sql.d/query.sql'));
+        $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/etl_sql.d/query.sql');
         $this->assertNull($key);
         $this->assertEquals($expected, $value, "JSON-encoded value");
     }
