@@ -1,0 +1,17 @@
+{
+    "Jobs": {
+        "module": "xdmod",
+        "name": "Jobs",
+        "datasource": "Slurm",
+        "aggregate_schema": "modw_aggregates",
+        "aggregate_table_prefix": "jobfact_by_",
+        "aggregate_table_alias": "agg",
+        "order": 1,
+        "group_bys": {
+            "$ref": "datawarehouse.d/ref/Jobs-group-bys.json"
+        },
+        "statistics": {
+            "$ref": "datawarehouse.d/ref/Jobs-statistics.json"
+        }
+    }
+}
