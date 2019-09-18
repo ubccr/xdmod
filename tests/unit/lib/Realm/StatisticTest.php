@@ -103,7 +103,11 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getStatisticObject('Cloud_num_sessions_running');
 
-        $this->assertEquals($obj->getName(), sprintf('%s Number of Active Sessions', ORGANIZATION_NAME), 'getName()');
+        $this->assertEquals(
+            sprintf('%s Number of Active Sessions (Number of Sessions)', ORGANIZATION_NAME),
+            $obj->getName(),
+            'getName()'
+        );
     }
 
     /**
@@ -139,8 +143,10 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $expected = 'Jobs_job_count';
         $this->assertEquals($expected, $generated, "getId(false)");
 
+        // Note that the unit "Number of Jobs" is found in the statistic name so it will not be
+        // appended.
         $generated = $obj->getName();
-        $expected = sprintf('%s Number of Jobs Ended (Number of Jobs)', ORGANIZATION_NAME);
+        $expected = sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME);
         $this->assertEquals($expected, $generated, "getName()");
 
         $generated = $obj->getName(false);
