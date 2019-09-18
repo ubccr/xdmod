@@ -112,7 +112,11 @@ class ComplexDataset
                 )
             ) {
                 try {
-                    $query->addStat('sem_'.$data_description->metric);
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $data_description->realm,
+                        $data_description->metric
+                    );
+                    $query->addStat($semStatId);
                 } catch (\Exception $ex) {
                     $data_description->std_err = 0;
                     $data_description->std_err_labels = false;
@@ -620,13 +624,12 @@ class ComplexDataset
                     $yAxisDataObject->setErrors($newErrors);
                     $yAxisDataObject->getErrorCount(true);
 
-                    $semStatisticObject
-                        = $dataDescripterAndDataset->dataset->_query->_stats[
-                            'sem_'
-                            . $dataDescripterAndDataset->data_description
-                                                       ->metric
-                        ];
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $dataDescripterAndDataset->dataset->_query->getRealmName(),
+                        $dataDescripterAndDataset->data_description->metric
+                    );
 
+                    $semStatisticObject = $dataDescripterAndDataset->dataset->_query->_stats[$semStatId];
                     $semDecimals = $semStatisticObject->getPrecision();
                 }
 

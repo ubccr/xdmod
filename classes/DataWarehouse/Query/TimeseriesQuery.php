@@ -234,7 +234,10 @@ SQL;
         $stat        = $this->_main_stat_field->getAlias();
         $stat_weight = $this->_main_stat_field->getWeightStatName();
 
-        $sem_name = 'sem_' . $stat;
+        $sem_name = Realm::getStandardErrorStatisticFromStatistic(
+            $this->realm->getId(),
+            $stat
+        );
 
         $useWeights
             =  strpos($stat, 'avg_')             !== false

@@ -78,11 +78,15 @@ foreach ($roles as $activeRole) {
 
                     $statsObjects = $query_descripter->getStatisticsClasses($stats);
                     foreach ($statsObjects as $realm_group_by_statistic => $statistic_object) {
+                        $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                            $query_descripter_realm,
+                            $realm_group_by_statistic
+                        );
                         $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
                             array(
                                 'text' => $statistic_object->getName(),
                                 'info' => $statistic_object->getHtmlDescription(),
-                                'std_err' => in_array('sem_' . $realm_group_by_statistic, $permittedStatistics)
+                                'std_err' => in_array($semStatId, $permittedStatistics)
                             );
                         $seenstats[] = $realm_group_by_statistic;
                     }

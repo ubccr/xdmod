@@ -211,8 +211,13 @@ class SimpleDataset
         }
         $dataObject->setUnit( $this->getColumnLabel($column_name, $is_dimension) );
 
-        if (isset($this->_query->_stats['sem_' . $column_name])) {
-            $sem_column_name = 'sem_' . $column_name;
+        $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+            $this->_query->getRealmName(),
+            $column_name
+        );
+
+        if (isset($this->_query->_stats[$semStatId])) {
+            $sem_column_name = $semStatId;
         }
 
         $columnTypes = $this->_columnTypes;

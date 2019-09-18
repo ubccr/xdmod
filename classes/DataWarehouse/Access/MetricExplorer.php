@@ -249,7 +249,11 @@ class MetricExplorer extends Common
 
                 if ($data_description->std_err == 1) {
                     try {
-                        $query->addStat('sem_'.$data_description->metric);
+                        $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                            $data_description->realm,
+                            $data_description->metric
+                        );
+                        $query->addStat($semStatId);
                     }
                     catch (Exception $ex) {
                         $data_description->std_err = 0;

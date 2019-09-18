@@ -175,6 +175,15 @@ class Realm extends \CCR\Loggable implements iRealm
     }
 
     /**
+     * @see iRealm::getStandardErrorStatisticFromStatistic()
+     */
+
+    public static function getStandardErrorStatisticFromStatistic($realmId, $statisticId)
+    {
+        return sprintf('%s_sem_%s', $realmId, substr($statisticId, strlen($realmId) + 1));
+    }
+
+    /**
      * @see iRealm::factory()
      */
 
@@ -651,8 +660,8 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObject($shortName)
     {
-        // As a convienence, if the requested statistic does not start with the realm id, add it
-        // here.
+        // As a convienence, if the requested statistic does not start with the realm id, add
+        // it.
 
         if ( 0 !== strpos($shortName, $this->id) ) {
             $shortName = sprintf("%s_%s", $this->id, $shortName);
