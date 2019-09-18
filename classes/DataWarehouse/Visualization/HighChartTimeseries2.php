@@ -270,7 +270,11 @@ class HighChartTimeseries2 extends HighChart2
                 ) {
                     try
                     {
-                         $query->addStat('sem_'.$data_description->metric);
+                        $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                            $data_description->realm,
+                            $data_description->metric
+                        );
+                        $query->addStat($semStatId);
                     }
                     catch(\Exception $ex)
                     {
@@ -449,7 +453,11 @@ class HighChartTimeseries2 extends HighChart2
 
                 if($data_description->std_err == 1)
                 {
-                    $semStatisticObject = $query->_stats['sem_'.$data_description->metric];
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $data_description->realm,
+                        $data_description->metric
+                    );
+                    $semStatisticObject = $query->_stats[$semStatId];
                     $semDecimals = $semStatisticObject->getPrecision();
                 }
 

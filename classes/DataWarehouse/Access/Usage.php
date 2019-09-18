@@ -98,7 +98,12 @@ class Usage extends Common
                     $statUsageChartSettings['display_type'] = 'line';
                     $statUsageChartSettings['swap_xy'] = false;
                 }
-                $errorstat = 'sem_' . $userStatistic;
+
+                $errorstat = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                    $realm->getId(),
+                    $userStatistic
+                );
+
                 if (in_array($errorstat, $realm->getStatisticNames()) ) {
                     $statUsageChartSettings['enable_errors'] = 'y';
                 }
@@ -625,7 +630,11 @@ class Usage extends Common
                 // Get the statistic object used by this chart request.
                 $meRequestMetric = $realm->getStatisticObject($meRequest['data_series_unencoded'][0]['metric']);
 
-                $errorstat = 'sem_' . $meRequest['data_series_unencoded'][0]['metric'];
+                $errorstat = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                    $realm->getId(),
+                    $meRequest['data_series_unencoded'][0]['metric']
+                );
+
                 if (in_array($errorstat, $realm->getStatisticNames()) ) {
                     $usageChartSettings['enable_errors'] = 'y';
                 }

@@ -194,6 +194,7 @@ function main()
             $groupBys = array_keys($realmObj->getGroupByNames());
             $statistics = array_keys($realmObj->getStatisticNames());
             $results[$module]['realms'][$realmId] = array(
+                'display_name' => $realmObj->getName(),
                 'group_bys' => json_decode(json_encode($groupBys), true),
                 'statistics' => json_decode(json_encode($statistics), true)
             );
@@ -1640,12 +1641,11 @@ SQL;
         $statistics = $realmData['statistics'];
         foreach ($statistics as $statisticId) {
 
-            $realmName = strtolower($realm);
-            $id = "[ $module, $realmName, $acl, $groupBy, $statisticId ]";
+            $id = "[ $module, $realm, $acl, $groupBy, $statisticId ]";
 
             $params = array(
                 ':module_name' => $module,
-                ':realm_name' => $realmName,
+                ':realm_name' => $realm,
                 ':acl_name' => $acl,
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticId,
@@ -1714,17 +1714,17 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
 {
     global $dryRun, $log;
 
-    foreach ($realms as $realm => $realmData) {
-        $log->notice("Processing Realm: $realm for Module: $moduleName");
+    foreach ($realms as $realmId => $realmData) {
+        $log->notice(sprintf("Processing Realm: %s (%s) for Module: %s", $realmId, $realmData['display_name'], $moduleName));
 
-        createRealm($db, $moduleName, $realm);
+        createRealm($db, $moduleName, $realmId, $realmData['display_name']);
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
 
-        createGroupBys($db, $moduleName, strtolower($realm), $groupBys);
-        createStatistics($db, $moduleName, strtolower($realm), $statistics);
-        updateResourceTypeRealms($db, $realm);
+        createGroupBys($db, $moduleName, $realmId, $groupBys);
+        createStatistics($db, $moduleName, $realmId, $statistics);
+        updateResourceTypeRealms($db, $realmId);
     }
 }
 
@@ -1735,19 +1735,18 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
  * @param iDatabase $db            the database to be used when creating the realm
  * @param string    $moduleName    the name of the module to associate this realm
  *                                 with.
- * @param string    $realmDisplay  the name that this realm should be created with.
+ * @param string    $realmId       the id that this realm should be created with.
+ * @param string    $realmDisplay  the display name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm(iDatabase $db, $moduleName, $realmDisplay)
+function createRealm(iDatabase $db, $moduleName, $realmId, $realmDisplay)
 {
     global $dryRun, $log;
 
-    $realmName = strtolower($realmDisplay);
+    $log->notice(sprintf("*** Creating Realm %s (%s)...", $realmId, $realmDisplay));
 
-    $log->notice("*** Creating Realm ($realmDisplay)...");
-
-    $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
+    $successMsg = sprintf("[SUCCESS] Created Realm: %s (%s) for Module: %s", $realmId, $realmDisplay, $moduleName);
 
     $query = <<<SQL
     INSERT INTO realms(module_id, name, display)
@@ -1766,7 +1765,7 @@ function createRealm(iDatabase $db, $moduleName, $realmDisplay)
 SQL;
 
     $params = array(
-        ':realm_name' => $realmName,
+        ':realm_name' => $realmId,
         ':realm_display' => $realmDisplay,
         ':module_name' => $moduleName
     );

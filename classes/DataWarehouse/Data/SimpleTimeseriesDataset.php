@@ -109,8 +109,12 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $start_ts_column_name  = $this->_query->getAggregationUnit()->getUnitName()
                                 . '_start_ts';
         // standard error
-        if (isset($this->_query->_stats['sem_' . $column_name])) {
-            $sem_column_name = 'sem_' . $column_name;
+        $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+            $this->_query->getGetRealmName(),
+            $column_name
+        );
+        if (isset($this->_query->_stats[$semStatId])) {
+            $sem_column_name = $semStatId;
         }
 
         // create the data object
@@ -420,7 +424,10 @@ class SimpleTimeseriesDataset extends SimpleDataset
                     );
                 }
 
-                $sem_column_name = 'sem_' . $values_column_name;
+                $sem_column_name = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                    $this->_query->getGetRealmName(),
+                    $values_column_name
+                );
 
                 if (!array_key_exists($sem_column_name, $row)) {
                     $dataErrors[] = 0;

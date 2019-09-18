@@ -338,7 +338,10 @@ class Query extends Loggable
                 // Sort the results with stat_column descending
                 array_multisort($stat_column, $sort_option, $name_column, SORT_ASC, $results);
             }
-            $sem_name = 'sem_'.$stat;
+            $sem_name = Realm::getStandardErrorStatisticFromStatistic(
+                $this->realm->getId(),
+                $stat
+            );
             if (count($results) > 0) {
                 $return[$stat] = array();
                 $return['weight'] = array();
@@ -1223,7 +1226,7 @@ SQL;
             return null;
         }
         $statistic = $this->realm->getStatisticObject($stat_name);
-        $this->_stats[$stat_name] = $statistic;
+        $this->_stats[ $statistic->getId() ] = $statistic;
         $this->addStatField($statistic);
         return $statistic;
     }
