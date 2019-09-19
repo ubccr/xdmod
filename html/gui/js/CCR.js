@@ -1746,7 +1746,7 @@ CCR.xdmod.ui.presentFailureResponse = function (response, options) {
     // If a user-friendly message was given, add it to the displayed message.
     var outputMessage;
     if (options.wrapperMessage) {
-        outputMessage = options.wrapperMessage + " (" + responseMessage + ")";
+        outputMessage = options.wrapperMessage + '<br /> (' + responseMessage + ')';
     } else {
         outputMessage = responseMessage;
     }
