@@ -83,12 +83,26 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $disabled = false;
 
     /**
+     * @var boolean Set to false if this statistic should not be shown to the user in the metric
+     * catalog.
+     */
+
+    protected $showInCatalog = true;
+
+    /**
      * @var int PHP order specificaiton to determine how the query should sort results containing
      *   this Statistic.
      * @see http://php.net/manual/en/function.array-multisort.php
      */
 
     protected $sortOrder = SORT_DESC;
+
+    /**
+     * @var string The name of the weight statistic to use when normalizing data for this statistic.
+     *   This is typically used when calculating values such as standard error.
+     */
+
+    protected $weightStatisticId = 'weight_is_not_used';
 
     /**
      * @var array|null The definition of the additional where condition for this statistic. If not
@@ -175,8 +189,10 @@ class Statistic extends \CCR\Loggable implements iStatistic
             'module' => 'string',
             'order' => 'int',
             'precision' => 'int',
+            'show_in_catalog' => 'bool',
             'timeseries_formula' => 'string',
-            'use_timeseries_aggregate_tables' => 'bool'
+            'use_timeseries_aggregate_tables' => 'bool',
+            'weight_statistic_id' => 'string'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
@@ -227,6 +243,9 @@ class Statistic extends \CCR\Loggable implements iStatistic
                 case 'precision':
                     $this->precision = filter_var($value, FILTER_VALIDATE_INT);
                     break;
+                case 'show_in_catalog':
+                    $this->showInCatalog = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    break;
                 case 'timeseries_formula':
                     $this->timeseriesFormula = trim($value);
                     break;
@@ -235,6 +254,9 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     break;
                 case 'use_timeseries_aggregate_tables':
                     $this->useTimeseriesAggregateTables = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    break;
+                case 'weight_statistic_id':
+                    $this->weightStatisticId = trim($value);
                     break;
                 default:
                     $this->logger->notice(
@@ -428,12 +450,21 @@ class Statistic extends \CCR\Loggable implements iStatistic
     }
 
     /**
-     * @see iStatistic::getWeightStatName()
+     * @see iStatistic::getWeightStatisticId()
      */
 
-    public function getWeightStatName()
+    public function getWeightStatisticId()
     {
-        return 'weight_is_not_used';
+        return $this->weightStatisticId;
+    }
+
+    /**
+     * @see iRealm::showInMetricCatalog()
+     */
+
+    public function showInMetricCatalog()
+    {
+        return $this->showInCatalog;
     }
 
     /**
