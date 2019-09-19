@@ -6,6 +6,7 @@
         "aggregate_schema": "modw_aggregates",
         "aggregate_table_prefix": "jobfact_by_",
         "aggregate_table_alias": "agg",
+        "category": "HPC Metrics",
         "order": 1,
         "group_bys": {
             "none": {

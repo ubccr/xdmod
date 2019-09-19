@@ -56,13 +56,15 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = Realm::getRealmNames(Realm::SORT_ON_ORDER);
         $expected = array(
             'Jobs' => 'Jobs',
-            'Cloud' => 'Cloud'
+            'Cloud' => 'Cloud',
+            'HiddenRealm' => 'Do not show hidden realms in the metric catalog.'
         );
         $this->assertEquals($expected, $generated, "Sort realm names on order");
 
         $generated = Realm::getRealmNames(Realm::SORT_ON_SHORT_ID);
         $expected = array(
             'Cloud' => 'Cloud',
+            'HiddenRealm' => 'Do not show hidden realms in the metric catalog.',
             'Jobs' => 'Jobs'
         );
         $this->assertEquals($expected, $generated, "Sort realm names on short id");
@@ -70,6 +72,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = Realm::getRealmNames(Realm::SORT_ON_NAME);
         $expected = array(
             'Cloud' => 'Cloud',
+            'HiddenRealm' => 'Do not show hidden realms in the metric catalog.',
             'Jobs' => 'Jobs'
         );
         $this->assertEquals($expected, $generated, "Sort realm names on name");
@@ -225,5 +228,49 @@ class RealmTest extends \PHPUnit_Framework_TestCase
 
         $generated = $realm->getMinimumAggregationUnit();
         $this->assertNull($generated, "getMinimumAggregationUnit()");
+    }
+
+    /**
+     * (7) Test realm categories. The following cases are tested:
+     *   - A realm with a category defined
+     *   - A realm with no category defined (category defaults to realm id)
+     *   - A realm with show_in_catelog=false (category will be null)
+     */
+
+    public function testRealmCategories()
+    {
+        // Jobs realm has a category
+        $realmId = 'Jobs';
+        $category = \DataWarehouse::getCategoryForRealm($realmId);
+        $this->assertEquals('HPC Metrics', $category, sprintf("%s(): %s", __FUNCTION__, $realmId));
+
+        // Cloud realm has no category
+        $realmId = 'Cloud';
+        $category = \DataWarehouse::getCategoryForRealm($realmId);
+        $this->assertEquals($realmId, $category, sprintf("%s(): %s", __FUNCTION__, $realmId));
+
+        // HiddenRealm realm has show_in_catalog=false
+        $realmId = 'HiddenRealm';
+        $category = \DataWarehouse::getCategoryForRealm($realmId);
+        $this->assertNull($category, sprintf("%s(): %s", __FUNCTION__, $realmId));
+    }
+
+    /**
+     * (8) Test retrieval of the category list.
+     */
+
+    public function testRealmCategoryList()
+    {
+        $categoryList = \DataWarehouse::getCategories();
+        $expected = array(
+            'HPC Metrics' => array(
+                'Jobs'
+            ),
+            'Cloud' => array(
+                'Cloud'
+            )
+            // HiddenRealm will not be included
+        );
+        $this->assertEquals($expected, $categoryList, 'getCategories()');
     }
 }
