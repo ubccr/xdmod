@@ -1657,7 +1657,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             errorMessage += '<br />' + errorMessageExtraData;
                         }
                     }
-                    options.title =   'Usage';
+                    options.title = 'Usage';
                     options.wrapperMessage = errorMessage;
                 }
             }
