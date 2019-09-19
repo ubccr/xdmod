@@ -191,6 +191,11 @@ try {
 
                     foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
                         $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
+
+                        if ( ! $statistic_object->showInMetricCatalog() ) {
+                            continue;
+                        }
+
                         $statName = $statistic_object->getId();
                         $chartSettings = $query_descripter->getChartSettings();
                         if(!$statistic_object->usesTimePeriodTablesForAggregate()){

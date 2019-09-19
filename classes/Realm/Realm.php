@@ -78,6 +78,22 @@ class Realm extends \CCR\Loggable implements iRealm
     protected $disabled = false;
 
     /**
+     * @var boolean Set to false if this realm should not be shown to the user in the metric
+     * catalog.
+     */
+
+    protected $showInCatalog = true;
+
+    /**
+     * @var string A category that the realm will be placed into. This is used for grouping multiple
+     *   realms under a single category and was used for Value Analytics to present multiple realms
+     *   as a single entry in the user interface. If a category is not provided, the realm id is
+     *   used instead effectively placing each realm is in its own categoty.
+     */
+
+    protected $category = null;
+
+    /**
      * @var stdClass|null An associative array of group by configuration objects where the key is
      *   the short identifier and the value is a stdClass containing the configuration. These are
      *   used to create GroupBy objects on demand.
@@ -109,6 +125,7 @@ class Realm extends \CCR\Loggable implements iRealm
      */
 
     protected $statistics = array();
+
     /**
      * @var Configuration Parsed Configuration object for datawarehouse.json
      */
@@ -407,11 +424,12 @@ class Realm extends \CCR\Loggable implements iRealm
 
         $optionalConfigTypes = array(
             'aggregate_table_alias' => 'string',
-            'class' => 'string',
+            'category' => 'string',
             'disabled' => 'bool',
             'min_aggregation_unit' => 'string',
             'module' => 'string',
-            'order' => 'int'
+            'order' => 'int',
+            'show_in_catalog' => 'bool'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($specification, $optionalConfigTypes, $messages, true) ) {
@@ -421,6 +439,7 @@ class Realm extends \CCR\Loggable implements iRealm
         }
 
         $this->id = $shortName;
+        $this->category = $shortName;
 
         foreach ( $specification as $key => $value ) {
             switch ($key) {
@@ -432,6 +451,9 @@ class Realm extends \CCR\Loggable implements iRealm
                     break;
                 case 'aggregate_table_alias':
                     $this->aggregateTableAlias = trim($value);
+                    break;
+                case 'category':
+                    $this->category = trim($value);
                     break;
                 case 'datasource':
                     $this->datasource = trim($value);
@@ -453,6 +475,9 @@ class Realm extends \CCR\Loggable implements iRealm
                     break;
                 case 'name':
                     $this->name = trim($value);
+                    break;
+                case 'show_in_catalog':
+                    $this->showInCatalog = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 case 'statistics':
                     $this->statisticConfigs = $value;
@@ -705,6 +730,24 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getMinimumAggregationUnit()
     {
         return $this->minAggregationUnit;
+    }
+
+    /**
+     * @see iRealm::showInMetricCatalog()
+     */
+
+    public function showInMetricCatalog()
+    {
+        return $this->showInCatalog;
+    }
+
+    /**
+     * @see iRealm::getCategory()
+     */
+
+    public function getCategory()
+    {
+        return $this->category;
     }
 
     /**

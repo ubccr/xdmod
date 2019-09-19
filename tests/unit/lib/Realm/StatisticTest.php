@@ -184,12 +184,21 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $generated = $obj->getAdditionalWhereCondition();
         $this->assertNull($generated, "getAdditionalWhereCondition()");
 
-        $generated = $obj->getWeightStatName();
+        $generated = $obj->getWeightStatisticId();
         $expected = 'weight_is_not_used';
-        $this->assertEquals($expected, $generated, "getWeightStatName()");
+        $this->assertEquals($expected, $generated, "getWeightStatisticId()");
 
         $generated = $obj->usesTimePeriodTablesForAggregate();
         $this->assertTrue($generated, "usesTimePeriodTablesForAggregate()");
+
+        $generated = $obj->showInMetricCatalog();
+        $this->assertTrue($generated, "showInMetricCatalog() == true");
+
+        $realm = realm::factory('HiddenRealm', self::$logger);
+        $obj = $realm->getstatisticobject('hidden_statistic');
+
+        $generated = $obj->showInMetricCatalog();
+        $this->assertFalse($generated, "showInMetricCatalog() == false");
     }
 
     /**

@@ -156,11 +156,23 @@ interface iStatistic
     public function usesTimePeriodTablesForAggregate();
 
     /**
-     * @return string The name of the weighting statistic. It is likely that this is not currently
+     * @return string The name of the weighting statistic for this statistic. This is typically used
+     *   when calculating values such as standard error but is likely that this is not currently
      *   used.
+     *
+     * Note: Was getWeightStatName()
      */
 
-    public function getWeightStatName();
+    public function getWeightStatisticId();
+
+    /**
+     * @return boolean TRUE if this statistic should be displayed in the metric catalog. In some cases,
+     *   a statistic may be created to feed data to another component but not be intended to be directly
+     *   accessible via the user interface. For example, the statistics that generate the data for
+     *   standard error markers in the user interface (Jobs_sem_avg_processors).
+     */
+
+    public function showInMetricCatalog();
 
     /**
      * Generate a string representation of the object

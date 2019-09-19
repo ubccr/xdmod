@@ -262,6 +262,21 @@ interface iRealm
     public function getMinimumAggregationUnit();
 
     /**
+     * @return boolean TRUE if this realm should be displayed in the metric catalog. In some cases,
+     *   a realm may be created to feed data to another component but not be intended to be directly
+     *   accessible via the user interface.
+     */
+
+    public function showInMetricCatalog();
+
+    /**
+     * @return string The category that this realm belongs to. If not set, the category will default
+     *   to the realm id.
+     */
+
+    public function getCategory();
+
+    /**
      * @return VariableStore The VariableStore object for this realm to support variable
      *   substitution in GroupBy and Statistics classes.
      */

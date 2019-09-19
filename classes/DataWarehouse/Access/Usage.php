@@ -91,6 +91,10 @@ class Usage extends Common
 
                 $statsClass = $realm->getStatisticObject($userStatistic);
 
+                if ( ! $statsClass->showInMetricCatalog() ) {
+                    continue;
+                }
+
                 $statUsageChartSettings = $usageChartSettings;
 
                 if(!$statsClass->usesTimePeriodTablesForAggregate()){
@@ -275,6 +279,10 @@ class Usage extends Common
             } else {
                 foreach ($userStatistics as $userStatistic) {
                     $userStatisticObject = $realm->getStatisticObject($userStatistic);
+
+                    if ( ! $userStatisticObject->showInMetricCatalog() ) {
+                        continue;
+                    }
 
                     $statisticRequest = $this->request;
                     $statisticRequest['statistic'] = $userStatistic;
