@@ -205,6 +205,18 @@ class QueryHandler
     }
 
     /**
+     * Return details of all export requests presently in Available state.
+     *
+     * @return array
+     */
+    public function listAvailableRecords()
+    {
+        $sql = 'SELECT id, user_id, realm, start_date, end_date, export_file_format, requested_datetime
+            FROM batch_export_requests ' . $this->whereAvailable . ' ORDER BY requested_datetime, id';
+        return $this->dbh->query($sql);
+    }
+
+    /**
      * Return export requests in Available state that should expire.
      *
      * @return array

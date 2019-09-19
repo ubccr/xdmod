@@ -6359,7 +6359,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             this.updateRawDataWindowVisibility();
             if (location.hash.split('config=')[1]) {
                 var config = JSON.parse(window.atob(location.hash.split('config=')[1]));
-                XDMoD.Module.MetricExplorer.setConfig(config, config.title, false);
+                XDMoD.Module.MetricExplorer.setConfig(config, config.title, true);
             }
         }, // activate
 

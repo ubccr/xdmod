@@ -1614,16 +1614,29 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         handleDataException = function (response, exceptionType) {
             var viewer = CCR.xdmod.ui.Viewer.getViewer();
+            if (viewer && viewer.el) {
+                viewer.el.unmask();
+            }
+
+            var options = {};
+
+            view.tpl = new Ext.XTemplate(['<tpl for=".">', '<div>An error has occurred.</div>', '</tpl>']);
+            view.store.loadData({
+                totalCount: 1,
+                success: true,
+                message: 'Error',
+                data: [
+                    {
+                    }
+                ]
+            });
+            view.refresh();
 
             if (exceptionType === 'response') {
                 var data = CCR.safelyDecodeJSONResponse(response) || {};
                 var errorCode = data.code;
 
                 if (errorCode === XDMoD.Error.QueryUnavailableTimeAggregationUnit) {
-                    if (viewer && viewer.el) {
-                        viewer.el.unmask();
-                    }
-
                     var durationToolbar = self.getDurationSelector();
                     durationToolbar.setAggregationUnit('Auto');
                     durationToolbar.onHandle();
@@ -1644,40 +1657,12 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             errorMessage += '<br />' + errorMessageExtraData;
                         }
                     }
-
-                    Ext.MessageBox.alert(
-                        'Usage',
-                        errorMessage
-                    );
-                    return;
+                    options.title = 'Usage';
+                    options.wrapperMessage = errorMessage;
                 }
-                var extraInfo = JSON.parse(data.message);
-                var groupDescription = extraInfo.description;
-                if (extraInfo.statistic !== '') {
-                    groupDescription += ' by ' + extraInfo.statistic;
-                }
-                viewer.el.unmask();
-                view.tpl = new Ext.XTemplate(['<tpl for=".">', '<div>{group_description}</div><div>{description}</div>', '</tpl>']);
-                view.store.loadData({
-                    totalCount: 1,
-                    success: true,
-                    message: 'Error',
-                    data: [
-                        {
-                            group_description: groupDescription,
-                            description: extraInfo.instructions
-                        }
-                    ]
-                });
-                view.refresh();
-                return;
             }
 
-            CCR.xdmod.ui.presentFailureResponse(response);
-
-            if (viewer && viewer.el) {
-                viewer.el.unmask();
-            }
+            CCR.xdmod.ui.presentFailureResponse(response, options);
         };
 
         // ---------------------------------------------------------
@@ -1788,7 +1773,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             store: chartStore,
             autoScroll: true,
             tpl: largeChartTemplate
-
         }); //view
 
         // ---------------------------------------------------------
@@ -2674,6 +2658,13 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         'Loaded Chart',
                         'Chart: ' + chartStore.getAt(0).get('title') + ', Params: ' + chartStore.getAt(0).get('params_title')
                     );
+
+                    var serverChartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
+                    if (serverChartSettings === '') {
+                        serverChartSettings = n.attributes.defaultChartSettings;
+                    }
+                    n.attributes.chartSettings = serverChartSettings;
+                    chartToolbar.fromJSON(n.attributes.chartSettings);
 
                     self.setImageExport(true);
 

@@ -1753,7 +1753,7 @@ CCR.xdmod.ui.presentFailureResponse = function (response, options) {
     // If a user-friendly message was given, add it to the displayed message.
     var outputMessage;
     if (options.wrapperMessage) {
-        outputMessage = options.wrapperMessage + " (" + responseMessage + ")";
+        outputMessage = options.wrapperMessage + '<br /> (' + responseMessage + ')';
     } else {
         outputMessage = responseMessage;
     }
@@ -1795,7 +1795,7 @@ CCR.xdmod.ui.getComboBox = function (data, fields, valueField, displayField, edi
 };
 CCR.xdmod.ui.gridComboRenderer = function (combo) {
     return function (value) {
-        var idx = combo.store.find(combo.valueField, value);
+        var idx = combo.store.findExact(combo.valueField, value);
         var rec = combo.store.getAt(idx);
         if (!rec) {
             return combo.emptyText;

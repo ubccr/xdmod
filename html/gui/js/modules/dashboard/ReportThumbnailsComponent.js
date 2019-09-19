@@ -99,6 +99,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
             listeners: {
                 click: {
                     fn: function (dataView, index, node, e) {
+                        var win; // Window to display the chart
                         this.tmpHpc = new CCR.xdmod.ui.HighChartPanel({
                             chartOptions: {
                                 chart: {
@@ -137,7 +138,12 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                                 proxy: new Ext.data.HttpProxy({
                                     method: 'POST',
                                     url: 'controllers/metric_explorer.php'
-                                })
+                                }),
+                                listeners: {
+                                    load: function () {
+                                        win.el.unmask();
+                                    }
+                                }
 
                             })
 
@@ -175,7 +181,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
 
                         this.tmpHpc.store.setBaseParam('operation', 'get_data');
 
-                        var win = new Ext.Window({
+                        win = new Ext.Window({
                             layout: 'fit',
                             width: 800,
                             height: 600,
@@ -187,7 +193,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                                 text: 'Open in Metric Explorer',
                                 handler: function () {
                                     win.destroy();
-                                    XDMoD.Module.MetricExplorer.setConfig(config, config.title, false);
+                                    XDMoD.Module.MetricExplorer.setConfig(config, config.title, true);
                                 }
                             }, {
                                 text: 'Close',
@@ -201,6 +207,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                                     if (viewer.el) {
                                         viewer.el.mask();
                                     }
+                                    win.el.mask('Loading...');
                                 },
                                 destroy: function () {
                                     var viewer = CCR.xdmod.ui.Viewer.getViewer();
