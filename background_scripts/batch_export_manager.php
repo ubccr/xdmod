@@ -13,6 +13,19 @@ use DataWarehouse\Export\BatchProcessor;
 ini_set('memory_limit', -1);
 
 try {
+    $lockFile = '/var/tmp/xdmod-batch-export.lock';
+    $lockFileHandle = @fopen($lockFile, 'w');
+
+    if ($lockFileHandle === false) {
+        fwrite(STDERR, sprintf("Failed to open lock file \"%s\": %s\n", $lockFile, error_get_last()));
+        exit(1);
+    }
+
+    if (!@flock($lockFileHandle, LOCK_EX | LOCK_NB)) {
+        fwrite(STDERR, "XDMoD Data Warehouse Batch Export not running due to another process holding the lock.\n");
+        exit(1);
+    }
+
     $help = false;
     $dryRun = false;
     $logLevel = -1;
@@ -76,6 +89,9 @@ try {
     $batchProcessor->processRequests();
     // NOTE: "process_end_time" is needed for the log summary.
     $logger->notice(['message' => 'batch_export_manager end', 'process_end_time' => date('Y-m-d H:i:s')]);
+    @flock($lockFileHandle, LOCK_UN);
+    @fclose($lockFileHandle);
+    @unlink($lockFile);
     exit;
 } catch (Exception $e) {
     // Write any unexpected exceptions directly to STDERR since they may not

@@ -93,8 +93,10 @@ class BatchProcessor extends Loggable
      */
     public function processRequests()
     {
-        $this->processSubmittedRequests();
+        // Delete removed and expiring files before creating new files.
+        $this->processDeletedRequests();
         $this->processExpiringRequests();
+        $this->processSubmittedRequests();
     }
 
     /**
@@ -211,6 +213,25 @@ class BatchProcessor extends Loggable
                 'stacktrace' => $e->getTraceAsString()
             ]);
         }
+    }
+
+    /**
+     * Process requests that have been deleted.
+     *
+     * If a request has been deleted then the associated data file needs to be
+     * removed from the file system.
+     */
+    private function processDeletedRequests()
+    {
+        $this->logger->info('Processing deleted requests');
+        $this->fileManager->removeDeletedRequests(
+            array_map(
+                function ($request) {
+                    return $request['id'];
+                },
+                $this->queryHandler->listAvailableRecords()
+            )
+        );
     }
 
     /**

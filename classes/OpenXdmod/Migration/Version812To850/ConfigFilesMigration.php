@@ -103,9 +103,14 @@ EOT
             'data_warehouse_export_export_directory' => '/var/spool/xdmod/export',
             'data_warehouse_export_retention_duration_days' => 30
         ]);
-
+        $data = parse_ini_file($this->portalSettingsPath, true);
+        $roadmapUrl = 'https://trello.com/embed/board?id=mdFESh6j';
+        if('https://trello.com/b/mdFESh6j.html' !== $data['roadmap']['url']){
+            $roadmapUrl = $data['roadmap']['url'];
+        }
         $this->writePortalSettingsFile(array_merge(
             ['features_user_dashboard' => $dashboard],
+            ['roadmap_url' => $roadmapUrl],
             $exportSettings
         ));
     }

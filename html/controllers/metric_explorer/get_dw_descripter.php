@@ -45,11 +45,15 @@ foreach ($roles as $activeRole) {
 
         foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups)
         {
+            $category = DataWarehouse::getCategoryForRealm($query_descripter_realm);
+            if ($category === null) {
+                continue;
+            }
             $seenstats = array();
 
             $realms[$query_descripter_realm] = array(
                 'text' => $query_descripter_realm,
-                'category' => DataWarehouse::getCategoryForRealm($query_descripter_realm),
+                'category' => $category,
                 'dimensions' => array(),
                 'metrics' => array(),
             );
