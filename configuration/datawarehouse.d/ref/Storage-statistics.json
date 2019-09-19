@@ -1,0 +1,10 @@
+{
+    "user_count": {
+        "formula": "COUNT(DISTINCT agg.person_id)",
+        "name": "User Count",
+        "description_html": "Number of ${ORGANIZATION_NAME} users with file system usage data.",
+        "unit": "Number of Users",
+        "precision": 0,
+        "order": 1
+    }
+}
