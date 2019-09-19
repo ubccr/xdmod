@@ -78,6 +78,11 @@ foreach ($roles as $activeRole) {
 
                     $statsObjects = $query_descripter->getStatisticsClasses($stats);
                     foreach ($statsObjects as $realm_group_by_statistic => $statistic_object) {
+
+                        if ( ! $statistic_object->showInMetricCatalog() ) {
+                            continue;
+                        }
+
                         $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
                             $query_descripter_realm,
                             $realm_group_by_statistic
