@@ -94,6 +94,9 @@ class RawDataset
                 if (isset($this->query_results[0]['timezone'])) {
                     $value = $this->formattime($value, $this->query_results[0]['timezone']);
                     $units = '';
+                } elseif (isset($this->query_results[0]['Timezone'])) {
+                    $value = $this->formattime($value, $this->query_results[0]['Timezone']);
+                    $units = '';
                 }
             }
 
