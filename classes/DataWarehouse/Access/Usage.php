@@ -108,7 +108,7 @@ class Usage extends Common
                     $userStatistic
                 );
 
-                if (in_array($errorstat, $realm->getStatisticNames()) ) {
+                if (in_array($errorstat, array_keys($realm->getStatisticNames())) ) {
                     $statUsageChartSettings['enable_errors'] = 'y';
                 }
                 $statUsageChartSettings['statistic'] = $userStatistic;
@@ -643,7 +643,7 @@ class Usage extends Common
                     $meRequest['data_series_unencoded'][0]['metric']
                 );
 
-                if (in_array($errorstat, $realm->getStatisticNames()) ) {
+                if (in_array($errorstat, array_keys($realm->getStatisticNames())) ) {
                     $usageChartSettings['enable_errors'] = 'y';
                 }
 
