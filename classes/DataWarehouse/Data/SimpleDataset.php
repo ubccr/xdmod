@@ -339,7 +339,7 @@ class SimpleDataset
 
         foreach ($stats as $stat) {
             $stat_unit  = $stat->getUnit();
-            $stat_alias = $stat->getAlias();
+            $stat_alias = $stat->getId();
 
             $data_unit = '';
             if (substr( $stat_unit, -1 ) == '%') {
@@ -374,13 +374,13 @@ class SimpleDataset
             $record = array();
             foreach ($group_bys as $group_by) {
                 $record[$group_by->getId()]
-                    = $result[$group_by->getLongNameColumnName(true)];
+                    = $result[ sprintf('%s_name', $group_by->getId()) ];
             }
 
             $stats = $this->_query->getStats();
             foreach ($stats as $stat) {
-                $record[$stat->getAlias()]
-                    = $result[$stat->getAlias()];
+                $record[$stat->getId()]
+                    = $result[$stat->getId()];
             }
 
             $rows[] = $record;
@@ -442,7 +442,7 @@ class SimpleDataset
 
             foreach ($stats as $stat) {
                 $stat_unit = $stat->getUnit();
-                $stat_alias = $stat->getAlias();
+                $stat_alias = $stat->getId();
 
                 $data_unit = '';
                 if (substr( $stat_unit, -1 ) == '%') {
@@ -485,13 +485,13 @@ class SimpleDataset
                 $record = array();
                 foreach ($group_bys as $group_by) {
                     $record[$group_by->getId()]
-                        = $result[$group_by->getLongNameColumnName(true)];
+                        = $result[ sprintf('%s_name', $group_by->getId()) ];
                 }
 
                 $stats = $this->_query->getStats();
                 foreach ($stats as $stat) {
-                    $record[$stat->getAlias()]
-                        =  $result[$stat->getAlias()];
+                    $record[$stat->getId()]
+                        =  $result[$stat->getId()];
                 }
 
                 $records[] = $record;

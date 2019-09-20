@@ -231,7 +231,7 @@ SQL;
             throw new \Exception('Timeseries: main_stat_field is null');
         }
 
-        $stat        = $this->_main_stat_field->getAlias();
+        $stat        = $this->_main_stat_field->getId();
         $stat_weight = $this->_main_stat_field->getWeightStatName();
 
         $sem_name = Realm::getStandardErrorStatisticFromStatistic(
