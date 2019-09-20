@@ -197,7 +197,19 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public static function getStandardErrorStatisticFromStatistic($realmId, $statisticId)
     {
+        $statisticId = static::normalizeStatisticId($realmId, $statisticId);
         return sprintf('%s_sem_%s', $realmId, substr($statisticId, strlen($realmId) + 1));
+    }
+
+    /**
+     * Statistic ids should start with the realm id, but in some cases due to historical code paths
+     * or test values they do not.  As a convenience, if the requested statistic does not start with
+     * the realm id, add it.
+     */
+
+    private static function normalizeStatisticId($realmId, $statisticId)
+    {
+        return ( 0 !== strpos($statisticId, $realmId) ? sprintf("%s_%s", $realmId, $statisticId) : $statisticId );
     }
 
     /**
@@ -596,13 +608,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function statisticExists($id)
     {
-        // As a convienence, if the requested statistic does not start with the realm id, add it
-        // here.
-
-        if ( 0 !== strpos($id, $this->id) ) {
-            $id = sprintf("%s_%s", $this->id, $id);
-        }
-
+        $id = static::normalizeStatisticId($this->id, $id);
         return isset($this->statisticConfigs->$id);
     }
 
@@ -685,12 +691,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObject($shortName)
     {
-        // As a convienence, if the requested statistic does not start with the realm id, add
-        // it.
-
-        if ( 0 !== strpos($shortName, $this->id) ) {
-            $shortName = sprintf("%s_%s", $this->id, $shortName);
-        }
+        $shortName = static::normalizeStatisticId($this->id, $shortName);
 
         if ( ! isset($this->statisticConfigs->$shortName) ) {
             $this->logAndThrowException(sprintf("No Statistic found with id '%s'", $shortName));
