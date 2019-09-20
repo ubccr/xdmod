@@ -58,6 +58,11 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->statisticExists('Jobs_job_count');
         $this->assertTrue($generated, "statisticExists('Jobs_job_count')");
 
+        // Test convenience function adding realm id to statistic id
+
+        $generated = $realm->statisticExists('job_count');
+        $this->assertTrue($generated, "statisticExists('job_count')");
+
         $generated = $realm->statisticExists('does_not_exist');
         $this->assertFalse($generated, "statistiExists('does_not_exist')");
     }
@@ -106,7 +111,17 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             sprintf('%s Number of Active Sessions (Number of Sessions)', ORGANIZATION_NAME),
             $obj->getName(),
-            'getName()'
+            'getStatisticObject(Cloud_num_sessions_running)'
+        );
+
+        // Test convenience function adding realm id to statistic id
+
+        $obj = $realm->getStatisticObject('num_sessions_running');
+
+        $this->assertEquals(
+            sprintf('%s Number of Active Sessions (Number of Sessions)', ORGANIZATION_NAME),
+            $obj->getName(),
+            'getStatisticObject(num_sessions_running)'
         );
     }
 
