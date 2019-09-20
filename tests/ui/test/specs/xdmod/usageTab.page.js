@@ -33,11 +33,11 @@ class Usage {
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';
         this.durationMenuItem = name => `${this.durationMenu}//li/a[./span[text()="${name}"]]`;
-        this.toolbarButtonByText = function(text) {
-            return `//div[contains(@class, "x-toolbar")]//button[contains(text(), "${text}")]`
+        this.toolbarButtonByText = function (text) {
+            return `//div[contains(@class, "x-toolbar")]//button[contains(text(), "${text}")]`;
         };
-        this.displayMenuItemByText = function(text) {
-            return `//div[@id='chart_config_menu_chart_toolbar_tg_usage']//span[contains(text(), '${text}')]//ancestor::li[contains(@class, 'x-menu-list-item')]`
+        this.displayMenuItemByText = function (text) {
+            return `//div[@id='chart_config_menu_chart_toolbar_tg_usage']//span[contains(text(), '${text}')]//ancestor::li[contains(@class, 'x-menu-list-item')]`;
         };
     }
 
@@ -203,7 +203,7 @@ class Usage {
     toolbarMenuItemIsEnabled(display) {
         var item = this.displayMenuItemByText(display);
         browser.waitForVisible(item);
-        return  !($(item).getAttribute('class').includes('x-item-disabled'));
+        return !($(item).getAttribute('class').includes('x-item-disabled'));
     }
 }
 module.exports = new Usage();

@@ -34,7 +34,7 @@ describe('Usage', function () {
 
                 // Check to make sure that the 'Std Err' display menu items are disabled.
                 browser.waitForLoadedThenClick(usg.toolbarButtonByText('Display'));
-                ['Std Err Bars', 'Std Err Labels'].forEach(function(menuLabel) {
+                ['Std Err Bars', 'Std Err Labels'].forEach(function (menuLabel) {
                     browser.waitForVisible(usg.displayMenuItemByText(menuLabel));
                     expect(usg.toolbarMenuItemIsEnabled(menuLabel)).to.equal(false);
                 });
@@ -45,13 +45,13 @@ describe('Usage', function () {
                 browser.waitUntilAnimEndAndClick(usg.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job'));
                 browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job: by System Username'));
             });
-            it('View CPU Hours: Per Job', function() {
+            it('View CPU Hours: Per Job', function () {
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'));
                 browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job'));
 
                 // Check to make sure that the 'Std Err' display menu items are disabled.
                 browser.waitForLoadedThenClick(usg.toolbarButtonByText('Display'));
-                ['Std Err Bars', 'Std Err Labels'].forEach(function(menuLabel) {
+                ['Std Err Bars', 'Std Err Labels'].forEach(function (menuLabel) {
                     browser.waitForVisible(usg.displayMenuItemByText(menuLabel));
                     expect(usg.toolbarMenuItemIsEnabled(menuLabel)).to.equal(true);
                 });
