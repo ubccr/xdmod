@@ -402,6 +402,11 @@ class MetricExplorer extends Common
 
         foreach ($jret as &$y) {
 
+            // Statistic ids are now prefixed with the realm id. Ensure this is the case when
+            // working with statistic names that were not queried from XDMoD, such as test data.
+
+            $y->metric = ( 0 !== strpos($y->metric, $y->realm) ? sprintf("%s_%s", $y->realm, $y->metric) : $y->metric );
+
             // Set values of new attribs for backward compatibility.
             if (!isset($y->line_type) || empty($y->line_type)) {
                 $y->line_type = 'Solid';
