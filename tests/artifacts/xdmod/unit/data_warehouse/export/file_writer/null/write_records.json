@@ -1,0 +1,29 @@
+{
+    "Single record with one element": [
+        [
+            [
+                "a"
+            ]
+        ]
+    ],
+    "Single record with two elements": [
+        [
+            [
+                "a",
+                "b"
+            ]
+        ]
+    ],
+    "Two records with two elements each": [
+        [
+            [
+                "a",
+                "b"
+            ],
+            [
+                "c",
+                "d"
+            ]
+        ]
+    ]
+}
