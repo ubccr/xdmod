@@ -143,10 +143,12 @@ class BatchProcessor extends Loggable
             $dataSet = $this->getDataSet($request, $user);
             $format = $this->dryRun ? 'null' : $request['export_file_format'];
             $dataFile = $this->fileManager->writeDataSetToFile($dataSet, $format);
-            $this->fileManager->createZipFile($dataFile, $request);
+            if (!$this->dryRun) {
+                $this->fileManager->createZipFile($dataFile, $request);
+            }
 
             // Delete file that was added to zip archive.
-            if (!unlink($dataFile)) {
+            if (!$this->dryRun && !unlink($dataFile)) {
                 $this->logger->err(sprintf(
                     'Failed to delete temporary data file "%s"',
                     $dataFile
