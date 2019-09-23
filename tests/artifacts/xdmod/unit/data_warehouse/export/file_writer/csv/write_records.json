@@ -1,0 +1,32 @@
+{
+    "Single record with one element": [
+        [
+            [
+                "a"
+            ]
+        ],
+        "a\n"
+    ],
+    "Single record with two elements": [
+        [
+            [
+                "a",
+                "b"
+            ]
+        ],
+        "a,b\n"
+    ],
+    "Two records with two elements each": [
+        [
+            [
+                "a",
+                "b"
+            ],
+            [
+                "c",
+                "d"
+            ]
+        ],
+        "a,b\nc,d\n"
+    ]
+}
