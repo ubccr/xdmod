@@ -319,9 +319,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'dataset_type_to_chart_display_type_map':
                     foreach ( $value as $datasetType => $chartType ) {
-                        if ( ! array_key_exists($queryType, $this->datasetTypeToChartDisplayTypeMap) ) {
+                        if ( ! array_key_exists($datasetType, $this->datasetTypeToChartDisplayTypeMap) ) {
                             $this->logger->warning(
-                                sprintf("Unsupported dataset type in '%s' for group by '%s': '%s'", $key, $datasetType, $this->id)
+                                sprintf("Unsupported dataset type in '%s' for group by '%s': '%s'", $key, $this->id, $datasetType)
                             );
                         }
                         // Set or overwrite query type defaults

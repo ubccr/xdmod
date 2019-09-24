@@ -60,7 +60,7 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      * group by id, short name, and name.
      */
 
-    public function testAggregateQueryNoGroupBy()
+    public function testAggregateQueryNoStatistic()
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -89,6 +89,42 @@ GROUP BY person.id
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query no statistic');
+    }
+
+    /**
+     * Create an aggregate query with a group by but no statistic. The select field will contain the
+     * group by id, short name, and name.
+     */
+
+    public function testAggregateQueryWithAlternateGroupByColumn()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31',
+            'username'
+        );
+
+        $generated = $query->getQueryString();
+        $expected  =<<<SQL
+SELECT
+  systemaccount.username as 'username_id',
+  systemaccount.username as 'username_short_name',
+  systemaccount.username as 'username_name',
+  systemaccount.username as 'username_order_id'
+FROM
+  modw_aggregates.jobfact_by_day agg,
+  modw.days duration,
+  modw.systemaccount systemaccount
+WHERE
+  duration.id = agg.day_id
+  AND agg.day_id between 201600357 and 201700001
+  AND systemaccount.id = agg.systemaccount_id
+GROUP BY systemaccount.username
+ORDER BY systemaccount.username ASC
+SQL;
+        $this->assertEquals($expected, $generated, 'Aggregate query with alternate group by column');
     }
 
     /**

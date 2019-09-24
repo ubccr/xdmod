@@ -157,6 +157,35 @@
                     ]
                 }
             },
+            "username": {
+                "name": "System Username",
+                "description_html": "The specific system username of the users who ran jobs.",
+                "attribute_table_schema": "modw",
+                "attribute_table": "systemaccount",
+                "order": 6,
+                "attribute_to_aggregate_table_key_map": [
+                    { "id": "systemaccount_id" }
+                ],
+                "alternate_group_by_columns": [
+                    "username"
+                ],
+                "attribute_values_query": {
+                    "records": {
+                        "id": "username",
+                        "short_name": "username",
+                        "name": "username",
+                        "order_id": "username"
+                    },
+                    "joins": [
+                        {
+                            "name": "systemaccount"
+                        }
+                    ],
+                    "orderby": [
+                        "username"
+                    ]
+                }
+            },
             "disabled_group_by": {
                 "#": "This group by is disabled and should not be considered at all",
                 "disabled": true,
