@@ -205,11 +205,24 @@ class Realm extends \CCR\Loggable implements iRealm
      * Statistic ids should start with the realm id, but in some cases due to historical code paths
      * or test values they do not.  As a convenience, if the requested statistic does not start with
      * the realm id, add it.
+     *
+     * @param string $realmId The short identifier for the realm
+     * @param string $statisticId The short identifier for the statistic to normalize
+     * @param Log|null $logger A Log instance that will be utilized during processing.
      */
 
-    private static function normalizeStatisticId($realmId, $statisticId)
+    private static function normalizeStatisticId($realmId, $statisticId, Logger $logger = null)
     {
-        return ( 0 !== strpos($statisticId, $realmId) ? sprintf("%s_%s", $realmId, $statisticId) : $statisticId );
+        $normalizedId = $statisticId;
+
+        if ( 0 !== strpos($statisticId, $realmId) ) {
+            $normalizedId = sprintf("%s_%s", $realmId, $statisticId);
+            if ( null !== $logger ) {
+                $logger->warning(sprintf("Normalizing statistic id '%s' to '%s'", $statisticId, $normalizedId));
+            }
+        }
+
+        return $normalizedId;
     }
 
     /**
@@ -515,7 +528,13 @@ class Realm extends \CCR\Loggable implements iRealm
                 'ORGANIZATION_NAME' => ORGANIZATION_NAME,
                 'ORGANIZATION_NAME_ABBREV' => ORGANIZATION_NAME_ABBREV,
                 'REALM_ID' => $this->id,
-                'REALM_NAME' => $this->name
+                'REALM_NAME' => $this->name,
+                'HIERARCHY_TOP_LEVEL_LABEL', HIERARCHY_TOP_LEVEL_LABEL,
+                'HIERARCHY_TOP_LEVEL_INFO', HIERARCHY_TOP_LEVEL_INFO,
+                'HIERARCHY_MIDDLE_LEVEL_LABEL', HIERARCHY_MIDDLE_LEVEL_LABEL,
+                'HIERARCHY_MIDDLE_LEVEL_INFO', HIERARCHY_MIDDLE_LEVEL_INFO,
+                'HIERARCHY_BOTTOM_LEVEL_LABEL', HIERARCHY_BOTTOM_LEVEL_LABEL,
+                'HIERARCHY_BOTTOM_LEVEL_INFO', HIERARCHY_BOTTOM_LEVEL_INFO
             ),
             $logger
         );
@@ -608,7 +627,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function statisticExists($id)
     {
-        $id = static::normalizeStatisticId($this->id, $id);
+        $id = static::normalizeStatisticId($this->id, $id, $this->logger);
         return isset($this->statisticConfigs->$id);
     }
 
@@ -691,7 +710,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     public function getStatisticObject($shortName)
     {
-        $shortName = static::normalizeStatisticId($this->id, $shortName);
+        $shortName = static::normalizeStatisticId($this->id, $shortName, $this->logger);
 
         if ( ! isset($this->statisticConfigs->$shortName) ) {
             $this->logAndThrowException(sprintf("No Statistic found with id '%s'", $shortName));
