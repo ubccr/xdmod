@@ -279,8 +279,14 @@ class RegressionTestHelper extends XdmodTestHelper
                 . $testReqData['statistic']
                 . '/';
 
+            /**
+             * the following string replace is used since statistic names are
+             * namespaced with `${REALM_NAME}_`.
+             * However, instead of renaming all of the test files we remove
+             * `${REALM_NAME}_` here to get the filename name
+             */
             $fullName
-                = $testName
+                = str_replace($testReqData['realm'] . '_', '', $testName)
                 . $testReqData['dataset_type']
                 . '-'
                 . $testReqData['aggregation_unit'];

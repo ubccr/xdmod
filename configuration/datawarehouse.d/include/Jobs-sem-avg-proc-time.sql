@@ -2,13 +2,17 @@ SQRT(
     COALESCE(
         (
             (
-                SUM(agg.sum_node_time_squared)
+                SUM(
+                    POW(agg.processor_count, 2)
+                    *
+                    agg.ended_job_count
+                )
                 /
                 SUM(agg.running_job_count)
             )
             -
             POW(
-                SUM(agg.node_time)
+                SUM(agg.processor_count * agg.running_job_count)
                 /
                 SUM(agg.running_job_count)
                 , 2
@@ -16,8 +20,6 @@ SQRT(
         )
         /
         SUM(agg.running_job_count)
-    , 0
+        , 0
     )
 )
-/
-3600.0

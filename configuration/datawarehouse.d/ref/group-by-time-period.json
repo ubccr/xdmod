@@ -81,8 +81,8 @@
                 "id": "id",
                 "#": "Note that we must alias the column when using SQL functions so that",
                 "#": "we can properly add the attribute table when constructing queries",
-                "short_name": "DATE_FORMAT(quarters.quarter_start, '%Y-%m')",
-                "name": "DATE_FORMAT(quarters.quarter_start, '%Y-%m')",
+                "short_name": "CONCAT(YEAR(quarters.quarter_start),' Q', CEIL(MONTH(quarters.quarter_start)/3))",
+                "name": "CONCAT(YEAR(quarters.quarter_start),' Q', CEIL(MONTH(quarters.quarter_start)/3))",
                 "start_ts": "quarter_start_ts"
             },
             "joins": [
@@ -113,8 +113,8 @@
                 "id": "id",
                 "#": "Note that we must alias the column when using SQL functions so that",
                 "#": "we can properly add the attribute table when constructing queries",
-                "short_name": "DATE_FORMAT(years.year_start, '%Y-%m')",
-                "name": "DATE_FORMAT(years.year_start, '%Y-%m')",
+                "short_name": "DATE_FORMAT(years.year_start, '%Y')",
+                "name": "DATE_FORMAT(years.year_start, '%Y')",
                 "start_ts": "year_start_ts"
             },
             "joins": [
