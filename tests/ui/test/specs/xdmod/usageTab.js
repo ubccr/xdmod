@@ -31,12 +31,30 @@ describe('Usage', function () {
                 browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
                 browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
                 usg.checkLegendText(expected.centerdirector.legend);
+
+                // Check to make sure that the 'Std Err' display menu items are disabled.
+                browser.waitForLoadedThenClick(usg.toolbarButtonByText('Display'));
+                ['Std Err Bars', 'Std Err Labels'].forEach(function (menuLabel) {
+                    browser.waitForVisible(usg.displayMenuItemByText(menuLabel));
+                    expect(usg.toolbarMenuItemIsEnabled(menuLabel)).to.equal(false);
+                });
             });
             it('View CPU Hours by System Username', function () {
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary'));
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs by System Username'));
                 browser.waitUntilAnimEndAndClick(usg.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job'));
                 browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job: by System Username'));
+            });
+            it('View CPU Hours: Per Job', function () {
+                browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'));
+                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job'));
+
+                // Check to make sure that the 'Std Err' display menu items are disabled.
+                browser.waitForLoadedThenClick(usg.toolbarButtonByText('Display'));
+                ['Std Err Bars', 'Std Err Labels'].forEach(function (menuLabel) {
+                    browser.waitForVisible(usg.displayMenuItemByText(menuLabel));
+                    expect(usg.toolbarMenuItemIsEnabled(menuLabel)).to.equal(true);
+                });
             });
         });
         logIn.logout();
