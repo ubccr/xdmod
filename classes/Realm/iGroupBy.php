@@ -264,10 +264,13 @@ interface iGroupBy
     public function getDefaultDatasetType();
 
     /**
+     * @param string $dataset_type The type of dataset that we are querying (e.g., timeseries or
+     *   aggregate).
+     *
      * @return string
      */
 
-    public function getDefaultDisplayType($dataset_type = null);
+    public function getDefaultDisplayType($dataset_type = 'timeseries');
 
     /**
      * @return string
