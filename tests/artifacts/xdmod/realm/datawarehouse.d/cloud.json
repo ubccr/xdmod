@@ -97,9 +97,14 @@
                 "attribute_to_aggregate_table_key_map": [
                     { "instance_type_id": "instance_type_id" }
                 ],
-                "dataset_type_to_chart_display_type_map": {
-                    "aggregate": "bar",
-                    "timeseries": "area"
+                "chart_options": {
+                    "dataset_display_type": {
+                        "aggregate": "bar",
+                        "timeseries": "area"
+                    },
+                    "dataset_type": "custom_dataset_type",
+                    "offset": 5,
+                    "show_legend": false
                 },
                 "order": 4,
                 "attribute_values_query": {
