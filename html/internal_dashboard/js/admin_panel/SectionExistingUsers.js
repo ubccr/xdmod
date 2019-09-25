@@ -784,7 +784,28 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             return false;
         };
 
+        /**
+         * Reverts the User Settings ( E-Mail Address, User Type, Map To, Institution ) to their original values.
+         */
+        var revertUserSettings = function () {
+            // eslint-disable-next-line no-use-before-define
+            var fieldValues = userSettings.getForm().getFieldValues();
+            for (var id in fieldValues) {
+                if (fieldValues.hasOwnProperty(id)) {
+                    var field = Ext.getCmp(id);
+
+                    // Only check a field if it's been rendered.
+                    if (field.rendered) {
+                        if (field.originalValue !== field.getValue()) {
+                            field.setValue(field.originalValue);
+                        }
+                    }
+                }
+            }
+        };
+
         self.resetDirtyState = function () {
+            revertUserSettings();
             roleGrid.setDirtyState(false);
         };
 

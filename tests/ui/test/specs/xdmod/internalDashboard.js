@@ -126,6 +126,104 @@ describe('Internal Dashboard', function () {
             expect(roles).to.equal('User');
         });
     });
+    describe('Make sure that updates to the newly created users Settings can be discarded', function () {
+        const settings = [
+            {
+                label: 'User Type',
+                type: 'text',
+                updated: 'Testing',
+                expected: 'External'
+            },
+            {
+                label: 'Map To',
+                type: 'text',
+                updated: 'Auk, Great',
+                expected: 'Unknown, Unknown'
+            },
+            {
+                label: 'Institution',
+                type: 'text',
+                updated: 'Unknown Organization',
+                expected: 'Screwdriver'
+            }
+        ];
+        settings.forEach(function (value) {
+            describe(`Checking: ${value.label}`, function () {
+                it('Select the "Existing Users" tab', function () {
+                    browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
+                    browser.waitAndClick(page.selectors.user_management.tabs.existing_users());
+                });
+                it('Ensure that the "Existing Users" table is displayed', function () {
+                    browser.waitForVisible(page.selectors.existing_users.table.container);
+                });
+                it('Double click the users row in the `Existing Users` table', function () {
+                    const usernameCol = page.selectors.existing_users.table.col_for_user('btest', 'Username');
+                    browser.waitForValue(usernameCol);
+                    browser.doubleClick(usernameCol);
+
+                    browser.waitForVisible(page.selectors.create_manage_users.window);
+                    browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                });
+                it(`Change the "${value.label}" to "${value.updated}"`, function () {
+                    const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
+                    browser.waitForVisible(inputTrigger);
+                    browser.click(inputTrigger);
+
+                    const inputDropDown = page.selectors.combo.container;
+                    browser.waitForVisible(inputDropDown);
+
+                    const dropDownValue = page.selectors.combo.itemByText(value.updated);
+                    browser.waitForVisible(dropDownValue);
+                    browser.waitAndClick(dropDownValue);
+
+                    browser.waitForInvisible(inputDropDown);
+
+                    const input = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
+                    const updatedValue = browser.getValue(input);
+                    expect(updatedValue).to.equal(value.updated);
+                });
+                it('Ensure that the user dirty message is shown', function () {
+                    const dirtyMessage = page.selectors.create_manage_users.bottom_bar.messageByText('unsaved changes');
+                    browser.waitForVisible(dirtyMessage);
+                });
+                it('Click the Close button', function () {
+                    const closeButton = page.selectors.create_manage_users.current_users.button('Close');
+                    browser.waitAndClick(closeButton);
+                });
+                it('Ensure that the Unsaved Changes modal is presented', function () {
+                    browser.waitForVisible(page.selectors.modal.containerByTitle('Unsaved Changes'));
+                });
+                it('Discard Changes', function () {
+                    const noButton = page.selectors.modal.buttonByText('Unsaved Changes', 'No');
+                    browser.waitForVisible(noButton);
+                    browser.click(noButton);
+
+                    // We expect that the modal dialog will disappear
+                    browser.waitForInvisible(page.selectors.modal.containerByTitle('Unsaved Changes'));
+                });
+                it('Edit the User again', function () {
+                    const usernameCol = page.selectors.existing_users.table.col_for_user('btest', 'Username');
+                    browser.waitForValue(usernameCol);
+                    browser.doubleClick(usernameCol);
+
+                    browser.waitForVisible(page.selectors.create_manage_users.window);
+                    browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                });
+                it(`Check that the ${value.label} is back to ${value.expected}`, function () {
+                    const userTypeInput = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
+
+                    browser.waitForVisible(userTypeInput);
+                    const userType = browser.getValue(userTypeInput);
+                    expect(userType).to.equal(value.expected);
+                });
+                it('Close the Edit Existing User Modal', function () {
+                    const closeButton = page.selectors.create_manage_users.current_users.button('Close');
+                    browser.waitForVisible(closeButton);
+                    browser.click(closeButton);
+                });
+            });
+        });
+    });
     describe('Remove the newly created User', function () {
         it('Ensure that were on the "Existing Users" tab', function () {
             browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
@@ -153,7 +251,7 @@ describe('Internal Dashboard', function () {
             browser.click(deleteUserItem);
         });
         it('Confirm the deletion of the user', function () {
-            const yesDelete = page.selectors.buttonInModalDialog('Delete User', 'Yes');
+            const yesDelete = page.selectors.modal.buttonByText('Delete User', 'Yes');
             browser.waitAndClick(yesDelete);
 
             const deleteNotification = page.selectors.deleteSuccessNotification('btest');
