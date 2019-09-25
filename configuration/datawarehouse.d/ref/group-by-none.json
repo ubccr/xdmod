@@ -19,5 +19,8 @@
                 "name": "dual"
             }
         ]
+    },
+    "chart_options": {
+        "dataset_type": "timeseries"
     }
 }
