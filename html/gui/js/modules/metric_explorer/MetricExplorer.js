@@ -2742,7 +2742,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             baseParams: {
                 'operation': 'get_dw_descripter'
-            }
+            },
+            listeners: {
+                exception: function (proxy, type, action, exception, response) {
+                    CCR.xdmod.ui.presentFailureResponse(response);
+                }
+           }
 
         }); //dwDescriptionStore
 
