@@ -83,7 +83,8 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
             'person' => 'User',
             'none' => 'None',
             'day' => 'Day',
-            'month' => 'Month'
+            'month' => 'Month',
+            'username' => 'System Username'
         );
         $this->assertEquals($expected, $generated, "getGroupByObjects('Jobs')");
 
@@ -305,5 +306,39 @@ SQL;
             }
             $this->assertEquals($expected, $generated, sprintf('Alternate GroupBy class does not match: %s', $message));
         }
+    }
+
+    /**
+     * (10) Test setting custom chart display types for datasets.
+     */
+
+    public function testCustomChartTypes()
+    {
+        $realm = Realm::factory('Cloud', self::$logger);
+        $obj = $realm->getGroupByObject('configuration');
+
+        $generated = $obj->getDefaultDisplayType();
+        $this->assertEquals($generated, 'area', 'getDefaultDisplayType()');
+
+        $generated = $obj->getDefaultDisplayType('timeseries');
+        $this->assertEquals($generated, 'area', 'getDefaultDisplayType(timeseries)');
+
+        $generated = $obj->getDefaultDisplayType('aggregate');
+        $this->assertEquals($generated, 'bar', 'getDefaultDisplayType(aggregate)');
+    }
+
+    /**
+     * (11) Test an unknown dataset type when querying the default chart display type for that
+     *      dataset.
+     *
+     * @expectedException Exception
+     */
+
+    public function testUnknownDatasetType()
+    {
+        $realm = Realm::factory('Cloud', self::$logger);
+        $obj = $realm->getGroupByObject('configuration');
+
+        $obj->getDefaultDisplayType('unknown_dataset_type');
     }
 }

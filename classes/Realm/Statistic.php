@@ -323,7 +323,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
     public function getHtmlNameAndDescription()
     {
-        return sprintf("<b>%s</b>: %s", $this->getName(false), $this->getHtmlDescription());
+        return sprintf("<b>%s</b>: %s", $this->getName(), $this->getHtmlDescription());
     }
 
     /**

@@ -83,6 +83,15 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $attributeToAggregateKeyMap = null;
 
     /**
+     * @var array A list of alternate group-by columns to be used in the generated SQL query. The
+     * list must contain one element for each key provided in the attribute to aggregate key map. In
+     * some cases, such as group by username, we will want to group by a value that is different
+     * than the attribute or aggregate keys.
+     */
+
+    protected $alternateGroupByColumns = array();
+
+    /**
      * @var DbQuery The Attribute Values Query provides a mechanism for the GroupBy class to
      *   enumerate a list of the current values for the dimensional attribute that it describes. This
      *   is constructed from the same JSON configuration object used by the ETL.
@@ -139,6 +148,17 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      */
 
     protected $isAggregationUnit = false;
+
+    /**
+     * @var array An associative array specifying the chart type to use for a given dataset type
+     *   when using this group by. The keys are the dataset type (e.g., aggregate or timeseries) and
+     *   the values are chart types. Note that the chart types are currently specific to HighCharts.
+     */
+
+    protected $datasetTypeToChartDisplayTypeMap = array(
+        'aggregate' => 'h_bar',
+        'timeseries' => 'line'
+    );
 
     /**
      * @var int PHP order specificaiton to determine how the query should sort results containing
@@ -213,16 +233,18 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
 
         $optionalConfigTypes = array(
+            'alternate_group_by_columns' => 'array',
             'attribute_description_query' => 'int',
             'attribute_filter_map_query' => 'object',
             'attribute_table_schema' => 'string',
-            'is_aggregation_unit' => 'bool',
             'available_for_drilldown' => 'bool',
             'category' => 'string',
             'data_sort_order' => 'string',
             'disabled' => 'bool',
+            'is_aggregation_unit' => 'bool',
             'module' => 'string',
-            'order' => 'int'
+            'order' => 'int',
+            'query_type_to_chart_display_type_map' => 'object',
         );
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
@@ -233,8 +255,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
         foreach ( $config as $key => $value ) {
             switch ($key) {
-                case 'is_aggregation_unit':
-                    $this->isAggregationUnit = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                case 'alternate_group_by_columns':
+                    $this->alternateGroupByColumns = $value;
                     break;
                 case 'attribute_table':
                     $this->attributeTableName = trim($value);
@@ -267,12 +289,14 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 case 'category':
                     $this->category = trim($value);
                     break;
+                case 'chart_display_type_map':
+                    break;
                 case 'data_sort_order':
                     // The sort order is specified in the JSON config file as the string
                     // representation of a PHP constant so convert it to an integer in order to
                     // properly use it. See https://php.net/manual/en/function.array-multisort.php
                     $sortOrder = null;
-                    eval('$sortOrder = $value');
+                    eval('$sortOrder = $value;');
                     $this->setSortOrder($sortOrder);
                     break;
                 case 'description_html':
@@ -280,6 +304,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'disabled':
                     $this->disabled = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    break;
+                case 'is_aggregation_unit':
+                    $this->isAggregationUnit = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 case 'module':
                     $this->moduleName = trim($value);
@@ -289,6 +316,17 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'order':
                     $this->order = filter_var($value, FILTER_VALIDATE_INT);
+                    break;
+                case 'dataset_type_to_chart_display_type_map':
+                    foreach ( $value as $datasetType => $chartType ) {
+                        if ( ! array_key_exists($datasetType, $this->datasetTypeToChartDisplayTypeMap) ) {
+                            $this->logger->warning(
+                                sprintf("Unsupported dataset type in '%s' for group by '%s': '%s'", $key, $this->id, $datasetType)
+                            );
+                        }
+                        // Set or overwrite query type defaults
+                        $this->datasetTypeToChartDisplayTypeMap[$datasetType] = $chartType;
+                    }
                     break;
                 default:
                     $this->logger->notice(
@@ -317,6 +355,33 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $this->attributeTableName,
             $this->attributeTableName
         );
+
+        // If alternate groupby columns have been proivided, ensure that there are the same number
+        // as the attribute to aggregate column map.
+
+        if ( 0 != count($this->alternateGroupByColumns) ) {
+            if ( count($this->alternateGroupByColumns) != count($this->attributeToAggregateKeyMap) ) {
+                $this->logAndThrowException(
+                    'Number of alternate group by columns does not match number of columns in attribute to aggregate key map'
+                );
+            } else {
+                // Ensure that the values are not empty (null or empty string)
+
+                $valid = array_reduce(
+                    $this->alternateGroupByColumns,
+                    function ($item, $carry) {
+                        return $carry && ! empty($item);
+                    },
+                    true
+                );
+
+                if ( ! $valid ) {
+                    $this->logAndThrowException(
+                        'All items in the alternate group by column list must non-null and non-empty'
+                    );
+                }
+            }
+        }
 
         $this->logger->debug(sprintf('Created %s', $this));
     }
@@ -763,17 +828,29 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             // Add a GroupBy and Where condition for each field that is part of the key that maps a
             // dimensional attribute to the aggregate table.
 
+            $mapIndex = 0;
+            $useAlternateGroupBy = (0 != count($this->alternateGroupByColumns));
+
             foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
                 $alias = $this->qualifyColumnName($attributeKey, true);
+                // Aggregation unit group bys use the date table rather than the attribute table
                 $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
-                $field = new TableField($tableObj, $attributeKey, $alias);
-                $query->addGroup($field);
-                $this->logger->trace(sprintf("%s Add GROUP BY '%s'", $this, $field));
+                $groupByField = new TableField(
+                    $tableObj,
+                    ($useAlternateGroupBy ? $this->alternateGroupByColumns[$mapIndex++] : $attributeKey),
+                    $alias
+                );
+                $query->addGroup($groupByField);
+                $this->logger->trace(sprintf("%s Add GROUP BY '%s'", $this, $groupByField));
 
                 // The aggregation unit where condition is already added by Query::setDuration()
 
                 if ( ! $this->isAggregationUnit ) {
-                    $where = new WhereCondition($field, '=', new TableField($query->getDataTable(), $aggregateKey));
+                    $where = new WhereCondition(
+                        new TableField($tableObj, $attributeKey),
+                        '=',
+                        new TableField($query->getDataTable(), $aggregateKey)
+                    );
                     $query->addWhereCondition($where);
                     $this->logger->trace(sprintf("%s Add WHERE condition '%s'", $this, $where));
                 }
@@ -1109,9 +1186,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see iGroupBy::getDefaultDisplayType()
      */
 
-    public function getDefaultDisplayType($dataset_type = null)
+    public function getDefaultDisplayType($dataset_type = 'timeseries')
     {
-        return ( 'aggregate' == $dataset_type ? 'h_bar' : 'line' );
+        if ( ! array_key_exists($dataset_type, $this->datasetTypeToChartDisplayTypeMap) ) {
+            $this->logAndThrowException(sprintf("Unsupported dataset type: '%s'", $dataset_type));
+        }
+        return $this->datasetTypeToChartDisplayTypeMap[$dataset_type];
     }
 
     /**

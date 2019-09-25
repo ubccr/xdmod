@@ -92,7 +92,8 @@ class RealmTest extends \PHPUnit_Framework_TestCase
             'day' => 'Day',
             'resource' => 'Resource',
             'person' => 'User',
-            'month' => 'Month'
+            'month' => 'Month',
+            'username' => 'System Username'
         );
         $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_ORDER)");
 
@@ -102,7 +103,8 @@ class RealmTest extends \PHPUnit_Framework_TestCase
             'none' => 'None',
             'person' => 'User',
             'resource' => 'Resource',
-            'month' => 'Month'
+            'month' => 'Month',
+            'username' => 'System Username'
         );
         $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_SHORT_ID)");
 
@@ -112,6 +114,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
             'month' => 'Month',
             'none' => 'None',
             'resource' => 'Resource',
+            'username' => 'System Username',
             'person' => 'User'
         );
         $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_NAME)");
@@ -162,7 +165,8 @@ class RealmTest extends \PHPUnit_Framework_TestCase
             'none-None',
             'day-Day',
             'month-Month',
-            'resource-Resource'
+            'resource-Resource',
+            'username-System Username'
         );
         $this->assertEquals($expected, $generated, "getDrillTargets('person')");
 

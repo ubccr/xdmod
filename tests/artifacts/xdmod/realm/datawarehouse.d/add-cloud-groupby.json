@@ -10,6 +10,9 @@
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "systemaccount_id" }
                 ],
+                "alternate_group_by_columns": [
+                    "username"
+                ],
                 "module": "cloud",
                 "order": 5,
                 "attribute_values_query": {
