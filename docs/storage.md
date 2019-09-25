@@ -25,7 +25,8 @@ installed from source they will need to be adjusted accordingly.
 
 ## Input Format
 
-Storage data must be formatted in JSON files.  These files will be validated
+Storage data must be formatted in JSON files and these files must use the
+`.json` file extension (e.g. `2019-01-01.json`).  These files will be validated
 against the JSON Schema
 `/etc/xdmod/etl/etl_schemas.d/storage/usage.schema.json`.
 
