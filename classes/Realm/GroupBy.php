@@ -150,6 +150,35 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $isAggregationUnit = false;
 
     /**
+     * @var array An associative array specifying chart defaults where the key is the chart property
+     *   and the value is a property value which may be specific to HighCharts. Note that "y" and
+     *   "n" are used rather than true and false to ensure that existing code does not break.
+     */
+
+    protected $chartOptions = array(
+        'combine_method' => 'stack',
+        'dataset_display_type' => array(
+            'aggregate' => 'h_bar',
+            'timeseries' => 'line'
+        ),
+        'dataset_type' => 'aggregate',
+        'enable_errors' => 'y',
+        'enable_trend_line' => 'y',
+        'limit' => array(
+            'multichart_page' => 3,
+            'default' => 10
+        ),
+        'log_scale' => 'n',
+        'offset' => 0,
+        'show_aggregate_labels' => 'n',
+        'show_error_bars' => 'n',
+        'show_error_labels' => 'n',
+        'show_guide_lines' => 'y',
+        'show_legend' => 'y',
+        'show_trend_line' => 'n'
+    );
+
+    /**
      * @var array An associative array specifying the chart type to use for a given dataset type
      *   when using this group by. The keys are the dataset type (e.g., aggregate or timeseries) and
      *   the values are chart types. Note that the chart types are currently specific to HighCharts.
@@ -239,12 +268,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             'attribute_table_schema' => 'string',
             'available_for_drilldown' => 'bool',
             'category' => 'string',
+            'chart_options' => 'object',
             'data_sort_order' => 'string',
             'disabled' => 'bool',
             'is_aggregation_unit' => 'bool',
             'module' => 'string',
-            'order' => 'int',
-            'query_type_to_chart_display_type_map' => 'object',
+            'order' => 'int'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
@@ -289,6 +318,81 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 case 'category':
                     $this->category = trim($value);
                     break;
+                case 'chart_options':
+                    foreach ( $value as $optionKey => $optionValue ) {
+                        if ( ! array_key_exists($optionKey, $this->chartOptions) ) {
+                            $this->logger->warning(
+                                sprintf("Unsupported option in '%s' for group by '%s': '%s'", $key, $this->id, $optionKey)
+                            );
+                            continue;
+                        }
+                        // Enable special handling of various options
+                        switch ($optionKey) {
+                            case 'enable_errors':
+                            case 'enable_trend_line':
+                            case 'log_scale':
+                            case 'show_aggregate_labels':
+                            case 'show_error_bars':
+                            case 'show_error_labels':
+                            case 'show_guide_lines':
+                            case 'show_legend':
+                            case 'show_trend_line':
+                                // For historical reasons, use 'y' and 'n' as boolean values. This
+                                // may be able to be changed to true/false in the future.
+                                $this->chartOptions[$optionKey] = (
+                                    filter_var($optionValue, FILTER_VALIDATE_BOOLEAN)
+                                    ? 'y'
+                                    : 'n'
+                                );
+                                break;
+                            case 'offset':
+                                $this->chartOptions[$optionKey] = filter_var($optionValue, FILTER_VALIDATE_INT);
+                                break;
+                            case 'dataset_display_type':
+                                if ( ! is_object($optionValue) ) {
+                                    continue;
+                                }
+                                foreach ($optionValue as $datasetType => $chartDisplayValue ) {
+                                    if ( ! array_key_exists($datasetType, $this->chartOptions[$optionKey]) ) {
+                                        $this->logger->warning(
+                                            sprintf("Unsupported dataset type in '%s' for group by '%s': '%s'", $optionKey, $this->id, $datasetType)
+                                        );
+                                        continue;
+                                    }
+                                    $this->chartOptions[$optionKey][$datasetType] = $chartDisplayValue;
+                                }
+                                break;
+                            case 'limit':
+                                if ( ! is_object($optionValue) ) {
+                                    continue;
+                                }
+                                foreach ($optionValue as $pageType => $limitValue ) {
+                                    if ( ! array_key_exists($pageType, $this->chartOptions[$optionKey]) ) {
+                                        $this->logger->warning(
+                                            sprintf("Unsupported page type in '%s' for group by '%s': '%s'", $optionKey, $this->id, $pageType)
+                                        );
+                                        continue;
+                                    }
+                                    $this->chartOptions[$optionKey][$pageType] = $limitValue;
+                                }
+                                break;
+                            default:
+                                if ( ! array_key_exists($optionKey, $this->chartOptions) ) {
+                                    $this->logger->notice(
+                                        sprintf(
+                                            "Unknown key in chart_defaults for realm '%s' group by '%s': '%s'",
+                                            $this->realm->getName(),
+                                            $this->id,
+                                            $optionKey
+                                        )
+                                    );
+                                } else {
+                                    $this->chartOptions[$optionKey] = $optionValue;
+                                }
+                                break;
+                        }
+                    }
+                    break;
                 case 'chart_display_type_map':
                     break;
                 case 'data_sort_order':
@@ -316,17 +420,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'order':
                     $this->order = filter_var($value, FILTER_VALIDATE_INT);
-                    break;
-                case 'dataset_type_to_chart_display_type_map':
-                    foreach ( $value as $datasetType => $chartType ) {
-                        if ( ! array_key_exists($datasetType, $this->datasetTypeToChartDisplayTypeMap) ) {
-                            $this->logger->warning(
-                                sprintf("Unsupported dataset type in '%s' for group by '%s': '%s'", $key, $this->id, $datasetType)
-                            );
-                        }
-                        // Set or overwrite query type defaults
-                        $this->datasetTypeToChartDisplayTypeMap[$datasetType] = $chartType;
-                    }
                     break;
                 default:
                     $this->logger->notice(
@@ -1179,7 +1272,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultDatasetType()
     {
-        return ( $this->isAggregationUnit && 'none' == $this->id ? 'timeseries' : 'aggregate' );
+        return $this->chartOptions['dataset_type'];
     }
 
     /**
@@ -1188,10 +1281,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultDisplayType($dataset_type = 'timeseries')
     {
-        if ( ! array_key_exists($dataset_type, $this->datasetTypeToChartDisplayTypeMap) ) {
+        if ( ! array_key_exists($dataset_type, $this->chartOptions['dataset_display_type']) ) {
             $this->logAndThrowException(sprintf("Unsupported dataset type: '%s'", $dataset_type));
         }
-        return $this->datasetTypeToChartDisplayTypeMap[$dataset_type];
+        return $this->chartOptions['dataset_display_type'][$dataset_type];
     }
 
     /**
@@ -1200,7 +1293,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultCombineMethod()
     {
-        return 'stack';
+        return $this->chartOptions['combine_method'];
     }
 
     /**
@@ -1209,7 +1302,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultShowLegend()
     {
-        return 'y';
+        return $this->chartOptions['show_legend'];
     }
 
     /**
@@ -1218,7 +1311,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultLimit($isMultiChartPage = false)
     {
-        return ( $isMultiChartPage ? 3 : 10 );
+        $pageType = ( $isMultiChartPage ? 'multichart_page' : 'default' );
+        return $this->chartOptions['limit'][$pageType];
     }
 
     /**
@@ -1227,7 +1321,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultOffset()
     {
-        return 0;
+        return $this->chartOptions['offset'];
     }
 
     /**
@@ -1236,7 +1330,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultLogScale()
     {
-        return 'n';
+        return $this->chartOptions['log_scale'];
     }
 
     /**
@@ -1245,7 +1339,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultShowTrendLine()
     {
-        return 'n';
+        return $this->chartOptions['show_trend_line'];
     }
 
     /**
@@ -1254,7 +1348,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultShowErrorBars()
     {
-        return 'n';
+        return $this->chartOptions['show_error_bars'];
     }
 
     /**
@@ -1263,7 +1357,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultShowGuideLines()
     {
-        return 'y';
+        return $this->chartOptions['show_guide_lines'];
     }
 
     /**
@@ -1272,7 +1366,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultShowAggregateLabels()
     {
-        return 'n';
+        return $this->chartOptions['show_aggregate_labels'];
     }
 
     /**
@@ -1281,7 +1375,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultShowErrorLabels()
     {
-        return 'n';
+        return $this->chartOptions['show_error_labels'];
     }
 
     /**
@@ -1290,7 +1384,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultEnableErrors()
     {
-        return 'y';
+        return $this->chartOptions['enable_errors'];
     }
 
     /**
@@ -1299,7 +1393,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getDefaultEnableTrendLine()
     {
-        return 'y';
+        return $this->chartOptions['enable_trend_line'];
     }
 
     /**

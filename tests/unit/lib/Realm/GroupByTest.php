@@ -341,4 +341,30 @@ SQL;
 
         $obj->getDefaultDisplayType('unknown_dataset_type');
     }
+
+    /**
+     * (12) Test custom group by chart options by testing one of each type of value.
+     */
+
+    public function testCustomChartOptions()
+    {
+        $realm = Realm::factory('Cloud', self::$logger);
+        $obj = $realm->getGroupByObject('configuration');
+
+        // String
+        $generated = $obj->getDefaultDatasetType();
+        $this->assertEquals($generated, 'custom_dataset_type', 'getDefaultDatasetType()');
+
+        // Object
+        $generated = $obj->getDefaultDisplayType('aggregate');
+        $this->assertEquals($generated, 'bar', 'getDefaultDisplayType()');
+
+        // Integer
+        $generated = $obj->getDefaultOffset();
+        $this->assertEquals($generated, 5, 'getDefaultCombineMethod()');
+
+        // Boolean
+        $generated = $obj->getDefaultShowLegend();
+        $this->assertEquals($generated, 'n', 'getDefaultShowLegend()');
+    }
 }
