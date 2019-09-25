@@ -179,9 +179,11 @@
             }
         },
         "category": "Administrative",
-        "dataset_type_to_chart_display_type_map": {
-            "aggregate": "pie",
-            "timeseries": "line"
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "pie",
+                "timeseries": "line"
+            }
         },
         "description_html": "${HIERARCHY_TOP_LEVEL_INFO}",
         "name": "${HIERARCHY_TOP_LEVEL_LABEL}"
