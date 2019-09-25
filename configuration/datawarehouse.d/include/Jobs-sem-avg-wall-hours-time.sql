@@ -2,13 +2,13 @@ SQRT(
     COALESCE(
         (
             (
-                SUM(agg.sum_node_time_squared)
+                SUM(COALESCE(agg.sum_wallduration_squared, 0.0))
                 /
                 SUM(agg.running_job_count)
             )
             -
             POW(
-                SUM(agg.node_time)
+                SUM(COALESCE(agg.wallduration, 0))
                 /
                 SUM(agg.running_job_count)
                 , 2
@@ -16,7 +16,7 @@ SQRT(
         )
         /
         SUM(agg.running_job_count)
-    , 0
+        , 0
     )
 )
 /

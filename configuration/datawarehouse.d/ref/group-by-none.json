@@ -1,6 +1,6 @@
 {
     "name": "${ORGANIZATION_NAME}",
-    "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database (excludes non-${ORGANIZATION_NAME} usage).",
+    "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database.",
     "attribute_table_schema": "modw",
     "attribute_table": "dual",
     "available_for_drilldown": false,
@@ -19,5 +19,8 @@
                 "name": "dual"
             }
         ]
+    },
+    "chart_options": {
+        "dataset_type": "timeseries"
     }
 }

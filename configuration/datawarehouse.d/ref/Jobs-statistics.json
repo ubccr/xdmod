@@ -1,116 +1,237 @@
 {
+    "active_person_count": {
+        "description_html": "The total number of users that used ${ORGANIZATION_NAME} resources.",
+        "formula": "COUNT(DISTINCT(agg.person_id))",
+        "name": "Number of Users: Active",
+        "precision": 0,
+        "unit": "Number of Users"
+    },
+    "active_pi_count": {
+        "description_html": "The total number of PIs that used ${ORGANIZATION_NAME} resources.",
+        "formula": "COUNT(DISTINCT(agg.principalinvestigator_person_id))",
+        "name": "Number of PIs: Active",
+        "precision": 0,
+        "unit": "Number of PIs"
+    },
+    "active_resource_count": {
+        "description_html": "The total number of active ${ORGANIZATION_NAME} resources.",
+        "formula": "COUNT(DISTINCT(agg.task_resource_id))",
+        "name": "Number of Resources: Active",
+        "precision": 0,
+        "unit": "Number of Resources"
+    },
+    "avg_cpu_hours": {
+        "aggregate_formula": "COALESCE(SUM(agg.cpu_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
+        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "name": "CPU Hours: Per Job",
+        "precision": 2,
+        "timeseries_formula": "COALESCE(SUM(agg.cpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
+        "unit": "CPU Hour"
+    },
+    "avg_job_size_weighted_by_cpu_hours": {
+        "description_html": "The average ${ORGANIZATION_NAME} job size weighted by CPU Hours. Defined as <br><i>Average Job Size Weighted By CPU Hours: </i> sum(i = 0 to n){ job i core count * job i cpu hours}/sum(i =  0 to n){job i cpu hours}",
+        "formula": "COALESCE(SUM(agg.processor_count * agg.cpu_time) / SUM(agg.cpu_time),0)",
+        "name": "Job Size: Weighted By CPU Hours",
+        "precision": 2,
+        "unit": "Core Count"
+    },
+    "avg_node_hours": {
+        "aggregate_formula": "COALESCE(SUM(agg.node_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
+        "description_html": "The average node hours (number of nodes x wall time hours) per ${ORGANIZATION_NAME} job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "name": "Node Hours: Per Job",
+        "precision": 2,
+        "timeseries_formula": "COALESCE(SUM(agg.node_time) / SUM(agg.running_job_count), 0) / 3600.0",
+        "unit": "Node Hour"
+    },
+    "avg_processors": {
+        "aggregate_formula": "COALESCE(SUM(agg.processor_count * CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
+        "description_html": "TThe average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+        "name": "Job Size: Per Job",
+        "precision": 2,
+        "timeseries_formula": "COALESCE(SUM(agg.processor_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
+        "unit": "Core Count"
+    },
+    "avg_waitduration_hours": {
+        "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits before execution on the designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
+        "formula": "COALESCE(SUM(agg.waitduration)/SUM(agg.started_job_count),0)/3600.0",
+        "name": "Wait Hours: Per Job",
+        "precision": 2,
+        "unit": "Hour"
+    },
+    "avg_wallduration_hours": {
+        "aggregate_formula": "COALESCE(SUM(agg.wallduration)/SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END),0)/3600.0",
+        "description_html": "The average time, in hours, a job takes to execute.<br/>In timeseries view mode, the statistic shows the average wall time per job per time period. In aggregate view mode the statistic only includes the job wall hours between the defined time range. The wall hours outside the time range are not included in the calculation.<br /> <i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.",
+        "name": "Wall Hours: Per Job",
+        "precision": 2,
+        "timeseries_formula": "COALESCE(SUM(agg.wallduration)/SUM(agg.running_job_count),0)/3600.0",
+        "unit": "Hour"
+    },
+    "expansion_factor": {
+        "description_html": "The average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+        "formula": "COALESCE(SUM(agg.sum_weighted_expansion_factor)/SUM(agg.sum_job_weights),0)",
+        "name": "User Expansion Factor",
+        "precision": 0,
+        "unit": "User Expansion Factor"
+    },
     "job_count": {
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that ended within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
         "formula": "COALESCE(SUM(agg.ended_job_count), 0)",
         "name": "Number of Jobs Ended",
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that ended within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
-        "unit": "Number of Jobs",
         "precision": 0,
-        "order": 2
+        "unit": "Number of Jobs"
+    },
+    "max_processors": {
+        "description_html": "The maximum size ${ORGANIZATION_NAME} job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.",
+        "formula": "COALESCE( MAX( CASE WHEN agg.processor_count = 0 THEN NULL ELSE agg.processor_count END), 0)",
+        "name": "Job Size: Max",
+        "precision": 0,
+        "unit": "Core Count"
+    },
+    "min_processors": {
+        "description_html": "The minimum size ${ORGANIZATION_NAME} job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.",
+        "formula": "COALESCE( MIN( CASE WHEN agg.processor_count = 0 THEN NULL ELSE agg.processor_count END), 0)",
+        "name": "Job Size: Min",
+        "precision": 0,
+        "unit": "Core Count"
+    },
+    "normalized_avg_processors": {
+        "aggregate_formula": {
+            "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-agg.sql"
+        },
+        "description_html": "The percentage average size ${ORGANIZATION_NAME} job over total machine cores.<br><i>Normalized Job Size: </i>The percentage total number of processor cores used by a (parallel) job over the total number of cores on the machine.",
+        "name": "Job Size: Normalized",
+        "precision": 2,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-time.sql"
+        },
+        "unit": "% of Total Cores"
     },
     "running_job_count": {
         "#": "Support different formulas for aggregate and timeseries queries",
-        "timeseries_formula": "SUM(agg.running_job_count)",
         "aggregate_formula": "COALESCE(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
-        "name": "Number of Running Jobs",
         "description_html": "The total number of ${ORGANIZATION_NAME} jobs that are running.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
-        "unit": "Number of Jobs",
+        "name": "Number of Jobs Running",
         "precision": 0,
-        "order": 1
-    },
-    "started_job_count": {
-        "formula": "COALESCE(SUM(agg.started_job_count), 0)",
-        "name": "Number of Jobs Started",
-        "unit": "Number of Jobs",
-        "precision": 0,
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that started executing within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
-    },
-    "submitted_job_count": {
-        "formula": "COALESCE(SUM(agg.submitted_job_count), 0)",
-        "name": "Number of Jobs Submitted",
-        "unit": "Number of Jobs",
-        "precision": 0,
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that submitted/queued within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
-    },
-    "active_person_count": {
-        "formula": "COUNT(DISTINCT(agg.person_id))",
-        "name": "Number of Users: Active",
-        "unit": "Number of Users",
-        "precision": 0,
-        "description_html": "The total number of users that used ${ORGANIZATION_NAME} resources."
-    },
-    "active_pi_count": {
-        "formula": "COUNT(DISTINCT(agg.principalinvestigator_person_id))",
-        "name": "Number of PIs: Active",
-        "unit": "Number of PIs",
-        "precision": 0,
-        "description_html": "The total number of PIs that used ${ORGANIZATION_NAME} resources."
-    },
-    "total_cpu_hours": {
-        "formula": "COALESCE(SUM(agg.cpu_time),0)/3600.0",
-        "name": "CPU Hours: Total",
-        "unit": "CPU Hour",
-        "precision": 2,
-        "description_html": "The total CPU hours (number of CPU cores x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br /><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
-    },
-    "total_waitduration_hours": {
-        "formula": "COALESCE(SUM(agg.waitduration),0)/3600.0",
-        "name": "Wait Hours: Total",
-        "unit": "Hour",
-        "precision": 2,
-        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs waited before execution on their designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute."
-    },
-    "total_node_hours": {
-        "formula": "COALESCE(SUM(agg.node_time),0)/3600.0",
-        "name": "Node Hours: Total",
-        "unit": "Node Hour",
-        "precision": 2,
-        "description_html": "The total node hours (number of nodes x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
-    },
-    "total_wallduration_hours": {
-        "formula": "COALESCE(SUM(agg.wallduration),0)/3600.0",
-        "name": "Wall Hours: Total",
-        "unit": "Hour",
-        "precision": 2,
-        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs took to execute.<br/><i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
-    },
-    "avg_cpu_hours": {
-        "timeseries_formula": "COALESCE(SUM(agg.cpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
-        "aggregate_formula": "COALESCE(SUM(agg.cpu_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
-        "name": "CPU Hours: Per Job",
-        "unit": "CPU Hour",
-        "precision": 2,
-        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
+        "timeseries_formula": "SUM(agg.running_job_count)",
+        "unit": "Number of Jobs"
     },
     "sem_avg_cpu_hours": {
-        "timeseries_formula": {
-            "$include": "datawarehouse.d/include/Jobs-sem-avg-cpu-hours-time.sql"
-        },
         "aggregate_formula": {
             "$include": "datawarehouse.d/include/Jobs-sem-avg-cpu-hours-agg.sql"
         },
+        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
         "name": "Std Dev: CPU Hours: Per Job",
-        "unit": "CPU Hour",
         "precision": 2,
-        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
-    },
-    "avg_node_hours": {
-        "timeseries_formula": "COALESCE(SUM(agg.node_time) / SUM(agg.running_job_count), 0) / 3600.0",
-        "aggregate_formula": "COALESCE(SUM(agg.node_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
-        "name": "Node Hours: Per Job",
-        "unit": "Node Hour",
-        "precision": 2,
-        "description_html": "The average node hours (number of nodes x wall time hours) per ${ORGANIZATION_NAME} job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
+        "show_in_catalog": false,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-cpu-hours-time.sql"
+        },
+        "unit": "CPU Hour"
     },
     "sem_avg_node_hours": {
-        "timeseries_formula": {
-            "$include": "datawarehouse.d/include/Jobs-sem-avg-node-hours-time.sql"
-        },
         "aggregate_formula": {
             "$include": "datawarehouse.d/include/Jobs-sem-avg-node-hours-agg.sql"
         },
+        "description_html": "The standard error of the average node hours by each ${ORGANIZATION_NAME} job.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "name": "Std Dev: Node Hours: Per Job",
-        "unit": "Node Hour",
         "precision": 2,
-        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment."
+        "show_in_catalog": false,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-node-hours-time.sql"
+        },
+        "unit": "Node Hour"
+    },
+    "sem_avg_processors": {
+        "aggregate_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-proc-agg.sql"
+        },
+        "description_html": "The standard error of the average size ${ORGANIZATION_NAME} job in number of cores. <br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
+        "name": "Std Dev: Job Size: Per Job",
+        "precision": 2,
+        "show_in_catalog": false,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-proc-time.sql"
+        },
+        "unit": "Core Count"
+    },
+    "sem_avg_waitduration_hours": {
+        "aggregate_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wait-hours-agg.sql"
+        },
+        "description_html": "The standard error of the average time, in hours, an ${ORGANIZATION_NAME} job had to wait until it began to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
+        "name": "Std Dev: Wait Hours: Per Job",
+        "precision": 2,
+        "show_in_catalog": false,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wait-hours-time.sql"
+        },
+        "unit": "Hour"
+    },
+    "sem_avg_wallduration_hours": {
+        "aggregate_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wall-hours-agg.sql"
+        },
+        "description_html": "The standard error of the average time each ${ORGANIZATION_NAME} job took to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
+        "name": "Std Dev: Wall Hours: Per Job",
+        "precision": 2,
+        "show_in_catalog": false,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wall-hours-time.sql"
+        },
+        "unit": "Hour"
+    },
+    "started_job_count": {
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that started executing within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "formula": "COALESCE(SUM(agg.started_job_count), 0)",
+        "name": "Number of Jobs Started",
+        "precision": 0,
+        "unit": "Number of Jobs"
+    },
+    "submitted_job_count": {
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that submitted/queued within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "formula": "COALESCE(SUM(agg.submitted_job_count), 0)",
+        "name": "Number of Jobs Submitted",
+        "precision": 0,
+        "unit": "Number of Jobs"
+    },
+    "total_cpu_hours": {
+        "description_html": "The total CPU hours (number of CPU cores x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br /><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "formula": "COALESCE(SUM(agg.cpu_time),0)/3600.0",
+        "name": "CPU Hours: Total",
+        "precision": 2,
+        "unit": "CPU Hour"
+    },
+    "total_node_hours": {
+        "description_html": "The total node hours (number of nodes x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "formula": "COALESCE(SUM(agg.node_time),0)/3600.0",
+        "name": "Node Hours: Total",
+        "precision": 2,
+        "unit": "Node Hour"
+    },
+    "total_waitduration_hours": {
+        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs waited before execution on their designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
+        "formula": "COALESCE(SUM(agg.waitduration),0)/3600.0",
+        "name": "Wait Hours: Total",
+        "precision": 2,
+        "unit": "Hour"
+    },
+    "total_wallduration_hours": {
+        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs took to execute.<br/><i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "formula": "COALESCE(SUM(agg.wallduration),0)/3600.0",
+        "name": "Wall Hours: Total",
+        "precision": 2,
+        "unit": "Hour"
+    },
+    "utilization": {
+        "aggregate_formula": {
+            "$include": "datawarehouse.d/include/Jobs-util-agg.sql"
+        },
+        "description_html": "The percentage of the ${ORGANIZATION_NAME} obligation of a resource that has been utilized by ${ORGANIZATION_NAME} jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by ${ORGANIZATION_NAME} jobs over a given time period divided by the total CPU hours that the system is contractually required to provide to ${ORGANIZATION_NAME} during that period. It does not include non-${ORGANIZATION_NAME} jobs.<br/>It is worth noting that this value is a rough estimate in certain cases where the resource providers don't provide accurate records of their system specifications, over time.",
+        "name": "${ORGANIZATION_NAME} Utilization",
+        "precision": 2,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-util-time.sql"
+        },
+        "unit": "%"
     }
 }
