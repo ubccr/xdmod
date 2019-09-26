@@ -183,7 +183,8 @@
             "dataset_display_type": {
                 "aggregate": "pie",
                 "timeseries": "line"
-            }
+            },
+            "show_aggregate_labels": true
         },
         "description_html": "${HIERARCHY_TOP_LEVEL_INFO}",
         "name": "${HIERARCHY_TOP_LEVEL_LABEL}"
