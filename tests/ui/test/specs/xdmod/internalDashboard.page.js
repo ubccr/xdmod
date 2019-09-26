@@ -103,6 +103,9 @@ class InternalDashboard {
                     },
                     create_user: function () {
                         return `${self.selectors.create_manage_users.window}//button[contains(@class, "admin_panel_btn_create_user")]`;
+                    },
+                    save_changes: function () {
+                        return `${self.selectors.create_manage_users.window}//button[contains(text(), "Save Changes")]`;
                     }
                 },
                 current_users: {
@@ -125,8 +128,17 @@ class InternalDashboard {
                         deleteUser: {
                             container: '//div[contains(@class, "delete_user") and contains(@class, "x-window")]',
                             button: function (text) {
-                                return `${self.selectors.modalDiaglogByTitle('Delete User')}//button[.="${text}"]`;
+                                return `${self.selectors.modal.containerByTitle('Delete User')}//button[.="${text}"]`;
                             }
+                        }
+                    },
+                    settings: {
+                        container: '//div[@id="admin_panel_user_editor"]',
+                        inputByLabelText: function (labelText, inputType) {
+                            return `${self.selectors.create_manage_users.current_users.settings.container}//label[contains(text(), "${labelText}")]/parent::*//input[@type="${inputType}"]`;
+                        },
+                        inputTriggerByLabelText: function (labelText) {
+                            return `${self.selectors.create_manage_users.current_users.settings.container}//label[contains(text(), "${labelText}")]/parent::*//img[contains(@class, "x-form-trigger")]`;
                         }
                     },
                     button: function (text) {
@@ -170,34 +182,48 @@ class InternalDashboard {
                     dialog: function (text) {
                         return `//div[contains(@class, "x-window") and contains(@class, "x-notification")]//b[contains(@class, "user_management_message") and contains(text(), "${text}")]`;
                     }
+                },
+                bottom_bar: {
+                    container: function () {
+                        return `${self.selectors.create_manage_users.window}//div[contains(@class, "x-panel-bbar")]`;
+                    },
+                    messageByText: function (text) {
+                        return `${self.selectors.create_manage_users.bottom_bar.container()}//span[contains(text(), "${text}")]`;
+                    }
                 }
             },
             tabByText: function (name) {
                 return `//div[@id="dashboard-tabpanel"]//span[contains(@class, "x-tab-strip-text") and contains(text(), "${name}")]`;
             },
             combo: {
-                container: '//div[contains(@class, "x-combo-list")]',
+                container: '//div[contains(@class, "x-combo-list") and contains(@style, "visibility: visible")]',
                 itemByText: function (text) {
                     return `${self.selectors.combo.container}//div[contains(@class, "x-combo-list-item") and contains(text(), "${text}")]`;
                 }
             },
             createSuccessNotification: function (username) {
-                return self.selectors.modalDiaglogByTitle('User Management') +
+                return self.selectors.modal.containerByTitle('User Management') +
                     '//b[text()[1][contains(., "User")] and text()[2][contains(., "created successfully")]]/b[text() = "' +
                     username + '"]/ancestor::node()[1]';
             },
             deleteSuccessNotification: function (username) {
-                return self.selectors.modalDiaglogByTitle('User Management') +
+                return self.selectors.modal.containerByTitle('User Management') +
                     '//b[text()[1][contains(., "User")] and text()[2][contains(., "deleted from the portal")]]/b[text() = "' +
                     username + '"]/ancestor::node()[1]';
             },
-            buttonInModalDialog: function (title, button) {
-                return `${self.selectors.modalDiaglogByTitle(title)}//button[contains(text(), "${button}")]`;
-            },
-            modalDiaglogByTitle: function (title) {
-                return '//div[contains(@class, "x-window")]//div[contains(@class, "x-window-header")]//span[contains(@class, "x-window-header-text") and text()="' + title + '"]/ancestor::node()[5]';
+            modal: {
+                containerByTitle: function (title) {
+                    return `//div[contains(@class, "x-window")]//div[contains(@class, "x-window-header")]//span[contains(@class, "x-window-header-text") and text()="${title}"]/ancestor::node()[5]`;
+                },
+                buttonByText: function (modalTitle, buttonText) {
+                    return `${self.selectors.modal.containerByTitle(modalTitle)}//button[contains(text(), "${buttonText}")]`;
+                },
+                tools: {
+                    close: function (modalTitle) {
+                        return `${self.selectors.modal.containerByTitle(modalTitle)}//div[contains(@class, "x-tool-close")]`;
+                    }
+                }
             }
-
         };
     }
 
