@@ -342,7 +342,7 @@ class UserAdminTest extends BaseUserAdminTest
         # Check expected file
         $expected = array();
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/" . strtolower($realm));
 
             if(!is_file($expectedOutputFile)) {
                 $newFile = array();
@@ -367,15 +367,36 @@ class UserAdminTest extends BaseUserAdminTest
                     mkdir($filePath);
                 }
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
-                echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
+                $this->markTestSkipped("Generated Expected Output for testGetMenus: $expectedOutputFile\n");
             }
 
             $resource = JSON::loadFile($expectedOutputFile);
-            foreach($resource as $item) {
-                array_push($expected, $item);
+            foreach($resource as $value) {
+                array_push($expected, $value);
             }
         }
-        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
+        foreach($expected as $key => $value) {
+            if (isset($value['defaultChartSettings'])) {
+                $value['defaultChartSettings'] = json_decode($value['defaultChartSettings']);
+                $expected[$key] = $value;
+            }
+            if (isset($value['chartSettings'])) {
+                $value['chartSettings'] = json_decode($value['chartSettings']);
+                $expected[$key] = $value;
+            }
+        }
+        foreach($actual as $key => $value) {
+            if (isset($value['defaultChartSettings'])) {
+                $value['defaultChartSettings'] = json_decode($value['defaultChartSettings']);
+                $actual[$key] = $value;
+            }
+            if (isset($value['chartSettings'])) {
+                $value['chartSettings'] = json_decode($value['chartSettings']);
+                $actual[$key] = $value;
+            }
+        }
+        $this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+        #$this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
 
         if ($username !== self::PUBLIC_USER_NAME) {
             $this->helper->logout();

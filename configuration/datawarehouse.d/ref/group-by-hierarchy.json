@@ -1,0 +1,102 @@
+{
+    "fieldofscience": {
+        "attribute_table": "fieldofscience_hierarchy",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "fos_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "fieldofscience_hierarchy"
+                }
+            ],
+            "orderby": [
+                "description"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "description",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
+        "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}"
+    },
+    "nsfdirectorate": {
+        "alternate_group_by_columns": [
+            "directorate_id"
+        ],
+        "attribute_table": "fieldofscience_hierarchy",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "fos_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "fieldofscience_hierarchy"
+                }
+            ],
+            "orderby": [
+                "directorate_description"
+            ],
+            "records": {
+                "id": "id",
+                "name": "directorate_description",
+                "order_id": "directorate_description",
+                "short_name": "directorate_abbrev"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "pie",
+                "timeseries": "area"
+            },
+            "enable_errors": false,
+            "enable_trend_line": false,
+            "show_aggregate_labels": true,
+            "show_guide_lines": false
+        },
+        "description_html": "${HIERARCHY_TOP_LEVEL_INFO}",
+        "name": "${HIERARCHY_TOP_LEVEL_LABEL}"
+    },
+    "parentscience": {
+        "alternate_group_by_columns": [
+            "parent_id"
+        ],
+        "attribute_table": "fieldofscience_hierarchy",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "fos_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "fieldofscience_hierarchy"
+                }
+            ],
+            "orderby": [
+                "parent_description"
+            ],
+            "records": {
+                "id": "parent_id",
+                "name": "parent_description",
+                "order_id": "parent_description",
+                "short_name": "parent_description"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
+        "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}"
+    }
+}

@@ -4,18 +4,18 @@ SQRT(
             (
                 SUM(COALESCE(agg.sum_waitduration_squared, 0.0))
                 /
-                SUM(agg.running_job_count)
+                SUM(agg.started_job_count)
             )
             -
             POW(
                 SUM(COALESCE(agg.waitduration, 0))
                 /
-                SUM(agg.running_job_count)
+                SUM(agg.started_job_count)
                 , 2
             )
         )
         /
-        SUM(agg.running_job_count)
+        SUM(agg.started_job_count)
         , 0
     )
 )
