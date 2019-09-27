@@ -3,6 +3,7 @@ namespace DataWarehouse\Query\Jobs;
 
 use \DataWarehouse\Query\Model\Table;
 use \DataWarehouse\Query\Model\TableField;
+use \DataWarehouse\Query\Model\FormulaField;
 use \DataWarehouse\Query\Model\WhereCondition;
 use \DataWarehouse\Query\Model\Schema;
 
@@ -73,6 +74,9 @@ class RawData extends \DataWarehouse\Query\Query
 
         $this->addField(new TableField($factTable, "job_id", "jobid"));
         $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
+        $this->addField(new TableField($factTable, 'start_time_ts'));
+        $this->addField(new TableField($factTable, 'end_time_ts'));
+        $this->addField(new FormulaField('-1', 'cpu_user'));
 
         $this->addTable($joblistTable);
         $this->addTable($factTable);
@@ -99,6 +103,14 @@ class RawData extends \DataWarehouse\Query\Query
                 // All other metrics show running job count
                 break;
         }
+
+        $this->prependOrder(
+            new \DataWarehouse\Query\Model\OrderBy(
+                new TableField($factTable, 'end_time_ts'),
+                'DESC',
+                'end_time_ts'
+            )
+        );
     }
 
     /**
