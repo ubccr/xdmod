@@ -51,13 +51,13 @@ class UsageExplorerStorageTest extends \PHPUnit_Framework_TestCase
     public function csvExportProvider()
     {
         $statistics = [
-            'avg_file_count',
-            'avg_logical_usage',
-            'avg_physical_usage',
-            'avg_logical_utilization',
-            'avg_hard_threshold',
-            'avg_soft_threshold',
-            'user_count'
+            'Storage_avg_file_count',
+            'Storage_avg_logical_usage',
+            'Storage_avg_physical_usage',
+            'Storage_avg_logical_utilization',
+            'Storage_avg_hard_threshold',
+            'Storage_avg_soft_threshold',
+            'Storage_user_count'
         ];
 
         $groupBys = [

@@ -102,7 +102,7 @@
                 "path"
             ],
             "records": {
-                "id": "id",
+                "id": "mountpoint_id",
                 "name": "path",
                 "order_id": "path",
                 "short_name": "path"
@@ -197,7 +197,7 @@
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
-                "id": "record_resource_id"
+                "id": "resource_id"
             }
         ],
         "attribute_values_query": {

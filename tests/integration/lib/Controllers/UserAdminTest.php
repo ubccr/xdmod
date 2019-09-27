@@ -395,8 +395,7 @@ class UserAdminTest extends BaseUserAdminTest
                 $actual[$key] = $value;
             }
         }
-        $this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
-        #$this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
+        $this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual), "[$username] Get Menus - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
 
         if ($username !== self::PUBLIC_USER_NAME) {
             $this->helper->logout();
