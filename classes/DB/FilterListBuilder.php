@@ -356,7 +356,7 @@ class FilterListBuilder extends Loggable
         $dimensionQueryFields = $dimensionQuery->getSelectFields();
         $dimensionTableStringComponents = explode(' ', $dimensionQueryTables[1]);
         $dimensionTable = $dimensionTableStringComponents[0];
-        preg_match('/\.(\S+)\s/', $dimensionQueryFields['id'], $dimensionColumnMatches);
+        preg_match('/\.(\S+)\s/', $dimensionQueryFields[ sprintf('%s_id', $dimensionId) ], $dimensionColumnMatches);
         $dimensionColumn = $dimensionColumnMatches[1];
 
         if (!$helper->tableExists($dimensionTable)) {
