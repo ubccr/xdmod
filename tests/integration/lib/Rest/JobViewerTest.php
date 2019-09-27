@@ -432,6 +432,12 @@ class JobViewerTest extends BaseTest
 
         // Normal user can only see their jobs
         foreach($result[0]['results'] as $jobrecord) {
+            $this->assertArrayHasKey('resource', $jobrecord);
+            $this->assertArrayHasKey('name', $jobrecord);
+            $this->assertArrayHasKey('text', $jobrecord);
+            $this->assertArrayHasKey('start_time_ts', $jobrecord);
+            $this->assertArrayHasKey('end_time_ts', $jobrecord);
+            $this->assertArrayHasKey('cpu_user', $jobrecord);
             $this->assertEquals('Whimbrel', $jobrecord['name']);
         }
 
