@@ -4,7 +4,7 @@
             "dashboard_components": [
                 {
                     "config": {
-                        "timeframe": "Year to date"
+                        "timeframe": "1 year"
                     },
                     "name": "Chart Thumbnails",
                     "region": "top",
