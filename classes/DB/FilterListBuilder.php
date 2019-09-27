@@ -363,7 +363,14 @@ class FilterListBuilder extends Loggable
             throw new TableNotFoundException("Could not find table $dimensionTable", 0, null, $dimensionTable);
         }
 
-        $columnDescriptionResults = $db->query("DESCRIBE {$dimensionTable} {$dimensionColumn}");
+        $sql = sprintf('DESCRIBE %s %s', $dimensionTable, $dimensionColumn);
+        try {
+            $columnDescriptionResults = $db->query($sql);
+        } catch (\PDOException $e) {
+            throw new \Exception(
+                sprintf("Error inspecting dimension column '%s': %s", $sql, $e->getMessage())
+            );
+        }
         if (empty($columnDescriptionResults)) {
             $realmName = $realmQuery->getRealmName();
             throw new Exception("Could not find column $dimensionColumn in table {$dimensionTable}. Realm: $realmName, Dimension: $dimensionId");
