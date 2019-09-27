@@ -286,17 +286,17 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                         }
                     },
                     {
-                        text: 'Year to date',
-                        checked: timeframe_label === 'Year to date',
+                        text: '1 year',
+                        checked: timeframe_label === '1 year',
                         group: 'timeframe',
                         listeners: {
                             click: function () {
                                 var today = new Date();
-                                var thisYearStart = today.add(Date.DAY, -1 * today.getDayOfYear());
-                                var start = thisYearStart;
+                                var lastYear = today.add(Date.YEAR, -1);
+                                var start = lastYear;
                                 var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
-                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Year to date');
+                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('1 year');
                                 this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' to ' + self.timeframe.end_date + '</b>');
                             }
                         }
