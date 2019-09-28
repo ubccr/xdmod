@@ -1,20 +1,4 @@
 {
-    "#avgstat-template": {
-        "aggregate_formula": "COALESCE(SUM(agg.avg_$baseStat) / COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0)",
-        "description_html": "",
-        "name": "",
-        "precision": 2,
-        "timeseries_formula": "COALESCE(SUM(agg.avg_$baseStat), 0)",
-        "unit": ""
-    },
-    "#sem-template": {
-        "description_html": "",
-        "formula": "SQRT(SUM(agg.sum_squared_$baseStat) / SUM(agg.record_count) - POW(SUM(agg.sum_$baseStat) / SUM(agg.record_count), 2)) / SQRT(SUM(agg.record_count))",
-        "name": "",
-        "precision": 2,
-        "show_in_catalog": false,
-        "unit": ""
-    },
     "avg_logical_utilization": {
         "description_html": "Average logical file system usage as a percentage of the quota soft threshold.",
         "formula": "100 * COALESCE(SUM(agg.avg_logical_usage) / SUM(agg.avg_soft_threshold), 0)",

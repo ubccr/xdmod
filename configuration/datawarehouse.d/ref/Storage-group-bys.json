@@ -217,7 +217,7 @@
                 "rf.name"
             ],
             "records": {
-                "id": "CONCAT(rf.id, '^', rf.code)",
+                "id": "rf.id",
                 "name": "rf.code",
                 "order_id": "id",
                 "short_name": "rf.code"
