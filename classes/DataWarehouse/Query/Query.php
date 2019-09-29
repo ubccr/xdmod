@@ -216,6 +216,15 @@ class Query extends Loggable
         return $this->realm->getId();
     }
 
+    /**
+     * @see iQuery::getRealm()
+     */
+
+    public function getRealm()
+    {
+        return $this->realm;
+    }
+
     protected $_data_table;
     protected $_date_table;
 
