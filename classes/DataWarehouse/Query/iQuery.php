@@ -56,6 +56,12 @@ interface iQuery
     public function getVariableStore();
 
     /**
+     * @return Realm The object that represents the realm that is query is generating data for.
+     */
+
+    public function getRealm();
+
+    /**
      * @return string The query type, for example 'aggreage' or 'timeseries'.
      */
 
