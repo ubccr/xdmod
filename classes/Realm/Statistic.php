@@ -6,6 +6,7 @@
 namespace Realm;
 
 use Log as Logger;  // CCR implementation of PEAR logger
+use ETL\VariableStore;
 
 class Statistic extends \CCR\Loggable implements iStatistic
 {
@@ -98,7 +99,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $sortOrder = SORT_DESC;
 
     /**
-     * @var string The name of the weight statistic to use when normalizing data for this statistic.
+     * @var string The id of the weight statistic to use when normalizing data for this statistic.
      *   This is typically used when calculating values such as standard error.
      */
 
@@ -120,6 +121,13 @@ class Statistic extends \CCR\Loggable implements iStatistic
      */
 
     protected $useTimeseriesAggregateTables = true;
+
+    /**
+     * @var VariableStore Collection of variable names and values available for substitution in
+     *   various properties.
+     */
+
+    protected $variableStore = null;
 
     /**
      * @see iRealm::factory()
@@ -274,6 +282,14 @@ class Statistic extends \CCR\Loggable implements iStatistic
         ){
             $this->logAndThrowException("Must define either 'formula' or ('aggregate_formula' and 'timeseries_formula')");
         }
+
+        $this->variableStore = new VariableStore(
+            array(
+                'STATISTIC_ID' => $this->id,
+                'WEIGHT_STATISTIC_ID' => $this->weightStatisticId
+            ),
+            $logger
+        );
     }
 
     /**
@@ -354,7 +370,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
         } else {
             // Update the variable store with the most recent values in the query class as they may
             // change dynamically.
-            $vStore = $query->updateVariableStore();
+            $queryVariableStore = $query->updateVariableStore();
             $formula = null;
             if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
                 $formula = $this->formula;
@@ -363,7 +379,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
             } elseif ( $query->isTimeseries() ) {
                 $formula = $this->timeseriesFormula;
             }
-            return sprintf('%s AS %s', $vStore->substitute($formula), $this->id);
+            return sprintf('%s AS %s', $this->variableStore->substitute($queryVariableStore->substitute($formula)), $this->id);
         }
     }
 
