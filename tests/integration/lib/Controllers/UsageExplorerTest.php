@@ -39,7 +39,7 @@ class UsageExplorerTest extends BaseTest
     public function testCorruptRequestData($input, $expectedMessage)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -83,7 +83,7 @@ class UsageExplorerTest extends BaseTest
     public function testGetTabs()
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -116,7 +116,7 @@ class UsageExplorerTest extends BaseTest
     public function testSystemUsernameAccess()
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         self::$publicView['group_by'] = "username";
@@ -199,7 +199,7 @@ EOF;
     public function testAggregateViewValidData($view, $expected)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -225,7 +225,7 @@ EOF;
     public function testErrorBars($input, $expected)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
@@ -304,7 +304,7 @@ EOF;
     public function testExport($chartConfig, $expectedMimeType, $expectedFinfo)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -433,7 +433,7 @@ EOF;
     public function testDataFiltering($user, $chartSettings, $expectedNames)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -529,7 +529,7 @@ EOF;
     public function testFilterIdLookup($options)
     {
         //TODO: Needs further integration for storage realm
-        if (self::$XDMOD_REALMS == array("storage"))  {
+        if (self::$XDMOD_REALMS == array("Storage"))  {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -551,7 +551,7 @@ EOF;
 
             $expectedCount = count($expectedValue);
             $actualCount = count($actualValue);
-            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . print_r($data, true));
+            $this->assertEquals($expectedCount, $actualCount, sprintf('Number of actual values does not match the expected: \n%s\nActual:%s', print_r($options, true), print_r($originalResults, true)));
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];
@@ -571,7 +571,6 @@ EOF;
                 }
             }
         }
-
         if (isset($options['last']) && $user !== 'pub') {
             $helper->logout();
         }
@@ -621,7 +620,7 @@ EOF;
         //TODO: Needs further integration for storage realm
         $realmData = array();
 
-        if (in_array("cloud", self::getRealms())) {
+        if (in_array("Cloud", self::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
@@ -640,7 +639,7 @@ EOF;
                     ),
                     'additional_data' => array(
                         'group_by' => 'project',
-                        'statistic' => 'cloud_core_time',
+                        'statistic' => 'Cloud_core_time',
                         'start_date' => '2018-04-01',
                         'end_date' => '2018-05-01'
                     )
@@ -661,7 +660,7 @@ EOF;
                     ),
                     'additional_data' => array(
                         'group_by' => 'project',
-                        'statistic' => 'cloud_core_time',
+                        'statistic' => 'Cloud_core_time',
                         'start_date' => '2018-04-01',
                         'end_date' => '2018-05-01'
                     )
@@ -669,7 +668,7 @@ EOF;
             );
         };
 
-        if (in_array("jobs", self::getRealms())) {
+        if (in_array("Jobs", self::getRealms())) {
             array_push(
                 $realmData,
                 // Jobs, single value filter tests
@@ -693,7 +692,7 @@ EOF;
                     ),
                     'additional_data' => array(
                         'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
+                        'statistic' => 'Jobs_total_cpu_hours',
                         'start_date' => '2016-12-22',
                         'end_date' => '2017-01-01'
                     )
@@ -719,7 +718,7 @@ EOF;
                     ),
                     'additional_data' => array(
                         'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
+                        'statistic' => 'Jobs_total_cpu_hours',
                         'start_date' => '2016-12-22',
                         'end_date' => '2017-01-01'
                     )
@@ -745,7 +744,7 @@ EOF;
                     ),
                     'additional_data' => array(
                         'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
+                        'statistic' => 'Jobs_total_cpu_hours',
                         'start_date' => '2016-12-22',
                         'end_date' => '2017-01-01'
                     )
@@ -775,7 +774,7 @@ EOF;
                     ),
                     'additional_data' => array(
                         'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
+                        'statistic' => 'Jobs_total_cpu_hours',
                         'start_date' => '2016-12-22',
                         'end_date' => '2017-01-01'
                     )

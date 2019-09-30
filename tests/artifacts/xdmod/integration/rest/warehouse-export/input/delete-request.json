@@ -2,7 +2,7 @@
     "Normal user": [
         "usr",
         {
-            "realm": "jobs",
+            "realm": "Jobs",
             "start_date": "2018-01-01",
             "end_date": "2018-12-31",
             "format": "CSV"
@@ -13,7 +13,7 @@
     "PI": [
         "pi",
         {
-            "realm": "jobs",
+            "realm": "Jobs",
             "start_date": "2018-01-01",
             "end_date": "2018-12-31",
             "format": "CSV"
@@ -24,7 +24,7 @@
     "Center director": [
         "cd",
         {
-            "realm": "jobs",
+            "realm": "Jobs",
             "start_date": "2018-01-01",
             "end_date": "2018-12-31",
             "format": "CSV"
