@@ -109,15 +109,15 @@ class ComplexDataset
                 || (
                     property_exists($data_description, 'std_err_labels')
                     && $data_description->std_err_labels
-                )
-            ) {
-                try {
-                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                        $data_description->realm,
-                        $data_description->metric
-                    );
+                )) {
+                $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                    $data_description->realm,
+                    $data_description->metric
+                );
+                if ($query->getRealm()->statisticExists($semStatId)) {
                     $query->addStat($semStatId);
-                } catch (\Exception $ex) {
+                }
+                else {
                     $data_description->std_err = 0;
                     $data_description->std_err_labels = false;
                 }
