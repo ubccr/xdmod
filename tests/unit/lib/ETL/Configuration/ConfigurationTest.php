@@ -123,7 +123,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test inclusion of a the following with:
+     * Test the following scenarios:
      * - A JSON reference with variables in the referenced JSON
      * - A JSON-encoded include file with variables in the include path. Note that a comment is
      *   included in the reference object to ensure comments are removed before transformers are
@@ -296,4 +296,55 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json'
         );
     }
-} // class ConfigurationTest
+
+    /**
+     * Test the JSON reference with overwrite in the following scenarios:
+     * - Reference that overwrites scalars and objects
+     * - Reference that does not generate an object (key_two in sample_config_with_variables)
+     * - No '$overwrite' key
+     */
+
+    public function testJsonReferenceWithOverwriteWithVariables()
+    {
+        @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json', '/tmp/sample_config_with_variables.json');
+        $configObj = Configuration::factory(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_json_overwrite_transformer_keys.json',
+            null,
+            self::$logger,
+            array(
+                'config_variables' => array(
+                    'TABLE_NAME' => 'resource_allocations',
+                    'WIDTH' => 40,
+                    'TMPDIR' => '/tmp',
+                    'SQLDIR'  => 'etl_sql.d',
+                    'SOURCE_SCHEMA' => 'modw'
+                )
+            )
+        );
+        $generated = json_decode($configObj->toJson());
+        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config_with_json_overwrite_transformer_keys.expected'));
+        @unlink('/tmp/sample_config_with_variables.json');
+        $this->assertEquals($expected, $generated, 'Test JSON reference with overwrite');
+    }
+
+    /**
+     * Test the JSON reference with overwrite in the following scenarios:
+     * - No '$overwrite' key present
+     *
+     * @expectedException Exception
+     */
+
+    public function testJsonReferenceWithOverwriteWithNoOverwriteDirective()
+    {
+        Configuration::factory(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_missing_json_overwrite_key.json',
+            null,
+            self::$logger,
+            array(
+                'config_variables' => array(
+                    'TMPDIR' => '/tmp'
+                )
+            )
+        );
+    }
+}
