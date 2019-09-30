@@ -9,10 +9,6 @@ then
     junit_output_dir="$2"
 fi
 
-# Temporary while working on configuration changes so that
-# travis starts to pass
-XDMOD_REALMS=jobs,storage
-
 if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=$(echo `mysql -Ne "SELECT name FROM moddb.realms"` | tr ' ' ',')
 fi

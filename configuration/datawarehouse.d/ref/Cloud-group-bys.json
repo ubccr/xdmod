@@ -251,7 +251,6 @@
             }
         },
         "category": "Administrative",
-        "data_sort_order": null,
         "description_html": "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.",
         "name": "VM Size: Memory"
     },

@@ -418,7 +418,7 @@ class RegressionTestHelper extends XdmodTestHelper
         $endpoint = parse_url(self::getSiteUrl());
         $outputDir = implode(
             DIRECTORY_SEPARATOR,
-            [self::getBaseDir(), 'expected', $endpoint['host'], $testName]
+            [self::getBaseDir(), 'expected', $endpoint['host'], str_replace($input['realm'] . '_', '', $testName)]
         );
 
         if (!file_exists($outputDir)) {
