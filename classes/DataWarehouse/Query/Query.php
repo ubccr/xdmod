@@ -1081,14 +1081,6 @@ SQL;
                     return array();
                 }
 
-                // Get the group by object associated with this dimension.
-                // If it does not exist for this realm, skip this parameter.
-                try {
-                    $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
-                } catch (Exceptions\UnknownGroupByException $e) {
-                    continue;
-                }
-
                 if (is_array($role_parameter_value)) {
                     $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
                     $role_parameter_values = $role_parameter_value;
@@ -1097,9 +1089,20 @@ SQL;
                     $role_parameter_values = array($role_parameter_value);
                 }
 
-                $rolewheres = $this->getParameters($group_by_instance->generateQueryFiltersFromRequest($param));
-
-                $allwheres[] = "(" . implode(" AND ", $rolewheres) . ")";
+                // Get the group by object associated with this dimension.
+                // If it does not exist for this realm, skip this parameter.
+                if (!$this->realm->groupByExists($role_parameter_dimension)){
+                    continue;
+                }
+                else {
+                    $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
+                    $allwheres[] = "(" .
+                        implode(
+                            " AND ",
+                            $this->getParameters($group_by_instance->generateQueryFiltersFromRequest($param))
+                        )
+                        . ")";
+                }
 
                 if (array_key_exists($role_parameter_dimension, $role_parameters)) {
                     $role_parameters_value_list = &$role_parameters[$role_parameter_dimension]['dimensionValues'];
