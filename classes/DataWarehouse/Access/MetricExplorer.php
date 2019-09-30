@@ -252,8 +252,7 @@ class MetricExplorer extends Common
                         $data_description->realm,
                         $data_description->metric
                     );
-                    $realm = $query->getRealm();
-                    if ($realm->statisticExists($semStatId)) {
+                    if ($query->getRealm()->statisticExists($semStatId)) {
                         $query->addStat($semStatId);
                     }
                     else {
