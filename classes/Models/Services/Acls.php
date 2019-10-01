@@ -939,8 +939,8 @@ SQL;
         $db = DB::factory('database');
 
         $query = <<<SQL
-SELECT a.* 
-FROM acls a 
+SELECT a.*
+FROM acls a
   JOIN acl_types at ON a.acl_type_id = at.acl_type_id
 WHERE at.name = :acl_type_name
 SQL;

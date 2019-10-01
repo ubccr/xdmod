@@ -5,6 +5,6 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Year,"[yerwa] Number of Active Sessions (Number of Sessions)","[setusca] Number of Active Sessions (Number of Sessions)","[ylwwa] Number of Active Sessions (Number of Sessions)"
+Year,"[yerwa] Number of Active Sessions","[setusca] Number of Active Sessions","[ylwwa] Number of Active Sessions"
 2018,36,11,6
 ---------
