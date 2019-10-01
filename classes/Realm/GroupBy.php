@@ -1134,11 +1134,18 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             }
         }
 
+        $mapIndex = 0;
+        $useAlternateGroupBy = (0 != count($this->alternateGroupByColumns));
+
         foreach ( $attributeKeyConstraints as $attributeKey => $valueList ) {
             $where = new WhereCondition(
-                sprintf('%s.%s', $this->attributeTableName, $attributeKey),
+                sprintf(
+                    '%s.%s',
+                    $this->attributeTableName,
+                    ($useAlternateGroupBy ? $this->alternateGroupByColumns[$mapIndex++] : $attributeKey)
+                ),
                 $operation,
-                sprintf('(%s)', implode(',', $valueList))
+                sprintf("('%s')", implode("','", $valueList))
             );
             $this->logger->debug(sprintf('%s Add where condition: %s', $this, $where));
             $query->addWhereCondition($where);
