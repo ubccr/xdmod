@@ -8,25 +8,25 @@
             "items": [
                 {
                     "title": "Users",
-                    "fieldName": "Jobs_active_person_count",
+                    "fieldName": "active_person_count",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 },
                 {
                     "title": "PIs",
-                    "fieldName": "Jobs_active_pi_count",
+                    "fieldName": "active_pi_count",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 },
                 {
                     "title": "Allocations",
-                    "fieldName": "Jobs_active_allocation_count",
+                    "fieldName": "active_allocation_count",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 },
                 {
                     "title": "Institutions",
-                    "fieldName": "Jobs_active_institution_count",
+                    "fieldName": "active_institution_count",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 }
@@ -37,13 +37,13 @@
             "items": [
                 {
                     "title": "Total",
-                    "fieldName": "Jobs_job_count",
+                    "fieldName": "job_count",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 },
                 {
                     "title": "Gateway",
-                    "fieldName": "Jobs_gateway_job_count",
+                    "fieldName": "gateway_job_count",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 }
@@ -54,13 +54,13 @@
             "items": [
                 {
                     "title": "Total",
-                    "fieldName": "Jobs_total_su",
+                    "fieldName": "total_su",
                     "numberType": "float",
                     "numberFormat": "#,#.0"
                 },
                 {
                     "title": "Avg (Per Job)",
-                    "fieldName": "Jobs_avg_su",
+                    "fieldName": "avg_su",
                     "numberType": "float",
                     "numberFormat": "#,#.00"
                 }
@@ -71,13 +71,13 @@
             "items": [
                 {
                     "title": "Total",
-                    "fieldName": "Jobs_total_cpu_hours",
+                    "fieldName": "total_cpu_hours",
                     "numberType": "float",
                     "numberFormat": "#,#.0"
                 },
                 {
                     "title": "Avg (Per Job)",
-                    "fieldName": "Jobs_avg_cpu_hours",
+                    "fieldName": "avg_cpu_hours",
                     "numberType": "float",
                     "numberFormat": "#,#.00"
                 }
@@ -88,7 +88,7 @@
             "items": [
                 {
                     "title": "Avg (Per Job)",
-                    "fieldName": "Jobs_avg_waitduration_hours",
+                    "fieldName": "avg_waitduration_hours",
                     "numberType": "float",
                     "numberFormat": "#,#.00"
                 }
@@ -99,13 +99,13 @@
             "items": [
                 {
                     "title": "Total",
-                    "fieldName": "Jobs_total_wallduration_hours",
+                    "fieldName": "total_wallduration_hours",
                     "numberType": "float",
                     "numberFormat": "#,#.0"
                 },
                 {
                     "title": "Avg (Per Job)",
-                    "fieldName": "Jobs_avg_wallduration_hours",
+                    "fieldName": "avg_wallduration_hours",
                     "numberType": "float",
                     "numberFormat": "#,#.00"
                 }
@@ -116,13 +116,13 @@
             "items": [
                 {
                     "title": "Max",
-                    "fieldName": "Jobs_max_processors",
+                    "fieldName": "max_processors",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 },
                 {
                     "title": "Avg (Per Job)",
-                    "fieldName": "Jobs_avg_processors",
+                    "fieldName": "avg_processors",
                     "numberType": "int",
                     "numberFormat": "#,#"
                 }
