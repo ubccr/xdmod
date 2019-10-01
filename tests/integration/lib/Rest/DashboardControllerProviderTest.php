@@ -66,7 +66,6 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
         if (!is_file($expectedFilePath)) {
             file_put_contents($expectedFilePath, sprintf("%s\n", json_encode($actual, JSON_PRETTY_PRINT)));
             $this->markTestSkipped("Generated Expected File: $expectedFilePath");
-            $this->assertTrue(true);
         } else {
             $expected = json_decode(file_get_contents($expectedFilePath), true);
 

@@ -455,12 +455,12 @@ class UserAdminTest extends BaseUserAdminTest
         if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
         } else {
-            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
+            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/Jobs');
         }
 
         if (!is_file($expectedFileName)) {
             @file_put_contents($expectedFileName, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
-            $this->markTestSkipped();
+            $this->markTestSkipped("Generated Expected Output for testResourcesNamesValues: $expectedFileName\n");
         }
         $expected = file_get_contents($expectedFileName);
         $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);
