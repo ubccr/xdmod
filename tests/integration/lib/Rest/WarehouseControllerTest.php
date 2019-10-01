@@ -35,7 +35,7 @@ class WarehouseControllerTest extends BaseTest
         $config = array(
             'realm' => 'Jobs',
             'group_by' => 'person',
-            'statistics' => array('job_count', 'total_cpu_hours'),
+            'statistics' => array('Jobs_job_count', 'Jobs_total_cpu_hours'),
             'aggregation_unit' => 'day',
             'start_date' => '2016-12-01',
             'end_date' => '2017-01-01',
@@ -105,7 +105,7 @@ class WarehouseControllerTest extends BaseTest
     public function testGetAggregateData()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

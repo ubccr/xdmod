@@ -41,7 +41,7 @@ class JobViewerTest extends BaseTest
     public function testDimensions()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -88,7 +88,7 @@ class JobViewerTest extends BaseTest
     public function testDimensionValues($xdmodhelper, $dimension)
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -109,7 +109,7 @@ class JobViewerTest extends BaseTest
     public function testResourceEndPoint()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -142,7 +142,7 @@ class JobViewerTest extends BaseTest
     public function testResourceNoAuth()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -157,7 +157,7 @@ class JobViewerTest extends BaseTest
     private function validateSingleJobSearch($searchparams, $doAuth = true)
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -185,7 +185,7 @@ class JobViewerTest extends BaseTest
 
     public function testBasicJobSearch() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -203,7 +203,7 @@ class JobViewerTest extends BaseTest
 
     public function testBasicJobSearchNoAuth() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -229,7 +229,7 @@ class JobViewerTest extends BaseTest
 
     public function testInvalidJobSearch() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -245,7 +245,7 @@ class JobViewerTest extends BaseTest
 
     public function testInvalidJobSearchJson() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -366,7 +366,7 @@ class JobViewerTest extends BaseTest
      */
     public function testInvalidJobSearchMissingParams($xdmodhelper, $searchparams, $isfinal) {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -383,7 +383,7 @@ class JobViewerTest extends BaseTest
 
     public function testAdvancedSearchInvalid() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -409,7 +409,7 @@ class JobViewerTest extends BaseTest
 
     public function testAdvancedSearchNoParams() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -446,7 +446,7 @@ class JobViewerTest extends BaseTest
 
     public function testJobMetadata() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
