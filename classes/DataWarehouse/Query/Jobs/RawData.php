@@ -24,7 +24,7 @@ class RawData extends \DataWarehouse\Query\Query
     ) {
         $realmId = 'Jobs';
         $schema = 'modw_aggregates';
-        $dataTablePrefix = 'jobfact_by';
+        $dataTablePrefix = 'jobfact_by_';
 
         parent::__construct(
             $realmId,
