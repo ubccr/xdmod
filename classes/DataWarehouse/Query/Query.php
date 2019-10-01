@@ -658,7 +658,7 @@ class Query extends Loggable
                 $filter_table = FilterListHelper::getFullTableName($this, $dimension_group_by, $restriction_data['groupBy']);
 
                 $restriction_wheres[] = sprintf(
-                    "%s IN ( SELECT %.% FROM %s WHERE %.% IN (%s) )",
+                    "%s IN ( SELECT %s.%s FROM %s WHERE %s.%s IN (%s) )",
                     $id_field_without_alias,
                     $filter_table,
                     $dimension_group_by_id,
