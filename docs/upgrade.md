@@ -102,48 +102,10 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.1.1 to 8.1.2 Upgrade Notes
+8.5.0 to 8.6.0 Upgrade Notes
 ----------------------------
 
-Open XDMoD 8.1.2 is a bug fix release that fixes an issue with detecting enabled
-realms and the ingestion / aggregation of data.
 
-You may upgrade directly from 8.0.0 to 8.1.2.
-
-8.1.0 to 8.1.1 Upgrade Notes
-----------------------------
-
-Open XDMoD 8.1.1 is a bug fix release that fixes an issue with upgrading from
-8.0.0 where the `modw_cloud` schema does not exist.
-
-You may upgrade directly from 8.0.0 to 8.1.1.
-
-8.0.0 to 8.1.0 Upgrade Notes
-----------------------------
-
-### Configuration File Changes
-
-- Changes `datawarehouse.json`:
-    - Adds Cloud realm `group_bys`.
-- Changes `portal_settings.ini`:
-    - Removes `singlejobviewer` option.
-    - Adds an option to show or hide the local login modal dialog for single
-      sign on configurations.
-    - Added subject prefix option for outbound emails.
-- Removes `processor_buckets.json`:
-    - Use `etl/etl_data.d/cloud_common/processor_buckets.json` to change
-      processor bucket ranges.
-- Changes `roles.d/cloud.json`:
-    - If the cloud realm is enabled this file will be updated with permissions
-      for the new `group_by`s.
-- Changes files in `etl/`:
-    - Various additions, improvements and bug fixes.
-
-### Database Changes
-
-- Drops existing tables in `modw_cloud` if cloud realm is enabled.
-- Updates user profile data in `moddb` to normalize Metric Explorer
-  configuration of saved charts.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
