@@ -191,8 +191,8 @@ function main()
 
         // Process the realms provided by this module, if any.
         foreach ( $realmObjects as $realmId => $realmObj ) {
-            $groupBys = array_keys($realmObj->getGroupByNames());
-            $statistics = array_keys($realmObj->getStatisticNames());
+            $groupBys = $realmObj->getGroupByIds();
+            $statistics = $realmObj->getStatisticIds();
             $results[$module]['realms'][$realmId] = array(
                 'display_name' => $realmObj->getName(),
                 'group_bys' => json_decode(json_encode($groupBys), true),

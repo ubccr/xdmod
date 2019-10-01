@@ -301,7 +301,7 @@ abstract class TimeAggregationUnit
             return null;
         }
 
-        $groupByIds = array_keys($realm->getGroupByNames());
+        $groupByIds = $realm->getGroupByIds();
         $minUnit = null;
         $minUnitDays = PHP_INT_MAX;
 

@@ -1316,7 +1316,7 @@ SQL;
 
     public function setStat($stat)
     {
-        $permitted_statistics = array_keys($this->realm->getStatisticNames());
+        $permitted_statistics = $this->realm->getStatisticIds();
 
         if ($stat == 'all') {
             $this->_main_stat_field = null;
