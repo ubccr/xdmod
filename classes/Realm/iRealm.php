@@ -69,6 +69,18 @@ interface iRealm
     public static function getRealmNames($order = self::SORT_ON_ORDER, Logger $logger = null);
 
     /**
+     * This is a convenience function to return only the list of realm ids.
+     *
+     * @param int $order A specification on how the realm list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     * @param Log|null $logger A Log instance that will be utilized during processing.
+     *
+     * @return array An array of realm ids, ordered as specified
+     */
+
+    public static function getRealmIds($order = self::SORT_ON_ORDER, Logger $logger = null);
+
+    /**
      * Return an associative array where the array keys are realm short identifier (id) and the values
      * are the Realm objects associated with that key.
      *
@@ -190,6 +202,18 @@ interface iRealm
     public function getGroupByNames($order = self::SORT_ON_ORDER);
 
     /**
+     * This is a convenience function to return only the list of groupby ids. Note that disabled
+     * groupby ids are not included.
+     *
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     *
+     * @return array An array of the groupby ids available to this realm, ordered as specified.
+     */
+
+    public function getGroupByIds($order = self::SORT_ON_ORDER);
+
+    /**
      * Note that disabled Statistic names are not included.
      *
      * @param int $order A specification on how the list will be ordered. Possible values are:
@@ -200,6 +224,18 @@ interface iRealm
      */
 
     public function getStatisticNames($order = self::SORT_ON_ORDER);
+
+    /**
+     * This is a convenience function to return only the list of statistic ids. Note that disabled
+     * statistic ids are not included.
+     *
+     * @param int $order A specification on how the list will be ordered. Possible values are:
+     *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
+     *
+     * @return array An array of the statistic ids available to this realm, ordered as specified.
+     */
+
+    public function getStatisticIds($order = self::SORT_ON_ORDER);
 
     /**
      * Note that disabled GroupBy objects are not included.

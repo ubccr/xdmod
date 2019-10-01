@@ -109,7 +109,7 @@ class Usage extends Common
                     $userStatistic
                 );
 
-                if (in_array($errorstat, array_keys($realm->getStatisticNames())) ) {
+                if (in_array($errorstat, $realm->getStatisticIds()) ) {
                     $statUsageChartSettings['enable_errors'] = 'y';
                 }
                 $statUsageChartSettings['statistic'] = $userStatistic;
@@ -648,7 +648,7 @@ class Usage extends Common
                     $meRequest['data_series_unencoded'][0]['metric']
                 );
 
-                if (in_array($errorstat, array_keys($realm->getStatisticNames())) ) {
+                if (in_array($errorstat, $realm->getStatisticIds()) ) {
                     $usageChartSettings['enable_errors'] = 'y';
                 }
 
@@ -1097,7 +1097,7 @@ class Usage extends Common
 
         $meFilters = array();
         $realm = Realm::factory($usageRealm);
-        $realmGroupByNames = array_values($realm->getGroupByNames());
+        $realmGroupByIds = $realm->getGroupByIds();
 
         // Extract the supported filter values from $usageRequest
         foreach ($usageRequest as $usageKey => $usageValue) {
@@ -1123,7 +1123,7 @@ class Usage extends Common
             }
 
             // handles '<dimension>' properties
-            if (in_array($usageKey, $realmGroupByNames)) {
+            if (in_array($usageKey, $realmGroupByIds)) {
                 $meFilters[] = array(
                     'id' => "$usageKey=$usageValue",
                     'value_id' => $usageValue,

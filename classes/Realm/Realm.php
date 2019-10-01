@@ -182,6 +182,18 @@ class Realm extends \CCR\Loggable implements iRealm
     }
 
     /**
+     * @see iRealm::getRealmIds()
+     *
+     * Essentially, call array_keys() on the list of realm names to get the ids. This keeps the code
+     * in one place rather than littered throughout the codebase.
+     */
+
+    public static function getRealmIds($order = self::SORT_ON_ORDER, Logger $logger = null)
+    {
+        return array_keys(static::getRealmNames($order, $logger));
+    }
+
+    /**
      * @see iRealm::getRealmObjects()
      */
 
@@ -650,12 +662,36 @@ class Realm extends \CCR\Loggable implements iRealm
     }
 
     /**
+     * @see iRealm::getGroupByIds()
+     *
+     * Essentially, call array_keys() on the list of groupby names to get the ids. This keeps the
+     * code in one place rather than littered throughout the codebase.
+     */
+
+    public function getGroupByIds($order = self::SORT_ON_ORDER)
+    {
+        return array_keys($this->getGroupByNames($order));
+    }
+
+    /**
      * @see iRealm::getStatisticNames()
      */
 
     public function getStatisticNames($order = self::SORT_ON_ORDER)
     {
         return static::getSortedNameList($this->statisticConfigs, $order);
+    }
+
+    /**
+     * @see iRealm::getStatisticIds()
+     *
+     * Essentially, call array_keys() on the list of statistic names to get the ids. This keeps the
+     * code in one place rather than littered throughout the codebase.
+     */
+
+    public function getStatisticIds($order = self::SORT_ON_ORDER)
+    {
+        return array_keys($this->getStatisticNames($order));
     }
 
     /**
