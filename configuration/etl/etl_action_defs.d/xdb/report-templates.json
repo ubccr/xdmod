@@ -49,11 +49,11 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "rt",
                 "type": "left outer",
-                "on": "rts.id=rt.id",
-                "where": [
-                    "rt.id IS NULL"
-                ]
+                "on": "rts.id=rt.id"
             }
+        ],
+        "where": [
+            "rt.id IS NULL"
         ]
     }
 }

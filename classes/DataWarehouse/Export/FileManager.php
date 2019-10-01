@@ -197,6 +197,7 @@ class FileManager extends Loggable
      *
      * @param string $dataFile Path to file that will be put in the zip file.
      * @param array $request Batch export request data.
+     * @return string Zip file path.
      * @throws \Exception If creating the zip file fails.
      */
     public function createZipFile($dataFile, array $request)

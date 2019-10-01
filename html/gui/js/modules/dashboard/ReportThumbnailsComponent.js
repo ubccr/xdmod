@@ -286,18 +286,17 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                         }
                     },
                     {
-                        text: 'Previous year',
-                        checked: timeframe_label === 'Previous year',
+                        text: '1 year',
+                        checked: timeframe_label === '1 year',
                         group: 'timeframe',
                         listeners: {
                             click: function () {
                                 var today = new Date();
-                                var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
-                                var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
-                                var start = oneYearAgoStart;
-                                var end = oneYearAgoEnd;
+                                var lastYear = today.add(Date.YEAR, -1);
+                                var start = lastYear;
+                                var end = today;
                                 this.ownerCt.ownerCt.ownerCt.ownerCt.fireEvent('timeframe_change', start, end);
-                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('Previous year');
+                                this.ownerCt.ownerCt.ownerCt.items.items[1].setText('1 year');
                                 this.ownerCt.ownerCt.ownerCt.items.items[2].setText('<b>' + self.timeframe.start_date + ' to ' + self.timeframe.end_date + '</b>');
                             }
                         }

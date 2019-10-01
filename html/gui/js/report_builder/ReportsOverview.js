@@ -377,6 +377,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
                      }
 
                   });//conn.request
+                  CCR.xdmod.ui.tgSummaryViewer.fireEvent('request_refresh');
 
                }//if (resp == 'yes')
                else {

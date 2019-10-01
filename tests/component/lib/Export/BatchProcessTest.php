@@ -2,8 +2,10 @@
 
 namespace ComponentTests\Export;
 
+use CCR\DB;
 use ComponentTests\BaseTest;
 use DataWarehouse\Export\BatchProcessor;
+use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use xd_utilities;
 
@@ -20,9 +22,20 @@ class BatchProcessTest extends BaseTest
     const TEST_GROUP = 'component/export/batch_process';
 
     /**
+     * Database handle.
+     * @var \CCR\DB\iDatabase
+     */
+    private static $dbh;
+
+    /**
      * @var \DataWarehouse\Export\QueryHandler
      */
     private static $queryHandler;
+
+    /**
+     * @var \DataWarehouse\Export\FileManager
+     */
+    private static $fileManager;
 
     /**
      * The file containing email data.
@@ -37,6 +50,19 @@ class BatchProcessTest extends BaseTest
     private static $exportDirectory;
 
     /**
+     * Primary key of a submitted batch export request.
+     * @var int
+     */
+    private static $submittedRequestId;
+
+    /**
+     * Primary key of an expiring batch export request.
+     * @var int
+     */
+    private static $expiringRequestId;
+
+    /**
+     * Create test objects and data.
      */
     public static function setUpBeforeClass()
     {
@@ -46,6 +72,48 @@ class BatchProcessTest extends BaseTest
             'data_warehouse_export',
             'export_directory'
         );
+        self::$dbh = DB::factory('database');
+
+        list($row) = self::$dbh->query('SELECT COUNT(*) AS count FROM batch_export_requests');
+        if ($row['count'] > 0) {
+            error_log(sprintf('Expected 0 rows in moddb.batch_export_requests, found %d', $row['count']));
+        }
+
+        $exportFileCount = count(self::getExportFiles());
+        if ($exportFileCount > 0) {
+            error_log(sprintf('Expected 0 export files in %s found %d', self::$exportDirectory, $exportFileCount));
+        }
+
+        // Find a valid user ID.
+        list($user) = self::$dbh->query("SELECT id FROM Users WHERE username = 'normaluser'");
+
+        // Create records and set one to be expiring.
+        self::$submittedRequestId = self::$queryHandler->createRequestRecord($user['id'], 'jobs', '2019-01-01', '2019-01-31', 'CSV');
+        self::$expiringRequestId = self::$queryHandler->createRequestRecord($user['id'], 'jobs', '2019-01-01', '2019-01-31', 'JSON');
+        self::$queryHandler->submittedToAvailable(self::$expiringRequestId);
+        self::$dbh->execute(
+            'UPDATE batch_export_requests SET export_expires_datetime = :expiration_date WHERE id = :id',
+            [
+                'expiration_date' => date('Y-m-d H:i:s', time() - 1),
+                'id' => self::$expiringRequestId
+            ]
+        );
+        self::$fileManager = new FileManager();
+        file_put_contents(self::$fileManager->getExportDataFilePath(self::$expiringRequestId), 'TEST DATA');
+    }
+
+    /**
+     * Remove test data from database and generated files.
+     */
+    public static function tearDownAfterClass()
+    {
+        // Delete any requests that weren't already deleted.
+        self::$dbh->execute('DELETE FROM batch_export_requests');
+
+        // Delete files.
+        foreach (self::getExportFiles() as $file) {
+            @unlink($file['path']);
+        }
     }
 
     /**
@@ -55,6 +123,10 @@ class BatchProcessTest extends BaseTest
      */
     private static function getEmails()
     {
+        while (trim(`postqueue -p | tail -n1 | awk '{print $5}'`) != '') {
+            usleep(10000);
+        }
+
         if (!file_exists(self::$mailbox)) {
             return [];
         }
@@ -118,7 +190,8 @@ class BatchProcessTest extends BaseTest
 
         return array_map(
             function ($file) use ($dir) {
-                return stat($dir . DIRECTORY_SEPARATOR . $file);
+                $path = $dir . DIRECTORY_SEPARATOR . $file;
+                return array_merge(stat($path), ['path' => $path]);
             },
             // Filter out files starting with ".".
             array_filter(
@@ -135,15 +208,14 @@ class BatchProcessTest extends BaseTest
      */
     public function testDryRun()
     {
-        $batchProcessor = new BatchProcessor();
-        $batchProcessor->setDryRun(true);
-
         // Capture state before processing requests.
         $emails = self::getEmails();
         $files = self::getExportFiles();
         $submittedRequests = self::$queryHandler->listSubmittedRecords();
         $expiringRequests = self::$queryHandler->listExpiringRecords();
 
+        $batchProcessor = new BatchProcessor();
+        $batchProcessor->setDryRun(true);
         $batchProcessor->processRequests();
 
         $this->assertEquals($emails, self::getEmails(), 'No new emails');
@@ -158,8 +230,6 @@ class BatchProcessTest extends BaseTest
             self::$queryHandler->listExpiringRecords(),
             'No expiring requests changed'
         );
-
-        $this->markTestIncomplete('This test has not been implemented yet.');
     }
 
     /**
@@ -167,8 +237,66 @@ class BatchProcessTest extends BaseTest
      */
     public function testRequestProcessing()
     {
+        // Capture state before processing requests.
+        $emailsBefore = self::getEmails();
+        $filesBefore = self::getExportFiles();
+        $submittedRequestsBefore = self::$queryHandler->listSubmittedRecords();
+        $expiringRequestsBefore = self::$queryHandler->listExpiringRecords();
+
         $batchProcessor = new BatchProcessor();
         $batchProcessor->processRequests();
-        $this->markTestIncomplete('This test has not been implemented yet.');
+
+        // Capture state after processing requests.
+        $emailsAfter = self::getEmails();
+        $filesAfter = self::getExportFiles();
+        $submittedRequestsAfter = self::$queryHandler->listSubmittedRecords();
+        $expiringRequestsAfter = self::$queryHandler->listExpiringRecords();
+
+        $this->assertEquals(
+            count($emailsBefore) + 1,
+            count($emailsAfter),
+            '1 new email'
+        );
+        $this->assertEquals(
+            count($filesBefore),
+            count($filesAfter),
+            'Same number of export files'
+        );
+        $filePathsAfter = array_map(
+            function ($file) {
+                return $file['path'];
+            },
+            $filesAfter
+        );
+        $this->assertContains(
+            self::$fileManager->getExportDataFilePath(self::$submittedRequestId),
+            $filePathsAfter,
+            'Submitted request now has a data file'
+        );
+        $this->assertNotContains(
+            self::$fileManager->getExportDataFilePath(self::$expiringRequestId),
+            $filePathsAfter,
+            'Expiring request no longer has a data file'
+        );
+        $this->assertEquals(
+            count($submittedRequestsBefore) - 1,
+            count($submittedRequestsAfter),
+            'One less submitted request'
+        );
+        $this->assertEquals(
+            self::$submittedRequestId,
+            array_diff($submittedRequestsBefore, $submittedRequestsAfter)[0]['id'],
+            'Submitted request ID no longer listed'
+        );
+        $this->assertEquals(
+            count($expiringRequestsBefore) - 1,
+            count($expiringRequestsAfter),
+            'One less expiring request'
+        );
+        $this->assertEquals(
+            self::$expiringRequestId,
+            array_diff($expiringRequestsBefore, $expiringRequestsAfter)[0]['id'],
+            'Expiring request ID no longer listed'
+        );
     }
 }

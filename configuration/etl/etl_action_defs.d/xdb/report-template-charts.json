@@ -37,11 +37,11 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "rtc",
                 "type": "left outer",
-                "on": "rtcs.template_id=rtc.template_id",
-                "where": [
-                    "rtc.template_id IS NULL"
-                ]
+                "on": "rtcs.template_id=rtc.template_id"
             }
+        ],
+        "where": [
+            "rtc.template_id IS NULL"
         ]
     }
 }

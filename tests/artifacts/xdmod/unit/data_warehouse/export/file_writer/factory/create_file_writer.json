@@ -1,0 +1,14 @@
+{
+    "CSV File Writer": [
+        "csv",
+        "\\DataWarehouse\\Export\\FileWriter\\CsvFileWriter"
+    ],
+    "JSON File Writer": [
+        "json",
+        "\\DataWarehouse\\Export\\FileWriter\\JsonFileWriter"
+    ],
+    "NULL File Writer": [
+        "null",
+        "\\DataWarehouse\\Export\\FileWriter\\NullFileWriter"
+    ]
+}
