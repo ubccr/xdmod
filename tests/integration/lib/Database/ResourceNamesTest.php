@@ -44,7 +44,7 @@ class ResourceNamesTest extends BaseTest
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->testFiles->getFile('integration/database', 'resource_names', "output/$realm");
+            $expectedOutputFile = $this->testFiles->getFile('integration/database', 'resource_names', "output/" . strtolower($realm));
 
             # Create missing files/directories
             if(!is_file($expectedOutputFile)) {
@@ -84,7 +84,7 @@ class ResourceNamesTest extends BaseTest
                     mkdir($filePath);
                 }
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
-                echo "Generated Expected Output for testResourcesNamesValues: $expectedOutputFile\n";
+                $this->markTestSkipped("Generated Expected Output for testResourcesNamesValues: $expectedOutputFile\n");
             }
 
             $resources = Json::loadFile($expectedOutputFile);
