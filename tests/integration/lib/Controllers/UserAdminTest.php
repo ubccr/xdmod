@@ -455,7 +455,7 @@ class UserAdminTest extends BaseUserAdminTest
         if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
         } else {
-            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/Jobs');
+            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
         }
 
         if (!is_file($expectedFileName)) {
