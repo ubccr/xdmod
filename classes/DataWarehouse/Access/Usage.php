@@ -8,6 +8,7 @@ use Exception;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
+use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use Realm\Realm;
 use Models\Services\Acls;
 use PDO;
@@ -181,8 +182,12 @@ class Usage extends Common
 
             // Get the request's group by.
             $usageGroupBy = \xd_utilities\array_get($this->request, 'group_by', 'none');
+            if ( ! $realm->groupByExists($usageGroupBy) ) {
+                throw new UnknownGroupByException(
+                    sprintf('Query: Unknown Group By "%s" Specified', $usageGroupBy)
+                );
+            }
             $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
-
             // Get whether or not the request is for a timeseries chart.
             $usageIsTimeseries = \xd_utilities\array_get($this->request, 'dataset_type') === 'timeseries';
 
