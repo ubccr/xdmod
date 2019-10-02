@@ -13,6 +13,8 @@ class QueryDescripter
      */
     private $realm = null;
 
+    private $_realm_name;
+
     /**
      * @var string
      */
@@ -63,6 +65,7 @@ class QueryDescripter
     ) {
 
         $this->realm = \Realm\Realm::factory($realm_name);
+        $this->realm = $this->realm->getId();
         $this->_group_by_name   = $group_by_name;
         $this->_default_statisticname         = $default_statisticname;
         $this->_default_aggregation_unit_name = $default_aggregation_unit_name;

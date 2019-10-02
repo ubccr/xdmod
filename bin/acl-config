@@ -311,7 +311,7 @@ INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
   FROM user_acl_group_by_parameters_bkup uagbp
     LEFT JOIN acls a ON a.name = uagbp.acl_name
     LEFT JOIN modules m ON m.name = uagbp.group_by_module_name
-    LEFT JOIN realms r ON r.name = uagbp.group_by_realm_name
+    LEFT JOIN realms r ON LOWER(r.name) = LOWER(uagbp.group_by_realm_name)
     LEFT JOIN group_bys gb
       ON gb.name = uagbp.group_by_name AND
          gb.module_id = m.module_id AND
