@@ -179,12 +179,6 @@ TXT;
         $groupBy = $options['group_by'];
         $statistic = $options['statistic'];
 
-        $fileId = $options['file_id'];
-
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('acls', "get_query_descripters-$fileId")
-        );
-
         $user = XDUser::getUserByUserName($username);
 
         $roles = $user->getAllRoles();
@@ -222,7 +216,7 @@ TXT;
             }
 
             $this->assertEquals(
-                $expected,
+                $options['expected'],
                 $actual,
                 sprintf(
                     self::DEBUG_MSG,
@@ -233,7 +227,7 @@ TXT;
                     $statistic,
                     $role,
                     self::GET_QUERY_DESCRIPTERS,
-                    print_r($expected, true),
+                    print_r($options['expected'], true),
                     self::GET_QUERY_DESCRIPTERS,
                     print_r($actual, true)
                 )
@@ -295,9 +289,81 @@ TXT;
      */
     public function provideGetQueryDescripters()
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('acls', 'get_query_descripters', 'input')
+        $groups = array(
+            'fieldofscience',
+            'jobsize',
+            'jobwalltime',
+            'nodecount',
+            'none',
+            'nsfdirectorate',
+            'parentscience',
+            'person',
+            'pi',
+            'queue',
+            'resource',
+            'resource_type',
+            'username',
         );
+
+        $stats = array(
+            null,
+            'active_person_count',
+            'active_pi_count',
+            'active_resource_count',
+            'avg_cpu_hours',
+            'avg_job_size_weighted_by_cpu_hours',
+            'avg_node_hours',
+            'avg_processors',
+            'avg_waitduration_hours',
+            'avg_wallduration_hours',
+            'expansion_factor',
+            'job_count',
+            'max_processors',
+            'min_processors',
+            'normalized_avg_processors',
+            'running_job_count',
+            'started_job_count',
+            'submitted_job_count',
+            'total_cpu_hours',
+            'total_node_hours',
+            'total_waitduration_hours',
+            'total_wallduration_hours',
+            'utilization'
+        );
+
+        $base = array(
+            'username' => array('principal'),
+            'realm' => array('jobs'),
+            'group_by' => $groups,
+            'statistic' => $stats,
+        );
+
+        $testdata = array(
+            array(
+                array(
+                    "username" => "principal",
+                    "realm" => "jobs",
+                    "group_by" => null,
+                    "statistic" => null,
+                    "expected" => JSON::loadFile($this->getTestFiles()->getFile('acls', 'get_query_descripters-jobs'))
+                )
+            )
+        );
+
+        foreach(\TestHarness\Utilities::getCombinations($base) as $settings)
+        {
+            $settings['expected'] = array(
+                "_realm_name" => 'Jobs',
+                "_group_by_name" => $settings['group_by'],
+                "_default_statisticname" => isset($settings['statistic']) ? $settings['statistic'] : 'all',
+                "_order_id" => 0,
+                "_show_menu" => true,
+                "_disable_menu" => false
+            );
+            $testdata[] = array($settings);
+        }
+
+        return $testdata;
     }
 
     /**
