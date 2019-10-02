@@ -2100,7 +2100,7 @@ function verifyConfigData()
             \Configuration\XdmodConfiguration::assocArrayFactory("$section.json", CONFIG_DIR);
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
-            $log->err("[FAIL] Unable to load section $section");
+            $log->err(sprintf('[FAIL] Unable to load section %s: %s', $section, $e->getMessage()));
             $invalid[] = $section;
         }
     }
