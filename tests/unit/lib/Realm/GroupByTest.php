@@ -217,8 +217,8 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $expected = SORT_DESC;
         $this->assertEquals($expected, $generated, 'getSortOrder()');
 
-        $generated = $obj->isAvailableForDrilldown();
-        $this->assertTrue($generated, 'isAvailableForDrilldown()');
+        $generated = $obj->showInMetricCatalog();
+        $this->assertTrue($generated, 'showInMetricCatalog()');
 
         $generated = $obj->getAttributeValuesQuery()->getSql();
         $expected =<<<SQL
