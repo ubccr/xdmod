@@ -448,7 +448,7 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
-  AND person.id > (constraint)
+  AND person.id > ('constraint')
 GROUP BY person.id
 ORDER BY person.order_id ASC
 SQL;
