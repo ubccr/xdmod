@@ -162,7 +162,13 @@ class Realm extends \CCR\Loggable implements iRealm
         $filename = ( isset($options->config_file_name) ? $options->config_file_name : 'datawarehouse.json' );
         $configDir = ( isset($options->config_base_dir) ? $options->config_base_dir : CONFIG_DIR );
 
-        if ( null === self::$dataWarehouseConfig ) {
+        // When using a non-standard configuration file location we always re-load the configuration
+        // class. Otherwise, tests that reference different locations or artifacts will fail
+        // depending on the order that they are run in.
+
+        $nonStandardConfig = ( isset($options->config_file_name) || isset($options->config_base_dir) );
+
+        if ( null === self::$dataWarehouseConfig || $nonStandardConfig ) {
             self::$dataWarehouseConfig = Configuration::factory(
                 $filename,
                 $configDir,
