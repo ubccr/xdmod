@@ -833,7 +833,7 @@ class Realm extends \CCR\Loggable implements iRealm
         foreach ( $groupByObjects as $gId => $groupByObj ) {
             // Don't include the current group by or any group bys that are not available for drill
             // down.
-            if ( $gId == $groupById || ! $groupByObj->isAvailableForDrilldown() ) {
+            if ( $gId == $groupById || ! $groupByObj->showInMetricCatalog() ) {
                 continue;
             }
             $drillTargets[] = sprintf('%s-%s', $gId, $groupByObj->getName());
