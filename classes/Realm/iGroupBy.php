@@ -122,11 +122,11 @@ interface iGroupBy
     public function getSortOrder();
 
     /**
-     * @return boolean TRUE if the attribute represented by this GroupBy should be available as a
-     *   drill-down for a statistic in the user interface.
+     * @return boolean TRUE if the attribute represented by this GroupBy should be available in the
+     *   metric catalog and as a drill-down for a statistic in the user interface.
      */
 
-    public function isAvailableForDrilldown();
+    public function showInMetricCatalog();
 
     /**
      * @return boolean TRUE if the attribute represented by this GroupBy is an aggregation unit such

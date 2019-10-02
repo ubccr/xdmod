@@ -137,10 +137,11 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $category = 'uncategorized';
 
     /**
-     * @var boolean Indicates that this dimension is available for drill-down in the user interface.
+     * @var boolean Indicates that this dimension should be shown in the metric catalog and is
+     *   available for drill-down in the user interface.
      */
 
-    protected $isAvailableForDrilldown = true;
+    protected $showInCatalog = true;
 
     /**
      * @var boolean Indicates that this dimension is an aggregation unit such as day, month,
@@ -266,14 +267,14 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             'attribute_description_query' => 'int',
             'attribute_filter_map_query' => 'object',
             'attribute_table_schema' => 'string',
-            'available_for_drilldown' => 'bool',
             'category' => 'string',
             'chart_options' => 'object',
             'data_sort_order' => 'string',
             'disabled' => 'bool',
             'is_aggregation_unit' => 'bool',
             'module' => 'string',
-            'order' => 'int'
+            'order' => 'int',
+            'show_in_catalog' => 'bool'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
@@ -312,8 +313,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 case 'attribute_description_query':
                     $this->attributeDescriptionSql = trim($value);
                     break;
-                case 'available_for_drilldown':
-                    $this->isAvailableForDrilldown = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                case 'show_in_catalog':
+                    $this->showInCatalog = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 case 'category':
                     $this->category = trim($value);
@@ -610,12 +611,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     }
 
     /**
-     * @see iGroupBy::isAvailableForDrilldown()
+     * @see iGroupBy::showInMetricCatalog()
      */
 
-    public function isAvailableForDrilldown()
+    public function showInMetricCatalog()
     {
-        return $this->isAvailableForDrilldown;
+        return $this->showInCatalog;
     }
 
     /**
