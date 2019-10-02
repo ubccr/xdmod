@@ -180,7 +180,6 @@
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
                 "cloud_common/domains.json",
-                "cloud_common/domains_staging.json",
                 "cloud_openstack/domain_submission_venue.json",
                 "cloud_openstack/domain_submission_venue_staging.json",
                 "cloud_openstack/staging_event.json",

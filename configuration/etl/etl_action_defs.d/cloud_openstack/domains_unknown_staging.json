@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "${table_definition_dir}/cloud_common/domains_staging.json#/table_definition"
+        "$ref": "${table_definition_dir}/cloud_common/domains.json#/table_definition"
     },
     "source_query": {
         "records": {
