@@ -29,8 +29,8 @@ class GroupByQuarter extends GroupByAggregationUnit
             '
                 SELECT DISTINCT
                     gt.id,
-                    DATE(gt.quarter_start) AS long_name,
-                    DATE(gt.quarter_start) AS short_name,
+                    CONCAT(YEAR(gt.quarter_start)," Q", CEIL(MONTH(gt.quarter_start)/3)) AS long_name,
+                    CONCAT(YEAR(gt.quarter_start)," Q", CEIL(MONTH(gt.quarter_start)/3)) AS short_name,
                     gt.quarter_start_ts AS start_ts
                 FROM quarters gt
                 WHERE 1
@@ -51,11 +51,11 @@ class GroupByQuarter extends GroupByAggregationUnit
             $this->getIdColumnName($multiGroup)
         );
         $nameField = new FormulaField(
-            'DATE(' . $query->getDateTable()->getAlias() . '.quarter_start)',
+            'CONCAT(YEAR(' . $query->getDateTable()->getAlias() . '.quarter_start)," Q", CEIL(MONTH(' . $query->getDateTable()->getAlias() . '.quarter_start)/3))',
             $this->getLongNameColumnName($multiGroup)
         );
         $shortnameField = new FormulaField(
-            'DATE(' . $query->getDateTable()->getAlias() . '.quarter_start)',
+            'CONCAT(YEAR(' . $query->getDateTable()->getAlias() . '.quarter_start)," Q", CEIL(MONTH(' . $query->getDateTable()->getAlias() . '.quarter_start)/3))',
             $this->getShortNameColumnName($multiGroup)
         );
         $valueField = new TableField(

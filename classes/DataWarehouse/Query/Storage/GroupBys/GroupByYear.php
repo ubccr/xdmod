@@ -29,8 +29,8 @@ class GroupByYear extends GroupByAggregationUnit
             '
                 SELECT DISTINCT
                     gt.id,
-                    DATE(gt.year_start) AS long_name,
-                    DATE(gt.year_start) AS short_name,
+                    DATE_FORMAT(gt.year_start, "%Y") AS long_name,
+                    DATE_FORMAT(gt.year_start, "%Y") AS short_name,
                     gt.year_start_ts AS start_ts
                 FROM years gt
                 WHERE 1
@@ -51,11 +51,11 @@ class GroupByYear extends GroupByAggregationUnit
             $this->getIdColumnName($multiGroup)
         );
         $nameField = new FormulaField(
-            'DATE(' . $query->getDateTable()->getAlias() . '.year_start)',
+            'DATE_FORMAT(' . $query->getDateTable()->getAlias() . '.year_start, "%Y")',
             $this->getLongNameColumnName($multiGroup)
         );
         $shortnameField = new FormulaField(
-            'DATE(' . $query->getDateTable()->getAlias() . '.year_start)',
+            'DATE_FORMAT(' . $query->getDateTable()->getAlias() . '.year_start, "%Y")',
             $this->getShortNameColumnName($multiGroup)
         );
         $valueField = new TableField(

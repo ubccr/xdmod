@@ -85,4 +85,8 @@ class GroupByParentScience extends GroupBy
             'fos_id'
         );
     }
+    public function getDefaultDatasetType()
+    {
+        return 'aggregate';
+    }
 }

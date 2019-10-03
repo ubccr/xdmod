@@ -24,8 +24,8 @@ class GroupByMonth extends GroupByAggregationUnit
             '
                 SELECT DISTINCT
                     gt.id,
-                    DATE(gt.month_start) AS long_name,
-                    DATE(gt.month_start) AS short_name,
+                    DATE_FORMAT(gt.month_start, "%Y-%m") as long_name,
+                    DATE_FORMAT(gt.month_start, "%Y-%m") as short_name,
                     gt.month_start_ts AS start_ts
                 FROM months gt
                 WHERE 1
@@ -51,11 +51,11 @@ class GroupByMonth extends GroupByAggregationUnit
             $this->getIdColumnName($multiGroup)
         );
         $nameField = new FormulaField(
-            'DATE(' . $query->getDateTable()->getAlias() . '.month_start)',
+            'DATE_FORMAT(' . $query->getDateTable()->getAlias() . '.month_start, "%Y-%m")',
             $this->getLongNameColumnName($multiGroup)
         );
         $shortnameField = new FormulaField(
-            'DATE(' . $query->getDateTable()->getAlias() . '.month_start)',
+            'DATE_FORMAT(' . $query->getDateTable()->getAlias() . '.month_start, "%Y-%m")',
             $this->getShortNameColumnName($multiGroup)
         );
         $valueField = new TableField(

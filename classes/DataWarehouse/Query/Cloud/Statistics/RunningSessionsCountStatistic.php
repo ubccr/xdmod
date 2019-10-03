@@ -21,15 +21,10 @@ class RunningSessionsCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             $sql,
             'cloud_num_sessions_running',
-            'Number of Active Sessions',
-            'Number of Sessions',
+            'Number of Sessions Active',
+            'Sessions',
             0
         );
-    }
-
-    public function getLabel()
-    {
-        return parent::getLabel(false);
     }
 
     public function getInfo()

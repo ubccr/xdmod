@@ -21,7 +21,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             $sql,
             'cloud_avg_wallduration_hours',
-            'Average Wall Hours per Session',
+            'Wall Hours: Per Session',
             'Hours',
             2
         );
