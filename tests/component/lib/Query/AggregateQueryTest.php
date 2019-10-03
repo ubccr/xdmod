@@ -358,6 +358,56 @@ SQL;
     }
 
     /**
+     * Test adding an additional JOIN constraint to the query, as is used in GroupByQueue.
+     */
+
+    public function testAggregateQueryAdditionalJoinConstraint()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31'
+        );
+        $query->addGroupBy('queue');
+        $query->addStat('Jobs_job_count');
+
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // prepends the metric to the ORDER BY clause. Simulate that here.
+
+        $data_description = (object) array(
+            'sort_type' => 'value_desc',
+            'group_by'  => 'queue',
+            'metric'    => 'Jobs_job_count'
+        );
+        $query->addOrderByAndSetSortInfo($data_description);
+
+
+        $generated = $query->getQueryString();
+        $expected  =<<<SQL
+SELECT
+  queue.id as 'queue_id',
+  queue.id as 'queue_short_name',
+  queue.id as 'queue_name',
+  queue.id as 'queue_order_id',
+  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+FROM
+  modw_aggregates.jobfact_by_day agg,
+  modw.days duration,
+  modw.queue queue
+WHERE
+  duration.id = agg.day_id
+  AND agg.day_id between 201600357 and 201700001
+  AND queue.id = agg.queue
+  AND queue.resource_id = agg.task_resource_id
+GROUP BY queue.id
+ORDER BY Jobs_job_count desc,
+  queue.id ASC
+SQL;
+        $this->assertEquals($expected, $generated, 'Additional join constraint');
+    }
+
+    /**
      * Test using group by none, which is a special case of aggregation unit group-by.
      */
 
