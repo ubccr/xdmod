@@ -89,11 +89,7 @@ class UsageExplorerJobsTest extends \PHPUnit_Framework_TestCase
             'parentscience',
             'person',
             'pi',
-/**
- * Temporary comment to get tests to pass while known error is fixed
- * specifically allowing group bys to have additional where clauses
- */
-//            'queue',
+            'queue',
             'resource',
             'resource_type',
             'username'

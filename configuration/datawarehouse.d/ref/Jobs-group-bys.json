@@ -239,6 +239,13 @@
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
     },
     "queue": {
+        "additional_join_constraints": [
+            {
+                "attribute_expr": "resource_id",
+                "operation": "=",
+                "aggregate_expr": "task_resource_id"
+            }
+        ],
         "attribute_table": "queue",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
