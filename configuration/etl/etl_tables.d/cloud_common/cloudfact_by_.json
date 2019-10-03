@@ -115,7 +115,7 @@
                 "name": "domain_id",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": ""
+                "comment": "DIMENSION: A domain is a high-level container for projects, users and groups."
             }
         ],
 
