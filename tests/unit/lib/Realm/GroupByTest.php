@@ -84,7 +84,8 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
             'none' => 'None',
             'day' => 'Day',
             'month' => 'Month',
-            'username' => 'System Username'
+            'username' => 'System Username',
+            'queue' => 'Queue'
         );
         $this->assertEquals($expected, $generated, "getGroupByObjects('Jobs')");
 

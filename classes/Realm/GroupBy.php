@@ -84,12 +84,22 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     /**
      * @var array A list of alternate group-by columns to be used in the generated SQL query. The
-     * list must contain one element for each key provided in the attribute to aggregate key map. In
-     * some cases, such as group by username, we will want to group by a value that is different
-     * than the attribute or aggregate keys.
+     *   list must contain one element for each key provided in the attribute to aggregate key map. In
+     *   some cases, such as group by username, we will want to group by a value that is different
+     *   than the attribute or aggregate keys.
      */
 
     protected $alternateGroupByColumns = array();
+
+    /**
+     * @var array An array of objects describing qdditional constraints to be added to the JOIN
+     *   clause between the attribute and aggregate data tables. The specification contains the
+     *   attribute column (left), operation, and aggregate column (right). This is used in cases where
+     *   we want to add additional where clauses to the JOIN condition between the attribute and
+     *   aggregate data tables to ensure we are restricting data properly.
+     */
+
+    protected $additionalJoinConstraints = null;
 
     /**
      * @var DbQuery The Attribute Values Query provides a mechanism for the GroupBy class to
@@ -263,6 +273,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
 
         $optionalConfigTypes = array(
+            'additional_join_constraints' => 'array',
             'alternate_group_by_columns' => 'array',
             'attribute_description_query' => 'int',
             'attribute_filter_map_query' => 'object',
@@ -287,6 +298,16 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             switch ($key) {
                 case 'alternate_group_by_columns':
                     $this->alternateGroupByColumns = $value;
+                    break;
+                case 'additional_join_constraints':
+                    foreach ( $value as $constraint ) {
+                        if ( ! is_object($constraint) ) {
+                            $this->logAndThrowException(
+                                sprintf("In additional_join_constraints list, expected object, got %s", gettype($constraint))
+                            );
+                        }
+                        $this->additionalJoinConstraints[] = $constraint;
+                    }
                     break;
                 case 'attribute_table':
                     $this->attributeTableName = trim($value);
@@ -945,9 +966,23 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                         '=',
                         new TableField($query->getDataTable(), $aggregateKey)
                     );
+                    $this->logger->trace(sprintf("%s Add JOIN condition '%s'", $this, $where));
                     $query->addWhereCondition($where);
-                    $this->logger->trace(sprintf("%s Add WHERE condition '%s'", $this, $where));
                 }
+            }
+        }
+
+        // If additional join constraints were specified add those here.
+
+        if ( null !== $this->additionalJoinConstraints ) {
+            foreach ( $this->additionalJoinConstraints as $constraint ) {
+                $where = new WhereCondition(
+                    new TableField($this->attributeTableObj, $constraint->attribute_expr),
+                    $constraint->operation,
+                    new TableField($query->getDataTable(), $constraint->aggregate_expr)
+                );
+                $this->logger->trace(sprintf("%s Add additional JOIN condition '%s'", $this, $where));
+                $query->addWhereCondition($where);
             }
         }
 
@@ -1119,6 +1154,21 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $this->logger->debug(sprintf('%s Add join condition: %s', $this, $where));
             $query->addWhereCondition($where);
         }
+
+        // If additional join constraints were specified add those here.
+
+        if ( null !== $this->additionalJoinConstraints ) {
+            foreach ( $this->additionalJoinConstraints as $constraint ) {
+                $where = new WhereCondition(
+                    new TableField($this->attributeTableObj, $constraint->attribute_expr),
+                    $constraint->operation,
+                    new TableField($query->getDataTable(), $constraint->aggregate_expr)
+                );
+                $this->logger->trace(sprintf("%s Add additional JOIN condition '%s'", $this, $where));
+                $query->addWhereCondition($where);
+            }
+        }
+
 
         // Normalize the WHERE constraint. We may be able to set this as an array in the parameter
         // list.
