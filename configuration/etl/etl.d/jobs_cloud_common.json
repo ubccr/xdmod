@@ -49,7 +49,10 @@
                 "cloud_openstack/raw_volume.json",
                 "cloud_generic/raw_event.json",
                 "cloud_generic/raw_instance_type.json",
-                "cloud_generic/raw_volume.json"
+                "cloud_generic/raw_volume.json",
+                "cloud_common/domains.json",
+                "cloud_openstack/domain_submission_venue_staging.json",
+                "cloud_openstack/domain_submission_venue.json"
             ]
         },
         {

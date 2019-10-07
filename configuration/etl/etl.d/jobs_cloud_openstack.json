@@ -35,7 +35,6 @@
             "truncate_destination": false
         }
     },
-
     "jobs-cloud-ingest-openstack": [
         {
             "name": "OpenStackRawCloudEventIngestor",
@@ -55,6 +54,7 @@
                         "record_separator": "\n",
                         "record_schema_path": "cloud_openstack/event.schema.json",
                         "field_names": [
+                            "domain",
                             "event_type",
                             "generated",
                             "host",
@@ -250,6 +250,55 @@
             "description": "Open Stack cloud instance data",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/instance.json"
+        },
+        {
+            "name": "OpenStackUnknownDomainIngestor",
+            "description": "The default 'Unknown' domain.",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_openstack/unknown_domain.sql"
+            ],
+            "truncate_destination": true
+        },
+        {
+            "name": "OpenStackDomainIngestor",
+            "description": "Open Stack cloud domains data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/domains.json",
+            "truncate_destination": false
+        },
+        {
+            "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",
+            "description": "Load schema version history",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "cloud_openstack/domain_submission_venue_staging.json",
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "openstack-domain-submission-venue-mapping",
+                    "path": "cloud_openstack/domain_submission_venue_staging_map.json"
+                }
+            }
+        },
+        {
+            "name": "OpenStackDomainToSubmissionVenueMappingIngestor",
+            "description": "",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/domain_submission_venue.json",
+            "truncate_destination": true,
+            "endpoints": {
+                "utility": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         },
         {
             "#": "Events must be ingested after all other dimensions",

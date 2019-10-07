@@ -36,6 +36,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "username"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "domain"
                 }
             ],
             "+summary_charts": [{
@@ -147,6 +151,10 @@
                     "realm": "Cloud",
                     "group_by": "username",
                     "disable": true
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "domain"
                 }
             ]
         }

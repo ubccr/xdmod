@@ -545,9 +545,9 @@ EOF;
         if ($expectedXpath !== null) {
             $xml = simplexml_load_string($originalResults[0]);
 
-            $results = $xml->xpath($expectedXpath);
+            $xmlValues = $xml->xpath($expectedXpath);
 
-            $actualValue = is_array($expectedValue) ? $results : array_pop($results);
+            $actualValue = is_array($expectedValue) ? $xmlValues : array_pop($xmlValues);
 
             $expectedCount = count($expectedValue);
             $actualCount = count($actualValue);
@@ -555,8 +555,8 @@ EOF;
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];
-                $actual = $actualValue[$i];
-                $this->assertEquals($expected, (string)$actual);
+                $actual = (string)$actualValue[$i];
+                $this->assertEquals($expected, $actual);
             }
         } else {
             $actual = $originalResults[0];

@@ -43,7 +43,8 @@
                 "num_sessions_ended": "SUM(IF(sr.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
                 "num_sessions_running": "SUM(1)",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
-                "submission_venue_id": "sr.submission_venue_id"
+                "submission_venue_id": "sr.submission_venue_id",
+                "domain_id": "sr.domain_id"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",

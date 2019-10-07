@@ -130,6 +130,12 @@
                 "type": "varchar(64)",
                 "nullable": true,
                 "default": null
+            },
+            {
+                "name": "domain",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
             }
         ],
         "indexes": [{

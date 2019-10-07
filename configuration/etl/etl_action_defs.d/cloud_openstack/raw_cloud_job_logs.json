@@ -15,6 +15,7 @@
 
     "destination_record_map": {
         "openstack_raw_event": {
+            "domain": "domain",
             "event_type": "event_type",
             "record_type": "record_type",
             "event_time_utc": "generated",

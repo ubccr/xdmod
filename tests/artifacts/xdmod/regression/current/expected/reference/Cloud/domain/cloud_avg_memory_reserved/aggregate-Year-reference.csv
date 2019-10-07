@@ -1,0 +1,10 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by Domain"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Domain,"Average Memory Reserved Weighted By Wall Hours (Bytes)"
+"Unknown - NutSetters",5389444295.8833
+---------

@@ -71,6 +71,7 @@ then
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
     fi
     sudo -u xdmod xdmod-ingestor
 
@@ -116,4 +117,22 @@ then
         expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
     fi
 
+    # TODO: Replace diff files with hard fixes
+    # Modify integration sso tests to work with cloud realm
+    if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
+        expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
+        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-ingestor
+
+#        if ! patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+#            # -- Fix users searched in SSO test
+#            patch -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+#        fi
+#    else
+#        if patch --dry-run -Rfsup1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff; then
+#            # -- Reverse previous patch
+#            patch -R -up1 --directory=/scratch/xdmod/ < $SRCDIR/xdmod/tests/ci/diff/SSOLoginTest.php.diff
+#        fi
+
+    fi
 fi
