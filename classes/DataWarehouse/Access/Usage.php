@@ -93,18 +93,17 @@ class Usage extends Common
                 if (!$statsClass->isVisible()) {
                     continue;
                 }
-                $statUsageChartSettings = $usageChartSettings;
-
+                
                 if(!$statsClass->usesTimePeriodTablesForAggregate()){
-                    $statUsageChartSettings['dataset_type'] = 'timeseries';
-                    $statUsageChartSettings['display_type'] = 'line';
-                    $statUsageChartSettings['swap_xy'] = false;
+                    $usageChartSettings['dataset_type'] = 'timeseries';
+                    $usageChartSettings['display_type'] = 'line';
+                    $usageChartSettings['swap_xy'] = false;
                 }
                 $errorstat = 'sem_' . $userStatistic;
                 if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
-                    $statUsageChartSettings['enable_errors'] = 'y';
+                    $usageChartSettings['enable_errors'] = 'y';
                 }
-                $statUsageChartSettings['statistic'] = $userStatistic;
+                $usageChartSettings['statistic'] = $userStatistic;
 
                 $usageChart = array(
                         'hc_jsonstore' => array('title' => array('text' => '')),
@@ -114,7 +113,7 @@ class Usage extends Common
                         'subnotes' => $usageSubnotes,
                         'group_description' => $usageGroupByObject->getDescription(),
                         'description' => $statsClass->getDescription($usageGroupByObject),
-                        'chart_settings' => json_encode($statUsageChartSettings),
+                        'chart_settings' => $usageChartSettings,
                 );
 
                 $usageCharts[] = $usageChart;
@@ -939,7 +938,7 @@ class Usage extends Common
                     'realm' => $usageRealm,
                     'start_date' => $this->request['start_date'],
                     'end_date' => $this->request['end_date'],
-                    'chart_settings' => json_encode($usageChartSettings),
+                    'chart_settings' => $usageChartSettings,
                     'show_gradient' => $usageShowGradient,
                     'final_width' => $usageWidth,
                     'final_height' => $usageHeight - 4,

@@ -1454,7 +1454,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartContainer.setHeight(CCR.xdmod.ui.thumbHeight * chartThumbScale);
                             chartContainer.mask('Loading...');
 
-                            var chart_params = Ext.apply({}, Ext.util.JSON.decode(r.get('chart_settings')), menuParams);
+                            var chart_params = Ext.apply({}, r.get('chart_settings'), menuParams);
 
                             var deferStore = new Ext.data.JsonStore({
                                 autoDestroy: true,
