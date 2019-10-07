@@ -1463,8 +1463,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             results: selected
         };
 
-        var realmField = Ext.getCmp('realm-field');
-        var realm = realmField ? realmField.getValue() : null;
+        var realm = params.searchterms.params.realm;
         var idFragment = id !== undefined ? '/' + id : '';
         var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
 
