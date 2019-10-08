@@ -20,6 +20,4 @@ FROM (
      ) inc
          LEFT JOIN modw_cloud.`domains` cur
                    ON cur.id = inc.id
-                       AND cur.resource_id = inc.resource_id
-                       AND cur.name = inc.name
 WHERE cur.id IS NULL;
