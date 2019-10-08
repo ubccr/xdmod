@@ -805,7 +805,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         };
 
         self.resetDirtyState = function () {
-            revertUserSettings();
+            resetUserSettings();
             roleGrid.setDirtyState(false);
         };
 
@@ -982,7 +982,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         self.resetDirtyState();
-                        resetUserSettings();
+                        revertUserSettings();
 
                         updateSaveIndicator();
 
