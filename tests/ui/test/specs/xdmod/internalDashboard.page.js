@@ -140,8 +140,8 @@ class InternalDashboard {
                         dropDownTriggerByLabel: function (labelText) {
                             return `${self.selectors.create_manage_users.current_users.settings.container}//label[contains(text(), "${labelText}")]/parent::*//img[contains(@class, "x-form-trigger")]`;
                         },
-                        noUserSelectedModal: function() {
-                            return `${self.selectors.create_manage_users.current_users.settings.container}//div[contains(@class, 'ext-el-mask-msg')]//div[contains(text(), 'Select A User From The List To The Left')]`
+                        noUserSelectedModal: function () {
+                            return `${self.selectors.create_manage_users.current_users.settings.container}//div[contains(@class, 'ext-el-mask-msg')]//div[contains(text(), 'Select A User From The List To The Left')]`;
                         }
                     },
                     user_list: {
@@ -149,15 +149,15 @@ class InternalDashboard {
                             return `${self.selectors.create_manage_users.current_users.container}//div[contains(@class, 'admin_panel_existing_user_list')]`;
                         },
                         toolbar: {
-                            container: function() {
-                                return `${self.selectors.create_manage_users.current_users.user_list.container()}//div[contains(@class, 'x-panel-tbar')]`
+                            container: function () {
+                                return `${self.selectors.create_manage_users.current_users.user_list.container()}//div[contains(@class, 'x-panel-tbar')]`;
                             },
-                            buttonByLabel: function(labelText, buttonText) {
-                                return `${self.selectors.create_manage_users.current_users.user_list.toolbar.container()}//div[contains(text(), "${labelText}")]/following::*//button[contains(text(), "${buttonText}")]`
+                            buttonByLabel: function (labelText, buttonText) {
+                                return `${self.selectors.create_manage_users.current_users.user_list.toolbar.container()}//div[contains(text(), "${labelText}")]/following::*//button[contains(text(), "${buttonText}")]`;
                             }
                         },
                         dropDownItemByText: function (text) {
-                           return `//div[contains(@class, 'x-menu')]//ul[contains(@class, 'x-menu-list')]//span[contains(text(), '${text}')]/parent::*[contains(@class, 'x-menu-item')]`;
+                            return `//div[contains(@class, 'x-menu')]//ul[contains(@class, 'x-menu-list')]//span[contains(text(), '${text}')]/parent::*[contains(@class, 'x-menu-item')]`;
                         },
                         /**
                          * Retrieve a column via `column_name`, for a user via
