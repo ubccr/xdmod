@@ -40,6 +40,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "domain"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "service_provider"
                 }
             ],
             "+summary_charts": [{

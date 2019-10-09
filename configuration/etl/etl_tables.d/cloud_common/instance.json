@@ -37,6 +37,13 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "Unknown = -1"
+            },
+            {
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Unknown = -1"
             }
         ],
 
