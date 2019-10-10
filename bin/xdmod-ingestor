@@ -240,6 +240,7 @@ function main()
     if ($ingest) {
         $logger->info('Ingesting data');
         try {
+            $dwi->initializeIngestion();
 
             // If no ingestion phase is specified, ingest all.
             if (!$ingestShredded && !$ingestStaging && !$ingestHpcdb && !$datatype){
