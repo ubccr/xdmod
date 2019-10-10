@@ -111,6 +111,14 @@ class DataWarehouseInitializer
     }
 
     /**
+     * Ran any prerequisite pipelines before ingestion.
+     */
+    public function initializeIngestion()
+    {
+        Utilities::runEtlPipeline(array('jobs-common', 'ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
+    }
+
+    /**
      * Ingest all data needed for the data warehouse.
      *
      * @param string $startDate
@@ -148,7 +156,7 @@ class DataWarehouseInitializer
         }
 
         $this->logger->debug('Ingesting shredded data to staging tables');
-        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs', 'ingest-resource-types'), $this->logger);
+        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
     }
 
     /**
