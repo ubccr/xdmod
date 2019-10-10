@@ -44,3 +44,17 @@ integrations:
       on_cancel: always
       on_start: always
       on_pull_request: always
+jobs:
+    - name: xdmod_runCI
+      type: runCI
+      steps:
+        - IN: nightly-trigger
+      on_success:
+        - NOTIFY: shippable_slack
+      on_failure:
+        - NOTIFY: shippable_slack
+resources:
+  - name: nightly-trigger
+    type: time
+    versionTemplate:
+      interval: "15 14 * * *" # UTC
