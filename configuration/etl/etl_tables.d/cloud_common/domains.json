@@ -1,11 +1,9 @@
 {
-  "#": "Domains are specific to a resource",
-  "#": "Populated from the `domains_staging` table. `domains_staging` manages",
-  "#": "the `resource_id` + `domain_id` combination auto-increment. This table",
-  "#": "manages the overall row unique column `id`.",
+  "#": "Domains are high-level containers for projects, users and groups and are specific to a resource.",
   "table_definition": {
     "name": "domains",
     "engine": "MyISAM",
+    "charset": "utf8",
     "comment": "Which domains are currently being tracked by the Cloud realm",
     "columns": [
       {
