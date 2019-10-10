@@ -79,6 +79,13 @@ class DataWarehouseInitializer
     protected $append;
 
     /**
+     * A String[] of the realms currently considered `enabled`.
+     *
+     * @var array
+     */
+    protected $enabledRealms = null;
+
+    /**
      * @param iDatabase $hpcdbDb The HPcDB database.
      * @param iDatabase $warehouseDb The MoD warehouse database.
      */
@@ -456,6 +463,10 @@ class DataWarehouseInitializer
      */
     public function getEnabledRealms()
     {
+        if ($this->enabledRealms !== null) {
+            return $this->enabledRealms;
+        }
+
         $resources = \Configuration\XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
         $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
 
@@ -473,6 +484,8 @@ class DataWarehouseInitializer
                 $realms = array_merge($realms, $resourceTypes[$currentResourceType]['realms']);
             }
         }
-        return array_unique($realms);
+        $this->enabledRealms = array_unique($realms);
+
+        return $this->enabledRealms;
     }
 }
