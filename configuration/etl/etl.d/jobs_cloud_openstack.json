@@ -259,15 +259,13 @@
             "class": "ExecuteSql",
             "sql_file_list": [
                 "cloud_openstack/unknown_domain.sql"
-            ],
-            "truncate_destination": true
+            ]
         },
         {
             "name": "OpenStackDomainIngestor",
             "description": "Open Stack cloud domains data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/domains.json",
-            "truncate_destination": false
+            "definition_file": "cloud_openstack/domains.json"
         },
         {
             "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",

@@ -12,10 +12,18 @@
                 "name": "openstack_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
+            },
+            {
+                "name": "domains",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "cur",
+                "type": "LEFT",
+                "on": "cur.name = raw.domain AND cur.resource_id = raw.resource_id"
             }
         ],
         "where": [
-            "raw.domain IS NOT NULL"
+            "raw.domain IS NOT NULL",
+            "cur.id IS NULL"
         ]
     }
 }
