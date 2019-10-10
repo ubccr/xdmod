@@ -115,7 +115,7 @@ class DataWarehouseInitializer
      */
     public function initializeIngestion()
     {
-        Utilities::runEtlPipeline(array('jobs-common', 'ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
+        Utilities::runEtlPipeline(array('ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
     }
 
     /**
