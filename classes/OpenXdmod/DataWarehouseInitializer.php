@@ -3,6 +3,7 @@
 namespace OpenXdmod;
 
 use CCR\DB;
+use Configuration\XdmodConfiguration;
 use Exception;
 use CCR\DB\iDatabase;
 use ETL\Configuration\EtlConfiguration;
@@ -444,6 +445,34 @@ class DataWarehouseInitializer
      */
     public function isRealmEnabled($realm)
     {
-        return in_array($realm, Realms::getEnabledRealms());
+        return in_array($realm, $this->getEnabledRealms());
+    }
+
+    /**
+     * Retrieve an array of the realms that are `enabled` for this XDMoD installation. `enabled` is defined as there
+     * being a resource present of a type that supports ( i.e. has a record in its `realms` property ) said realm.
+     * .
+     * @return array
+     */
+    public function getEnabledRealms()
+    {
+        $resources = \Configuration\XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
+        $resourceTypes = \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+
+        $currentResourceTypes = array();
+        foreach($resources as $resource) {
+            if (isset($resource['resource_type'])) {
+                $currentResourceTypes[] = $resource['resource_type'];
+            }
+        }
+        $currentResourceTypes = array_unique($currentResourceTypes);
+
+        $realms = array();
+        foreach($currentResourceTypes as $currentResourceType) {
+            if (isset($resourceTypes[$currentResourceType])) {
+                $realms = array_merge($realms, $resourceTypes[$currentResourceType]['realms']);
+            }
+        }
+        return array_unique($realms);
     }
 }
