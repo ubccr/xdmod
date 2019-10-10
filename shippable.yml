@@ -49,12 +49,8 @@ jobs:
       type: runCI
       steps:
         - IN: nightly-trigger
-      on_success:
-        - NOTIFY: shippable_slack
-      on_failure:
-        - NOTIFY: shippable_slack
 resources:
   - name: nightly-trigger
     type: time
     versionTemplate:
-      interval: "20 14 * * *" # UTC
+      interval: "30 17 * * *" # UTC
