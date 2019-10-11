@@ -99,7 +99,6 @@
             "name": "ResourceTypesStagingUnknown",
             "description": "Populates the resource types table w/ the Unknown resource",
             "namespace": "ETL\\Maintenance",
-            "truncate_destination": false,
             "class": "ExecuteSql",
             "options_class": "MaintenanceOptions",
             "sql_file_list": [
