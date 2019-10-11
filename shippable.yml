@@ -53,4 +53,4 @@ resources:
   - name: nightly-trigger
     type: time
     versionTemplate:
-      interval: "30 17 * * *" # UTC
+      interval: "0 3 * * *" # UTC
