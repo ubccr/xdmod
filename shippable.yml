@@ -45,13 +45,28 @@ integrations:
       on_start: always
       on_pull_request: always
 resources:
-  - name: xdmod-time-trigger
+  - name: bpless-xdmod-time-trigger
     type: time
     versionTemplate:
-      interval: "20 15 * * *" # UTC
+      interval: "25 15 * * *" # UTC
   - name: slack_notif
     type: notification
     integration: slack-notification-xdmod
     versionTemplate:
       recipients:
         - "#shippable"
+jobs:
+    - name: xdmod_runCI
+      type: runCI
+      steps:
+        - IN: bpless-xdmod-time-trigger
+      on_start:
+        - NOTIFY: slack_notif
+      on_success:
+        - NOTIFY: slack_notif
+      on_failure:
+        - NOTIFY: slack_notif
+      on_cancel:
+        - NOTIFY: slack_notif
+      always:
+        - NOTIFY: slack_notif
