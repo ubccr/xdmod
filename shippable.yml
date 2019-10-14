@@ -48,7 +48,7 @@ resources:
   - name: bpless-xdmod-time-trigger
     type: time
     versionTemplate:
-      interval: "33 15 * * *" # UTC
+      interval: "38 15 * * *" # UTC
   - name: slack_notif
     type: notification
     integration: slack-notification-xdmod
