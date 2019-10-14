@@ -48,7 +48,7 @@ resources:
   - name: xdmod-time-trigger
     type: time
     versionTemplate:
-      interval: "15 15 * * *" # UTC
+      interval: "20 15 * * *" # UTC
   - name: slack_notif
     type: notification
     integration: slack-notification-xdmod
