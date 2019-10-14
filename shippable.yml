@@ -34,3 +34,24 @@ build:
         - if [ -s /var/log/xdmod/apache-error.log ]; then cat /var/log/xdmod/apache-error.log; false; fi
     on_failure:
         - cat /var/log/xdmod/*
+integrations:
+  notifications:
+    - integrationName: slack-notification-xdmod
+      type: slack
+      recipients: "#shippable"
+      on_success: always
+      on_failure: always
+      on_cancel: always
+      on_start: always
+      on_pull_request: always
+resources:
+  - name: xdmod-time-trigger
+    type: time
+    versionTemplate:
+      interval: "15 15 * * *" # UTC
+  - name: slack_notif
+    type: notification
+    integration: slack-notification-xdmod
+    versionTemplate:
+      recipients:
+        - "#shippable"
