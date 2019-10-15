@@ -2,6 +2,7 @@ language: none
 env:
     - XDMOD_TEST_MODE=fresh_install
     - XDMOD_TEST_MODE=upgrade
+    - XDMOD_TEST_MODE=fresh_install XDMOD_REALMS=jobs
 build:
     cache: true
     cache_dir_list:
@@ -33,4 +34,6 @@ build:
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - if [ -s /var/log/xdmod/apache-error.log ]; then cat /var/log/xdmod/apache-error.log; false; fi
     on_failure:
+        - mysqldump modw resourcetype
+        - mysqldump mod_shredder staging_resource_type
         - cat /var/log/xdmod/*
