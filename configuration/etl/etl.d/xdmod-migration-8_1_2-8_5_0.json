@@ -210,6 +210,69 @@
             }
         },
         {
+            "name": "ResourceTypesStagingUnknown",
+            "description": "Populates the resource types table w/ the Unknown resource",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "cloud_openstack/unknown_resource_type.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder",
+                    "definition_file": "common/staging/resource-type-realms.json"
+                }
+            }
+        },
+        {
+            "name": "ResourceTypesHpcdb",
+            "description": "Ingest resource types",
+            "definition_file": "common/hpcdb/resource-types.json",
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Staging tables",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "ResourceTypesDatawarehouse",
+            "definition_file": "jobs/xdw/resource-type.json",
+            "namespace": "ETL\\Ingestor",
+            "description": "resource type records",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
             "class": "DatabaseIngestor",
             "name": "IngestInitialRealms",
             "namespace": "ETL\\Ingestor",
