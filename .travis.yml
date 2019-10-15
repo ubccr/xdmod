@@ -14,7 +14,7 @@ env:
         - XDMOD_IS_CORE=true
 addons:
     sonarcloud:
-        organization: "ryanrath"
+        organization: "ubccr"
         token: "$SONAR_TOKEN"
 # Add dependency directories to the Travis cache
 cache:
