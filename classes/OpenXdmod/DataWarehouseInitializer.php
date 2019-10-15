@@ -148,7 +148,7 @@ class DataWarehouseInitializer
         }
 
         $this->logger->debug('Ingesting shredded data to staging tables');
-        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs', 'ingest-resource-types'), $this->logger);
+        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
     }
 
     /**
