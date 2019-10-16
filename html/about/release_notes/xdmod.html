@@ -2,17 +2,17 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
-<h2> Version 8.5.0 (2019-10-16) </h2>
+<h2> Version 8.5.0 (2019-10-17) </h2>
+
 <h3>Bug Fixes</h3>
 <ul>
     <li>General
         <ul>
             <li>Ensure resourcetypes table is correctly populated.</li>
             <li>Ensure summary controller only displays preset charts for realm…</li>
-            <li>xdmod-update-resource-specs: fix resources file name</li>
+            <li><code>xdmod-update-resource-specs</code>: fix resources file name</li>
             <li>Enable APCu cache for Configuration objects</li>
             <li>Fix Query Descriptor Visibility</li>
-            <li>enable all component tests and make sure they work</li>
         </ul>
     </li>
     <li>Job Viewer
@@ -29,15 +29,13 @@
     <li>Metric Explorer
         <ul>
             <li>Fix metric explorer metric and dimension display bug.</li>
-            <li>Update the “Per Job” statistics to support aggregate view mode.</li>
+            <li>Enable aggregate view for all “Per Job” statistics in the Jobs realm.</li>
         </ul>
     </li>
     <li>User Dashboard
         <ul>
-            <li>Minor text changes</li>
             <li>Bug fixes: Add mask and make chart name unique</li>
             <li>adding check to make sure Help Tips exist before making a help tour for a portlet</li>
-            <li>fixing new user tour so duplicate tours are not made when the summary tab is refreshed</li>
             <li>Bug Fixes and Changes</li>
         </ul>
     </li>
@@ -48,7 +46,7 @@
     </li>
     <li>ACL
         <ul>
-            <li>Updated SQL construction for <code>tablesExist</code></li>
+            <li>Fix backup table detection bug in <code>acl-config</code>.</li>
         </ul>
     </li>
 </ul>
@@ -58,21 +56,6 @@
         <ul>
             <li>Update DWI’s <code>isRealmEnabled</code> to be config file based</li>
             <li>Filter Realms processed by <code>acl-config</code></li>
-        </ul>
-    </li>
-    <li>User Dashboard
-        <ul>
-            <li>Add ability to hide realm from the metric catalog</li>
-            <li>Add help window for Dashboard Components</li>
-            <li>Set default chart configuration</li>
-            <li>Unify the no data error messages.</li>
-            <li>Updating the message and button text of the popup message asking a person if they want to see the new
-                user tour</li>
-            <li>Fix summary page to two columns.</li>
-            <li>Added default layout configuration options.</li>
-            <li>Add PI view to recent jobs panel</li>
-            <li>Allow search to be run without extra parameters</li>
-            <li>Added REST endpoint to query aggregate data</li>
         </ul>
     </li>
     <li>ACL
@@ -87,11 +70,6 @@
             <li>Add Show raw data support for the Jobs Realm</li>
         </ul>
     </li>
-    <li>Metric Explorer
-        <ul>
-            <li>Add chart link button to metric explorer</li>
-        </ul>
-    </li>
     <li>General
         <ul>
             <li>Performance improvements by providing caching for Configuration objects built from JSON configuration
@@ -104,7 +82,7 @@
         </ul>
     </li>
 </ul>
-<h3>Qa / Testing</h3>
+<h3>QA / Testing</h3>
 <ul>
     <li>General
         <ul>
@@ -113,7 +91,9 @@
             <li>Improve robustness of UI tests</li>
             <li>Update Travis YML to explicitly use Ubuntu 14.04</li>
             <li>Fixing timing issues in Metric Explorer UI Tests</li>
+            <li>Add Dockerfiles used for test builds</li>
             <li>Less stringent DataWarehouse Descripter tests</li>
+            <li>enable all component tests and make sure they work</li>
         </ul>
     </li>
     <li>Infrastructure
@@ -128,7 +108,6 @@
         <ul>
             <li>Improve xdmod-ingestor documentation</li>
             <li>Improve processor buckets documentation</li>
-            <li>Add Dockerfiles used for test builds</li>
         </ul>
     </li>
 </ul>
@@ -139,9 +118,14 @@
             <li>Add data warehouse batch export</li>
         </ul>
     </li>
+    <li>Metric Explorer
+        <ul>
+            <li>Add a view chart json button for developers</li>
+            <li>Add chart link button to metric explorer</li>
+        </ul>
+    </li>
     <li>User Dashboard
         <ul>
-            <li>Updates to Help Tips</li>
             <li>Added reset summary page layout UI</li>
             <li>Add JobPortlet</li>
             <li>Adding New User Help Tour and functionality to reset if a user has seen a tour or not</li>
@@ -151,11 +135,6 @@
             <li>User Dashboard - Center Report Card: Support</li>
             <li>User Dashboard - Summary Statistics Portlet</li>
             <li>Initial Prototype of Novice User Portal</li>
-        </ul>
-    </li>
-    <li>Metric Explorer
-        <ul>
-            <li>Add a view chart json button for developers</li>
         </ul>
     </li>
 </ul>
@@ -169,6 +148,7 @@
         </ul>
     </li>
 </ul>
+
 <h2> Version 8.1.2 (2019-05-06) </h2>
 <h3>Bug Fixes</h3>
 <ul>
