@@ -35,7 +35,7 @@
             "size": "size",
             "volume_id": "volume_id",
             "state": "state",
-            "service_provider": "${SERVICE_PROVIDER}"
+            "service_provider": "service_provider"
         },
         "openstack_raw_instance_type": {
             "instance_type": "instance_type",

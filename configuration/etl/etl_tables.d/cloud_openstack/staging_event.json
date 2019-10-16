@@ -132,7 +132,7 @@
                     "person_id",
                     "account_id",
                     "host_id",
-                    "service_provider_id"
+                    "service_provider"
                 ],
                 "is_unique": true
             },

@@ -83,7 +83,7 @@
                           "type": "external",
                           "name": "jq",
                           "path": "jq",
-                          "arguments" :"-c '.[] | .[\"record_type\"] += if .[\"event_type\"] == \"compute.instance.exists\" then \"ADMINISTRATIVE\" else \"ACCOUNTING\" end'"
+                          "arguments" :"-c '.[] | .[\"record_type\"] += if .[\"event_type\"] == \"compute.instance.exists\" then \"ADMINISTRATIVE\" else \"ACCOUNTING\" end | .[\"service_provider\"] += \"${SERVICE_PROVIDER}\"'"
                         }]
                     }
                 }

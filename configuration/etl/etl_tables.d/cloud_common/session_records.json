@@ -103,7 +103,12 @@
                 "name": "domain_id",
                 "type": "int(11)",
                 "nullable": true
-            }
+            },
+            {
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": true
+            },
             {
                 "name": "last_modified",
                 "type": "timestamp",
