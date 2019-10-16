@@ -1,5 +1,122 @@
 Open XDMoD Change Log
-=====================
+==================
+## 2019-10-16 v8.5.0
+
+### Bug Fixes
+
+- General
+    - Ensure resourcetypes table is correctly populated.
+    - Ensure summary controller only displays preset charts for realm…
+    - xdmod-update-resource-specs: fix resources file name
+    - Enable APCu cache for Configuration objects
+    - Fix Query Descriptor Visibility
+    - enable all component tests and make sure they work
+
+- Job Viewer
+    - Fix bug in job viewer save search when multiple realms available
+    - Fix display bugs in the error message for the job viewer analytics.
+
+- Internal Dashboard
+    - Fixing an infinite loop when discarding user changes
+
+- Metric Explorer
+    - Fix metric explorer metric and dimension display bug.
+    - Update the  "Per Job" statistics to support aggregate view mode.
+
+- User Dashboard
+    - Minor text changes
+    - Bug fixes: Add mask and make chart name unique
+    - adding check to make sure Help Tips exist before making a help tour for a portlet
+    - fixing new user tour so duplicate tours are not made when the summary tab is refreshed
+    - Bug Fixes and Changes
+
+- ETL
+    - Improve DirectorySanner to properly handle first file being empty
+
+- ACL
+    - Updated SQL construction for `tablesExist`
+
+### Enhancements
+
+- Infrastructure
+    - Update DWI's `isRealmEnabled` to be config file based
+    - Filter Realms processed by `acl-config`
+
+- User Dashboard
+    - Add ability to hide realm from the metric catalog
+    - Add help window for Dashboard Components
+    - Set default chart configuration
+    - Unify the no data error messages.
+    - Updating the message and button text of the popup message asking a person if they want to see the new user tour
+    - Fix summary page to two columns.
+    - Added default layout configuration options.
+    - Add PI view to recent jobs panel
+    - Allow search to be run without extra parameters
+    - Added REST endpoint to query aggregate data
+
+- ACL
+    - Updated to add resource_types and resource_type_realms
+
+- Job Viewer
+    - Add tooltips to jobviewer Summary value column
+    - Convert Joules to kWh for display in job viewer.
+    - Add Show raw data support for the Jobs Realm
+
+- Metric Explorer
+    - Add chart link button to metric explorer
+
+- General
+    - Performance improvements by providing caching for Configuration objects built from JSON configuration files
+
+- ETL
+    - Allow re-use of StructuredFile data endpoints with external filters
+
+### Qa / Testing
+
+- General
+    - Add Usage Explorer Tests
+    - Multi realm installs - Allow for modification of enabled realms…
+    - Improve robustness of UI tests
+    - Update Travis YML to explicitly use Ubuntu 14.04
+    - Fixing timing issues in Metric Explorer UI Tests
+    - Less stringent DataWarehouse Descripter tests
+
+- Infrastructure
+    - Wait for loading mask to disappear on SSO logout
+
+### Documentation
+
+- General
+    - Improve xdmod-ingestor documentation
+    - Improve processor buckets documentation
+    - Add Dockerfiles used for test builds
+
+### New Features
+
+- Data Warehouse Export
+    - Add data warehouse batch export
+
+- User Dashboard
+    - Updates to Help Tips
+    - Added reset summary page layout UI
+    - Add JobPortlet
+    - Adding New User Help Tour and functionality to reset if a user has seen a tour or not
+    - Add recent charts and reports portlet
+    - Add report thumbnails portlet
+    - Add guided user tours
+    - User Dashboard - Center Report Card: Support
+    - User Dashboard - Summary Statistics Portlet
+    - Initial Prototype of Novice User Portal
+
+- Metric Explorer
+    - Add a view chart json button for developers
+
+### Data Quality
+
+- General
+    - Increase size of system username column
+    - Update Average Wall Hours statistic to be exact rather than approximate in aggregate mode
+    - Fix datatype of job_id column
 
 ## 2019-05-06 v8.1.2
 
