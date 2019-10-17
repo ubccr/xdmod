@@ -5,10 +5,10 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD only supports upgrading to a new version from the version
-  that directly precedes it.  If you need to upgrade from an older
-  version you must upgrade through all the intermediate versions or
-  perform a clean installation.
+- Open XDMoD only supports upgrading to a new version from the version that
+  directly precedes it unless otherwise noted below.  If you need to upgrade
+  from an older version you must upgrade through all the intermediate versions
+  or perform a clean installation.
 - Make a backup of your Open XDMoD configuration files before running
   the upgrade script.  The upgrade script may overwrite your current
   configuration files.
@@ -102,48 +102,45 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.1.1 to 8.1.2 Upgrade Notes
-----------------------------
+8.1 to 8.5 Upgrade Notes
+------------------------
 
-Open XDMoD 8.1.2 is a bug fix release that fixes an issue with detecting enabled
-realms and the ingestion / aggregation of data.
+Open XDMoD 8.5.0 is a major release that includes new features along with many
+enhancements and bug fixes.
 
-You may upgrade directly from 8.0.0 to 8.1.2.
-
-8.1.0 to 8.1.1 Upgrade Notes
-----------------------------
-
-Open XDMoD 8.1.1 is a bug fix release that fixes an issue with upgrading from
-8.0.0 where the `modw_cloud` schema does not exist.
-
-You may upgrade directly from 8.0.0 to 8.1.1.
-
-8.0.0 to 8.1.0 Upgrade Notes
-----------------------------
+You may upgrade directly from 8.1.0, 8.1.1 or 8.1.2 to 8.5.0.
 
 ### Configuration File Changes
 
-- Changes `datawarehouse.json`:
-    - Adds Cloud realm `group_bys`.
 - Changes `portal_settings.ini`:
-    - Removes `singlejobviewer` option.
-    - Adds an option to show or hide the local login modal dialog for single
-      sign on configurations.
-    - Added subject prefix option for outbound emails.
-- Removes `processor_buckets.json`:
-    - Use `etl/etl_data.d/cloud_common/processor_buckets.json` to change
-      processor bucket ranges.
-- Changes `roles.d/cloud.json`:
-    - If the cloud realm is enabled this file will be updated with permissions
-      for the new `group_by`s.
+    - Adds `user_dashboard` option.
+    - Adds data warehouse batch export configuration options.
+- Changes `datawarehouse.json` and files in `datawarehouse.d/`:
+    - Reorganizes data warehouse configuration.
+- Changes `roles.json` and files in `roles.d`:
+    - Reorganizes role configuration.
+    - Adds permissions for data warehouse batch export
 - Changes files in `etl/`:
     - Various additions, improvements and bug fixes.
+- Changes `cron` configuration:
+    - Adds cron job for data warehouse batch export.
 
 ### Database Changes
 
-- Drops existing tables in `modw_cloud` if cloud realm is enabled.
-- Updates user profile data in `moddb` to normalize Metric Explorer
-  configuration of saved charts.
+- Adds `mod_hpcdb`.`resource_type_realms` table.
+- Changes `mod_hpcdb`.`hpcdb_resource_types` primary key.
+- Changes `mod_hpcdb`.`hpcdb_resources` foreign key constraint.
+- Alters `mod_shredder`.`staging_resource_config` table.
+- Adds `mod_shredder`.`staging_resource_type_realms` table.
+- Increases `modw_cloud`.`openstack_raw_event`.`user_name` column length.
+- Increases `mod_hpcdb`.`hpcdb_system_accounts`.`username` column length.
+- Increases `modw`.`systemaccount`.`username` column length.
+- Increases `mod_shredder`.`staging_storage_usage`.`user_name` column length.
+- Increases `mod_shredder`.`staging_storage_usage`.`pi_name` column length.
+- Adds `modw`.`jobfact_by_day_joblist` table.
+- Adds `modw`.`batch_export_requests` table.
+- Adds `moddb`.`ReportTemplateChartsStaging` table.
+- Adds `moddb`.`ReportTemplatesStaging` table.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
