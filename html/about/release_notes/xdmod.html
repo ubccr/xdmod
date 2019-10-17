@@ -2,6 +2,153 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
+<h2> Version 8.5.0 (2019-10-17) </h2>
+
+<h3>Bug Fixes</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Ensure resourcetypes table is correctly populated.</li>
+            <li>Ensure summary controller only displays preset charts for realm…</li>
+            <li><code>xdmod-update-resource-specs</code>: fix resources file name</li>
+            <li>Enable APCu cache for Configuration objects</li>
+            <li>Fix Query Descriptor Visibility</li>
+        </ul>
+    </li>
+    <li>Job Viewer
+        <ul>
+            <li>Fix bug in job viewer save search when multiple realms available</li>
+            <li>Fix display bugs in the error message for the job viewer analytics.</li>
+        </ul>
+    </li>
+    <li>Internal Dashboard
+        <ul>
+            <li>Fixing an infinite loop when discarding user changes</li>
+        </ul>
+    </li>
+    <li>Metric Explorer
+        <ul>
+            <li>Fix metric explorer metric and dimension display bug.</li>
+            <li>Enable aggregate view for all “Per Job” statistics in the Jobs realm.</li>
+        </ul>
+    </li>
+    <li>User Dashboard
+        <ul>
+            <li>Bug fixes: Add mask and make chart name unique</li>
+            <li>adding check to make sure Help Tips exist before making a help tour for a portlet</li>
+            <li>Bug Fixes and Changes</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Improve DirectorySanner to properly handle first file being empty</li>
+        </ul>
+    </li>
+    <li>ACL
+        <ul>
+            <li>Fix backup table detection bug in <code>acl-config</code>.</li>
+        </ul>
+    </li>
+</ul>
+<h3>Enhancements</h3>
+<ul>
+    <li>Infrastructure
+        <ul>
+            <li>Update DWI’s <code>isRealmEnabled</code> to be config file based</li>
+            <li>Filter Realms processed by <code>acl-config</code></li>
+        </ul>
+    </li>
+    <li>ACL
+        <ul>
+            <li>Updated to add resource_types and resource_type_realms</li>
+        </ul>
+    </li>
+    <li>Job Viewer
+        <ul>
+            <li>Add tooltips to jobviewer Summary value column</li>
+            <li>Convert Joules to kWh for display in job viewer.</li>
+            <li>Add Show raw data support for the Jobs Realm</li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Performance improvements by providing caching for Configuration objects built from JSON configuration
+                files</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Allow re-use of StructuredFile data endpoints with external filters</li>
+        </ul>
+    </li>
+</ul>
+<h3>QA / Testing</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Add Usage Explorer Tests</li>
+            <li>Multi realm installs - Allow for modification of enabled realms…</li>
+            <li>Improve robustness of UI tests</li>
+            <li>Update Travis YML to explicitly use Ubuntu 14.04</li>
+            <li>Fixing timing issues in Metric Explorer UI Tests</li>
+            <li>Add Dockerfiles used for test builds</li>
+            <li>Less stringent DataWarehouse Descripter tests</li>
+            <li>enable all component tests and make sure they work</li>
+        </ul>
+    </li>
+    <li>Infrastructure
+        <ul>
+            <li>Wait for loading mask to disappear on SSO logout</li>
+        </ul>
+    </li>
+</ul>
+<h3>Documentation</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Improve xdmod-ingestor documentation</li>
+            <li>Improve processor buckets documentation</li>
+        </ul>
+    </li>
+</ul>
+<h3>New Features</h3>
+<ul>
+    <li>Data Warehouse Export
+        <ul>
+            <li>Add data warehouse batch export</li>
+        </ul>
+    </li>
+    <li>Metric Explorer
+        <ul>
+            <li>Add a view chart json button for developers</li>
+            <li>Add chart link button to metric explorer</li>
+        </ul>
+    </li>
+    <li>User Dashboard
+        <ul>
+            <li>Added reset summary page layout UI</li>
+            <li>Add JobPortlet</li>
+            <li>Adding New User Help Tour and functionality to reset if a user has seen a tour or not</li>
+            <li>Add recent charts and reports portlet</li>
+            <li>Add report thumbnails portlet</li>
+            <li>Add guided user tours</li>
+            <li>User Dashboard - Center Report Card: Support</li>
+            <li>User Dashboard - Summary Statistics Portlet</li>
+            <li>Initial Prototype of Novice User Portal</li>
+        </ul>
+    </li>
+</ul>
+<h3>Data Quality</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Increase size of system username column</li>
+            <li>Update Average Wall Hours statistic to be exact rather than approximate in aggregate mode</li>
+            <li>Fix datatype of job_id column</li>
+        </ul>
+    </li>
+</ul>
+
 <h2> Version 8.1.2 (2019-05-06) </h2>
 <h3>Bug Fixes</h3>
 <ul>
@@ -25,34 +172,38 @@
 </ul>
 <h2> Version 8.1.0 (2019-04-23) </h2>
 
-<h3 id="documentation">Documentation</h3>
+<h3>Documentation</h3>
 <ul>
     <li>ETL
         <ul>
             <li>Improve storage aggregation</li>
             <li>Processor Buckets documentation update</li>
-        </ul></li>
-        <li>General
-            <ul>
-                <li>Update broken url and change wording of supported software</li>
-                <li>Add Federated XDMoD to About page</li>
-                <li>Update with some of the options that are avalbile</li>
-                <li>Improve storage documentation</li>
-            </ul></li>
-            <li>Cloud
-                <ul>
-                    <li>Updated Cloud Documentation for 8.1 Release</li>
-                </ul></li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Update broken url and change wording of supported software</li>
+            <li>Add Federated XDMoD to About page</li>
+            <li>Update with some of the options that are avalbile</li>
+            <li>Improve storage documentation</li>
+        </ul>
+    </li>
+    <li>Cloud
+        <ul>
+            <li>Updated Cloud Documentation for 8.1 Release</li>
+        </ul>
+    </li>
 </ul>
-<h3 id="new-features">New Features</h3>
+<h3>New Features</h3>
 <ul>
     <li>Cloud
         <ul>
             <li>Add cloud user and system account group by</li>
             <li>Add support for cloud data to xdmod-shredder and xdmod-ingestor</li>
-        </ul></li>
+        </ul>
+    </li>
 </ul>
-<h3 id="enhancements">Enhancements</h3>
+<h3>Enhancements</h3>
 <ul>
     <li>General
         <ul>
@@ -66,27 +217,30 @@
             <li>Support non-numeric values for Usage chart filter parameters</li>
             <li>Make “Show raw data” for multiple realms configurable</li>
             <li>Update Sign On Panel to collapse local login if SSO is enabled</li>
-        </ul></li>
-        <li>Cloud
-            <ul>
-                <li>Do not truncate aggregate tables on each ingest</li>
-                <li>Truncate staging tables after ingestion</li>
-                <li>Update events that are used to determine VM session starts and stops</li>
-            </ul></li>
-            <li>ETL
-                <ul>
-                    <li>Improve resiliency of ETLv2 manage tables</li>
-                    <li>Add storage shredder/ingestor support</li>
-                    <li>Support ETL ‘$include’ directive</li>
-                    <li>Update Configuration class to support merging objects in local config files</li>
-                    <li>DirectoryScanner support for last modified time based on filename and/or directory</li>
-                    <li>Move the job performance postprocessing SQL to the aggregation pipeline</li>
-                    <li>Implement dynamic fact tables via ETLv2 for job performance ETL</li>
-                    <li>Add exception code to logAndThrowException</li>
-                    <li>Skip only records that fail verificaiton instead of rest of file</li>
-                </ul></li>
+        </ul>
+    </li>
+    <li>Cloud
+        <ul>
+            <li>Do not truncate aggregate tables on each ingest</li>
+            <li>Truncate staging tables after ingestion</li>
+            <li>Update events that are used to determine VM session starts and stops</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Improve resiliency of ETLv2 manage tables</li>
+            <li>Add storage shredder/ingestor support</li>
+            <li>Support ETL ‘$include’ directive</li>
+            <li>Update Configuration class to support merging objects in local config files</li>
+            <li>DirectoryScanner support for last modified time based on filename and/or directory</li>
+            <li>Move the job performance postprocessing SQL to the aggregation pipeline</li>
+            <li>Implement dynamic fact tables via ETLv2 for job performance ETL</li>
+            <li>Add exception code to logAndThrowException</li>
+            <li>Skip only records that fail verificaiton instead of rest of file</li>
+        </ul>
+    </li>
 </ul>
-<h3 id="bug-fixes">Bug Fixes</h3>
+<h3>Bug Fixes</h3>
 <ul>
     <li>Cloud
         <ul>
@@ -103,33 +257,37 @@
             <li>Fix for generic cloud datetime, and openstack instance type datetime</li>
             <li>Update cloud realm to not throw away event precision</li>
             <li>Guarantees a deterministic order for events received by the event reconstructor</li>
-        </ul></li>
-        <li>General
-            <ul>
-                <li>Add proper namespace in VerifyDatabase</li>
-                <li>Fix path to Exception in TimeAggregationUnit::factory</li>
-                <li>Explictly check for stdClass in VariableStore initializer</li>
-                <li>Make lastLogin time be floored to the second instead of microtime</li>
-                <li>Make logrotate.d file not override global settings</li>
-                <li>Fix security vulnerabities in job performance</li>
-                <li>Allow search panel scroll bars on small displays</li>
-            </ul></li>
-            <li>ETL
-                <ul>
-                    <li>Update primary key on resourcefact table to improve cloud ingestion</li>
-                    <li>Throw Exception if lockfile could not be obtained</li>
-                    <li>Improve debugging messages when executing SQL</li>
-                    <li>Don’t automatically rewind DirectoryScanner file handle</li>
-                    <li>Explicitly cast potentiall nulls to array for array_merge()</li>
-                    <li>Improve verification of resource codes</li>
-                    <li>Fix uncaught ETL exception in PdoIngestor</li>
-                </ul></li>
-                <li>Metric Explorer
-                    <ul>
-                        <li>Fix refesh button for Metric Explorer</li>
-                    </ul></li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Add proper namespace in VerifyDatabase</li>
+            <li>Fix path to Exception in TimeAggregationUnit::factory</li>
+            <li>Explictly check for stdClass in VariableStore initializer</li>
+            <li>Make lastLogin time be floored to the second instead of microtime</li>
+            <li>Make logrotate.d file not override global settings</li>
+            <li>Fix security vulnerabities in job performance</li>
+            <li>Allow search panel scroll bars on small displays</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Update primary key on resourcefact table to improve cloud ingestion</li>
+            <li>Throw Exception if lockfile could not be obtained</li>
+            <li>Improve debugging messages when executing SQL</li>
+            <li>Don’t automatically rewind DirectoryScanner file handle</li>
+            <li>Explicitly cast potentiall nulls to array for array_merge()</li>
+            <li>Improve verification of resource codes</li>
+            <li>Fix uncaught ETL exception in PdoIngestor</li>
+        </ul>
+    </li>
+    <li>Metric Explorer
+        <ul>
+            <li>Fix refesh button for Metric Explorer</li>
+        </ul>
+    </li>
 </ul>
-<h3 id="qa-testing">QA / Testing</h3>
+<h3>QA / Testing</h3>
 <ul>
     <li>General
         <ul>
@@ -138,11 +296,13 @@
             <li>Add environment variable to force regression test harness to generate expected results</li>
             <li>Enforce javascript unit tests</li>
             <li>Robustness improvements for integration tests</li>
-        </ul></li>
-        <li>Cloud
-            <ul>
-                <li>Update cloud reference data</li>
-            </ul></li>
+        </ul>
+    </li>
+    <li>Cloud
+        <ul>
+            <li>Update cloud reference data</li>
+        </ul>
+    </li>
 </ul>
 
 <h2> Version 8.0.0 (2018-10-30) </h2>
@@ -220,7 +380,7 @@
 <h3>Bug Fixes</h3>
 <ul>
     <li> Properly implement data access for non-feature ACLs (e.g., ACLs that provide access to
-        data but not a feature such as a tab) that are not part of the hierarchy.  For example,
+        data but not a feature such as a tab) that are not part of the hierarchy. For example,
         the Value Analytics ACL.</li>
 </ul>
 
@@ -560,9 +720,9 @@
 <h2>Version 6.0.0 (2016-09-21)</h2>
 
 <p><strong>IMPORTANT NOTE:</strong> Highcharts has been updated from
-v3.0.9 to v4.2.5. If you are a commercial user as defined by the
-Highcharts license terms and your Highcharts license does not cover the
-new version, you will need to acquire a new license.</p>
+    v3.0.9 to v4.2.5. If you are a commercial user as defined by the
+    Highcharts license terms and your Highcharts license does not cover the
+    new version, you will need to acquire a new license.</p>
 
 <h3>Features</h3>
 <ul>
