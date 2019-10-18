@@ -582,7 +582,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     protected function compareUsers($expectedUsers, $actualUsers)
     {
         $allFound = true;
-        foreach ($expectedUsers as $key => $expectedUser) {
+        foreach ($expectedUsers as $expectedUser) {
             $entryExists = $this->entryExists(
                 $actualUsers,
                 /**
