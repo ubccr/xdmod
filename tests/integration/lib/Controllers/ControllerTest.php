@@ -73,33 +73,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $expectedUsers = $expected['response'];
         $actualUsers = $actual['response'];
 
-        $allFound = true;
-        foreach ($expectedUsers as $key => $expectedUser) {
-            $entryExists = $this->entryExists(
-                $actualUsers,
-                function ($key, $value) use ($expectedUser) {
-                    if ($value['username'] === $expectedUser['username']) {
-                        $success = true;
-                        $diff = array_diff_assoc($expectedUser, $value);
-                        array_walk_recursive(
-                            $diff,
-                            function ($value, $index, $properties) use (&$success) {
-                                if (!in_array($index, $properties)) {
-                                    $success = false;
-                                }
-                            },
-                            array('last_logged_in', 'id', 'email_address')
-                        );
-                        return $success;
-                    }
-                    return false;
-                }
-            );
-            if (!$entryExists) {
-                $allFound = false;
-                break;
-            }
-        }
+        $allFound = $this->compareUsers($expectedUsers, $actualUsers);
 
         $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in' | " . json_encode($actualUsers));
 
@@ -232,33 +206,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $actualUsers = $data['users'];
         $expectedUsers = $expected['users'];
 
-        $allFound = true;
-        foreach ($expectedUsers as $key => $expectedUser) {
-            $entryExists = $this->entryExists(
-                $actualUsers,
-                function ($key, $value) use ($expectedUser) {
-                    if ($value['username'] === $expectedUser['username']) {
-                        $success = true;
-                        $diff = array_diff_assoc($expectedUser, $value);
-                        array_walk_recursive(
-                            $diff,
-                            function ($value, $index, $properties) use (&$success) {
-                                if (!in_array($index, $properties)) {
-                                    $success = false;
-                                }
-                            },
-                            array('last_logged_in', 'id', 'email_address')
-                        );
-                        return $success;
-                    }
-                    return false;
-                }
-            );
-            if (!$entryExists) {
-                $allFound = false;
-                break;
-            }
-        }
+        $allFound = $this->compareUsers($expectedUsers, $actualUsers);
 
         $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
 
@@ -342,7 +290,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $expectedFilePath = $this->getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users');
 
         if (!is_file($expectedFilePath)) {
-            file_put_contents($expectedFilePath, json_encode($data, JSON_PRETTY_PRINT)) . "\n";
+            file_put_contents($expectedFilePath, json_encode($data, JSON_PRETTY_PRINT) . "\n");
             $this->markTestSkipped();
         } else {
             $expected = JSON::loadFile($expectedFilePath);
@@ -619,30 +567,62 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         return $data['response'];
     }
 
-
-    public function arrayRecursiveDiff($aArray1, $aArray2)
+    /**
+     * Compare $expectedUsers to $actualUsers using the following rules to determine a positive match:
+     *   - The `username` properties must be equal.
+     *   - That they share all properties except the following:
+     *     - last_logged_in
+     *     - id
+     *     - email_address
+     *
+     * @param array $expectedUsers The users that were expected to be returned.
+     * @param array $actualUsers   The users that were retrieved from the system.
+     * @return bool
+     */
+    protected function compareUsers($expectedUsers, $actualUsers)
     {
-        $aReturn = array();
-
-        foreach ($aArray1 as $mKey => $mValue) {
-            if (array_key_exists($mKey, $aArray2)) {
-                if (is_array($mValue)) {
-                    $aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
-                    if (count($aRecursiveDiff)) {
-                        $aReturn[$mKey] = $aRecursiveDiff;
+        $allFound = true;
+        foreach ($expectedUsers as $key => $expectedUser) {
+            $entryExists = $this->entryExists(
+                $actualUsers,
+                /**
+                 * @param mixed $key        the key of an entry in `$actualUsers`
+                 * @param array $actualUser expected to be an associative array in the same format as $expectedUser.
+                 * @return bool
+                 */
+                function ($key, $actualUser) use ($expectedUser) {
+                    if ($actualUser['username'] === $expectedUser['username']) {
+                        $success = true;
+                        $diff = array_diff_assoc($expectedUser, $actualUser);
+                        array_walk_recursive(
+                            $diff,
+                            function ($value, $index, $properties) use (&$success) {
+                                if (!in_array($index, $properties)) {
+                                    $success = false;
+                                }
+                            },
+                            array('last_logged_in', 'id', 'email_address')
+                        );
+                        return $success;
                     }
-                } else {
-                    if ($mValue != $aArray2[$mKey]) {
-                        $aReturn[$mKey] = $mValue;
-                    }
+                    return false;
                 }
-            } else {
-                $aReturn[$mKey] = $mValue;
+            );
+            if (!$entryExists) {
+                $allFound = false;
+                break;
             }
         }
-        return $aReturn;
+        return $allFound;
     }
 
+    /**
+     * Search $source for a $key, $value pair that causes the $predicate function to return true.
+     *
+     * @param array    $source    The array that is being searched.
+     * @param callable $predicate The function used to determine whether or not the desired entry has been found.
+     * @return bool
+     */
     protected function entryExists(array $source, callable $predicate)
     {
         foreach ($source as $key => $value) {
