@@ -112,6 +112,14 @@ You may upgrade directly from 8.1.0, 8.1.1 or 8.1.2 to 8.5.0.
 
 ### Configuration File Changes
 
+The `xdmod-upgrade` script will migrate user editable configuration files to
+the new version.
+
+- Changes `resources.json`:
+    - No longer uses `resource_type_id` and now uses `resource_type` which
+      references the resource type key name from `resource_types.json`.
+- Changes `resource_types.json`:
+    - This file now uses a new format.
 - Changes `portal_settings.ini`:
     - Adds `user_dashboard` option.
     - Adds data warehouse batch export configuration options.
@@ -126,6 +134,9 @@ You may upgrade directly from 8.1.0, 8.1.1 or 8.1.2 to 8.5.0.
     - Adds cron job for data warehouse batch export.
 
 ### Database Changes
+
+The `xdmod-upgrade` script will migrate the database schemas to the new
+version.  Tables may be altered the first time they are used during ingestion.
 
 - Adds `mod_hpcdb`.`resource_type_realms` table.
 - Changes `mod_hpcdb`.`hpcdb_resource_types` primary key.
