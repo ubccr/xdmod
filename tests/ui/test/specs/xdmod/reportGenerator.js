@@ -375,7 +375,7 @@ describe('Report Generator', function () {
             reportGeneratorPage.selectTab();
         });
         it('Reports listed', function () {
-            expect(reportGeneratorPage.getMyReportsRows().length, 'Rows in the list of reports').to.be.equal(1);
+            expect(reportGeneratorPage.getMyReportsRows().length, 'Rows in the list of reports').to.be.equal(0);
         });
         it('No available charts listed', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
