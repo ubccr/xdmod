@@ -30,7 +30,7 @@
                 "schema": "${UTILITY_SCHEMA}",
                 "name": "systemaccount",
                 "alias": "sa",
-                "type": "INNER",
+                "type": "LEFT",
                 "on": "staging.person_id = sa.person_id AND staging.resource_id = sa.resource_id"
             },
             {
