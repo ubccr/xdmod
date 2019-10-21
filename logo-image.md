@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.1/logo-image.html
+redirect_to: /8.5/logo-image.html
 ---

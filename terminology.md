@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.1/terminology.html
+redirect_to: /8.5/terminology.html
 ---

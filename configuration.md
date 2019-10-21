@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.1/configuration.html
+redirect_to: /8.5/configuration.html
 ---
