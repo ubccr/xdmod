@@ -153,6 +153,13 @@ class QueryHandler
         // read export retention duration from config file. Value is stored in days.
         $expires_in_days = \xd_utilities\getConfiguration('data_warehouse_export', 'retention_duration_days');
 
+        if (!is_numeric($expires_in_days)) {
+            throw new Exception(sprintf(
+                'Configuration "data_warehouse_export" "retention_duration_days" value "%s" is not numeric',
+                $expires_in_days
+            ));
+        }
+
         $sql = "UPDATE batch_export_requests
                 SET export_created_datetime = NOW(),
                     export_expires_datetime = DATE_ADD(NOW(), INTERVAL :expires_in_days DAY),
