@@ -11,8 +11,8 @@ addition to limited access to our support team.
 
 | Version | Release Date       | End of Support     |
 | ------- | ------------------ | ------------------ |
+| 8.5     | October 17, 2019   | October 17, 2020   |
 | 8.1     | April 23, 2019     | April 23, 2020     |
-| 8.0     | October 10, 2018   | October 10, 2019   |
 
 Supported Operating Systems
 ---------------------------
