@@ -2,7 +2,7 @@
 /**
  * Update config files from version 8.5.0 To 8.6.0.
  */
-namespace OpenXdmod\Migration\Version810To811;
+namespace OpenXdmod\Migration\Version850To860;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
