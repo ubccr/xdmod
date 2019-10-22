@@ -119,7 +119,7 @@
                 "name": "service_provider",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": "DIMENSION: The venue that a job or virtual machine was initiated from."
+                "comment": "DIMENSION: The orgainization that is hosting a virtual machine."
             }
         ],
 

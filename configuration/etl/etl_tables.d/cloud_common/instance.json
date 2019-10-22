@@ -56,7 +56,8 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "provider_identifier"
+                    "provider_identifier",
+                    "service_provider"
                 ],
                 "is_unique": true
             },

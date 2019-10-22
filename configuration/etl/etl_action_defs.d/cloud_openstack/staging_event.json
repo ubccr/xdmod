@@ -103,6 +103,7 @@
 
         "groupby": [
             "raw.resource_id",
+            "i.service_provider",
             "i.instance_id",
             "raw.event_time_utc",
             "etype.event_type_id",

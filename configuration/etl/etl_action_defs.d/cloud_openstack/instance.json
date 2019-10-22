@@ -40,7 +40,8 @@
 
         "groupby": [
             "raw.resource_id",
-            "raw.provider_instance_identifier"
+            "raw.provider_instance_identifier",
+            "raw.service_provider"
         ]
     }
 }

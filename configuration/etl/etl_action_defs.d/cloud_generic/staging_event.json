@@ -29,7 +29,8 @@
             "instance_type_id": "COALESCE(itype.instance_type_id, 1)",
             "image_id": "COALESCE(img.image_id, 1)",
             "event_data": "raw.event_data",
-            "root_volume_type_id": "COALESCE(atype.asset_type_id, -1)"
+            "root_volume_type_id": "COALESCE(atype.asset_type_id, -1)",
+            "service_provider": "i.service_provider"
         },
 
         "joins": [
@@ -108,6 +109,7 @@
 
         "groupby": [
             "raw.resource_id",
+            "i.service_provider",
             "i.instance_id",
             "raw.event_time_utc",
             "etype.event_type_id",
