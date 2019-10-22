@@ -352,20 +352,25 @@ this should be set to `true`.
             "resource": "resource1",
             "name": "Resource 1",
             "description": "Our first HPC resource",
-            "resource_type_id": 1
+            "resource_type": "HPC"
         },
         {
             "resource": "resource2",
             "name": "Resource 2",
-            "resource_type_id": 2,
+            "resource_type": "HPC"
             "pi_column": "account_name"
         },
         {
             "resource": "resource3",
             "name": "Resource 3",
-            "resource_type_id": 1,
+            "resource_type": "HPC"
             "timezone": "US/Eastern",
             "shared_jobs": true
+        },
+        {
+            "resource": "resource4",
+            "name": "Resource 4",
+            "resource_type": "Cloud"
         }
     ]
 
@@ -427,22 +432,9 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 
 ### resource_types.json
 
-Defines resource types.  Each resource in `resources.json` should reference a
-resource type from this file.
-
-    [
-        {
-            "id": 0,
-            "abbrev": "UNK",
-            "description": "Unknown"
-        },
-        {
-            "id": 1,
-            "abbrev": "HPC",
-            "description": "High-performance computing"
-        },
-        ...
-    ]
+Defines resource types and associates resource types with realms.  Each
+resource in `resources.json` should reference a resource type from this file.
+This file typically should not be changed.
 
 ### update_check.json
 
