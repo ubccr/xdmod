@@ -88,7 +88,7 @@
       
          if (preg_match('/chart_data_(\d+)/', $k, $m) > 0) {
          
-            $order = $m[1];
+            $order = filter_var($m[1], FILTER_VALIDATE_INT);
             
             list($chart_id, $chart_title, $chart_drill_details, $chart_date_description, $timeframe_type, $entry_type) = explode(';', $v);  
             
@@ -102,6 +102,15 @@
             if (isset($_POST[$cache_ref_variable])) {
             
                list($start_date, $end_date, $ref, $rank) = explode(';', $_POST[$cache_ref_variable]);
+
+                $start_date = filter_var($start_date, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => RESTRICTION_DATE)));
+                $end_date = filter_var($end_date, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => RESTRICTION_DATE)));
+                $ref = filter_var($ref, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/^[a-z_\-0-9]+$/')));
+                $rank = filter_var($rank, FILTER_VALIDATE_INT);
+
+                if ($start_date === false || $end_date === false || $ref === false || $rank === false) {
+                    throw new \DataWarehouse\Query\Exceptions\BadRequestException('Invalid content in ' . $cache_ref_variable);
+                }
    
                $location = sys_get_temp_dir() . "/{$ref}_{$rank}_{$start_date}_{$end_date}.png";
 
