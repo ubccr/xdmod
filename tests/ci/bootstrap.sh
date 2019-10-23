@@ -121,6 +121,7 @@ then
     # Modify integration sso tests to work with cloud realm
     if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
         expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
         sudo -u xdmod xdmod-ingestor
 
