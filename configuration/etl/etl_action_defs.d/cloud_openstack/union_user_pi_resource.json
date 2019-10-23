@@ -4,7 +4,7 @@
     },
     "source_query": {
         "records": {
-            "union_user_pi_name": "DISTINCT raw.user_name",
+            "union_user_pi_name": "DISTINCT IF(raw.user_name IS NULL, 'Unknown', raw.user_name)",
             "resource_name": "r.code"
         },
         "joins": [
@@ -19,9 +19,6 @@
                 "alias": "r",
                 "on": "r.id = raw.resource_id"
             }
-        ],
-        "where": [
-            "raw.user_name IS NOT NULL"
         ]
     }
 }

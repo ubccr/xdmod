@@ -622,7 +622,7 @@
     "state": "building",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -767,7 +767,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -1707,7 +1707,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -2792,7 +2792,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -2817,7 +2817,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -3261,7 +3261,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -3287,7 +3287,7 @@
     "state": "deleted",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -4040,7 +4040,7 @@
     "state": "deleted",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
-    "user_name": "yerwa",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -16625,7 +16625,7 @@
     "state": "building",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -16747,7 +16747,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -17336,7 +17336,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -17361,7 +17361,7 @@
     "state": "stopped",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -17414,7 +17414,7 @@
     "state": "stopped",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -17439,7 +17439,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -17903,7 +17903,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -18094,7 +18094,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -18119,7 +18119,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -18213,7 +18213,7 @@
     "state": "active",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -18239,7 +18239,7 @@
     "state": "deleted",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {
@@ -19614,7 +19614,7 @@
     "state": "deleted",
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
-    "user_name": "setusca",
+    "user_name": null,
     "vcpus": "1"
   },
   {

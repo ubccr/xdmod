@@ -4,7 +4,7 @@
     },
     "source_query": {
         "records": {
-            "union_user_pi_name": "DISTINCT raw.user_name"
+            "union_user_pi_name": "DISTINCT IF(raw.user_name IS NULL, 'Unknown', raw.user_name)"
         },
         "joins": [
             {
@@ -12,9 +12,6 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             }
-        ],
-        "where": [
-          "raw.user_name IS NOT NULL"
         ]
     }
 }

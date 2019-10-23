@@ -5,6 +5,6 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Year,"[Warbler, Yellow-rumped] Number of Sessions Ended","[Warbler, Blackburnian] Number of Sessions Ended","[Warbler, Yellow] Number of Sessions Ended"
-2018,36,11,6
+Year,"[Warbler, Yellow-rumped] Number of Sessions Ended","[Warbler, Blackburnian] Number of Sessions Ended","[Warbler, Yellow] Number of Sessions Ended","[Unknown] Number of Sessions Ended"
+2018,35,9,6,3
 ---------
