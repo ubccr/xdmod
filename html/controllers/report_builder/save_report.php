@@ -109,6 +109,8 @@
                 $rank = filter_var($rank, FILTER_VALIDATE_INT);
 
                 if ($start_date === false || $end_date === false || $ref === false || $rank === false) {
+                    error_log('chart_cacheref error ' . $cache_ref_variable . ' ' . $_POST[$cache_ref_variable]);
+
                     throw new \DataWarehouse\Query\Exceptions\BadRequestException('Invalid content in ' . $cache_ref_variable);
                 }
    
