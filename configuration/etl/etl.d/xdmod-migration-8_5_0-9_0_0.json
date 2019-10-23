@@ -1,6 +1,6 @@
 {
     "module": "xdmod",
-    "migration-8_5_0-8_6_0": [
+    "migration-8_5_0-9_0_0": [
         {
             "name": "update-modw_cloud-tables",
             "description": "Update modw_cloud tables",

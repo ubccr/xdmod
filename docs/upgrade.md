@@ -102,8 +102,8 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.5.0 to 8.6.0 Upgrade Notes
-----------------------------
+8.5 to 9.0 Upgrade Notes
+------------------------
 
 
 

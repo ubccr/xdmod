@@ -1,8 +1,8 @@
 <?php
 /**
- * Update config files from version 8.5.0 To 8.6.0.
+ * Update config files from version 8.5.0 To 9.0.0.
  */
-namespace OpenXdmod\Migration\Version850To860;
+namespace OpenXdmod\Migration\Version850To900;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
