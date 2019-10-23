@@ -5,10 +5,10 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD only supports upgrading to a new version from the version
-  that directly precedes it.  If you need to upgrade from an older
-  version you must upgrade through all the intermediate versions or
-  perform a clean installation.
+- Open XDMoD only supports upgrading to a new version from the version that
+  directly precedes it unless otherwise noted below.  If you need to upgrade
+  from an older version you must upgrade through all the intermediate versions
+  or perform a clean installation.
 - Make a backup of your Open XDMoD configuration files before running
   the upgrade script.  The upgrade script may overwrite your current
   configuration files.

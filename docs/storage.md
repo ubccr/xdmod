@@ -1,5 +1,5 @@
 ---
-title: Storage Metrics (Beta)
+title: Storage Metrics
 ---
 
 The Storage Realm provides metrics relating to storage subsystems including
@@ -17,8 +17,6 @@ resource. Detailed information such as access and modification times of
 individual files is not currently supported as the collection of this
 information is meta-data intensive and can adversely affect the performance of
 the filesystem.
-
-**NOTE: Storage metrics are currently considered beta quality.**
 
 These instructions use the file paths from the RPM installation.  If you've
 installed from source they will need to be adjusted accordingly.

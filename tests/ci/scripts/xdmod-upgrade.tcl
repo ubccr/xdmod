@@ -21,17 +21,6 @@ proc confirmUpgrade { } {
 set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
-provideInput {Enable Dashboard Tab*} {off}
-provideInput {Export Directory*} {}
-provideInput {Export File Retention Duration*} 31
-expect {
-    -re "\nDo you want to run aggregation now.*\\\]" {
-        send no\n
-    }
-    timeout {
-        send_user "\nFailed to get prompt\n"; exit 1
-    }
-}
 expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1

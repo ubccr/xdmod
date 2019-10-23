@@ -20,4 +20,12 @@ do
     fi
 done
 
+# Check that the unknown resource is in the database with key 0
+unkrescount=$(echo 'SELECT COUNT(*) from resourcetype WHERE id = 0 and abbrev = '"'"'UNK'"'" | mysql -N modw)
+if [ $unkrescount -ne 1 ];
+then
+    echo "Missing / inconsistent 'UNK' row in modw.resourcetype"
+    exitcode=1
+fi
+
 exit $exitcode
