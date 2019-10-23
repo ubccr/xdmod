@@ -14,6 +14,15 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
     public function execute()
     {
         $this->assertPortalSettingsIsWritable();
-        $this->writePortalSettingsFile();
+        $data = parse_ini_file($this->portalSettingsPath, true);
+        $roadmapUrl = 'https://trello.com/b/mdFESh6j.html';
+        if('https://trello.com/embed/board?id=mdFESh6j' !== $data['roadmap']['url']){
+            $roadmapUrl = $data['roadmap']['url'];
+        }
+        $this->writePortalSettingsFile(
+            array(
+               'roadmap_url' => $roadmapUrl
+            )
+        );
     }
 }
