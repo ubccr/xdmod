@@ -1,13 +1,6 @@
 <?php
 namespace DataWarehouse\Query\Jobs\Statistics;
 
-/**
- * @author Amin Ghadersohi
- * @date 2011-Feb-07
- *
- * class for calculating the min processor count
- */
-
 class MinProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
@@ -33,7 +26,6 @@ class MinProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
     }
     public function getInfo()
     {
-        return 'The minimum size ' . ORGANIZATION_NAME . ' job in number of cores.<br/>
-            <i>Job Size: </i>The total number of processor cores used by a (parallel) job.';
+        return 'The minimum size ' . ORGANIZATION_NAME . ' job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.';
     }
 }

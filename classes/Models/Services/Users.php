@@ -329,7 +329,9 @@ SQL;
     }
 
     /**
-     * Retrieves the set of centers that a user has a relation to.
+     * Retrieves the set of centers that a user has a relation to. If no
+     * records are found in the database for the provided user. An array
+     * containing `$user->getOrganizationID()` is returned.
      *
      * @param XDUser $user
      * @return mixed
@@ -349,7 +351,13 @@ SQL;
         );
 
         $db = DB::factory('database');
-        return $db->query($query, $params);
+        $results = $db->query($query, $params);
+
+        if (empty($results)) {
+            $results = array($user->getOrganizationID());
+        }
+
+        return $results;
     }
 
     /**

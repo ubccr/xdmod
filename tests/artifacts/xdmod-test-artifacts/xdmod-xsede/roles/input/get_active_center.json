@@ -1,7 +1,7 @@
 [
-    [ "centerdirector", -1 ],
-    [ "centerstaff", 476 ],
-    [ "principal", -1 ],
-    [ "normaluser", -1 ],
+    [ "centerdirector", 1 ],
+    [ "centerstaff", 1 ],
+    [ "principal", 1 ],
+    [ "normaluser", 1 ],
     [ "Public User", -1 ]
 ]

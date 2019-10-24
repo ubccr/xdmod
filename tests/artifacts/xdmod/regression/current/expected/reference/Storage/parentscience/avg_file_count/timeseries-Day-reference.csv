@@ -1,0 +1,19 @@
+title
+"File Count (Number of files): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[Unknown] File Count (Number of files)","[Mechanical and Structural Systems] File Count (Number of files)","[Molecular Biosciences] File Count (Number of files)","[Mathematical Sciences] File Count (Number of files)","[Chemistry] File Count (Number of files)","[Electrical and Communication Systems] File Count (Number of files)","[Earth Sciences] File Count (Number of files)","[Astronomical Sciences] File Count (Number of files)","[Environmental Biology] File Count (Number of files)","[Physics] File Count (Number of files)","[Materials Research] File Count (Number of files)","[Social and Economic Science] File Count (Number of files)","[Microelectronic Information Processing Systems] File Count (Number of files)","[Polar Programs] File Count (Number of files)","[Chemical, Thermal Systems] File Count (Number of files)","[Atmospheric Sciences] File Count (Number of files)","[Arts] File Count (Number of files)"
+2018-12-27,219505360,2940515,3050306,2147760,1528372,929461,356985,227914,62606,20072,6976,7098,5339,740,51,48,8
+2018-12-28,220199493,2940752,3050377,2146930,1528669,942500,473958,253961,62604,20072,6976,7096,5339,798,51,48,8
+2018-12-29,220909652,3272058,3050425,2146930,1545455,942579,392805,221585,62690,20072,6976,7099,5339,798,51,48,8
+2018-12-30,220869065,3507560,3050468,2146930,1545454,913122,410632,252098,62719,20072,6976,7099,5339,798,51,48,8
+2018-12-31,220996200,3784497,3026167,2146930,1545416,913101,419839,245325,62713,20072,6976,7048,5339,798,51,48,8
+2019-01-01,221233693,3791772,2984753,2152075,1545320,900081,420910,232953,62732,20072,6957,5970,5339,798,51,48,8
+2019-01-02,221578786,3793948,2984801,2152075,1544700,899778,365107,202989,62739,20072,6957,6068,5339,798,51,48,8
+2019-01-03,221982330,3671019,2983051,2151990,1543740,899919,360243,199890,62743,20072,6957,6355,5339,798,51,48,8
+2019-01-04,222401952,3746709,2984667,2152252,1543348,911677,362434,197097,62736,20072,6957,6355,5339,798,51,48,8
+2019-01-05,222454328,3827476,2984699,2152176,1543348,901557,363868,201225,62803,20072,6957,6355,5339,918,51,48,8
+---------

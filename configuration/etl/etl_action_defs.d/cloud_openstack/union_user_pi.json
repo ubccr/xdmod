@@ -1,0 +1,20 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/union-user-pi.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "union_user_pi_name": "DISTINCT raw.user_name"
+        },
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+        "where": [
+          "raw.user_name IS NOT NULL"
+        ]
+    }
+}

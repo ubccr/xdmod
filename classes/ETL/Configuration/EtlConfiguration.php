@@ -433,10 +433,7 @@ class EtlConfiguration extends Configuration
             'default_module_name' => $this->defaultModuleName
         );
 
-        $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
-        $localConfigObj->initialize();
-
-        return $localConfigObj;
+        return EtlConfiguration::factory($localConfigFile, $this->baseDir, $this->logger, $options);
 
     }  // processLocalConfig()
 
@@ -764,7 +761,7 @@ class EtlConfiguration extends Configuration
         // the action configuration.
 
         if ( ! isset($config->options_class) ) {
-            $this->logAndThrowException("Options class not defined for $actionName");
+            $this->logAndThrowException("Key 'options_class' not defined for $actionName");
         }
 
         $optionsClassName = $config->options_class;
@@ -877,7 +874,7 @@ class EtlConfiguration extends Configuration
         // Register the key with the configuration
         $config->key = $endpointKey;
 
-        return $endpoint;
+        return $this->endpoints[$endpointKey];
 
     }  // addDataEndpoint()
 
@@ -1147,4 +1144,13 @@ class EtlConfiguration extends Configuration
     {
         return $this->paths;
     }  // getPaths()
+
+    /**
+     * @see iConfiguration::__sleep()
+     */
+
+    public function __sleep()
+    {
+        return array_keys(get_object_vars($this));
+    }
 }  // class EtlConfiguration

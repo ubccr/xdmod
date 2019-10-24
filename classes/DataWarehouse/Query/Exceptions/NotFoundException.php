@@ -7,22 +7,20 @@ namespace DataWarehouse\Query\Exceptions;
  */
 class NotFoundException extends QueryException
 {
-	/**
-	 * The message used by this exception if none is provided.
-	 */
-	const defaultMessage = 'The requested resource does not exist';
+    /**
+     * The message used by this exception if none is provided.
+     */
+    const defaultMessage = 'The requested resource does not exist';
 
-	/**
+    /**
      * The code used by this exception if none is provided.
      */
-	const defaultCode = \XDError::QueryNotFound;
+    const defaultCode = \XDError::QueryNotFound;
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, \Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
+    {
+        parent::__construct($message, $code, $previous);
 
-		$this->httpCode = 404;
-	}
+        $this->httpCode = 404;
+    }
 }
-
-?>

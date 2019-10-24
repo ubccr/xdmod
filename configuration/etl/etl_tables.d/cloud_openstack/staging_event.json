@@ -10,25 +10,18 @@
                 "nullable": false
             },
             {
-                "name": "event_id",
-                "type": "bigint(20)",
-                "extra": "auto_increment",
-                "nullable": false,
-                "comment": "Auto-increment relative to resource_id. Unknown = -1"
-            },
-            {
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Optional instance the event is associated with. Unknown = -1"
+                "default": 1,
+                "comment": "Optional instance the event is associated with. Unknown = 1"
             },
             {
-                "name": "event_time_utc",
-                "type": "datetime",
+                "name": "event_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time of the event in UTC."
+                "default": "0.000000",
+                "comment": "Unix timestamp to the microsecond."
             },
             {
                 "name": "event_type_id",
@@ -36,6 +29,20 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "user_name",
+                "type": "varchar(32)",
+                "nullable": true,
+                "default": null,
+                "comment": "Username associated with event"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Person ID associated with event"
             },
             {
                 "name": "record_type_id",
@@ -48,22 +55,22 @@
                 "name": "account_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Optional account the event is associated with. Unknown = -1"
+                "default": 1,
+                "comment": "Optional account the event is associated with. Unknown = 1"
             },
             {
                 "name": "host_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Host where the event occured. Unknown = -1"
+                "default": 1,
+                "comment": "Host where the event occured. Unknown = 1"
             },
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Instance type for the event. Unknown = -1"
+                "default": 1,
+                "comment": "Instance type for the event. Unknown = 1"
             },
             {
                 "name": "event_data",
@@ -83,8 +90,8 @@
                 "name": "image_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Image associated with the event. Unknown = -1"
+                "default": 1,
+                "comment": "Image associated with the event. Unknown = 1"
             },
             {
                 "name": "volume_id",
@@ -92,6 +99,13 @@
                 "nullable": true,
                 "default": null,
                 "comment": "Volume associated with the event."
+            },
+            {
+                "name": "domain_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "The domain associated with the event"
             }
         ],
 
@@ -105,25 +119,12 @@
                 "columns": [
                     "resource_id",
                     "instance_id",
-                    "event_time_utc",
+                    "event_time_ts",
                     "event_type_id",
                     "record_type_id",
+                    "person_id",
                     "account_id",
                     "host_id"
-                ],
-                "is_unique": true
-            },
-            {
-                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
-                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
-                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
-                "#": "useful when you want to put data into ordered groups.",
-                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
-
-                "name": "increment_key",
-                "columns": [
-                    "resource_id",
-                    "event_id"
                 ],
                 "is_unique": true
             },

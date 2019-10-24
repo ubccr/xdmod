@@ -1,0 +1,10 @@
+title
+"Number of Active Sessions: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[Warbler, Yellow-rumped] Number of Active Sessions (Number of Sessions)","[Warbler, Blackburnian] Number of Active Sessions (Number of Sessions)","[Warbler, Yellow] Number of Active Sessions (Number of Sessions)"
+"2018 Q2",36,11,6
+---------

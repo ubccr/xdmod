@@ -2,14 +2,6 @@
 
 namespace DataWarehouse\Query\Jobs\GroupBys;
 
-/**
- * @author Amin Ghadersohi
- * @date 2011-Jan-07
- *
- * class for adding group by resource queue to a query
- *
- */
-
 class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
 {
     public static function getLabel()
@@ -19,7 +11,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
 
     public function getInfo()
     {
-        return "Queue pertains to the low level job queues on each resource.";
+        return 'Queue pertains to the low level job queues on each resource.';
     }
     public function __construct()
     {
@@ -59,7 +51,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
 
         $query->addGroup($id_field);
 
-        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "queue");
+        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'queue');
 
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
@@ -72,11 +64,10 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
             new \DataWarehouse\Query\Model\WhereCondition(
                 new \DataWarehouse\Query\Model\TableField($this->queue_table, 'resource_id'),
                 '=',
-                new \DataWarehouse\Query\Model\TableField($data_table, "task_resource_id")
+                new \DataWarehouse\Query\Model\TableField($data_table, 'task_resource_id')
             )
         );
         $this->addOrder($query, $multi_group);
-
     }
 
     // JMS: add join with where clause, October 2015
@@ -93,10 +84,10 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
         $query->addTable($this->queue_table);
 
         $id_field = new \DataWarehouse\Query\Model\TableField($this->queue_table, $this->_id_field_name);
-        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "queue");
+        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'queue');
 
         // note: resource_id is the column in the queue table that is an int...
-        $resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "resource_id");
+        $resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'resource_id');
 
         // the where conditions that specify the joins of the tables
         $query->addWhereCondition(
@@ -110,7 +101,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
             new \DataWarehouse\Query\Model\WhereCondition(
                 new \DataWarehouse\Query\Model\TableField($this->queue_table, 'resource_id'),
                 '=',
-                new \DataWarehouse\Query\Model\TableField($data_table, "task_resource_id")
+                new \DataWarehouse\Query\Model\TableField($data_table, 'task_resource_id')
             )
         );
         // the where condition that specifies the constraint on the joined table
@@ -126,16 +117,14 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
                 $whereConstraint
             )
         );
-
     } // addWhereJoin
 
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->queue_table, $this->_order_id_field_name), $dir, $this->getName());
-        if($prepend === true) {
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
@@ -147,7 +136,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select distinct id as field_label from modw.queue  where id in (_filter_) order by id"
+            'SELECT DISTINCT ID AS field_label FROM modw.queue  WHERE id IN (_filter_) ORDER BY id'
         );
     }
 }

@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[ylwwa] Average Cores Reserved Weighted By Wall Hours","[yerwa] Average Cores Reserved Weighted By Wall Hours","[setusca] Average Cores Reserved Weighted By Wall Hours"
+2018,2.0145,1.3040,1.0000
+---------

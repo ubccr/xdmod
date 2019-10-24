@@ -89,13 +89,6 @@ SQL;
      */
     public static function removeCenterRelation($userId, $centerId, $aclName)
     {
-        $legacyQuery = <<< SQL
-DELETE FROM moddb.UserRoleParameters
-WHERE 
-  user_id = :user_id                                             AND
-  role_id = (SELECT r.role_id FROM moddb.Roles r WHERE r.abbrev = :acl_name) AND
-  param_value = :center_id;
-SQL;
         $query = <<<SQL
 DELETE FROM moddb.user_acl_group_by_parameters 
 WHERE 
@@ -111,9 +104,6 @@ SQL;
         );
 
         $db = DB::factory('database');
-
-        // Ensure the center relation is removed from the legacy table
-        $db->execute($legacyQuery, $params);
 
         // Ensure that the center relation is removed from the current table.
         $db->execute($query, $params);

@@ -1,0 +1,12 @@
+title
+"Wall Hours: Total: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Wall Hours: Total"
+"Warbler, Yellow-rumped",1003.4189
+"Warbler, Yellow",219.0086
+"Warbler, Blackburnian",4.4983
+---------

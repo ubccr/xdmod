@@ -20,9 +20,6 @@ class JobSizeWeightedByCPUHours extends \DataWarehouse\Query\Jobs\Statistic
 
     public function getInfo()
     {
-        return 'The average ' . ORGANIZATION_NAME . ' job size weighted by'
-            . ' CPU Hours. Defined as <br><i>Average Job Size Weighted By'
-            . ' CPU Hours: </i> sum(i = 0 to n){job i core count*job i cpu'
-            . ' hours}/sum(i =  0 to n){job i cpu hours}';
+        return 'The average ' . ORGANIZATION_NAME . ' job size weighted by CPU Hours. Defined as <br><i>Average Job Size Weighted By CPU Hours: </i> sum(i = 0 to n){ job i core count * job i cpu hours}/sum(i =  0 to n){job i cpu hours}';
     }
 }

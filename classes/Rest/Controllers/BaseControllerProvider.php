@@ -2,6 +2,7 @@
 
 namespace Rest\Controllers;
 
+use DateTime;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -551,7 +552,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             FILTER_CALLBACK,
             array(
                 "options" => function ($value) {
-                    $value_dt = \DateTime::createFromFormat('U', $value);
+                    $value_dt = DateTime::createFromFormat('U', $value);
                     if ($value_dt === false) {
                         return null;
                     }
@@ -559,6 +560,52 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
                 },
             ),
             "Unix timestamp"
+        );
+    }
+
+    /**
+     * Attempt to get a date parameter value from a request where it is
+     * submitted as a ISO 8601 (YYYY-MM-DD) date.
+     *
+     * @param  Request $request The request to extract the parameter from.
+     * @param  string $name The name of the parameter.
+     * @param  boolean $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param  mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a DateTime. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value could not be
+     *                                 converted to a DateTime.
+     */
+    protected function getDateFromISO8601Param(
+        Request $request,
+        $name,
+        $mandatory = false,
+        $default = null
+    ) {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_CALLBACK,
+            [
+                'options' => function ($value) {
+                    $value_dt = \DateTime::createFromFormat('Y-m-d', $value);
+                    if ($value_dt === false) {
+                        return null;
+                    }
+                    return $value_dt;
+                },
+            ],
+            'ISO 8601 Date'
         );
     }
 
@@ -705,4 +752,52 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         return $retval;
 
     }  // formatLogMessage()
+
+    /**
+     * Checks that the `$[start|end]Date` values are valid ( `Y-m-d` ) dates and that `$startDate`
+     * is before `$endDate`.
+     *
+     * @param string $startDate the beginning of the date range.
+     * @param string $endDate   the end of the date range.
+     * @throws BadRequestHttpException if either start or end dates are not provided in the format
+     * `Y-m-d`, or if the start date is after the end date.
+     */
+    protected function checkDateRange($startDate, $endDate)
+    {
+        $startTimestamp = $this->getTimestamp($startDate, 'start_date');
+        $endTimestamp = $this->getTimestamp($endDate, 'end_date');
+
+        if ($startTimestamp > $endTimestamp) {
+            throw new BadRequestHttpException('Start Date must not be after End Date');
+        }
+    }
+
+    /**
+     * Attempt to convert the provided string $date value into an equivalent unix timestamp (int).
+     *
+     * @param string $date              The value to be converted into a DateTime.
+     * @param string $paramName 'date', The name of the parameter to be included in the exception
+     *                                  message if validation fails.
+     * @param string $format 'Y-m-d',   The format that `$date` should be in.
+     * @return int created from the provided `$date` value.
+     * @throws BadRequestHttpException if the date is not in the form `Y-m-d`.
+     */
+    protected function getTimestamp($date, $paramName = 'date', $format = 'Y-m-d')
+    {
+        $parsed = date_parse_from_format($format, $date);
+        $date = mktime(
+            $parsed['hour'],
+            $parsed['minute'],
+            $parsed['second'],
+            $parsed['month'],
+            $parsed['day'],
+            $parsed['year']
+        );
+
+        if ($date === false || $parsed['error_count'] > 0) {
+            throw new BadRequestHttpException("Unable to parse $paramName");
+        }
+
+        return $date;
+    }
 }

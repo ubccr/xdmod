@@ -46,36 +46,15 @@ XDMoD is installed you must create the databases manually.  Likewise, if you
 don't want to use this process and would prefer to manually create the
 databases, see the [Database Guide](databases.html).
 
-#### Acl Database Setup
-Will create the tables required by the Acl framework. This is done via execution
-of the script:
-  - bin/acl-xdmod-management. 
-Should the table structures require additional changes after modifying the 
-appropriate configuration files located in 
-etc/etl/etl_tables.d/acls/xdmod/<table>.json this script should be executed to
-migrate the changes to the database.
+#### Acl Database Setup / Population
 
-#### Acl Database Population
-After the tables required for the Acl framework have been created two scripts
-will be executed to populate them. 
+This step will run immediately after you have setup the database that XDMoD will
+be using and does not require any additional input. It is responsible for creating
+and populating the tables required by the Acl framework.
 
-The first is:
-  - bin/acl-config
-  
-this script validates and utilizes the information contained in the following 
-files:
-  - etc/datawarehouse.json
-  - etc/datawarehouse.d/*.json
-  - etc/roles.json
-  - etc/roles.d/*.json
-  - etc/hierarchies.json
-  - etc/hierarchies.d/*.json
-  
-The second script is:
-  - bin/acl-import
-  
-this script executes a series of sql statements that are stored in 
-etc/etl/etl_sql.d/acls/xdmod/\*.sql.
+If your XDMoD Installation requires modifications to the acl tables
+(etc/etl/etl_tables.d/acls/xdmod/<table>.json) then running this step again or
+the `acl-config` bin script is required.
 
 ### Organization Settings
 
@@ -233,7 +212,7 @@ Primary configuration file. Contains:
 
 Defines realms, group bys, statistics.
 
-### processor_buckets.json
+### etl/etl_data.d/jobs/xdw/processor-buckets.json
 
 Defines the ranges used for number of processors/cores in "Job Size"
 charts.  Sites may want to align the bucket sizes with the number of
@@ -255,6 +234,15 @@ cores per node on their resources.
         [13,   2049,       4096, "2k - 4k"],
         [14,   4097, 2147483647, "> 4k"]
     ]
+
+After changing this file it must be re-ingested and all job data must be
+re-aggregated.  If the job data are not re-aggregated the new labels will be
+displayed, but will not be accurate if the corresponding bucket has changed.
+
+```sh
+/usr/share/xdmod/tools/etl/etl_overseer.php -a xdmod.jobs-xdw-bootstrap.processorbuckets
+xdmod-ingestor --aggregate=job --last-modified-start-date 1970-01-01
+```
 
 ### roles.json
 
@@ -364,20 +352,25 @@ this should be set to `true`.
             "resource": "resource1",
             "name": "Resource 1",
             "description": "Our first HPC resource",
-            "resource_type_id": 1
+            "resource_type": "HPC"
         },
         {
             "resource": "resource2",
             "name": "Resource 2",
-            "resource_type_id": 2,
+            "resource_type": "HPC"
             "pi_column": "account_name"
         },
         {
             "resource": "resource3",
             "name": "Resource 3",
-            "resource_type_id": 1,
+            "resource_type": "HPC"
             "timezone": "US/Eastern",
             "shared_jobs": true
+        },
+        {
+            "resource": "resource4",
+            "name": "Resource 4",
+            "resource_type": "Cloud"
         }
     ]
 
@@ -439,22 +432,9 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 
 ### resource_types.json
 
-Defines resource types.  Each resource in `resources.json` should reference a
-resource type from this file.
-
-    [
-        {
-            "id": 0,
-            "abbrev": "UNK",
-            "description": "Unknown"
-        },
-        {
-            "id": 1,
-            "abbrev": "HPC",
-            "description": "High-performance computing"
-        },
-        ...
-    ]
+Defines resource types and associates resource types with realms.  Each
+resource in `resources.json` should reference a resource type from this file.
+This file typically should not be changed.
 
 ### update_check.json
 

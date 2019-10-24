@@ -5,10 +5,10 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD only supports upgrading to a new version from the version
-  that directly precedes it.  If you need to upgrade from an older
-  version you must upgrade through all the intermediate versions or
-  perform a clean installation.
+- Open XDMoD only supports upgrading to a new version from the version that
+  directly precedes it unless otherwise noted below.  If you need to upgrade
+  from an older version you must upgrade through all the intermediate versions
+  or perform a clean installation.
 - Make a backup of your Open XDMoD configuration files before running
   the upgrade script.  The upgrade script may overwrite your current
   configuration files.
@@ -35,7 +35,7 @@ Download available at [GitHub][github-latest-release].
 
 ### Install the RPM
 
-    # yum install xdmod-x.y.z-1.0.el6.noarch.rpm
+    # yum install xdmod-{{ page.sw_version }}-1.0.el7.noarch.rpm
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm` RPM
 files if you have those installed.
@@ -46,7 +46,7 @@ merge `portal_settings.ini`.  This file will be updated by the upgrade
 script.  If you have manually edited this file, you should create a
 backup and merge any changes after running the upgrade script.
 
-### Verify server configuration settings
+### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
 the recommended values listed on the [software requirements page][mysql-config].
@@ -58,11 +58,10 @@ the recommended values listed on the [software requirements page][mysql-config].
 Source Package Upgrade Process
 ------------------------------
 
-This example assumes that your previous version of Open XDMoD is
-installed at `/opt/xdmod-old` and the new version of Open XDMoD will be
-installed at `/opt/xdmod-new`.  It is recommended to install the new
-version of Open XDMoD in a different directory than your existing
-version.
+This example assumes that your previous version of Open XDMoD is installed at
+`/opt/xdmod-{{ page.prev_sw_version }}` and the new version of Open XDMoD will be installed at
+`/opt/xdmod-{{ page.sw_version }}`.  It is recommended to install the new version of Open XDMoD
+in a different directory than your existing version.
 
 ### Download Latest Open XDMoD Source Package
 
@@ -70,21 +69,21 @@ Download available at [GitHub][github-latest-release].
 
 ### Extract and Install Source Package
 
-    $ tar zxvf xdmod-x.y.z.tar.gz
-    $ cd xdmod-x.y.z
-    # ./install --prefix=/opt/xdmod-new
+    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    $ cd xdmod-{{ page.sw_version }}
+    # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm`
 tarballs if you have those installed.
 
 ### Copy Current Config Files
 
-    # cp /opt/xdmod-old/etc/portal_settings.ini /opt/xdmod-new/etc
-    # cp /opt/xdmod-old/etc/hierarchy.json      /opt/xdmod-new/etc
-    # cp /opt/xdmod-old/etc/organization.json   /opt/xdmod-new/etc
-    # cp /opt/xdmod-old/etc/resource_specs.json /opt/xdmod-new/etc
-    # cp /opt/xdmod-old/etc/resources.json      /opt/xdmod-new/etc
-    # cp /opt/xdmod-old/etc/update_check.json   /opt/xdmod-new/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/portal_settings.ini /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/hierarchy.json      /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/organization.json   /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/resource_specs.json /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/resources.json      /opt/xdmod-{{ page.sw_version }}/etc
+    # cp /opt/xdmod-{{ page.prev_sw_version }}/etc/update_check.json   /opt/xdmod-{{ page.sw_version }}/etc
 
 If you have manually changed (i.e. not using `xdmod-setup`) any of the
 other config files you may need to merge your changes into the new
@@ -94,165 +93,19 @@ changed in the new version.  You do not need to merge
 If you have manually edited this file, you should create a backup and
 merge any changes after running the upgrade script.
 
-### Verify server configuration settings
+### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
 the recommended values listed on the [software requirements page][mysql-config].
 
 ### Upgrade Database Schema and Config Files
 
-    # /opt/xdmod-new/bin/xdmod-upgrade
+    # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-7.5.1 to 8.0.0 Upgrade Notes
-----------------------------
+8.5 to 9.0 Upgrade Notes
+------------------------
 
-- This upgrade includes config file changes.
-    - The contents of `resource_types.json` has been changed to include
-      additional resource types.
-- The recommended [MySQL server settings][mysql-config] were updated.
 
-7.5.0 to 7.5.1 Upgrade Notes
-----------------------------
-
-- This upgrade does not in include any database schema changes.
-- This upgrade does not include any config file format changes, but the
-  upgrade script will recreate `portal_settings.ini` with the new
-  version number.
-
-7.0.1 to 7.5.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes RPM packaging changes.
-    - The RPM will create an `xdmod` user and group if they do not already
-      exist.
-    - The RPM will change the permissions of `/var/log/xdmod/query.log` and
-      `/var/log/xdmod/exceptions.log` so that they are writable by the `apache`
-      user and the `xdmod` group.
-    - The RPM will change the ownership and permissions of `/var/log/xdmod`
-      so that it is writable by the `apache` user
-      and the `xdmod` group.
-
-7.0.0 to 7.0.1 Upgrade Notes
-----------------------------
-
-- This upgrade does not in include any database schema changes.
-- This upgrade does not include any config file format changes, but the
-  upgrade script will recreate `portal_settings.ini` with the new
-  version number.
-
-6.6.0 to 7.0.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-    - Modifies `moddb` schema to remove unused tables and add new ACL tables.
-
-6.5.0 to 6.6.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-    - Modifies `moddb` schema.
-    - Modifies `modw` schema.
-
-6.0.0 to 6.5.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-    - Modifies `mod_shredder` schema.
-    - Modifies `mod_hpcdb` schema.
-- This upgrade includes Slurm shredder changes.
-    - If you are using `xdmod-shredder` with Slurm (and not
-      `xdmod-slurm-helper`) you must update the argument to the `sacct`
-      `--format` option.  See the
-      [Slurm resource manager notes](resource-manager-slurm.html) for details.
-
-5.6.0 to 6.0.0 Upgrade Notes
-----------------------------
-
-**Important Note**: Highcharts has been updated from v3.0.9 to v4.2.5. If you
-are a commercial user as defined by the Highcharts license terms and your
-Highcharts license does not cover the new version, you will need to acquire a
-new license.
-
-- This upgrade includes database schema changes.
-    - Modifies `mod_shredder` schema.
-    - Modifies `moddb` schema.
-    - Modifies `modw` schema.
-    - The database tables for both LSF and Slurm are altered.  If you use either
-      of these resource managers the database migration may take over an hour if
-      you have millions of job records in your database.
-    - Updates SUPReMM user search history to allow editing of searches created
-      in previous versions.
-- This upgrade includes config file format changes.
-    - Upgrades `roles.json` and `roles.d/*.json` files to new format.
-    - Adds new option to `portal_settings.ini`.
-        - The `maintainer_email_signature` options in the `general` section can
-          be set to specify the email signature used in emails sent from Open
-          XDMoD.
-    - Adds new option to `portal_settings.d/supremm.ini` (if the `xdmod-supremm`
-      module is installed.
-        - The `schema_file` option in the `supremm-general` section can be set
-          to specify the ETL schema file.
-
-5.5.0 to 5.6.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-    - This version adds a new schema, `modw_filters`. Creating this schema
-      requires admin credentials for your MySQL server.
-    - Modifies `mod_logger` schema.
-    - Modifies `mod_shredder` schema.
-    - Modifies `moddb` schema.
-    - Modifies `modw` schema.
-- This upgrade includes config file format changes.
-    - If you have created custom roles that are associated with data
-      dimensions, you will need to add the property `dimensions` to their
-      definitions in `roles.json` and/or `roles.d`. The value of this property
-      should be an array of the IDs of the dimensions used.
-        - For example, if you created a role based around queues, you
-          would add `dimensions: ["queue"]` to the definition.
-    - Adds additional options to `portal_settings.ini`.
-
-**NOTE**: Following this upgrade, filter lists and other components that use
-dimension values **will not work** until data aggregation runs again. To get
-these components working again without performing aggregation, you can run
-`xdmod-ingestor --build-filter-lists`.
-
-5.0.0 to 5.5.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-- This upgrade includes config file format changes.
-
-**NOTE**: The database migration in this upgrade is substantial and may
-take over an hour if you have millions of job records in your database.
-
-4.5.2 to 5.0.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-- This upgrade includes config file format changes.
-
-4.5.1 to 4.5.2 Upgrade Notes
-----------------------------
-
-- This upgrade does not in include any database schema changes.
-- This upgrade does not include any config file format changes, but the
-  upgrade script will recreate `portal_settings.ini` with the new
-  version number.
-
-4.5.0 to 4.5.1 Upgrade Notes
-----------------------------
-
-- This upgrade does not in include any database schema changes.
-- This upgrade does not include any config file format changes, but the
-  upgrade script will recreate `portal_settings.ini` with the new
-  version number.
-
-3.5.0 to 4.5.0 Upgrade Notes
-----------------------------
-
-- This upgrade includes database schema changes.
-- This upgrade includes config file format changes.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql

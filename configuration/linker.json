@@ -1,22 +1,12 @@
 {
-    "autoloaders": [
-        "vendor/autoload.php"
-    ],
     "include_dirs": [
         "classes",
         "classes/DB",
-        "classes/DB/TACCStatsIngestors",
-        "classes/DB/TGcDBIngestors",
-        "classes/DB/POPSIngestors",
-        "classes/DB/XRASIngestors",
-        "classes/DB/Aggregators",
         "classes/DB/DBModel",
         "classes/DB/TimePeriodGenerators",
         "classes/ExtJS",
-        "classes/REST",
+        "classes/Rest",
         "classes/User",
-        "classes/ReportTemplates",
-        "classes/AppKernel",
-        "libraries/HighRoller_1.0.5"
+        "classes/ReportTemplates"
     ]
 }

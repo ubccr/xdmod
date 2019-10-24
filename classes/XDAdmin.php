@@ -152,13 +152,11 @@ SQL;
     {
         return $this->modw->query("
             SELECT DISTINCT
-                resource_organization_id AS id,
+                o.id            AS id,
                 o.abbrev        AS organization,
                 o.name          AS name
             FROM
-                modw_aggregates.jobfact_by_quarter,
                 organization o
-            WHERE o.id = resource_organization_id
             ORDER BY o.abbrev ASC
         ");
     }

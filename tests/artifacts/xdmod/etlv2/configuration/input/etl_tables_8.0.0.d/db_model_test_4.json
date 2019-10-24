@@ -1,0 +1,59 @@
+{
+  "#": "1. Rename and reorder a column at the same time",
+  "table_definition": {
+    "name": "modify_table_test",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "name": "resource",
+        "type": "varchar(40)",
+        "nullable": true
+      },
+      {
+        "name": "new_column_1",
+        "type": "varchar(40)",
+        "nullable": true
+      },
+      {
+        "name": "new_column_2",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "resource_id",
+        "type": "int(11)",
+        "nullable": false
+      },
+      {
+        "name": "available",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "#": "Reorder from after new_column_2 to after available. No other change to definition",
+        "name": "renamed_column_3",
+        "type": "int(11)",
+        "nullable": true,
+        "hints": {
+          "rename_from": "new_column_3"
+        }
+      },
+      {
+        "name": "new_column_4",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "awarded",
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "Changed to not null"
+      },
+      {
+        "name": "recommended",
+        "type": "int(11)",
+        "nullable": true
+      }
+    ]
+  }
+}

@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Setup;
 
+use Models\Services\Organizations;
 use XDUser;
 
 /**

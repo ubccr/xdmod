@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by Decanal Unit"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[Unknown] Logical Usage (Bytes)","[Biological Sciences] Logical Usage (Bytes)","[Geosciences] Logical Usage (Bytes)","[Mathematical and Physical Sciences] Logical Usage (Bytes)","[Engineering] Logical Usage (Bytes)","[Social, Behavioral, and Economic Sciences] Logical Usage (Bytes)","[Humanities/Arts] Logical Usage (Bytes)","[Computer and Information Science and Engineering] Logical Usage (Bytes)"
+2018-10-01,532741548168533,167232847590400,53827509632000,31530238464000,15800680294400,2506240000,128000,0
+2019-01-01,535099205939200,151315968051200,52544247782400,25391314329600,15149795968000,2546048000,128000,0
+---------

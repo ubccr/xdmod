@@ -1,0 +1,10 @@
+title
+"Average Wall Hours per Session: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[ylwwa] Average Wall Hours per Session","[yerwa] Average Wall Hours per Session","[setusca] Average Wall Hours per Session"
+2018,36.50143519,27.87274691,0.40893939
+---------

@@ -75,6 +75,15 @@ class Index extends NamedEntity implements iEntity
         }
 
         switch ( $property ) {
+            case 'name':
+                // Normalize property values to lowercase to match MySQL behavior. PRIMARY keys are
+                // represented in information schema as indexes named PRIMARY.
+                if ( 'PRIMARY' == strtoupper($value) ) {
+                    $value = 'PRIMARY';
+                } else {
+                    $value = strtolower($value);
+                }
+                break;
 
             case 'is_unique':
                 $origValue = $value;
@@ -96,6 +105,14 @@ class Index extends NamedEntity implements iEntity
                         sprintf("%s must be an non-empty array", $property)
                     );
                 }
+
+                // Normalize property values to lowercase to match MySQL behavior
+
+                $normalizedValues = array();
+                foreach ( $value as $column ) {
+                    $normalizedValues[] = strtolower($column);
+                }
+                $value = $normalizedValues;
                 break;
 
             case 'type':
@@ -104,6 +121,8 @@ class Index extends NamedEntity implements iEntity
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
                 }
+                // Normalize property values to lowercase to match MySQL behavior
+                $value = strtoupper($value);
                 break;
 
             default:
@@ -142,11 +161,16 @@ class Index extends NamedEntity implements iEntity
             return 1;
         }
 
+        if ( ($retval = parent::compare($cmp)) != 0 ) {
+            return $retval;
+        }
+
         // Indexes are considered equal if all non-null properties are the same but only the name and
-        // columns are required but if the type and uniqueness are provided use those in the comparison
+        // columns are required. If the type and uniqueness are provided use those in the comparison
         // as well.
 
-        if ( $this->name != $cmp->name || $this->columns != $cmp->columns ) {
+        if ( $this->columns != $cmp->columns ) {
+            $this->logCompareFailure('columns', implode(',', $this->columns), implode(',', $cmp->columns), $this->name);
             return -1;
         }
 
@@ -154,7 +178,8 @@ class Index extends NamedEntity implements iEntity
         // a value will be provided when the database information schema is queried.
 
         if ( ( null !== $this->type && null !== $cmp->type ) && $this->type != $cmp->type ) {
-            return -2;
+            $this->logCompareFailure('type', $this->type, $cmp->type, $this->name);
+            return -1;
         }
 
         // The following properties do not have defaults set by the database and should be considered if
@@ -162,10 +187,18 @@ class Index extends NamedEntity implements iEntity
 
         // By default a primary key in MySQL has the name PRIMARY and is unique
 
-        if ( "PRIMARY" != $this->name && "PRIMARY" != $cmp->name
-             && ( null !== $this->is_unique && null !== $cmp->is_unique )
-             && $this->is_unique != $cmp->is_unique ) {
-            return -3;
+        if (
+            'PRIMARY' != $this->name && 'PRIMARY' != $cmp->name
+            && ( null !== $this->is_unique && null !== $cmp->is_unique )
+            && $this->is_unique != $cmp->is_unique
+        ) {
+            $this->logCompareFailure(
+                'is_unique',
+                ($this->is_unique ? 'true' : 'false'),
+                ($cmp->is_unique ? 'true' : 'false'),
+                $this->name
+            );
+            return -1;
         }
 
         return 0;

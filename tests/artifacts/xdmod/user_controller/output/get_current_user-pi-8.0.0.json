@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "results": {
+    "first_name": "Caspian",
+    "last_name": "Tern",
+    "email_address": "principal@example.com",
+    "is_sso_user": false,
+    "first_time_login": false,
+    "autoload_suppression": false,
+    "field_of_science": "0",
+    "active_role": "Principal Investigator",
+    "most_privileged_role": "Principal Investigator"
+  }
+}

@@ -1,0 +1,21 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/union-user-pi.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "union_user_pi_name": "DISTINCT raw.provider_user"
+        },
+        "joins": [
+            {
+                "name": "generic_cloud_raw_volume",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+        "where": [
+          "raw.provider_user IS NOT NULL"
+        ]
+
+    }
+}

@@ -1,0 +1,30 @@
+{
+  "table_definition": {
+    "$ref": "${table_definition_dir}/acls/report_template_acls.json"
+  },
+  "destination_record_map": {
+    "report_template_acls": {
+      "report_template_id": "report_template_id",
+      "acl_id": "acl_id"
+    }
+  },
+  "source_query": {
+    "records": {
+      "report_template_id": "rta.template_id",
+      "acl_id": "a.acl_id"
+    },
+    "joins": [
+      {
+        "name": "report_template_acls_staging",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "rta"
+      },
+      {
+        "name": "acls",
+        "schema": "${SOURCE_SCHEMA}",
+        "alias": "a",
+        "on": "a.name = rta.acl_name"
+      }
+    ]
+  }
+}

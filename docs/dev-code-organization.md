@@ -68,7 +68,7 @@ HTML and Markdown versions of the documentation along with the license
 files.
 
 - Source Tarball: `docs/`
-- RPM Installation: `/usr/share/doc/xdmod-x.y.z/`
+- RPM Installation: `/usr/share/doc/xdmod-{{ page.sw_version }}/`
 - Source Installation: `/opt/xdmod/share/`
 
 External Libraries
@@ -114,7 +114,7 @@ Includes the Java code used to generate reports.
 - RPM Installation: `/usr/share/xdmod/reporting/`
 - Source Installation: `/opt/xdmod/share/reporting/`
 
-Configuration Tempalates
+Configuration Templates
 ------------------------
 
 Template files used by `xdmod-setup` to generate config files.

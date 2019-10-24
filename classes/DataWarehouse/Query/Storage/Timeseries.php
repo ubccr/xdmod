@@ -16,10 +16,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         $endDate,
         $groupBy,
         $stat = '',
-        array $parameters = array(),
-        $queryGroupname = 'query_groupname',
-        array $parameterDescription = array(),
-        $singleStat = false
+        array $parameters = array()
     ) {
         parent::__construct(
             'Storage',
@@ -31,10 +28,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
             $endDate,
             $groupBy,
             $stat,
-            $parameters,
-            $queryGroupname,
-            $parameterDescription,
-            $singleStat
+            $parameters
         );
     }
 }

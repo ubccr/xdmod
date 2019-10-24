@@ -89,6 +89,14 @@
         ],
         "indexes": [
             {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
                 "name": "aggregation_index",
                 "columns": [
                     "resourcetype_id",
@@ -114,7 +122,7 @@
                 "is_unique": false
             },
             {
-                "name": "PRIMARY",
+                "name": "UNIQ",
                 "columns": [
                     "organization_id",
                     "name",

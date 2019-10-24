@@ -1,0 +1,43 @@
+{
+    "table_definition": {
+        "name": "organizations",
+        "engine": "InnoDB",
+        "comment": "Organization data for Value Analytics.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "AUTO_INCREMENT",
+                "comment": "The ID for an organization (assigned by XDMoD)."
+            },
+            {
+                "name": "name",
+                "type": "varchar(300)",
+                "nullable": false,
+                "comment": "The name of an organization."
+            },
+            {
+                "name": "abbrev",
+                "type": "varchar(100)",
+                "nullable": true,
+                "comment": "An abbreviation for an organization."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ]
+            },
+            {
+                "name": "name",
+                "columns": [
+                    "name"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

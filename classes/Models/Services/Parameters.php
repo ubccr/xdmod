@@ -2,7 +2,7 @@
 
 namespace Models\Services;
 
-use Xdmod\Config;
+use Configuration\XdmodConfiguration;
 
 class Parameters
 {
@@ -22,10 +22,7 @@ class Parameters
 
         // We need to retrieve which dimensions this acl filters on. To do that we need to see how
         // it's configured
-        $config = Config::factory();
-
-        // retrieve the roles section of the roles.json/.d config files.
-        $roles = $config['roles']['roles'];
+        $roles = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR)['roles'];
 
         if (!isset($roles[$aclName])) {
             throw new \Exception("Unable to find configuration information for $aclName.");
@@ -37,6 +34,9 @@ class Parameters
             switch ($dimension) {
                 case 'provider':
                     $parameters['provider'] = (string)$user->getOrganizationID();
+                    break;
+                case 'institution':
+                    $parameters['institution'] = (string)$user->getOrganizationID();
                     break;
                 case 'person':
                     $parameters['person'] = (string)$user->getPersonID();

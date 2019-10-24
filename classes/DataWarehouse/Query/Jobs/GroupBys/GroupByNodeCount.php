@@ -1,14 +1,6 @@
 <?php
-
 namespace DataWarehouse\Query\Jobs\GroupBys;
 
-/**
- * @author Amin Ghadersohi
- * @date 2011-Jan-07
- *
- * class for adding group by job time (wall duration) to a query
- *
- */
 class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
 {
     public function __construct()
@@ -35,7 +27,7 @@ class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function getInfo()
     {
-        return "A categorization of jobs into discrete groups based on node count.";
+        return 'A categorization of jobs into discrete groups based on node count.';
     }
     public static function getLabel()
     {
@@ -86,7 +78,7 @@ class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
         );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -101,24 +93,21 @@ class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->nodes_table, $this->_order_id_field_name), $dir, $this->getName());
-        if($prepend === true) {
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2($request, '_filter_', 'node_count');
-
     }
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select nodes as field_label from modw.nodecount  where id in (_filter_) order by id"
+            'SELECT nodes AS field_label FROM modw.nodecount  WHERE id IN (_filter_) ORDER BY id'
         );
-
     }
 }

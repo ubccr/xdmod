@@ -1,0 +1,36 @@
+[
+    [
+        {
+            "id": 1,
+            "user_id": 1,
+            "realm": "jobs",
+            "start_date": "2018-01-01",
+            "end_date": "2018-02-28",
+            "export_file_format": "CSV",
+            "requested_datetime": "2019-01-01 00:00:00",
+            "export_succeeded": null,
+            "export_created_datetime": null,
+            "downloaded_datetime": null,
+            "export_expires_datetime": null,
+            "export_expired": 0,
+            "last_modified": "2019-01-01 00:00:00"
+        }
+    ],
+    [
+        {
+            "id": 2,
+            "user_id": 1,
+            "realm": "jobs",
+            "start_date": "2001-01-01",
+            "end_date": "2001-01-02",
+            "export_file_format": "JSON",
+            "requested_datetime": "2019-01-01 00:00:01",
+            "export_succeeded": null,
+            "export_created_datetime": null,
+            "downloaded_datetime": null,
+            "export_expires_datetime": null,
+            "export_expired": 0,
+            "last_modified": "2019-01-01 00:00:01"
+        }
+    ]
+]

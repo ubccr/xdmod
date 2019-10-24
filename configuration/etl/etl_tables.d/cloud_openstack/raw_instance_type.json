@@ -54,10 +54,10 @@
             },
             {
                 "name": "start_time",
-                "type": "datetime",
-                "nullable": true,
-                "default": "0000-00-00 00:00:00",
-                "comment": "First time this configuration was encountered, defaults to unknown."
+                "type": "char(26)",
+                "nullable": false,
+                "default": "0000-00-00T00:00:00.000000",
+                "comment": "The time of the event in UTC."
             }
         ],
         "indexes": [

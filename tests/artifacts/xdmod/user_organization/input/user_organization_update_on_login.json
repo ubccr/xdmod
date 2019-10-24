@@ -1,0 +1,30 @@
+[
+  [
+    {
+      "user": "cd",
+      "organization": 2,
+      "expected": "cd_update_organization_on_login"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "organization": 3,
+      "expected": "cs_update_organization_on_login"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "organization": 4,
+      "expected": "pi_update_organization_on_login"
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "organization": 5,
+      "expected": "usr_update_organization_on_login"
+    }
+  ]
+]

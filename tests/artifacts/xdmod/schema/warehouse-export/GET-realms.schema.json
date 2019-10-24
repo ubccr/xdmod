@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Response from GET rest/warehouse/export/realms",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/realm"
+            }
+        },
+        "total": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "success",
+        "data"
+    ],
+    "additionalProperties": false,
+    "definitions": {
+        "realm": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "name"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

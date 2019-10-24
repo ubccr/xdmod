@@ -47,10 +47,8 @@ You will need to modify the `config.php` file and make sure you modify the `meta
   ),
   ...
 ```
-two other keys that might need to be set if you are having errors
+If you are having errors you might need to check the trusted domains setting
 ```php
-  ...
-  'session.phpsession.cookiename' => null,
   ...
   'trusted.url.domains' => array('f.q.dn.of.xdmod'),
   ...
@@ -128,7 +126,14 @@ $config = array(
 );
 ```
 
-Use the above example to match the response from the IdP, the indexes under `authproc[40]` point to indexes expected by Open XDMoD.
+Use the above example to match the response from the IdP, the indexes (left side of `=>`) under `authproc[40]` point to values (right side of `=>`) expected by Open XDMoD.
+These indexes need to be what SAML receives from the IdP not the ones known from LDAP or other sources.
+
+These indexes can be viewed using the `Test authentication sources` page built into simplesamlphp located at
+`https://<hostname>/simplesaml/module.php/core/authenticate.php` then clicking on `xdmod-sp` after which you will be redirect to the configured IdP login page.
+After you have successfully logged in to the IdP you should be redirected back to a `SAML 2.0 SP Demo Example` page.  This page will show you the attributes passed back by the IdP.
+
+**NOTE**: If a login prompt is displayed when going to the `Test authentication sources` you will need to use the user name  `admin` and the password in `/etc/xdmod/simplesamlphp/config/config.php` under the `auth.adminpassword` index.
 
 ## Setting up IdP metadata
 

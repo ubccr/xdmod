@@ -1,0 +1,10 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[yerwa] Average Memory Reserved Weighted By Wall Hours (Bytes)","[ylwwa] Average Memory Reserved Weighted By Wall Hours (Bytes)","[setusca] Average Memory Reserved Weighted By Wall Hours (Bytes)"
+"2018 Q2",5597586865.0629,4472021504.9981,3626414819.0708
+---------

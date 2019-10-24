@@ -1,0 +1,12 @@
+title
+"Quota: Hard Threshold (Bytes): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Mountpoint,"Quota: Hard Threshold (Bytes)"
+/projects,1219010023424000.0000
+/data,128035016704000.0000
+/scratch,0.0000
+---------

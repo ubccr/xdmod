@@ -9,13 +9,6 @@ use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
 
-/*
-* @author Rudra Chakraborty
-* @date 03/27/2018
-*
-* Group By VM Size in Memory
-*/
-
 class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
@@ -25,7 +18,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.";
+        return 'A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.';
     }
 
     public function __construct()
@@ -33,13 +26,13 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'vm_size_memory',
             array(),
-            "SELECT distinct
+            'SELECT DISTINCT
                 gt.id,
-                gt.min_memory as short_name,
-                gt.description as long_name,
+                gt.min_memory AS short_name,
+                gt.description AS long_name,
             FROM memory_buckets gt
-            where 1
-            order by gt.id"
+            WHERE 1
+            ORDER BY gt.id'
         );
         $this->_id_field_name = 'id';
         $this->_long_name_field_name = 'description';
@@ -84,7 +77,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addWhereCondition(new WhereCondition($buckettable_id_field, '=', $datatable_bucket_id_field));
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -119,7 +112,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by id"
+            'SELECT long_name AS field_label FROM modw.memory_buckets WHERE id IN (_filter_) ORDER BY id'
         );
     }
 }

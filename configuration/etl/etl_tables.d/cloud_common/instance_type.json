@@ -58,17 +58,17 @@
             },
             {
                 "name": "start_time",
-                "type": "datetime",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "First time that this configuration was seen, defaults to unknown."
+                "default": "0.000000",
+                "comment": "First time that this configuration was seen as a unix timestamp to the microsecond. defaults to unknown."
             },
             {
                 "name": "end_time",
-                "type": "datetime",
+                "type": "decimal(16,6)",
                 "nullable": true,
                 "default": null,
-                "comment": "End time for this configuration, NULL if it is still in effect."
+                "comment": "End time for this configuration as a unix timestamp to the microsecond., NULL if it is still in effect."
             }
         ],
 
@@ -97,8 +97,8 @@
 
                 "name": "increment_key",
                 "columns": [
-                    "instance_type_id",
-                    "resource_id"
+                    "resource_id",
+                    "instance_type_id"
                 ],
                 "is_unique": true
             }

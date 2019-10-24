@@ -1,0 +1,20 @@
+{
+  "table_definition": {
+    "name": "report_template_acls_staging",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "name": "template_id",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "acl_name",
+        "type": "varchar(255)",
+        "nullable": true
+      }
+    ],
+    "indexes": [],
+    "triggers": []
+  }
+}

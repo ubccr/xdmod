@@ -18,10 +18,7 @@ class Aggregate extends Query
         $endDate,
         $groupBy,
         $stat = '',
-        array $parameters = array(),
-        $queryGroupname = 'query_groupname',
-        array $parameterDescriptions = array(),
-        $singleStat = false
+        array $parameters = array()
     ) {
         parent::__construct(
             'Storage',
@@ -33,10 +30,7 @@ class Aggregate extends Query
             $endDate,
             $groupBy,
             $stat,
-            $parameters,
-            $queryGroupname,
-            $parameterDescriptions,
-            $singleStat
+            $parameters
         );
     }
 }

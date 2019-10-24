@@ -19,6 +19,7 @@ Open XDMoD requires the following software:
     - [PEAR MDB2 Package][pear-mdb2]
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
     - [mbstring][php-mbstring]
+    - [APCu][php-pecl-apcu]
 - [Java][] 1.8 including the [JDK][]
 - [PhantomJS][] 2.1+
 - [ghostscript][] 9+
@@ -44,6 +45,7 @@ Open XDMoD requires the following software:
 [pear-mdb2]:       https://pear.php.net/package/MDB2
 [pear-mdb2-mysql]: https://pear.php.net/package/MDB2_Driver_mysql
 [php-mbstring]:    https://secure.php.net/manual/en/book.mbstring.php
+[php-pecl-apcu]:   https://www.php.net/manual/en/book.apcu.php
 [java]:            https://java.com/
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [phantomjs]:       http://phantomjs.org/
@@ -78,7 +80,7 @@ added with this command for CentOS 7:
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.8.0-openjdk java-1.8.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
-                  ghostscript php-mbstring jq
+                  ghostscript php-mbstring php-pecl-apcu jq
 
 **NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
 so that must be installed manually.  Packages are available for
@@ -88,6 +90,8 @@ website.
 **NOTE**: After installing Apache and MySQL you must make sure that they
 are running.  CentOS may not start these services and they will not
 start after a reboot unless you have configured them to do so.
+
+**NOTE**: APCu is optional, but highly recommended as it provides enhanced performance.
 
 Additional Notes
 ----------------

@@ -1,2 +1,17 @@
 {
+    "xdmod": {
+        "portal": {
+            "js": [
+                "gui/js/modules/dashboard/ChartComponent.js",
+                "gui/js/modules/dashboard/JobComponent.js",
+                "gui/js/modules/dashboard/SavedChartsReportsComponent.js",
+                "gui/js/modules/dashboard/ReportThumbnailsComponent.js"
+            ],
+            "css": [
+                "gui/css/JobComponent.css",
+                "gui/css/ChartComponent.css",
+                "gui/css/ReportThumbnailsComponent.css"
+            ]
+        }
+    }
 }

@@ -1,0 +1,22 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[Warbler, Yellow] Average Cores Reserved Weighted By Wall Hours","[Warbler, Yellow-rumped] Average Cores Reserved Weighted By Wall Hours","[Warbler, Blackburnian] Average Cores Reserved Weighted By Wall Hours"
+2018-04-18,4.0000,1.0282,0
+2018-04-19,2.0000,1.0000,1.0000
+2018-04-20,2.0000,1.0000,0
+2018-04-21,2.0000,1.0000,0
+2018-04-22,2.0000,1.0000,0
+2018-04-23,2.0000,1.0000,0
+2018-04-24,2.0000,1.0000,0
+2018-04-25,2.0000,1.0000,0
+2018-04-26,2.0000,1.2418,0
+2018-04-27,1.7776,1.7500,0
+2018-04-28,0,1.7500,0
+2018-04-29,0,1.7500,0
+2018-04-30,2.0000,1.7503,0
+---------

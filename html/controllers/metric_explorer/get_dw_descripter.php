@@ -9,7 +9,7 @@ $roles = $user->getAllRoles(true);
 
 $roleDescriptors = array();
 foreach ($roles as $activeRole) {
-    $shortRole = $activeRole->getIdentifier();
+    $shortRole = $activeRole;
     $us_pos = strpos($shortRole, '_');
     if ($us_pos > 0)
     {
@@ -41,16 +41,19 @@ foreach ($roles as $activeRole) {
         $realms = array();
         $groupByObjects = array();
 
-        $query_group_name = 'tg_usage';
         $query_descripter_realms = Acls::getQueryDescripters($user);
 
         foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups)
         {
+            $category = DataWarehouse::getCategoryForRealm($query_descripter_realm);
+            if ($category === null) {
+                continue;
+            }
             $seenstats = array();
 
             $realms[$query_descripter_realm] = array(
                 'text' => $query_descripter_realm,
-                'category' => DataWarehouse::getCategoryForRealm($query_descripter_realm),
+                'category' => $category,
                 'dimensions' => array(),
                 'metrics' => array(),
             );

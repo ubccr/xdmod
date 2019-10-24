@@ -1,0 +1,20 @@
+title
+"Physical Usage (Bytes): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[blaca] Physical Usage (Bytes)","[crcco] Physical Usage (Bytes)","[egyni] Physical Usage (Bytes)","[frahata] Physical Usage (Bytes)","[gresh] Physical Usage (Bytes)","[lanwa] Physical Usage (Bytes)","[ovenb] Physical Usage (Bytes)","[palsw] Physical Usage (Bytes)","[parcr] Physical Usage (Bytes)","[phivi] Physical Usage (Bytes)","[razor] Physical Usage (Bytes)","[rocdo] Physical Usage (Bytes)","[sante] Physical Usage (Bytes)","[savsp] Physical Usage (Bytes)","[swath] Physical Usage (Bytes)"
+2018-12-27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-02,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-03,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-04,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-05,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

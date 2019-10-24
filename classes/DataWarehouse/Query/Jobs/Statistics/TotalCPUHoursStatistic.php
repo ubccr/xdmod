@@ -1,18 +1,11 @@
 <?php
 namespace DataWarehouse\Query\Jobs\Statistics;
 
-/*
-* @author Amin Ghadersohi
-* @date 2011-Feb-07
-*
-* class for calculating the total cpu hours
-*/
-
 class TotalCPUHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.cpu_time),0)/3600.0', 'total_cpu_hours', 'CPU Hours: Total', 'CPU Hour');
+        parent::__construct('COALESCE(SUM(jf.cpu_time),0)/3600.0', 'total_cpu_hours', 'CPU Hours: Total', 'CPU Hour');
     }
 
     public function getInfo()

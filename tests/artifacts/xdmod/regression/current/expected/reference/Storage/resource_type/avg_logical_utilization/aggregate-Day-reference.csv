@@ -1,0 +1,11 @@
+title
+"Quota Utilization: Logical (%): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"Resource Type","Quota Utilization: Logical (%)"
+"Storage grid",83.1472
+"Tape storage resource",62.5264
+---------

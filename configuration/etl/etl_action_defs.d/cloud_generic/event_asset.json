@@ -1,0 +1,43 @@
+{
+    "#": "Associate events with assets. Only volume assets are associated as they are",
+    "#": "the only assets that we have data for to associate with instances using the",
+    "#": "event_data field. See also event_asset_root_volume.def.json",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/event_asset.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "ev.resource_id",
+            "event_id": "ev.event_id",
+            "asset_id": "a.asset_id"
+        },
+
+        "joins": [
+            {
+                "name": "generic_cloud_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
+                "name": "event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ev",
+                "on": "ev.resource_id = staging.resource_id AND ev.instance_id = staging.instance_id AND ev.event_time_ts = staging.event_time_ts AND ev.event_type_id = staging.event_type_id"
+            },
+            {
+                "name": "asset",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "a",
+                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = staging.event_data"
+            }
+        ],
+
+        "where": [
+            "staging.event_data IS NOT NULL"
+        ]
+    }
+}

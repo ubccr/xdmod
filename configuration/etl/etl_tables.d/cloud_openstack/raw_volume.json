@@ -33,25 +33,25 @@
                 "comment": "Account number that owns this volume."
             },
             {
-                "name": "event_time_utc",
-                "type": "datetime",
+                "name": "event_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time of the event in UTC."
+                "default": "0.000000",
+                "comment": "A unix timestamp to the microsecond."
             },
             {
-                "name": "attach_time_utc",
-                "type": "datetime",
+                "name": "attach_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the volume was attached to an instance in UTC."
+                "default": "0.000000",
+                "comment": "The time that the volume was attached to an instance as a unix timestamp to the microsecond."
             },
             {
-                "name": "create_time_utc",
-                "type": "datetime",
+                "name": "create_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the volume was created in UTC."
+                "default": "0.000000",
+                "comment": "The time that the volume was created as a unix timestamp to the microsecond."
             },
             {
                 "name": "provider_volume_identifier",
@@ -104,7 +104,7 @@
                     "provider_volume_identifier",
                     "disk_gb",
                     "type",
-                    "create_time_utc"
+                    "create_time_ts"
                 ],
                 "is_unique": true
             }

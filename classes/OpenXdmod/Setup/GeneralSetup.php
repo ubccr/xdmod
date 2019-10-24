@@ -134,6 +134,20 @@ EOT
             $settings['general_email_token_expiration'] = '600';
         }
 
+        $this->console->displayBlankLine();
+        $this->console->displayMessage(<<<"EOT"
+This release of XDMoD features an optional replacement for the summary
+tab that is intended to provide easier access to XDMoD's many features.
+Detailed information is available at https://open.xdmod.org/dashboard.html
+EOT
+        );
+        $this->console->displayBlankLine();
+        $settings['features_user_dashboard'] = $this->console->prompt(
+            'Enable Dashboard Tab?',
+            $settings['features_user_dashboard'],
+            array('on', 'off')
+        );
+
         $this->saveIniConfig($settings, 'portal_settings');
     }
 }

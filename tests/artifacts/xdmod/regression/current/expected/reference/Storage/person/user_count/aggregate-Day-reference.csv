@@ -1,0 +1,353 @@
+title
+"User Count (Number of Users): by User"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+User,"User Count (Number of Users)"
+"Auk, Great",1
+"Auk, Little",1
+Bee-eater,1
+"Bee-eater, Blue-cheeked",1
+Bittern,1
+"Black-backed, Great",1
+"Black-backed, Lesser",1
+"Black, White-crowned",1
+"Black, White-winged",1
+Blackbird,1
+Blackcap,1
+"Blue, Siberian",1
+"Bluetail, Red-flanked",1
+Bluethroat,1
+Bobolink,1
+"Bonelli's, Western",1
+Brambling,1
+Bullfinch,1
+"Bunting, Black-faced",1
+"Bunting, Chestnut-eared",1
+"Bunting, Cirl",1
+"Bunting, Corn",1
+"Bunting, Cretzschmar's",1
+"Bunting, Lapland",1
+"Bunting, Little",1
+"Bunting, Pine",1
+"Bunting, Reed",1
+"Bunting, Rock",1
+"Bunting, Snow",1
+"Bunting, Yellow-browed",1
+"Bush, Rufous",1
+"Catbird, Grey",1
+Chaffinch,1
+"Chiffchaff, Iberian",1
+Chough,1
+Coot,1
+"Courser, Cream-coloured",1
+"Cowbird, Brown-headed",1
+"Crane, Sandhill",1
+"Crested, Lesser",1
+"Crossbill, Common",1
+"Crossbill, Parrot",1
+"Crossbill, Scottish",1
+"Crossbill, Two-barred",1
+"Crow, Carrion",1
+"Crowned, Eastern",1
+Cuckoo,1
+"Cuckoo, Yellow-billed",1
+"Desert, Asian",1
+Dipper,1
+"Dove, Collared",1
+"Dove, Mourning",1
+"Dove, Rock",1
+"Dove, Stock",1
+"Dove, Turtle",1
+"Dowitcher, Long-billed",1
+Dunlin,1
+Dunnock,1
+"Egret, Cattle",1
+"Falcon, Amur",1
+"Falcon, Gyr",1
+"Falcon, Red-footed",1
+"Finch, Trumpeter",1
+Firecrest,1
+"Flycatcher, Brown",1
+"Flycatcher, Collared",1
+"Flycatcher, Pied",1
+"Flycatcher, Red-breasted",1
+"Flycatcher, Spotted",1
+Goldfinch,1
+"Goose, Egyptian",1
+"Grasshopper, Pallas's",1
+"Grebe, Pied-billed",1
+Greenfinch,1
+Greenshank,1
+"Grey, Southern",1
+"Grosbeak, Evening",1
+"Grosbeak, Pine",1
+"Grosbeak, Rose-breasted",1
+"Grouse, Red",1
+Guillemot,1
+"Guillemot, Brunnich's",1
+"Gull, Audouin's",1
+"Gull, Black-headed",1
+"Gull, Caspian",1
+"Gull, Common",1
+"Gull, Franklin's",1
+"Gull, Glaucous",1
+"Gull, Iceland",1
+"Gull, Ivory",1
+"Gull, Laughing",1
+"Gull, Little",1
+"Gull, Mediterranean",1
+"Gull, Ross's",1
+"Gull, Sabine's",1
+"Gull, Slaty-backed",1
+"Gull, Slender-billed",1
+Hawfinch,1
+"Herring, American",1
+Hobby,1
+Honey-buzzard,1
+Hoopoe,1
+Jay,1
+"Junco, Dark-eyed",1
+Kestrel,1
+"Kestrel, American",1
+"Kestrel, Lesser",1
+Kingfisher,1
+"Kingfisher, Belted",1
+Kittiwake,1
+"Lark, Bimaculated",1
+"Lark, Black",1
+"Lark, Calandra",1
+"Lark, Crested",1
+"Lark, Shore",1
+"Lark, Short-toed",1
+"Lark, White-winged",1
+Linnet,1
+Magpie,1
+"Martin, Crag",1
+"Martin, House",1
+"Martin, Purple",1
+"Martin, Sand",1
+"May, Cape",1
+"Mockingbird, Northern",1
+"Murrelet, Ancient",1
+"Murrelet, Long-billed",1
+"Nighthawk, Common",1
+Nightingale,1
+"Nightingale, Thrush",1
+Nightjar,1
+"Nightjar, Egyptian",1
+"Nightjar, Red-necked",1
+Nutcracker,1
+"Nuthatch, Red-breasted",1
+"Olivaceous, Eastern",1
+"Oriole, Baltimore",1
+"Oriole, Golden",1
+"Orphean, Western",1
+"Ouzel, Ring",1
+Ovenbird,1
+"Owl, Barn",1
+"Owl, Hawk",1
+"Owl, Long-eared",1
+"Owl, Scops",1
+"Owl, Short-eared",1
+"Owl, Snowy",1
+"Owl, Tawny",1
+"Owl, Tengmalm's",1
+"Parakeet, Ring-necked",1
+"Parula, Northern",1
+"Phalarope, Grey",1
+"Phalarope, Red-necked",1
+"Phalarope, Wilson's",1
+"Phoebe, Eastern",1
+"Pipit, Blyth's",1
+"Pipit, Olive-backed",1
+"Pipit, Pechora",1
+"Pipit, Richard's",1
+"Pipit, Rock",1
+"Pipit, Tawny",1
+"Pipit, Tree",1
+"Pipit, Water",1
+"Plover, White-tailed",1
+"Pratincole, Black-winged",1
+"Pratincole, Collared",1
+"Pratincole, Oriental",1
+"Puffin, Tufted",1
+Raven,1
+Razorbill,1
+"Redpoll, Arctic",1
+"Redpoll, Mealy",1
+Redshank,1
+Redstart,1
+"Redstart, American",1
+"Redstart, Black",1
+"Redstart, Moussier's",1
+Redwing,1
+"Reed, Blyth's",1
+"Reed, Great",1
+"Reed, Pallas's",1
+Robin,1
+"Robin, American",1
+"Robin, Rufous-tailed",1
+"Rock, Blue",1
+Roller,1
+Rook,1
+"Rosefinch, Common",1
+"Rubythroat, Siberian",1
+"Sandgrouse, Pallas's",1
+"Sandpiper, Baird's",1
+"Sandpiper, Buff-breasted",1
+"Sandpiper, Common",1
+"Sandpiper, Green",1
+"Sandpiper, Least",1
+"Sandpiper, Marsh",1
+"Sandpiper, Pectoral",1
+"Sandpiper, Purple",1
+"Sandpiper, Semipalmated",1
+"Sandpiper, Solitary",1
+"Sandpiper, Spotted",1
+"Sandpiper, Terek",1
+"Sandpiper, White-rumped",1
+"Sandpiper, Wood",1
+"Scaup, Lesser",1
+"Scoter, Velvet",1
+Serin,1
+Shag,1
+"Shearwater, Balearic",1
+"Shearwater, Cory's",1
+"Short-toed, Lesser",1
+"Shrike, Isabelline",1
+"Shrike, Long-tailed",1
+"Shrike, Masked",1
+"Shrike, Red-backed",1
+"Shrike, Woodchat",1
+"Skua, Great",1
+"Skua, Long-tailed",1
+"Skua, Pomarine",1
+Skylark,1
+Snipe,1
+"Snipe, Great",1
+"Snipe, Jack",1
+"Snipe, Wilson's",1
+"Sparrow, House",1
+"Sparrow, Lark",1
+"Sparrow, Rock",1
+"Sparrow, Savannah",1
+"Sparrow, Spanish",1
+"Sparrow, White-crowned",1
+"Spotted, Great",1
+Starling,1
+Stonechat,1
+Swallow,1
+"Swallow, Cliff",1
+"Swallow, Red-rumped",1
+"Swallow, Tree",1
+Swift,1
+"Swift, Alpine",1
+"Swift, Chimney",1
+"Swift, Needle-tailed",1
+"Swift, Pacific",1
+"Swift, Pallid",1
+"Tanager, Scarlet",1
+"Tanager, Summer",1
+"Tattler, Grey-tailed",1
+"Tern, Aleutian",1
+"Tern, Arctic",1
+"Tern, Black",1
+"Tern, Bridled",1
+"Tern, Cabot's",1
+"Tern, Common",1
+"Tern, Forster's",1
+"Tern, Little",1
+"Tern, Roseate",1
+"Tern, Royal",1
+"Tern, Sandwich",1
+"Tern, Sooty",1
+"Tern, Whiskered",1
+"Thrasher, Brown",1
+"Thrush, Black-throated",1
+"Thrush, Eyebrowed",1
+"Thrush, Grey-cheeked",1
+"Thrush, Naumann's",1
+"Thrush, Rock",1
+"Thrush, Siberian",1
+"Thrush, Song",1
+"Thrush, Swainson's",1
+"Thrush, Varied",1
+"Thrush, Wood",1
+"Tit, Blue",1
+"Tit, Coal",1
+"Tit, Crested",1
+"Tit, Great",1
+"Tit, Long-tailed",1
+"Tit, Marsh",1
+"Tit, Penduline",1
+"Towhee, Eastern",1
+Treecreeper,1
+"Treecreeper, Short-toed",1
+"Turtle, Rufous",1
+Twite,1
+Veery,1
+"Vireo, Philadelphia",1
+"Vireo, Red-eyed",1
+"Vireo, Yellow-throated",1
+"Wagtail, Citrine",1
+"Wagtail, Grey",1
+"Wagtail, Yellow",1
+Wallcreeper,1
+"Warbler, Aquatic",1
+"Warbler, Black-and-white",1
+"Warbler, Blackburnian",1
+"Warbler, Cetti's",1
+"Warbler, Dartford",1
+"Warbler, Dusky",1
+"Warbler, Garden",1
+"Warbler, Golden-winged",1
+"Warbler, Grasshopper",1
+"Warbler, Green",1
+"Warbler, Greenish",1
+"Warbler, Hooded",1
+"Warbler, Hume's",1
+"Warbler, Icterine",1
+"Warbler, Lanceolated",1
+"Warbler, Magnolia",1
+"Warbler, Marsh",1
+"Warbler, Melodious",1
+"Warbler, Olive-tree",1
+"Warbler, Pallas's",1
+"Warbler, Reed",1
+"Warbler, River",1
+"Warbler, Ruppell's",1
+"Warbler, Sardinian",1
+"Warbler, Sedge",1
+"Warbler, Spectacled",1
+"Warbler, Subalpine",1
+"Warbler, Tennessee",1
+"Warbler, Thick-billed",1
+"Warbler, Willow",1
+"Warbler, Wood",1
+"Warbler, Yellow",1
+"Warbler, Yellow-browed",1
+"Warbler, Yellow-rumped",1
+"Waterthrush, Northern",1
+Waxwing,1
+"Waxwing, Cedar",1
+Wheatear,1
+"Wheatear, Black-eared",1
+"Wheatear, Desert",1
+"Wheatear, Isabelline",1
+"Wheatear, Pied",1
+Whinchat,1
+Whitethroat,1
+"Whitethroat, Lesser",1
+Woodcock,1
+Woodlark,1
+"Woodpecker, Green",1
+Woodpigeon,1
+Wren,1
+Wryneck,1
+Yellowhammer,1
+"Yellowlegs, Greater",1
+"Yellowlegs, Lesser",1
+---------

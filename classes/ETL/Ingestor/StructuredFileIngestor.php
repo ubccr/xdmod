@@ -98,7 +98,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
         // If there are no records we can bail out. Otherwise we may not even be able to infer the
         // source field names.
 
-        if ( 0 == $this->sourceEndpoint->count() ) {
+        if ( false === $firstRecord || 0 == $this->sourceEndpoint->count() ) {
             $this->logger->info(
                 sprintf("Source endpoint %s returned 0 records, skipping.", $this->sourceEndpoint)
             );

@@ -1,0 +1,8 @@
+{
+  "_realm_name": "Jobs",
+  "_group_by_name": "nodecount",
+  "_default_statisticname": "avg_node_hours",
+  "_order_id": 0,
+  "_show_menu": true,
+  "_disable_menu": false
+}

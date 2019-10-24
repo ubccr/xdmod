@@ -56,6 +56,8 @@ else {
     \xd_response\presentError("Acl information is required");
 }
 
+$sticky = isset($_POST['sticky']) ? filter_var($_POST['sticky'], FILTER_VALIDATE_BOOLEAN) : false;
+
 try {
     $password_chars = 'abcdefghijklmnopqrstuvwxyz!@#$%-_=+ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     $max_password_chars_index = strlen($password_chars) - 1;
@@ -74,7 +76,9 @@ try {
         array_keys($acls),
         ROLE_ID_USER,
         $_POST['institution'],
-        $_POST['assignment']
+        $_POST['assignment'],
+        array(),
+        $sticky
     );
     $newuser->setUserType($_POST['user_type']);
     $newuser->saveUser();
@@ -82,8 +86,8 @@ try {
     foreach ($acls as $acl => $centers) {
         // Now that the user has been updated, We need to check if they have been assigned any
         // 'center' acls. If they have and if an 'institution' has been provided ( it should have
-        // been ) then we need to call `setOrganizations` so that the UserRoleParameters and
-        // user_acl_group_by_parameters tables are updated accordingly.
+        // been ) then we need to call `setOrganizations` so that the user_acl_group_by_parameters
+        // table is updated accordingly.
         if (in_array($acl, array('cd', 'cs')) && isset($_POST['institution'])) {
             $newuser->setOrganizations(
                 array(

@@ -1,0 +1,112 @@
+[
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 314,
+    "hard_threshold": 150000001024000,
+    "logical_usage": 575703936000,
+    "mountpoint": "/projects",
+    "pi": "redgr",
+    "resource": "torx",
+    "soft_threshold": 100000002048000,
+    "user": "redgr"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 102408,
+    "hard_threshold": 150000001024000,
+    "logical_usage": 94668546688000,
+    "mountpoint": "/projects",
+    "pi": "amere",
+    "resource": "torx",
+    "soft_threshold": 100000002048000,
+    "user": "amere"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 14270,
+    "hard_threshold": 60000002048000,
+    "logical_usage": 13832863872000,
+    "mountpoint": "/projects",
+    "pi": "tenwa",
+    "resource": "torx",
+    "soft_threshold": 50000003072000,
+    "user": "tenwa"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 627987,
+    "hard_threshold": 50005000192000,
+    "logical_usage": 26967857536000,
+    "mountpoint": "/projects",
+    "pi": "bawwa",
+    "resource": "torx",
+    "soft_threshold": 50000003072000,
+    "user": "bawwa"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 2908,
+    "hard_threshold": 7000006656000,
+    "logical_usage": 1471399808000,
+    "mountpoint": "/projects",
+    "pi": "fulma",
+    "resource": "torx",
+    "soft_threshold": 4000002048000,
+    "user": "setusca"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 1135809,
+    "hard_threshold": 100005003264000,
+    "logical_usage": 50638493824000,
+    "mountpoint": "/projects",
+    "pi": "norwa",
+    "resource": "torx",
+    "soft_threshold": 100000002048000,
+    "user": "norwa"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 88683162,
+    "hard_threshold": 250000003072000,
+    "logical_usage": 162292553216000,
+    "mountpoint": "/projects",
+    "pi": "molater",
+    "resource": "torx",
+    "soft_threshold": 200000000000000,
+    "user": "molater"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 15196470,
+    "hard_threshold": 250000003072000,
+    "logical_usage": 55029891456000,
+    "mountpoint": "/projects",
+    "pi": "bobol",
+    "resource": "torx",
+    "soft_threshold": 150000001024000,
+    "user": "bobol"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 1324,
+    "hard_threshold": 2000003072000,
+    "logical_usage": 43913088000,
+    "mountpoint": "/projects",
+    "pi": "corbu",
+    "resource": "torx",
+    "soft_threshold": 1000001536000,
+    "user": "corbu"
+  },
+  {
+    "dt": "2018-12-29T13:12:45Z",
+    "file_count": 1,
+    "hard_threshold": 200000000000000,
+    "logical_usage": 0,
+    "mountpoint": "/projects",
+    "pi": "fulma",
+    "resource": "torx",
+    "soft_threshold": 100000002048000,
+    "user": "ylwwa"
+  }
+]

@@ -1,0 +1,353 @@
+title
+"Quota: Soft Threshold (Bytes): by User"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+User,"Quota: Soft Threshold (Bytes)"
+"Cowbird, Brown-headed",200000000000000.0000
+Bobolink,150000001024000.0000
+"Grouse, Red",100000002048000.0000
+"Redstart, American",100000002048000.0000
+"Warbler, Yellow",100000002048000.0000
+"Waterthrush, Northern",100000002048000.0000
+"Warbler, Black-and-white",50000003072000.0000
+"Warbler, Tennessee",50000003072000.0000
+Chaffinch,30000001024000.0000
+"Chiffchaff, Iberian",25000001536000.0000
+"Warbler, Magnolia",20000002048000.0000
+"Kestrel, Lesser",10000003072000.0000
+"Martin, Sand",10000003072000.0000
+"May, Cape",10000003072000.0000
+"Parula, Northern",10000003072000.0000
+"Scaup, Lesser",10000003072000.0000
+"Warbler, Blackburnian",5000003584000.0000
+"Treecreeper, Short-toed",1000005632000.0000
+"Bunting, Corn",1000001536000.0000
+"Auk, Great",0.0000
+"Auk, Little",0.0000
+Bee-eater,0.0000
+"Bee-eater, Blue-cheeked",0.0000
+Bittern,0.0000
+"Black-backed, Great",0.0000
+"Black-backed, Lesser",0.0000
+"Black, White-crowned",0.0000
+"Black, White-winged",0.0000
+Blackbird,0.0000
+Blackcap,0.0000
+"Blue, Siberian",0.0000
+"Bluetail, Red-flanked",0.0000
+Bluethroat,0.0000
+"Bonelli's, Western",0.0000
+Brambling,0.0000
+Bullfinch,0.0000
+"Bunting, Black-faced",0.0000
+"Bunting, Chestnut-eared",0.0000
+"Bunting, Cirl",0.0000
+"Bunting, Cretzschmar's",0.0000
+"Bunting, Lapland",0.0000
+"Bunting, Little",0.0000
+"Bunting, Pine",0.0000
+"Bunting, Reed",0.0000
+"Bunting, Rock",0.0000
+"Bunting, Snow",0.0000
+"Bunting, Yellow-browed",0.0000
+"Bush, Rufous",0.0000
+"Catbird, Grey",0.0000
+Chough,0.0000
+Coot,0.0000
+"Courser, Cream-coloured",0.0000
+"Crane, Sandhill",0.0000
+"Crested, Lesser",0.0000
+"Crossbill, Common",0.0000
+"Crossbill, Parrot",0.0000
+"Crossbill, Scottish",0.0000
+"Crossbill, Two-barred",0.0000
+"Crow, Carrion",0.0000
+"Crowned, Eastern",0.0000
+Cuckoo,0.0000
+"Cuckoo, Yellow-billed",0.0000
+"Desert, Asian",0.0000
+Dipper,0.0000
+"Dove, Collared",0.0000
+"Dove, Mourning",0.0000
+"Dove, Rock",0.0000
+"Dove, Stock",0.0000
+"Dove, Turtle",0.0000
+"Dowitcher, Long-billed",0.0000
+Dunlin,0.0000
+Dunnock,0.0000
+"Egret, Cattle",0.0000
+"Falcon, Amur",0.0000
+"Falcon, Gyr",0.0000
+"Falcon, Red-footed",0.0000
+"Finch, Trumpeter",0.0000
+Firecrest,0.0000
+"Flycatcher, Brown",0.0000
+"Flycatcher, Collared",0.0000
+"Flycatcher, Pied",0.0000
+"Flycatcher, Red-breasted",0.0000
+"Flycatcher, Spotted",0.0000
+Goldfinch,0.0000
+"Goose, Egyptian",0.0000
+"Grasshopper, Pallas's",0.0000
+"Grebe, Pied-billed",0.0000
+Greenfinch,0.0000
+Greenshank,0.0000
+"Grey, Southern",0.0000
+"Grosbeak, Evening",0.0000
+"Grosbeak, Pine",0.0000
+"Grosbeak, Rose-breasted",0.0000
+Guillemot,0.0000
+"Guillemot, Brunnich's",0.0000
+"Gull, Audouin's",0.0000
+"Gull, Black-headed",0.0000
+"Gull, Caspian",0.0000
+"Gull, Common",0.0000
+"Gull, Franklin's",0.0000
+"Gull, Glaucous",0.0000
+"Gull, Iceland",0.0000
+"Gull, Ivory",0.0000
+"Gull, Laughing",0.0000
+"Gull, Little",0.0000
+"Gull, Mediterranean",0.0000
+"Gull, Ross's",0.0000
+"Gull, Sabine's",0.0000
+"Gull, Slaty-backed",0.0000
+"Gull, Slender-billed",0.0000
+Hawfinch,0.0000
+"Herring, American",0.0000
+Hobby,0.0000
+Honey-buzzard,0.0000
+Hoopoe,0.0000
+Jay,0.0000
+"Junco, Dark-eyed",0.0000
+Kestrel,0.0000
+"Kestrel, American",0.0000
+Kingfisher,0.0000
+"Kingfisher, Belted",0.0000
+Kittiwake,0.0000
+"Lark, Bimaculated",0.0000
+"Lark, Black",0.0000
+"Lark, Calandra",0.0000
+"Lark, Crested",0.0000
+"Lark, Shore",0.0000
+"Lark, Short-toed",0.0000
+"Lark, White-winged",0.0000
+Linnet,0.0000
+Magpie,0.0000
+"Martin, Crag",0.0000
+"Martin, House",0.0000
+"Martin, Purple",0.0000
+"Mockingbird, Northern",0.0000
+"Murrelet, Ancient",0.0000
+"Murrelet, Long-billed",0.0000
+"Nighthawk, Common",0.0000
+Nightingale,0.0000
+"Nightingale, Thrush",0.0000
+Nightjar,0.0000
+"Nightjar, Egyptian",0.0000
+"Nightjar, Red-necked",0.0000
+Nutcracker,0.0000
+"Nuthatch, Red-breasted",0.0000
+"Olivaceous, Eastern",0.0000
+"Oriole, Baltimore",0.0000
+"Oriole, Golden",0.0000
+"Orphean, Western",0.0000
+"Ouzel, Ring",0.0000
+Ovenbird,0.0000
+"Owl, Barn",0.0000
+"Owl, Hawk",0.0000
+"Owl, Long-eared",0.0000
+"Owl, Scops",0.0000
+"Owl, Short-eared",0.0000
+"Owl, Snowy",0.0000
+"Owl, Tawny",0.0000
+"Owl, Tengmalm's",0.0000
+"Parakeet, Ring-necked",0.0000
+"Phalarope, Grey",0.0000
+"Phalarope, Red-necked",0.0000
+"Phalarope, Wilson's",0.0000
+"Phoebe, Eastern",0.0000
+"Pipit, Blyth's",0.0000
+"Pipit, Olive-backed",0.0000
+"Pipit, Pechora",0.0000
+"Pipit, Richard's",0.0000
+"Pipit, Rock",0.0000
+"Pipit, Tawny",0.0000
+"Pipit, Tree",0.0000
+"Pipit, Water",0.0000
+"Plover, White-tailed",0.0000
+"Pratincole, Black-winged",0.0000
+"Pratincole, Collared",0.0000
+"Pratincole, Oriental",0.0000
+"Puffin, Tufted",0.0000
+Raven,0.0000
+Razorbill,0.0000
+"Redpoll, Arctic",0.0000
+"Redpoll, Mealy",0.0000
+Redshank,0.0000
+Redstart,0.0000
+"Redstart, Black",0.0000
+"Redstart, Moussier's",0.0000
+Redwing,0.0000
+"Reed, Blyth's",0.0000
+"Reed, Great",0.0000
+"Reed, Pallas's",0.0000
+Robin,0.0000
+"Robin, American",0.0000
+"Robin, Rufous-tailed",0.0000
+"Rock, Blue",0.0000
+Roller,0.0000
+Rook,0.0000
+"Rosefinch, Common",0.0000
+"Rubythroat, Siberian",0.0000
+"Sandgrouse, Pallas's",0.0000
+"Sandpiper, Baird's",0.0000
+"Sandpiper, Buff-breasted",0.0000
+"Sandpiper, Common",0.0000
+"Sandpiper, Green",0.0000
+"Sandpiper, Least",0.0000
+"Sandpiper, Marsh",0.0000
+"Sandpiper, Pectoral",0.0000
+"Sandpiper, Purple",0.0000
+"Sandpiper, Semipalmated",0.0000
+"Sandpiper, Solitary",0.0000
+"Sandpiper, Spotted",0.0000
+"Sandpiper, Terek",0.0000
+"Sandpiper, White-rumped",0.0000
+"Sandpiper, Wood",0.0000
+"Scoter, Velvet",0.0000
+Serin,0.0000
+Shag,0.0000
+"Shearwater, Balearic",0.0000
+"Shearwater, Cory's",0.0000
+"Short-toed, Lesser",0.0000
+"Shrike, Isabelline",0.0000
+"Shrike, Long-tailed",0.0000
+"Shrike, Masked",0.0000
+"Shrike, Red-backed",0.0000
+"Shrike, Woodchat",0.0000
+"Skua, Great",0.0000
+"Skua, Long-tailed",0.0000
+"Skua, Pomarine",0.0000
+Skylark,0.0000
+Snipe,0.0000
+"Snipe, Great",0.0000
+"Snipe, Jack",0.0000
+"Snipe, Wilson's",0.0000
+"Sparrow, House",0.0000
+"Sparrow, Lark",0.0000
+"Sparrow, Rock",0.0000
+"Sparrow, Savannah",0.0000
+"Sparrow, Spanish",0.0000
+"Sparrow, White-crowned",0.0000
+"Spotted, Great",0.0000
+Starling,0.0000
+Stonechat,0.0000
+Swallow,0.0000
+"Swallow, Cliff",0.0000
+"Swallow, Red-rumped",0.0000
+"Swallow, Tree",0.0000
+Swift,0.0000
+"Swift, Alpine",0.0000
+"Swift, Chimney",0.0000
+"Swift, Needle-tailed",0.0000
+"Swift, Pacific",0.0000
+"Swift, Pallid",0.0000
+"Tanager, Scarlet",0.0000
+"Tanager, Summer",0.0000
+"Tattler, Grey-tailed",0.0000
+"Tern, Aleutian",0.0000
+"Tern, Arctic",0.0000
+"Tern, Black",0.0000
+"Tern, Bridled",0.0000
+"Tern, Cabot's",0.0000
+"Tern, Common",0.0000
+"Tern, Forster's",0.0000
+"Tern, Little",0.0000
+"Tern, Roseate",0.0000
+"Tern, Royal",0.0000
+"Tern, Sandwich",0.0000
+"Tern, Sooty",0.0000
+"Tern, Whiskered",0.0000
+"Thrasher, Brown",0.0000
+"Thrush, Black-throated",0.0000
+"Thrush, Eyebrowed",0.0000
+"Thrush, Grey-cheeked",0.0000
+"Thrush, Naumann's",0.0000
+"Thrush, Rock",0.0000
+"Thrush, Siberian",0.0000
+"Thrush, Song",0.0000
+"Thrush, Swainson's",0.0000
+"Thrush, Varied",0.0000
+"Thrush, Wood",0.0000
+"Tit, Blue",0.0000
+"Tit, Coal",0.0000
+"Tit, Crested",0.0000
+"Tit, Great",0.0000
+"Tit, Long-tailed",0.0000
+"Tit, Marsh",0.0000
+"Tit, Penduline",0.0000
+"Towhee, Eastern",0.0000
+Treecreeper,0.0000
+"Turtle, Rufous",0.0000
+Twite,0.0000
+Veery,0.0000
+"Vireo, Philadelphia",0.0000
+"Vireo, Red-eyed",0.0000
+"Vireo, Yellow-throated",0.0000
+"Wagtail, Citrine",0.0000
+"Wagtail, Grey",0.0000
+"Wagtail, Yellow",0.0000
+Wallcreeper,0.0000
+"Warbler, Aquatic",0.0000
+"Warbler, Cetti's",0.0000
+"Warbler, Dartford",0.0000
+"Warbler, Dusky",0.0000
+"Warbler, Garden",0.0000
+"Warbler, Golden-winged",0.0000
+"Warbler, Grasshopper",0.0000
+"Warbler, Green",0.0000
+"Warbler, Greenish",0.0000
+"Warbler, Hooded",0.0000
+"Warbler, Hume's",0.0000
+"Warbler, Icterine",0.0000
+"Warbler, Lanceolated",0.0000
+"Warbler, Marsh",0.0000
+"Warbler, Melodious",0.0000
+"Warbler, Olive-tree",0.0000
+"Warbler, Pallas's",0.0000
+"Warbler, Reed",0.0000
+"Warbler, River",0.0000
+"Warbler, Ruppell's",0.0000
+"Warbler, Sardinian",0.0000
+"Warbler, Sedge",0.0000
+"Warbler, Spectacled",0.0000
+"Warbler, Subalpine",0.0000
+"Warbler, Thick-billed",0.0000
+"Warbler, Willow",0.0000
+"Warbler, Wood",0.0000
+"Warbler, Yellow-browed",0.0000
+"Warbler, Yellow-rumped",0.0000
+Waxwing,0.0000
+"Waxwing, Cedar",0.0000
+Wheatear,0.0000
+"Wheatear, Black-eared",0.0000
+"Wheatear, Desert",0.0000
+"Wheatear, Isabelline",0.0000
+"Wheatear, Pied",0.0000
+Whinchat,0.0000
+Whitethroat,0.0000
+"Whitethroat, Lesser",0.0000
+Woodcock,0.0000
+Woodlark,0.0000
+"Woodpecker, Green",0.0000
+Woodpigeon,0.0000
+Wren,0.0000
+Wryneck,0.0000
+Yellowhammer,0.0000
+"Yellowlegs, Greater",0.0000
+"Yellowlegs, Lesser",0.0000
+---------

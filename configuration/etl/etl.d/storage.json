@@ -2,10 +2,7 @@
     "module": "xdmod",
     "#": "Storage Ingestion and Aggregation",
     "defaults": {
-        "xdw-ingest-storage": {
-            "namespace": "ETL\\Ingestor",
-            "class": "DatabaseIngestor",
-            "options_class": "IngestorOptions",
+        "global": {
             "endpoints": {
                 "source": {
                     "type": "mysql",
@@ -20,6 +17,11 @@
                     "schema": "modw"
                 }
             }
+        },
+        "xdw-ingest-storage": {
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions"
         }
     },
     "xdw-bootstrap-storage": [

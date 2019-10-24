@@ -129,7 +129,6 @@
                 "event": "INSERT",
                 "table": "Users",
                 "body": "\n\n\tSET NEW.time_created = NOW();\n\n\tSET NEW.time_last_updated = NOW();\n\n",
-                "definer": "xdmod@localhost",
                 "schema": "moddb",
                 "name": "users_insert_timestamp"
             },
@@ -138,7 +137,6 @@
                 "event": "UPDATE",
                 "table": "Users",
                 "body": "\n\n\tIF NEW.password <> OLD.password THEN\n\n\t\tSET NEW.password_last_updated = NOW(); \n\n\tEND IF; \n\n\tSET NEW.time_last_updated = NOW();\n\n",
-                "definer": "xdmod@localhost",
                 "schema": "moddb",
                 "name": "users_update_timestamp"
             }

@@ -1,0 +1,29 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/cloud_common/domains.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "DISTINCT raw.resource_id",
+            "name": "raw.domain"
+        },
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            },
+            {
+                "name": "domains",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "cur",
+                "type": "LEFT",
+                "on": "cur.name = raw.domain AND cur.resource_id = raw.resource_id"
+            }
+        ],
+        "where": [
+            "raw.domain IS NOT NULL",
+            "cur.id IS NULL"
+        ]
+    }
+}

@@ -1,0 +1,11 @@
+title
+"File Count (Number of files): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Unknown] File Count (Number of files)","[Mechanical and Structural Systems] File Count (Number of files)","[Molecular Biosciences] File Count (Number of files)","[Mathematical Sciences] File Count (Number of files)","[Chemistry] File Count (Number of files)","[Electrical and Communication Systems] File Count (Number of files)","[Earth Sciences] File Count (Number of files)","[Astronomical Sciences] File Count (Number of files)","[Environmental Biology] File Count (Number of files)","[Physics] File Count (Number of files)","[Materials Research] File Count (Number of files)","[Social and Economic Science] File Count (Number of files)","[Microelectronic Information Processing Systems] File Count (Number of files)","[Polar Programs] File Count (Number of files)","[Chemical, Thermal Systems] File Count (Number of files)","[Atmospheric Sciences] File Count (Number of files)","[Arts] File Count (Number of files)"
+2018-01-01,220513553,3289076,3045549,2147096,1538674,928152,410844,240177,62666,20072,6976,7088,5339,786,51,48,8
+2019-01-01,221930219,3766184,2984393,2152113,1544091,902603,374514,206830,62751,20072,6957,6221,5339,822,51,48,8
+---------

@@ -1,0 +1,20 @@
+title
+"File Count (Number of files): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[swath] File Count (Number of files)","[ovenb] File Count (Number of files)","[parcr] File Count (Number of files)","[savsp] File Count (Number of files)","[sante] File Count (Number of files)","[phivi] File Count (Number of files)","[lanwa] File Count (Number of files)","[egyni] File Count (Number of files)","[palsw] File Count (Number of files)","[blaca] File Count (Number of files)","[rocdo] File Count (Number of files)","[crcco] File Count (Number of files)","[frahata] File Count (Number of files)","[gresh] File Count (Number of files)","[razor] File Count (Number of files)"
+2018-12-27,160112,60567,6421,678,97,11,10,5,5,2,2,1,1,1,1
+2018-12-28,160112,88969,4066,678,97,11,10,5,5,2,2,1,1,1,1
+2018-12-29,160112,56593,4066,678,97,11,10,5,5,2,2,1,1,1,1
+2018-12-30,160112,87106,4066,678,97,11,10,5,5,2,2,1,1,1,1
+2018-12-31,160112,80333,4066,678,97,11,10,5,5,2,2,1,1,1,1
+2019-01-01,160112,68070,3957,678,97,11,10,5,5,2,2,1,1,1,1
+2019-01-02,160112,38106,3957,678,97,11,10,5,5,2,2,1,1,1,1
+2019-01-03,160125,33523,5428,678,97,11,10,5,5,2,2,1,1,1,1
+2019-01-04,160138,30267,5878,678,97,11,10,5,5,2,2,1,1,1,1
+2019-01-05,160200,11695,28516,678,97,11,10,5,5,2,2,1,1,1,1
+---------

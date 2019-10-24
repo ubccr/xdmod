@@ -342,3 +342,6 @@ launch.json
 /.qa/
  .eslintrc.json
  phpcs.xml
+
+# Include test specific diff changes
+!/tests/ci/diff/*.diff

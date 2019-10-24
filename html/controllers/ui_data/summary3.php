@@ -47,59 +47,57 @@ try {
             }
         }
     }
+    $enabledRealms = \Models\Services\Realms::getEnabledRealms();
+    if (in_array('Jobs', $enabledRealms)) {
+        $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
 
-    $query_descripter = new \User\Elements\QueryDescripter('tg_summary', 'Jobs', 'none');
+        $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
 
-    $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
+        // This try/catch block is intended to replace the "Base table or
+        // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
+        // doesn't exist" error message with something more informative for
+        // Open XDMoD users.
 
-    // This try/catch block is intended to replace the "Base table or
-    // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
-    // doesn't exist" error message with something more informative for
-    // Open XDMoD users.
-
-    try {
-        $result = $query->execute();
-    } catch (PDOException $e) {
-        if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
-            $msg = 'Aggregate table not found, have you ingested your data?';
-            throw new Exception($msg);
-        } else {
-            throw $e;
+        try {
+            $result = $query->execute();
+        } catch (PDOException $e) {
+            if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
+                $msg = 'Aggregate table not found, have you ingested your data?';
+                throw new Exception($msg);
+            } else {
+                throw $e;
+            }
         }
     }
-    $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($logged_in_user);
-    $summaryCharts = array_map(
-        function ($chart) {
-            if (!isset($chart['preset'])) {
-                $chart['preset'] = true;
-            }
-            return json_encode($chart);
-        },
-        Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_charts')
-    );
 
-    foreach ($summaryCharts as $i => $summaryChart) {
-        $summaryChartObject = json_decode($summaryChart);
-        $summaryChartObject->preset = true;
-        $summaryCharts[$i] = json_encode($summaryChartObject);
+    $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($logged_in_user);
+
+    $rolesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+    $roles = $rolesConfig['roles'];
+
+    $mostPrivilegedAclName = $mostPrivilegedAcl->getName();
+    $mostPrivilegedAclSummaryCharts = $roles['default']['summary_charts'];
+
+    if (isset($roles[$mostPrivilegedAclName]['summary_charts'])) {
+        $mostPrivilegedAclSummaryCharts = $roles[$mostPrivilegedAclName]['summary_charts'];
+    }
+
+    $summaryCharts = array();
+    foreach ($mostPrivilegedAclSummaryCharts as $chart)
+    {
+        $realm = $chart['data_series']['data'][0]['realm'];
+        if (!in_array($realm, $enabledRealms)) {
+            continue;
+        }
+        $chart['preset'] = true;
+
+        $summaryCharts[] = json_encode($chart);
     }
 
     if (!isset($_REQUEST['public_user']) || $_REQUEST['public_user'] != 'true')
     {
-        $userProfile = $logged_in_user->getProfile();
-
-        // Attempt to retrieve the queries from the new location, falling back
-        // to the old location. In either case normalize the results so that
-        // the proceeding code can be standardized.
-        $queries = $userProfile->fetchValue('queries_store');
-        if (!isset($queries)) {
-            $queries = $userProfile->fetchValue('queries');
-            if ($queries != null) {
-                $queries = array_values(json_decode($queries, true));
-            }
-        } else if (isset($queries['data'])) {
-            $queries = $queries['data'];
-        }
+        $queryStore = new \UserStorage($logged_in_user, 'queries_store');
+        $queries = $queryStore->get();
 
         if ($queries != NULL) {
             foreach ($queries as $i => $query) {

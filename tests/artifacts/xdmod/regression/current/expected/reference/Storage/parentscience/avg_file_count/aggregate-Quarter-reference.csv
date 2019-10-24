@@ -1,0 +1,26 @@
+title
+"File Count (Number of files): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Department,"File Count (Number of files)"
+Unknown,221221886.0000
+"Mechanical and Structural Systems",3527630.0000
+"Molecular Biosciences",3014971.0000
+"Mathematical Sciences",2149604.5000
+Chemistry,1541382.5000
+"Electrical and Communication Systems",915377.5000
+"Earth Sciences",392679.0000
+"Astronomical Sciences",223503.5000
+"Environmental Biology",62708.5000
+Physics,20072.0000
+"Materials Research",6966.5000
+"Social and Economic Science",6654.5000
+"Microelectronic Information Processing Systems",5339.0000
+"Polar Programs",804.0000
+"Chemical, Thermal Systems",51.0000
+"Atmospheric Sciences",48.0000
+Arts,8.0000
+---------

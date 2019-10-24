@@ -1,0 +1,12 @@
+title
+"Quota: Hard Threshold (Bytes): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[blaca] Quota: Hard Threshold (Bytes)","[crcco] Quota: Hard Threshold (Bytes)","[egyni] Quota: Hard Threshold (Bytes)","[frahata] Quota: Hard Threshold (Bytes)","[gresh] Quota: Hard Threshold (Bytes)","[lanwa] Quota: Hard Threshold (Bytes)","[ovenb] Quota: Hard Threshold (Bytes)","[palsw] Quota: Hard Threshold (Bytes)","[parcr] Quota: Hard Threshold (Bytes)","[phivi] Quota: Hard Threshold (Bytes)","[razor] Quota: Hard Threshold (Bytes)","[rocdo] Quota: Hard Threshold (Bytes)","[sante] Quota: Hard Threshold (Bytes)","[savsp] Quota: Hard Threshold (Bytes)","[swath] Quota: Hard Threshold (Bytes)"
+2018-10-01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

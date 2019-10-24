@@ -255,7 +255,11 @@ Ext.extend(CCR.xdmod.ui.DurationToolbar, Ext.Toolbar, {
     getDurationLabel: function () {
         return this.cannedDateButton.getText();
     },
-    onHandle: function () {
+    onHandle: function (refreshButtonClicked) {
+        var changed = true;
+        if (refreshButtonClicked) {
+            changed = this.startDateField.didChange() || this.endDateField.didChange();
+        }
         var refreshBtn = Ext.getCmp('refresh_button_' + this.id);
         if (refreshBtn) refreshBtn.removeClass('dateframe_refresh_button_highlight');
         Ext.getCmp('start_field_' + this.id).updatePreviousValue();
@@ -279,6 +283,7 @@ Ext.extend(CCR.xdmod.ui.DurationToolbar, Ext.Toolbar, {
         if (this.handler) {
             this.handler.call(this.scope || this, {
                 preset: this.getDurationLabel(),
+                changed: changed,
                 aggregation_unit: this.getAggregationUnit(),
                 start_date: this.getStartDate().format('Y-m-d'),
                 end_date: this.getEndDate().format('Y-m-d')
@@ -680,7 +685,7 @@ Ext.extend(CCR.xdmod.ui.DurationToolbar, Ext.Toolbar, {
             tooltip: 'Refresh using selected time frame',
             scope: this,
             handler: function () {
-                this.onHandle();
+                this.onHandle(true);
             }
         });
 

@@ -1,0 +1,88 @@
+{
+  "defaults": {
+      "global": {
+          "namespace": "ETL\\Ingestor",
+          "options_class": "IngestorOptions",
+          "class": "DatabaseIngestor",
+          "truncate_destination": false,
+          "enabled": true,
+          "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Shredder/Staging Database",
+                  "config": "database",
+                  "schema": "mod_shredder",
+                  "create_schema_if_not_exists": true
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Shredder/Staging Database",
+                  "config": "database",
+                  "schema": "mod_shredder",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      }
+    },
+    "ingest-organizations": [
+        {
+            "name": "IngestOrganizationConfig",
+            "description": "Ingest organization configuration file",
+            "class": "StructuredFileIngestor",
+            "definition_file": "common/staging/organization.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Organization configuration",
+                    "path": "${base_dir}/../organization.json",
+                    "record_schema_path": "common/organization.schema.json",
+                    "filters": [
+                        {
+                            "#": "Add an ID value to the organization record",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'{id:1,name,abbrev}'"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "IngestOrganizationHpcdb",
+            "description": "Ingest organizations",
+            "definition_file": "common/hpcdb/organizations.json",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "IngestOrgranizationDatawarehouse",
+            "definition_file": "jobs/xdw/organization.json",
+            "description": "organization records",
+            "#": "disable to allow order_id to be set",
+            "optimize_query": false,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud timing test DB",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    ]
+}

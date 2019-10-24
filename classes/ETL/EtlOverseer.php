@@ -180,8 +180,8 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
                     // Verify that specified resource codes are valid
 
                     $codeList = array_merge(
-                        $action->getOptions()->include_only_resource_codes,
-                        $action->getOptions()->exclude_resource_codes
+                        (array) $action->getOptions()->include_only_resource_codes,
+                        (array) $action->getOptions()->exclude_resource_codes
                     );
                     $this->verifyResourceCodes($codeList);
                 }

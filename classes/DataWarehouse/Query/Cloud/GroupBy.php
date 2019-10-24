@@ -1,11 +1,6 @@
 <?php
 namespace DataWarehouse\Query\Cloud;
 
-/*
-* @author Rudra Chakraborty
-* @date 2018-02-15
-*/
-
 abstract class GroupBy extends \DataWarehouse\Query\GroupBy
 {
     public function __construct($name, array $additional_permitted_parameters = array(), $possible_values_query = null)

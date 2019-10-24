@@ -1,0 +1,59 @@
+{
+  "table_definition": {
+    "name": "report_template_acls",
+    "engine": "InnoDB",
+    "comments": "Tracks which acls have access to which report templates.",
+    "columns": [
+      {
+        "name": "report_template_acl_id",
+        "type": "int(11)",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "report_template_id",
+        "type": "int(11)",
+        "nullable": false
+      },
+      {
+        "name": "acl_id",
+        "type": "int(11)",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_report_template_acl_id",
+        "columns": [
+          "report_template_acl_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      },
+      {
+        "name": "idx_report_template_id",
+        "columns": [
+          "report_template_id"
+        ]
+      },
+      {
+        "name": "idx_acl_id",
+        "columns": [
+          "acl_id"
+        ]
+      }
+    ],
+    "foreign_key_constraints": [
+      {
+        "name": "fk_rta_acl_id",
+        "columns": [
+          "acl_id"
+        ],
+        "referenced_table": "acls",
+        "referenced_columns": [
+          "acl_id"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[torx] Quota: Soft Threshold (Bytes)","[recex] Quota: Soft Threshold (Bytes)"
+2018-01-01,855000018944000,127000027136000
+2019-01-01,855000018944000,127000027136000
+---------

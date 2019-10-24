@@ -1,0 +1,62 @@
+{
+  "#": "7. Swap the order of awarded and recommended",
+  "table_definition": {
+    "name": "modify_table_test",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "#": "New column at start of list",
+        "name": "new_column_1",
+        "type": "varchar(40)",
+        "nullable": true
+      },
+      {
+        "name": "resource",
+        "type": "varchar(40)",
+        "nullable": true
+      },
+      {
+        "#": "New column in middle of the list",
+        "name": "new_column_2",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "#": "rename `id` -> `resource_id`",
+        "name": "resource_id",
+        "type": "int(11)",
+        "nullable": false,
+        "hints": {
+          "rename_from": "id"
+        }
+      },
+      {
+        "#": "New column after renamed column",
+        "name": "new_column_3",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "available",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "#": "New column after deleted column (deleted `requested`)",
+        "name": "new_column_4",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "recommended",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "awarded",
+        "type": "int(11)",
+        "nullable": true
+      }
+    ]
+  }
+}

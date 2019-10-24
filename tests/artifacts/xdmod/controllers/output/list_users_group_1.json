@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "status": "success",
+  "users": [
+    {
+      "id": "3",
+      "username": "centerdirector",
+      "first_name": "Reed",
+      "last_name": "Bunting",
+      "account_is_active": "1",
+      "last_logged_in": 0
+    },
+    {
+      "id": "4",
+      "username": "centerstaff",
+      "first_name": "Turtle",
+      "last_name": "Dove",
+      "account_is_active": "1",
+      "last_logged_in": 0
+    },
+    {
+      "id": "5",
+      "username": "principal",
+      "first_name": "Caspian",
+      "last_name": "Tern",
+      "account_is_active": "1",
+      "last_logged_in": 0
+    },
+    {
+      "id": "6",
+      "username": "normaluser",
+      "first_name": "",
+      "last_name": "Whimbrel",
+      "account_is_active": "1",
+      "last_logged_in": 0
+    }
+  ]
+}

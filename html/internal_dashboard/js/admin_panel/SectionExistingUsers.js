@@ -112,14 +112,24 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var selected_user_id = -1;
         var selected_username = '';
 
-        var cached_user_type = null;
-
         var user_update_callback;
-
-        var settingsAreDirty = false;
 
         self.setCallback = function (callback) {
             user_update_callback = callback;
+        };
+
+        /**
+         * Updates the save indicator based on whether or not changes have been
+         * made.
+         */
+        var updateSaveIndicator = function () {
+            if (self.inDirtyState()) {
+                // eslint-disable-next-line no-use-before-define
+                saveIndicator.show();
+            } else {
+                // eslint-disable-next-line no-use-before-define
+                saveIndicator.hide();
+            }
         };
 
         function userRenderer(
@@ -201,14 +211,16 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var comboChangeHandler = function (f, newValue, oldValue) {
             /* eslint-disable no-use-before-define */
-            settingsAreDirty = true;
-            saveIndicator.show();
-            if (cmbUserMapping.startValue !== cmbUserMapping.getValue() || cmbInstitution.startValue !== cmbInstitution.getValue()) {
+            if ((cmbUserMapping.originalValue !== cmbUserMapping.getValue()) ||
+                (cmbInstitution.originalValue !== cmbInstitution.getValue())
+            ) {
                 stickyCheckbox.setValue(true);
             } else {
                 stickyCheckbox.setValue(false);
             }
             /* eslint-enable no-use-before-define */
+
+            updateSaveIndicator();
         };
 
         // ------------------------------------------------------------------
@@ -241,7 +253,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             triggerAction: 'all',
             valueField: 'id',
             emptyText: 'No User Type Selected',
-            listeners: { change: comboChangeHandler }
+            listeners: { change: updateSaveIndicator, select: updateSaveIndicator }
         });
 
         cmbUserType.on('disable', function () {
@@ -282,8 +294,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         if (resp === 'no') {
                             self.resetDirtyState();
 
-                            // eslint-disable-next-line no-use-before-define
-                            saveIndicator.hide();
+                            updateSaveIndicator();
                             self.reloadUserList(menuItem.type_id);
                         }
                     }
@@ -358,9 +369,13 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
         var stickyCheckbox = new Ext.form.Checkbox({
             boxLabel: 'Manually Overridden',
-            labelStyle: 'display: none; visible: none'
+            labelStyle: 'display: none; visible: none',
+            listeners: {
+                check: function () {
+                    updateSaveIndicator();
+                }
+            }
         });
-
 
         var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
             fieldLabel: 'Institution',
@@ -416,6 +431,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             cmbUserType.setDisabled(true);
             btnSaveChanges.setDisabled(true);
             existingUserEmailField.setValue('');
+            cmbUserType.setValue('');
 
             if (self.initFlag === 1) {
                 document.getElementById('txtAccountTimestamps').innerText = '';
@@ -519,6 +535,41 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         });
 
         this.groupToggle = usersTypeSplitButton;
+
+        var resetNewUserTour = function () {
+            Ext.Ajax.request({
+                url: XDMoD.REST.url + '/admin/reset_user_tour_viewed',
+                params: {
+                    viewedTour: 0,
+                    uid: selected_user_id
+                },
+                method: 'POST',
+
+                callback: function (options, success, response) {
+                    var json;
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+
+                        // eslint-disable-next-line no-param-reassign
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'User operation failed.'
+                        });
+                        return;
+                    }
+
+                    var displayedMessage = json.message ? json.message : json.status;
+                    CCR.xdmod.ui.userManagementMessage(
+                        displayedMessage,
+                        json.success
+                    );
+                }
+            }); // Ext.Ajax.request
+        };
 
         // ------------------------------------------
 
@@ -648,11 +699,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             maxLengthText: 'Maximum length (' + maxEmailLength + ' characters) exceeded.',
 
             validator: function (value) {
-                // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
-                    return true;
-                }
-
                 // Return validity of value in the field.
                 // (Other validators will check the remaining criteria.)
                 return XDMoD.validator.email(value);
@@ -668,10 +714,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         return;
                     }
 
-                    settingsAreDirty = true;
-
-                    // eslint-disable-next-line no-use-before-define
-                    saveIndicator.show();
+                    updateSaveIndicator();
                 }
             }
         });
@@ -684,7 +727,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             user_management_mode: true,
             fieldLabel: 'Map To',
             emptyText: 'User not mapped',
-            hiddenName: 'nm_existing_user_mapping',
             width: 165,
             cascadeOptions: {
                 component: cmbInstitution,
@@ -704,16 +746,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         // ------------------------------------------
         /* eslint-disable no-use-before-define */
-        var roleGridClickHandler = function () {
-            if (roleGrid.isInDirtyState()) {
-                saveIndicator.show();
-            } else {
-                saveIndicator.hide();
-            }
-        };
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
-            selectionChangeHandler: roleGridClickHandler,
+            selectionChangeHandler: updateSaveIndicator,
             border: false
         });
         /* eslint-enable no-use-before-define */
@@ -721,11 +756,78 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         self.inDirtyState = function () {
-            return (roleGrid.isInDirtyState() || settingsAreDirty);
+            // eslint-disable-next-line no-use-before-define
+            return (roleGrid.isInDirtyState() || userSettingsDirty());
+        };
+
+        /**
+         * Checks the fields in the User Settings form to see if there have been
+         * any changes.
+         *
+         * @returns {boolean} true if there have been changes else false.
+         */
+        var userSettingsDirty = function () {
+            // eslint-disable-next-line no-use-before-define
+            var fieldValues = userSettings.getForm().getFieldValues();
+            for (var id in fieldValues) {
+                if (fieldValues.hasOwnProperty(id)) {
+                    var field = Ext.getCmp(id);
+
+                    // Only check a field if it's been rendered.
+                    if (field.rendered) {
+                        if (field.originalValue !== field.getValue()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+
+        /**
+         * Reverts the User Settings ( E-Mail Address, User Type, Map To, Institution ) to their original values.
+         */
+        var revertUserSettings = function () {
+            // eslint-disable-next-line no-use-before-define
+            var fieldValues = userSettings.getForm().getFieldValues();
+            for (var id in fieldValues) {
+                if (fieldValues.hasOwnProperty(id)) {
+                    var field = Ext.getCmp(id);
+
+                    // Only check a field if it's been rendered.
+                    if (field.rendered) {
+                        if (field.originalValue !== field.getValue()) {
+                            field.setValue(field.originalValue);
+                        }
+                    }
+                }
+            }
+        };
+
+        /**
+         * Reset the start / original values for the User Settings fields for
+         * accurate change tracking.
+         */
+        var resetUserSettings = function () {
+            // Reset the user setting fields so that their original
+            // and start values are the same as their current values.
+            // eslint-disable-next-line no-use-before-define
+            var fieldValues = userSettings.getForm().getFieldValues();
+            for (var id in fieldValues) {
+                if (fieldValues.hasOwnProperty(id)) {
+                    var field = Ext.getCmp(id);
+                    if (field.originalValue !== field.getValue()) {
+                        field.originalValue = field.getValue();
+                    }
+                    if (field.startValue !== field.getValue()) {
+                        field.startValue = field.getValue();
+                    }
+                }
+            }
         };
 
         self.resetDirtyState = function () {
-            settingsAreDirty = false;
+            resetUserSettings();
             roleGrid.setDirtyState(false);
         };
 
@@ -844,11 +946,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
-                // When we are working on a 'Single Sign On' user the cmbUserType will
-                // not have a value ( as it's hidden ). In that case use the
-                // cached_user_type variable which is populated when we fetch
-                // the users details.
-                var userType = cmbUserType.isVisible() ? cmbUserType.getValue() : cached_user_type;
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
@@ -858,7 +955,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '-1' :
                         cmbUserMapping.getValue(),
                     institution: cmbInstitution.getValue(),
-                    user_type: userType,
+                    user_type: cmbUserType.getValue(),
                     sticky: stickyCheckbox.getValue()
                 };
 
@@ -885,9 +982,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         self.resetDirtyState();
+                        revertUserSettings();
 
-                        // eslint-disable-next-line no-use-before-define
-                        saveIndicator.hide();
+                        updateSaveIndicator();
 
                         CCR.xdmod.ui.userManagementMessage(
                             json.status,
@@ -947,6 +1044,10 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 {
                     text: 'Empty Report Image Cache',
                     handler: actionEmptyReportImageCache
+                },
+                {
+                    text: 'Reset New User Tour',
+                    handler: resetNewUserTour
                 }
             ]
         });
@@ -1095,10 +1196,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                     roleGrid.setDirtyState(false);
                     roleGrid.reset();
-                    settingsAreDirty = false;
 
-                    // eslint-disable-next-line no-use-before-define
-                    saveIndicator.hide();
+                    resetUserSettings();
+                    updateSaveIndicator();
 
                     cmbUserMapping.removeClass('admin_panel_invalid_text_entry');
                     cmbInstitution.removeClass('admin_panel_invalid_text_entry');
@@ -1154,31 +1254,37 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         userEditor.setTitle('User Details: ' + Ext.util.Format.htmlEncode(json.user_information.formal_name));
 
                         existingUserEmailField.setValue(json.user_information.email_address);
+                        existingUserEmailField.originalValue = json.user_information.email_address;
+
 
                         // Remaining inputs ----------------------
-
-                        cached_user_type = parseInt(json.user_information.user_type, 10);
                         cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
+                        cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
-                        if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
-                            // XSEDE-derived User: Can't change user type
-                            cmbUserType.hide();
+                        var userType = parseInt(json.user_information.user_type, 10);
+                        cmbUserType.setValue(userType);
+                        cmbUserType.originalValue = cmbUserType.getValue();
+
+                        if (userType === CCR.xdmod.SSO_USER_TYPE) {
+                            // XSEDE-derived User: Can't change user type so we
+                            // instead show the `lblXSEDEUser` element and hide
+                            // the `cmbUserType`.
                             lblXSEDEUser.show();
-
+                            cmbUserType.hide();
                             mnuItemPasswordReset.hide();
                         } else {
                             // All other (non-XSEDE-derived) users
                             lblXSEDEUser.hide();
                             cmbUserType.show();
-
                             mnuItemPasswordReset.show();
-
-                            cmbUserType.setDisabled(false);
-                            cmbUserType.setValue(cached_user_type);
                         }
-                        stickyCheckbox.setValue(Boolean(json.user_information.sticky));
-                        cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
 
+                        var sticky = Boolean(json.user_information.sticky);
+                        stickyCheckbox.originalValue = sticky;
+                        stickyCheckbox.setValue(sticky);
+
+                        cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
+                        cmbInstitution.originalValue = json.user_information.institution;
                         /**
                          * acls are in the form:
                          * {
@@ -1279,7 +1385,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                                 if (resp === 'no') {
                                     self.resetDirtyState();
                                     // eslint-disable-next-line no-use-before-define
-                                    saveIndicator.hide();
+                                    updateSaveIndicator();
 
                                     selected_user_id = component.store.getAt(rowindex).data.id;
                                     selected_username = component.store.getAt(rowindex).data.username;

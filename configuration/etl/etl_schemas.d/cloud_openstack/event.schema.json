@@ -74,6 +74,9 @@
         },
         "volume_id": {
             "type": "string"
+        },
+        "domain": {
+            "type": "string"
         }
       }
   ]

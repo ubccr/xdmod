@@ -1,5 +1,4 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
 use DataWarehouse\Query\Query;
@@ -8,13 +7,6 @@ use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
-
-/*
-* @author Rudra Chakraborty
-* @date 05/17/2018
-*
-* Group By Project
-*/
 
 class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -25,7 +17,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "The project associated with a running session of a virtual machine.";
+        return 'The project associated with a running session of a virtual machine.';
     }
 
     public function __construct()
@@ -33,14 +25,13 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'project',
             array(),
-            "SELECT distinct
+            'SELECT distinct
                 gt.account_id,
                 gt.display as short_name,
                 gt.provider_account as long_name
             FROM account gt
             WHERE 1
-            ORDER BY gt.account_id
-        "
+            ORDER BY gt.ACCOUNT_ID'
         );
         $this->_id_field_name = 'account_id';
         $this->_long_name_field_name = 'display';
@@ -94,7 +85,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
         );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -129,7 +120,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select long_name as field_label from modw_cloud.account where id in (_filter_) order by display"
+            'SELECT long_name AS field_label FROM modw_cloud.account WHERE id IN (_filter_) ORDER BY display'
         );
     }
 }

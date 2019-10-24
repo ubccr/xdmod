@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "status": "success",
+  "users": [
+    {
+      "id": "2",
+      "username": "admin",
+      "first_name": "Admin",
+      "last_name": "User",
+      "account_is_active": "1",
+      "last_logged_in": 1509035416000
+    }
+  ]
+}

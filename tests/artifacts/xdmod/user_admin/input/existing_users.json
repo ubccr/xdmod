@@ -1,0 +1,32 @@
+[
+  [
+    {
+      "username": "admin",
+      "user_type": 2
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "user_type": 1
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "user_type": 1
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "user_type": 1
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "user_type": 1
+    }
+  ]
+]

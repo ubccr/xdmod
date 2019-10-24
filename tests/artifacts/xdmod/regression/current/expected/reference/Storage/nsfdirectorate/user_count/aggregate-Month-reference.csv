@@ -1,0 +1,17 @@
+title
+"User Count (Number of Users): by Decanal Unit"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"Decanal Unit","User Count (Number of Users)"
+Unknown,188
+"Mathematical and Physical Sciences",44
+Engineering,39
+Geosciences,27
+"Biological Sciences",25
+"Social, Behavioral, and Economic Sciences",15
+"Computer and Information Science and Engineering",4
+Humanities/Arts,2
+---------

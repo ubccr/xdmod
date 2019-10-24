@@ -23,7 +23,8 @@ XDMoD.ToolbarItem = {
    DURATION_SELECTOR: 1,
    EXPORT_MENU: 2,
    PRINT_BUTTON: 3,
-   REPORT_CHECKBOX: 4
+   REPORT_CHECKBOX: 4,
+   CHART_LINK_BUTTON: 5
    
 };//XDMoD.ToolbarItem
 
@@ -57,7 +58,8 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       durationSelector: false,
       exportMenu: false,
       printButton: false,
-      reportCheckbox: false
+      reportCheckbox: false,
+      chartLinkButton: false
       
    },//toolbarItems
    
@@ -69,7 +71,8 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       XDMoD.ToolbarItem.DURATION_SELECTOR,
       XDMoD.ToolbarItem.EXPORT_MENU,
       XDMoD.ToolbarItem.PRINT_BUTTON,
-      XDMoD.ToolbarItem.REPORT_CHECKBOX
+      XDMoD.ToolbarItem.REPORT_CHECKBOX,
+      XDMoD.ToolbarItem.CHART_LINK_BUTTON
 
    ],   
 
@@ -190,6 +193,27 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       
       // ----------------------------------------
       
+      var createChartLinkButton = function () {
+         var chartLinkButton = new Ext.Button({
+
+             text: 'Link to Current Chart',
+             iconCls: 'chart_bar_link',
+             tooltip: 'Link to Current Chart',
+             scope: this,
+             handler: function () {
+                 self.fireEvent('chart_link_clicked');
+             } // handler
+
+         }); // chartLinkButton
+
+         self.getChartLinkButton = function () {
+             return chartLinkButton;
+         };
+
+         return chartLinkButton;
+     }; // createChartLinkButton
+
+     // ----------------------------------------
       var moduleConfig = {
       
          layout: 'border',
@@ -329,7 +353,18 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
                   }
                   
                   break;
-                  
+
+               case XDMoD.ToolbarItem.CHART_LINK_BUTTON:
+
+                  if (self.toolbarItems.chartLinkButton === true) {
+                        if (moduleConfig.tbar.items.getCount() > 1 && employSeparator) {
+                           moduleConfig.tbar.addItem('-');
+                        }
+                        moduleConfig.tbar.addItem(createChartLinkButton(self.module_id));
+                  }
+
+                  break;
+
                default:
 
                   if (moduleConfig.tbar.items.getCount() > 1 && employSeparator)

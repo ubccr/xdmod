@@ -1,13 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
-
-/*
-* @author Rudra Chakraborty
-* @date 03/06/2018
-*
-* Group By Resource
-*/
 
 class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
 {
@@ -35,7 +27,8 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
             WHERE 1
                 AND gt.id = rs.resource_id
                 AND rs.processors IS NOT NULL
-                ORDER BY gt.code',
+            ORDER BY
+                    gt.code',
             array('nsfdirectorate')
         );
         $this->_id_field_name = 'id';
@@ -70,7 +63,6 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
             )
         );
         $this->addOrder($query, $multi_group);
-
     }
 
     public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint)
@@ -92,7 +84,7 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
 
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
 
@@ -109,10 +101,9 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->resourcefact_table, $this->_order_id_field_name), $dir, $this->getName());
-        if($prepend === true) {
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
@@ -124,6 +115,9 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function pullQueryParameterDescriptions(&$request)
     {
-        return parent::pullQueryParameterDescriptions2($request, "select code as field_label from modw.resourcefact  where id in (_filter_) order by code");
+        return parent::pullQueryParameterDescriptions2(
+            $request,
+            'SELECT code AS field_label FROM modw.resourcefact  WHERE id IN (_filter_) ORDER BY code'
+        );
     }
 }

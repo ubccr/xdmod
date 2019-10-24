@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-__XDMOD_BIN_PATH__/acl-etl -p acls-import "$@"

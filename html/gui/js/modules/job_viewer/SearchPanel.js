@@ -312,9 +312,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             Ext.getCmp('search-add').disable();
             Ext.getCmp('job-viewer-search-search').disable();
             this.searchStore.removeAll();
-            this.valueField.store.setBaseParam({
-                realm: realm
-            });
+            this.valueField.store.setBaseParam('realm', realm);
             this.searchField.reset();
             this.searchField.store.load({
                 params: {
@@ -1465,8 +1463,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             results: selected
         };
 
-        var realmField = Ext.getCmp('realm-field');
-        var realm = realmField ? realmField.getValue() : null;
+        var realm = params.searchterms.params.realm;
         var idFragment = id !== undefined ? '/' + id : '';
         var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
 

@@ -48,106 +48,6 @@ class Utilities
     }  // containsVariable()
 
     /* ------------------------------------------------------------------------------------------
-     * Perform variable/macro substitution on a string using a variable map. The map keys
-     * are the names of the variables WITHOUT the ${} wrapper (e.g., a key of 'SCHEMA'
-     * matches the variable ${SCHEMA}) while the values are the destination strings.
-     * Optionally throw an exception if there are un-matched variables left in the string.
-     *
-     * NOTE: Map keys with a value of NULL are ignored.
-     *
-     * @param $string Target string containing variables
-     * @param $map Associative array containing the variable mappings. The keys are the
-     *   names of the variables WITHOUT the ${} wrapper.
-     * @param $logger An optional class that extends Loggable. If this is present then an
-     *   exception will be thrown if there are any unsubstituted variables present in the
-     *   string.
-     * @param $exceptionPrefix An optional string to use in the exception message
-     * @param $substitutionDetails An optional array that, if present, will be populated
-     *   with the macros that were substituted and those that were not substituted.
-     *
-     *   'substituted'   => An array of variables that were substituted
-     *   'unsubstituted' => An array of variables that were present in the string but not
-     *                      substituted
-     *
-     * @return The string with variables substituted.
-     *
-     * @throws An exception of $logger is not NULL and there are unsubstituted macros
-     *   found in the string
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public static function substituteVariables(
-        $string,
-        array $map,
-        Loggable $logger = null,
-        $exceptionPrefix = null,
-        array $substitutionDetails = null
-    ) {
-
-        if ( null === $string ) {
-            return $string;
-        }
-
-        $exceptionForUnusedVariables = ( null !== $logger );
-        $trackDetails = ( null !== $substitutionDetails );
-
-        // If we are not tracking the variables that have or have not been substituted, simply
-        // perform a string replacement.
-
-        if ( ! $exceptionForUnusedVariables && ! $trackDetails ) {
-            foreach ( $map as $k => $v ) {
-                if ( null === $v ) {
-                    continue;
-                }
-                $string = str_replace('${' . $k . '}', $v, $string);
-            }
-        } else {
-
-            $substitutionDetails = array(
-                'unsubstituted' => array(),
-                'substituted'   => array()
-            );
-
-            // Perform the substitution and track variables that have been substituted
-
-            array_map(
-                function ($v, $k) use (&$string, &$substitutionDetails) {
-                    if ( null === $v ) {
-                        return;
-                    }
-                    $search = '${' . $k . '}';
-                    if ( false !== strpos($string, $search) ) {
-                        $substitutionDetails['substituted'][] = $k;
-                    }
-                    $string = str_replace($search, $v, $string);
-                },
-                $map,
-                array_keys($map)
-            );
-
-            // If there are any variables left in the string, track them as unsubstituted.
-
-            $matches = array();
-            if ( 0 !== preg_match_all('/(\$\{.+\})/', $string, $matches ) ) {
-                $substitutionDetails['unsubstituted'] = array_shift($matches);
-            }
-
-            $substitutionDetails['unsubstituted'] = array_unique($substitutionDetails['unsubstituted']);
-
-            if ( $exceptionForUnusedVariables && 0 != count($substitutionDetails['unsubstituted']) ) {
-                $logger->logAndThrowException(
-                    ( null !== $exceptionPrefix ? $exceptionPrefix . ": " : "Undefined macros found: " )
-                    . implode(", ", $substitutionDetails['unsubstituted'])
-                );
-            }
-
-        }  // else ( null === $substitutedVariables && null == $unsubstitutedVariables )
-
-        return $string;
-
-    }  // substituteVariables()
-
-    /* ------------------------------------------------------------------------------------------
      * Process a macro file. A macro is simply a text fragment containing markers that will be
      * replaced with values. Markers are identified using bash variable syntax (e.g., ${macro}) and
      * are replaced by values specified in the configuration. The macro configuration is comprised of
@@ -248,11 +148,17 @@ class Utilities
 
         // Replace macro arguments
 
+        $vs = new VariableStore();
+
         if ( isset($config->args) && count($config->args) > 0 ) {
-            $macro = self::substituteVariables($macro, (array) $config->args);
+            $vs->add((array) $config->args);
+            $macro = $vs->substitute($macro);
+
         }
 
-        $string = self::substituteVariables($string, array( $config->name => $macro ));
+        $vs->clear();
+        $vs->add(array($config->name => $macro));
+        $string = $vs->substitute($string);
 
         return $string;
 
@@ -323,4 +229,53 @@ class Utilities
 
         return $localVariableMap;
     }  // quoteVariables()
+
+    public static function runEtlPipeline(array $pipelines, $logger, array $params = array())
+    {
+        $logger->debug(
+            sprintf(
+                'Running ETL pipeline "%s" with parameters %s',
+                implode(', ', $pipelines),
+                json_encode($params)
+            )
+        );
+
+        $configOptions = array('default_module_name' => 'xdmod');
+        if( array_key_exists('variable-overrides', $params) ){
+            $configOptions['config_variables'] = $params['variable-overrides'];
+        }
+
+        $etlConfig = EtlConfiguration::factory(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            $logger,
+            $configOptions
+        );
+        self::setEtlConfig($etlConfig);
+
+        $scriptOptions = array_merge(
+            array(
+                'default-module-name' => 'xdmod',
+                'process-sections' => $pipelines,
+            ),
+            $params
+        );
+        $logger->debug(
+            sprintf(
+                'Running ETL pipeline with script options %s',
+                json_encode($scriptOptions)
+            )
+        );
+
+        $overseerOptions = new EtlOverseerOptions(
+            $scriptOptions,
+            $logger
+        );
+
+        $utilitySchema = $etlConfig->getGlobalEndpoint('utility')->getSchema();
+        $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.resourcefact", $utilitySchema));
+
+        $overseer = new EtlOverseer($overseerOptions, $logger);
+        $overseer->execute($etlConfig);
+    } // runEtlPipeline
 }  // class Utilities

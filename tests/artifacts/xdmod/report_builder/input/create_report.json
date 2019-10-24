@@ -1,0 +1,166 @@
+[
+  [
+    {
+      "user": "cd",
+      "charts": [
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "Wall Hours: Per Job",
+          "chart_drill_details": "",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        },
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "CPU Hours: Total",
+          "chart_drill_details": "",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        }
+      ],
+      "data": {
+        "operation": "save_report",
+        "phase": "create",
+        "report_id": "",
+        "report_name": "TAS Report 1",
+        "report_title": "",
+        "report_header": "",
+        "report_footer": "",
+        "charts_per_page": "1",
+        "report_font": "Arial",
+        "report_format": "Pdf",
+        "report_schedule": "Once",
+        "report_delivery": "E-mail",
+        "chart_cacheref_1": "2018-01-01;2018-01-31;xd_report_volatile_3;1",
+        "chart_data_1": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month;CPU Hours: Total;;2018-01-01 to 2018-01-31;Previous month;image",
+        "chart_cacheref_2": "2018-01-01;2018-01-31;xd_report_volatile_3;2",
+        "chart_data_2": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month;Wall Hours: Per Job;;2018-01-01 to 2018-01-31;Previous month;image"
+      }
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "charts": [
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "CPU Hours: Total",
+          "chart_drill_details": "",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        },
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "Wall Hours: Total",
+          "chart_drill_details": "",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        }
+      ],
+      "data": {
+        "operation": "save_report",
+        "phase": "create",
+        "report_id": "",
+        "report_name": "TAS Report 1",
+        "report_title": "",
+        "report_header": "",
+        "report_footer": "",
+        "charts_per_page": "1",
+        "report_font": "Arial",
+        "report_format": "Pdf",
+        "report_schedule": "Once",
+        "report_delivery": "E-mail",
+        "chart_cacheref_1": "2018-01-01;2018-01-31;xd_report_volatile_4;3",
+        "chart_data_1": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month;CPU Hours: Total;;2018-01-01 to 2018-01-31;Previous month;image",
+        "chart_cacheref_2": "2018-01-01;2018-01-31;xd_report_volatile_4;4",
+        "chart_data_2": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_wallduration_hours&thumbnail=n&timeframe_label=Previous month;Wall Hours: Total;;2018-01-01 to 2018-01-31;Previous month;image"
+      }
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "charts": [
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&pi_filter=74&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "CPU Hours: Total",
+          "chart_drill_details": "PI =  Tern, Caspian",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        },
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&pi_filter=74&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "Wall Hours: Total",
+          "chart_drill_details": "PI =  Tern, Caspian",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        }
+      ],
+      "data": {
+        "operation": "save_report",
+        "phase": "create",
+        "report_id": "",
+        "report_name": "TAS Report 1",
+        "report_title": "",
+        "report_header": "",
+        "report_footer": "",
+        "charts_per_page": "1",
+        "report_font": "Arial",
+        "report_format": "Pdf",
+        "report_schedule": "Once",
+        "report_delivery": "E-mail",
+        "chart_cacheref_1": "2018-01-01;2018-01-31;xd_report_volatile_5;5",
+        "chart_data_1": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&pi_filter=74&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month;CPU Hours: Total;PI =  Tern, Caspian;2018-01-01 to 2018-01-31;Previous month;image",
+        "chart_cacheref_2": "2018-01-01;2018-01-31;xd_report_volatile_5;6",
+        "chart_data_2": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&pi_filter=74&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_wallduration_hours&thumbnail=n&timeframe_label=Previous month;Wall Hours: Total;PI =  Tern, Caspian;2018-01-01 to 2018-01-31;Previous month;image"
+      }
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "charts": [
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&person_filter=60&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "CPU Hours: Total",
+          "chart_drill_details": "User =  Whimbrel",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        },
+        {
+          "operation": "add_to_queue",
+          "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&person_filter=60&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+          "chart_title": "Wall Hours: Total",
+          "chart_drill_details": "User =  Whimbrel",
+          "chart_date_desc": "2018-01-01 to 2018-01-31",
+          "module": "user_interface"
+        }
+      ],
+      "data": {
+        "operation": "save_report",
+        "phase": "create",
+        "report_id": "",
+        "report_name": "TAS Report 1",
+        "report_title": "",
+        "report_header": "",
+        "report_footer": "",
+        "charts_per_page": "1",
+        "report_font": "Arial",
+        "report_format": "Pdf",
+        "report_schedule": "Once",
+        "report_delivery": "E-mail",
+        "chart_cacheref_1": "2018-01-01;2018-01-31;xd_report_volatile_6;7",
+        "chart_data_1": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&person_filter=60&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_cpu_hours&thumbnail=n&timeframe_label=Previous month;CPU Hours: Total;User =  Whimbrel;2018-01-01 to 2018-01-31;Previous month;image",
+        "chart_cacheref_2": "2018-01-01;2018-01-31;xd_report_volatile_6;8",
+        "chart_data_2": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&person_filter=60&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=total_wallduration_hours&thumbnail=n&timeframe_label=Previous month;Wall Hours: Total;User =  Whimbrel;2018-01-01 to 2018-01-31;Previous month;image"
+      }
+    }
+  ]
+]

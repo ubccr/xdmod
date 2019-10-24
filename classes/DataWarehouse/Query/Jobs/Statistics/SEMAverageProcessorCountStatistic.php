@@ -1,13 +1,6 @@
 <?php
 namespace DataWarehouse\Query\Jobs\Statistics;
 
-/**
- * @author Amin Ghadersohi
- * @date 2011-Feb-07
- *
- * class for calculating the average processor count
- */
-
 class SEMAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
@@ -48,8 +41,7 @@ class SEMAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statis
 
     public function getInfo()
     {
-        return 'The standard error of the average size ' . ORGANIZATION_NAME . ' job in number of cores. <br/>
-            <i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).';
+        return 'The standard error of the average size ' . ORGANIZATION_NAME . ' job in number of cores. <br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).';
     }
     public function isVisible()
     {

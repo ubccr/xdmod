@@ -171,7 +171,14 @@ class AggregationTable extends Table
 
         foreach ( $indexJson as $def ) {
             foreach ( $def as $key => &$value ) {
-                $value = $variableStore->substitute($value);
+                // The columns of an index is an array and substitution must be run on each element.
+                if ( 'columns' == $key ) {
+                    foreach ( $value as &$indexCol ) {
+                        $indexCol = $variableStore->substitute($indexCol);
+                    }
+                } else {
+                    $value = $variableStore->substitute($value);
+                }
             }
             unset($value); // Sever the reference with the last element
             $newTable->addIndex($def);

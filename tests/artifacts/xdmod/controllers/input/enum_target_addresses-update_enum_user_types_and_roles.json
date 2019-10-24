@@ -1,0 +1,447 @@
+[
+  [
+    {
+      "data": {
+        "group_filter": "all",
+        "role_filter": "any"
+      },
+      "expected": {
+        "file": "enum_target_addresses_all_any"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 0
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_0"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 1
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_1-update_enum_user_types_and_roles"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 3
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_3-update_enum_user_types_and_roles"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 4
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_4"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 5
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_5"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 7
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_7"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 1,
+        "role_filter": 8
+      },
+      "expected": {
+        "file": "enum_target_addresses_1_8"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 0
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_0-update_enum_user_types_and_roles"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 1
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_1-update_enum_user_types_and_roles"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 3
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_3"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 4
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_4"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 5
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_5"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 7
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_7"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 2,
+        "role_filter": 8
+      },
+      "expected": {
+        "file": "enum_target_addresses_2_8-update_enum_user_types_and_roles"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 0
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_0"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 1
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_1"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 3
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_3"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 4
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_4"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 5
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_5"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 7
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_7"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 3,
+        "role_filter": 8
+      },
+      "expected": {
+        "file": "enum_target_addresses_3_8"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 0
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_0"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 1
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_1"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 3
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_3"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 4
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_4"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 5
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_5"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 7
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_7"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 4,
+        "role_filter": 8
+      },
+      "expected": {
+        "file": "enum_target_addresses_4_8"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 0
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_0"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 1
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_1"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 3
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_3"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 4
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_4"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 5
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_5"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 7
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_7"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": 5,
+        "role_filter": 8
+      },
+      "expected": {
+        "file": "enum_target_addresses_5_8"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": "",
+        "role_filter": ""
+      },
+      "expected": {
+        "file": "enum_target_addresses__-update_enum_user_types_and_roles",
+        "http_code": 200,
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": "null",
+        "role_filter": "null"
+      },
+      "expected": {
+        "file": "enum_target_addresses_null_null",
+        "content_type": "application/json"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": "E6I2iftftHegzzZmkge17i3je3CP1vfGCXJUddaGUoXtYWPid4jkmnEBqgqrMG8oDRjR4tyZSvsQsi8Fms0IPEjfUKHHqP54HpVMStLLYeBqwK6Sc6A1KUhF",
+        "role_filter": "E6I2iftftHegzzZmkge17i3je3CP1vfGCXJUddaGUoXtYWPid4jkmnEBqgqrMG8oDRjR4tyZSvsQsi8Fms0IPEjfUKHHqP54HpVMStLLYeBqwK6Sc6A1KUhF"
+      },
+      "expected": {
+        "file": "enum_target_addresses_rand_char(120)_rand_char(120)-update_enum_user_types_and_roles",
+        "http_code": 200,
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  ],
+  [
+    {
+      "data": {
+        "group_filter": "rand(16)",
+        "role_filter": "rand(16)"
+      },
+      "expected": {
+        "file": "enum_target_addresses_rand(16)_rand(16)"
+      }
+    }
+  ]
+]

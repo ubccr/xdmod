@@ -1,9 +1,0 @@
-{
-  "success": false,
-  "count": 0,
-  "total": 0,
-  "totalCount": 0,
-  "results": [],
-  "data": [],
-  "message": "Could not execute: /usr/sbin/sendmail -t -i"
-}

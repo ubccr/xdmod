@@ -40,18 +40,18 @@
                 "comment": "Optional account the asset is associated with. Unknown = 1."
             },
             {
-                "name": "create_time_utc",
-                "type": "datetime",
+                "name": "create_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the asset was created in UTC."
+                "default": 0,
+                "comment": "The time that the asset was created as a unix timestamp to the microsecond."
             },
             {
-                "name": "destroy_time_utc",
-                "type": "datetime",
+                "name": "destroy_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": true,
                 "default": null,
-                "comment": "The time that the asset was destroyed in UTC."
+                "comment": "The time that the asset was destroyed as a unix timestamp to the microsecond."
             },
             {
                 "name": "size",
@@ -74,7 +74,7 @@
                     "asset_type_id",
                     "provider_identifier",
                     "account_id",
-                    "create_time_utc",
+                    "create_time_ts",
                     "size"
                 ],
                 "is_unique": true
@@ -95,8 +95,8 @@
 
                 "name": "autoincrement_key",
                 "columns": [
-                    "asset_id",
-                    "resource_id"
+                    "resource_id",
+                    "asset_id"
                 ],
                 "is_unique": true
             }

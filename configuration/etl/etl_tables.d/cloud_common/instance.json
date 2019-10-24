@@ -16,14 +16,14 @@
                 "type": "int(11)",
                 "nullable": false,
                 "extra": "auto_increment",
-                "comment": "Auto-increment relative to resource_id. Unknown = -1"
+                "comment": "Auto-increment relative to resource_id. Unknown = 1"
             },
             {
                 "name": "account_id",
                 "type": "int(11)",
                 "nullable": false,
                 "default": 1,
-                "comment": "Unknown = -1"
+                "comment": "Unknown = 1"
             },
             {
                 "name": "provider_identifier",
@@ -35,7 +35,7 @@
                 "name": "person_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": 1,
+                "default": -1,
                 "comment": "Unknown = -1"
             }
         ],
@@ -59,15 +59,11 @@
                 "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
                 "#": "useful when you want to put data into ordered groups.",
                 "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
-
-                "#": "The ordering of autoincrement id + resource_id is explicit and mandatory.",
-                "#": "This is because MyISAM mandates that composite keys containing an",
-                "#": "autoincrement value have said value as the first key.",
-                "#": "See the following for details: https://www.ryadel.com/en/mysql-two-columns-primary-key-with-auto-increment/",
+                "#": "https://www.ryadel.com/en/mysql-two-columns-primary-key-with-auto-increment/",
                 "name": "increment_key",
                 "columns": [
-                    "instance_id",
-                    "resource_id"
+                    "resource_id",
+                    "instance_id"
                 ],
                 "is_unique": true
             }

@@ -4,14 +4,11 @@ use Exception;
 use PDO;
 
 use CCR\DB;
-use CCR\DB\iDatabase;
 use Models\Acl;
 use Models\GroupBy;
 use Models\Realm;
 use Models\Statistic;
 use User\Elements\QueryDescripter;
-use User\Roles;
-use Xdmod\Config;
 use XDUser;
 
 /**
@@ -529,6 +526,24 @@ SQL;
     }
 
     /**
+     * Attempt to retrieve an Acl via it's `display` value. This corresponds to `moddb.acls.display`
+     * If an acl is not found then null will be returned.
+     *
+     * @param string $display
+     * @return Acl|null
+     * @throws Exception
+     */
+    public static function getAclByDisplay($display)
+    {
+        $db = DB::factory('database');
+        $rows = $db->query('SELECT * FROM acls a WHERE a.display = :display', array(':display' => $display));
+        if (count($rows) > 0) {
+            return new Acl($rows[0]);
+        }
+        return null;
+    }
+
+    /**
      * Attempt to retrieve all descriptors for the provided user.
      *
      * @param XDUser $user the user to use when retrieving the descriptors.
@@ -959,26 +974,20 @@ SQL;
      */
     public static function getQueryDescripters(XDUser $user, $realmName = null, $groupByName = null, $statisticName = null)
     {
-        $selectClauses = array(
-            'r.display as realm',
-            'gb.name as group_by',
-            '!agb.enabled as not_enabled'
-        );
-
-        if (isset($statisticName)) {
-            $selectClauses[] = 'agb.visible';
+        // This can be removed after we refactor the tables to support more general disabling / hiding.
+        // The reason it's here is that unless we are specifically filtering on a statistic, having the
+        // sem* statistics included messes up the results. Specifically, we get duplicate rows
+        $statisticWhere = '';
+        if ($statisticName === null) {
+            $statisticWhere = "\nAND s.name NOT LIKE 'sem%'";
         }
-
-        // Note: this type of dynamic sql is safe as we're not including any user defined input
-        // in the sql itself.
-        $selectClause = implode(
-            ",\n",
-            $selectClauses
-        );
 
         $query = <<<SQL
         SELECT DISTINCT
-  $selectClause
+            r.display as realm,
+            gb.name as group_by,
+            !agb.enabled as not_enabled,
+            agb.visible
 FROM group_bys gb
   JOIN realms r ON gb.realm_id = r.realm_id
   JOIN acl_group_bys agb
@@ -1023,7 +1032,7 @@ FROM group_bys gb
       ua3.user_id = :user_id AND
       at.name = 'data'
   )
-WHERE ua.user_id = :user_id
+WHERE ua.user_id = :user_id $statisticWhere
 SQL;
 
         $params = array(
@@ -1055,16 +1064,15 @@ SQL;
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $descripter = new QueryDescripter(
-                    'tg_usage',
                     $row['realm'],
                     $row['group_by']
                 );
 
                 $descripter->setDisableMenu((bool)$row['not_enabled']);
+                $descripter->setShowMenu((bool)$row['visible']);
 
                 if (isset($statisticName)) {
                     $descripter->setDefaultStatisticName($statisticName);
-                    $descripter->setShowMenu((bool)$row['visible']);
                 }
 
                 // NOTE: this is done so that the GroupByNone query descripter does not have it's

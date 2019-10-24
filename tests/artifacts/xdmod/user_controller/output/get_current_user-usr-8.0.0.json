@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "results": {
+    "first_name": "",
+    "last_name": "Whimbrel",
+    "email_address": "normaluser@example.com",
+    "is_sso_user": false,
+    "first_time_login": false,
+    "autoload_suppression": false,
+    "field_of_science": "0",
+    "active_role": "User",
+    "most_privileged_role": "User"
+  }
+}

@@ -43,8 +43,6 @@ if (isset($_POST['direct_to'])) {
 
   <link rel="stylesheet" type="text/css" href="../gui/css/viewer.css">
 
-  <script type="text/javascript" src="../gui/lib/debug.js"></script>
-
   <!-- Non-GUI JS Class Definitions -->
 
   <script type="text/javascript" src="../js_classes/DateUtilities.js"></script>
@@ -101,10 +99,8 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="../gui/lib/NumberFormat.js"></script>
   <script type="text/javascript" src="../gui/js/multiline-tree-nodes.js"></script>
 
-  <script type="text/javascript" src="../gui/js/RESTDataProxy.js"></script>
   <script type="text/javascript" src="../gui/lib/printer/Printer-all.js"></script>
 
-  <script type="text/javascript" src="../gui/js/login.js.php"></script>
   <script type="text/javascript" src="../gui/js/LoginPrompt.js"></script>
 
   <script type="text/javascript" src="../gui/js/ContainerBodyMask.js"></script>
@@ -193,10 +189,8 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="js/UsersSummary/Store.js"></script>
   <script type="text/javascript" src="js/UsersSummary/Portlet.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="../gui/lib/extjs/examples/ux/css/ColumnHeaderGroup.css"/>
   <link rel="stylesheet" type="text/css" href="../gui/css/GroupTab.css"/>
 
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/ColumnHeaderGroup.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTab.js"></script>
 

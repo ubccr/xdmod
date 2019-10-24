@@ -1,0 +1,112 @@
+{
+    "+realms": {
+        "+Storage": {
+            "schema": "modw",
+            "table": "storagefact",
+            "datasource": "Storage usage logs",
+            "group_bys": [
+                {
+                    "name": "none",
+                    "class": "GroupByNone"
+                },
+                {
+                    "name": "day",
+                    "class": "GroupByDay"
+                },
+                {
+                    "name": "month",
+                    "class": "GroupByMonth"
+                },
+                {
+                    "name": "quarter",
+                    "class": "GroupByQuarter"
+                },
+                {
+                    "name": "year",
+                    "class": "GroupByYear"
+                },
+                {
+                    "name": "resource",
+                    "class": "GroupByResource"
+                },
+                {
+                    "name": "resource_type",
+                    "class": "GroupByResourceType"
+                },
+                {
+                    "name": "mountpoint",
+                    "class": "GroupByMountpoint"
+                },
+                {
+                    "name": "person",
+                    "class": "GroupByPerson"
+                },
+                {
+                    "name": "pi",
+                    "class": "GroupByPI"
+                },
+                {
+                    "name": "username",
+                    "class": "GroupByUsername"
+                },
+                {
+                    "name": "nsfdirectorate",
+                    "class": "GroupByNSFDirectorate"
+                },
+                {
+                    "name": "parentscience",
+                    "class": "GroupByParentScience"
+                },
+                {
+                    "name": "fieldofscience",
+                    "class": "GroupByScience"
+                }
+            ],
+            "statistics": [
+                {
+                    "name": "user_count",
+                    "class": "UserCountStatistic"
+                },
+                {
+                    "name": "avg_file_count",
+                    "class": "FileCountStatistic"
+                },
+                {
+                    "name": "sem_file_count",
+                    "class": "SemFileCountStatistic",
+                    "visible": false
+                },
+                {
+                    "name": "avg_logical_usage",
+                    "class": "LogicalUsageStatistic"
+                },
+                {
+                    "name": "sem_logical_usage",
+                    "class": "SemLogicalUsageStatistic",
+                    "visible": false
+                },
+                {
+                    "name": "avg_physical_usage",
+                    "class": "PhysicalUsageStatistic"
+                },
+                {
+                    "name": "sem_physical_usage",
+                    "class": "SemPhysicalUsageStatistic",
+                    "visible": false
+                },
+                {
+                    "name": "avg_hard_threshold",
+                    "class": "HardThresholdStatistic"
+                },
+                {
+                    "name": "avg_soft_threshold",
+                    "class": "SoftThresholdStatistic"
+                },
+                {
+                    "name": "avg_logical_utilization",
+                    "class": "LogicalUtilizationStatistic"
+                }
+            ]
+        }
+    }
+}

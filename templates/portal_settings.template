@@ -47,6 +47,11 @@ appkernels = "off"
 ; set to 'off' in Open XDMoD until support has been added.
 multiple_service_providers = "off"
 
+; Enable the user dashboard interface. This replaces the existing
+; summary page with a tab that displays information specfic
+; to each user's role
+user_dashboard = "[:features_user_dashboard:]"
+
 [sso]
 ; Set to "on" to enable the local user option in login modal.
 show_local_login = "off"
@@ -74,6 +79,10 @@ basic_auth = "[:rest_basic_auth:]"
 [mailer]
 sender_name = "[:mailer_sender_name:]"
 sender_email = "[:mailer_sender_email:]"
+
+; Add a prefix to all outbound emails
+subject_prefix = "[:mailer_subject_prefix:]"
+
 ; To use a captcha on Signup and Contact by no logged in users XDMoD loadSupportScripts
 ; google recaptcha, to get the following information you must login to
 ; https://www.google.com/recaptcha/admin
@@ -141,3 +150,12 @@ database = "mod_hpcdb"
 
 [slurm]
 sacct = "[:slurm_sacct:]"
+
+; Configuration for data warehouse export functionality.
+[data_warehouse_export]
+; Exported data files will be stored in this directory.
+export_directory = "[:data_warehouse_export_export_directory:]"
+; Length of time in days that files will be retained before automatic deletion.
+retention_duration_days = "[:data_warehouse_export_retention_duration_days:]"
+; Salt used during deidentification.
+hash_salt = "[:data_warehouse_export_hash_salt:]"

@@ -1,0 +1,11 @@
+title
+"User Count (Number of Users): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[/scratch] User Count (Number of Users)","[/data] User Count (Number of Users)","[/projects] User Count (Number of Users)"
+2018-10-01,334,10,10
+2019-01-01,334,10,10
+---------

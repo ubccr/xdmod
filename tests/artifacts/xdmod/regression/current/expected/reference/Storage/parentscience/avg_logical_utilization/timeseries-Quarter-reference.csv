@@ -1,0 +1,11 @@
+title
+"Quota Utilization: Logical (%): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[Earth Sciences] Quota Utilization: Logical (%)","[Molecular Biosciences] Quota Utilization: Logical (%)","[Mathematical Sciences] Quota Utilization: Logical (%)","[Chemistry] Quota Utilization: Logical (%)","[Unknown] Quota Utilization: Logical (%)","[Electrical and Communication Systems] Quota Utilization: Logical (%)","[Arts] Quota Utilization: Logical (%)","[Astronomical Sciences] Quota Utilization: Logical (%)","[Atmospheric Sciences] Quota Utilization: Logical (%)","[Chemical, Thermal Systems] Quota Utilization: Logical (%)","[Environmental Biology] Quota Utilization: Logical (%)","[Materials Research] Quota Utilization: Logical (%)","[Mechanical and Structural Systems] Quota Utilization: Logical (%)","[Microelectronic Information Processing Systems] Quota Utilization: Logical (%)","[Physics] Quota Utilization: Logical (%)","[Polar Programs] Quota Utilization: Logical (%)","[Social and Economic Science] Quota Utilization: Logical (%)"
+2018-10-01,536.9840,114.4814,89.7267,88.2044,68.2127,2.5564,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-01,524.1506,103.5780,89.8593,87.4681,68.5146,2.5425,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+---------

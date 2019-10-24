@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[/projects] Logical Usage (Bytes)","[/scratch] Logical Usage (Bytes)","[/data] Logical Usage (Bytes)"
+2018-10-01,405505900620800,316146804309333,79482625587200
+2019-01-01,406293158809600,293875459097600,79334460339200
+---------

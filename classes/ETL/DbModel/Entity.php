@@ -94,7 +94,8 @@ class Entity extends Loggable
         if ( null !== $config ) {
 
             if ( is_string($config) ) {
-                $config = $this->parseJsonFile($config, "Table Definition");
+                $config = \Configuration\Configuration::factory($config);
+                $config = $config->toStdClass();
                 // Support the table config directly or assigned to a "table_definition" key
                 if ( isset($config->table_definition) ) {
                     $config = $config->table_definition;
@@ -278,29 +279,6 @@ class Entity extends Loggable
     }  // quote()
 
     /* ------------------------------------------------------------------------------------------
-     * Parse a JSON table configuration file.
-     *
-     * @param $filename The file containing the table configuration
-     * @param $name Optional name for the file. Useful for error reporting.
-     *
-     * @return This object to support method chaining.
-     *
-     * @throw Exception If the file is does not exist or is not readable
-     * @throw Exception If there is an error parsing the file
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function parseJsonFile($filename, $name = null)
-    {
-        $name = ( null === $name ? "JSON file" : $name );
-        $opt = new DataEndpointOptions(array('name' => $name,
-                                             'path' => $filename,
-                                             'type' => "jsonfile"));
-        $jsonFile = DataEndpoint::factory($opt, $this->logger);
-        return $jsonFile->parse();
-    }  // parseJsonFile()
-
-    /* ------------------------------------------------------------------------------------------
      * @see iEntity::toStdClass()
      *
      * Translate this entity into a simple stdClass object. An attempt will be made to
@@ -420,6 +398,31 @@ class Entity extends Loggable
         return $this;
 
     }  // resetPropertyValues()
+
+    /* ------------------------------------------------------------------------------------------
+     * Log the reason that two entities failed comparison.
+     *
+     * @param string $property The property being compared.
+     * @param string $srcValue The value of the source property.
+     * @param string $compareValue The value being compared to the source value.
+     * @param string|null $name Optional name of the entity being compared.
+     * ------------------------------------------------------------------------------------------
+     */
+    protected function logCompareFailure($property, $srcValue, $compareValue, $name = null)
+    {
+        $classParts = explode('\\', get_class($this));
+        $this->logger->debug(
+            sprintf(
+                // '%s%s: comparison for "%s" failed ("%s" != "%s")',
+                '%s%s: values for "%s" differ ("%s" != "%s")',
+                array_pop($classParts),  // Strip the namespace from the class name
+                (null !== $name ? ' ' . $name : ''),
+                $property,
+                (null === $srcValue ? 'null' : $srcValue),
+                (null === $compareValue ? 'null' : $compareValue)
+            )
+        );
+    }
 
     /* ------------------------------------------------------------------------------------------
      * Generic setter method for scalar properties. This method will set simple properties

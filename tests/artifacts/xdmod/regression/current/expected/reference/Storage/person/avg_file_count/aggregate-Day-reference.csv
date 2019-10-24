@@ -1,0 +1,353 @@
+title
+"File Count (Number of files): by User"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+User,"File Count (Number of files)"
+"Warbler, Magnolia",105192388.3000
+"Cowbird, Brown-headed",89120484.8000
+Bobolink,15196470.0000
+"Bunting, Chestnut-eared",6091664.1000
+"Reed, Pallas's",2275235.8000
+"Kestrel, Lesser",2148624.5000
+"Bunting, Little",1365060.7000
+Chaffinch,1227901.8000
+Coot,1185344.0000
+"Waterthrush, Northern",1135809.0000
+"Scaup, Lesser",943505.0000
+Yellowhammer,938054.4000
+"Chiffchaff, Iberian",785457.2000
+"Martin, Purple",748238.5000
+"Warbler, Black-and-white",630272.0000
+"Bunting, Cirl",595394.0000
+"Sparrow, White-crowned",509822.5000
+"Oriole, Baltimore",381957.1000
+"Junco, Dark-eyed",292582.3000
+"Auk, Little",288362.9000
+"Bunting, Pine",174607.9000
+"Thrush, Swainson's",160124.7000
+"Bunting, Rock",143440.2000
+"Grosbeak, Rose-breasted",123610.8000
+"Bunting, Black-faced",121125.0000
+"Goose, Egyptian",108834.0000
+"Redstart, American",102408.0000
+"Bunting, Cretzschmar's",101637.5000
+"Swift, Alpine",86623.1000
+Twite,79552.6000
+"Bunting, Snow",73344.0000
+Dunlin,62708.5000
+Ovenbird,55522.9000
+"Tanager, Scarlet",54479.7000
+"Sparrow, Lark",51464.8000
+Linnet,33143.8000
+"Martin, Sand",32673.0000
+"Crossbill, Common",31883.8000
+"Thrush, Rock",30131.0000
+Roller,24220.7000
+"Wagtail, Citrine",23780.0000
+"Warbler, Yellow",21001.0000
+"Plover, White-tailed",20036.0000
+"Egret, Cattle",18325.0000
+"Sandpiper, Purple",16500.5000
+"Sparrow, Rock",15288.0000
+"Bunting, Reed",14496.8000
+"Warbler, Tennessee",14270.0000
+"Warbler, Hume's",13556.3000
+"Sandpiper, Baird's",13512.0000
+"Pipit, Blyth's",12295.0000
+"Rock, Blue",11988.0000
+"Pipit, Tawny",11130.8000
+"Parula, Northern",10410.6000
+"Towhee, Eastern",8955.0000
+"Flycatcher, Collared",8530.0000
+"Wheatear, Black-eared",7417.0000
+"Crossbill, Parrot",7042.1000
+Bluethroat,7009.4000
+"Redstart, Moussier's",6970.0000
+"Crane, Sandhill",6954.5000
+"Grebe, Pied-billed",6781.0000
+"Treecreeper, Short-toed",6025.8000
+Serin,5866.0000
+Honey-buzzard,5423.0000
+"Warbler, Hooded",5262.0000
+"Grosbeak, Pine",4624.8000
+Redwing,4617.0000
+"Finch, Trumpeter",4360.0000
+"Warbler, Blackburnian",2916.0000
+"Black, White-crowned",2875.7000
+"Redpoll, Arctic",2842.6000
+"Pipit, Water",2828.3000
+"Wheatear, Isabelline",2742.0000
+"Bunting, Lapland",2703.0000
+"Redpoll, Mealy",2581.3000
+Goldfinch,2503.8000
+"Thrush, Grey-cheeked",2498.3000
+"Thrush, Siberian",2362.0000
+"Thrush, Naumann's",2350.0000
+"Blue, Siberian",2215.0000
+Greenfinch,2199.3000
+"Rubythroat, Siberian",2063.0000
+"Crossbill, Two-barred",1958.5000
+"Redstart, Black",1648.0000
+Hawfinch,1548.7000
+Whinchat,1442.0000
+"Bunting, Corn",1334.0000
+Wheatear,1306.0000
+"Lark, Black",1225.0000
+Redstart,1111.0000
+Bullfinch,1058.3000
+"Flycatcher, Pied",1051.0000
+"Wagtail, Grey",995.9000
+Dipper,915.0000
+Starling,896.0000
+"Pipit, Olive-backed",822.7000
+"Lark, White-winged",788.0000
+"Crossbill, Scottish",776.0000
+"Sparrow, Savannah",678.0000
+Stonechat,609.0000
+"Wheatear, Pied",605.0000
+"Bluetail, Red-flanked",504.6000
+"Thrush, Eyebrowed",494.0000
+"Bunting, Yellow-browed",468.0000
+"Thrush, Varied",452.0000
+"Pipit, Pechora",448.0000
+Wren,425.0000
+"Lark, Bimaculated",404.0000
+"Sparrow, House",396.7000
+"Waxwing, Cedar",373.0000
+"Thrasher, Brown",368.0000
+"Nightingale, Thrush",352.7000
+"Pipit, Rock",328.0000
+"Grey, Southern",327.2000
+"Pipit, Richard's",321.4000
+"Grouse, Red",314.0000
+"Bush, Rufous",289.0000
+Treecreeper,175.0000
+"Mockingbird, Northern",171.0000
+"Martin, Crag",167.6000
+Robin,163.0000
+"Reed, Great",161.0000
+Nightingale,145.0000
+"Flycatcher, Spotted",143.4000
+Brambling,142.6000
+"Dove, Turtle",138.0000
+"Lark, Calandra",130.0000
+"Ouzel, Ring",123.0000
+"Thrush, Black-throated",113.0000
+"Tit, Marsh",106.0000
+Veery,103.0000
+"Tit, Coal",102.0000
+"Sparrow, Spanish",101.5000
+"Tern, Sandwich",97.0000
+"Wheatear, Desert",91.4000
+"Warbler, River",90.0000
+"Tit, Crested",86.0000
+"Warbler, Garden",78.0000
+"Warbler, Cetti's",75.0000
+"Warbler, Dartford",75.0000
+"Tit, Great",72.0000
+"Thrush, Wood",69.0000
+"Shrike, Long-tailed",65.0000
+"Catbird, Grey",60.0000
+"Warbler, Olive-tree",57.0000
+"Warbler, Aquatic",53.0000
+"Flycatcher, Brown",52.8000
+"Warbler, Reed",52.0000
+"Flycatcher, Red-breasted",51.3000
+"Tit, Blue",51.0000
+"Warbler, Dusky",50.0000
+"Warbler, Spectacled",50.0000
+Whitethroat,50.0000
+"Tit, Penduline",49.0000
+"Warbler, Yellow-browed",48.0000
+Firecrest,43.0000
+"Robin, Rufous-tailed",42.0000
+"Warbler, Melodious",39.0000
+Raven,38.0000
+"Thrush, Song",37.0000
+"Warbler, Golden-winged",36.0000
+Dunnock,34.0000
+"Warbler, Marsh",34.0000
+"Nuthatch, Red-breasted",31.0000
+"Warbler, Ruppell's",31.0000
+"Crow, Carrion",29.0000
+Nutcracker,29.0000
+Rook,29.0000
+Jay,28.0000
+Magpie,28.0000
+Chough,26.0000
+"Shearwater, Cory's",25.0000
+"Shrike, Masked",25.0000
+"Orphean, Western",24.0000
+"Robin, American",22.0000
+"Shrike, Woodchat",22.0000
+"Reed, Blyth's",19.0000
+"Shrike, Red-backed",17.0000
+"Oriole, Golden",15.0000
+"Shrike, Isabelline",15.0000
+"Vireo, Red-eyed",14.0000
+"Warbler, Sedge",13.0000
+"Tanager, Summer",12.0000
+"Phoebe, Eastern",11.0000
+"Shearwater, Balearic",11.0000
+"Vireo, Philadelphia",11.0000
+"Vireo, Yellow-throated",11.0000
+"Warbler, Grasshopper",11.0000
+"Warbler, Thick-billed",11.0000
+Blackbird,10.8889
+"Falcon, Gyr",10.0000
+Hobby,10.0000
+"Olivaceous, Eastern",10.0000
+"Parakeet, Ring-necked",10.0000
+Shag,10.0000
+"Warbler, Lanceolated",10.0000
+"Whitethroat, Lesser",10.0000
+"Falcon, Amur",9.0000
+"Falcon, Red-footed",9.0000
+"Kestrel, American",9.0000
+"Tit, Long-tailed",9.0000
+"Warbler, Greenish",9.0000
+Kestrel,7.0000
+"Swallow, Cliff",7.0000
+"Warbler, Icterine",7.0000
+"Woodpecker, Green",7.0000
+"Grasshopper, Pallas's",6.5000
+Waxwing,6.4000
+Bee-eater,6.0000
+"Bee-eater, Blue-cheeked",6.0000
+Hoopoe,6.0000
+Wryneck,6.0000
+"Desert, Asian",5.0000
+Kingfisher,5.0000
+"Kingfisher, Belted",5.0000
+"Nighthawk, Common",5.0000
+"Nightjar, Egyptian",5.0000
+"Nightjar, Red-necked",5.0000
+Swift,5.0000
+"Swift, Chimney",5.0000
+"Swift, Needle-tailed",5.0000
+"Swift, Pacific",5.0000
+"Swift, Pallid",5.0000
+"Warbler, Yellow-rumped",5.0000
+"Crowned, Eastern",4.0000
+Nightjar,4.0000
+"Owl, Hawk",4.0000
+"Owl, Long-eared",4.0000
+"Owl, Short-eared",4.0000
+"Owl, Snowy",4.0000
+"Owl, Tawny",4.0000
+"Owl, Tengmalm's",4.0000
+"Sandpiper, Spotted",4.0000
+"Scoter, Velvet",4.0000
+"Swallow, Red-rumped",4.0000
+"Warbler, Green",4.0000
+"Warbler, Subalpine",4.0000
+"Bonelli's, Western",3.0000
+Cuckoo,3.0000
+"Cuckoo, Yellow-billed",3.0000
+"Dove, Collared",3.0000
+"Dove, Mourning",3.0000
+"Dove, Stock",3.0000
+"Martin, House",3.0000
+"Owl, Barn",3.0000
+"Owl, Scops",3.0000
+"Spotted, Great",3.0000
+"Turtle, Rufous",3.0000
+Wallcreeper,3.0000
+Woodpigeon,3.0000
+"Black-backed, Great",2.0000
+"Black-backed, Lesser",2.0000
+Blackcap,2.0000
+"Dove, Rock",2.0000
+"Gull, Caspian",2.0000
+"Gull, Glaucous",2.0000
+"Gull, Iceland",2.0000
+"Gull, Slaty-backed",2.0000
+"Herring, American",2.0000
+"May, Cape",2.0000
+"Sandgrouse, Pallas's",2.0000
+Swallow,2.0000
+"Swallow, Tree",2.0000
+"Wagtail, Yellow",2.0000
+"Warbler, Pallas's",2.0000
+"Warbler, Willow",2.0000
+"Auk, Great",1.0000
+Bittern,1.0000
+"Black, White-winged",1.0000
+"Courser, Cream-coloured",1.0000
+"Crested, Lesser",1.0000
+"Dowitcher, Long-billed",1.0000
+Greenshank,1.0000
+"Grosbeak, Evening",1.0000
+Guillemot,1.0000
+"Guillemot, Brunnich's",1.0000
+"Gull, Audouin's",1.0000
+"Gull, Black-headed",1.0000
+"Gull, Common",1.0000
+"Gull, Franklin's",1.0000
+"Gull, Ivory",1.0000
+"Gull, Laughing",1.0000
+"Gull, Little",1.0000
+"Gull, Mediterranean",1.0000
+"Gull, Ross's",1.0000
+"Gull, Sabine's",1.0000
+"Gull, Slender-billed",1.0000
+Kittiwake,1.0000
+"Lark, Crested",1.0000
+"Lark, Shore",1.0000
+"Lark, Short-toed",1.0000
+"Murrelet, Ancient",1.0000
+"Murrelet, Long-billed",1.0000
+"Phalarope, Grey",1.0000
+"Phalarope, Red-necked",1.0000
+"Phalarope, Wilson's",1.0000
+"Pipit, Tree",1.0000
+"Pratincole, Black-winged",1.0000
+"Pratincole, Collared",1.0000
+"Pratincole, Oriental",1.0000
+"Puffin, Tufted",1.0000
+Razorbill,1.0000
+Redshank,1.0000
+"Rosefinch, Common",1.0000
+"Sandpiper, Buff-breasted",1.0000
+"Sandpiper, Common",1.0000
+"Sandpiper, Green",1.0000
+"Sandpiper, Least",1.0000
+"Sandpiper, Marsh",1.0000
+"Sandpiper, Pectoral",1.0000
+"Sandpiper, Semipalmated",1.0000
+"Sandpiper, Solitary",1.0000
+"Sandpiper, Terek",1.0000
+"Sandpiper, White-rumped",1.0000
+"Sandpiper, Wood",1.0000
+"Short-toed, Lesser",1.0000
+"Skua, Great",1.0000
+"Skua, Long-tailed",1.0000
+"Skua, Pomarine",1.0000
+Skylark,1.0000
+Snipe,1.0000
+"Snipe, Great",1.0000
+"Snipe, Jack",1.0000
+"Snipe, Wilson's",1.0000
+"Tattler, Grey-tailed",1.0000
+"Tern, Aleutian",1.0000
+"Tern, Arctic",1.0000
+"Tern, Black",1.0000
+"Tern, Bridled",1.0000
+"Tern, Cabot's",1.0000
+"Tern, Common",1.0000
+"Tern, Forster's",1.0000
+"Tern, Little",1.0000
+"Tern, Roseate",1.0000
+"Tern, Royal",1.0000
+"Tern, Sooty",1.0000
+"Tern, Whiskered",1.0000
+"Warbler, Wood",1.0000
+Woodcock,1.0000
+Woodlark,1.0000
+"Yellowlegs, Greater",1.0000
+"Yellowlegs, Lesser",1.0000
+"Warbler, Sardinian",0.0000
+---------

@@ -1,0 +1,11 @@
+title
+"Physical Usage (Bytes): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Storage grid] Physical Usage (Bytes)","[Tape storage resource] Physical Usage (Bytes)"
+2018-01-01,0,0
+2019-01-01,0,0
+---------

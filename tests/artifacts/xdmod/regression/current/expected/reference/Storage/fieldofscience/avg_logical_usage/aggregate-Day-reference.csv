@@ -1,0 +1,41 @@
+title
+"Logical Usage (Bytes): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"PI Group","Logical Usage (Bytes)"
+Unknown,533918117529600.0000
+Biophysics,157675908224000.0000
+Seismology,50376874368000.0000
+"Mechanics and Materials",14837865497600.0000
+"Galactic Astronomy",10697016486400.0000
+"Algebra and Number Theory",8972348544000.0000
+"Organic and Macromolecular Chemistry",8639812684800.0000
+"Cell Biology",1507261952000.0000
+Geophysics,1340020812800.0000
+"Geology and Paleontology",1336851827200.0000
+"Solid-State and Microstructures",635384230400.0000
+"Physical Chemistry",143814592000.0000
+"Polar Meteorology",129129152000.0000
+"Systematic and Population Biology",91059212800.0000
+"Statistics and Probability",6953753600.0000
+Tectonics,3000576000.0000
+Sociology,2518976000.0000
+"Quantum Electronics, Waves, and Beams",1986227200.0000
+"Solid State Chemistry and Polymers",821760000.0000
+"Biochemistry and Molecular Structure and Function",178432000.0000
+"Theoretical Physics",8576000.0000
+"Decision, Risk, and Management Science",6272000.0000
+"Structures and Building Systems",2176000.0000
+"Volcanology and Mantle Geochemistry",1920000.0000
+Economics,896000.0000
+Arts,128000.0000
+"Experimental Systems",0.0000
+"Fluid, Particulate, and Hydraulic Systems",0.0000
+"Global Atmospheric Research",0.0000
+"Law and Social Sciences",0.0000
+"Metals, Ceramics, and Electronic Materials",0.0000
+"Polar Aeronomy and Astrophysics",0.0000
+---------

@@ -1,0 +1,364 @@
+{
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+
+        "jobs-cloud-ingest-generic": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false
+        },
+        "jobs-cloud-extract-generic": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false
+        },
+        "jobs-cloud-import-users-generic": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false
+        }
+    },
+
+    "#": "Ingests cloud data from a file formatted in our generic cloud format",
+    "jobs-cloud-ingest-generic": [
+        {
+            "name": "GenericRawCloudEventLogIngestor",
+            "description": "Raw generic cloud instance data from log files",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_generic/raw_cloud_job_logs.json",
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "directoryscanner",
+                    "name": "Generic cloud event logs",
+                    "#": "Relative paths are searched in $BASEDIR/etl_data.d",
+                    "path": "${CLOUD_EVENT_LOG_DIRECTORY}",
+                    "directory_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}/",
+                    "file_pattern": "/acct\\.json/",
+                    "#": "Recursion depth is relative to the path",
+                    "recursion_depth": 1,
+                    "handler": {
+                        "type": "jsonfile",
+                        "record_separator": "\n",
+                        "record_schema_path": "cloud/event.schema.json",
+                        "#": "Explicitly specify field names as some are optional",
+                        "field_names": [
+                            "instance_id",
+                            "event_type",
+                            "event_data",
+                            "event_time",
+                            "record_type",
+                            "account",
+                            "node_controller",
+                            "image_type",
+                            "instance_type",
+                            "root_type",
+                            "block_devices",
+                            "public_ip",
+                            "private_ip"
+                        ],
+                        "filters": [ {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "-c 'select(.event_type != \"VOL_STATE_REPORT\") | select((.event_type == \"STATE_REPORT\" and .node_controller) // .event_type != \"STATE_REPORT\")'"
+                        }]
+                    }
+                }
+            },
+            "stop_on_exception" : false
+        },
+        {
+            "#": "An event can specify an array of block devices associated with it.  Re-process",
+            "#": "the log files and for each event containing block devices, transform these each of",
+            "#": "these device array elements into individual devive records with select event",
+            "#": "metadata.",
+
+            "name": "GenericRawCloudVolumeIngestor",
+            "description": "Raw generic cloud block devices associated with an event",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_generic/raw_volume.json",
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "directoryscanner",
+                    "name": "Generic volume logs",
+                    "path": "${CLOUD_EVENT_LOG_DIRECTORY}",
+                    "directory_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}/",
+                    "file_pattern": "/acct\\.json/",
+                    "#": "Recursion depth is relative to the path",
+                    "recursion_depth": 1,
+                    "# last_modified_start": "now - 30 days",
+                    "handler": {
+                        "type": "jsonfile",
+                        "record_separator": "\n",
+                        "record_schema_path": "cloud/volume.schema.json",
+                        "#": "Return one record for each element in the block_devices array.",
+                        "#": ".block_devices[] returns a result for each block_device array element",
+                        "#": "so use this to create one object per element and then move the keys",
+                        "#": "from nested the block_devices object into the main object",
+                        "filters": [{
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments" :"-c 'select(.block_devices) | {instance_id: .instance_id, account_number: .account, event_time: .event_time, bd: .block_devices[]} | foreach .bd as $i (.; . + $i) | del(.bd)'"
+                        }]
+                    }
+                }
+            },
+            "stop_on_exception": false
+        }
+    ],
+    "jobs-cloud-import-users-generic": [
+      {
+          "name": "GenericCloudStagingUserIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_generic/union_user_pi.json",
+          "endpoints": {
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_shredder"
+              }
+          }
+      },
+      {
+          "name": "GenericCloudStagingUserResourceIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_generic/union_user_pi_resource.json",
+          "endpoints": {
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_shredder"
+              }
+          }
+      },
+      {
+          "name": "GenericCloudCloudStagingHpcdbPeopleIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "common/hpcdb/people.json",
+          "endpoints": {
+              "source": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_shredder"
+              },
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_hpcdb"
+              }
+          }
+      },
+      {
+          "name": "GenericCloudloudStagingHpcdbSystemAccountIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "common/hpcdb/system-accounts.json",
+          "endpoints": {
+            "source": {
+                "type" : "mysql",
+                "name" : "Cloud DB",
+                "config" : "datawarehouse",
+                "schema": "mod_shredder"
+            },
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_hpcdb"
+              }
+          }
+      },
+      {
+          "name": "GenericCloudCloudStagingSystemAccountIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "jobs/xdw/system-account.json",
+          "endpoints": {
+            "source": {
+                "type" : "mysql",
+                "name" : "Cloud DB",
+                "config" : "datawarehouse",
+                "schema": "mod_hpcdb"
+            },
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "modw"
+              }
+          }
+      },
+      {
+          "name": "GenericCloudCloudStagingPersonIngestor",
+          "description": "Cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "jobs/xdw/person.json",
+            "endpoints": {
+                "source": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw"
+                }
+            },
+            "#": "disable to allow order_id to be set",
+            "optimize_query": false
+      }
+    ],
+    "#": "Extracts data from raw data tables into fact and dimension tables used for aggregation",
+    "jobs-cloud-extract-generic": [
+        {
+            "name": "GenericCloudAccountIngestor",
+            "description": "Generic cloud account data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/account.json"
+        },
+        {
+            "name": "GenericCloudHostIngestor",
+            "description": "Generic cloud host data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/host.json"
+        },
+        {
+            "name": "GenericCloudImageIngestor",
+            "description": "Generic cloud image data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/image.json"
+        },
+        {
+            "name": "GenericCloudInstanceTypeIngestor",
+            "description": "Generic cloud instance type data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/instance_type.json",
+            "#": "Because the generic format allows for a Z at the end of the timestamp",
+            "#": "the Z gets truncated off and throws this warning",
+            "hide_sql_warning_codes": [
+                1292
+            ]
+        },
+        {
+            "name": "GenericCloudInstanceIngestor",
+            "description": "Generic cloud instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/instance.json"
+        },
+        {
+            "name": "GenericCloudVolumeAssetIngestor",
+            "description": "Generic cloud attachable volume (block device) data from raw logs",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/volume.json",
+            "#": "Because the generic format allows for a Z at the end of the timestamp",
+            "#": "the Z gets truncated off and throws this warning",
+            "hide_sql_warning_codes": [
+                1292
+            ]
+        },
+        {
+            "name": "GenericCloudPostIngestUpdates",
+            "description": "Post-ingest updates for massaging Generic cloud data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_generic/post_ingest_updates.sql"
+            ]
+        },
+        {
+            "#": "Events must be ingested after all other dimensions",
+            "name": "GenericCloudStagingEventIngestor",
+            "description": "Generic staging data for cloud events",
+            "class": "DatabaseIngestor",
+            "truncate_destination": "true",
+            "definition_file": "cloud_generic/staging_event.json",
+            "endpoints": {
+              "utility": {
+                "type": "mysql",
+                "name": "Cloud DB",
+                "config": "datawarehouse",
+                "schema": "modw"
+              }
+            },
+            "#": "Because the generic format allows for a Z at the end of the timestamp",
+            "#": "the Z gets truncated off and throws this warning",
+            "hide_sql_warning_codes": [
+                1292
+            ]
+        },
+        {
+            "#": "Instance data must be ingested after staging events",
+            "name": "GenericCloudRootVolumeAssetIngestor",
+            "description": "Infer Generic instance root volume data from instance types",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/root_volume.json"
+        },
+        {
+            "#": "Instance data must be ingested after staging events",
+            "name": "GenericCloudIpAddressAssetIngestor",
+            "description": "Generic cloud attachable IP address data from staging events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/ip_address.json"
+        },
+        {
+            "#": "Instance data must be ingested after staging events",
+            "name": "GenericCloudEventIngestor",
+            "description": "Generic cloud event",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/event.json"
+        },
+        {
+            "#": "Instance data must be ingested after events",
+            "name": "GenericCloudInstanceDataIngestor",
+            "description": "Generic cloud instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/instance_data.json"
+        },
+        {
+            "#": "Asset data must be ingested after events",
+            "name": "GenericCloudEventAssetRootVolumeIngestor",
+            "description": "Generic cloud instance root volume assets associated with START events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/event_asset_root_volume.json"
+        },
+        {
+            "#": "Asset data must be ingested after events",
+            "name": "GenericCloudEventAssetIngestor",
+            "description": "Generic cloud assets associated with events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/event_asset.json"
+        }
+    ]
+}

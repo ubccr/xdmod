@@ -228,6 +228,135 @@ XDMoD.GlobalToolbar.Contact = function () {
 
 // -------------------------------------------------
 
+XDMoD.createTour = function () {
+    if (XDMoD.tour) {
+        return;
+    }
+    // TODO: have this pull each of the 'UI' modules for their descriptions
+    // instead of hard coding these.
+    var dashboardDescription = 'Dashboard - Pre-selected statistics and components tailored to you.';
+    if (CCR.xdmod.ui.tgSummaryViewer.title === 'Summary') {
+        dashboardDescription = 'Summary - Pre-selected statistics providing a general overview';
+    }
+    var tourItems = [
+        {
+            html: 'Welcome to XDMoD! This tour will guide you through some of the features of XDMoD.' +
+                ((CCR.xdmod.publicUser) ? ' This tour has additional information after you sign in.' : ''),
+            target: '#tg_summary',
+            position: 't-t'
+        },
+        {
+            html: 'XDMoD provides a wealth of information. Different functionality is provided by individual tabs listed below.' +
+                ((CCR.xdmod.publicUser) ? ' Some tabs are only visible after you sign in.' : '') +
+                '<ul>' +
+                '<li>' +
+                dashboardDescription +
+                '</li>' +
+                '<li>' +
+                'Usage - A convenient way to browse all available statistics.' +
+                '</li>' +
+                '<li>' +
+                'Metric Explorer - Allows you to create complex charts containing multiple statistics and optionally apply filters.' +
+                '</li>' +
+                '<li>' +
+                'Report Generator - Create reports that may contain multiple charts. Reports may be downloaded directly or scheduled to be emailed periodically.' +
+                '</li>' +
+                '<li>' +
+                'Job Viewer - A detailed view of individual jobs that provides an overall summary of job accounting data, job performance, and a temporal view of a job\'s CPU, network, and disk I/O utilization.' +
+                '</li>' +
+                '</ul>' +
+                '* Additional modules might provide additional tabs not mentioned here.',
+            target: '#main_tab_panel .x-tab-panel-header',
+            position: 'tl-bl',
+            maxWidth: 400,
+            offset: [20, 0]
+        }
+    ];
+    if (CCR.xdmod.ui.tgSummaryViewer.title !== 'Summary') {
+        tourItems.push(
+            {
+                html: 'The Dashboard tab presents individual component and summary charts that provide an overview of information that is available throughout XDMoD as well as the ability to access more detailed information. ' +
+                    'In order to provide relevant information, XDMoD accounts have an assigned role (set by the XDMoD system administrator), the content of the dashboard is tailored to your role.' +
+                    '<ul>' +
+                    '<li>' +
+                    'User - Information such as a list of all jobs that you have run as well as other useful information such as queue wait times. ' +
+                    '</li>' +
+                    '<li>' +
+                    'Principal Investigator - Information about all the jobs running under your projects. ' +
+                    '</li>' +
+                    '<li>' +
+                    'Center Staff - Information on all user jobs run at the center as well as information you can use to gauge how well the center is running. ' +
+                    '</li>' +
+                    '</ul>' +
+                    'For more information on XDMoD roles, please refer to the XDMoD User Manual available from the Help menu.',
+                target: '#tg_summary',
+                position: 't-t'
+            }
+        );
+    }
+    tourItems.push(
+        {
+            html: 'Each component provides a toolbar that is customized to provide controls relevant to that component. ' +
+                'Hovering over each control with your mouse will display a tool-tip describing what that control does.' +
+                '<ul>' +
+                '<li>' +
+                '"?" - Display additional information about a component' +
+                '</li>' +
+                '<li>' +
+                '"*" - Open a chart in the Metric Explorer.' +
+                '</li>' +
+                '</ul>',
+            target: '.x-panel-header:first',
+            position: 'tl-br',
+            offset: [-10, 0]
+        },
+        {
+            html: 'The Help button provides you with the following options:' +
+                '<ul>' +
+                '<li>User Manual - A detailed help document for XDMoD.  If help is available for the section of XDMoD you currently are visiting, this' +
+                'will automatically navigate to the respective section.' +
+                '</li>' +
+                '<li>XDMoD Tour - start this tour again' +
+                '</li>' +
+                '</ul>',
+            target: '#help_button',
+            position: 'tr-bl'
+        }
+    );
+    if (CCR.xdmod.publicUser !== true) {
+        tourItems.push({
+            html: 'The My Profile button allows you to view and update your account settings. Your role will be displayed in the title bar of the My Profile window.' +
+                '<br /><br />>Information you can update includes your Name, Email Address and Password.',
+            target: '#global-toolbar-profile',
+            position: 'tl-bl'
+        });
+    }
+    tourItems.push({
+        html: 'Thank you for viewing the XDMoD Tour. If you want to view this tour again you can find it by clicking the Help button.',
+        target: '#tg_summary',
+        position: 't-t',
+        listeners: {
+            show: function () {
+                if (CCR.xdmod.publicUser !== true) {
+                    var conn = new Ext.data.Connection();
+                    conn.request({
+                        url: XDMoD.REST.url + '/dashboard/viewedUserTour',
+                        params: {
+                            viewedTour: 1,
+                            token: XDMoD.REST.token
+                        },
+                        method: 'POST'
+                    }); // conn.request
+                }
+            }
+        }
+    });
+    XDMoD.tour = new Ext.ux.HelpTipTour({
+        title: 'XDMoD Tour',
+        items: tourItems
+    });
+};
+
 XDMoD.GlobalToolbar.Help = function (tabPanel) {
     var menuItems = [
         {
@@ -245,12 +374,16 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             }
         },
         {
-            text: 'YouTube Channel',
-            iconCls: 'youtube_16',
-            id: 'global-toolbar-help-youtube',
+            text: 'View XDMoD User Tour',
+            iconCls: 'tour_16',
+            id: 'global-toolbar-help-new-user-tour',
             handler: function () {
-                XDMoD.TrackEvent("Portal", "Help -> YouTube Channel Button Clicked");
-                window.open('https://www.youtube.com/channel/UChm_AbEcBryCdIfebN5Kkrg');
+                XDMoD.TrackEvent('Portal', 'Help -> Tour');
+                XDMoD.createTour();
+                Ext.History.add('main_tab_panel:tg_summary');
+                new Ext.util.DelayedTask(function () {
+                    XDMoD.tour.startTour();
+                }).delay(10);
             }
         }
     ];
@@ -432,6 +565,112 @@ XDMoD.utils.syncWindowShadow = function (thisComponent) {
     });
 };
 
+XDMoD.utils.format = {
+
+    /**
+     * Return an at-a-glance time showing the top two units
+     * i.e. days and hours, hours and minutes, etc. If you the full breakdown
+     * of days,hours,minutes,seconds then it is difficult to comprehend.
+     *
+     * @param s
+     * @returns {*}
+     */
+    humanTime: function (seconds) {
+        var s = seconds;
+        var plural = function (val, unit, ignorezero) {
+            if (val > 1) {
+                return val + ' ' + unit + 's ';
+            } else if (val === 0) {
+                if (ignorezero) {
+                    return '';
+                }
+                return val + ' ' + unit + 's ';
+            }
+            return val + ' ' + unit + ' ';
+        };
+
+        var days = Math.floor(s / (24 * 3600));
+        if (days > 0) {
+            s %= (24 * 3600);
+            return plural(days, 'day', 0) + plural((s / 3600.0).toFixed(1), 'hour', 1);
+        }
+        var hours = Math.floor(s / 3600);
+        if (hours > 0) {
+            s %= 3600;
+            return plural(hours, 'hour', 0) + plural((s / 60.0).toFixed(1), 'minute', 1);
+        }
+        var minutes = Math.floor(s / 60);
+        if (minutes > 0) {
+            return plural(minutes, 'minute', 0) + plural(s % 60, 'second', 1);
+        }
+
+        return plural(s, 'second', 0);
+    },
+
+    /**
+     * Converts a number to a string with SI prefix notation
+     *
+     * @param {Number} input     the number to format.
+     * @param {String} units     the unit name to append to the number.
+     * @param {Number} precision the number of significant figures to show.
+     * @returns {*}
+     */
+    convertToSiPrefix: function (input, units, precision) {
+        if (isNaN(input)) {
+            return input;
+        }
+
+        var value = Number(Number(input).toPrecision(precision));
+        var result;
+
+        if (value >= 1.0e12) {
+            result = (value / 1.0e12) + ' T' + units;
+        } else if (value >= 1.0e9) {
+            result = (value / 1.0e9) + ' G' + units;
+        } else if (value >= 1.0e6) {
+            result = (value / 1.0e6) + ' M' + units;
+        } else if (value >= 1.0e3) {
+            result = (value / 1.0e3) + ' k' + units;
+        } else {
+            result = value + ' ' + units;
+        }
+
+        return result;
+    },
+
+    /**
+     * A helper display function that applies the correct human readable byte
+     * measurement to the provided value (val), given in the correct precision
+     * and formatted with the provided units.
+     *
+     * @param {Number} val
+     * @param {String} units
+     * @param {Number} precision
+     * @returns {*}
+     */
+    convertToBinaryPrefix: function (val, units, precision) {
+        if (isNaN(val)) {
+            return val;
+        }
+
+        var outval = null;
+
+        if (val > 1099511627776.0) {
+            outval = (val / 1099511627776.0).toPrecision(precision) + ' Ti' + units;
+        } else if (val > 1073741824.0) {
+            outval = (val / 1073741824.0).toPrecision(precision) + ' Gi' + units;
+        } else if (val > 1048576.0) {
+            outval = (val / 1048576.0).toPrecision(precision) + ' Mi' + units;
+        } else if (val > 1024.0) {
+            outval = (val / 1024.0).toPrecision(precision) + ' Ki' + units;
+        } else {
+            outval = Number(val).toPrecision(precision) + ' ' + units;
+        }
+
+        return outval;
+    }
+};
+
 // =====================================================================
 
 Ext.Ajax.timeout = 86400000;
@@ -474,7 +713,8 @@ CCR.xdmod.reporting.dirtyState = false;
 
 CCR.xdmod.catalog = {
     metric_explorer: {},
-    report_generator: {}
+    report_generator: {},
+    data_export: {}
 };
 
 CCR.xdmod.ui.invertColor = function (hexTripletColor) {
@@ -1506,7 +1746,7 @@ CCR.xdmod.ui.presentFailureResponse = function (response, options) {
     // If a user-friendly message was given, add it to the displayed message.
     var outputMessage;
     if (options.wrapperMessage) {
-        outputMessage = options.wrapperMessage + " (" + responseMessage + ")";
+        outputMessage = options.wrapperMessage + '<br /> (' + responseMessage + ')';
     } else {
         outputMessage = responseMessage;
     }
@@ -1548,7 +1788,7 @@ CCR.xdmod.ui.getComboBox = function (data, fields, valueField, displayField, edi
 };
 CCR.xdmod.ui.gridComboRenderer = function (combo) {
     return function (value) {
-        var idx = combo.store.find(combo.valueField, value);
+        var idx = combo.store.findExact(combo.valueField, value);
         var rec = combo.store.getAt(idx);
         if (!rec) {
             return combo.emptyText;

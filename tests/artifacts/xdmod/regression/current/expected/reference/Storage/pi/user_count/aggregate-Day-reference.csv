@@ -1,0 +1,165 @@
+title
+"User Count (Number of Users): by PI"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+PI,"User Count (Number of Users)"
+"Dowitcher, Short-billed",20
+Fulmar,15
+"Tern, Caspian",15
+"Chiffchaff, Iberian",12
+"Starling, Rose-coloured",11
+"Lark, Calandra",10
+"Swift, Little",10
+"Flycatcher, Taiga",9
+"Scaup, Lesser",8
+Blackbird,6
+"Petrel, Fea's",5
+"Pipit, Tree",5
+"Redshank, Spotted",5
+"Rosefinch, Common",5
+"Bunting, Pine",4
+Chaffinch,4
+Chiffchaff,4
+"Pipit, Red-throated",4
+"Thrush, Red-throated",4
+"Warbler, Barred",4
+"Warbler, Fan-tailed",4
+"Warbler, Hooded",4
+Bittern,3
+"Bluetail, Red-flanked",3
+Fieldfare,3
+"Sparrow, Song",3
+"Tern, Gull-billed",3
+"Wagtail, Pied",3
+"Warbler, Arctic",3
+"Warbler, Blackpoll",3
+"Warbler, Cetti's",3
+"Warbler, Magnolia",3
+"Warbler, Subalpine",3
+"Bunting, Rustic",2
+"Falcon, Eleonora's",2
+"Finch, Citril",2
+"Goose, Red-breasted",2
+Jackdaw,2
+"Kestrel, Lesser",2
+"Martin, Sand",2
+Nuthatch,2
+"Parula, Northern",2
+"Shearwater, Balearic",2
+"Shearwater, Macaronesian",2
+"Sparrow, Tree",2
+"Spotted, Lesser",2
+"Swift, Chimney",2
+"Tanager, Summer",2
+"Thrush, Hermit",2
+"Wagtail, Yellow",2
+"Warbler, Icterine",2
+"Warbler, Savi's",2
+"Warbler, Sykes's",2
+"Black-headed, Great",1
+Bobolink,1
+"Bonelli's, Eastern",1
+Bullfinch,1
+"Bunting, Corn",1
+"Bunting, Indigo",1
+"Bunting, Lapland",1
+"Bunting, Rock",1
+"Catbird, Grey",1
+"Cowbird, Brown-headed",1
+"Crow, Hooded",1
+Cuckoo,1
+"Cuckoo, Black-billed",1
+"Desert, Asian",1
+Dotterel,1
+"Dowitcher, Long-billed",1
+Dunlin,1
+Dunnock,1
+"Falcon, Red-footed",1
+"Finch, Trumpeter",1
+"Flycatcher, Brown",1
+"Flycatcher, Spotted",1
+Goldcrest,1
+Goldfinch,1
+"Goose, Egyptian",1
+Greenfinch,1
+"Grouse, Red",1
+"Guillemot, Black",1
+"Guillemot, Brunnich's",1
+"Gull, Audouin's",1
+"Gull, Bonaparte's",1
+"Gull, Franklin's",1
+"Gull, Glaucous",1
+"Gull, Herring",1
+"Gull, Sabine's",1
+"Gull, Slaty-backed",1
+"Gull, Yellow-legged",1
+Kingfisher,1
+"Kingfisher, Belted",1
+Linnet,1
+"Martin, House",1
+Merlin,1
+"Nighthawk, Common",1
+Nightingale,1
+Nightjar,1
+"Nuthatch, Red-breasted",1
+Osprey,1
+"Owl, Little",1
+"Owl, Scops",1
+"Owl, Short-eared",1
+"Owl, Snowy",1
+"Phalarope, Red-necked",1
+"Phalarope, Wilson's",1
+"Pipit, Olive-backed",1
+"Pipit, Tawny",1
+Puffin,1
+"Redpoll, Arctic",1
+"Redpoll, Mealy",1
+"Redstart, American",1
+"Robin, Rufous-tailed",1
+"Robin, White-throated",1
+"Sandpiper, Baird's",1
+"Sandpiper, Buff-breasted",1
+"Sandpiper, Purple",1
+"Sandpiper, Western",1
+"Sandpiper, White-rumped",1
+"Shrike, Brown",1
+"Skua, Arctic",1
+"Skua, Pomarine",1
+Skylark,1
+Smew,1
+Snipe,1
+"Snipe, Great",1
+"Sparrow, Lark",1
+"Stonechat, Siberian",1
+Swift,1
+"Swift, Pacific",1
+"Tern, Black",1
+"Tern, Cabot's",1
+"Tern, Common",1
+"Thrush, Dusky",1
+"Thrush, Eyebrowed",1
+"Thrush, Rock",1
+"Thrush, White's",1
+"Thrush, Wood",1
+"Tit, Bearded",1
+"Tit, Long-tailed",1
+"Tit, Willow",1
+Twite,1
+Veery,1
+"Warbler, Black-and-white",1
+"Warbler, Blackburnian",1
+"Warbler, Green",1
+"Warbler, Marmora's",1
+"Warbler, Paddyfield",1
+"Warbler, Radde's",1
+"Warbler, Reed",1
+"Warbler, Tennessee",1
+"Waterthrush, Northern",1
+Woodcock,1
+"Woodpecker, Green",1
+Woodpigeon,1
+"Yellowthroat, Common",1
+---------

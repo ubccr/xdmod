@@ -1,0 +1,10 @@
+title
+"Number of Active Sessions: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[yerwa] Number of Active Sessions (Number of Sessions)","[setusca] Number of Active Sessions (Number of Sessions)","[ylwwa] Number of Active Sessions (Number of Sessions)"
+"2018 Q2",36,11,6
+---------

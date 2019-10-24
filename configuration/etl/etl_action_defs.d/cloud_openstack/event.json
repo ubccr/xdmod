@@ -1,25 +1,23 @@
 {
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_common/instance_data.json#/table_definition"
-        },
-        {
             "$ref": "${table_definition_dir}/cloud_common/event.json#/table_definition"
         }
     ],
 
     "source_query": {
         "records": {
-            "event_id": "staging.event_id",
             "resource_id": "staging.resource_id",
             "instance_id": "staging.instance_id",
-            "instance_type_id": "staging.instance_type_id",
-            "event_time_utc": "staging.event_time_utc",
+            "event_time_ts": "staging.event_time_ts",
             "event_type_id": "staging.event_type_id",
             "record_type_id": "staging.record_type_id",
             "host_id": "staging.host_id",
-            "image_id": "staging.image_id",
-            "submission_venue_id": 3
+            "person_id": "staging.person_id",
+            "systemaccount_id": "sa.id",
+            "domain_id": "COALESCE(staging.domain_id, 1)",
+            "#": "The default value of '3' corresponds to the 'OpenStack API' modw.submission_venue record.",
+            "submission_venue_id": "COALESCE(dsv.submission_venue_id, 3)"
         },
 
         "joins": [
@@ -27,27 +25,28 @@
                 "name": "openstack_staging_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "staging"
+            },
+            {
+                "schema": "${UTILITY_SCHEMA}",
+                "name": "systemaccount",
+                "alias": "sa",
+                "type": "INNER",
+                "on": "staging.person_id = sa.person_id AND staging.resource_id = sa.resource_id"
+            },
+            {
+                "name": "domains",
+                "schema": "${SOURCE_SCHEMA}",
+                "type": "LEFT",
+                "alias": "d",
+                "on": "d.id = staging.domain_id"
+            },
+            {
+                "name": "domain_submission_venues",
+                "schema": "${SOURCE_SCHEMA}",
+                "type": "LEFT",
+                "alias": "dsv",
+                "on": "dsv.domain_id = staging.domain_id"
             }
         ]
-    },
-
-    "destination_field_map": {
-        "instance_data": {
-            "resource_id": "resource_id",
-            "event_id": "event_id",
-            "instance_type_id": "instance_type_id",
-            "host_id": "host_id",
-            "image_id": "image_id"
-        },
-        "event": {
-            "event_id": "event_id",
-            "resource_id": "resource_id",
-            "instance_id": "instance_id",
-            "event_time_utc": "event_time_utc",
-            "event_type_id": "event_type_id",
-            "record_type_id": "record_type_id",
-            "host_id": "host_id",
-            "submission_venue_id": "submission_venue_id"
-        }
     }
 }

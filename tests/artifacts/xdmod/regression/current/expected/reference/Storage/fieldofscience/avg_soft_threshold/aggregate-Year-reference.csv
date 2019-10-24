@@ -1,0 +1,41 @@
+title
+"Quota: Soft Threshold (Bytes): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"PI Group","Quota: Soft Threshold (Bytes)"
+Unknown,781000019968000.0000
+"Cell Biology",116000014336000.0000
+Biophysics,30000001024000.0000
+"Solid-State and Microstructures",25000001536000.0000
+"Algebra and Number Theory",10000003072000.0000
+"Organic and Macromolecular Chemistry",10000003072000.0000
+Seismology,10000003072000.0000
+Arts,0.0000
+"Biochemistry and Molecular Structure and Function",0.0000
+"Decision, Risk, and Management Science",0.0000
+Economics,0.0000
+"Experimental Systems",0.0000
+"Fluid, Particulate, and Hydraulic Systems",0.0000
+"Galactic Astronomy",0.0000
+"Geology and Paleontology",0.0000
+Geophysics,0.0000
+"Global Atmospheric Research",0.0000
+"Law and Social Sciences",0.0000
+"Mechanics and Materials",0.0000
+"Metals, Ceramics, and Electronic Materials",0.0000
+"Physical Chemistry",0.0000
+"Polar Aeronomy and Astrophysics",0.0000
+"Polar Meteorology",0.0000
+"Quantum Electronics, Waves, and Beams",0.0000
+Sociology,0.0000
+"Solid State Chemistry and Polymers",0.0000
+"Statistics and Probability",0.0000
+"Structures and Building Systems",0.0000
+"Systematic and Population Biology",0.0000
+Tectonics,0.0000
+"Theoretical Physics",0.0000
+"Volcanology and Mantle Geochemistry",0.0000
+---------

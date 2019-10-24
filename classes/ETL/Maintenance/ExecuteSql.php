@@ -205,17 +205,14 @@ class ExecuteSql extends aAction implements iAction
             // does not support multiple SQL statements in a single query.
 
             $sqlStatementList = explode($delimiter, $sqlFileContents);
+
+            // Trim each SQL statement and filter empty items (such as newlines)
+
+            $sqlStatementList = array_filter(array_map('trim', $sqlStatementList));
             $numSqlStatements = count($sqlStatementList);
             $numStatementsProcessed = 0;
 
             foreach ($sqlStatementList as $sql) {
-
-                // Skip empty queries
-
-                $sql = trim($sql);
-                if ( "" == $sql ) {
-                    continue;
-                }
 
                 // Remove comments from the SQL before executing for clarity.
 

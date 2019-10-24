@@ -10,8 +10,6 @@ $returnData = array();
 try {
    $user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
 
-    $activeRole = $user->getMostPrivilegedRole();
-
     if (isset($_REQUEST['node']) && $_REQUEST['node'] == 'realms') {
         $query_group_name = 'tg_usage';
 
@@ -95,53 +93,52 @@ try {
                     $user,
                     $realm_name
                 );
+                foreach($query_descripter_groups as $groupBy => $queryDescriptorData) {
+                    $queryDescriptor = $queryDescriptorData['all'];
 
-                foreach($query_descripter_groups as $realm => $query_descripter_group) {
-                    foreach($query_descripter_group as $query_descripter) {
-                        if ($query_descripter->getShowMenu() !== true) {
-                            continue;
-                        }
-
-                        $nodeId = (
-                            'group_by_'
-                            . $categoryName
-                            . '_'
-                            . $query_descripter->getGroupByName()
-                        );
-
-                        // Make sure that the nodeText, derived from the query descripters menu
-                        // label, has each  instance of $realm_name replaced with $categoryName.
-                        $nodeText = preg_replace(
-                            '/' . preg_quote($realm_name, '/') . '/',
-                            $categoryName,
-                            $query_descripter->getMenuLabel()
-                        );
-
-                        // If this $nodeId has been seen before but for a different realm. Update
-                        // the list of realms associated with this $nodeId
-                        $nodeRealms = (
-                        isset($categoryReturnData[$nodeId])
-                            ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
-                            : $realm_name
-                        );
-
-                        $categoryReturnData[$nodeId] = array(
-                            'text' => $nodeText,
-                            'id' => $nodeId,
-                            'group_by' => $query_descripter->getGroupByName(),
-                            'query_group' => $query_group_name,
-                            'category' => $categoryName,
-                            'realm' => $nodeRealms,
-                            'defaultChartSettings' => $query_descripter->getChartSettings(true),
-                            'chartSettings' => $query_descripter->getChartSettings(true),
-                            'node_type' => 'group_by',
-                            'iconCls' => 'menu',
-                            'description' => $query_descripter->getGroupByLabel(),
-                            'leaf' => false
-                        );
-
-                        $hasItems = true;
+                    if ($queryDescriptor->getShowMenu() !== true) {
+                        continue;
                     }
+
+                    $nodeId = (
+                        'group_by_'
+                        . $categoryName
+                        . '_'
+                        . $queryDescriptor->getGroupByName()
+                    );
+
+                    // Make sure that the nodeText, derived from the query descripters menu
+                    // label, has each  instance of $realm_name replaced with $categoryName.
+                    $nodeText = preg_replace(
+                        '/' . preg_quote($realm_name, '/') . '/',
+                        $categoryName,
+                        $queryDescriptor->getMenuLabel()
+                    );
+
+                    // If this $nodeId has been seen before but for a different realm. Update
+                    // the list of realms associated with this $nodeId
+                    $nodeRealms = (
+                    isset($categoryReturnData[$nodeId])
+                        ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
+                        : $realm_name
+                    );
+
+                    $categoryReturnData[$nodeId] = array(
+                        'text' => $nodeText,
+                        'id' => $nodeId,
+                        'group_by' => $queryDescriptor->getGroupByName(),
+                        'query_group' => $query_group_name,
+                        'category' => $categoryName,
+                        'realm' => $nodeRealms,
+                        'defaultChartSettings' => $queryDescriptor->getChartSettings(true),
+                        'chartSettings' => $queryDescriptor->getChartSettings(true),
+                        'node_type' => 'group_by',
+                        'iconCls' => 'menu',
+                        'description' => $queryDescriptor->getGroupByLabel(),
+                        'leaf' => false
+                    );
+
+                    $hasItems = true;
                 }
             }
 
@@ -195,6 +192,15 @@ try {
                     foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
                         $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
                         if ($statistic_object->isVisible()) {
+                            $statName = $statistic_object->getAlias()->getName();
+                            $chartSettings = $query_descripter->getChartSettings();
+                            if(!$statistic_object->usesTimePeriodTablesForAggregate()){
+                                $chartSettingsArray = json_decode($chartSettings, true);
+                                $chartSettingsArray['dataset_type'] = 'timeseries';
+                                $chartSettingsArray['display_type'] = 'line';
+                                $chartSettingsArray['swap_xy'] = false;
+                                $chartSettings = json_encode($chartSettingsArray);
+                            }
                             $returnData[] = array(
                                 'text'                 => $statistic_object->getLabel(false),
                                 'id'                   => 'statistic_'
@@ -202,19 +208,20 @@ try {
                                                         . '_'
                                                         . $group_by_name
                                                         . '_'
-                                                        . $statistic_object->getAlias()->getName(),
-                                'statistic'            => $statistic_object->getAlias()->getName(),
+                                                        . $statName,
+                                'statistic'            => $statName,
                                 'group_by'             => $group_by_name,
                                 'group_by_label'       => $group_by->getLabel(),
                                 'query_group'          => $query_group_name,
                                 'category'             => $categoryName,
                                 'realm'                => $realm_name,
-                                'defaultChartSettings' => $query_descripter->getChartSettings(),
-                                'chartSettings'        => $query_descripter->getChartSettings(),
+                                'defaultChartSettings' => $chartSettings,
+                                'chartSettings'        => $chartSettings,
                                 'node_type'            => 'statistic',
                                 'iconCls'              => 'chart',
-                                'description'          => $statistic_object->getAlias()->getName(),
+                                'description'          => $statName,
                                 'leaf'                 => true,
+                                'supportsAggregate'    => $statistic_object->usesTimePeriodTablesForAggregate()
                             );
                         }
                     }

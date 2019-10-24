@@ -1,5 +1,5 @@
 ## Prerequisites
-- A full working installation of XDMoD with jobs data that is ingested daily. [XDMoD install instructions](install.html)
+- A full working installation of XDMoD. [XDMoD install instructions](install.html)
 
 ## What are cloud metrics?
 The Cloud realm in XDMoD tracks events that occur in cloud infrastructure systems which can also referred to as Infrastructure as a Service(IaaS) cloud computing systems. A variety of events are tracked such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs. In this beta release we support an initial set of cloud metrics with additional metrics to be added in subsequent releases.
@@ -104,22 +104,4 @@ Cloud resources are added by using the xdmod-setup command.
 
 
 ### Ingesting cloud event data
-The commands that need to be run to ingest your cloud data depend on the format of the event data in your cloud log files. The -d option is used to specify a directory where the log files are located. When running this command replace `/path/to/log/files` with the directory where your log files are.
-
-#### Generic format
-```
-php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common -p jobs-cloud-common -p ingest-resources &&
-php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-eucalyptus -r name_of_resource -d "CLOUD_EVENT_LOG_DIRECTORY=/path/to/log/files" &&
-php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline &&
-xdmod-build-filter-lists --realm Cloud
-```
-#### OpenStack format
-```
-php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common -p jobs-cloud-common -p ingest-resources &&
-php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r name_of_resource -d "CLOUD_EVENT_LOG_DIRECTORY=/path/to/log/files" -p jobs-cloud-extract-openstack &&
-php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline &&
-xdmod-build-filter-lists --realm Cloud
-```
-
-## Known issues
-  - Cloud metrics do not display for any date past the date you last ingested jobs data. In order to prevent this your XDMoD installation must ingest new jobs data daily.
+Cloud data is shredded and ingested using the [`xdmod-shredder`](shredder.md) and [`xdmod-ingestor`](ingestor.md) commands. Please see their respective guides for further information.

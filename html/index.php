@@ -142,8 +142,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     </script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
-
-    <script type="text/javascript" src="gui/lib/debug.js"></script>
+    <link rel="stylesheet" type="text/css" href="gui/css/helptour.css">
 
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
@@ -201,6 +200,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
     <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTip.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTipTour.js"></script>
 
     <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
     <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
@@ -209,19 +210,17 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/js/CCR.js"></script>
     <script type="text/javascript" src="gui/js/HighChartWrapper.js"></script>
-    <script type="text/javascript" src="gui/js/RESTDataProxy.js"></script>
-    <script type="text/javascript" src="gui/js/CustomHttpProxy.js"></script>
 
     <script type="text/javascript" src="gui/lib/printer/Printer-all.js"></script>
 
     <script type="text/javascript" src="gui/js/TGUserDropDown.js"></script>
 
-    <script language="JavaScript" src="gui/js/login.js.php"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/LoginPrompt.js"></script>
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
+    <script type="text/javascript" src="gui/lib/ClearableComboBox.js"></script>
 
     <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
     <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
@@ -239,14 +238,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <?php
-
-    $manager = $user->isManager() ? 'true' : 'false';
-    $developer = $user->isDeveloper() ? 'true' : 'false';
-
-    $primary_center_director = (
-        $user->hasAcl(ROLE_ID_CENTER_DIRECTOR) &&
-        true //($user->getPromoter(ROLE_ID_CENTER_DIRECTOR, $user->getActiveRole()->getActiveCenter()) == -1)
-    ) ? 'true' : 'false';
     $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
         $carry [] = $item->getName();
         return $carry;
@@ -256,7 +247,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type='text/javascript'>
 
         <?php
-        print "CCR.xdmod.publicUser = " . ($userLoggedIn ? 'false' : 'true') . ";\n";
+        print "CCR.xdmod.publicUser = " . json_encode(!$userLoggedIn) . ";\n";
 
         $tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
         print "CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '$tech_support_recipient';\n";
@@ -270,20 +261,25 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.fullName = " . json_encode($user->getFormalName()) . ";\n";
             $userType = $user->getUserType();
             print "CCR.xdmod.ui.usertype = '$userType';\n";
-            $userIsSSO = ($userType === SSO_USER_TYPE) ? "true" : "false";
-            print "CCR.xdmod.ui.userIsSSO = $userIsSSO;\n";
+            print "CCR.xdmod.ui.userIsSSO = " . json_encode(($userType === SSO_USER_TYPE)) . ";\n";
             print "CCR.xdmod.ui.mappedPID = '{$user->getPersonID(TRUE)}';\n";
 
             $obj_warehouse = new XDWarehouse();
             print 'CCR.xdmod.ui.mappedPName = ' . json_encode($obj_warehouse->resolveName($user->getPersonID(true))) . ";\n";
 
-            print "CCR.xdmod.ui.isManager = $manager;\n";
-            print "CCR.xdmod.ui.isDeveloper = $developer;\n";
-            print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
+            print "CCR.xdmod.ui.isManager = " . json_encode($user->isManager()) . ";\n";
+            print "CCR.xdmod.ui.isDeveloper = " . json_encode($user->isDeveloper()) . ";\n";
+            print "CCR.xdmod.ui.isCenterDirector = " . json_encode($user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) . ";\n";
         }
 
-        $config = \Xdmod\Config::factory();
-        $rawDataRealms = array_keys($config['rawstatistics']['realms']);
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
+
+        $rawDataRealms = array_map(
+            function ($item) {
+                return $item['name'];
+            },
+            $config['realms']
+        );
 
         print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
 
@@ -411,7 +407,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/lib/Portal.js"></script>
     <script type="text/javascript" src="gui/lib/PortalColumn.js"></script>
     <script type="text/javascript" src="gui/lib/Portlet.js"></script>
-
+    <script type="text/javascript" src="gui/js/Portlet.js"></script>
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
         <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
@@ -441,7 +437,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
     <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
     <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
-
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/Spotlight.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
         <script type="text/javascript" src="gui/js/AddDataPanel.js"></script>
@@ -462,10 +458,16 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
+    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN)): ?>
+        <script type="text/javascript" src="gui/js/modules/Dashboard.js"></script>
+    <?php else: ?>
+        <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
+    <?php endif; ?>
+
     <script type="text/javascript" src="gui/js/modules/Usage.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/modules/ReportGenerator.js"></script>
+        <script type="text/javascript" src="gui/js/modules/DataExport.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="gui/js/modules/About.js"></script>
 

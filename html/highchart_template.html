@@ -67,7 +67,12 @@
                });
             }
 
-            if (inputChartOptions.series.length == 0) inputChartOptions.subtitle.text = inputChartOptions.subtitle.text+'<br/> <h2>**NO DATA**<h2/>';
+            if (inputChartOptions.series.length == 0) {
+               inputChartOptions.title.text = 'No data available for the critera specified';
+               inputChartOptions.title.verticalAlign = 'middle';
+               inputChartOptions.title.floating = true;
+               inputChartOptions.title.style = { "color": "#333333", "fontSize": "40px" }
+            }
             chart = XDMoD.utils.createChart(inputChartOptions);
 
          });//$(document).ready(...

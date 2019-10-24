@@ -1,0 +1,26 @@
+title
+"Quota Utilization: Logical (%): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Department,"Quota Utilization: Logical (%)"
+"Earth Sciences",530.5673
+"Molecular Biosciences",109.0297
+"Mathematical Sciences",89.7930
+Chemistry,87.8362
+Unknown,68.3634
+"Electrical and Communication Systems",2.5495
+Arts,0.0000
+"Astronomical Sciences",0.0000
+"Atmospheric Sciences",0.0000
+"Chemical, Thermal Systems",0.0000
+"Environmental Biology",0.0000
+"Materials Research",0.0000
+"Mechanical and Structural Systems",0.0000
+"Microelectronic Information Processing Systems",0.0000
+Physics,0.0000
+"Polar Programs",0.0000
+"Social and Economic Science",0.0000
+---------

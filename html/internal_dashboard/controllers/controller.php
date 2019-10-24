@@ -166,12 +166,6 @@ switch ($operation) {
 
                 }
 
-                $entry['role_list'] = '"' . $entry['role_list'] . '"';
-
-                if ($entry['user_type'] == 1) $entry['user_type'] = 'External';
-                if ($entry['user_type'] == 2) $entry['user_type'] = 'Internal';
-                if ($entry['user_type'] == 3) $entry['user_type'] = 'Testing';
-
                 if ($entry['user_type'] == 700) {
 
                     $entry['user_type'] = 'XSEDE';

@@ -1,0 +1,12 @@
+title
+"Logical Usage (Bytes): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[ovenb] Logical Usage (Bytes)","[parcr] Logical Usage (Bytes)","[swath] Logical Usage (Bytes)","[sante] Logical Usage (Bytes)","[blaca] Logical Usage (Bytes)","[savsp] Logical Usage (Bytes)","[lanwa] Logical Usage (Bytes)","[crcco] Logical Usage (Bytes)","[egyni] Logical Usage (Bytes)","[frahata] Logical Usage (Bytes)","[gresh] Logical Usage (Bytes)","[palsw] Logical Usage (Bytes)","[phivi] Logical Usage (Bytes)","[razor] Logical Usage (Bytes)","[rocdo] Logical Usage (Bytes)"
+2018-01-01,13264600192000,459080755200,6017996800,5779584000,768000,640000,256000,0,0,0,0,0,0,0,0
+2019-01-01,7177720064000,467461376000,7590092800,5779584000,768000,640000,256000,0,0,0,0,0,0,0,0
+---------

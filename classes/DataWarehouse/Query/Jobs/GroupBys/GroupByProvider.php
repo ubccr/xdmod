@@ -1,14 +1,5 @@
 <?php
-
 namespace DataWarehouse\Query\Jobs\GroupBys;
-
-/**
- * @author Amin Ghadersohi
- * @date 2011-Jan-07
- *
- * class for adding group by resource provider to a query
- *
- */
 
 class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
 {
@@ -70,7 +61,6 @@ class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
         );
 
         $this->addOrder($query, $multi_group);
-
     }
 
     public function addWhereJoin(
@@ -97,7 +87,7 @@ class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
 
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
-            $whereConstraint="(". implode(",", $whereConstraint) .")";
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
         $query->addWhereCondition(
@@ -112,10 +102,9 @@ class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->organization_table, $this->_order_id_field_name), $dir, $this->getName());
-        if($prepend === true) {
+        if ($prepend === true) {
             $query->prependOrder($orderField);
-        }else
-        {
+        } else {
             $query->addOrder($orderField);
         }
     }
@@ -127,7 +116,7 @@ class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select short_name as field_label from modw.organization  where id in (_filter_) order by order_id"
+            'SELECT short_name AS field_label FROM modw.organization  WHERE id IN (_filter_) ORDER BY order_id'
         );
     }
 }

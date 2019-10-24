@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[Unknown] Quota: Soft Threshold (Bytes)","[Cell Biology] Quota: Soft Threshold (Bytes)","[Biophysics] Quota: Soft Threshold (Bytes)","[Solid-State and Microstructures] Quota: Soft Threshold (Bytes)","[Algebra and Number Theory] Quota: Soft Threshold (Bytes)","[Organic and Macromolecular Chemistry] Quota: Soft Threshold (Bytes)","[Seismology] Quota: Soft Threshold (Bytes)","[Arts] Quota: Soft Threshold (Bytes)","[Biochemistry and Molecular Structure and Function] Quota: Soft Threshold (Bytes)","[Decision, Risk, and Management Science] Quota: Soft Threshold (Bytes)","[Economics] Quota: Soft Threshold (Bytes)","[Experimental Systems] Quota: Soft Threshold (Bytes)","[Fluid, Particulate, and Hydraulic Systems] Quota: Soft Threshold (Bytes)","[Galactic Astronomy] Quota: Soft Threshold (Bytes)","[Geology and Paleontology] Quota: Soft Threshold (Bytes)","[Geophysics] Quota: Soft Threshold (Bytes)","[Global Atmospheric Research] Quota: Soft Threshold (Bytes)","[Law and Social Sciences] Quota: Soft Threshold (Bytes)","[Mechanics and Materials] Quota: Soft Threshold (Bytes)","[Metals, Ceramics, and Electronic Materials] Quota: Soft Threshold (Bytes)","[Physical Chemistry] Quota: Soft Threshold (Bytes)","[Polar Aeronomy and Astrophysics] Quota: Soft Threshold (Bytes)","[Polar Meteorology] Quota: Soft Threshold (Bytes)","[Quantum Electronics, Waves, and Beams] Quota: Soft Threshold (Bytes)","[Sociology] Quota: Soft Threshold (Bytes)","[Solid State Chemistry and Polymers] Quota: Soft Threshold (Bytes)","[Statistics and Probability] Quota: Soft Threshold (Bytes)","[Structures and Building Systems] Quota: Soft Threshold (Bytes)","[Systematic and Population Biology] Quota: Soft Threshold (Bytes)","[Tectonics] Quota: Soft Threshold (Bytes)","[Theoretical Physics] Quota: Soft Threshold (Bytes)","[Volcanology and Mantle Geochemistry] Quota: Soft Threshold (Bytes)"
+2018-10-01,781000019968000,116000014336000,30000001024000,25000001536000,10000003072000,10000003072000,10000003072000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,781000019968000,116000014336000,30000001024000,25000001536000,10000003072000,10000003072000,10000003072000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

@@ -1,0 +1,10 @@
+title
+"Number of Sessions Ended: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[yerwa] Number of Sessions Ended","[setusca] Number of Sessions Ended","[ylwwa] Number of Sessions Ended"
+"2018 Q2",36,11,6
+---------

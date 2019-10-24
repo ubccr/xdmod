@@ -9,6 +9,7 @@ use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
 use CCR\DB;
 use CCR\Log;
+use ETL\Utilities;
 
 /**
  * Database setup.
@@ -140,28 +141,14 @@ EOT
         /**
          *  ETLv2 database bootstrap start
          */
-        $scriptOptions = array(
-            'default-module-name' => 'xdmod',
-            'process-sections' => array(
-                'xdb-bootstrap',
-                'jobs-xdw-bootstrap',
-                'shredder-bootstrap',
-                'staging-bootstrap',
-                'hpcdb-bootstrap',
-            ),
-        );
-
-        $etlConfig = new \ETL\Configuration\EtlConfiguration(
-            CONFIG_DIR . '/etl/etl.json',
-            null,
-            $logger,
-            array('default_module_name' => $scriptOptions['default-module-name'])
-        );
-        $etlConfig->initialize();
-        \ETL\Utilities::setEtlConfig($etlConfig);
-        $overseerOptions = new \ETL\EtlOverseerOptions($scriptOptions, $logger);
-        $overseer = new \ETL\EtlOverseer($overseerOptions, $logger);
-        $overseer->execute($etlConfig);
+        Utilities::runEtlPipeline(array(
+            'xdb-bootstrap',
+            'jobs-xdw-bootstrap',
+            'xdw-bootstrap-storage',
+            'shredder-bootstrap',
+            'staging-bootstrap',
+            'hpcdb-bootstrap',
+        ), $logger);
 
 
         $aggregationUnits = array(
@@ -176,17 +163,6 @@ EOT
             $tpg->generateMainTable(DB::factory('datawarehouse'), new \DateTime('2000-01-01'), new \DateTime('2038-01-18'));
         }
 
-        /**
-         *  ETLv2 database bootstrap end
-         */
-
-        $aclSetup = new AclSetup($this->console);
-        $aclSetup->handle();
-
-        $aclConfig = new AclConfig($this->console);
-        $aclConfig->handle();
-
-        $aclImport = new AclImportXdmod($this->console);
-        $aclImport->handle();
+        passthru('acl-config');
     }
 }

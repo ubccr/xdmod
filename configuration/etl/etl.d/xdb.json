@@ -33,7 +33,7 @@
             "class": "ManageTables",
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
-            "# order-matters": "Because foreign key constraints exist between user-roles and users the order matters",
+            "# order-matters": "Because of foreign key constraints",
             "definition_file_list": [
                 "xdb/account-requests.json",
                 "xdb/api-keys.json",
@@ -51,10 +51,9 @@
                 "xdb/session-manager.json",
                 "xdb/users.json",
                 "xdb/user-profiles.json",
-                "xdb/user-role-parameters.json",
-                "xdb/user-roles.json",
                 "xdb/user-types.json",
-                "xdb/version-check.json"
+                "xdb/version-check.json",
+                "xdb/batch-export-requests.json"
             ]
         },
         {

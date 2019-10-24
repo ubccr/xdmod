@@ -1,0 +1,26 @@
+title
+"User Count (Number of Users): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Department,"User Count (Number of Users)"
+Unknown,188
+"Molecular Biosciences",24
+"Mechanical and Structural Systems",22
+"Earth Sciences",21
+Chemistry,18
+"Astronomical Sciences",15
+"Electrical and Communication Systems",15
+"Social and Economic Science",15
+"Mathematical Sciences",5
+"Polar Programs",5
+"Microelectronic Information Processing Systems",4
+"Materials Research",3
+Physics,3
+Arts,2
+"Chemical, Thermal Systems",2
+"Atmospheric Sciences",1
+"Environmental Biology",1
+---------

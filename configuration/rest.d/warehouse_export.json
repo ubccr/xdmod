@@ -1,0 +1,6 @@
+{
+  "warehouse_export": {
+    "prefix": "warehouse/export",
+    "controller": "Rest\\Controllers\\WarehouseExportControllerProvider"
+  }
+}

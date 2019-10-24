@@ -16,11 +16,6 @@ class QueryDescripter
     private $_group_by_name;
 
     /**
-     * @var string
-     */
-    private $_query_groupname;
-
-    /**
      * The name of the default statistic or "all".
      *
      * @var string
@@ -55,7 +50,6 @@ class QueryDescripter
     private $_disable_menu;
 
     public function __construct(
-        $query_groupname,
         $realm_name,
         $group_by_name,
         array $drill_target_group_bys = array(),
@@ -64,7 +58,6 @@ class QueryDescripter
         $default_query_type = 'aggregate',
         $order_id = 0
     ) {
-        $this->_query_groupname = $query_groupname;
         $this->_realm_name      = $realm_name;
         $this->_group_by_name   = $group_by_name;
 
@@ -114,11 +107,6 @@ class QueryDescripter
     public function getShowMenu()
     {
         return $this->_show_menu;
-    }
-
-    public function getQueryGroupname()
-    {
-        return $this->_query_groupname;
     }
 
     public function getClassnamePrefix()
@@ -179,9 +167,7 @@ class QueryDescripter
         $end_date,
         $statistic_name,
         $aggregation_unit_name = 'auto',
-        array $parameters = array(),
-        array $parameter_descriptions = array(),
-        $single_stat = false
+        array $parameters = array()
     ) {
         $classname = $this->getClassnamePrefix() . 'Aggregate';
 
@@ -191,10 +177,7 @@ class QueryDescripter
             $end_date,
             $this->getGroupByName(),
             $statistic_name,
-            $parameters,
-            $this->getQueryGroupname(),
-            $parameter_descriptions,
-            $single_stat
+            $parameters
         );
     }
 
@@ -203,9 +186,7 @@ class QueryDescripter
         $end_date,
         $statistic_name,
         $aggregation_unit_name = 'auto',
-        array $parameters = array(),
-        array $parameter_descriptions = array(),
-        $single_stat = false
+        array $parameters = array()
     ) {
         $classname =  $this->getClassnamePrefix() . 'Timeseries';
 
@@ -215,10 +196,7 @@ class QueryDescripter
             $end_date,
             $this->getGroupByName(),
             $statistic_name,
-            $parameters,
-            $this->getQueryGroupname(),
-            $parameter_descriptions,
-            $single_stat
+            $parameters
         );
     }
 
@@ -227,9 +205,7 @@ class QueryDescripter
         $end_date,
         $aggregation_unit_name = 'auto',
         array $parameters = array(),
-        $query_type = 'aggregate',
-        array $parameter_descriptions = array(),
-        $single_stat = false
+        $query_type = 'aggregate'
     ) {
         $queries    = array();
         $statistics = array();
@@ -251,9 +227,7 @@ class QueryDescripter
                     $end_date,
                     $statistic,
                     $aggregation_unit_name,
-                    $parameters,
-                    $parameter_descriptions,
-                    $single_stat
+                    $parameters
                 );
             } else {
                 $queries[] = $this->getTimeseries(
@@ -261,9 +235,7 @@ class QueryDescripter
                     $end_date,
                     $statistic,
                     $aggregation_unit_name,
-                    $parameters,
-                    $parameter_descriptions,
-                    $single_stat
+                    $parameters
                 );
             }
         }

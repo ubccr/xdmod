@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../configuration/linker.php';
-
+@session_start();
 $formal_name = isset($_REQUEST['xd_user_formal_name']) ? $_REQUEST['xd_user_formal_name'] :  "";
 $samlError = false;
 $auth = null;
@@ -9,7 +9,10 @@ $message = '';
 try {
     $auth = new Authentication\SAML\XDSamlAuthentication();
 } catch (InvalidArgumentException $ex) {
- // This will catch when a configuration directory does not exist if it is set in the environment level
+    // This will catch when apache or nginx have been set up
+    // to to have an alternate saml configuration directory
+    // that does not exist, so we ignore it as saml isnt set
+    // up and we dont have to do anything with it
 }
 try {
     if ($auth && $auth->isSamlConfigured()) {
@@ -50,7 +53,7 @@ try {
     function loadPortal() {
       setTimeout(function(){
         parent.location.href = '/index.php' + document.location.hash;
-      }, 3000);
+      }, 1500);
     }
 
     function contactAdmin() {

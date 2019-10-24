@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "count": 0,
+  "total": 0,
+  "totalCount": 0,
+  "results": [],
+  "data": [],
+  "message": "An error was encountered while attempting to process the requested authorization procedure.",
+  "code": 0
+}

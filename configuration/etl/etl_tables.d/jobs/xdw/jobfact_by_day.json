@@ -1,0 +1,477 @@
+{
+    "table_definition": {
+        "name": "jobfact_by_",
+        "comment": "Jobfacts aggregated by ${AGGREGATION_UNIT}.",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },
+            {
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },
+            {
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },
+            {
+                "name": "record_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource on which the request was made"
+            },
+            {
+                "name": "task_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource on which the jobs ran"
+            },
+            {
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the resource that the jobs ran on."
+            },
+            {
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The type of the resource on which the jobs ran. References resourcetype.id"
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the resource system account (local username) under which the job ran. References systemaccount.id"
+            },
+            {
+                "name": "submission_venue_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The method used to submit this job: cli, gateway, ..."
+            },
+            {
+                "name": "job_record_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Task type or event."
+            },
+            {
+                "name": "job_task_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Type of job: hpc, cloud, hpc-reservation, ...."
+            },
+            {
+                "name": "queue",
+                "type": "char(50)",
+                "nullable": false,
+                "comment": "DIMENSION: The queue of the resource on which the jobs ran."
+            },
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of allocation these jobs used to run"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the account record from which one can get charge number"
+            },
+            {
+                "name": "requesting_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the person that requested the resources (e.g., made the reservation or submitted the job."
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the person that ran the jobs."
+            },
+            {
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the person that ran the jobs."
+            },
+            {
+                "name": "person_nsfstatuscode_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The NSF status code of the person that ran the jobs. References person.nsfstatuscode_id"
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The field of science of the project to which the jobs belong."
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The PI that owns the allocations that these jobs ran under. References principalinvestigator.person_id"
+            },
+            {
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the PI that owns the project that funds these jobs. References piperson.organization_id"
+            },
+            {
+                "name": "job_time_bucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Job time is bucketing of wall time based on prechosen intervals in the modw.job_times table."
+            },
+            {
+                "name": "job_wait_time_bucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Job wait time is bucketing of wait time based on prechosen intervals in the modw.job_wait_times table."
+            },
+            {
+                "name": "node_count",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Number of nodes each of the jobs used."
+            },
+            {
+                "name": "processor_count",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Number of processors each of the jobs used."
+            },
+            {
+                "name": "processorbucket_id",
+                "type": "int(4)",
+                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id",
+                "nullable": true
+            },
+            {
+                "name": "submitted_job_count",
+                "type": "int(11)",
+                "comment": "FACT: The number of jobs that started during this day.",
+                "nullable": true
+            },
+            {
+                "name": "ended_job_count",
+                "type": "int(11)",
+                "comment": "FACT: The number of jobs that ended during this day.",
+                "nullable": true
+            },
+            {
+                "name": "started_job_count",
+                "type": "int(11)",
+                "comment": "FACT: The number of jobs that started during this day.",
+                "nullable": true
+            },
+            {
+                "name": "running_job_count",
+                "type": "int(11)",
+                "comment": "FACT: The number of jobs that were running during this day.",
+                "nullable": true
+            },
+            {
+                "name": "wallduration",
+                "type": "decimal(18,0)",
+                "comment": "FACT: (seconds) The wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days.",
+                "nullable": true
+            },
+            {
+                "name": "sum_wallduration_squared",
+                "type": "double",
+                "comment": "FACT: (seconds) The sum of the square of wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days.",
+                "nullable": true
+            },
+            {
+                "name": "waitduration",
+                "type": "decimal(18,0)",
+                "comment": "FACT: (seconds) The amount of time jobs waited to execute during this day.",
+                "nullable": true
+            },
+            {
+                "name": "sum_waitduration_squared",
+                "type": "double",
+                "comment": "FACT: (seconds) The sum of the square of the amount of time jobs waited to execute during this day.",
+                "nullable": true
+            },
+            {
+                "name": "local_charge_su",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "local_charge_xdsu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "local_charge_nu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "adjusted_charge_su",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "adjusted_charge_xdsu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "adjusted_charge_nu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "task_local_charge_su",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "task_local_charge_xdsu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "task_local_charge_nu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "task_adjusted_charge_su",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "task_adjusted_charge_xdsu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "task_adjusted_charge_nu",
+                "type": "decimal(18,0)",
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "sum_local_charge_xdsu_squared",
+                "type": "double",
+                "comment": "FACT: The sum of the square of local_charge of jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "cpu_time",
+                "type": "decimal(18,0)",
+                "comment": "FACT: (seconds) The amount of the cpu time (processor_count * wallduration) of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "sum_cpu_time_squared",
+                "type": "double",
+                "comment": "FACT: (seconds) The sum of the square of the amount of the cpu_time of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "node_time",
+                "type": "decimal(18,0)",
+                "comment": "FACT: (seconds) The amount of the node time (nodes * wallduration) of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "sum_node_time_squared",
+                "type": "double",
+                "comment": "FACT: (seconds) The sum of the square of the amount of the node_time of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used.",
+                "nullable": true
+            },
+            {
+                "name": "sum_weighted_expansion_factor",
+                "type": "decimal(18,0)",
+                "comment": "FACT: This is the sum of expansion factor per job multiplied by node_count and the [adjusted] duration of jobs that ran in this days.",
+                "nullable": true
+            },
+            {
+                "name": "sum_job_weights",
+                "type": "decimal(18,0)",
+                "comment": "FACT: this is the sum of (node_count multipled by the [adjusted] duration) for jobs that ran in this days.",
+                "nullable": true
+            },
+            {
+                "name": "job_id_list",
+                "type": "mediumtext",
+                "nullable": false,
+                "comment": "METADATA: the ids in the fact table for the rows that went into this row"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "default": "CURRENT_TIMESTAMP",
+                "nullable": false,
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "index_account",
+                "columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "index_allocation",
+                "columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "index_fos",
+                "columns": [
+                    "fos_id"
+                ]
+            },
+            {
+                "name": "index_job_time_bucket_id",
+                "columns": [
+                    "job_time_bucket_id"
+                ]
+            },
+            {
+                "name": "index_job_wait_time_bucket_id",
+                "columns": [
+                    "job_wait_time_bucket_id"
+                ]
+            },
+            {
+                "name": "index_node_count",
+                "columns": [
+                    "node_count"
+                ]
+            },
+            {
+                "name": "index_resource_organization",
+                "columns": [
+                    "resource_organization_id"
+                ]
+            },
+            {
+                "name": "index_person",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "index_person_nsf_status_code",
+                "columns": [
+                    "person_nsfstatuscode_id"
+                ]
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
+            },
+            {
+                "name": "index_person_organization",
+                "columns": [
+                    "person_organization_id"
+                ]
+            },
+            {
+                "name": "index_pi_organization",
+                "columns": [
+                    "piperson_organization_id"
+                ]
+            },
+            {
+                "name": "index_pi_person",
+                "columns": [
+                    "principalinvestigator_person_id"
+                ]
+            },
+            {
+                "name": "index_processor_count",
+                "columns": [
+                    "processor_count"
+                ]
+            },
+            {
+                "name": "index_queue",
+                "columns": [
+                    "queue"
+                ]
+            },
+            {
+                "name": "index_resource_type",
+                "columns": [
+                    "resourcetype_id"
+                ]
+            },
+            {
+                "name": "index_resource",
+                "columns": [
+                    "record_resource_id"
+                ]
+            },
+            {
+                "name": "index_system_account",
+                "columns": [
+                    "systemaccount_id"
+                ]
+            },
+            {
+                "name": "index_period_value",
+                "columns": [
+                    "${AGGREGATION_UNIT}"
+                ]
+            },
+            {
+                "name": "index_period",
+                "columns": [
+                    "${AGGREGATION_UNIT}_id"
+                ]
+            }
+        ],
+        "table_prefix": "jobfact_by_"
+    }
+}

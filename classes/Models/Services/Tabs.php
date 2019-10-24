@@ -3,7 +3,7 @@
 namespace Models\Services;
 
 use CCR\DB;
-use User\Roles;
+use Configuration\XdmodConfiguration;
 
 class Tabs
 {
@@ -58,14 +58,11 @@ SQL;
             ':acl_hierarchy_name' => self::DEFAULT_ACL_HIERARCHY
         ));
 
-        $sections = array('display', 'type', 'permitted_modules', 'query_descripters', 'summary_charts');
-        $acls = array();
+        $aclConfig = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+        $acls = $aclConfig['roles'];
 
-        $roleNames = Roles::getRoleNames(array('default'));
-        foreach ($roleNames as $roleName) {
-            foreach ($sections as $section) {
-                $acls[$roleName][$section] = Roles::getConfig($roleName, $section);
-            }
+        if (isset($acls['default'])) {
+            unset($acls['default']);
         }
 
         foreach ($rows as $row) {

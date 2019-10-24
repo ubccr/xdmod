@@ -177,16 +177,13 @@ class Authentication
      *                           the currently logged in user.
      * @param $ip_address the ip_address that is associated with this
      *                           authentication attempt.
-     * @param bool $user_id_only a flag that indicates whether or not to return
-     *                           a full XDUser object or just the user id.
-     * @return int|null|XDUser
+     * @return XDUser
      * @throws Exception
      * @throws SessionExpiredException
      */
-    public static function resolveUserFromToken(
+    private static function resolveUserFromToken(
         $token,
-        $ip_address,
-        $user_id_only = false
+        $ip_address
     ) {
         @session_start();
 
@@ -265,10 +262,6 @@ class Authentication
                 ':ip_address' => $ip_address,
                 ':init_time' => $_SESSION['xdInit'],
             ));
-
-            if ($user_id_only) {
-                return $user_check[0]['user_id'];
-            }
 
             $user = XDUser::getUserByID($user_check[0]['user_id']);
 

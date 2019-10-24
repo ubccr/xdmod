@@ -11,9 +11,8 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "account_id": "COALESCE(act.account_id, -1)",
-            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')",
-            "person_id": "COALESCE(u.account_id, -1)"
+            "account_id": "COALESCE(act.account_id, 1)",
+            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')"
         },
 
         "joins": [
@@ -27,13 +26,6 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "act",
                 "on": "act.provider_account = raw.project_id AND act.resource_id = raw.resource_id",
-                "type": "LEFT OUTER"
-            },
-            {
-                "name": "user",
-                "schema": "${SOURCE_SCHEMA}",
-                "alias": "u",
-                "on": "u.provider_account = raw.user_id AND u.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
             }
         ],

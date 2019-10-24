@@ -1,0 +1,20 @@
+title
+"Quota: Soft Threshold (Bytes): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[blaca] Quota: Soft Threshold (Bytes)","[crcco] Quota: Soft Threshold (Bytes)","[egyni] Quota: Soft Threshold (Bytes)","[frahata] Quota: Soft Threshold (Bytes)","[gresh] Quota: Soft Threshold (Bytes)","[lanwa] Quota: Soft Threshold (Bytes)","[ovenb] Quota: Soft Threshold (Bytes)","[palsw] Quota: Soft Threshold (Bytes)","[parcr] Quota: Soft Threshold (Bytes)","[phivi] Quota: Soft Threshold (Bytes)","[razor] Quota: Soft Threshold (Bytes)","[rocdo] Quota: Soft Threshold (Bytes)","[sante] Quota: Soft Threshold (Bytes)","[savsp] Quota: Soft Threshold (Bytes)","[swath] Quota: Soft Threshold (Bytes)"
+2018-12-27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-02,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-03,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-04,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-05,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

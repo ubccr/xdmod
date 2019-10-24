@@ -1,0 +1,11 @@
+title
+"Quota: Hard Threshold (Bytes): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"Resource Type","Quota: Hard Threshold (Bytes)"
+"Storage grid",1219010023424000.0000
+"Tape storage resource",128035016704000.0000
+---------

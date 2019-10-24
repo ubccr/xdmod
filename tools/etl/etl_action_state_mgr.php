@@ -191,10 +191,11 @@ if ( $scriptOptions['dryrun']) {
 // Parse the ETL configuration. We will need it for listing available ingestors, aggregators, etc.
 
 try {
-    $etlConfig = new EtlConfiguration($scriptOptions['config-file'],
-                                      $scriptOptions['base-dir']);
-    $etlConfig->setLogger($logger);
-    $etlConfig->initialize();
+    $etlConfig = EtlConfiguration::factory(
+        $scriptOptions['config-file'],
+        $scriptOptions['base-dir'],
+        $logger
+    );
     $etlConfig->cleanup();
 } catch ( Exception $e ) {
     exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");

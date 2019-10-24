@@ -13,5 +13,3 @@ abstract class RawQueryTypes
     const TIMESERIES_METRICS = 6;
     const ANALYTICS          = 7;
 }
-
-?>

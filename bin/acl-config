@@ -16,8 +16,10 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
+use Configuration\Configuration;
+use ETL\Utilities;
+use Models\Services\Realms;
 use User\Roles;
-use Xdmod\Config;
 
 const SCHEMA = 'moddb';
 
@@ -110,6 +112,9 @@ function main()
         exit($result);
     }
 
+    // Make sure that all of the required tables are present
+    Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
+
     // a role/acl blacklist. 'default' doesn't actually exist so don't bother
     // processing it.
     $blacklist = array('default');
@@ -121,10 +126,8 @@ function main()
     // roles/datawarehouse
     $results = array();
 
-    $config = Config::factory();
-
     // Module Retrieval
-    $modules = $config['modules'];
+    $modules = Configuration::assocArrayFactory('modules.json', CONFIG_DIR, $log);
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
@@ -134,85 +137,85 @@ function main()
     if (isset($modules['WARNING'])) {
         unset($modules['WARNING']);
     }
-    $moduleNames = array_keys($modules);
     $moduleHierarchies = array();
 
     // Role Retrieval
     $allRoles = Roles::getRoleNames($blacklist);
 
-    // Retrieve the annotated combined config information for each section.
-    $rawHierarchies = $config->getModuleSection('hierarchies', $moduleNames);
-    $rawRoles = $config->getModuleSection('roles', $moduleNames);
-    $rawRealms = $config->getModuleSection('datawarehouse', $moduleNames);
-
+    // Configuration Files
+    $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
+    $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
+    $realmConfig = \Configuration\ModuleConfiguration::factory('datawarehouse.json', CONFIG_DIR, $log);
 
     foreach ($modules as $module => $moduleData) {
 
-        // Setup the metadata to be used in the filtering.
-        if ($module !== DEFAULT_MODULE_NAME) {
-            $metaData = array(
-                'modules' => array(
-                    DEFAULT_MODULE_NAME,
-                    $module
-                )
-            );
-        } else {
-            $metaData = array(
-                'modules' => array(
-                    DEFAULT_MODULE_NAME,
-                )
-            );
-        }
-
-        // Retrieve the section information filtered by module.
-        $hierarchies = $config->filterByMetaData(
-            $rawHierarchies,
-            $metaData
-        );
-
-        $roles = $config->filterByMetaData(
-            $rawRoles,
-            $metaData
-        );
-
-        $realms = $config->filterByMetaData(
-            $rawRealms,
-            $metaData
-        );
+        $hierarchies = $hierarchyConfig->filterByModule($module);
+        $roles = $roleConfig->filterByModule($module);
+        $realms = $realmConfig->filterByModule($module);
 
         // Process the hierarchies provided by this module, if any.
-        if (count($hierarchies) > 0 && isset($hierarchies['hierarchies'])) {
-            $moduleHierarchies[$module] = $hierarchies['hierarchies'];
+        if (count(get_object_vars($hierarchies)) > 0 && property_exists($hierarchies, 'hierarchies')) {
+            $moduleHierarchies[$module] = json_decode(json_encode($hierarchies->hierarchies), true);
         }
 
         // Process the roles provided by this module, if any.
-        if (count($roles) > 0 && isset($roles['roles'])) {
-            $moduleRoles = $roles['roles'];
+        if (count(get_object_vars($roles)) > 0 && property_exists($roles, 'roles')) {
+            $moduleRoles = $roles->roles;
+
+            // for each defined role
             foreach ($allRoles as $role) {
-                $roleData = isset($moduleRoles[$role]) ? $moduleRoles[$role] : array();
-                if (array_key_exists('extends', $roleData)) {
-                    $roleData = array_merge_recursive($moduleRoles[$roleData['extends']], $roleData);
-                }
+
+                // retrieve any role data provided by $module
+                $roleData = property_exists($moduleRoles, $role) ? $moduleRoles->$role : new stdClass();
+
+                // foreach of the role sections,
                 foreach ($sections as $section) {
-                    if (isset($roleData[$section])) {
-                        $results[$module]['acls'][$role][$section] = $roleData[$section];
+
+                    // if that section exists in the module role data
+                    if (property_exists($roleData, $section)) {
+
+                        // include that module / role / section in $results.
+                        $results[$module]['acls'][$role][$section] = json_decode(json_encode($roleData->$section), true);
                     }
                 }
             }
         }
 
         // Process the realms provided by this module, if any.
-        if (count($realms) > 0 && isset($realms['realms'])) {
-            foreach ($realms['realms'] as $realm => $data) {
-                $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
-                $statistics = isset($data['statistics']) ? $data['statistics'] : null;
+        if (property_exists($realms, 'realms')) {
+            foreach ($realms->realms as $realm => $data) {
+
+                $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
+                $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
                 $results[$module]['realms'][$realm] = array(
-                    'group_bys' => $groupBys,
-                    'statistics' => $statistics
+                    'group_bys' => json_decode(json_encode($groupBys), true),
+                    'statistics' => json_decode(json_encode($statistics), true)
                 );
             }
         }
     }
+
+    /* So $results will now look like ( generically speaking ):
+     * $results = array(
+     *   "<module>" => array(
+     *     "acls" => array(
+     *       "<acl>" => array(
+     *         "permitted_modules" => array(),
+     *         "query_descripters" => array(),
+     *         "display"           => "",
+     *         "type"              => "",
+     *         "hierarchies"       => array()
+     *       )
+     *     ),
+     *     "realms" => array(
+     *       "<realm>" = array(
+     *         "group_bys" => array(),
+     *         "statistics" => array()
+     *       )
+     *     )
+     *   )
+     * )
+     */
 
     $db = null;
 
@@ -353,7 +356,7 @@ SQL;
      *       - user_acls
      *       - user_acl_group_by_parameters
      *
-     *   - managed tables: These tables are able to be re-created from our available configuration 
+     *   - managed tables: These tables are able to be re-created from our available configuration
      *     files ( roles.json / datawarehouse.json ).
      *
      *     Current tables include:
@@ -436,7 +439,10 @@ SQL;
 
     wipeManagedTables($db);
 
-    createManagedTables();
+    // Create Managed Tables
+    Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
+
+    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
@@ -482,6 +488,9 @@ SQL;
 
     // Make sure we drop the backup tables
     dropTables($db, $nonManagedBackupTables);
+
+    // Run the acl cleanup scripts
+    Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
 }
 
 /**
@@ -539,13 +548,15 @@ function wipeManagedTables(iDatabase $db)
         'tabs',
         'acl_hierarchies',
         'acl_group_bys',
+        'report_template_acls',
         'acls',
         'acl_types',
         'group_bys',
         'statistics',
         'hierarchies',
         'realms',
-        'modules'
+        'modules',
+        'resource_type_realms'
     );
 
     foreach($tables as $table) {
@@ -566,31 +577,6 @@ SQL;
 
     $log->info("Managed Tables Wiped!");
 }
-
-function createManagedTables()
-{
-    global $dryRun, $log;
-
-    $cmd = implode(
-        ' ',
-        array(
-            'php',
-            BASE_DIR . '/tools/etl/etl_overseer.php',
-            '-p',
-            'acls-xdmod-management',
-            '-v',
-            'quiet'
-        )
-    );
-
-    if ($dryRun) {
-        $log->info("Would have executed: $cmd");
-        return;
-    }
-
-    echo exec($cmd);
-}
-
 
 /**
  * Re-populate the user related tables
@@ -724,6 +710,12 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
 
     $log->info("Processing Module: $module");
 
+    $enabledRealms = Realms::getEnabledRealms();
+    $filteredRealms = array_diff(array_keys($realms), $enabledRealms);
+    foreach($filteredRealms as $filteredRealm) {
+        unset($realms[$filteredRealm]);
+    }
+
     if ($modules === null) {
         $log->err("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
         return;
@@ -736,7 +728,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
     }
 
     if ($acls !== null) {
-        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
+        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls, $enabledRealms);
     } else {
         $log->info("No acl information for module $module skipping...");
     }
@@ -1033,7 +1025,7 @@ function processModules(iDatabase $db, array $modules)
  *                          db.
  * @return void
  **/
-function processAcls(iDatabase $db, $module, array $realms, array $acls)
+function processAcls(iDatabase $db, $module, array $realms, array $acls, array $enabledRealms)
 {
     global $dryRun, $log;
 
@@ -1052,7 +1044,7 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls)
 
         if (null !== $permittedModules && count($permittedModules) > 0) {
             $log->info("Processing tabs for Acl [$acl]");
-            processTabs($db, $module, $acl, $permittedModules);
+            processTabs($db, $module, $acl, $permittedModules, $enabledRealms);
         } elseif (null === $permittedModules) {
             $log->info("Acl $acl has no tabs to process.");
         }
@@ -1382,11 +1374,14 @@ SQL;
  *
  * @return void
  **/
-function processTabs(iDatabase $db, $module, $acl, array $tabs)
+function processTabs(iDatabase $db, $module, $acl, array $tabs, array $enabledRealms)
 {
     global $dryRun, $log;
 
     foreach ($tabs as $tab) {
+        if (isset($tab['supported_realms']) && count(array_intersect($enabledRealms, $tab['supported_realms'])) === 0){
+            continue;
+        }
         $name = $tab['name'];
         createTab($db, $module, $name);
         relateAclAndTab($db, $acl, $name);
@@ -1616,9 +1611,6 @@ SQL;
     foreach ($queryDescriptors as $queryDescriptor) {
 
         $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm'] : null;
-        $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
-        $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
-
         // if we can't find the current realm in the array of available realms
         // then just ignore this entry. This is due to the way in which we
         // process modules / how the data is represented and is expected.
@@ -1626,26 +1618,31 @@ SQL;
             continue;
         }
 
+        $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
+        $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
+        $hide = isset($queryDescriptor['hide']) ? $queryDescriptor['hide'] : null;
+
         $realmData = $realms[$realm];
         if (!isset($realmData['statistics'])) {
             $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
             continue;
         }
-        $statistics = $realmData['statistics'];
 
+        $statistics = $realmData['statistics'];
         foreach ($statistics as $statistic) {
 
             $statisticName = isset($statistic['name']) ? $statistic['name'] : null;
-            $hide = isset($statistic['hide']) ? $statistic['hide'] : null;
             $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
 
-            $enabled = null !== $disable ? !$disable : true;
-
-            if ($visible === null && $hide !== null) {
-                $visible = !$hide;
+            // By default, an entry will be shown.
+            // If the statistic defines a $visible value, then prefer that.
+            // Else, if the query descriptor has a hide value, use that.
+            $shown = true;
+            if (isset($visible)) {
+                $shown = $visible;
+            } elseif (!isset($visible) && isset($hide)) {
+                $shown = !$hide;
             }
-
-            $visible = $visible !== null ? $visible : true;
 
             $realmName = strtolower($realm);
 
@@ -1657,8 +1654,8 @@ SQL;
                 ':acl_name' => $acl,
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticName,
-                ':visible' => ( $visible ? 1 : 0 ),
-                ':enabled' => ( $enabled ? 1 : 0 )
+                ':visible' => ( $shown ? 1 : 0 ),
+                ':enabled' => ( !$disable ? 1 : 0 )
             );
 
             $log->debug(json_encode($params));
@@ -1974,7 +1971,7 @@ SQL;
  * Process each verification step to verify the Acl Setup. This includes:
  *     - Verifying that all of the relevant json files are valid syntactically.
  *     - Verifying that all of the relevant json files can be read and processed
- *       by the Xdmod\Config class.
+ *       by the Configuration\XdmodConfiguration class.
  *
  * @return int 0 if the verification was successful, 1 if it failed.
  **/
@@ -2077,9 +2074,10 @@ function verifyJsonSyntax()
 
 
 /**
- * Attempt to load an instance of Xdmod\Config and retrieve each section that
- * the Acl system depends on. If an exception occurs while attempting to
- * retrieve as section then we can assume there is a problem with that section.
+ * Attempt to load an instance of Configuration\XdmodConfiguration and retrieve
+ * each section that the Acl system depends on. If an exception occurs while
+ * attempting to retrieve as section then we can assume there is a problem with
+ * that section.
  *
  * @return boolean true if all configuration sections were loaded successfully else false.
  **/
@@ -2091,21 +2089,14 @@ function verifyConfigData()
 
     $invalid = array();
 
-    $sections = array(
-        'modules',
-        'roles',
-        'datawarehouse'
-    );
+    $sections = array('modules', 'roles', 'datawarehouse');
 
-    $config = Config::factory();
-
-    foreach ($sections as $section) {
-
+    foreach($sections as $section) {
         try {
-            $data = $config[$section];
+            \Configuration\XdmodConfiguration::assocArrayFactory("$section.json", CONFIG_DIR);
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
-            $log->err("[FAIL] Unable to load section $section");
+            $log->err(sprintf('[FAIL] Unable to load section %s: %s', $section, $e->getMessage()));
             $invalid[] = $section;
         }
     }
@@ -2150,12 +2141,6 @@ function verifyDatabase()
 function tablesExist(iDatabase $db, array $tables, $schema, $all = true)
 {
     $handle = $db->handle();
-    $query = <<<SQL
-SELECT *
-FROM information_schema.tables
-WHERE table_schema = :table_schema
-AND table_name in (:table_list);
-SQL;
 
     $tables = array_reduce(
         $tables,
@@ -2168,10 +2153,18 @@ SQL;
     );
 
     $tableList = implode(',', $tables);
+
+    $query = <<<SQL
+SELECT *
+FROM information_schema.tables
+WHERE table_schema = :table_schema
+AND table_name in ($tableList);
+SQL;
+
     $params = array(
-        ':table_schema' => $schema,
-        ':table_list' => $tableList
+        ':table_schema' => $schema
     );
+
     $results = $db->query(
         $query,
         $params
@@ -2184,14 +2177,33 @@ SQL;
     return count($results) > 0;
 }
 
+/**
+ * Attempt to issue a DROP TABLE statement for each of the provided $tables.
+ *
+ * @param iDatabase $db     the database to issue the sql statements to.
+ * @param string[]  $tables an array of string table names that are to be dropped.
+ */
 function dropTables(iDatabase $db, array $tables)
 {
+    global $dryRun, $log;
+
+    $log->info("*** Dropping Tables...");
+
     $tableList = implode(
         ',',
         $tables
     );
 
+    if ($dryRun) {
+        $log->notice("Would have dropped tables: $tableList");
+        return;
+    }
+
+    $log->info("\t [$tableList]");
+
     $db->execute("DROP TABLE $tableList");
+
+    $log->info("*** Tables Dropped!");
 }
 
 /**

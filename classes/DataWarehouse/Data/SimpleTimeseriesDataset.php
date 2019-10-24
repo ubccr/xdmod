@@ -286,10 +286,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $this->_query->getEndDate(),
             null,
             null,
-            array(),
-            'tg_usage',
-            array(),
-            false
+            array()
         );
 
         $agg_query->addGroupBy($column_name);
@@ -346,10 +343,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $this->_query->getEndDate(),
             null,
             null,
-            array(),
-            'tg_usage',
-            array(),
-            false
+            array()
         );
 
         $agg_query->addGroupBy($column_name);
@@ -758,10 +752,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $this->_query->getEndDate(),
             null,           // no group by in constructor
             null,           // statname associated with query in constructor
-            array(),        // params
-            'tg_usage',     // query groupname
-            array(),        // parameter_description
-            false           // single_stat
+            array()         // params
         );
 
         // add the stats

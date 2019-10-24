@@ -2,6 +2,8 @@
 
 namespace OpenXdmod;
 
+use CCR\DB;
+use Configuration\XdmodConfiguration;
 use Exception;
 use CCR\DB\iDatabase;
 use ETL\Configuration\EtlConfiguration;
@@ -9,6 +11,8 @@ use ETL\EtlOverseer;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 use FilterListBuilder;
+use Models\Services\Realms;
+use PDO;
 
 class DataWarehouseInitializer
 {
@@ -75,6 +79,13 @@ class DataWarehouseInitializer
     protected $append;
 
     /**
+     * A String[] of the realms currently considered `enabled`.
+     *
+     * @var array
+     */
+    protected $enabledRealms = null;
+
+    /**
      * @param iDatabase $hpcdbDb The HPcDB database.
      * @param iDatabase $warehouseDb The MoD warehouse database.
      */
@@ -126,6 +137,9 @@ class DataWarehouseInitializer
         $this->ingestAllShredded($startDate, $endDate);
         $this->ingestAllStaging($startDate, $endDate);
         $this->ingestAllHpcdb($startDate, $endDate);
+        $this->ingestCloudDataGeneric();
+        $this->ingestCloudDataOpenStack();
+        $this->ingestStorageData();
     }
 
     /**
@@ -136,9 +150,13 @@ class DataWarehouseInitializer
      */
     public function ingestAllShredded($startDate = null, $endDate = null)
     {
+        if( !$this->isRealmEnabled('Jobs') ){
+            $this->logger->debug('Jobs realm not enabled, not ingesting shredded data to staging tables');
+            return;
+        }
+
         $this->logger->debug('Ingesting shredded data to staging tables');
-        $this->runEtlPipeline('staging-ingest-common');
-        $this->runEtlPipeline('staging-ingest-jobs');
+        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
     }
 
     /**
@@ -149,9 +167,14 @@ class DataWarehouseInitializer
      */
     public function ingestAllStaging($startDate = null, $endDate = null)
     {
+        if( !$this->isRealmEnabled('Jobs') ){
+            $this->logger->debug('Jobs realm not enabled, not ingesting staging data to HPCDB');
+            return;
+        }
+
         $this->logger->debug('Ingesting staging data to HPCDB');
-        $this->runEtlPipeline('hpcdb-ingest-common');
-        $this->runEtlPipeline('hpcdb-ingest-jobs');
+        Utilities::runEtlPipeline(array('hpcdb-ingest-common', 'hpcdb-ingest-jobs'), $this->logger);
+
     }
 
     /**
@@ -162,33 +185,172 @@ class DataWarehouseInitializer
      */
     public function ingestAllHpcdb($startDate = null, $endDate = null)
     {
+
+        if( !$this->isRealmEnabled('Jobs') ){
+            $this->logger->debug('Jobs realm not enabled, not ingesting HPCDB data to modw');
+            return;
+        }
+
         $this->logger->debug('Ingesting HPCDB data to modw');
+        $params = array();
+        $pipeline = array('hpcdb-prep-xdw-job-ingest-by-new-jobs');
 
         if ($startDate !== null || $endDate !== null) {
-            $params = array();
             if ($startDate !== null) {
                 $params['start-date'] = $startDate . ' 00:00:00';
             }
             if ($endDate !== null) {
                 $params['end-date'] = $endDate . ' 23:59:59';
             }
-            $this->runEtlPipeline(
-                'hpcdb-prep-xdw-job-ingest-by-date-range',
-                $params
-            );
-        } else {
-            $this->runEtlPipeline('hpcdb-prep-xdw-job-ingest-by-new-jobs');
+            $pipeline = array('hpcdb-prep-xdw-job-ingest-by-date-range');
         }
+
+        Utilities::runEtlPipeline($pipeline, $this->logger, $params);
 
         // Use current time from the database in case clocks are not
         // synchronized.
         $lastModifiedStartDate
             = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
 
-        $this->runEtlPipeline(
-            'hpcdb-xdw-ingest',
+        Utilities::runEtlPipeline(
+            array('hpcdb-xdw-ingest-common', 'hpcdb-xdw-ingest-jobs'),
+            $this->logger,
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
+
+    }
+
+    /**
+     * Extracting openstack data from the openstack_raw_events table. If the raw
+     * tables do not exist then catch the resulting exception and display a message
+     * saying that there is no OpenStack data to ingest.
+     */
+    public function ingestCloudDataOpenStack()
+    {
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            return;
+        }
+
+        try {
+            $this->logger->notice('Ingesting OpenStack event log data');
+            Utilities::runEtlPipeline(
+                array('jobs-cloud-common', 'jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                $this->logger
+            );
+        }
+        catch( Exception $e ){
+            if( $e->getCode() == 1146 ){
+                $this->logger->notice('No OpenStack events to ingest');
+            }
+            else{
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Extracting cloud log data from the generic_raw_events table. If the raw
+     * tables do not exist then catch the resulting exception and display a message
+     * saying that there is no generic cloud data to ingest.
+     */
+    public function ingestCloudDataGeneric()
+    {
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            return;
+        }
+
+        try {
+            $this->logger->notice('Ingesting generic cloud log files');
+            Utilities::runEtlPipeline(
+                array('jobs-cloud-common', 'jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
+                $this->logger
+            );
+        }
+        catch( Exception $e ){
+            if( $e->getCode() == 1146 ){
+                $this->logger->notice('No cloud event data to ingest');
+            }
+            else{
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Ingest storage data.
+     *
+     * If the storage realm is not enabled then do nothing.
+     */
+    public function ingestStorageData()
+    {
+        if (!$this->isRealmEnabled('Storage')) {
+            $this->logger->debug('Storage realm not enabled, not ingesting');
+            return;
+        }
+
+        $this->logger->notice('Ingesting storage data');
+        Utilities::runEtlPipeline(
+            [
+                'staging-ingest-common',
+                'hpcdb-ingest-common',
+                'hpcdb-ingest-storage',
+                'hpcdb-xdw-ingest-common',
+                'xdw-ingest-storage',
+            ],
+            $this->logger
+        );
+    }
+
+    /**
+     * Aggregating all cloud data. If the appropriate tables do not exist then
+     * catch the resulting exception and display a message saying that there
+     * is no cloud data to aggregate and cloud aggregation is being skipped.
+     */
+    public function aggregateCloudData($lastModifiedStartDate)
+    {
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            return;
+        }
+
+        $this->logger->notice('Aggregating Cloud data');
+        Utilities::runEtlPipeline(
+            array('cloud-state-pipeline'),
+            $this->logger,
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Cloud');
+    }
+
+    /**
+     * Aggregate storage data.
+     *
+     * If the storage realm is not enabled then do nothing.
+     *
+     * @param string $lastModifiedStartDate Aggregate data ingested on or after
+     *     this date.
+     */
+    public function aggregateStorageData($lastModifiedStartDate)
+    {
+        if (!$this->isRealmEnabled('Storage')) {
+            $this->logger->notice('Storage realm not enabled, not aggregating');
+            return;
+        }
+
+        $this->logger->notice('Aggregating storage data');
+        Utilities::runEtlPipeline(
+            ['xdw-aggregate-storage'],
+            $this->logger,
+            ['last-modified-start-date' => $lastModifiedStartDate]
+        );
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Storage');
     }
 
     /**
@@ -217,10 +379,17 @@ class DataWarehouseInitializer
      */
     public function aggregateAllJobs($lastModifiedStartDate)
     {
-        $this->runEtlPipeline(
-            'jobs-xdw-aggregate',
+        if (!$this->isRealmEnabled('Jobs')) {
+            $this->logger->notice('Jobs realm not enabled, not aggregating');
+            return;
+        }
+
+        Utilities::runEtlPipeline(
+            array('jobs-xdw-aggregate'),
+            $this->logger,
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
+
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
         $filterListBuilder->buildRealmLists('Jobs');
@@ -276,50 +445,47 @@ class DataWarehouseInitializer
     }
 
     /**
-     * Run an ETL pipeline.
+     * Check to see if a realm exists in the realms table
      *
-     * @param string $name Pipeline or "section" to run.
-     * @param array $params Parameters to be passed to used to construct
-     *   EtlOverseerOptions.
+     * @param string $realm The realm you are checking to see if exists
+     * @return bool
      */
-    private function runEtlPipeline($name, $params = array())
+    public function isRealmEnabled($realm)
     {
-        $this->logger->debug(
-            sprintf(
-                'Running ETL pipeline "%s" with parameters %s',
-                $name,
-                json_encode($params)
-            )
-        );
+        return in_array($realm, $this->getEnabledRealms());
+    }
 
-        $etlConfig = new EtlConfiguration(
-            CONFIG_DIR . '/etl/etl.json',
-            null,
-            $this->logger,
-            array('default_module_name' => 'xdmod')
-        );
-        $etlConfig->initialize();
-        Utilities::setEtlConfig($etlConfig);
+    /**
+     * Retrieve an array of the realms that are `enabled` for this XDMoD installation. `enabled` is defined as there
+     * being a resource present of a type that supports ( i.e. has a record in its `realms` property ) said realm.
+     * .
+     * @return array
+     */
+    public function getEnabledRealms()
+    {
+        if ($this->enabledRealms !== null) {
+            return $this->enabledRealms;
+        }
 
-        $scriptOptions = array_merge(
-            array(
-                'default-module-name' => 'xdmod',
-                'process-sections' => array($name),
-            ),
-            $params
-        );
-        $this->logger->debug(
-            sprintf(
-                'Running ETL pipeline with script options %s',
-                json_encode($scriptOptions)
-            )
-        );
+        $resources = XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
+        $resourceTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
 
-        $overseerOptions = new EtlOverseerOptions(
-            $scriptOptions,
-            $this->logger
-        );
-        $overseer = new EtlOverseer($overseerOptions, $this->logger);
-        $overseer->execute($etlConfig);
+        $currentResourceTypes = array();
+        foreach($resources as $resource) {
+            if (isset($resource['resource_type'])) {
+                $currentResourceTypes[] = $resource['resource_type'];
+            }
+        }
+        $currentResourceTypes = array_unique($currentResourceTypes);
+
+        $realms = array();
+        foreach($currentResourceTypes as $currentResourceType) {
+            if (isset($resourceTypes[$currentResourceType])) {
+                $realms = array_merge($realms, $resourceTypes[$currentResourceType]['realms']);
+            }
+        }
+        $this->enabledRealms = array_unique($realms);
+
+        return $this->enabledRealms;
     }
 }
