@@ -151,7 +151,7 @@ class DataWarehouseInitializer
     public function ingestAllShredded($startDate = null, $endDate = null)
     {
         if( !$this->isRealmEnabled('Jobs') ){
-            $this->logger->debug('Jobs realm not enabled, not ingesting shredded data to staging tables');
+            $this->logger->notice('Jobs realm not enabled, not ingesting shredded data to staging tables');
             return;
         }
 
@@ -168,7 +168,7 @@ class DataWarehouseInitializer
     public function ingestAllStaging($startDate = null, $endDate = null)
     {
         if( !$this->isRealmEnabled('Jobs') ){
-            $this->logger->debug('Jobs realm not enabled, not ingesting staging data to HPCDB');
+            $this->logger->notice('Jobs realm not enabled, not ingesting staging data to HPCDB');
             return;
         }
 
@@ -187,7 +187,7 @@ class DataWarehouseInitializer
     {
 
         if( !$this->isRealmEnabled('Jobs') ){
-            $this->logger->debug('Jobs realm not enabled, not ingesting HPCDB data to modw');
+            $this->logger->notice('Jobs realm not enabled, not ingesting HPCDB data to modw');
             return;
         }
 
@@ -228,7 +228,7 @@ class DataWarehouseInitializer
     public function ingestCloudDataOpenStack()
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            $this->logger->notice('Cloud realm not enabled, not ingesting');
             return;
         }
 
@@ -257,7 +257,7 @@ class DataWarehouseInitializer
     public function ingestCloudDataGeneric()
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            $this->logger->notice('Cloud realm not enabled, not ingesting');
             return;
         }
 
@@ -286,7 +286,7 @@ class DataWarehouseInitializer
     public function ingestStorageData()
     {
         if (!$this->isRealmEnabled('Storage')) {
-            $this->logger->debug('Storage realm not enabled, not ingesting');
+            $this->logger->notice('Storage realm not enabled, not ingesting');
             return;
         }
 
@@ -311,7 +311,7 @@ class DataWarehouseInitializer
     public function aggregateCloudData($lastModifiedStartDate)
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            $this->logger->notice('Cloud realm not enabled, not aggregating');
             return;
         }
 
