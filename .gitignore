@@ -4,6 +4,7 @@
 *.orig
 *.log
 *.rej
+*.sarif
 
 # Ignore paths that contain generated content.
 cache/
