@@ -467,13 +467,20 @@ class DataWarehouseInitializer
             return $this->enabledRealms;
         }
 
-        $resources = XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
+        $resources = XdmodConfiguration::factory('resources.json', CONFIG_DIR)->toStdClass();
         $resourceTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+
+        // If there is only one entry in the json array in the config file then
+        // the XdmodConfiguration returns the entry. If there are multiple
+        // entries then it returns an array containing the entries.
+        if (!is_array($resources)) {
+            $resources = array($resources);
+        }
 
         $currentResourceTypes = array();
         foreach($resources as $resource) {
-            if (isset($resource['resource_type'])) {
-                $currentResourceTypes[] = $resource['resource_type'];
+            if (isset($resource->resource_type)) {
+                $currentResourceTypes[] = $resource->resource_type;
             }
         }
         $currentResourceTypes = array_unique($currentResourceTypes);
