@@ -21,8 +21,8 @@ build:
         - ./tests/ci/validate.sh
         - composer install --no-progress
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
-        - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
-        - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
+        - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
+        - cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - ./tests/integration/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - ./tests/regression/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults/
         - ./tests/component/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml

@@ -79,4 +79,8 @@ class GroupByScience extends GroupBy
 
         $this->addOrder($query, $multi_group);
     }
+    public function getDefaultDatasetType()
+    {
+        return 'aggregate';
+    }
 }
