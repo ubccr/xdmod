@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2019-10-28 v8.5.1
+## 2019-10-29 v8.5.1
 
 - Bug Fixes
     - General
