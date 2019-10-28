@@ -1,5 +1,10 @@
-Open XDMoD Change Log
-==================
+# Open XDMoD Change Log
+
+## 2019-10-28 v8.5.1
+
+- Bug Fixes
+    - General
+        - Fix configuration settings for configuration class. ([\#1130](https://github.com/ubccr/xdmod/pull/1130))
 
 ## 2019-10-21 v8.5.0
 

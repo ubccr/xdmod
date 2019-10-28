@@ -37,7 +37,7 @@ defaults:
     values:
       layout: "page"
       prev_sw_version: "8.1.2"
-      sw_version: "8.5.0"
+      sw_version: "8.5.1"
       style: "effervescence"
       tocversion: "toc"
 
