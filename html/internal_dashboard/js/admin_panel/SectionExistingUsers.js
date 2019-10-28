@@ -804,11 +804,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             }
         };
 
-        self.resetDirtyState = function () {
-            revertUserSettings();
-            roleGrid.setDirtyState(false);
-        };
-
         /**
          * Reset the start / original values for the User Settings fields for
          * accurate change tracking.
@@ -829,6 +824,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
             }
+        };
+
+        self.resetDirtyState = function () {
+            resetUserSettings();
+            roleGrid.setDirtyState(false);
         };
 
         // ------------------------------------------
@@ -982,7 +982,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         self.resetDirtyState();
-                        resetUserSettings();
+                        revertUserSettings();
 
                         updateSaveIndicator();
 

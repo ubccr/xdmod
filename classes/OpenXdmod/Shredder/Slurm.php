@@ -158,6 +158,9 @@ class Slurm extends Shredder
         'NODE_FAIL',
         'PREEMPTED',
         'TIMEOUT',
+        'OUT_OF_MEMORY',
+        'DEADLINE',
+        'REVOKED'
     );
 
     /**

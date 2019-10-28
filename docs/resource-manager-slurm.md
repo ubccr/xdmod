@@ -44,7 +44,8 @@ options that limit the output.
         --format jobid,jobidraw,cluster,partition,account,group,gid,\
     user,uid,submit,eligible,start,end,elapsed,exitcode,state,nnodes,\
     ncpus,reqcpus,reqmem,reqgres,reqtres,timelimit,nodelist,jobname \
-        --state CANCELLED,COMPLETED,FAILED,NODE_FAIL,PREEMPTED,TIMEOUT \
+        --state CANCELLED,COMPLETED,FAILED,NODE_FAIL,PREEMPTED,TIMEOUT,\
+    OUT_OF_MEMORY,DEADLINE,REVOKED \
         --starttime 2013-01-01T00:00:00 --endtime 2013-01-01T23:59:59 \
         >/tmp/slurm.log
 

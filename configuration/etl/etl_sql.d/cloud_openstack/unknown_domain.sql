@@ -13,7 +13,8 @@ FROM (
                                  LIMIT 1),
                                 (SELECT resource_id
                                  FROM ${DESTINATION_SCHEMA}.domains d
-                                 WHERE LOWER(d.name) = 'default')
+                                 WHERE LOWER(d.name) = 'default'
+                                 LIMIT 1)
                             ),
                         -1) as resource_id,
                 'Unknown'   as name
