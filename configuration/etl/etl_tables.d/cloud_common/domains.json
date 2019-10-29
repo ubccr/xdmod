@@ -28,14 +28,14 @@
     ],
     "indexes": [
       {
-        "name": "PRIMARY",
+        "name": "increment_key",
         "columns": [
           "id"
         ],
         "is_unique": true
       },
       {
-        "name": "idx_resource_id_name_uniq",
+        "name": "PRIMARY",
         "columns": [
           "resource_id",
           "name"
