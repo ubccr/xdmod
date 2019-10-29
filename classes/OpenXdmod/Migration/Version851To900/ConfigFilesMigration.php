@@ -1,13 +1,14 @@
 <?php
 /**
- * Update config files from version 8.5.0 To 9.0.0.
+ * Update config files from version 8.5.1 To 9.0.0.
  */
-namespace OpenXdmod\Migration\Version850To900;
+namespace OpenXdmod\Migration\Version851To900;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
 /**
- * Update portal_settings.ini with the new version number.
+ * Update portal_settings.ini with the new version number and update roadmap
+ * URL.
  */
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {

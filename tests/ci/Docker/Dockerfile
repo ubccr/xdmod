@@ -5,7 +5,7 @@ ARG GIT_USER=ubccr
 # if you want to test uncomment the run line below
 # RUN echo $GIT_USER $GIT_BRANCH
 
-ENV REL=8.5.0
+ENV REL=8.5.1
 ENV BUILD=1
 
 ENV SRCDIR=/src/github.com/ubccr
