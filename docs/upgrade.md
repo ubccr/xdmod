@@ -102,8 +102,8 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.1 to 8.5 Upgrade Notes
-------------------------
+8.5.0 Upgrade Notes
+-------------------
 
 Open XDMoD 8.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
@@ -152,6 +152,14 @@ version.  Tables may be altered the first time they are used during ingestion.
 - Adds `modw`.`batch_export_requests` table.
 - Adds `moddb`.`ReportTemplateChartsStaging` table.
 - Adds `moddb`.`ReportTemplatesStaging` table.
+
+8.5.1 Upgrade Notes
+-------------------
+
+Open XDMoD 8.5.1 is a bug fix release that fixes an issue with detecting
+enabled realms when only one resource is configured.
+
+You may upgrade directly from 8.1.0, 8.1.1, 8.1.2 or 8.5.0 to 8.5.1.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
