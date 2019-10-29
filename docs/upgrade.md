@@ -102,10 +102,23 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.5.0 to 8.6.0 Upgrade Notes
-----------------------------
+8.6.0 Upgrade Notes
+-------------------
 
+Open XDMoD 8.6.0 is a major release that includes new features along with many
+enhancements and bug fixes.
 
+You may upgrade directly from 8.5.0 or 8.5.1.
+
+### Configuration File Changes
+
+The `xdmod-upgrade` script will migrate user editable configuration files to
+the new version.
+
+### Database Changes
+
+The `xdmod-upgrade` script will migrate the database schemas to the new
+version.  Tables may be altered the first time they are used during ingestion.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
