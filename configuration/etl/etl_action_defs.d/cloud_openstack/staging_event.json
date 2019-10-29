@@ -25,8 +25,7 @@
             "instance_type_id": "COALESCE(itype.instance_type_id, 1)",
             "event_data": "raw.event_data",
             "volume_id": "raw.volume_id",
-            "domain_id": "COALESCE(d.id, 1)",
-            "service_provider": "i.service_provider"
+            "domain_id": "COALESCE(d.id, 1)"
         },
 
         "joins": [
