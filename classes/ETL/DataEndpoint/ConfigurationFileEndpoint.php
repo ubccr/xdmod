@@ -20,7 +20,7 @@ class ConfigurationFileEndpoint extends JsonFile implements iStructuredFile, iCo
 
         $retVal = parent::parse();
 
-        #unlink($tmpFile);
+        unlink($tmpFile);
 
         return $retVal;
     }

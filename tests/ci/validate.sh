@@ -28,4 +28,13 @@ then
     exitcode=1
 fi
 
+# Check that the various scripts have not left any files around in the tmp
+# directory
+if find /tmp -type f -newer /usr/share/xdmod/html/index.php | grep -q  .
+then
+    echo "Unexpected files found in temporary directory"
+    find /tmp -type f -newer /usr/share/xdmod/html/index.php
+    exitcode=1
+fi
+
 exit $exitcode
