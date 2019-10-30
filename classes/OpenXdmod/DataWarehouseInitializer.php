@@ -467,7 +467,7 @@ class DataWarehouseInitializer
             return $this->enabledRealms;
         }
 
-        $resources = XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR);
+        $resources = XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR, null, array('force_array_return' => true));
         $resourceTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
 
         $currentResourceTypes = array();
