@@ -77,13 +77,6 @@
                 "comment": "domain that the event is related to. Unknown = -1"
             },
             {
-                "name": "service_provider",
-                "type": "int(11)",
-                "nullable": false,
-                "default": -1,
-                "comment": "Service provider that the event is related to. Unknown = -1"
-            },
-            {
                 "name": "last_modified",
                 "type": "timestamp",
                 "nullable": false,
@@ -96,7 +89,6 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "service_provider",
                     "instance_id",
                     "event_time_ts",
                     "event_type_id",

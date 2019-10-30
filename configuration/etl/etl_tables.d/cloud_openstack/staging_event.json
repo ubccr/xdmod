@@ -106,13 +106,6 @@
                 "nullable": true,
                 "default": null,
                 "comment": "The domain associated with the event"
-            },
-            {
-                "name": "service_provider",
-                "type": "int(11)",
-                "nullable": true,
-                "default": null,
-                "comment": "The service provider associated with the event"
             }
         ],
 
@@ -131,8 +124,7 @@
                     "record_type_id",
                     "person_id",
                     "account_id",
-                    "host_id",
-                    "service_provider"
+                    "host_id"
                 ],
                 "is_unique": true
             },

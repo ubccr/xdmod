@@ -92,13 +92,6 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "Asset type of the root volume as defined by the instance type. Unknown = -1"
-            },
-            {
-                "name": "service_provider",
-                "type": "int(11)",
-                "nullable": true,
-                "default": null,
-                "comment": "The service provider associated with the event"
             }
         ],
 
@@ -117,8 +110,7 @@
                     "record_type_id",
                     "person_id",
                     "account_id",
-                    "host_id",
-                    "service_provider"
+                    "host_id"
                 ],
                 "is_unique": true
             },
