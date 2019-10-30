@@ -63,7 +63,9 @@
                 },
                 {
                    "name": "service_provider",
-                   "class": "GroupByServiceProvider"
+                   "class": "GroupByServiceProvider",
+                   "visible": false
+
                 }
             ],
             "statistics": [
