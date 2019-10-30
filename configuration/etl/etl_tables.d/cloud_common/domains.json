@@ -28,9 +28,17 @@
     ],
     "indexes": [
       {
-        "name": "PRIMARY",
+        "name": "increment_key",
         "columns": [
           "id"
+        ],
+        "is_unique": true
+      },
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "resource_id",
+          "name"
         ],
         "is_unique": true
       }
