@@ -7,6 +7,7 @@
 namespace ETL\DataEndpoint;
 
 use Exception;
+use JsonSchema\Constraints\Constraint;
 use Log;
 use ETL\JsonPointer;
 use ETL\DataEndpoint\DataEndpointOptions;
@@ -129,7 +130,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
 
         foreach ($this->recordList as $index => $record) {
             $recordCount++;
-            $validator->validate($record, $schemaObject);
+            $validator->validate($record, $schemaObject, Constraint::CHECK_MODE_COERCE_TYPES);
 
             if ( $validator->isValid() ) {
                 continue;
