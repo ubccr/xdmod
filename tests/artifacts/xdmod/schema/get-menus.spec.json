@@ -25,10 +25,10 @@
           "type":"string"
         },
         "defaultChartSettings": {
-          "type":"string"
+          "type":"object"
         },
         "chartSettings": {
-          "type":"string"
+          "type":"object"
         },
         "node_type": {
           "type":"string"

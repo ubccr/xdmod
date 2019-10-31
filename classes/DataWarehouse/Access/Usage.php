@@ -114,7 +114,7 @@ class Usage extends Common
                         'subnotes' => $usageSubnotes,
                         'group_description' => $usageGroupByObject->getDescription(),
                         'description' => $statsClass->getDescription($usageGroupByObject),
-                        'chart_settings' => json_encode($statUsageChartSettings),
+                        'chart_settings' => $statUsageChartSettings,
                 );
 
                 $usageCharts[] = $usageChart;
@@ -939,7 +939,7 @@ class Usage extends Common
                     'realm' => $usageRealm,
                     'start_date' => $this->request['start_date'],
                     'end_date' => $this->request['end_date'],
-                    'chart_settings' => json_encode($usageChartSettings),
+                    'chart_settings' => $usageChartSettings,
                     'show_gradient' => $usageShowGradient,
                     'final_width' => $usageWidth,
                     'final_height' => $usageHeight - 4,

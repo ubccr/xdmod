@@ -105,25 +105,6 @@ Ext.extend(CCR.xdmod.ui.ChartToolbar, Ext.Toolbar, {
         }
     },
 
-    fromJSON: function (chartSettingsString) {
-        var chartSettingsObject = Ext.util.JSON.decode(chartSettingsString);
-        this.setValues(chartSettingsObject.dataset_type,
-            chartSettingsObject.display_type,
-            chartSettingsObject.combine_type,
-            chartSettingsObject.show_legend,
-            chartSettingsObject.limit,
-            chartSettingsObject.offset,
-            chartSettingsObject.log_scale,
-            chartSettingsObject.show_guide_lines,
-            chartSettingsObject.show_trend_line,
-            chartSettingsObject.show_error_bars,
-            chartSettingsObject.show_aggregate_labels,
-            chartSettingsObject.show_error_labels,
-            chartSettingsObject.enable_errors,
-            chartSettingsObject.enable_trend_line,
-            chartSettingsObject.hide_tooltip);
-    },
-
     setValues: function (
         dataset_type,
         display_type,
@@ -159,6 +140,24 @@ Ext.extend(CCR.xdmod.ui.ChartToolbar, Ext.Toolbar, {
         this.chartConfigButton.menu.setDisplayParam(display_type);
         this.chartConfigButton.menu.setDataCombineMethodParam(data_combine_method);
         this.chartConfigButton.menu.setDatasetParam(dataset_type);
+    },
+
+    setValuesFromSettings: function (chartSettingsObject) {
+        this.setValues(chartSettingsObject.dataset_type,
+            chartSettingsObject.display_type,
+            chartSettingsObject.combine_type,
+            chartSettingsObject.show_legend,
+            chartSettingsObject.limit,
+            chartSettingsObject.offset,
+            chartSettingsObject.log_scale,
+            chartSettingsObject.show_guide_lines,
+            chartSettingsObject.show_trend_line,
+            chartSettingsObject.show_error_bars,
+            chartSettingsObject.show_aggregate_labels,
+            chartSettingsObject.show_error_labels,
+            chartSettingsObject.enable_errors,
+            chartSettingsObject.enable_trend_line,
+            chartSettingsObject.hide_tooltip);
     },
 
     onHandle: function () {

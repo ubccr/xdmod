@@ -237,7 +237,7 @@ EOF;
 
         $this->assertArrayHasKey('chart_settings', $plotdata['data'][0]);
 
-        $settings = json_decode($plotdata['data'][0]['chart_settings'], true);
+        $settings = $plotdata['data'][0]['chart_settings'];
 
         $this->assertArrayHasKey('enable_errors', $settings);
         $this->assertEquals($expected, $settings['enable_errors']);

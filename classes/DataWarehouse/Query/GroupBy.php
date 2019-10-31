@@ -276,23 +276,21 @@ abstract class GroupBy extends \Common\Identity
 
     public function getChartSettings($isMultiChartPage = false)
     {
-        return json_encode(
-            array(
-                'dataset_type' => $this->getDefaultDatasetType(),
-                'display_type' => $this->getDefaultDisplayType($this->getDefaultDatasetType()),
-                'combine_type' => $this->getDefaultCombineMethod(),
-                'limit' => $this->getDefaultLimit($isMultiChartPage),
-                'offset' => $this->getDefaultOffset(),
-                'log_scale' => $this->getDefaultLogScale(),
-                'show_legend' => $this->getDefaultShowLegend(),
-                'show_trend_line' => $this->getDefaultShowTrendLine(),
-                'show_error_bars' => $this->getDefaultShowErrorBars(),
-                'show_guide_lines' => $this->getDefaultShowGuideLines(),
-                'show_aggregate_labels' => $this->getDefaultShowAggregateLabels(),
-                'show_error_labels' => $this->getDefaultShowErrorLabels(),
-                'enable_errors' => $this->getDefaultEnableErrors(),
-                'enable_trend_line' => $this->getDefaultEnableTrendLine(),
-            )
+        return array(
+            'dataset_type' => $this->getDefaultDatasetType(),
+            'display_type' => $this->getDefaultDisplayType($this->getDefaultDatasetType()),
+            'combine_type' => $this->getDefaultCombineMethod(),
+            'limit' => $this->getDefaultLimit($isMultiChartPage),
+            'offset' => $this->getDefaultOffset(),
+            'log_scale' => $this->getDefaultLogScale(),
+            'show_legend' => $this->getDefaultShowLegend(),
+            'show_trend_line' => $this->getDefaultShowTrendLine(),
+            'show_error_bars' => $this->getDefaultShowErrorBars(),
+            'show_guide_lines' => $this->getDefaultShowGuideLines(),
+            'show_aggregate_labels' => $this->getDefaultShowAggregateLabels(),
+            'show_error_labels' => $this->getDefaultShowErrorLabels(),
+            'enable_errors' => $this->getDefaultEnableErrors(),
+            'enable_trend_line' => $this->getDefaultEnableTrendLine(),
         );
     }
     public function getDefaultDatasetType()

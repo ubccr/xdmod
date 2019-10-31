@@ -1083,7 +1083,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             var newStartDate = self.getDurationSelector().getStartDate().format('Y-m-d');
             var newEndDate = self.getDurationSelector().getEndDate().format('Y-m-d');
             var aggregationUnit = self.getDurationSelector().getAggregationUnit();
-            var chartSettings = JSON.decode ? JSON.decode(n.attributes.chartSettings) : JSON.parse ? JSON.parse(n.attributes.chartSettings): {};
+            var chartSettings = Ext.apply({}, n.attributes.chartSettings);
             function boolean_to_char(value) {
                 if ( value !== undefined  && typeof value === 'boolean') {
                     return value ? 'y' : 'n';
@@ -1254,7 +1254,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 // Now that all the shenanigans are over, go ahead and update the
                 // toolbar w/ the possibly updated decoded chart settings.
                 chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(n.attributes.supportsAggregate === false);
-                chartToolbar.fromJSON(n.attributes.chartSettings);
+                chartToolbar.setValuesFromSettings(n.attributes.chartSettings);
             } else {
                 chartToolbar.resetValues();
             }
@@ -1454,7 +1454,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartContainer.setHeight(CCR.xdmod.ui.thumbHeight * chartThumbScale);
                             chartContainer.mask('Loading...');
 
-                            var chart_params = Ext.apply({}, Ext.util.JSON.decode(r.get('chart_settings')), menuParams);
+                            var chart_params = Ext.apply({}, r.get('chart_settings'), menuParams);
 
                             var deferStore = new Ext.data.JsonStore({
                                 autoDestroy: true,
@@ -1925,11 +1925,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         if (n.attributes.supportsAggregate === false) {
                             // do not overide chart settings for nodes that correspond to statistics that must be
                             // shown in timeseries mode (note for future: there should be no statistics like this in XDMoD).
-                            var decoded = JSON.parse(n.attributes.chartSettings);
+                            var decoded = Ext.apply({}, n.attributes.chartSettings);
                             decoded.dataset_type = 'timeseries';
                             decoded.display_type = 'line';
                             decoded.swap_xy = false;
-                            statisticNode.attributes.chartSettings = JSON.stringify(decoded);
+                            statisticNode.attributes.chartSettings = decoded;
                         } else {
                             statisticNode.attributes.chartSettings = node.attributes.chartSettings || undefined;
                         }
@@ -2659,12 +2659,14 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         'Chart: ' + chartStore.getAt(0).get('title') + ', Params: ' + chartStore.getAt(0).get('params_title')
                     );
 
-                    var serverChartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
-                    if (serverChartSettings === '') {
-                        serverChartSettings = n.attributes.defaultChartSettings;
+                    var serverChartSettings = Ext.apply({}, chartStore.getAt(0).get('chart_settings'));
+
+                    if (!serverChartSettings) {
+                        serverChartSettings = Ext.apply({}, n.attributes.defaultChartSettings);
                     }
+
                     n.attributes.chartSettings = serverChartSettings;
-                    chartToolbar.fromJSON(n.attributes.chartSettings);
+                    chartToolbar.setValuesFromSettings(n.attributes.chartSettings);
 
                     self.setImageExport(true);
 
