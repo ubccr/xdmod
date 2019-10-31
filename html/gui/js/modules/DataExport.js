@@ -56,18 +56,30 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                 // Update history so the download URL is no longer present.
                 Ext.History.add(this.id);
 
-                // A confirmation message is used because the download cannot
-                // be initiated automatically as it would be blocked as a
-                // pop-up.
-                Ext.Msg.confirm(
-                    'Data Export',
-                    'Download exported data now?',
-                    function (buttonId) {
-                        if (buttonId === 'yes') {
-                            XDMoD.Module.DataExport.openDownloadWindow(params.id);
-                        }
+                // The requests aren't loaded until after the realms so it's
+                // safe to use the "load" event to wait until the records are
+                // available.
+                this.requestsStore.on('load', function (store) {
+                    if (store.getById(params.id)) {
+                        // A confirmation message is used because the download cannot
+                        // be initiated automatically as it would be blocked as a
+                        // pop-up.
+                        Ext.Msg.confirm(
+                            'Data Export',
+                            'Download exported data now?',
+                            function (buttonId) {
+                                if (buttonId === 'yes') {
+                                    XDMoD.Module.DataExport.openDownloadWindow(params.id);
+                                }
+                            }
+                        );
+                    } else {
+                        Ext.Msg.alert(
+                            'Data Export',
+                            'Exported data not found'
+                        );
                     }
-                );
+                }, this, { single: true });
             }
         }, this, { single: true });
 
