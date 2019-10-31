@@ -62,8 +62,10 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                 Ext.Msg.confirm(
                     'Data Export',
                     'Download exported data now?',
-                    function () {
-                        XDMoD.Module.DataExport.openDownloadWindow(params.id);
+                    function (buttonId) {
+                        if (buttonId === 'yes') {
+                            XDMoD.Module.DataExport.openDownloadWindow(params.id);
+                        }
                     }
                 );
             }
