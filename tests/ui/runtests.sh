@@ -14,7 +14,7 @@ if (( $SHMSIZEK < 2000000 )); then
     echo "***************************************************************"
 fi
 
-CACHEFILE='/tmp/browser-tests-node-modules.tar.gz'
+CACHEFILE='/root/browser-tests-node-modules.tar.gz'
 set -e
 set -o pipefail
 

@@ -19,7 +19,7 @@ RUN /tmp/assets/copy-caches.sh
 COPY bin /root/bin
 
 RUN mkdir -p $SRCDIR \
-    && git clone https://github.com/$GIT_USER/xdmod/ --branch $GIT_BRANCH --single-branch $SRCDIR/xdmod
+    && git clone https://github.com/$GIT_USER/xdmod/ --branch $GIT_BRANCH --no-tags --depth 1 $SRCDIR/xdmod
 
 # Install the XDMoD git repos locally so we can build the RPM from the requested branch
 WORKDIR $SRCDIR/xdmod
@@ -34,4 +34,4 @@ RUN composer install \
     && ~/bin/services stop
 
 WORKDIR /
-RUN rm -rf ~/rpmbuild/* /tmp/assets $SRCDIR
+RUN yum clean all && rm -rf ~/rpmbuild /tmp/* $SRCDIR /var/cache/yum

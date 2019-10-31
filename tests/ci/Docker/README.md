@@ -1,13 +1,12 @@
 # XDMoD Docker
 
-Currently we only use docker for development, testing, and demonstration.
+The XDMoD Team currently uses Docker for development, testing, and demonstrations.
 
-wWe start a docker with the following commmand
+The file `tests/ci/Docker/Dockerfile` in the `ubccr/xdmod` GitHub repository is used to build the Docker image used for testing.
 
-**NOTE:**
-Make changes to `-v`, `-p`, `--env-file` as appropriate.
+Start Docker with the following command:
 
-Look at the repos main Dockerfile to get the current docker.
+**NOTE:** Make changes to `-v`, `-p`, `--env-file` as appropriate.
 
 ```bash
 docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306 -p 8080:8080 --env-file ~/xdmod.env tas-tools-ext-01.ccr.xdmod.org/centos7_6-open8.1.2:latest /bin/bash
@@ -15,14 +14,18 @@ docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306
 
 ## Demonstration
 
+Services (database, web server, etc.) are not running in the Docker image and
+must be started manually:
+
 ```bash
 ~/bin/services start
 ```
 
-## Developmnet
+## Development
 
-To help with develpoment when using docker you can enable xdebug by running the following script inside of docker.
-This has to be done before starting apache.
+To assist with development when using Docker you can enable `xdebug` by running
+the following script inside of the Docker container.  This must be done before
+starting Apache.
 
 ```bash
 #!/bin/bash
@@ -58,9 +61,10 @@ fi
 
 After that use the editor of your choice on your host machine with port 9000 to debug.
 
-When working on new code most of use use a build script to pull in our code and do changes
+When developing new features a build script is commonly used to pull in our
+code and make changes.
 
-below is an example.
+Below is an example:
 
 ```bash
 #!/bin/bash
@@ -68,7 +72,7 @@ XDMOD_GIT_USER=${XDMOD_GIT_USER:-'ubccr'}
 XDMOD_GIT_BRANCH=${XDMOD_GIT_USER:-'xdmod8.5'}
 #upgrade if you dont want to reingest data and are not testing that portion
 #otherwise fresh_install
-DMOD_TEST_MODE=${XDMOD_TEST_MODE:-'upgrade'}
+XDMOD_TEST_MODE=${XDMOD_TEST_MODE:-'upgrade'}
 
 SRCDIR=/root/src/github.com/ubccr
 
@@ -107,10 +111,9 @@ sed -i -- 's/value: this.dateRanges\[this.defaultCannedDateIndex\].start,$/value
 sed -i -- 's/value: this.dateRanges\[this.defaultCannedDateIndex\].end,$/value: new Date(2018, 7, 2),/' /usr/share/xdmod/html/gui/js/DurationToolbar.js
 sed -i -- 's/this.defaultCannedDate = this.dateRanges\[this.defaultCannedDateIndex\].text;/this.defaultCannedDate = "User Defined";/' /usr/share/xdmod/html/gui/js/DurationToolbar.js
 
-\cp /etc/xdmod/portal_settings.ini $SRCDIR/xdmod/configuration
-
+cp /etc/xdmod/portal_settings.ini $SRCDIR/xdmod/configuration
 ```
 
 ## Testing
 
-See the testing folder for more information.
+See the `tests` folder for more information.
