@@ -74,23 +74,23 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
             messageProperty: 'message',
 
             fields: [
-                'job_count',
-                'active_person_count',
-                'active_pi_count',
-                'total_waitduration_hours',
-                'avg_waitduration_hours',
-                'total_cpu_hours',
-                'avg_cpu_hours',
-                'total_su',
-                'avg_su',
-                'min_processors',
-                'max_processors',
-                'avg_processors',
-                'total_wallduration_hours',
-                'avg_wallduration_hours',
-                'gateway_job_count',
-                'active_allocation_count',
-                'active_institution_count',
+                'Jobs_job_count',
+                'Jobs_active_person_count',
+                'Jobs_active_pi_count',
+                'Jobs_total_waitduration_hours',
+                'Jobs_avg_waitduration_hours',
+                'Jobs_total_cpu_hours',
+                'Jobs_avg_cpu_hours',
+                'Jobs_total_su',
+                'Jobs_avg_su',
+                'Jobs_min_processors',
+                'Jobs_max_processors',
+                'Jobs_avg_processors',
+                'Jobs_total_wallduration_hours',
+                'Jobs_avg_wallduration_hours',
+                'Jobs_gateway_job_count',
+                'Jobs_active_allocation_count',
+                'Jobs_active_institution_count',
                 'charts'
             ],
 
@@ -228,22 +228,22 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     {
                         title: 'Users',
-                        fieldName: 'active_person_count',
+                        fieldName: 'Jobs_active_person_count',
                         numberType: 'int',
                         numberFormat: '#,#'
                     }, {
                         title: 'PIs',
-                        fieldName: 'active_pi_count',
+                        fieldName: 'Jobs_active_pi_count',
                         numberType: 'int',
                         numberFormat: '#,#'
                     }, {
                         title: 'Allocations',
-                        fieldName: 'active_allocation_count',
+                        fieldName: 'Jobs_active_allocation_count',
                         numberType: 'int',
                         numberFormat: '#,#'
                     }, {
                         title: 'Institutions',
-                        fieldName: 'active_institution_count',
+                        fieldName: 'Jobs_active_institution_count',
                         numberType: 'int',
                         numberFormat: '#,#'
                     }
@@ -259,12 +259,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     {
                         title: 'Total',
-                        fieldName: 'job_count',
+                        fieldName: 'Jobs_job_count',
                         numberType: 'int',
                         numberFormat: '#,#'
                     }, {
                         title: 'Gateway',
-                        fieldName: 'gateway_job_count',
+                        fieldName: 'Jobs_gateway_job_count',
                         numberType: 'int',
                         numberFormat: '#,#'
                     }
@@ -280,12 +280,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     {
                         title: 'Total',
-                        fieldName: 'total_su',
+                        fieldName: 'Jobs_total_su',
                         numberType: 'float',
                         numberFormat: '#,#.0'
                     }, {
                         title: 'Avg (Per Job)',
-                        fieldName: 'avg_su',
+                        fieldName: 'Jobs_avg_su',
                         numberType: 'float',
                         numberFormat: '#,#.00'
                     }
@@ -301,12 +301,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     {
                         title: 'Total',
-                        fieldName: 'total_cpu_hours',
+                        fieldName: 'Jobs_total_cpu_hours',
                         numberType: 'float',
                         numberFormat: '#,#.0'
                     }, {
                         title: 'Avg (Per Job)',
-                        fieldName: 'avg_cpu_hours',
+                        fieldName: 'Jobs_avg_cpu_hours',
                         numberType: 'float',
                         numberFormat: '#,#.00'
                     }
@@ -322,7 +322,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     {
                         title: 'Avg (Per Job)',
-                        fieldName: 'avg_waitduration_hours',
+                        fieldName: 'Jobs_avg_waitduration_hours',
                         numberType: 'float',
                         numberFormat: '#,#.00'
                     }
@@ -336,12 +336,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                 title: 'Wall Time (h)',
                 items: [{
                     title: 'Total',
-                    fieldName: 'total_wallduration_hours',
+                    fieldName: 'Jobs_total_wallduration_hours',
                     numberType: 'float',
                     numberFormat: '#,#.0'
                 }, {
                     title: 'Avg (Per Job)',
-                    fieldName: 'avg_wallduration_hours',
+                    fieldName: 'Jobs_avg_wallduration_hours',
                     numberType: 'float',
                     numberFormat: '#,#.00'
                 }]
@@ -353,12 +353,12 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                 title: 'Processors',
                 items: [{
                     title: 'Max',
-                    fieldName: 'max_processors',
+                    fieldName: 'Jobs_max_processors',
                     numberType: 'int',
                     numberFormat: '#,#'
                 }, {
                     title: 'Avg (Per Job)',
-                    fieldName: 'avg_processors',
+                    fieldName: 'Jobs_avg_processors',
                     numberType: 'int',
                     numberFormat: '#,#'
                 }]

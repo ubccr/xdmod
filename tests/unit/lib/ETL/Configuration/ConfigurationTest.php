@@ -26,7 +26,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'file' => false,
             'db' => false,
             'mail' => false,
-            'consoleLogLevel' => Log::WARNING
+            'consoleLogLevel' => Log::EMERG
         );
         self::$logger = Log::factory('PHPUnit', $conf);
     }

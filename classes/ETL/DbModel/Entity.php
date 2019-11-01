@@ -452,7 +452,7 @@ class Entity extends Loggable
             $this->properties[$property] = $this->filterAndVerifyValue($property, $value);
         } else {
             $this->logger->warning(
-                sprintf("%s: Attempt to set unsupported property: '%s'", get_class($this), $property)
+                sprintf("%s: Attempt to set unsupported property: '%s' with value '%s'", get_class($this), $property, print_r($value, true))
             );
         }
     }  // __set()
