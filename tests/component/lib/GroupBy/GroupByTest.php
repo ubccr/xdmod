@@ -85,40 +85,40 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $obj = $realm->getGroupByObject('resource');
 
         $values = $obj->getAttributeValues();
-        $this->assertEquals(8, count($values), 'Number of resource attributes returned with no filter');
+        $this->assertCount(9, $values, 'Number of resource attributes returned with no filter');
 
         $restrictions = array(
             'id' => '1^frearson'
         );
         $values = $obj->getAttributeValues($restrictions);
-        $this->assertEquals(1, count($values), 'Number of resource attributes returned with id = 1^frearson');
+        $this->assertCount(1, $values, 'Number of resource attributes returned with id = 1^frearson');
 
         $restrictions = array(
             'name' => 'mortorq'
         );
         $values = $obj->getAttributeValues($restrictions);
-        $this->assertEquals(1, count($values), 'Number of resource attributes returned with name = mortorq');
+        $this->assertCount(1, $values, 'Number of resource attributes returned with name = mortorq');
 
         $restrictions = array(
             'id'   => '2^mortorq',
             'name' => 'mortorq'
         );
         $values = $obj->getAttributeValues($restrictions);
-        $this->assertEquals(1, count($values), 'Number of resource attributes returned with id = 2^motorq, name = mortorq');
+        $this->assertCount(1, $values, 'Number of resource attributes returned with id = 2^motorq, name = mortorq');
 
         $restrictions = array(
             'id'   => '1^motorq',
             'name' => 'mortorq'
         );
         $values = $obj->getAttributeValues($restrictions);
-        $this->assertEquals(0, count($values), 'Number of resource attributes returned with id = 1^motorq, name = mortorq');
+        $this->assertCount(0, $values, 'Number of resource attributes returned with id = 1^motorq, name = mortorq');
 
         $obj = $realm->getGroupByObject('person');
 
         $restrictions = array(
-            'id' => 552
+            'name' => 'Avocet'
         );
         $values = $obj->getAttributeValues($restrictions);
-        $this->assertEquals(1, count($values), 'Number of person attributes returned with id = 552');
+        $this->assertCount(1, $values, 'Number of person attributes returned with id = 552');
     }
 }

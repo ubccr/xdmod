@@ -868,7 +868,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             implode(', ', $labels)
         );
 
-        $labelList[] = sprintf('%s = %s', $this->name, $labelString);
+        $labelList[] = sprintf('%s = %s', $this->getName(), $labelString);
 
         $this->logger->debug(
             sprintf('%s Generated query parameter labels %s', $this, implode('; ', $labelList))
