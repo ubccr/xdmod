@@ -33,6 +33,7 @@ build:
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - if [ -s /var/log/xdmod/apache-error.log ]; then cat /var/log/xdmod/apache-error.log; false; fi
     on_failure:
+        - cat /var/log/xdmod/apache-error.log
         - cat /var/log/xdmod/exceptions.log
         - cat /var/log/xdmod/query.log
         - cat /var/log/xdmod/apache-access.log
