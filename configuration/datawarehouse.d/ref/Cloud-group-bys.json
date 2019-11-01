@@ -1,0 +1,308 @@
+{
+    "configuration": {
+        "name": "Instance Type",
+        "description_html": "The instance type of a virtual machine.",
+        "additional_join_constraints": [
+            {
+                "attribute_expr": "resource_id",
+                "operation": "=",
+                "aggregate_expr": "host_resource_id"
+            }
+        ],
+        "attribute_table_schema": "modw_cloud",
+        "attribute_table": "instance_type",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "instance_type_id": "instance_type_id"
+            }
+        ],
+        "order": 6,
+        "attribute_values_query": {
+            "records": {
+                "id": "instance_type_id",
+                "short_name": "instance_type",
+                "name": "display",
+                "order_id": "instance_type_id"
+            },
+            "joins": [
+                {
+                    "name": "instance_type"
+                }
+            ],
+            "orderby": [
+                "instance_type_id"
+            ]
+        }
+    },
+    "domain": {
+        "name": "Domain",
+        "description_html": "A domain is a high-level container for projects, users and groups",
+        "additional_join_constraints": [
+            {
+                "attribute_expr": "resource_id",
+                "operation": "=",
+                "aggregate_expr": "host_resource_id"
+            }
+        ],
+        "attribute_table_schema": "modw_cloud",
+        "attribute_table": "domains",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "domain_id"
+            }
+        ],
+        "attribute_values_query": {
+            "records": {
+                "id": "id",
+                "short_name": "name",
+                "name": "name",
+                "order_id": "name"
+            },
+            "joins": [
+                {
+                    "name": "domains"
+                }
+            ],
+            "orderby": [
+                "name"
+            ]
+        }
+    },
+    "none": {
+        "$ref": "datawarehouse.d/ref/group-by-none.json"
+    },
+    "day": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
+    },
+    "month": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
+    },
+    "person": {
+        "attribute_table": "person",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "person_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "person"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "long_name",
+                "order_id": "order_id",
+                "short_name": "short_name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A person on a principal investigator's allocation, able to spin up and manipulate VM instances.",
+        "name": "User"
+    },
+    "project": {
+        "additional_join_constraints": [
+            {
+                "attribute_expr": "resource_id",
+                "operation": "=",
+                "aggregate_expr": "host_resource_id"
+            }
+        ],
+        "attribute_table": "account",
+        "attribute_table_schema": "modw_cloud",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "account_id": "account_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "account"
+                }
+            ],
+            "orderby": [
+                "display"
+            ],
+            "records": {
+                "id": "account_id",
+                "name": "display",
+                "order_id": "display",
+                "short_name": "provider_account"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The project associated with a running session of a virtual machine.",
+        "name": "Project"
+    },
+    "quarter": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
+    },
+    "resource": {
+        "attribute_table": "resourcefact",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "host_resource_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "alias": "rf",
+                    "name": "resourcefact"
+                },
+                {
+                    "alias": "rs",
+                    "name": "resourcespecs",
+                    "on": "rf.id = rs.resource_id"
+                }
+            ],
+            "orderby": [
+                "rf.code",
+                "rf.name"
+            ],
+            "records": {
+                "id": "rf.id",
+                "name": "rf.code",
+                "order_id": "id",
+                "short_name": "rf.code"
+            },
+            "where": [
+                "rs.processors IS NOT NULL"
+            ]
+        },
+        "description_html": "A resource is defined as any infrastructure that hosts virtual machines.",
+        "name": "Resource"
+    },
+    "submission_venue": {
+        "attribute_table": "submission_venue",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "submission_venue_id": "submission_venue_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "submission_venue"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "submission_venue_id",
+                "name": "display",
+                "order_id": "order_id",
+                "short_name": "submission_venue"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The venue that a job or cloud instance was initiated from.",
+        "name": "Submission Venue"
+    },
+    "username": {
+        "alternate_group_by_columns": [
+            "username"
+        ],
+        "attribute_table": "systemaccount",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "systemaccount_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "systemaccount"
+                }
+            ],
+            "orderby": [
+                "username"
+            ],
+            "records": {
+                "id": "username",
+                "name": "username",
+                "order_id": "username",
+                "short_name": "username"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The specific system username associated with a running session of a virtual machine.",
+        "name": "System Username"
+    },
+    "vm_size": {
+        "attribute_table": "processor_buckets",
+        "attribute_table_schema": "modw_cloud",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "processorbucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "processor_buckets"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of sessions into discrete groups based on the number of cores used by each VM.",
+        "name": "VM Size: Cores"
+    },
+    "vm_size_memory": {
+        "attribute_table": "memory_buckets",
+        "attribute_table_schema": "modw_cloud",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "memorybucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "memory_buckets"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "min_memory"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.",
+        "name": "VM Size: Memory"
+    },
+    "year": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+    }
+}

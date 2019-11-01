@@ -1,7 +1,8 @@
 {
     "+roles": {
         "+default": {
-            "+query_descripters": [{
+            "+query_descripters": [
+                {
                     "realm": "Cloud",
                     "group_by": "none"
                 },
@@ -39,31 +40,34 @@
                 },
                 {
                     "realm": "Cloud",
-                    "group_by": "domain"
+                    "group_by": "username"
                 }
             ],
-            "+summary_charts": [{
+            "+summary_charts": [
+                {
                     "data_series": {
-                        "data": [{
-                            "combine_type": "stack",
-                            "display_type": "area",
-                            "filters": {
-                                "data": [],
-                                "total": 0
-                            },
-                            "group_by": "resource",
-                            "has_std_err": false,
-                            "id": 1,
-                            "ignore_global": false,
-                            "log_scale": false,
-                            "long_legend": true,
-                            "metric": "cloud_core_time",
-                            "realm": "Cloud",
-                            "sort_type": "value_desc",
-                            "std_err": false,
-                            "value_labels": false,
-                            "x_axis": true
-                        }],
+                        "data": [
+                            {
+                                "combine_type": "stack",
+                                "display_type": "area",
+                                "filters": {
+                                    "data": [],
+                                    "total": 0
+                                },
+                                "group_by": "resource",
+                                "has_std_err": false,
+                                "id": 1,
+                                "ignore_global": false,
+                                "log_scale": false,
+                                "long_legend": true,
+                                "metric": "Cloud_core_time",
+                                "realm": "Cloud",
+                                "sort_type": "value_desc",
+                                "std_err": false,
+                                "value_labels": false,
+                                "x_axis": true
+                            }
+                        ],
                         "total": 1
                     },
                     "global_filters": {
@@ -79,26 +83,28 @@
                 },
                 {
                     "data_series": {
-                        "data": [{
-                            "combine_type": "stack",
-                            "display_type": "area",
-                            "filters": {
-                                "data": [],
-                                "total": 0
-                            },
-                            "group_by": "project",
-                            "has_std_err": false,
-                            "id": 2,
-                            "ignore_global": false,
-                            "log_scale": false,
-                            "long_legend": true,
-                            "metric": "cloud_num_sessions_started",
-                            "realm": "Cloud",
-                            "sort_type": "value_desc",
-                            "std_err": false,
-                            "value_labels": false,
-                            "x_axis": true
-                        }],
+                        "data": [
+                            {
+                                "combine_type": "stack",
+                                "display_type": "area",
+                                "filters": {
+                                    "data": [],
+                                    "total": 0
+                                },
+                                "group_by": "project",
+                                "has_std_err": false,
+                                "id": 2,
+                                "ignore_global": false,
+                                "log_scale": false,
+                                "long_legend": true,
+                                "metric": "Cloud_num_sessions_started",
+                                "realm": "Cloud",
+                                "sort_type": "value_desc",
+                                "std_err": false,
+                                "value_labels": false,
+                                "x_axis": true
+                            }
+                        ],
                         "total": 1
                     },
                     "global_filters": {
@@ -115,7 +121,8 @@
             ]
         },
         "+pub": {
-            "+query_descripters": [{
+            "+query_descripters": [
+                {
                     "realm": "Cloud",
                     "group_by": "none"
                 },
