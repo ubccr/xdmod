@@ -1,0 +1,374 @@
+{
+    "day": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
+    },
+    "fieldofscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
+    },
+    "jobsize": {
+        "attribute_table": "processor_buckets",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "processorbucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "processor_buckets"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of jobs into discrete groups based on the number of cores used by each job.",
+        "name": "Job Size"
+    },
+    "jobwaittime": {
+        "attribute_table": "job_wait_times",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "job_wait_time_bucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "job_wait_times"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of jobs into discrete groups based on the total linear time each job waited.",
+        "name": "Job Wait Time"
+    },
+    "jobwalltime": {
+        "attribute_table": "job_times",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "job_time_bucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "job_times"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of jobs into discrete groups based on the total linear time each job took to execute.",
+        "name": "Job Wall Time"
+    },
+    "month": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
+    },
+    "nodecount": {
+        "attribute_table": "nodecount",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "node_count"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "nodecount"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "nodes",
+                "order_id": "id",
+                "short_name": "nodes"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A categorization of jobs into discrete groups based on node count.",
+        "name": "Node Count"
+    },
+    "none": {
+        "$ref": "datawarehouse.d/ref/group-by-none.json"
+    },
+    "nsfdirectorate": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
+    },
+    "parentscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
+    },
+    "person": {
+        "attribute_table": "person",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "person_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "person"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "long_name",
+                "order_id": "order_id",
+                "short_name": "short_name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A person who is on a PIs allocation, hence able run jobs on resources.",
+        "name": "User"
+    },
+    "pi": {
+        "attribute_table": "piperson",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "person_id": "principalinvestigator_person_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "piperson"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "person_id",
+                "name": "long_name",
+                "order_id": "order_id",
+                "short_name": "short_name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The principal investigator of a project has a valid allocation, which can be used by him/her or the members of the project to run jobs on.",
+        "name": "PI"
+    },
+    "provider": {
+        "attribute_table": "serviceprovider",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "organization_id": "resource_organization_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "serviceprovider"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "organization_id",
+                "name": "short_name",
+                "order_id": "order_id",
+                "short_name": "short_name"
+            }
+        },
+        "show_in_catalog": false,
+        "category": "Administrative",
+        "description_html": "A service provider is an institution that hosts resources.",
+        "name": "Service Provider"
+    },
+    "quarter": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
+    },
+    "queue": {
+        "additional_join_constraints": [
+            {
+                "attribute_expr": "resource_id",
+                "operation": "=",
+                "aggregate_expr": "task_resource_id"
+            }
+        ],
+        "attribute_table": "queue",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "queue"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "queue"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "id",
+                "order_id": "id",
+                "short_name": "id"
+            }
+        },
+        "description_html": "Queue pertains to the low level job queues on each resource.",
+        "name": "Queue"
+    },
+    "resource": {
+        "attribute_table": "resourcefact",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "record_resource_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "alias": "rf",
+                    "name": "resourcefact"
+                },
+                {
+                    "alias": "rs",
+                    "name": "resourcespecs",
+                    "on": "rf.id = rs.resource_id"
+                }
+            ],
+            "orderby": [
+                "rf.code",
+                "rf.name"
+            ],
+            "records": {
+                "id": "rf.id",
+                "name": "rf.code",
+                "order_id": "id",
+                "short_name": "rf.code"
+            },
+            "where": [
+                "rs.processors IS NOT NULL"
+            ]
+        },
+        "description_html": "A resource is a remote computer that can run jobs.",
+        "name": "Resource"
+    },
+    "resource_type": {
+        "attribute_table": "resourcetype",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "resourcetype_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "resourcetype"
+                }
+            ],
+            "orderby": [
+                "description"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "description",
+                "short_name": "abbrev"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A categorization of resources into by their general capabilities.",
+        "name": "Resource Type"
+    },
+    "username": {
+        "alternate_group_by_columns": [
+            "username"
+        ],
+        "attribute_table": "systemaccount",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "systemaccount_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "systemaccount"
+                }
+            ],
+            "orderby": [
+                "username"
+            ],
+            "records": {
+                "id": "username",
+                "name": "username",
+                "order_id": "username",
+                "short_name": "username"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The specific system username of the users who ran jobs",
+        "name": "System Username"
+    },
+    "year": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+    }
+}
