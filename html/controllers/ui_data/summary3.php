@@ -57,7 +57,15 @@ try {
         // Open XDMoD users.
 
         try {
-            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
+            $query = new \DataWarehouse\Query\AggregateQuery(
+                'Jobs',
+                $aggregation_unit,
+                $start_date,
+                $end_date,
+                'none',
+                'all',
+                $query_descripter->pullQueryParameters($raw_parameters)
+            );
             $result = $query->execute();
         } catch (PDOException $e) {
             if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {

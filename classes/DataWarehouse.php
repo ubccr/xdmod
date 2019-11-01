@@ -354,60 +354,40 @@ class DataWarehouse
     }   //getAllocations()
 
     /**
-     * Get a mapping of categories to realms.
+     * Get a mapping of categories to realms. If a realm does not explicitly declare a category, its
+     * id is used as the category.  If a realm has the show_in_catalog property set to false then it
+     * does not appear in the list of categories.
      *
-     * If a realm does not explicitly declare a category, its name is used
-     * as the category. If a realm has the show_in_catalog property set to false
-     * then it does not appear in the list of categories.
-     *
-     * @return array An associative array mapping categories to the realms
-     *               they contain.
-     * @throws Exception if there is a problem reading / processing `datawarehouse.json`
+     * @return array An associative array mapping categories to realm ids.
      */
+
     public static function getCategories()
     {
-        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
-
+        $realmObjects = \Realm\Realm::getRealmObjects();
         $categories = array();
-        foreach ($dwConfig['realms'] as $realmName => $realm) {
-            if (isset($realm['show_in_catalog']) && $realm['show_in_catalog'] === false) {
+
+        foreach ( $realmObjects as $realmId => $obj ) {
+            if ( ! $obj->showInMetricCatalog() ) {
                 continue;
             }
-            $category = (
-                isset($realm['category'])
-                ? $realm['category']
-                : $realmName
-            );
-            $categories[$category][] = $realmName;
+            $categories[$obj->getCategory()][] = $realmId;
         }
+
         return $categories;
     }
 
     /**
-     * Get the category for a given realm.
+     * Get the category for a given realm.  If a realm does not explicitly declare a category, its
+     * name is used as the category.
      *
-     * If a realm does not explicitly declare a category, its name is used
-     * as the category.
-     *
-     * @param  string $realmName The name of the realm to get
-     *                           the category for.
-     * @return string            The category the realm belongs to or null if
-     *                           the realm has the show_in_catalog flag set to false.
+     * @param  string $realmId The id of the realm to get the category for.
+     * @return string          The category the realm belongs to or null if the realm has the
+     *                         show_in_catalog flag set to false.
      */
-    public static function getCategoryForRealm($realmName)
+
+    public static function getCategoryForRealm($realmId)
     {
-        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
-
-        if (isset($dwConfig['realms'][$realmName]['show_in_catalog'])
-            && $dwConfig['realms'][$realmName]['show_in_catalog'] === false
-        ) {
-            return null;
-        }
-
-        if (isset($dwConfig['realms'][$realmName]['category'])) {
-            return $dwConfig['realms'][$realmName]['category'];
-        }
-
-        return $realmName;
+        $realmObj = \Realm\Realm::factory($realmId);
+        return ( $realmObj->showInMetricCatalog() ? $realmObj->getCategory() : null );
     }
 } // class DataWarehouse

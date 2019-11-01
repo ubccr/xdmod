@@ -9,10 +9,11 @@
  */
 use CCR\Loggable;
 
+use Log as Logger;  // CCR implementation of PEAR logger
+use CCR\Loggable;
+
 class Aggregator extends Loggable
 {
-    public static $__initialized;
-
     /**
      * (Optional) The name of the realm associated with this aggregator.
      *
@@ -20,11 +21,9 @@ class Aggregator extends Loggable
      */
     protected $realmName = null;
 
-    public function __construct()
+    public function __construct(Logger $logger = null)
     {
-        if ($this->_logger === null) {
-            $this->_logger = Log::singleton('null');
-        }
+        parent::__construct($logger);
     }
 
     /**
@@ -38,8 +37,7 @@ class Aggregator extends Loggable
             return;
         }
 
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($this->_logger);
+        $filterListBuilder = new FilterListBuilder($this->logger);
         $filterListBuilder->buildRealmLists($this->realmName);
     }
 
