@@ -145,13 +145,18 @@ function main()
     // Configuration Files
     $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
     $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
-    $realmConfig = \Configuration\ModuleConfiguration::factory('datawarehouse.json', CONFIG_DIR, $log);
 
     foreach ($modules as $module => $moduleData) {
 
         $hierarchies = $hierarchyConfig->filterByModule($module);
         $roles = $roleConfig->filterByModule($module);
-        $realms = $realmConfig->filterByModule($module);
+
+        $realmObjects = array_filter(
+            \Realm\Realm::getRealmObjects(),
+            function ($obj) use ($module) {
+                return $module == $obj->getModuleName();
+            }
+        );
 
         // Process the hierarchies provided by this module, if any.
         if (is_object($hierarchies) && property_exists($hierarchies, 'hierarchies')) {
@@ -188,11 +193,11 @@ function main()
                 $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
                 $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
                 $results[$module]['realms'][$realm] = array(
+                    'display_name' => $data->getName(),
                     'group_bys' => json_decode(json_encode($groupBys), true),
                     'statistics' => json_decode(json_encode($statistics), true)
                 );
             }
-        }
     }
 
     /* So $results will now look like ( generically speaking ):
@@ -305,7 +310,7 @@ INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
   FROM user_acl_group_by_parameters_bkup uagbp
     LEFT JOIN acls a ON a.name = uagbp.acl_name
     LEFT JOIN modules m ON m.name = uagbp.group_by_module_name
-    LEFT JOIN realms r ON r.name = uagbp.group_by_realm_name
+    LEFT JOIN realms r ON LOWER(r.name) = LOWER(uagbp.group_by_realm_name)
     LEFT JOIN group_bys gb
       ON gb.name = uagbp.group_by_name AND
          gb.module_id = m.module_id AND
@@ -1621,7 +1626,11 @@ SQL;
 
         $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
-        $hide = isset($queryDescriptor['hide']) ? $queryDescriptor['hide'] : null;
+
+        if ( ! in_array($groupBy, $realms[$realm]['group_bys']) ) {
+            $log->warning(sprintf("Group by '%s' not defined for realm '%s', skipping.", $groupBy, $realm));
+            continue;
+        }
 
         $realmData = $realms[$realm];
         if (!isset($realmData['statistics'])) {
@@ -1630,32 +1639,17 @@ SQL;
         }
 
         $statistics = $realmData['statistics'];
-        foreach ($statistics as $statistic) {
+        foreach ($statistics as $statisticId) {
 
-            $statisticName = isset($statistic['name']) ? $statistic['name'] : null;
-            $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
-
-            // By default, an entry will be shown.
-            // If the statistic defines a $visible value, then prefer that.
-            // Else, if the query descriptor has a hide value, use that.
-            $shown = true;
-            if (isset($visible)) {
-                $shown = $visible;
-            } elseif (!isset($visible) && isset($hide)) {
-                $shown = !$hide;
-            }
-
-            $realmName = strtolower($realm);
-
-            $id = "[ $module, $realmName, $acl, $groupBy, $statisticName ]";
+            $id = "[ $module, $realm, $acl, $groupBy, $statisticId ]";
 
             $params = array(
                 ':module_name' => $module,
-                ':realm_name' => $realmName,
+                ':realm_name' => $realm,
                 ':acl_name' => $acl,
                 ':group_by_name' => $groupBy,
-                ':statistic_name' => $statisticName,
-                ':visible' => ( $shown ? 1 : 0 ),
+                ':statistic_name' => $statisticId,
+                ':visible' => 1,
                 ':enabled' => ( !$disable ? 1 : 0 )
             );
 
@@ -1678,9 +1672,9 @@ SQL;
 
             $totalInserted += $inserted;
             if ($inserted === 0) {
-                $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupBy, $statisticName ]");
+                $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupBy, $statisticId ]");
             } elseif ($inserted === 1) {
-                $log->info("[SUCCESS] Created Query Descriptor [ $module, $realm, $acl, $groupBy, $statisticName ]");
+                $log->info("[SUCCESS] Created Query Descriptor [ $module, $realm, $acl, $groupBy, $statisticId ]");
             }
         }
         $processed = count($statistics);
@@ -1720,16 +1714,16 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
 {
     global $dryRun, $log;
 
-    foreach ($realms as $realm => $realmData) {
-        $log->notice("Processing Realm: $realm for Module: $moduleName");
+    foreach ($realms as $realmId => $realmData) {
+        $log->notice(sprintf("Processing Realm: %s (%s) for Module: %s", $realmId, $realmData['display_name'], $moduleName));
 
-        createRealm($db, $moduleName, $realm);
+        createRealm($db, $moduleName, $realmId, $realmData['display_name']);
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
 
-        createGroupBys($db, $moduleName, strtolower($realm), $groupBys);
-        createStatistics($db, $moduleName, strtolower($realm), $statistics);
+        createGroupBys($db, $moduleName, $realmId, $groupBys);
+        createStatistics($db, $moduleName, $realmId, $statistics);
     }
 }
 
@@ -1740,19 +1734,18 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
  * @param iDatabase $db            the database to be used when creating the realm
  * @param string    $moduleName    the name of the module to associate this realm
  *                                 with.
- * @param string    $realmDisplay  the name that this realm should be created with.
+ * @param string    $realmId       the id that this realm should be created with.
+ * @param string    $realmDisplay  the display name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm(iDatabase $db, $moduleName, $realmDisplay)
+function createRealm(iDatabase $db, $moduleName, $realmId, $realmDisplay)
 {
     global $dryRun, $log;
 
-    $realmName = strtolower($realmDisplay);
+    $log->notice(sprintf("*** Creating Realm %s (%s)...", $realmId, $realmDisplay));
 
-    $log->notice("*** Creating Realm ($realmDisplay)...");
-
-    $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
+    $successMsg = sprintf("[SUCCESS] Created Realm: %s (%s) for Module: %s", $realmId, $realmDisplay, $moduleName);
 
     $query = <<<SQL
     INSERT INTO realms(module_id, name, display)
@@ -1771,7 +1764,7 @@ function createRealm(iDatabase $db, $moduleName, $realmDisplay)
 SQL;
 
     $params = array(
-        ':realm_name' => $realmName,
+        ':realm_name' => $realmId,
         ':realm_display' => $realmDisplay,
         ':module_name' => $moduleName
     );
@@ -1858,11 +1851,10 @@ SQL;
     }
     $totalInserted = 0;
 
-    foreach ($groupBys as $groupBy) {
-        $groupByName = $groupBy['name'];
+    foreach ($groupBys as $groupById) {
 
         $parameters = array(
-            ':group_by_name' => $groupByName,
+            ':group_by_name' => $groupById,
             ':module_name' => $moduleName,
             ':realm_name' => $realmName
         );
@@ -1870,7 +1862,7 @@ SQL;
         $log->debug(json_encode($parameters));
 
         if ($dryRun) {
-            $log->info(sprintf($successMsg, $groupByName));
+            $log->info(sprintf($successMsg, $groupById));
             continue;
         }
 
@@ -1881,9 +1873,9 @@ SQL;
         $inserted = $statement->rowCount();
         $totalInserted += $inserted;
         if ($inserted === 0) {
-            $log->info("[ALREADY EXISTS] Group By $groupByName for Module $moduleName and Realm $realmName");
+            $log->info("[ALREADY EXISTS] Group By $groupById for Module $moduleName and Realm $realmName");
         } elseif ($inserted === 1) {
-            $log->info(sprintf($successMsg, $groupByName));
+            $log->info(sprintf($successMsg, $groupById));
         }
     }
     $processed = count($groupBys);
@@ -1936,12 +1928,10 @@ SQL;
         $log->debug($query);
     }
     $totalInserted = 0;
-    foreach ($statistics as $statistic) {
-
-        $statisticName = $statistic['name'];
+    foreach ($statistics as $statisticId) {
 
         $parameters = array(
-            ':statistic_name' => $statisticName,
+            ':statistic_name' => $statisticId,
             ':module_name' => $moduleName,
             ':realm_name' => $realmName
         );
@@ -1949,7 +1939,7 @@ SQL;
         $log->debug(json_encode($parameters));
 
         if ($dryRun) {
-            $log->info(sprintf($successMsg, $statisticName));
+            $log->info(sprintf($successMsg, $statisticId));
             continue;
         }
 
@@ -1958,9 +1948,9 @@ SQL;
         $inserted = $statement->rowCount();
         $totalInserted += $inserted;
         if ($inserted === 0) {
-            $log->info("[ALREADY EXISTS] Statistic: $statisticName for Module: $moduleName and Realm: $realmName");
+            $log->info("[ALREADY EXISTS] Statistic: $statisticId for Module: $moduleName and Realm: $realmName");
         } elseif ($inserted === 1) {
-            $log->info(sprintf($successMsg, $statisticName));
+            $log->info(sprintf($successMsg, $statisticId));
         }
     }
 

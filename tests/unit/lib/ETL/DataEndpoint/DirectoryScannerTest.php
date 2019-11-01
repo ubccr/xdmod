@@ -43,7 +43,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             'file' => false,
             'db' => false,
             'mail' => false,
-            'consoleLogLevel' => Log::WARNING
+            'consoleLogLevel' => Log::EMERG
         );
 
         $this->logger = Log::factory('PHPUnit', $conf);

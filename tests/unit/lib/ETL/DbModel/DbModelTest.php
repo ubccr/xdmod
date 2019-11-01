@@ -35,7 +35,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $conf = array(
             'db' => false,
             'mail' => false,
-            'consoleLogLevel' => Log::WARNING
+            'consoleLogLevel' => Log::EMERG
         );
         self::$logger = Log::factory('PHPUnit', $conf);
     }

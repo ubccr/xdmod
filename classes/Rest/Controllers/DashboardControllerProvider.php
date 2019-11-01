@@ -389,7 +389,14 @@ class DashboardControllerProvider extends BaseControllerProvider
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
         try {
-            $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregationUnit, $startDate, $endDate, 'none', 'all');
+            $query = new \DataWarehouse\Query\AggregateQuery(
+                'Jobs',
+                $aggregationUnit,
+                $startDate,
+                $endDate,
+                'none',
+                'all'
+            );
 
             $result = $query->execute();
         } catch (PDOException $e) {
