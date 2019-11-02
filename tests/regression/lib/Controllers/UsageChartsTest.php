@@ -49,8 +49,9 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         }
 
         $hash = false;
-        if (isset($expectedHashes[$testName])) {
-            $hash = $expectedHashes[$testName];
+        $testWithoutRealm = str_replace($reference['realm'].'_', '', $testName);
+        if (isset($expectedHashes[$testWithoutRealm])) {
+            $hash = $expectedHashes[$testWithoutRealm];
         }
 
         return array($testName, $reference, $hash);
@@ -112,9 +113,9 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
            'controller_module' => 'user_interface'
         );
 
-        $statistics = array('job_count', 'total_cpu_hours', 'utilization');
-        $agg_err_stats = array('avg_waitduration_hours');
-        $errstatistics = array('avg_cpu_hours', 'avg_node_hours', 'avg_waitduration_hours');
+        $statistics = array('Jobs_job_count', 'Jobs_total_cpu_hours', 'Jobs_utilization');
+        $agg_err_stats = array('Jobs_avg_waitduration_hours');
+        $errstatistics = array('Jobs_avg_cpu_hours', 'Jobs_avg_node_hours', 'Jobs_avg_waitduration_hours');
 
         $group_bys = array('none', 'person', 'resource', 'jobsize');
 

@@ -85,7 +85,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $obj = $realm->getGroupByObject('resource');
 
         $values = $obj->getAttributeValues();
-        $this->assertEquals(8, count($values), 'Number of resource attributes returned with no filter');
+        $this->assertEquals(9, count($values), 'Number of resource attributes returned with no filter');
 
         $restrictions = array(
             'id' => '1^frearson'

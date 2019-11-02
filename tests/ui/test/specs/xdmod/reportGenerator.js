@@ -339,7 +339,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // TODO: Add tests for storage and cloud realms
-    if (XDMOD_REALMS.includes('jobs')) {
+    if (XDMOD_REALMS.includes('Jobs')) {
         // PI
         loginPage.login('principalinvestigator');
 
@@ -388,7 +388,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // TODO: Add tests for storage and cloud realms
-    if (XDMOD_REALMS.includes('jobs')) {
+    if (XDMOD_REALMS.includes('Jobs')) {
         // Center director
         loginPage.login('centerdirector');
 

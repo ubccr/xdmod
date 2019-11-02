@@ -432,10 +432,10 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertCount(1, $actual['data'], '"data" has one element');
         $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
         } else {
-            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
+            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/Jobs');
         }
 
         if (!is_file($expectedFileName)) {

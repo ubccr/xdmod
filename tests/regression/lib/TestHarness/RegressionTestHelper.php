@@ -279,8 +279,14 @@ class RegressionTestHelper extends XdmodTestHelper
                 . $testReqData['statistic']
                 . '/';
 
+            /**
+             * the following string replace is used since statistic names are
+             * namespaced with `${REALM_NAME}_`.
+             * However, instead of renaming all of the test files we remove
+             * `${REALM_NAME}_` here to get the filename name
+             */
             $fullName
-                = $testName
+                = str_replace($testReqData['realm'] . '_', '', $testName)
                 . $testReqData['dataset_type']
                 . '-'
                 . $testReqData['aggregation_unit'];
@@ -412,7 +418,7 @@ class RegressionTestHelper extends XdmodTestHelper
         $endpoint = parse_url(self::getSiteUrl());
         $outputDir = implode(
             DIRECTORY_SEPARATOR,
-            [self::getBaseDir(), 'expected', $endpoint['host'], $testName]
+            [self::getBaseDir(), 'expected', $endpoint['host'], str_replace($input['realm'] . '_', '', $testName)]
         );
 
         if (!file_exists($outputDir)) {
@@ -490,55 +496,45 @@ class RegressionTestHelper extends XdmodTestHelper
             foreach ($expectedHeader as $key => $value) {
                 $index = $useAssoc ? $value : $key;
                 $columnName = $useAssoc ? $index : $expectedHeader[$index];
+                $expectedRowValue = $expectedRow[$index];
+                $providedRowValue = $providedRow[$index];
+                $rowMessage = sprintf(
+                    "Values do not match for column %s, row %d. \nExpected: [%s] \nActual:   [%s]",
+                    $columnName,
+                    $i,
+                    $expectedRowValue,
+                    $providedRowValue
+                );
 
-                if (!array_key_exists($index, $providedRow)) {
-                    $failures[] = sprintf(
-                        "Expected key not found in provided row %d. \n\t\tExpected Key:  [%s]\n\t\tProvided Keys: [%s]",
-                        $i,
-                        $index,
-                        implode(', ', array_keys($providedRow))
-                    );
-                } else {
-                    $expectedRowValue = $expectedRow[$index];
-                    $providedRowValue = $providedRow[$index];
-                    $rowMessage = sprintf(
-                        "Values do not match for column %s, row %d. \nExpected: [%s] \nActual:   [%s]",
-                        $columnName,
-                        $i,
-                        $expectedRowValue,
-                        $providedRowValue
-                    );
+                if ($providedRowValue !== $expectedRowValue && is_numeric($expectedRowValue)) {
+                    $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
 
-                    if ($providedRowValue !== $expectedRowValue && is_numeric($expectedRowValue)) {
-                        $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
-
-                        if (abs($expectedRowValue) > self::$almostZero) {
-                            $relativeError = abs($expectedRowValue - $providedRowValue) / $expectedRowValue;
-                            $errorFormula .= " / $expectedRowValue";
-                        } else {
-                            $relativeError = abs($expectedRowValue - $providedRowValue);
-                        }
-
-                        if ($relativeError > self::$delta) {
-                            $failures[] = sprintf(
-                                '( %s ) => %f > %f',
-                                $errorFormula,
-                                $relativeError,
-                                self::$delta
-                            );
-                        } else {
-                            $this->messages[] = sprintf(
-                                'column: %s, row: %d ( %s ) => %f < %f',
-                                $columnName,
-                                $i,
-                                $errorFormula,
-                                $relativeError,
-                                self::$delta
-                            );
-                        }
-                    } elseif ($expectedRowValue !== $providedRowValue) {
-                        $failures[] = $rowMessage;
+                    if (abs($expectedRowValue) > self::$almostZero) {
+                        $relativeError = abs($expectedRowValue - $providedRowValue) / $expectedRowValue;
+                        $errorFormula .= " / $expectedRowValue";
+                    } else {
+                        $relativeError = abs($expectedRowValue - $providedRowValue);
                     }
+
+                    if ($relativeError > self::$delta) {
+                        $failures[] = sprintf(
+                            '( %s ) => %f > %f',
+                            $errorFormula,
+                            $relativeError,
+                            self::$delta
+                        );
+                    } else {
+                        $this->messages[] = sprintf(
+                            'column: %s, row: %d ( %s ) => %f < %f',
+                            $columnName,
+                            $i,
+                            $errorFormula,
+                            $relativeError,
+                            self::$delta
+                        );
+                    }
+                } elseif ($expectedRowValue !== $providedRowValue) {
+                    $failures[] = $rowMessage;
                 }
             }
         }

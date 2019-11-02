@@ -1,7 +1,7 @@
 {
   "_realm_name": "Jobs",
   "_group_by_name": "none",
-  "_default_statisticname": "utilization",
+  "_default_statisticname": "Jobs_utilization",
   "_order_id": 0,
   "_show_menu": true,
   "_disable_menu": false
