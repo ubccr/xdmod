@@ -119,7 +119,7 @@
                 "name": "service_provider",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": "DIMENSION: The orgainization that is hosting a virtual machine."
+                "comment": "DIMENSION: A service provider is an institution that hosts resources."
             }
         ],
 

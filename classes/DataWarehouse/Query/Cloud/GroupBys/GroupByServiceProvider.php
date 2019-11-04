@@ -17,7 +17,7 @@ class GroupByServiceProvider extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return 'The location of the resource.';
+        return 'A service provider is an institution that hosts resources.';
     }
 
     public function __construct()
