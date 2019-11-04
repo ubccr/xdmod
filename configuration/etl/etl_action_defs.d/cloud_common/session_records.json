@@ -58,7 +58,7 @@
             }
         ],
         "orderby": [
-            "resource_id ASC, instance_id ASC, service_provider ASC, start_time_ts ASC"
+            "resource_id ASC, instance_id ASC, start_time_ts ASC"
         ]
     }
 }
