@@ -110,7 +110,8 @@
                 "type": "int(11)",
                 "nullable": true,
                 "comment": "DIMENSION: The venue that a job or virtual machine was initiated from."
-            },{
+            },
+            {
                 "name": "domain_id",
                 "type": "int(11)",
                 "nullable": true,
