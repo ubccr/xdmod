@@ -276,20 +276,17 @@ class FileManager extends Loggable
     /**
      * Remove all data files corresponding to deleted requests.
      *
-     * @param array $availableRequestIds Request IDs for "Available" export
-     *   files.  These correspond to data files that should not be deleted.
+     * @param array $deletedRequestIds Request IDs for "Deleted" export
+     *   files.
      */
-    public function removeDeletedRequests(array $availableRequestIds)
+    public function removeDeletedRequests(array $deletedRequestIds)
     {
-        $availableFiles = array_map(
-            [$this, 'getExportDataFilePath'],
-            $availableRequestIds
-        );
-
-        foreach (glob($this->exportDir . '/*.zip') as $exportFile) {
-            if (!in_array($exportFile, $availableFiles)) {
+        foreach ($deletedRequestIds as $id) {
+            $exportFile = $this->getExportDataFilePath($id);
+            if (is_file($exportFile)) {
                 $this->logger->info([
                     'message' => 'Removing export file',
+                    'batch_export_request.id' => $id,
                     'zip_file' => $exportFile
                 ]);
                 if (!unlink($exportFile)) {
