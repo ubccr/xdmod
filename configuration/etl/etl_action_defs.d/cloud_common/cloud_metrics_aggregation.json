@@ -45,7 +45,7 @@
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
                 "submission_venue_id": "sr.submission_venue_id",
                 "domain_id": "sr.domain_id",
-                "service_provider": "COALESCE(instance.service_provider, 1)"
+                "service_provider": "sr.service_provider"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",

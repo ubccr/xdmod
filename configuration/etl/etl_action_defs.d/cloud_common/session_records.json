@@ -23,7 +23,8 @@
             "person_id": "ev.person_id",
             "systemaccount_id": "ev.systemaccount_id",
             "submission_venue_id": "ev.submission_venue_id",
-            "domain_id": "ev.domain_id"
+            "domain_id": "ev.domain_id",
+            "service_provider": "ev.service_provider"
         },
         "joins": [
             {
@@ -57,7 +58,7 @@
             }
         ],
         "orderby": [
-            "resource_id ASC, instance_id ASC, start_time_ts ASC"
+            "resource_id ASC, instance_id ASC, service_provider ASC, start_time_ts ASC"
         ]
     }
 }

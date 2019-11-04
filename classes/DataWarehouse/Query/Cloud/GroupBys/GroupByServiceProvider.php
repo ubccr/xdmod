@@ -12,7 +12,7 @@ class GroupByServiceProvider extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
     {
-        return 'Service Provider';
+        return 'Provider';
     }
 
     public function getInfo()
