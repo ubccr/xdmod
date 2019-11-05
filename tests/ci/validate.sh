@@ -28,4 +28,14 @@ then
     exitcode=1
 fi
 
+# Check that the various scripts have not left any files around in the tmp
+# directory
+FIND_CRITERIA='-type f -newer /usr/share/xdmod/html/index.php ( -user xdmod -o -user apache )'
+if find /tmp $FIND_CRITERIA | grep -q  .
+then
+    echo "Unexpected files found in temporary directory"
+    find /tmp $FIND_CRITERIA -print0 | xargs -0 ls -la
+    exitcode=1
+fi
+
 exit $exitcode
