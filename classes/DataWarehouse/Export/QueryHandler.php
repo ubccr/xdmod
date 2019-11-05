@@ -84,20 +84,44 @@ class QueryHandler
         $endDate,
         $format
     ) {
-        $sql = "INSERT INTO batch_export_requests
-                (requested_datetime, user_id, realm, start_date, end_date, export_file_format)
-                VALUES
-                (NOW(), :user_id, :realm, :start_date, :end_date, :export_file_format)";
+        try {
+            $this->dbh->beginTransaction();
 
-        $params = array(
-            'user_id' => $userId,
-            'realm' => $realm,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'export_file_format' => $format
-        );
+            // Check for duplicate submitted or available requests for the user.
+            $duplicates = array_filter(
+                $this->listUserRequestsByState($userId),
+                function ($request) use ($realm, $startDate, $endDate, $format) {
+                    return ($request['state'] == 'Submitted' || $request['state'] == 'Available')
+                        && $realm == $request['realm']
+                        && $startDate == $request['start_date']
+                        && $endDate == $request['end_date']
+                        && $format == $request['export_file_format'];
+                }
+            );
+            if (count($duplicates) > 0) {
+                throw new Exception('Cannot create duplicate request');
+            }
 
-        return $this->dbh->insert($sql, $params);
+            $sql = "INSERT INTO batch_export_requests
+                    (requested_datetime, user_id, realm, start_date, end_date, export_file_format)
+                    VALUES
+                    (NOW(), :user_id, :realm, :start_date, :end_date, :export_file_format)";
+
+            $params = array(
+                'user_id' => $userId,
+                'realm' => $realm,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'export_file_format' => $format
+            );
+
+            $id = $this->dbh->insert($sql, $params);
+            $this->dbh->commit();
+            return $id;
+        } catch (Exception $e) {
+            $this->dbh->rollBack();
+            throw $e;
+        }
     }
 
     /**

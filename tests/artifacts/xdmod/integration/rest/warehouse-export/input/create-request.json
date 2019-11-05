@@ -21,6 +21,17 @@
         200,
         "POST-request"
     ],
+    "Normal user (duplicate)": [
+        "usr",
+        {
+            "realm": "jobs",
+            "start_date": "2017-02-01",
+            "end_date": "2017-02-28",
+            "format": "JSON"
+        },
+        400,
+        "error"
+    ],
     "PI": [
         "pi",
         {
