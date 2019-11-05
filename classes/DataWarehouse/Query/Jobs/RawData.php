@@ -12,15 +12,17 @@ use \DataWarehouse\Query\Model\Schema;
  * the set of fact table rows given the where conditions on the aggregate
  * table.
  */
-class RawData extends \DataWarehouse\Query\Query
+class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query\iQuery
 {
     public function __construct(
+        $realmId,
         $aggregationUnitName,
         $startDate,
         $endDate,
         $groupById = null,
         $statisticId = null,
-        array $parameters = array()
+        array $parameters = array(),
+        Log $logger = null
     ) {
         $realmId = 'Jobs';
         $schema = 'modw_aggregates';
@@ -32,7 +34,7 @@ class RawData extends \DataWarehouse\Query\Query
             $startDate,
             $endDate,
             $groupById,
-            $statisticId,
+            null,
             $parameters
         );
 
@@ -93,11 +95,11 @@ class RawData extends \DataWarehouse\Query\Query
         ));
 
         switch ($statisticId) {
-            case "Jobs_job_count":
-                $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
+            case "job_count":
+                $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "BETWEEN", "duration.day_start_ts AND duration.day_end_ts"));
                 break;
-            case "Jobs_started_job_count":
-                $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
+            case "started_job_count":
+                $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "BETWEEN", "duration.day_start_ts AND duration.day_end_ts"));
                 break;
             default:
                 // All other metrics show running job count
@@ -169,5 +171,9 @@ class RawData extends \DataWarehouse\Query\Query
             $data_query .= " GROUP BY \n".implode(",\n", $groups);
         }
         return $data_query . ') as a';
+    }
+
+    public function getQueryType(){
+        return 'timeseries';
     }
 }
