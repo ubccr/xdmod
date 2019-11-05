@@ -111,6 +111,15 @@
                 "columns": [
                     "requested_datetime"
                 ]
+            },
+            {
+                "name": "idx_state",
+                "columns": [
+                    "is_deleted",
+                    "export_succeeded",
+                    "export_expired",
+                    "export_created_datetime"
+                ]
             }
         ],
         "foreign_key_constraints": [
