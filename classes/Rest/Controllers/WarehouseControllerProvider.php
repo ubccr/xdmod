@@ -1254,7 +1254,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestException('Invalid search parameters specified in params object');
         } else {
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
-            $query = new $QueryClass("day", $startDate, $endDate, null, "", array());
+            $query = new $QueryClass($realm, "day", $startDate, $endDate, null, "", array());
 
             $allRoles = $user->getAllRoles();
             $query->setMultipleRoleParameters($allRoles, $user);
@@ -1587,7 +1587,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoId,
         $action
     ) {
-    
+
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1627,7 +1627,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoId,
         $action
     ) {
-    
+
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1664,7 +1664,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoId,
         $action
     ) {
-    
+
 
         switch ($infoId) {
             case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
@@ -1700,7 +1700,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $jobId,
         $action
     ) {
-    
+
         $JobMetaDataClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $JobMetaDataClass();
         $jobMetaData = $info->getJobMetadata($user, $jobId);
