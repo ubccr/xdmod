@@ -158,7 +158,7 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
         $pk_field = new TableField(
             $this->table,
             $this->pk_field_name,
-            $this->getIdColumnName($multi_group)
+            'pk'
         );
         $query->addField($pk_field);
 
@@ -185,7 +185,8 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
 
         $fact_table_fk_field = new TableField(
             $data_table,
-            $this->fk_field_name
+            $this->fk_field_name,
+            'fk'
         );
         $query->addWhereCondition(
             new WhereCondition(
