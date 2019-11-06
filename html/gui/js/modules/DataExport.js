@@ -358,7 +358,11 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     dataIndex: 'realm_id',
                     scope: this,
                     renderer: function (value) {
-                        return this.realmsStore.getById(value).get('name');
+                        var realmById = this.realmsStore.getById(value);
+                        if(realmById){
+                                return realmById.get('name');
+                        }
+                        return 'Unsupported Realm';
                     }
                 },
                 {
