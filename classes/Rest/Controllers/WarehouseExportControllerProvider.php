@@ -166,13 +166,17 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('format must be CSV or JSON');
         }
 
-        $id = $this->queryHandler->createRequestRecord(
-            $user->getUserId(),
-            $realm,
-            $startDate->format('Y-m-d'),
-            $endDate->format('Y-m-d'),
-            $format
-        );
+        try {
+            $id = $this->queryHandler->createRequestRecord(
+                $user->getUserId(),
+                $realm,
+                $startDate->format('Y-m-d'),
+                $endDate->format('Y-m-d'),
+                $format
+            );
+        } catch (Exception $e) {
+            throw new BadRequestHttpException('Failed to create export request: ' . $e->getMessage());
+        }
 
         return $app->json([
             'success' => true,
