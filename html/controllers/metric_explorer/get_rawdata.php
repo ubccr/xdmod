@@ -135,11 +135,13 @@ try {
         // DEFINE: that we're going to be sending back json.
         header('Content-type: application/json');
 
+        $filterOpts = array('options' => array('default' => null));
+
         $requestedLimit = isset($_REQUEST['limit']) ? $_REQUEST['limit'] : null;
-        $limit = filter_var($requestedLimit, FILTER_VALIDATE_INT, array('default' => null));
+        $limit = filter_var($requestedLimit, FILTER_VALIDATE_INT, $filterOpts);
 
         $requestedOffset = isset($_REQUEST['start']) ? $_REQUEST['start'] : null;
-        $offset = filter_var($requestedOffset, FILTER_VALIDATE_INT, array('default' => null));
+        $offset = filter_var($requestedOffset, FILTER_VALIDATE_INT, $filterOpts);
 
         $totalCount  = $dataset->getTotalPossibleCount();
 
