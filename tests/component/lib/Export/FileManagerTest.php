@@ -229,7 +229,7 @@ class FileManagerTest extends BaseTest
         // Delete 2.
         $deletedRequestIds = [3, 4];
         $availableRequestIds = [1, 2, 5];
-        self::$fileManager->removeDeletedRequests($availableRequestIds);
+        self::$fileManager->removeDeletedRequests($deletedRequestIds);
         foreach ($deletedRequestIds as $id) {
             $file = self::$fileManager->getExportDataFilePath($id);
             $this->assertFileNotExists($file);

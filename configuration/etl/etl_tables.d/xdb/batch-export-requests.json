@@ -83,6 +83,13 @@
                 "nullable": false,
                 "default": "CURRENT_TIMESTAMP",
                 "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "is_deleted",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0,
+                "comment": "True if the export has been deleted"
             }
         ],
         "indexes": [
@@ -103,6 +110,15 @@
                 "name": "idx_requested_datetime",
                 "columns": [
                     "requested_datetime"
+                ]
+            },
+            {
+                "name": "idx_state",
+                "columns": [
+                    "is_deleted",
+                    "export_succeeded",
+                    "export_expired",
+                    "export_created_datetime"
                 ]
             }
         ],

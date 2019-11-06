@@ -7,13 +7,13 @@
  *
  *  Recognized states enforced in this class:
  *
- *  State       export_succeeded    export_created_datetime     export_expired
- *  -----       ----------------    -----------------------     --------------
- *  Submitted   NULL                NULL                        FALSE
- *  Available   TRUE                NOT NULL                    FALSE
- *  Expired     TRUE                NOT NULL                    TRUE
- *  Failed      FALSE               NULL                        FALSE
- *  (Deleted)       not   present    in    database   or    filesystem
+ *  State       export_succeeded   export_created_datetime   export_expired   is_deleted
+ *  -----       ----------------   -----------------------   --------------   ----------
+ *  Submitted   NULL               NULL                      FALSE            FALSE
+ *  Available   TRUE               NOT NULL                  FALSE            FALSE
+ *  Expired     TRUE               NOT NULL                  TRUE             FALSE
+ *  Failed      FALSE              NULL                      FALSE            FALSE
+ *  Deleted     -                  -                         -                TRUE
  *
  *  State transitions enforced in this class:
  *
@@ -42,25 +42,31 @@ class QueryHandler
      * Definition of Submitted state.
      * @var string
      */
-    private $whereSubmitted = "WHERE export_succeeded IS NULL AND export_created_datetime IS NULL AND export_expired = 0 ";
+    private $whereSubmitted = "WHERE export_succeeded IS NULL AND export_created_datetime IS NULL AND export_expired = 0 AND is_deleted = 0 ";
 
     /**
      * Definition of Available state.
      * @var string
      */
-    private $whereAvailable = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 0 ";
+    private $whereAvailable = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 0 AND is_deleted = 0 ";
 
     /**
      * Definition of Expired state.
      * @var string
      */
-    private $whereExpired = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 1 ";
+    private $whereExpired = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 1 AND is_deleted = 0 ";
 
     /**
      * Definition of Failed state.
      * @var string
      */
-    private $whereFailed = "WHERE export_succeeded = 0 AND export_created_datetime IS NULL AND export_expired = 0 ";
+    private $whereFailed = "WHERE export_succeeded = 0 AND export_created_datetime IS NULL AND export_expired = 0 AND is_deleted = 0 ";
+
+    /**
+     * Definition of Deleted state.
+     * @var string
+     */
+    private $whereDeleted = "WHERE is_deleted = 1 ";
 
     public function __construct()
     {
@@ -249,6 +255,18 @@ class QueryHandler
     }
 
     /**
+     * Return details of all export requests presently in the Deleted state.
+     *
+     * @return array
+     */
+    public function listDeletedRecords()
+    {
+        $sql = 'SELECT id, user_id, realm, start_date, end_date, export_file_format, requested_datetime
+            FROM batch_export_requests ' . $this->whereDeleted . ' ORDER BY requested_datetime, id';
+        return $this->dbh->query($sql);
+    }
+
+    /**
      * Return details of export requests made by specified user.
      *
      * @param integer $userId
@@ -313,7 +331,7 @@ class QueryHandler
      */
     public function deleteRequest($id, $userId)
     {
-        $sql = "DELETE FROM batch_export_requests WHERE id = :request_id AND user_id = :user_id";
+        $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
         return $this->dbh->execute($sql, array('request_id' => $id, 'user_id' => $userId));
     }
 }

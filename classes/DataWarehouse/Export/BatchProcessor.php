@@ -231,7 +231,7 @@ class BatchProcessor extends Loggable
                 function ($request) {
                     return $request['id'];
                 },
-                $this->queryHandler->listAvailableRecords()
+                $this->queryHandler->listDeletedRecords()
             )
         );
     }
