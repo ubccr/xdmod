@@ -1923,13 +1923,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     node.eachChild(function (n) {
                         var statisticNode = n;
                         if (n.attributes.supportsAggregate === false) {
-                            // do not overide chart settings for nodes that correspond to statistics that must be
-                            // shown in timeseries mode (note for future: there should be no statistics like this in XDMoD).
-                            var decoded = Ext.apply({}, n.attributes.chartSettings);
-                            decoded.dataset_type = 'timeseries';
-                            decoded.display_type = 'line';
-                            decoded.swap_xy = false;
-                            statisticNode.attributes.chartSettings = decoded;
+                            n.attributes.dataset_type = 'timeseries';
+                            n.attributes.display_type = 'line';
+                            n.attributes.swap_xy = false;
                         } else {
                             statisticNode.attributes.chartSettings = node.attributes.chartSettings || undefined;
                         }
@@ -2661,7 +2657,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                     var serverChartSettings = Ext.apply({}, chartStore.getAt(0).get('chart_settings'));
 
-                    if (!serverChartSettings) {
+                    if (Object.keys(serverChartSettings).length === 0) {
                         serverChartSettings = Ext.apply({}, n.attributes.defaultChartSettings);
                     }
 
