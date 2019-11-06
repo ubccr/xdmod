@@ -103,15 +103,7 @@ class GroupByDomain extends GroupBy
         $query->addGroup($domainIdField);
 
         $fkField = new TableField($dataTable, 'domain_id');
-
-        // the cloud_fact_by_* tables are *special* so they went with `host_resource_id` instead of `resource_id` for
-        // their `resource_id` fk field. We need to account for that here.
-        $resourceFkFieldName = 'resource_id';
-        if (strpos($dataTable->getName(), 'cloudfact_by') !== false) {
-            $resourceFkFieldName = 'host_resource_id';
-        }
-
-        $resourceFkField = new TableField($dataTable, $resourceFkFieldName);
+        $resourceFkField = new TableField($dataTable, 'host_resource_id');
 
         $query->addWhereCondition(new WhereCondition($domainIdField, '=', $fkField));
         $query->addWhereCondition(new WhereCondition($resourceIdField, '=', $resourceFkField));
