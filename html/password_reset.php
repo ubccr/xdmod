@@ -11,20 +11,16 @@
 	$page_title = xd_utilities\getConfiguration('general', 'title');
 	$site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
-$params = array(
-    'rid' => RESTRICTION_RID
-);
+$rid = filter_input(INPUT_GET, 'rid', FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => RESTRICTION_RID)));
 
-$isValid = xd_security\secureCheck($params, 'GET');
-
-if (!$isValid) {
+if ($rid === false) {
     $validationCheck = array(
         'status' => INVALID,
         'user_first_name' => 'INVALID',
         'user_id' => INVALID
     );
 } else {
-    $validationCheck = XDUser::validateRID($_GET['rid']);
+    $validationCheck = XDUser::validateRID($rid);
 }
 
 
@@ -114,7 +110,7 @@ if (!$isValid) {
       <![endif]-->
 
       <script language="JavaScript">
-         var reset_id = '<?php print $_GET['rid']; ?>';
+         var reset_id = <?php print json_encode($rid); ?>;
       </script>
       
       <script type="text/javascript" src="gui/js/PasswordReset.js"></script>
