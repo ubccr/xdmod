@@ -160,7 +160,7 @@ class MetricExplorerTest extends BaseTest
                     'total' => 0,
                 ),
                 'z_index' => 0,
-                'visibility' => NULL,
+                'visibility' => null,
                 'enabled' => true,
                 'metric' => 'job_count',
                 'realm' => 'Jobs',
