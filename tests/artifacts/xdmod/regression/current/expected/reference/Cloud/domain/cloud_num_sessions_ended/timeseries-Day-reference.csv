@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Unknown - NutSetters] Number of Sessions Ended"
+Day,"[Default - OpenStack] Number of Sessions Ended"
 2018-04-18,15
 2018-04-19,23
 2018-04-20,7
