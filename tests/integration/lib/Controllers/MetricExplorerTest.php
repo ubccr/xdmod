@@ -112,7 +112,7 @@ class MetricExplorerTest extends BaseTest
         $this->assertEquals(401, $response[1]['http_code']);
     }
 
-    function rawDataProvider()
+    public function rawDataProvider()
     {
         $params = array (
             'show_title' => 'y',
