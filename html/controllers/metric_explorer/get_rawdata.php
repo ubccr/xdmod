@@ -135,14 +135,10 @@ try {
         // DEFINE: that we're going to be sending back json.
         header('Content-type: application/json');
 
-        $limit = isset($_REQUEST['limit']) ? $_REQUEST['limit'] : null;
-        $offset = isset($_REQUEST['start']) ? $_REQUEST['start'] : null;
+        $filterOpts = array('options' => array('default' => null, 'min_range' => 0));
 
-        $hasLimit = isset($limit);
-        $hasOffset = isset($offset);
-
-        $limitIsValid = $hasLimit && ctype_digit($limit);
-        $offsetIsValid = $hasOffset && ctype_digit($offset);
+        $limit = filter_input(INPUT_POST, 'limit', FILTER_VALIDATE_INT, $filterOpts);
+        $offset = filter_input(INPUT_POST, 'start', FILTER_VALIDATE_INT, $filterOpts);
 
         $totalCount  = $dataset->getTotalPossibleCount();
 
@@ -168,19 +164,7 @@ try {
             $ret['totalAvailable'] = $privdataset->getTotalPossibleCount();
         }
 
-        // BUILD: the results to be returned
-        $results = array();
-        if ($limitIsValid && $offsetIsValid) {
-            foreach ($dataset->getResults($limit, $offset) as $res) {
-                array_push($results, $res);
-            }
-        } else {
-            foreach ($dataset->getResults() as $res) {
-                array_push($results, $res);
-            }
-        }
-
-        $ret['data'] = $results;
+        $ret['data'] = $dataset->getResults($limit, $offset);
         $ret['totalCount'] = $totalCount;
 
         print json_encode($ret);
