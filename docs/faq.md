@@ -45,7 +45,7 @@ configuration.
     read_buffer_size        = 4M
     join_buffer_size        = 16M
     innodb_buffer_pool_size = 64M
-    max_allowed_packet      = 16M
+    max_allowed_packet      = 1G
     tmp_table_size          = 1G
     max_heap_table_size     = 128M
     thread_stack            = 256K
@@ -53,6 +53,7 @@ configuration.
     query_cache_limit       = 16M
     query_cache_size        = 1G
     group_concat_max_len    = 16M
+    innodb_stats_on_metadata = off
 
 [optimizing-mysql]: https://dev.mysql.com/doc/refman/5.5/en/optimizing-server.html
 

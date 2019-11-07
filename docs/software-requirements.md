@@ -140,8 +140,9 @@ setting must be set to at least 16MB. The recommended setting in the mysql serve
 
 ```ini
 [mysqld]
-max_allowed_packet   = 16M
+max_allowed_packet = 1G
 group_concat_max_len = 16M
+innodb_stats_on_metadata = off
 ```
 
 [sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
