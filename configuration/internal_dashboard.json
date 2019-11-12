@@ -11,6 +11,12 @@
             "config": {
                 "title": "User Management"
             }
+        },
+        {
+            "class": "XDMoD.Admin.ETL.ETLViewer",
+            "config": {
+                "title": "ETL Viewer"
+            }
         }
     ],
     "logs": [

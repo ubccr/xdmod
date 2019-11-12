@@ -195,6 +195,11 @@ require_once 'user_check.php';
   <script type="text/javascript" src="js/Dashboard/FramePanel.js"></script>
   <script type="text/javascript" src="js/Dashboard/Viewport.js"></script>
 
+  <script type="text/javascript" src="js/etl_viewer/ETLViewer.js"></script>
+  <script type="text/javascript" src="js/etl_viewer/ETLViewerTreeTab.js"></script>
+  <script type="text/javascript" src="js/etl_viewer/ETLViewerTree.js"></script>
+  <script type="text/javascript" src="js/etl_viewer/ETLViewerTreePanel.js"></script>
+
   <?php echo \OpenXdmod\Assets::generateAssetTags('internal_dashboard'); ?>
 
     <script type="text/javascript">
