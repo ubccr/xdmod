@@ -17,7 +17,7 @@
             "event_type_id": "COALESCE(etype.event_type_id, -1)",
             "record_type_id": "COALESCE(rtype.record_type_id, -1)",
             "user_name": "raw.user_name",
-            "person_id": "sa.person_id",
+            "person_id": "COALESCE(sa.person_id, -1)",
             "account_id": "COALESCE(acct.account_id, 1)",
             "host_id": "COALESCE(h.host_id, 1)",
             "instance_id": "COALESCE(i.instance_id, 1)",
@@ -85,6 +85,7 @@
                 "name": "systemaccount",
                 "schema": "${UTILITY_SCHEMA}",
                 "alias": "sa",
+                "type": "LEFT",
                 "on": "raw.user_name = sa.username AND raw.resource_id = sa.resource_id"
             },
             {
