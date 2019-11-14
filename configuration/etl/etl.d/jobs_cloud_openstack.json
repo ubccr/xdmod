@@ -304,6 +304,7 @@
             "description": "OpenStack staging data for cloud events",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/staging_event.json",
+            "truncate_destination": true,
             "endpoints": {
               "utility": {
                 "type": "mysql",
