@@ -42,13 +42,13 @@ configuration.
 ```ini
 [mysqld]
 key_buffer_size = 1G
-sort_buffer_size = 8M
+sort_buffer_size = 16M
 read_buffer_size = 4M
-join_buffer_size = 16M
-innodb_buffer_pool_size = 64M
+join_buffer_size = 32M
+innodb_buffer_pool_size = 1G
 max_allowed_packet = 1G
 tmp_table_size = 1G
-max_heap_table_size = 128M
+max_heap_table_size = 1G
 thread_stack = 256K
 thread_cache_size = 8
 query_cache_limit = 16M
