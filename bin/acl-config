@@ -427,7 +427,8 @@ SQL;
         $log->err('Backup tables detected! ');
         $log->err('Unable to continue!');
         $log->err('This may indicate a failed previous run.');
-        $log->err('Please see the XDMoD Troubleshooting documentation to resolve.');
+        $log->err('Run "acl-config --recover" to recover using backup tables.');
+        $log->err('See https://open.xdmod.org/9.0/faq.html#why-do-i-see-backup-tables-detected-when-running-the-acl-config-script for more information.');
         exit(1);
     } elseif (!$backupTablesExist) {
         if ($recover) {
