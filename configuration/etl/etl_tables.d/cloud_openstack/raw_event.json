@@ -136,6 +136,12 @@
                 "type": "varchar(64)",
                 "nullable": true,
                 "default": null
+            },
+            {
+                "name": "service_provider",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
             }
         ],
         "indexes": [{

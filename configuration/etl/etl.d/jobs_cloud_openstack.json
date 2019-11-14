@@ -74,7 +74,8 @@
                             "record_type",
                             "size",
                             "created_at",
-                            "volume_id"
+                            "volume_id",
+                            "service_provider"
                         ],
                         "filters": [{
                           "#": "Open Stack records do not contain a record_type field so we determine it by looking at the",
@@ -82,7 +83,7 @@
                           "type": "external",
                           "name": "jq",
                           "path": "jq",
-                          "arguments" :"-c '.[] | .[\"record_type\"] += if .[\"event_type\"] == \"compute.instance.exists\" then \"ADMINISTRATIVE\" else \"ACCOUNTING\" end'"
+                          "arguments" :"-c '.[] | .[\"record_type\"] += if .[\"event_type\"] == \"compute.instance.exists\" then \"ADMINISTRATIVE\" else \"ACCOUNTING\" end | .[\"service_provider\"] += \"${SERVICE_PROVIDER}\"'"
                         }]
                     }
                 }

@@ -110,6 +110,11 @@
                 "nullable": false,
                 "default": "CURRENT_TIMESTAMP",
                 "extra": "on update CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": false
             }
         ],
         "indexes": [

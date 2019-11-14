@@ -34,7 +34,8 @@
             "disk_gb": "disk_gb",
             "size": "size",
             "volume_id": "volume_id",
-            "state": "state"
+            "state": "state",
+            "service_provider": "service_provider"
         },
         "openstack_raw_instance_type": {
             "instance_type": "instance_type",
