@@ -30,7 +30,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function __construct(array $params = [])
     {
         parent::__construct($params);
-        $this->fileManager = new FileManager();
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler();
     }
@@ -221,7 +220,8 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('Requested data is not available');
         }
 
-        $file = $this->fileManager->getExportDataFilePath($id);
+        $fileManager = new FileManager();
+        $file = $fileManager->getExportDataFilePath($id);
 
         if (!is_file($file)) {
             throw new NotFoundHttpException('Exported data not found');
@@ -238,7 +238,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 'Content-type' => 'application/zip',
                 'Content-Disposition' => sprintf(
                     'attachment; filename="%s"',
-                    $this->fileManager->getZipFileName($request)
+                    $fileManager->getZipFileName($request)
                 )
             ]
         );
