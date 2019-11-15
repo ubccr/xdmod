@@ -36,6 +36,21 @@ $logLevel = Log::ERR;
 $recover = false;
 
 try {
+    $lockFile = '/var/tmp/acl-config.lock';
+    $lockFileHandle = @fopen($lockFile, 'w');
+
+    if ($lockFileHandle === false) {
+        $lastError = error_get_last();
+        fwrite(STDERR, sprintf("Current User: %s\n", get_current_user()));
+        fwrite(STDERR, sprintf("Failed to open lock file \"%s\": %s", $lockFile, print_r($lastError, true)));
+        exit(1);
+    }
+
+    if (!@flock($lockFileHandle, LOCK_EX | LOCK_NB)) {
+        fwrite(STDERR, "acl-config not running due to another process holding the lock.\n");
+        exit(1);
+    }
+
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
 
     foreach ($options as $key => $value) {
@@ -79,21 +94,55 @@ try {
             'consoleLogLevel' => $logLevel
         )
     );
+    // The database connection will always be needed, even during dry-run because there are
+    // informational queries that will be executed even though information is not being changed.
 
-    main();
+    $log->debug("*** Conducting Database Verification...");
+    if (!verifyDatabase()) {
+        $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
+        exit(1);
+    }
+    $log->debug("*** Database Verification Passed!");
 
+    $db = DB::factory('database');
+
+    // Begin by making sure that we have an active transaction running. If something funky happens then we need to make
+    // sure we can roll back any changes that were made.
+    $db->beginTransaction();
+
+    $sigHandler = function ($sig) use (&$db) {
+        $rolledBack = $db->rollback();
+        if ($rolledBack === false) {
+            exit(1);
+        }
+    };
+
+    pcntl_signal(SIGINT, $sigHandler);
+    pcntl_signal(SIGTERM, $sigHandler);
+    pcntl_signal(SIGHUP, $sigHandler);
+
+    main($db);
+
+    @flock($lockFileHandle, LOCK_UN);
+    @fclose($lockFileHandle);
+    @unlink($lockFile);
 } catch (Exception $e) {
     do {
         fwrite(STDERR, $e->getMessage() . "\n");
         fwrite(STDERR, $e->getTraceAsString() . "\n");
     } while ($e = $e->getPrevious());
+
+    if ($db && $db->rollback() === false) {
+        fwrite(STDERR, "Unable to rollback database changes. Your database may be in an inconsistent state.");
+    }
+
     exit(1);
 }
 
 /**
  *
  **/
-function main()
+function main(iDatabase $db)
 {
     global $dryRun, $log, $verify, $logLevel, $recover;
 
@@ -217,19 +266,6 @@ function main()
      * )
      */
 
-    $db = null;
-
-    // The database connection will always be needed, even during dry-run because there are
-    // informational queries that will be executed even though information is not being changed.
-
-    $log->debug("*** Conducting Database Verification...");
-    if (!verifyDatabase()) {
-        $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
-        exit(1);
-    }
-    $log->debug("*** Database Verification Passed!");
-
-    $db = DB::factory('database');
 
     // Ensure that we're starting from scratch while backing up the tables that
     // we do not manage ( user_acls, user_acl_group_by_parameters ). These
@@ -492,15 +528,26 @@ SQL;
 
     // Run the acl cleanup scripts
     Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
+
+    $committed = $db->commit();
+    if ($committed === false) {
+        $log->err("Unable to commit acl-config changes! Please take note of any error messages and try again.");
+        $rolledBack = $db->rollBack();
+
+        // We throw an Exception so that we do not leave the db in an inconsistent state.
+        if ($rolledBack === false) {
+            throw new Exception("Unable to rollback acl-config changes. Database may be left in an inconsistent state.");
+        }
+    }
 }
 
 /**
  * Create a backup of the user related acl tables so that we can later re-populate
  * them
  *
- * @param iDatabase $db     the database that the user related tables will be backed
+ * @param iDatabase $db the database that the user related tables will be backed
  *                          up in.
- * @param array     $tables
+ * @param array $tables
  * @throws Exception if a problem occurs while executing table backup sql.
  */
 function backupNonManagedTables(iDatabase $db, array $tables)
@@ -1350,16 +1397,7 @@ SQL;
             $log->warning("[WARNING] Inserted more than one Acl Hierarchy Record for: $id");
         }
     }
-    $committed = $db->commit();
-    if ($committed === false) {
-        $log->warning("[FAIL] Attempt to commit hierarchies for Acl [$acl] failed.");
-        $rolledBack = $db->rollBack();
 
-        // We throw an Exception so that we do not leave the db in an inconsistent state.
-        if ($rolledBack === false) {
-            throw new Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
-        }
-    }
     $processed = count($hierarchies);
     $log->notice("Processed: $processed, Inserted: $inserted");
 }
