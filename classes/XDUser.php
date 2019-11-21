@@ -503,7 +503,7 @@ EML;
         $pdo = DB::factory('database');
 
         $userCheck = $pdo->query("
-         SELECT username, password, email_address, first_name, middle_name, last_name,
+         SELECT id, username, password, email_address, first_name, middle_name, last_name,
          time_created, time_last_updated, password_last_updated, account_is_active, organization_id, person_id, field_of_science, token, user_type, sticky
          FROM Users
          WHERE id=:id
@@ -523,7 +523,7 @@ EML;
             $user->_update_token = false;
         }
 
-        $user->_id = $uid;
+        $user->_id = $userCheck[0]['id'];
 
         $user->_account_is_active = ($userCheck[0]['account_is_active'] == '1');
 

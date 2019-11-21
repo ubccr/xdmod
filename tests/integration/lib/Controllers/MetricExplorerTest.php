@@ -112,6 +112,133 @@ class MetricExplorerTest extends BaseTest
         $this->assertEquals(401, $response[1]['http_code']);
     }
 
+    public function rawDataProvider()
+    {
+        $params = array (
+            'show_title' => 'y',
+            'timeseries' => 'y',
+            'aggregation_unit' => 'Auto',
+            'start_date' => '2016-12-28',
+            'end_date' => '2017-01-01',
+            'global_filters' => array(
+                'data' => array(
+                    array(
+                        'checked' => true,
+                        'value_id' => '110',
+                        'dimension_id' => 'person'
+                    ),
+                 ),
+            ),
+            'title' => 'untitled query 1',
+            'show_filters' => 'true',
+            'show_warnings' => 'true',
+            'show_remainder' => 'false',
+            'start' => '0',
+            'limit' => '20',
+            'timeframe_label' => 'User Defined',
+            'operation' => 'get_rawdata',
+            'data_series' => array (
+                array(
+                'group_by' => 'person',
+                'color' => 'auto',
+                'log_scale' => false,
+                'std_err' => false,
+                'value_labels' => false,
+                'display_type' => 'line',
+                'combine_type' => 'side',
+                'sort_type' => 'value_desc',
+                'ignore_global' => false,
+                'long_legend' => true,
+                'x_axis' => false,
+                'has_std_err' => false,
+                'trend_line' => false,
+                'line_type' => 'Solid',
+                'line_width' => 2,
+                'shadow' => false,
+                'filters' => array (
+                    'data' => array (),
+                    'total' => 0,
+                ),
+                'z_index' => 0,
+                'visibility' => null,
+                'enabled' => true,
+                'metric' => 'job_count',
+                'realm' => 'Jobs',
+                'category' => 'Jobs',
+                'id' => 0.41070416068466,
+                ),
+            ),
+            'swap_xy' => 'false',
+            'share_y_axis' => 'false',
+            'hide_tooltip' => 'false',
+            'show_guide_lines' => 'y',
+            'showContextMenu' => 'y',
+            'scale' => '1',
+            'format' => 'jsonstore',
+            'width' => '1884',
+            'height' => '700',
+            'legend_type' => 'bottom_center',
+            'font_size' => '3',
+            'featured' => 'false',
+            'trendLineEnabled' => '',
+            'controller_module' => 'metric_explorer',
+            'inline' => 'n',
+            'datapoint' => '1483056000000',
+            'datasetId' => '0.41070416068466'
+        );
+
+        $params['global_filters'] = urlencode(json_encode($params['global_filters']));
+        $params['data_series'] = urlencode(json_encode($params['data_series']));
+
+        $tests = array();
+
+        $tests[] = array($params, 20, true);
+
+        $params['limit'] = '1000\'; DROP TABLE Users;';
+        $tests[] = array($params, 712, true);
+
+        unset($params['limit']);
+        $tests[] = array($params, 712, true);
+
+        $params['start'] = 40;
+        $params['limit'] = 40;
+        $tests[] = array($params, 40, false);
+
+        $params['start'] = -10;
+        $params['limit'] = -1;
+        $tests[] = array($params, 712, true);
+
+        unset($params['start']);
+        $params['limit'] = 10;
+        $tests[] = array($params, 712, true);
+
+        return $tests;
+    }
+
+    /**
+     * @dataProvider rawDataProvider
+     */
+    public function testGetRawData($params, $limit, $shouldHaveTotalAvail)
+    {
+        // Jobs realm specific test
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
+        $this->helper->authenticate('cd');
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertArrayHasKey('data', $response[0]);
+        $this->assertCount($limit, $response[0]['data']);
+
+        if ($shouldHaveTotalAvail) {
+            $this->assertArrayHasKey('totalAvailable', $response[0]);
+        } else {
+            $this->assertArrayNotHasKey('totalAvailable', $response[0]);
+        }
+    }
+
     /**
      * @dataProvider chartDataProvider
      */
