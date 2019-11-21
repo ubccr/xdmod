@@ -2103,8 +2103,14 @@ class XDReportManager
         return true;
     }
 
+    /** retrieve information about the available report templates
+     * for a given set of ACLs.
+     * @param acls array() of acl names
+     * @param templateName string an optional filter to only return templates that match the name
+     */
     public static function enumerateReportTemplates(
-        $acls = array()
+        $acls = array(),
+        $templateName = null
     ) {
         $pdo = DB::factory('database');
         $aclNames = implode(
@@ -2126,10 +2132,16 @@ class XDReportManager
         FROM ReportTemplates rt
             JOIN report_template_acls rta ON rt.id = rta.report_template_id
             JOIN acls a                   ON rta.acl_id = a.acl_id
-        WHERE a.name IN ($aclNames);
+        WHERE a.name IN ($aclNames)
 SQL;
+        $queryparams = array();
+        if ($templateName !== null) {
+            $query .= " AND rt.`name` = ?";
+            $queryparams[] = $templateName;
+        }
+        $query .= " ORDER BY 1, 2, 3";
 
-        return $pdo->query($query);
+        return $pdo->query($query, $queryparams);
     }
 
     /**
