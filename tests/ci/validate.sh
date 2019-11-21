@@ -38,4 +38,12 @@ then
     exitcode=1
 fi
 
+# ensure tables absent
+tblcount=$(echo 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '"'"'moddb '"'"' AND table_name = '"'"'ReportTemplateACL'"'" | mysql -N information_schema)
+if [ $tblcount -ne 0 ];
+then
+    echo "Extraneous tables found in database"
+    exitcode=1
+fi
+
 exit $exitcode
