@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Models\Services\Acls;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use DataWarehouse\Query\Exceptions\NotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DashboardControllerProvider extends BaseControllerProvider
 {
@@ -272,7 +272,7 @@ class DashboardControllerProvider extends BaseControllerProvider
             if (is_null($userReport)){
                 $availTemplates = $rm->enumerateReportTemplates(array($role), 'Dashboard Tab Report');
                 if (empty($availTemplates)) {
-                    throw new NotFoundException();
+                    throw new NotFoundHttpException("No dashboard tab report template available for $role");
                 }
 
                 $template = $rm->retrieveReportTemplate($user, $availTemplates[0]['id']);
