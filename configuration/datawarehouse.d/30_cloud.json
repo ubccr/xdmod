@@ -60,6 +60,12 @@
                 {
                     "name": "domain",
                     "class": "GroupByDomain"
+                },
+                {
+                   "name": "service_provider",
+                   "class": "GroupByServiceProvider",
+                   "visible": false
+
                 }
             ],
             "statistics": [
