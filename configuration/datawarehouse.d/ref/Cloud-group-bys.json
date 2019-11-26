@@ -180,6 +180,33 @@
         "description_html": "A resource is defined as any infrastructure that hosts virtual machines.",
         "name": "Resource"
     },
+    "service_provider": {
+        "attribute_table": "serviceprovider",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "organization_id": "service_provider"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "serviceprovider"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "organization_id",
+                "name": "long_name",
+                "order_id": "order_id",
+                "short_name": "short_name"
+            }
+        },
+        "description_html": "A service provider is an institution that hosts resources.",
+        "name": "Provider"
+    },
     "submission_venue": {
         "attribute_table": "submission_venue",
         "attribute_table_schema": "modw",
@@ -199,9 +226,9 @@
             ],
             "records": {
                 "id": "submission_venue_id",
-                "name": "display",
+                "name": "description",
                 "order_id": "order_id",
-                "short_name": "submission_venue"
+                "short_name": "display"
             }
         },
         "category": "Administrative",
