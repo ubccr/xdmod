@@ -27,7 +27,7 @@ class GroupByUsername extends GroupBy
                 SELECT DISTINCT
                     gt.username AS id,
                     gt.username AS short_name,
-                    gt.username as long_name
+                    gt.username AS long_name
                 FROM systemaccount gt
                 WHERE 1
                 ORDER BY gt.username
@@ -41,6 +41,23 @@ class GroupByUsername extends GroupBy
         $this->_order_id_field_name = 'username';
         $this->table = new Table($this->schema, 'systemaccount', 'sa');
         $this->info = 'The specific system username of the users who stores data.';
+    }
+
+    public function pullQueryParameters(&$request)
+    {
+        return parent::pullQueryParameters2(
+            $request,
+            'SELECT id FROM modw.systemaccount WHERE username IN (_filter_)',
+            'systemaccount_id'
+        );
+    }
+
+    public function pullQueryParameterDescriptions(&$request)
+    {
+        return parent::pullQueryParameterDescriptions2(
+            $request,
+            'SELECT DISTINCT username AS field_label FROM modw.systemaccount WHERE username IN (_filter_) ORDER BY username'
+        );
     }
 
     public function getPossibleValues(
@@ -57,16 +74,16 @@ class GroupByUsername extends GroupBy
 
         foreach ($parameters as $pname => $pvalue) {
             if ($pname == 'person') {
-                $possible_values_query = str_ireplace('WHERE ', 'WHERE gt.person_id = $pvalue AND ', $possible_values_query);
+                $possible_values_query = str_ireplace('WHERE ', 'WHERE gt.person_id = ' . $pvalue . ' AND ', $possible_values_query);
             } elseif ($pname == 'provider') {
                 $possible_values_query = str_ireplace('FROM ', 'FROM modw.resourcefact rf, ', $possible_values_query);
-                $possible_values_query = str_ireplace('WHERE ', 'WHERE rf.organization_id = $pvalue AND gt.resource_id = rf.id  AND ', $possible_values_query);
+                $possible_values_query = str_ireplace('WHERE ', 'WHERE rf.organization_id = ' . $pvalue . ' AND gt.resource_id = rf.id AND ', $possible_values_query);
             } elseif ($pname == 'institution') {
                 $possible_values_query = str_ireplace('FROM ', 'FROM modw.person p, ', $possible_values_query);
-                $possible_values_query = str_ireplace('WHERE ', 'WHERE p.organization_id = $pvalue AND gt.person_id = p.id  AND ', $possible_values_query);
+                $possible_values_query = str_ireplace('WHERE ', 'WHERE p.organization_id = ' . $pvalue . ' AND gt.person_id = p.id AND ', $possible_values_query);
             } elseif ($pname == 'pi') {
                 $possible_values_query = str_ireplace('FROM ', 'FROM modw.peopleunderpi pup, ', $possible_values_query);
-                $possible_values_query = str_ireplace('WHERE ', 'WHERE pup.principalinvestigator_person_id = $pvalue AND gt.person_id = pup.person_id  AND ', $possible_values_query);
+                $possible_values_query = str_ireplace('WHERE ', 'WHERE pup.principalinvestigator_person_id = ' . $pvalue . ' AND gt.person_id = pup.person_id AND ', $possible_values_query);
             }
         }
 
