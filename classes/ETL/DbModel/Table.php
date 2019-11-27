@@ -735,6 +735,7 @@ ORDER BY trigger_name ASC";
         $alterList = array();
         $changeList = array();
         $triggerList = array();
+        $foreignKeyList = array();
 
         // --------------------------------------------------------------------------------
         // Process columns
@@ -954,8 +955,8 @@ ORDER BY trigger_name ASC";
             if ( 0 == $destForeignKeyConstraint->compare($this->getForeignKeyConstraint($name)) ) {
                 continue;
             }
-            $alterList[] = 'DROP FOREIGN KEY ' . $destForeignKeyConstraint->getName(true);
-            $alterList[] = 'ADD ' . $destForeignKeyConstraint->getSql($includeSchema);
+            $foreignKeyList[] = 'DROP FOREIGN KEY ' . $destForeignKeyConstraint->getName(true);
+            $foreignKeyList[] = 'ADD ' . $destForeignKeyConstraint->getSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
@@ -998,7 +999,7 @@ ORDER BY trigger_name ASC";
         // --------------------------------------------------------------------------------
         // Put it all together
 
-        if ( 0 == count($alterList) && 0 == count($changeList) && 0 == count($triggerList) ) {
+        if ( 0 == count($alterList) && 0 == count($changeList) && 0 == count($triggerList) && 0 == count($foreignKeyList) ) {
             return false;
         }
 
@@ -1011,6 +1012,10 @@ ORDER BY trigger_name ASC";
 
         if ( 0 != count($changeList) ) {
             $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, implode(",\n", $changeList));
+        }
+
+        foreach ($foreignKeyList as $fkey) {
+            $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, $fkey);
         }
 
         if ( 0 != count($triggerList) ) {

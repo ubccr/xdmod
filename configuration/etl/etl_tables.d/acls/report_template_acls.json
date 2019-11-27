@@ -52,7 +52,8 @@
         "referenced_table": "acls",
         "referenced_columns": [
           "acl_id"
-        ]
+        ],
+        "on_delete": "CASCADE"
       }
     ]
   }
