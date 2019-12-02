@@ -111,11 +111,17 @@ try {
     // sure we can roll back any changes that were made.
     $db->beginTransaction();
 
-    $sigHandler = function ($sig) use (&$db) {
-        $rolledBack = $db->rollback();
-        if ($rolledBack === false) {
-            exit(1);
+    $sigHandler = function ($sig) use (&$db, $lockFileHandle, $lockFile) {
+
+        @flock($lockFileHandle, LOCK_UN);
+        @fclose($lockFileHandle);
+        @unlink($lockFile);
+
+        if ($db->rollback() === false) {
+            fwrite(STDERR, "Unable to rollback database changes. Your database may be in an inconsistent state.");
         }
+
+        exit(1);
     };
 
     pcntl_signal(SIGINT, $sigHandler);
@@ -136,6 +142,10 @@ try {
     if ($db && $db->rollback() === false) {
         fwrite(STDERR, "Unable to rollback database changes. Your database may be in an inconsistent state.");
     }
+
+    @flock($lockFileHandle, LOCK_UN);
+    @fclose($lockFileHandle);
+    @unlink($lockFile);
 
     exit(1);
 }
