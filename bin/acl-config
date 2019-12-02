@@ -1356,9 +1356,6 @@ SQL;
 
     $inserted = 0;
 
-    // Begin a transaction so that either all of the hierarchies are inserted or
-    // none of them are.
-    $db->beginTransaction();
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
         if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
