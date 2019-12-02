@@ -123,6 +123,7 @@ class ExternalProcess extends \php_user_filter
             // Close the process's input file so it can finish up
 
             @fclose($this->pipes[0]);
+            $this->pipes[0] = null;
 
             // Process all data left on the pipe from the process
 
@@ -220,30 +221,26 @@ class ExternalProcess extends \php_user_filter
 
     public function onClose()
     {
-        // There is difficulty detecting if there is an error running the external
-        // process. By the time the process executes and fails, it is entirely possible
-        // that all data could be written to the process before we can discover that it
-        // has a non-zero exit status.
+        if ($this->pipes[0]) {
+            fclose($this->pipes[0]);
+        }
+        fclose($this->pipes[1]);
 
-        $status = proc_get_status($this->filterResource);
+        // Read stderr stream to EOF before closing.
+        $errorOutput = '';
+        while (($buffer = fgets($this->pipes[2])) !== false) {
+            $errorOutput .= $buffer;
+        }
+        fclose($this->pipes[2]);
 
-        // While the process is running the exit status is shown as -1
+        $exitStatus = proc_close($this->filterResource);
+        fclose($this->tmpResource);
 
-        if ( ! in_array($status['exitcode'], array(-1, 0)) ) {
-            $errorMessage = 'Error executing external filter process: ';
-            while ( ! feof($this->pipes[2]) ) {
-                $errorMessage .= fgets($this->pipes[2]);
-            }
+        if ($exitStatus !== 0) {
+            $errorMessage = 'Error ' . $exitStatus . ' executing external filter process: ' . $errorOutput;
             $this->logError($errorMessage);
             throw new \Exception($errorMessage);
         }
-
-        fclose($this->pipes[0]);
-        fclose($this->pipes[1]);
-        fclose($this->pipes[2]);
-        proc_close($this->filterResource);
-        fclose($this->tmpResource);
-
     }
 
     /**
