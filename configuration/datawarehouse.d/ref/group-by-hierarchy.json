@@ -38,6 +38,9 @@
                 "id": "fos_id"
             }
         ],
+        "attribute_filter_map_query": {
+            "fos_id": "SELECT id FROM modw.fieldofscience_hierarchy WHERE directorate_id IN (__filter_values__)"
+        },
         "attribute_values_query": {
             "joins": [
                 {
@@ -79,6 +82,9 @@
                 "id": "fos_id"
             }
         ],
+        "attribute_filter_map_query": {
+            "fos_id": "SELECT id FROM modw.fieldofscience_hierarchy WHERE parent_id IN (__filter_values__)"
+        },
         "attribute_values_query": {
             "joins": [
                 {
