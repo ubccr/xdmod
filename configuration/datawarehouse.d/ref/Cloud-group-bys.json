@@ -16,7 +16,6 @@
                 "instance_type_id": "instance_type_id"
             }
         ],
-        "order": 6,
         "attribute_values_query": {
             "records": {
                 "id": "instance_type_id",

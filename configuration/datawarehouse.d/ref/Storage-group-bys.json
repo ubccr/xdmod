@@ -27,13 +27,6 @@
             }
         },
         "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
         "description_html": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
         "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}"
     },
@@ -74,13 +67,6 @@
             }
         },
         "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
         "description_html": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
         "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}"
     },

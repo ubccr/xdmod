@@ -342,7 +342,7 @@ class UserAdminTest extends BaseUserAdminTest
         # Check expected file
         $expected = array();
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/" . strtolower($realm));
 
             if(!is_file($expectedOutputFile)) {
                 $newFile = array();
@@ -435,7 +435,7 @@ class UserAdminTest extends BaseUserAdminTest
         if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
         } else {
-            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/Jobs');
+            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
         }
 
         if (!is_file($expectedFileName)) {

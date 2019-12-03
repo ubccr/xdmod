@@ -44,7 +44,7 @@ class SharedJobsTest extends BaseTest
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->testFiles->getFile('integration/database', 'shared_jobs', "output/$realm");
+            $expectedOutputFile = $this->testFiles->getFile('integration/database', 'shared_jobs', "output/" . strtolower($realm));
 
             # Create missing files/directories
             if(!is_file($expectedOutputFile)) {
