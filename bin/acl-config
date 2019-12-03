@@ -36,6 +36,19 @@ $logLevel = Log::ERR;
 $recover = false;
 
 try {
+    $lockFile = implode(DIRECTORY_SEPARATOR, array(sys_get_temp_dir(), 'acl-config.lock'));
+    $lockFileHandle = @fopen($lockFile, 'w');
+    if ($lockFileHandle === false) {
+        $lastError = error_get_last();
+        fwrite(STDERR, sprintf("Current User: %s\n", get_current_user()));
+        fwrite(STDERR, sprintf("Failed to open lock file \"%s\": %s", $lockFile, print_r($lastError, true)));
+        exit(1);
+    }
+    if (!@flock($lockFileHandle, LOCK_EX | LOCK_NB)) {
+        fwrite(STDERR, "acl-config not running due to another process holding the lock.\n");
+        exit(1);
+    }
+
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
 
     foreach ($options as $key => $value) {
@@ -80,8 +93,22 @@ try {
         )
     );
 
+    // A handler function to make sure we cleanup the lock file, even if the process is killed.
+    $sigHandler = function ($sig) use ($lockFileHandle, $lockFile) {
+        @flock($lockFileHandle, LOCK_UN);
+        @fclose($lockFileHandle);
+        @unlink($lockFile);
+        exit(1);
+    };
+    pcntl_signal(SIGINT, $sigHandler);
+    pcntl_signal(SIGTERM, $sigHandler);
+    pcntl_signal(SIGHUP, $sigHandler);
+
     main();
 
+    @flock($lockFileHandle, LOCK_UN);
+    @fclose($lockFileHandle);
+    @unlink($lockFile);
 } catch (Exception $e) {
     do {
         fwrite(STDERR, $e->getMessage() . "\n");
