@@ -48,7 +48,7 @@
                 "directorate_description"
             ],
             "records": {
-                "id": "id",
+                "id": "directorate_id",
                 "name": "directorate_description",
                 "order_id": "directorate_description",
                 "short_name": "directorate_abbrev"
