@@ -14,7 +14,7 @@ use XDReportManager;
  * name for a center staff user you would include the string ${provider_name} in
  * the template and ${provider_id} gives the numerical identifier for the provider.
  */
-class VariableReportTemplate extends \ReportTemplates\aReportTemplate
+class ParameterizedReportTemplate extends \ReportTemplates\aReportTemplate
 {
     protected $variables = array();
     protected $replacements = array();
