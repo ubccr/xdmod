@@ -260,6 +260,38 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Confirm foreign key contraint changes work.
+     */
+    public function testAlterTableContraints()
+    {
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
+
+        $origTable = new Table($config, '`', self::$logger);
+        $fkconfig = (object) array(
+            'columns' => array('new_column'),
+            'referenced_table' => 'other_table',
+            'referenced_columns' => array('other_column'),
+            'on_delete' => 'NO ACTION'
+        );
+        $origTable->addForeignKeyConstraint($fkconfig);
+
+        $targetTable = new Table($config, '`', self::$logger);
+        $fkconfig1 = (object) array(
+            'columns' => array('new_column'),
+            'referenced_table' => 'other_table',
+            'referenced_columns' => array('other_column'),
+            'on_delete' => 'CASCADE'
+        );
+        $targetTable->addForeignKeyConstraint($fkconfig1);
+
+        $sql = $origTable->getAlterSql($targetTable);
+
+        $this->assertCount(2, $sql);
+        $this->assertEquals("ALTER TABLE `test_db_model`\nDROP FOREIGN KEY `fk_new_column`;", trim($sql[0]));
+        $this->assertEquals("ALTER TABLE `test_db_model`\nADD CONSTRAINT `fk_new_column` FOREIGN KEY (`new_column`) REFERENCES `other_table` (`other_column`) ON DELETE CASCADE;", trim($sql[1]));
+    }
+
+    /**
      * Test comparing 2 tables and the ALTER TABLE statement needed to go from one to the other.
      * Also manually add elements and verify the ALTER TABLE statement generated.
      */
