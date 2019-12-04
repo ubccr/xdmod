@@ -84,30 +84,21 @@ class GroupByDomain extends GroupBy
      */
     public function applyTo(Query &$query, Table $dataTable, $multiGroup = false)
     {
-        $resourceTable = new Table(new Schema('modw'), 'resourcefact', 'rf');
-        $resourceFactIdField = new TableField($resourceTable, 'id');
-        $resourceFactNameField = new TableField($resourceTable, 'name');
-
         $query->addTable($this->table);
-        $query->addTable($resourceTable);
 
         $domainIdField = new TableField($this->table, $this->_id_field_name, $this->getColumnName('id', $multiGroup));
         $domainNameField = new TableField($this->table, $this->_long_name_field_name, $this->getColumnName('name', $multiGroup));
-        $resourceIdField = new TableField($this->table, 'resource_id', $this->getColumnName('resource_id', $multiGroup));
 
         $query->addField($domainIdField);
-        $query->addField(new FormulaField("CONCAT({$domainNameField->getQualifiedName()}, ' - ', {$resourceFactNameField->getQualifiedName()})", $this->getColumnName('name', $multiGroup)));
+        $query->addField(new TableField($this->table, $this->_long_name_field_name, $this->getColumnName('name', $multiGroup)));
         $query->addField(new TableField($this->table, $this->_short_name_field_name, $this->getColumnName('short_name', $multiGroup)));
         $query->addField(new TableField($this->table, $this->_id_field_name, $this->getColumnName('order_id', $multiGroup)));
 
-        $query->addGroup($domainIdField);
+        $query->addGroup($domainNameField);
 
         $fkField = new TableField($dataTable, 'domain_id');
-        $resourceFkField = new TableField($dataTable, 'host_resource_id');
 
         $query->addWhereCondition(new WhereCondition($domainIdField, '=', $fkField));
-        $query->addWhereCondition(new WhereCondition($resourceIdField, '=', $resourceFkField));
-        $query->addWhereCondition(new WhereCondition($resourceFactIdField, '=', $resourceFkField));
 
         $this->addOrder($query);
     }
@@ -146,5 +137,18 @@ class GroupByDomain extends GroupBy
         } else {
             return $this->getName() . '_' . $columnName;
         }
+    }
+
+    public function pullQueryParameters(&$request)
+    {
+        return parent::pullQueryParameters2($request, '_filter_', 'domain_id');
+    }
+
+    public function pullQueryParameterDescriptions(&$request)
+    {
+        return parent::pullQueryParameterDescriptions2(
+            $request,
+            'SELECT name AS field_label FROM modw_cloud.domains WHERE id IN (_filter_) ORDER BY id'
+        );
     }
 }
