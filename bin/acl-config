@@ -139,9 +139,6 @@ function main()
         exit($result);
     }
 
-    // Make sure that all of the required tables are present
-    Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
-
     // a role/acl blacklist. 'default' doesn't actually exist so don't bother
     // processing it.
     $blacklist = array('default');
