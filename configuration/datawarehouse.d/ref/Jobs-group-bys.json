@@ -230,7 +230,7 @@
                 "short_name": "short_name"
             }
         },
-        "available_for_drilldown": false,
+        "show_in_catalog": false,
         "category": "Administrative",
         "description_html": "A service provider is an institution that hosts resources.",
         "name": "Service Provider"

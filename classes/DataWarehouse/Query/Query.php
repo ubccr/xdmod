@@ -111,21 +111,15 @@ class Query extends Loggable
         array $parameters = array(),
         Logger $logger = null
     ) {
-        /* Original Aggregate query parameters:
-         * $aggregation_unit_name,
-         * $start_date,
-         * $end_date,
-         * $group_by,
-         * $stat = 'job_count',
-         * array $parameters = array(),
-         * $query_groupname = 'query_groupname',
-         * array $parameterDescriptions = array(),
-         * $single_stat = false
-         */
 
         // If the logger was not passed in, create one specifically for the query logs
 
         if ( null === $logger ) {
+            $generalDebugEnabled = \xd_utilities\filter_var(
+                \xd_utilities\getConfiguration('general', 'debug_mode'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+
             $logger = \CCR\Log::factory(
                 'datawarehouse.query',
                 array(
@@ -133,7 +127,7 @@ class Query extends Loggable
                     'db' => false,
                     'mail' => false,
                     'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => PEAR_LOG_NOTICE
+                    'fileLogLevel' => $generalDebugEnabled ? PEAR_LOG_DEBUG : PEAR_LOG_NOTICE
                 )
             );
         }
