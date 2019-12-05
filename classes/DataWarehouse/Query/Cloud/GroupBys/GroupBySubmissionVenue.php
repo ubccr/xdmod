@@ -105,7 +105,7 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT display AS field_label FROM modw.submission_venue WHERE submission_venue_id IN (_filter_) ORDER BY submission_venue_id'
+            'SELECT display AS field_label FROM modw.submission_venue WHERE submission_venue_id IN (_filter_) ORDER BY order_id'
         );
     }
 }
