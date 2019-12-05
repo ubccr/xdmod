@@ -14,10 +14,11 @@
             "record_type_id": "staging.record_type_id",
             "host_id": "staging.host_id",
             "person_id": "staging.person_id",
-            "systemaccount_id": "sa.id",
+            "systemaccount_id": "COALESCE(sa.id, -1)",
             "domain_id": "COALESCE(staging.domain_id, 1)",
             "#": "The default value of '3' corresponds to the 'OpenStack API' modw.submission_venue record.",
-            "submission_venue_id": "COALESCE(dsv.submission_venue_id, 3)"
+            "submission_venue_id": "COALESCE(dsv.submission_venue_id, 3)",
+            "service_provider": "staging.service_provider"
         },
 
         "joins": [
@@ -30,7 +31,7 @@
                 "schema": "${UTILITY_SCHEMA}",
                 "name": "systemaccount",
                 "alias": "sa",
-                "type": "INNER",
+                "type": "LEFT",
                 "on": "staging.person_id = sa.person_id AND staging.resource_id = sa.resource_id"
             },
             {

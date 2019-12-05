@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Default - OpenStack] Core Hours: Total"
+Day,"[Default] Core Hours: Total"
 2018-04-18,52.1283
 2018-04-19,138.1206
 2018-04-20,97.0686

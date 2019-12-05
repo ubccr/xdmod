@@ -116,6 +116,11 @@
                 "type": "int(11)",
                 "nullable": true,
                 "comment": "DIMENSION: A domain is a high-level container for projects, users and groups."
+            },{
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A service provider is an institution that hosts resources."
             }
         ],
 
