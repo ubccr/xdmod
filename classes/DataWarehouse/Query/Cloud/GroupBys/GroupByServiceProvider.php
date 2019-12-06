@@ -23,7 +23,7 @@ class GroupByServiceProvider extends \DataWarehouse\Query\Cloud\GroupBy
     public function __construct()
     {
         parent::__construct(
-            'service_provider',
+            'provider',
             array(),
             'SELECT DISTINCT
                 gt.organization_id,

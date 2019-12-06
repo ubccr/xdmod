@@ -62,10 +62,9 @@
                     "class": "GroupByDomain"
                 },
                 {
-                   "name": "service_provider",
+                   "name": "provider",
                    "class": "GroupByServiceProvider",
                    "visible": false
-
                 }
             ],
             "statistics": [
