@@ -138,4 +138,17 @@ class GroupByDomain extends GroupBy
             return $this->getName() . '_' . $columnName;
         }
     }
+
+    public function pullQueryParameters(&$request)
+    {
+        return parent::pullQueryParameters2($request, '_filter_', 'domain_id');
+    }
+
+    public function pullQueryParameterDescriptions(&$request)
+    {
+        return parent::pullQueryParameterDescriptions2(
+            $request,
+            'SELECT name AS field_label FROM modw_cloud.domains WHERE id IN (_filter_) ORDER BY id'
+        );
+    }
 }
