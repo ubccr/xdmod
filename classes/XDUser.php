@@ -89,7 +89,6 @@ New Acls:         %s
 EML;
 
     const USER_NOTIFICATION_EMAIL = <<<EML
-
 Dear %s,
 
 This email is to notify you that XDMoD has detected a change in your organization affiliation. We
