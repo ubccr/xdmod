@@ -154,12 +154,12 @@ function main()
         $realms = $realmConfig->filterByModule($module);
 
         // Process the hierarchies provided by this module, if any.
-        if (count(get_object_vars($hierarchies)) > 0 && property_exists($hierarchies, 'hierarchies')) {
+        if (is_object($hierarchies) && property_exists($hierarchies, 'hierarchies')) {
             $moduleHierarchies[$module] = json_decode(json_encode($hierarchies->hierarchies), true);
         }
 
         // Process the roles provided by this module, if any.
-        if (count(get_object_vars($roles)) > 0 && property_exists($roles, 'roles')) {
+        if (is_object($roles) && property_exists($roles, 'roles')) {
             $moduleRoles = $roles->roles;
 
             // for each defined role
@@ -182,7 +182,7 @@ function main()
         }
 
         // Process the realms provided by this module, if any.
-        if (property_exists($realms, 'realms')) {
+        if (is_object($realms) && property_exists($realms, 'realms')) {
             foreach ($realms->realms as $realm => $data) {
 
                 $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
