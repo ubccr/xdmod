@@ -2514,6 +2514,8 @@ SQL;
                     )
                 );
 
+                $contactAddress = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
+
                 // Notify the user that there was an organization change detected.
                 MailWrapper::sendMail(
                     array(
@@ -2521,9 +2523,10 @@ SQL;
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
                             $this->getFormalName(),
-                            \xd_utilities\getConfiguration('general', 'contact_page_recipient')
+                            $contactAddress
                         ),
-                        'toAddress' => $this->getEmailAddress()
+                        'toAddress' => $this->getEmailAddress(),
+                        'replyAddress' => $contactAddress
                     )
                 );
             }
