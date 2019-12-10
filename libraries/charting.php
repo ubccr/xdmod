@@ -151,11 +151,12 @@
    
       $template = str_replace('_html_dir_', $html_dir, $template);
       $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
+
+      $globalChartOptions = array('timezone' => date_default_timezone_get());
       if ($globalChartConfig !== null) {
-          $template = str_replace('_globalChartOptions_', json_encode($globalChartConfig), $template);
-      } else {
-          $template = str_replace('_globalChartOptions_', 'null', $template);
+          $globalChartOptions = array_merge($globalChartOptions, $globalChartConfig);
       }
+      $template = str_replace('_globalChartOptions_', json_encode($globalChartOptions), $template);
       $template = str_replace('_width_',$effectiveWidth, $template);
       $template = str_replace('_height_',$effectiveHeight, $template);
       file_put_contents($tmp_html_filename,$template);
