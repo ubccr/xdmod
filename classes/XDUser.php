@@ -94,7 +94,7 @@ Dear %s,
 
 This email is to notify you that XDMoD has detected a change in your organization affiliation. We
 have taken steps to ensure that this is accurately reflected in our systems. If you have any questions
-or concerns please contact us @ %s.
+or concerns please contact us at %s.
 
 Thank You,
 
@@ -2522,7 +2522,7 @@ SQL;
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
                             $this->getFormalName(),
-                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                            \xd_utilities\getConfiguration('general', 'contact_page_recipient')
                         ),
                         'toAddress' => $this->getEmailAddress()
                     )
