@@ -35,6 +35,24 @@ $dryRun = false;
 $logLevel = Log::ERR;
 $recover = false;
 
+$lockFile = null;
+$lockFileHandle = null;
+$tables = array(
+    'modules',
+    'realms',
+    'hierarchies',
+    'statistics',
+    'group_bys',
+    'acl_types',
+    'acls',
+    'acl_group_bys',
+    'acl_hierarchies',
+    'tabs',
+    'acl_tabs',
+    'user_acls',
+    'user_acl_group_by_parameters'
+);
+
 try {
     $lockFile = implode(DIRECTORY_SEPARATOR, array(sys_get_temp_dir(), 'acl-config.lock'));
     $lockFileHandle = @fopen($lockFile, 'w');
@@ -114,6 +132,11 @@ try {
         fwrite(STDERR, $e->getMessage() . "\n");
         fwrite(STDERR, $e->getTraceAsString() . "\n");
     } while ($e = $e->getPrevious());
+
+    @flock($lockFileHandle, LOCK_UN);
+    @fclose($lockFileHandle);
+    @unlink($lockFile);
+
     exit(1);
 }
 
@@ -122,7 +145,7 @@ try {
  **/
 function main()
 {
-    global $dryRun, $log, $verify, $logLevel, $recover;
+    global $dryRun, $log, $verify, $logLevel, $recover, $tables;
 
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
@@ -280,12 +303,12 @@ SQL;
      * their way back into the system.
      */
     $userAclRepopulate = <<<SQL
-    INSERT INTO user_acls (user_id, acl_id)
+    INSERT INTO user_acls_staging (user_id, acl_id)
       SELECT
         ua.user_id,
         a.acl_id
       FROM user_acls_bkup ua
-        LEFT JOIN acls a ON a.name = ua.acl_name
+        LEFT JOIN acls_staging a ON a.name = ua.acl_name
       WHERE a.acl_id IS NOT NULL
 SQL;
 
@@ -320,17 +343,17 @@ SQL;
      *   - group_bys
      */
     $uagbpRepopulate = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+INSERT INTO user_acl_group_by_parameters_staging(user_id, acl_id, group_by_id, value)
   SELECT
     uagbp.user_id,
     a.acl_id,
     gb.group_by_id,
     uagbp.value
   FROM user_acl_group_by_parameters_bkup uagbp
-    LEFT JOIN acls a ON a.name = uagbp.acl_name
-    LEFT JOIN modules m ON m.name = uagbp.group_by_module_name
-    LEFT JOIN realms r ON r.name = uagbp.group_by_realm_name
-    LEFT JOIN group_bys gb
+    LEFT JOIN acls_staging a ON a.name = uagbp.acl_name
+    LEFT JOIN modules_staging m ON m.name = uagbp.group_by_module_name
+    LEFT JOIN realms_staging r ON r.name = uagbp.group_by_realm_name
+    LEFT JOIN group_bys_staging gb
       ON gb.name = uagbp.group_by_name AND
          gb.module_id = m.module_id AND
          gb.realm_id = r.realm_id
@@ -348,13 +371,13 @@ SQL;
         ),
         'user_acl_group_by_parameters' => array(
             'create_sql' => $uagbpCreateBkup,
-            'populate_sql' =>$uagbpRepopulate
+            'populate_sql' => $uagbpRepopulate
         )
     );
 
     $nonManagedBackupTables = array_reduce(
         array_keys($tablesToBeBackedUp),
-        function($carry, $item) {
+        function ($carry, $item) {
             $carry[] = "${item}_bkup";
             return $carry;
         },
@@ -462,12 +485,8 @@ SQL;
         backupNonManagedTables($db, $tablesToBeBackedUp);
     }
 
-    wipeManagedTables($db);
-
     // Create Managed Tables
     Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
-
-    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
@@ -508,23 +527,31 @@ SQL;
         processResult($db, $module, $moduleData, $modules);
     }
 
-    // Now re-populate the user related tables.
+    // Now re-populate the user related tables to their respective staging tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Make sure we drop the backup tables
     dropTables($db, $nonManagedBackupTables);
 
-    // Run the acl cleanup scripts
-    Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
+    // and finally, we DELETE * from  && INSERT INTO the final tables from the staging tables.
+    refreshAclTables($db);
+
+    $reversed = array_map(
+        function ($item) {
+            return "{$item}_staging";
+        },
+        array_reverse($tables)
+    );
+    dropTables($db, $reversed);
 }
 
 /**
  * Create a backup of the user related acl tables so that we can later re-populate
  * them
  *
- * @param iDatabase $db     the database that the user related tables will be backed
+ * @param iDatabase $db the database that the user related tables will be backed
  *                          up in.
- * @param array     $tables
+ * @param array $tables
  * @throws Exception if a problem occurs while executing table backup sql.
  */
 function backupNonManagedTables(iDatabase $db, array $tables)
@@ -652,7 +679,7 @@ function processHierarchies(iDatabase $db, $hierarchies)
     //     - the same name / display as incoming
     //     - but a different module_id than incoming
     $query = <<<SQL
-    INSERT INTO hierarchies(module_id, name, display)
+    INSERT INTO hierarchies_staging(module_id, name, display)
     SELECT inc.module_id, inc.name, inc.display
     FROM
     (
@@ -660,10 +687,10 @@ function processHierarchies(iDatabase $db, $hierarchies)
           m.module_id AS module_id,
           :name       AS name,
           :display    AS display
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN hierarchies cur
+    LEFT JOIN hierarchies_staging cur
     ON BINARY cur.name    = BINARY inc.name    AND
        BINARY cur.display = BINARY cur.display
     WHERE cur.hierarchy_id IS NULL;
@@ -876,13 +903,13 @@ function createModule(iDatabase $db, $name, $display, $enabled)
     global $dryRun, $log;
 
     $query = <<<SQL
-    INSERT INTO modules(name, display, enabled)
+    INSERT INTO modules_staging(name, display, enabled)
     SELECT inc.*
     FROM (
         SELECT :name    AS name,
                :display AS display,
                :enabled AS enabled ) inc
-    LEFT JOIN modules cur
+    LEFT JOIN modules_staging cur
         ON BINARY cur.name    = BINARY inc.name    AND
            BINARY cur.display = BINARY inc.display
     WHERE cur.module_id IS NULL
@@ -910,7 +937,7 @@ SQL;
         $log->info("[ALREADY EXISTS] Retrieving Identifier for Module: $name");
         $select = <<<SQL
     SELECT m.module_id
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.name    = BINARY :name    AND
           BINARY m.display = BINARY :display
 SQL;
@@ -944,7 +971,7 @@ function associateModuleAndVersion(iDatabase $db, $moduleId, $moduleVersionId)
 
     $exists = <<<SQL
     SELECT m.module_id
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.module_id          = BINARY :module_id AND
           BINARY m.current_version_id = BINARY :current_version_id
 SQL;
@@ -969,7 +996,7 @@ SQL;
     }
 
     $query = <<<SQL
-    UPDATE modules
+    UPDATE modules_staging
     SET current_version_id = :current_version_id
     WHERE BINARY module_id = BINARY :module_id
 SQL;
@@ -1108,7 +1135,7 @@ function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hier
         $aclTypeId = processAclType($db, $module, $type);
 
         $query = <<<SQL
-INSERT INTO acls(module_id, acl_type_Id, name, display, enabled)
+INSERT INTO acls_staging(module_id, acl_type_Id, name, display, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -1117,10 +1144,10 @@ FROM (
         :name          AS name,
         :display       AS display,
         :enabled       AS enabled
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.name = BINARY :module_name
  ) inc
-LEFT JOIN acls cur
+LEFT JOIN acls_staging cur
   ON cur.acl_type_id = inc.acl_type_id AND
      BINARY cur.name = BINARY inc.name
 WHERE cur.acl_id IS NULL
@@ -1140,7 +1167,7 @@ SQL;
         );
     } else {
         $query = <<<SQL
-INSERT INTO acls(module_id, name, display, enabled)
+INSERT INTO acls_staging(module_id, name, display, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -1148,10 +1175,10 @@ FROM (
         :name          AS name,
         :display       AS display,
         :enabled       AS enabled
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.name = BINARY :module_name
  ) inc
-LEFT JOIN acls cur
+LEFT JOIN acls_staging cur
   ON BINARY cur.name        = BINARY inc.name
 WHERE cur.acl_id IS NULL;
 SQL;
@@ -1180,8 +1207,8 @@ SQL;
         $log->notice("[ALREADY EXISTS] Acl $msg");
         $query = <<<SQL
     SELECT a.acl_id
-    FROM acls a
-        JOIN modules m
+    FROM acls_staging a
+        JOIN modules_staging m
             ON a.module_id = m.module_id
     WHERE BINARY m.name    = BINARY :module_name AND
           BINARY a.name    = BINARY :name        AND
@@ -1228,17 +1255,17 @@ function processAclType(iDatabase $db, $module, $type)
     $log->info("Processing Acl Type...");
 
     $query = <<<SQL
-    INSERT INTO acl_types(module_id, name, display)
+    INSERT INTO acl_types_staging(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id       AS module_id,
             :acl_type_name    AS name,
             :acl_type_display AS display
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN acl_types cur
+    LEFT JOIN acl_types_staging cur
         ON BINARY cur.name  = BINARY inc.name
     WHERE cur.acl_type_id IS NULL;
 SQL;
@@ -1262,7 +1289,7 @@ SQL;
         // exists, attempt to retrieve the acl_type_id.
         $query = <<<SQL
     SELECT at.acl_type_id
-    FROM acl_types at
+    FROM acl_types_staging at
     WHERE BINARY at.name    = BINARY :acl_type_name
 SQL;
         $results = $db->query(
@@ -1303,7 +1330,7 @@ function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies)
     $log->notice("Processing Acl Hierarchy Records...");
 
     $query = <<<SQL
-    INSERT INTO acl_hierarchies(acl_id, hierarchy_id, level, filter_override)
+    INSERT INTO acl_hierarchies_staging(acl_id, hierarchy_id, level, filter_override)
     SELECT inc.*
     FROM (
         SELECT
@@ -1311,13 +1338,13 @@ function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies)
             h.hierarchy_id   AS hierarchy_id,
             :level           AS level,
             :filter_override AS filter_override
-        FROM acls a, hierarchies h, modules m
+        FROM acls_staging a, hierarchies_staging h, modules_staging m
         WHERE a.module_id        = m.module_id         AND
               h.module_id        = m.module_id         AND
               BINARY m.name      = BINARY :module_name AND
               BINARY a.name      = BINARY :acl_name
     ) inc
-    LEFT JOIN acl_hierarchies cur
+    LEFT JOIN acl_hierarchies_staging cur
         ON cur.acl_id              = inc.acl_id       AND
            cur.hierarchy_id        = inc.hierarchy_id AND
            BINARY cur.level        = BINARY inc.level
@@ -1326,15 +1353,12 @@ SQL;
 
     $log->debug($query);
 
-    if ( ! $dryRun ) {
+    if (!$dryRun) {
         $statement = $db->prepare($query);
     }
 
     $inserted = 0;
 
-    // Begin a transaction so that either all of the hierarchies are inserted or
-    // none of them are.
-    $db->beginTransaction();
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
         if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
@@ -1374,16 +1398,7 @@ SQL;
             $log->warning("[WARNING] Inserted more than one Acl Hierarchy Record for: $id");
         }
     }
-    $committed = $db->commit();
-    if ($committed === false) {
-        $log->warning("[FAIL] Attempt to commit hierarchies for Acl [$acl] failed.");
-        $rolledBack = $db->rollBack();
 
-        // We throw an Exception so that we do not leave the db in an inconsistent state.
-        if ($rolledBack === false) {
-            throw new Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
-        }
-    }
     $processed = count($hierarchies);
     $log->notice("Processed: $processed, Inserted: $inserted");
 }
@@ -1433,16 +1448,16 @@ function createTab(iDatabase $db, $module, $tab)
     $msg = "name: $tab";
 
     $query = <<<SQL
-    INSERT INTO tabs(module_id, name)
+    INSERT INTO tabs_staging(module_id, name)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
             :name       AS name
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN tabs cur
+    LEFT JOIN tabs_staging cur
         ON BINARY cur.name = BINARY inc.name
     WHERE cur.tab_id IS NULL;
 SQL;
@@ -1469,7 +1484,7 @@ SQL;
         $log->info("[ALREADY EXISTS] Tab: $msg");
         $query = <<<SQL
     SELECT t.tab_id
-    FROM tabs t
+    FROM tabs_staging t
     WHERE BINARY t.name = BINARY :name
 SQL;
         $params = array(
@@ -1509,18 +1524,18 @@ function relateAclAndTab(iDatabase $db, $aclName, $tabName)
     global $dryRun, $log;
 
     $query = <<<SQL
-    INSERT INTO acl_tabs(acl_id, tab_id)
+    INSERT INTO acl_tabs_staging(acl_id, tab_id)
     SELECT inc.*
     FROM (
         SELECT
             a.acl_id AS acl_id,
             t.tab_id AS tab_id
-        FROM acls a, tabs t
+        FROM acls_staging a, tabs_staging t
         WHERE BINARY a.name = BINARY :acl_name AND
               BINARY t.name = BINARY :tab_name
 
     ) inc
-    LEFT JOIN acl_tabs cur
+    LEFT JOIN acl_tabs_staging cur
         ON cur.acl_id = inc.acl_id AND
            cur.tab_id = inc.tab_id
     WHERE cur.acl_tab_id IS NULL;
@@ -1598,7 +1613,7 @@ FROM (
         s.statistic_id AS statistic_id,
         :visible       AS visible,
         :enabled       AS enabled
-    FROM acls a, group_bys gb, statistics s, modules m, realms r
+    FROM acls_staging a, group_bys_staging gb, statistics_staging s, modules_staging m, realms_staging r
     WHERE BINARY m.name       = BINARY :module_name    AND
           BINARY r.name       = BINARY :realm_name     AND
           BINARY a.name       = BINARY :acl_name       AND
@@ -1610,7 +1625,7 @@ FROM (
           s.module_id         = m.module_id            AND
           s.realm_id          = r.realm_id
 ) inc
-LEFT JOIN acl_group_bys cur
+LEFT JOIN acl_group_bys_staging cur
     ON cur.realm_id    = inc.realm_id      AND
        cur.acl_id      = inc.acl_id        AND
        cur.group_by_id = inc.group_by_id   AND
@@ -1714,13 +1729,13 @@ SQL;
 
     fflush($bulkdatafile);
 
-    $bulkload = 'LOAD DATA LOCAL INFILE \'' . stream_get_meta_data($bulkdatafile)['uri'] . '\' INTO TABLE `acl_group_bys` FIELDS TERMINATED BY \',\' (realm_id, acl_id, group_by_id, statistic_id, visible, enabled)';
+    $bulkload = 'LOAD DATA LOCAL INFILE \'' . stream_get_meta_data($bulkdatafile)['uri'] . '\' INTO TABLE `acl_group_bys_staging` FIELDS TERMINATED BY \',\' (realm_id, acl_id, group_by_id, statistic_id, visible, enabled)';
     $databaseHelper = CCR\DB\MySQLHelper::factory($db);
     $output = $databaseHelper->executeStatement($bulkload);
 
     if (count($output) > 0) {
         $this->logger->warning($bulkload);
-        foreach($output as $line) {
+        foreach ($output as $line) {
             $this->logger->warning($line);
         }
     }
@@ -1779,17 +1794,17 @@ function createRealm(iDatabase $db, $moduleName, $realmDisplay)
     $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
 
     $query = <<<SQL
-    INSERT INTO realms(module_id, name, display)
+    INSERT INTO realms_staging(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
             :realm_name AS name,
             :realm_display AS display
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN realms cur
+    LEFT JOIN realms_staging cur
         ON BINARY cur.name = BINARY inc.name
     WHERE cur.realm_id IS NULL;
 SQL;
@@ -1815,7 +1830,7 @@ SQL;
 
     if ($inserted === 0) {
         $updateQuery = <<<SQL
-    UPDATE realms
+    UPDATE realms_staging
     SET display = :realm_display
     WHERE name = :realm_name;
 SQL;
@@ -1858,19 +1873,19 @@ function createGroupBys(iDatabase $db, $moduleName, $realmName, array $groupBys)
     $successMsg = "[SUCCESS] Created Group By: %s for Module: $moduleName and Realm: $realmName";
 
     $query = <<<SQL
-INSERT INTO group_bys(module_id, realm_id, name)
+INSERT INTO group_bys_staging(module_id, realm_id, name)
 SELECT inc.*
 FROM (
     SELECT
         m.module_id    AS module_id,
         r.realm_id     AS realm_id,
         :group_by_name AS name
-    FROM modules m, realms r
+    FROM modules_staging m, realms_staging r
     WHERE BINARY m.name      = BINARY :module_name AND
           r.module_id        =  m.module_id        AND
           BINARY r.name      = BINARY :realm_name
 ) inc
-LEFT JOIN group_bys cur
+LEFT JOIN group_bys_staging cur
     ON cur.module_id        = inc.module_id   AND
        cur.realm_id         = inc.realm_id    AND
        BINARY cur.name      = BINARY inc.name
@@ -1935,19 +1950,19 @@ function createStatistics(iDatabase $db, $moduleName, $realmName, array $statist
     $successMsg = "[SUCCESS] Created Statistic: %s for Module: $moduleName and Realm: $realmName";
 
     $query = <<<SQL
-INSERT INTO statistics(module_id, realm_id, name)
+INSERT INTO statistics_staging(module_id, realm_id, name)
 SELECT inc.*
 FROM (
     SELECT
         m.module_id     AS module_id,
         r.realm_id      AS realm_id,
         :statistic_name AS name
-    FROM modules m, realms r
+    FROM modules_staging m, realms_staging r
     WHERE BINARY m.name = BINARY :module_name  AND
           BINARY r.name = BINARY :realm_name   AND
           r.module_id   = m.module_id
 ) inc
-LEFT JOIN statistics cur
+LEFT JOIN statistics_staging cur
     ON cur.module_id        = inc.module_id   AND
        cur.realm_id         = inc.realm_id    AND
        BINARY cur.name      = BINARY inc.name
@@ -2097,6 +2112,53 @@ function verifyJsonSyntax()
     }
 }
 
+/**
+ * This function attempts to, for each acl related table:
+ *   - Remove all of the current records in the production table.
+ *   - Populate the production table from the corresponding `_staging` table.
+ *
+ * NOTE: All of the actions taken by this function are protected by a db transaction. This is to ensure we either get
+ * all of the new data, or none of it.
+ *
+ * @param iDatabase $db the database connection that will be used when executing sql statements.
+ *
+ * @throws Exception if there is a problem executing a sql statement or if there are problems rolling back any uncommitted
+ * changes.
+ */
+function refreshAclTables(iDatabase $db)
+{
+    global $log, $tables;
+
+    $log->info("Refreshing production acl tables from staging tables.");
+
+    $db->beginTransaction();
+
+    foreach ($tables as $table) {
+        $log->debug("Refreshing $table");
+
+        $deleteStatement = "DELETE FROM $table";
+        $populationStatement = "INSERT INTO $table SELECT * FROM {$table}_staging";
+
+        $db->execute($deleteStatement);
+        $log->debug("Deletion of $table complete");
+
+        $db->execute($populationStatement);
+        $log->debug("Population of $table complete");
+    }
+
+    $committed = $db->commit();
+    if ($committed === false) {
+        $log->crit("[FAIL] Attempt to commit staging data to production tables has failed. Rollback has been initiated");
+        $rolledBack = $db->rollBack();
+
+        // We throw an Exception so that we do not leave the db in an inconsistent state.
+        if ($rolledBack === false) {
+            throw new Exception("Rollback failed. Database may be left in an inconsistent state. Please investigate and / or contact support before running acl-config again.");
+        }
+    }
+
+    $log->info("All acl tables have been re-populated");
+}
 
 /**
  * Attempt to load an instance of Configuration\XdmodConfiguration and retrieve

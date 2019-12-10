@@ -1,0 +1,32 @@
+{
+  "table_definition": {
+    "$ref-with-overwrite": "etl_tables.d/acls/tabs.json#/table_definition",
+    "$overwrite": {
+      "name": "tabs_staging",
+      "foreign_key_constraints": [
+        {
+          "name": "fk_t_staging_module_id",
+          "columns": [
+            "module_id"
+          ],
+          "referenced_table": "modules_staging",
+          "referenced_columns": [
+            "module_id"
+          ],
+          "on_delete": "CASCADE"
+        },
+        {
+          "name": "fk_t_staging_parent_tab_id",
+          "columns": [
+            "parent_tab_id"
+          ],
+          "referenced_table": "tabs_staging",
+          "referenced_columns": [
+            "tab_id"
+          ],
+          "on_delete": "CASCADE"
+        }
+      ]
+    }
+  }
+}
