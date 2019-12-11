@@ -91,13 +91,14 @@ EML;
     const USER_NOTIFICATION_EMAIL = <<<EML
 Dear %s,
 
-This email is to notify you that XDMoD has detected a change in your organization affiliation. We
-have taken steps to ensure that this is accurately reflected in our systems. If you have any questions
-or concerns please contact us at %s.
+The organization associated with your XDMoD user account has been automatically
+updated from %s to %s. You will no longer be able to view non-public data
+from %s.
 
-Thank You,
+If you were not expecting this change or the new organization affiliation is
+incorrect then please contact support at %s.
 
-XDMoD
+%s
 EML;
 
     /**
@@ -2523,7 +2524,11 @@ SQL;
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
                             $this->getFormalName(),
-                            $contactAddress
+                            $userOrganizationName,
+                            $currentOrganizationName,
+                            $userOrganizationName,
+                            $contactAddress,
+                            MailWrapper::getMaintainerSignature()
                         ),
                         'toAddress' => $this->getEmailAddress(),
                         'replyAddress' => $contactAddress
