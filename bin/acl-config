@@ -198,6 +198,7 @@ function main()
                     'statistics' => json_decode(json_encode($statistics), true)
                 );
             }
+        }
     }
 
     /* So $results will now look like ( generically speaking ):
