@@ -274,6 +274,7 @@ function main()
                     $dwi->ingestStorageData();
                 }
             }
+
             $aclstatus = 0;
             passthru('acl-config', $aclstatus);
             if ($aclstatus !== 0) {
