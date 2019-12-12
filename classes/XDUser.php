@@ -2622,11 +2622,9 @@ SQL;
      * @return integer[] an array of the resourcefact.id values
      *
      * @throws Exception if there is a problem connecting to / querying the database.
-     * @throws Exception if the user this function is called for is not a Center [Director|Staff]
      */
     public function getResources($resourceNames = array())
     {
-        // We need to make sure that this function is only called for Center [Director|Staff]
         $db = DB::factory('database');
 
         $query = <<<SQL
