@@ -97,20 +97,14 @@ interface iRealm
      * XDMoD supports hidden meta-statistics such as standard error measurements. These are not
      * available via the metric catalog but are available when standard error bars are enabled.
      * Historically, they are referenced in the usage tab, metric explorer, and datasets by
-     * prefixing the statistic name with "sem_" (e.g., sem_job_count).  Now that the statistics are
-     * prefixed with the realm name we need to be able to translate between the statistic id and the
-     * standard error measurement version of that statistic id.
+     * prefixing the statistic name with "sem_" (e.g., sem_job_count).
      *
-     * For example, given the statistic "Jobs_job_count" the standard error measurement statisic
-     * would be "Jobs_sem_job_count".
-     *
-     * @param $realmId string The ID of the realm that the statistic belongs to
      * @param $statisticId string The ID of the source statistic
      *
      * @return string The ID of the standard error measurement statistic
      */
 
-    public static function getStandardErrorStatisticFromStatistic($realmId, $statisticId);
+    public static function getStandardErrorStatisticFromStatistic($statisticId);
 
     /**
      * @return string The short internal identifier.

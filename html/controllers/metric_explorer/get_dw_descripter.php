@@ -88,7 +88,6 @@ foreach ($roles as $activeRole) {
                         }
 
                         $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                            $query_descripter_realm,
                             $realm_group_by_statistic
                         );
                         $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =

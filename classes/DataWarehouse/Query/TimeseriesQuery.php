@@ -235,7 +235,6 @@ SQL;
         $stat_weight = $this->_main_stat_field->getWeightStatName();
 
         $sem_name = Realm::getStandardErrorStatisticFromStatistic(
-            $this->realm->getId(),
             $stat
         );
 

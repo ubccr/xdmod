@@ -91,7 +91,7 @@ interface iStatistic
      *
      * @return string The statistic formula and alias, which is an SQL fragment that can be embedded
      *   into an SELECT statement. For example:
-     *   "COALESCE(SUM(jf.cpu_time),0)/3600.0 AS jobs_total_cpu_hours"
+     *   "COALESCE(SUM(jf.cpu_time),0)/3600.0 AS total_cpu_hours"
      */
 
     public function getFormula(\DataWarehouse\Query\iQuery $query = null);
@@ -169,7 +169,7 @@ interface iStatistic
      * @return boolean TRUE if this statistic should be displayed in the metric catalog. In some cases,
      *   a statistic may be created to feed data to another component but not be intended to be directly
      *   accessible via the user interface. For example, the statistics that generate the data for
-     *   standard error markers in the user interface (Jobs_sem_avg_processors).
+     *   standard error markers in the user interface (sem_avg_processors).
      */
 
     public function showInMetricCatalog();

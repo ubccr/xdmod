@@ -212,7 +212,6 @@ class SimpleDataset
         $dataObject->setUnit( $this->getColumnLabel($column_name, $is_dimension) );
 
         $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-            $this->_query->getRealmName(),
             $column_name
         );
 

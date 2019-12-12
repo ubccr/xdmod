@@ -268,7 +268,6 @@ class HighChartTimeseries2 extends HighChart2
                         && $data_description->std_err_labels
                     )) {
                     $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                        $data_description->realm,
                         $data_description->metric
                     );
                     if ($query->getRealm()->statisticExists($semStatId)) {
@@ -451,7 +450,6 @@ class HighChartTimeseries2 extends HighChart2
                 if($data_description->std_err == 1)
                 {
                     $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                        $data_description->realm,
                         $data_description->metric
                     );
                     $semStatisticObject = $query->_stats[$semStatId];
