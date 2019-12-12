@@ -111,7 +111,6 @@ class ComplexDataset
                     && $data_description->std_err_labels
                 )) {
                 $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                    $data_description->realm,
                     $data_description->metric
                 );
                 if ($query->getRealm()->statisticExists($semStatId)) {
@@ -625,7 +624,6 @@ class ComplexDataset
                     $yAxisDataObject->getErrorCount(true);
 
                     $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                        $dataDescripterAndDataset->dataset->_query->getRealmName(),
                         $dataDescripterAndDataset->data_description->metric
                     );
 

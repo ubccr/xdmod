@@ -105,7 +105,6 @@ class Usage extends Common
                 }
 
                 $errorstat = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                    $realm->getId(),
                     $userStatistic
                 );
 
@@ -644,7 +643,6 @@ class Usage extends Common
                 $meRequestMetric = $realm->getStatisticObject($meRequest['data_series_unencoded'][0]['metric']);
 
                 $errorstat = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                    $realm->getId(),
                     $meRequest['data_series_unencoded'][0]['metric']
                 );
 

@@ -110,7 +110,6 @@ class SimpleTimeseriesDataset extends SimpleDataset
                                 . '_start_ts';
         // standard error
         $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-            $this->_query->getRealmName(),
             $column_name
         );
         if (isset($this->_query->_stats[$semStatId])) {
@@ -416,7 +415,6 @@ class SimpleTimeseriesDataset extends SimpleDataset
                 }
 
                 $sem_column_name = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                    $this->_query->getRealmName(),
                     $values_column_name
                 );
 

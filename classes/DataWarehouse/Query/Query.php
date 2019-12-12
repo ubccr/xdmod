@@ -348,7 +348,6 @@ class Query extends Loggable
                 array_multisort($stat_column, $sort_option, $name_column, SORT_ASC, $results);
             }
             $sem_name = Realm::getStandardErrorStatisticFromStatistic(
-                $this->realm->getId(),
                 $stat
             );
             if (count($results) > 0) {

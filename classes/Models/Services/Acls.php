@@ -579,8 +579,8 @@ FROM acl_group_bys agb
   JOIN statistics s
     ON s.statistic_id = agb.statistic_id
   LEFT JOIN statistics sem
--- Example: Statistic id is Jobs_avg_jobs_running while SEM statistic id is Jobs_sem_avg_jobs_running
-    ON sem.name = CONCAT(r.name, '_sem_', SUBSTR(s.name, LENGTH(r.name) + 1))
+-- Example: Statistic id is avg_jobs_running while SEM statistic id is em_avg_jobs_running
+    ON sem.name = CONCAT('sem_', s.name)
 WHERE
   ua.user_id = :user_id
   AND agb.enabled = TRUE
