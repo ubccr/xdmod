@@ -1375,7 +1375,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     this.legendTypeComboBox.enable();
                     this.chartTitleField.enable();
 
-                    parameters.interactive_elements = 'y';
                     chartStore.removeAll(true);
 
                     //var restoreTool = images.getTool('restore');
