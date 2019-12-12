@@ -534,15 +534,17 @@ SQL;
     dropTables($db, $nonManagedBackupTables);
 
     // and finally, we DELETE * from  && INSERT INTO the final tables from the staging tables.
-    refreshAclTables($db);
+    syncTableData($db, $tables);
 
-    $reversed = array_map(
+    $stagingTables = array_map(
         function ($item) {
             return "{$item}_staging";
         },
         array_reverse($tables)
     );
-    dropTables($db, $reversed);
+    dropTables($db, $stagingTables);
+
+    Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
 }
 
 /**
@@ -2113,36 +2115,40 @@ function verifyJsonSyntax()
 }
 
 /**
- * This function attempts to, for each acl related table:
+ * This function attempts to, for each table supplied in $tables:
  *   - Remove all of the current records in the production table.
  *   - Populate the production table from the corresponding `_staging` table.
  *
  * NOTE: All of the actions taken by this function are protected by a db transaction. This is to ensure we either get
  * all of the new data, or none of it.
  *
- * @param iDatabase $db the database connection that will be used when executing sql statements.
+ * @param iDatabase $db     the database connection that will be used when executing sql statements.
+ * @param array     $tables the array of tables that data will ultimately end up in.
  *
  * @throws Exception if there is a problem executing a sql statement or if there are problems rolling back any uncommitted
  * changes.
  */
-function refreshAclTables(iDatabase $db)
+function syncTableData(iDatabase $db, array $tables)
 {
-    global $log, $tables;
+    global $log;
 
     $log->info("Refreshing production acl tables from staging tables.");
 
     $db->beginTransaction();
-
     foreach ($tables as $table) {
         $log->debug("Refreshing $table");
 
         $deleteStatement = "DELETE FROM $table";
         $populationStatement = "INSERT INTO $table SELECT * FROM {$table}_staging";
 
-        $db->execute($deleteStatement);
-        $log->debug("Deletion of $table complete");
+
+        if ($table === 'modules') {
+            $db->execute($deleteStatement);
+            $log->debug("Deletion of $table complete");
+        }
 
         $db->execute($populationStatement);
+
         $log->debug("Population of $table complete");
     }
 

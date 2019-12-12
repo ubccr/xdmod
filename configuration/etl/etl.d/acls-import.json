@@ -32,44 +32,6 @@
             "enabled": true
         },
         {
-            "name": "xdmod-scrub-acl-tabs",
-            "description": "Ensures that the acl_tabs table does not contain erroneous data",
-            "sql_file_list": [
-                {
-                    "sql_file": "acls/xdmod/scrub_acl_tabs.sql"
-                }
-            ],
-            "enabled": true
-        },
-        {
-            "name": "xdmod-update-admin-users",
-            "description": "Ensure that any users that only have 'mgr' have 'usr' added.",
-            "sql_file_list": [
-                {
-                    "sql_file": "acls/xdmod/update_admin_users.sql"
-                }
-            ],
-            "enabled": true
-        },
-        {
-            "name": "xdmod-normalize-user-organizations",
-            "description": "Ensure that current Users have valid organizations",
-            "sql_file_list": [
-                {
-                    "sql_file": "acls/xdmod/normalize_user_organizations.sql"
-                }
-            ]
-        },
-        {
-            "name": "xdmod-update-user-organizations",
-            "description": "Ensure that current Users have the most up to date organization",
-            "sql_file_list": [
-                {
-                    "sql_file": "acls/xdmod/update_user_organizations.sql"
-                }
-            ]
-        },
-        {
             "name": "report-template-acls",
             "description": "report-template-acls + data",
             "namespace": "ETL\\Ingestor",
