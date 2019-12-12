@@ -142,6 +142,7 @@ try {
 
 /**
  *
+ * @throws Exception
  **/
 function main()
 {
@@ -584,55 +585,6 @@ SQL;
 }
 
 /**
- * Attempt to drop the tables managed by this script.
- *
- * @param iDatabase $db
- * @throws Exception if a problem occurs while executing sql.
- */
-function wipeManagedTables(iDatabase $db)
-{
-    global $dryRun, $log;
-
-    $log->info("Wiping Managed Tables...");
-
-    $tables = array(
-        'user_acl_group_by_parameters',
-        'user_acls',
-        'acl_tabs',
-        'tabs',
-        'acl_hierarchies',
-        'acl_group_bys',
-        'report_template_acls',
-        'acls',
-        'acl_types',
-        'group_bys',
-        'statistics',
-        'hierarchies',
-        'realms',
-        'modules',
-        'resource_type_realms'
-    );
-
-    foreach($tables as $table) {
-        $query = <<<SQL
-DROP TABLE $table;
-SQL;
-        if ($dryRun) {
-            $log->info("Would have dropped: $table");
-            continue;
-        }
-
-        $log->debug("Dropping Table\n$query");
-
-        $db->execute($query);
-
-        $log->debug("Table dropped");
-    }
-
-    $log->info("Managed Tables Wiped!");
-}
-
-/**
  * Re-populate the user related tables
  * @param iDatabase $db the database to utilize while re-populating the tables.
  * @param array $tables the tables to be re-populated.
@@ -660,7 +612,6 @@ function repopulateNonManagedTables(iDatabase $db, array $tables)
 
     $log->info("Re-Population of Tables Complete!");
 }
-
 
 /**
  *
