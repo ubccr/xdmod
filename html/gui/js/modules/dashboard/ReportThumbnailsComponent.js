@@ -99,6 +99,13 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
             listeners: {
                 click: {
                     fn: function (dataView, index, node, e) {
+                        var config = JSON.parse(JSON.stringify(dataView.store.data.items[index].json.chart_id));
+
+                        if (config.controller_module !== 'metric_explorer') {
+                            // Only metric explorer charts are supported
+                            return;
+                        }
+
                         var win; // Window to display the chart
                         this.tmpHpc = new CCR.xdmod.ui.HighChartPanel({
                             chartOptions: {
@@ -149,7 +156,6 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
 
                         }); // hcp
 
-                        var config = JSON.parse(JSON.stringify(dataView.store.data.items[index].json.chart_id));
                         this.tmpHpc.store.removeAll();
                         for (var key in config) {
                             if (key === 'data_series') {
