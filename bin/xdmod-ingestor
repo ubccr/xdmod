@@ -274,6 +274,11 @@ function main()
                     $dwi->ingestStorageData();
                 }
             }
+            $aclstatus = 0;
+            passthru('acl-config', $aclstatus);
+            if ($aclstatus !== 0) {
+                exit($aclstatus);
+            }
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Ingestion failed: ' . $e->getMessage(),
