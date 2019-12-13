@@ -111,17 +111,6 @@ try {
         )
     );
 
-    // A handler function to make sure we cleanup the lock file, even if the process is killed.
-    $sigHandler = function ($sig) use ($lockFileHandle, $lockFile) {
-        @flock($lockFileHandle, LOCK_UN);
-        @fclose($lockFileHandle);
-        @unlink($lockFile);
-        exit(1);
-    };
-    pcntl_signal(SIGINT, $sigHandler);
-    pcntl_signal(SIGTERM, $sigHandler);
-    pcntl_signal(SIGHUP, $sigHandler);
-
     main();
 
     @flock($lockFileHandle, LOCK_UN);
