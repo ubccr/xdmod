@@ -274,18 +274,6 @@ function main()
     // the managed tables.
 
     /**
-     * This sql statement should serve as the select query that will be used to
-     * create the backup table 'user_acls_bkup'.
-     */
-    $userAclCreateBkup = <<<SQL
-    SELECT
-      ua.user_id,
-      a.name AS acl_name
-    FROM user_acls ua
-      JOIN acls a ON a.acl_id = ua.acl_id
-SQL;
-
-    /**
      * Serves as the insertion query to utilize when reconstituting the
      * user_acls table. Notice the 'LEFT JOIN' on 'acls' and accompanying
      * where clause 'a.acl_id IS NOT NULL'. These are to ensure that if an
@@ -433,22 +421,6 @@ SQL;
      *   *after* a failed run but *before* acl-config is run with the --recover flag, then these
      *   changes will *not* be recovered.
      */
-    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, SCHEMA, false);
-
-    if ($backupTablesExist && !$recover) {
-        $log->err('Backup tables detected! ');
-        $log->err('Unable to continue!');
-        $log->err('This may indicate a failed previous run.');
-        $log->err('Run "acl-config --recover" to recover using backup tables.');
-        $log->err('See https://open.xdmod.org/9.0/faq.html#why-do-i-see-backup-tables-detected-when-running-the-acl-config-script for more information.');
-        exit(1);
-    } elseif (!$backupTablesExist) {
-        if ($recover) {
-            $log->warning('Recover mode specified but no backup tables exist.');
-            $log->warning('Script execution will continue as normal.');
-        }
-        backupNonManagedTables($db, $tablesToBeBackedUp);
-    }
 
     // Create Managed Tables
     Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
@@ -495,9 +467,6 @@ SQL;
     // Now re-populate the user related tables to their respective staging tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
-    // Make sure we drop the backup tables
-    dropTables($db, $nonManagedBackupTables);
-
     // and finally, we DELETE * from  && INSERT INTO the final tables from the staging tables.
     syncTableData($db, $tables);
 
@@ -510,42 +479,6 @@ SQL;
     dropTables($db, $stagingTables);
 
     Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
-}
-
-/**
- * Create a backup of the user related acl tables so that we can later re-populate
- * them
- *
- * @param iDatabase $db the database that the user related tables will be backed
- *                          up in.
- * @param array $tables
- * @throws Exception if a problem occurs while executing table backup sql.
- */
-function backupNonManagedTables(iDatabase $db, array $tables)
-{
-    global $dryRun, $log;
-    $log->info("Backing Up User Related Tables...");
-
-    foreach($tables as $table => $queries) {
-        $creationQuery = $queries['create_sql'];
-
-        $query = <<<SQL
-CREATE TABLE ${table}_bkup AS $creationQuery;
-SQL;
-
-        $log->debug("Backup query [$table]: $query");
-
-        if ($dryRun) {
-            $log->notice("Table[$table] would have been created");
-            continue;
-        }
-
-        // throws exception or returns row count
-        $rows = $db->execute($query);
-        $log->debug(sprintf('Inserted %d rows into %s', $rows, $table));
-    }
-
-    $log->info("User Related Tables Backed Up!");
 }
 
 /**
@@ -2134,55 +2067,6 @@ function verifyDatabase()
     } catch (Exception $e) {
     }
     return $result;
-}
-
-/**
- * Determines whether all of the provided tables currently exist.
- *
- * @param iDatabase $db to execute the required sql statement
- * @param array $tables an array of table names ( as strings )
- * @param string $schema the db schema that $tables belong to
- * @param bool $all only return true if all of the provided tables exist. Defaults to `true`.
- *
- * @return bool true if they do, false if they do not.
- */
-function tablesExist(iDatabase $db, array $tables, $schema, $all = true)
-{
-    $handle = $db->handle();
-
-    $tables = array_reduce(
-        $tables,
-        function($carry, $item) use ($handle)
-        {
-            $carry[] = $handle->quote($item);
-            return $carry;
-        },
-        array()
-    );
-
-    $tableList = implode(',', $tables);
-
-    $query = <<<SQL
-SELECT *
-FROM information_schema.tables
-WHERE table_schema = :table_schema
-AND table_name in ($tableList);
-SQL;
-
-    $params = array(
-        ':table_schema' => $schema
-    );
-
-    $results = $db->query(
-        $query,
-        $params
-    );
-
-    if ($all) {
-        return count($tables) === count($results);
-    }
-
-    return count($results) > 0;
 }
 
 /**
