@@ -109,8 +109,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
     <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
-    <script type="text/javascript" src="gui/lib/ie-object-values-polyfill.js"></script>
+    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
