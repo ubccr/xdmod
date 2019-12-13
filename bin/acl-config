@@ -53,19 +53,11 @@ $tables = array(
     'user_acl_group_by_parameters'
 );
 
+$lockFile = new \ETL\LockFile(sys_get_temp_dir(), 'acl-config');
+
 try {
-    $lockFile = implode(DIRECTORY_SEPARATOR, array(sys_get_temp_dir(), 'acl-config.lock'));
-    $lockFileHandle = @fopen($lockFile, 'w');
-    if ($lockFileHandle === false) {
-        $lastError = error_get_last();
-        fwrite(STDERR, sprintf("Current User: %s\n", get_current_user()));
-        fwrite(STDERR, sprintf("Failed to open lock file \"%s\": %s", $lockFile, print_r($lastError, true)));
-        exit(1);
-    }
-    if (!@flock($lockFileHandle, LOCK_EX | LOCK_NB)) {
-        fwrite(STDERR, "acl-config not running due to another process holding the lock.\n");
-        exit(1);
-    }
+
+    $lockFile->lock(array());
 
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
 
@@ -113,18 +105,14 @@ try {
 
     main();
 
-    @flock($lockFileHandle, LOCK_UN);
-    @fclose($lockFileHandle);
-    @unlink($lockFile);
+    $lockFile->unlock();
 } catch (Exception $e) {
     do {
         fwrite(STDERR, $e->getMessage() . "\n");
         fwrite(STDERR, $e->getTraceAsString() . "\n");
     } while ($e = $e->getPrevious());
 
-    @flock($lockFileHandle, LOCK_UN);
-    @fclose($lockFileHandle);
-    @unlink($lockFile);
+    $lockFile->unlock();
 
     exit(1);
 }
@@ -135,7 +123,7 @@ try {
  **/
 function main()
 {
-    global $dryRun, $log, $verify, $logLevel, $recover, $tables;
+    global $dryRun, $log, $verify, $logLevel, $tables;
 
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
