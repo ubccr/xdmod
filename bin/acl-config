@@ -297,28 +297,10 @@ SQL;
       SELECT
         ua.user_id,
         a.acl_id
-      FROM user_acls_bkup ua
-        LEFT JOIN acls_staging a ON a.name = ua.acl_name
-      WHERE a.acl_id IS NOT NULL
-SQL;
-
-    /**
-     * to serve as the select query that will be used to create the backup
-     * table 'user_acl_group_by_parameters_bkup'.
-     */
-    $uagbpCreateBkup = <<<SQL
-    SELECT
-      uagbp.user_id,
-      a.name  AS acl_name,
-      m.name  AS group_by_module_name,
-      r.name  AS group_by_realm_name,
-      gb.name AS group_by_name,
-      uagbp.value
-    FROM user_acl_group_by_parameters uagbp
-      JOIN acls a ON a.acl_id = uagbp.acl_id
-      JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
-      JOIN realms r ON r.realm_id = gb.realm_id
-      JOIN modules m ON m.module_id = gb.module_id;
+      FROM user_acls ua
+        JOIN acls a ON ua.acl_id = a.acl_id
+        LEFT JOIN acls_staging ast ON ast.name = a.name
+      WHERE ast.acl_id IS NOT NULL
 SQL;
 
     /**
@@ -337,41 +319,34 @@ INSERT INTO user_acl_group_by_parameters_staging(user_id, acl_id, group_by_id, v
   SELECT
     uagbp.user_id,
     a.acl_id,
-    gb.group_by_id,
+    gbst.group_by_id,
     uagbp.value
-  FROM user_acl_group_by_parameters_bkup uagbp
-    LEFT JOIN acls_staging a ON a.name = uagbp.acl_name
-    LEFT JOIN modules_staging m ON m.name = uagbp.group_by_module_name
-    LEFT JOIN realms_staging r ON r.name = uagbp.group_by_realm_name
-    LEFT JOIN group_bys_staging gb
-      ON gb.name = uagbp.group_by_name AND
-         gb.module_id = m.module_id AND
-         gb.realm_id = r.realm_id
-  WHERE a.acl_id IS NOT NULL AND
-        m.module_id IS NOT NULL AND
-        r.realm_id IS NOT NULL AND
-        gb.group_by_id IS NOT NULL;
+  FROM user_acl_group_by_parameters uagbp
+    JOIN acls a ON uagbp.acl_id = a.acl_id
+    JOIN group_bys g on uagbp.group_by_id = g.group_by_id
+    JOIN modules m ON m.module_id = g.module_id
+    JOIN realms r ON r.realm_id = g.realm_id
+    LEFT JOIN acls_staging ast ON ast.name = a.name
+    LEFT JOIN modules_staging mst ON mst.name = m.name
+    LEFT JOIN realms_staging rst ON rst.name = r.name
+    LEFT JOIN group_bys_staging gbst
+      ON gbst.name = g.name AND
+         gbst.module_id = mst.module_id AND
+         gbst.realm_id = rst.realm_id
+  WHERE ast.acl_id IS NOT NULL AND
+        mst.module_id IS NOT NULL AND
+        rst.realm_id IS NOT NULL AND
+        gbst.group_by_id IS NOT NULL;
 SQL;
 
 
     $tablesToBeBackedUp = array(
         'user_acls' => array(
-            'create_sql' => $userAclCreateBkup,
             'populate_sql' => $userAclRepopulate
         ),
         'user_acl_group_by_parameters' => array(
-            'create_sql' => $uagbpCreateBkup,
             'populate_sql' => $uagbpRepopulate
         )
-    );
-
-    $nonManagedBackupTables = array_reduce(
-        array_keys($tablesToBeBackedUp),
-        function ($carry, $item) {
-            $carry[] = "${item}_bkup";
-            return $carry;
-        },
-        array()
     );
 
     /* acl-config "recovery" documentation
