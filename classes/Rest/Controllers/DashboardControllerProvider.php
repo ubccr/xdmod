@@ -294,11 +294,13 @@ class DashboardControllerProvider extends BaseControllerProvider
                     $key = urldecode($key);
                     $value = urldecode($value);
                     $json = json_decode($value, true);
-                    if ($json === null) {
-                        $chart_id_parsed[$key] = $value;
-                    } else {
-                        $chart_id_parsed[$key] = $json;
+
+                    if ($key === 'timeseries') {
+                        $value = $value === 'y' || $value === 'true';
+                    } elseif ($json !== null) {
+                        $value = $json;
                     }
+                    $chart_id_parsed[$key] = $value;
                 }
                 $data['queue'][$count]['chart_id'] = $chart_id_parsed;
                 $count++;
