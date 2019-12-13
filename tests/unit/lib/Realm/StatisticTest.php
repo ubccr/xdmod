@@ -55,8 +55,8 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
-        $generated = $realm->statisticExists('Jobs_job_count');
-        $this->assertTrue($generated, "statisticExists('Jobs_job_count')");
+        $generated = $realm->statisticExists('job_count');
+        $this->assertTrue($generated, "statisticExists('job_count')");
 
         // Test convenience function adding realm id to statistic id
 
@@ -80,8 +80,8 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
             $generated[$id] = $obj->getName(false);
         }
         $expected = array(
-            'Jobs_job_count' => sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME),
-            'Jobs_running_job_count' => sprintf('%s Number of Running Jobs', ORGANIZATION_NAME)
+            'job_count' => sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME),
+            'running_job_count' => sprintf('%s Number of Running Jobs', ORGANIZATION_NAME)
         );
         $this->assertEquals($expected, $generated, "getStatisticObjects('Jobs')");
 
@@ -92,9 +92,9 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
             $generated[$id] = $obj->getName(false);
         }
         $expected = array(
-            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'Cloud_core_time' => 'Core Hours: Total',
-            'Cloud_num_sessions_running' => sprintf('%s Number of Active Sessions', ORGANIZATION_NAME)
+            'alternate_statistic_class' => 'Alternate Statistic Class Example',
+            'core_time' => 'Core Hours: Total',
+            'cloud_num_sessions_running' => sprintf('%s Number of Active Sessions', ORGANIZATION_NAME)
         );
         $this->assertEquals($expected, $generated, "getStatisticObjects('Cloud'), SORT_ON_SHORT_ID");
     }
@@ -106,22 +106,22 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     public function testGetStatisticObject()
     {
         $realm = Realm::factory('Cloud', self::$logger);
-        $obj = $realm->getStatisticObject('Cloud_num_sessions_running');
+        $obj = $realm->getStatisticObject('cloud_num_sessions_running');
 
         $this->assertEquals(
             sprintf('%s Number of Active Sessions (Number of Sessions)', ORGANIZATION_NAME),
             $obj->getName(),
-            'getStatisticObject(Cloud_num_sessions_running)'
+            'getStatisticObject(cloud_num_sessions_running)'
         );
 
         // Test convenience function adding realm id to statistic id
 
-        $obj = $realm->getStatisticObject('num_sessions_running');
+        $obj = $realm->getStatisticObject('cloud_num_sessions_running');
 
         $this->assertEquals(
             sprintf('%s Number of Active Sessions (Number of Sessions)', ORGANIZATION_NAME),
             $obj->getName(),
-            'getStatisticObject(num_sessions_running)'
+            'getStatisticObject(cloud_num_sessions_running)'
         );
     }
 
@@ -144,18 +144,18 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     public function testStatisticMetadata()
     {
         $realm = Realm::factory('Jobs', self::$logger);
-        $obj = $realm->getStatisticObject('Jobs_job_count');
+        $obj = $realm->getStatisticObject('job_count');
 
         $generated = $obj->getRealm()->getId();
         $expected = 'Jobs';
         $this->assertEquals($expected, $generated, 'getRealm()->getId()');
 
         $generated = $obj->getId();
-        $expected = 'Jobs_job_count';
+        $expected = 'job_count';
         $this->assertEquals($expected, $generated, "getId()");
 
         $generated = $obj->getId(false);
-        $expected = 'Jobs_job_count';
+        $expected = 'job_count';
         $this->assertEquals($expected, $generated, "getId(false)");
 
         // Note that the unit "Number of Jobs" is found in the statistic name so it will not be

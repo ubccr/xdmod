@@ -105,7 +105,7 @@ class WarehouseControllerTest extends BaseTest
     public function testGetAggregateData()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

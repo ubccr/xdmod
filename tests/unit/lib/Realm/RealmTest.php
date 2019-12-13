@@ -133,25 +133,25 @@ class RealmTest extends \PHPUnit_Framework_TestCase
 
         $generated = $realm->getStatisticNames(); // Default sort order is SORT_ON_ORDER
         $expected = array(
-            'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
-            'Cloud_core_time' => 'Core Hours: Total',
-            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example'
+            'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
+            'core_time' => 'Core Hours: Total',
+            'alternate_statistic_class' => 'Alternate Statistic Class Example'
         );
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_ORDER)");
 
         $generated = $realm->getStatisticNames(Realm::SORT_ON_SHORT_ID);
         $expected = array(
-            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'Cloud_core_time' => 'Core Hours: Total',
-            'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
+            'alternate_statistic_class' => 'Alternate Statistic Class Example',
+            'core_time' => 'Core Hours: Total',
+            'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
         );
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_SHORT_ID)");
 
         $generated = $realm->getStatisticNames(Realm::SORT_ON_NAME);
         $expected = array(
-            'Cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
-            'Cloud_alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'Cloud_core_time' => 'Core Hours: Total'
+            'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
+            'alternate_statistic_class' => 'Alternate Statistic Class Example',
+            'core_time' => 'Core Hours: Total'
         );
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_NAME)");
     }

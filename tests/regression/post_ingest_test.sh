@@ -9,7 +9,7 @@ if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=$(echo `mysql -Ne "SELECT name FROM moddb.realms"` | tr ' ' ',')
 fi
 
-if [[ !"$XDMOD_REALMS" == *"cloud"* ]];
+if [[ !"$XDMOD_REALMS" == *"Cloud"* ]];
 then
     oldCount=$(mysql -N -B -e "SELECT SUM(num_sessions_ended) FROM modw_cloud.cloudfact_by_month WHERE month = 4;")
 
@@ -42,7 +42,7 @@ then
     fi
 fi
 
-if [[ !"$XDMOD_REALMS" == *"storage"* ]];
+if [[ !"$XDMOD_REALMS" == *"Storage"* ]];
 then
     # Shred, ingest and aggregate storage data for a single day and check to make
     # sure that only one period is aggregated for each unit.

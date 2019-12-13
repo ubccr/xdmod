@@ -144,7 +144,7 @@ SQL;
             '2016-12-01',
             '2017-01-31',
             'person',
-            'Jobs_job_count'
+            'job_count'
         );
 
         $generated = $query->getQueryString();
@@ -154,8 +154,8 @@ SELECT
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
   person.order_id as 'person_order_id',
-  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS Jobs_running_job_count,
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -186,7 +186,7 @@ SQL;
             '2016-12-01',
             '2017-01-31',
             null,
-            'Jobs_job_count'
+            'job_count'
         );
 
         $generated = $query->getQueryString();
@@ -197,8 +197,8 @@ SQL;
 
         $expected  =<<<SQL
 SELECT
-  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS Jobs_running_job_count,
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration
@@ -223,7 +223,7 @@ SQL;
             '2017-01-31'
         );
         $query->addGroupBy('person');
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
@@ -232,7 +232,7 @@ SELECT
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
   person.order_id as 'person_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -260,7 +260,7 @@ SQL;
             '2017-01-31',
             'person'
         );
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
         // prepends the metric to the ORDER BY clause. Simulate that here.
@@ -268,7 +268,7 @@ SQL;
         $data_description = (object) array(
             'sort_type' => 'value_desc',
             'group_by'  => 'person',
-            'metric'    => 'Jobs_job_count'
+            'metric'    => 'job_count'
         );
         $query->addOrderByAndSetSortInfo($data_description);
 
@@ -279,7 +279,7 @@ SELECT
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
   person.order_id as 'person_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -289,7 +289,7 @@ WHERE
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY person.id
-ORDER BY Jobs_job_count desc,
+ORDER BY job_count desc,
   person.order_id ASC
 LIMIT 10 OFFSET 0
 SQL;
@@ -330,7 +330,7 @@ SQL;
             '2017-01-31'
         );
         $query->addGroupBy('resource');
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
@@ -339,7 +339,7 @@ SELECT
   resourcefact.code as 'resource_short_name',
   CONCAT(resourcefact.name, '-', resourcefact.code) as 'resource_name',
   resourcefact.id as 'resource_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -370,7 +370,7 @@ SQL;
             '2017-01-31'
         );
         $query->addGroupBy('queue');
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
         // prepends the metric to the ORDER BY clause. Simulate that here.
@@ -378,7 +378,7 @@ SQL;
         $data_description = (object) array(
             'sort_type' => 'value_desc',
             'group_by'  => 'queue',
-            'metric'    => 'Jobs_job_count'
+            'metric'    => 'job_count'
         );
         $query->addOrderByAndSetSortInfo($data_description);
 
@@ -390,7 +390,7 @@ SELECT
   queue.id as 'queue_short_name',
   queue.id as 'queue_name',
   queue.id as 'queue_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -401,7 +401,7 @@ WHERE
   AND queue.id = agg.queue
   AND queue.resource_id = agg.task_resource_id
 GROUP BY queue.id
-ORDER BY Jobs_job_count desc,
+ORDER BY job_count desc,
   queue.id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Additional join constraint');
@@ -420,7 +420,7 @@ SQL;
             '2017-01-31'
         );
         $query->addGroupBy('none');
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
         // prepends the metric to the ORDER BY clause. Simulate that here.
@@ -428,7 +428,7 @@ SQL;
         $data_description = (object) array(
             'sort_type' => 'value_desc',
             'group_by'  => 'none',
-            'metric'    => 'Jobs_job_count'
+            'metric'    => 'job_count'
         );
         $query->addOrderByAndSetSortInfo($data_description);
         $generated = $query->getQueryString();
@@ -438,7 +438,7 @@ SELECT
   'Screwdriver' as 'none_short_name',
   'Screwdriver' as 'none_name',
   'Screwdriver' as 'none_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration
@@ -446,7 +446,7 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
 
-ORDER BY Jobs_job_count desc
+ORDER BY job_count desc
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query group by none');
     }
@@ -532,9 +532,9 @@ SQL;
         );
 
         $realm = \Realm\Realm::factory('Cloud', self::$logger);
-        $statistic = $realm->getStatisticObject('Cloud_num_sessions_running');
+        $statistic = $realm->getStatisticObject('cloud_num_sessions_running');
         $generated = $statistic->getFormula($query);
-        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS Cloud_num_sessions_running';
+        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS cloud_num_sessions_running';
         $this->assertEquals($expected, $generated, 'getFormula()');
     }
 
@@ -551,7 +551,7 @@ SQL;
             '2017-01-31',
             'person'
         );
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         $generated = $query->getCountQueryString();
         $expected =<<<SQL
@@ -592,7 +592,7 @@ SQL;
             null,
             'person'
         );
-        $query->addStat('Jobs_job_count');
+        $query->addStat('job_count');
 
         $generated = $query->getDimensionValuesQuery();
         $expected =<<<SQL

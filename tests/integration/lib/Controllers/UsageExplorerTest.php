@@ -39,7 +39,7 @@ class UsageExplorerTest extends BaseTest
     public function testCorruptRequestData($input, $expectedMessage)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -83,7 +83,7 @@ class UsageExplorerTest extends BaseTest
     public function testGetTabs()
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -116,7 +116,7 @@ class UsageExplorerTest extends BaseTest
     public function testSystemUsernameAccess()
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         self::$publicView['group_by'] = "username";
@@ -198,7 +198,7 @@ EOF;
     public function testAggregateViewValidData($view, $expected)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -224,7 +224,7 @@ EOF;
     public function testErrorBars($input, $expected)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
@@ -302,7 +302,7 @@ EOF;
     public function testExport($chartConfig, $expectedMimeType, $expectedFinfo)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -431,7 +431,7 @@ EOF;
     public function testDataFiltering($user, $chartSettings, $expectedNames)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -618,7 +618,7 @@ EOF;
         //TODO: Needs further integration for storage realm
         $realmData = array();
 
-        if (in_array("cloud", self::getRealms())) {
+        if (in_array("Cloud", self::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
@@ -666,7 +666,7 @@ EOF;
             );
         };
 
-        if (in_array("jobs", self::getRealms())) {
+        if (in_array("Jobs", self::getRealms())) {
             array_push(
                 $realmData,
                 // Jobs, single value filter tests
