@@ -43,7 +43,7 @@ roles=( pub usr pi cd cs )
 
 if [ "$REG_TEST_ALL" = "1" ]; then
     set +e
-    if [[ "$XDMOD_REALMS" == *"jobs"* ]];
+    if [[ "$XDMOD_REALMS" == *"Jobs"* ]];
     then
         $phpunit $(log_opts "Charts-pub") --filter ChartsTest . #TODO: Implement UsageChartsTest for Cloud and Storage realms
     fi
@@ -59,7 +59,7 @@ if [ "$REG_TEST_ALL" = "1" ]; then
 else
     pids=()
 
-    if [[ "$XDMOD_REALMS" == *"jobs"* ]];
+    if [[ "$XDMOD_REALMS" == *"Jobs"* ]];
     then
         $phpunit $(log_opts "Charts-pub") --filter ChartsTest . & #TODO: Implement UsageChartsTest for Cloud and Storage realms
         pids+=($!)

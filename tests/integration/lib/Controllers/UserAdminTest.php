@@ -283,7 +283,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         # Handle special case where there's no PI data (Cloud Realm enabled only)
-        if (self::getRealms() == array("cloud")) {
+        if (self::getRealms() == array("Cloud")) {
             return Json::loadFile(
                 $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
             );
@@ -342,7 +342,7 @@ class UserAdminTest extends BaseUserAdminTest
         # Check expected file
         $expected = array();
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/" . strtolower($realm));
 
             if(!is_file($expectedOutputFile)) {
                 $newFile = array();
@@ -367,7 +367,7 @@ class UserAdminTest extends BaseUserAdminTest
                     mkdir($filePath);
                 }
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
-                $this->markTestSkipped();
+                $this->markTestSkipped("Generated Expected Output for UserAdminTest testGetMenus: $expectedOutputFile\n");
             }
 
             $resource = JSON::loadFile($expectedOutputFile);
@@ -432,7 +432,7 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertCount(1, $actual['data'], '"data" has one element');
         $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
         } else {
             $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
@@ -440,7 +440,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         if (!is_file($expectedFileName)) {
             @file_put_contents($expectedFileName, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
-            $this->markTestSkipped();
+            $this->markTestSkipped("Generated Expected Output for UserAdminTest testGetTabs: $expectedFileName\n");
         }
         $expected = file_get_contents($expectedFileName);
         $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);

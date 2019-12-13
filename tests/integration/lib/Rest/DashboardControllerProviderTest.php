@@ -18,7 +18,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function testGetStatistics(array $options)
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -65,8 +65,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
 
         if (!is_file($expectedFilePath)) {
             file_put_contents($expectedFilePath, sprintf("%s\n", json_encode($actual, JSON_PRETTY_PRINT)));
-            echo "Generated Expected File: $expectedFilePath\n";
-            $this->assertTrue(true);
+            $this->markTestSkipped("Generated Expected File: $expectedFilePath");
         } else {
             $expected = json_decode(file_get_contents($expectedFilePath), true);
 

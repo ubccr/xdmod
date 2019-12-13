@@ -62,7 +62,7 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
         $data_description = (object) array(
             'sort_type' => 'value_desc',
             'group_by' => 'person',
-            'metric' => 'Jobs_job_count'
+            'metric' => 'job_count'
         );
 
         $query->addGroupBy($data_description->group_by);
@@ -80,7 +80,7 @@ SELECT
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
   person.order_id as 'person_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS Jobs_job_count
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
@@ -92,7 +92,7 @@ WHERE
 GROUP BY duration.id,
   person.id
 HAVING person_id = 82
-ORDER BY Jobs_job_count desc,
+ORDER BY job_count desc,
   duration.id ASC,
   person.order_id ASC
 LIMIT 10 OFFSET 0

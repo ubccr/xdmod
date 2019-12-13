@@ -111,18 +111,6 @@ class Query extends Loggable
         array $parameters = array(),
         Logger $logger = null
     ) {
-        /* Original Aggregate query parameters:
-         * $aggregation_unit_name,
-         * $start_date,
-         * $end_date,
-         * $group_by,
-         * $stat = 'job_count',
-         * array $parameters = array(),
-         * $query_groupname = 'query_groupname',
-         * array $parameterDescriptions = array(),
-         * $single_stat = false
-         */
-
         // If the logger was not passed in, create one specifically for the query logs
 
         if ( null === $logger ) {
@@ -1217,7 +1205,7 @@ SQL;
         // construct where clause and add it to the current query object
         $whereObj = $group_by->addWhereJoin($this, $this->_data_table, $operation, $whereConstraint);
         return $whereObj;
-    } // public function addWhereAndJoin($group_by_name)
+    }
 
     public function addFilter($group_by_name)
     {
@@ -1294,7 +1282,7 @@ SQL;
                 )
                 );
                 break;
-        } // switch ($data_description->sort_type)
+        }
     }
 
     /**
@@ -1318,7 +1306,9 @@ SQL;
             }
         } else {
             if (!in_array($stat, $permitted_statistics)) {
-                throw new \Exception("Statistic $stat is not available for Group By {$this->_group_by->getId()}");
+                throw new \Exception(
+                    sprintf("Statistic %s is not available for Group By %s", $stat, $this->_group_by !== null ? $this->_group_by->getId() : 'null')
+                );
             }
 
             $this->logger->debug(
@@ -1476,5 +1466,5 @@ SQL;
                 ." date_table: {$this->_date_table} \n"
                 ." group_by: {$this->_group_by} \n"
                 ." main_stat_field: { $this->_main_stat_field } \n";
-    } // __toString()
+    }
 }
