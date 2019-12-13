@@ -1005,6 +1005,7 @@ class HighChart2
                         $dataLabelsConfig,
                         array(
                             'color' => '#000000',
+                            'padding' => 10,
                             'settings' => array(
                                 'maxL' => floor($this->_width*($this->limit<11?30:15)/580),
                                 'wrap' => floor($this->_width*($this->limit<11?15:15)/580),
