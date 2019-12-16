@@ -173,7 +173,7 @@ XDMoD.Admin.ETL.ETLViewerTreePanel = Ext.extend(XDMoD.Admin.ETL.ETLViewerTree, {
     _handleNodeClick: function (node) {
         var exists = CCR.exists;
         if (exists(node)) {
-            this.jobViewer.fireEvent('node_selected', node);
+            this.parentTab.fireEvent('node_selected', node);
         }
     }, // _handleNodeClick
 
@@ -199,7 +199,7 @@ XDMoD.Admin.ETL.ETLViewerTreePanel = Ext.extend(XDMoD.Admin.ETL.ETLViewerTree, {
                     node = child;
                     if (endOfPath && child.rendered) {
                         child.select();
-                        this.jobViewer.fireEvent('node_selected', child);
+                        this.parentTab.fireEvent('node_selected', child);
                         result = false;
                     }
                 } else {

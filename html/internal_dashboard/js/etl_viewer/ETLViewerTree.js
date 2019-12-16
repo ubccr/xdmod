@@ -19,6 +19,7 @@ XDMoD.Admin.ETL.ETLViewerTree = Ext.extend(Ext.tree.TreePanel, {
     initComponent: function () {
 
         this.loader = this.loader || new Ext.tree.TreeLoader();
+        this.loader.dataUrl = XDMoD.REST.url + '/etc/pipelines';
 
         Ext.apply(this, this._DEFAULT_CONFIG);
 
@@ -79,11 +80,16 @@ XDMoD.Admin.ETL.ETLViewerTree = Ext.extend(Ext.tree.TreePanel, {
             ? data.results.results
             : CCR.exists(data.results) && !CCR.exists(data.results.results) && CCR.isType(data.results, CCR.Types.Array)
                 ? data.results
-                : null;
+                : [];
 
 
         if (success) {
-            var nodes = this._processNodes(rawNodes);
+            var nodes = rawNodes.map(function (node) {
+                if (undefined === node.text) {
+                    node.text = node.name ? node.name : '';
+                }
+                return node;
+            });
             var node = CCR.exists(options) && CCR.exists(options.node) ? options.node : null;
 
             node.appendChild(nodes);

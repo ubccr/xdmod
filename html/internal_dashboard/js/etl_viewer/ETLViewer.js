@@ -25,7 +25,7 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.TabPanel, {
 
             this.loadMask.hide();
 
-            let selectionModel = this.viewerTreeTab.getSelectionModel();
+            let selectionModel = this.viewerTreeTab.tree.getSelectionModel();
 
             let path = this._getPath(token.raw);
             let isSelected = this.compareNodePath(this.currentNode, path) && selectionModel && CCR.exists(selectionModel.getSelectedNode());
@@ -67,9 +67,6 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.TabPanel, {
             }
             return results.reverse();
         } else if (isType(node, CCR.Types.String)) {
-
-            var results = [];
-
             var token = CCR.tokenize(node);
             var params = token && token.params && token.params.split ? token.params.split('&') : [];
             for (var i = 0; i < params.length; i++) {
@@ -85,4 +82,26 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.TabPanel, {
             return results;
         }
     }, // _getPath
+
+    /**
+     * Compare the given search history tree node with the provided path array.
+     * The path encoding from the _getPath function.
+     *
+     * @param Ext.tree.TreeNode node
+     * @param Array path
+     * @returns boolean true if the path array matches the tree node, false otherwise
+     */
+    compareNodePath: function (node, path) {
+        var i;
+        var np;
+        for (np = node, i = path.length - 1; np && np.attributes && np.attributes.dtype; np = np.parentNode, --i) {
+            if (i < 0) {
+                return false;
+            }
+            if (path[i].dtype !== np.attributes.dtype || path[i].value !== String(np.attributes[np.attributes.dtype])) {
+                return false;
+            }
+        }
+        return i === -1;
+    },
 }); // XDMOD.Admin.ETL.ETLViewer

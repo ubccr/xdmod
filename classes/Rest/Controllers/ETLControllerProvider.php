@@ -6,9 +6,9 @@ use CCR\Json;
 use ETL\Configuration\EtlConfiguration;
 use ETL\DataEndpoint\File;
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use ETL\DataEndpoint\JsonFile;
 use ETL\Utilities;
 use Exception;
+use http\Exception\InvalidArgumentException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,51 +43,77 @@ class ETLControllerProvider extends BaseControllerProvider
     {
         $this->authorize($request, array(ROLE_ID_MANAGER));
 
-        $etlConfig = $this->retrieveETLConfig();
-
-        $pipelineNames = $etlConfig->getSectionNames();
-        sort($pipelineNames);
+        $pipeline = $this->getStringParam($request, 'pipeline');
+        $action = $this->getStringParam($request, 'action');
 
         $results = array();
-        foreach ($pipelineNames as $pipelineName) {
-            $pipeline = array(
-                'name' => $pipelineName,
-                'actions' => array()
+        $etlConfig = $this->retrieveETLConfig();
+
+        if (empty($pipeline) && !empty($action)){
+            throw new InvalidArgumentException("");
+        } elseif (empty($pipeline) && empty($action)) {
+            $pipelineNames = $etlConfig->getSectionNames();
+            sort($pipelineNames);
+            $results = array_reduce(
+                $pipelineNames,
+                function ($carry, $item) {
+                    $carry[] = array(
+                        'text' => $item,
+                        'dtype' => 'pipeline',
+                        'pipeline' => $item,
+                    );
+                    return $carry;
+                },
+                $results
             );
+        } elseif (!empty($pipeline)) {
+            $actions = $etlConfig->getConfiguredActionNames($pipeline);
+            sort($actions);
+            $results = array_reduce(
+                $actions,
+                function ($carry, $item) {
+                    $carry[] = array(
+                        'text' => $item,
+                        'dtype' => 'action',
+                        'action'=> $item,
+                        'leaf' => true
+                    );
+                    return $carry;
+                },
+                $results
+            );
+        } else {
+            $action = array(
+                'text' => $action
+            );
+            $options = $etlConfig->getActionOptions($action, $pipeline);
 
-            $actions = $etlConfig->getConfiguredActionNames($pipelineName);
-            foreach ($actions as $actionName) {
-                $action = array(
-                    'name' => $actionName
-                );
-
-                $options = $etlConfig->getActionOptions($actionName, $pipelineName);
-
-                foreach ($options as $key => $value) {
-                    $translated = $value;
-                    if (in_array($key, array('source', 'destination', 'utility'))) {
-                        $endpoint = $etlConfig->getDataEndpoint($value);
-                        if ($endpoint instanceof iRdbmsEndpoint) {
-                            $translated = $endpoint->getSchema();
-                        } elseif ($endpoint instanceof File) {
-                            $translated = realpath($endpoint->getPath());
-                        } else {
-                            $translated = json_encode($translated);
-                        }
-                    } elseif ($key === 'definition_file' && isset($value)) {
-                        $definitionPath = $options->paths->action_definition_dir . "/$value";
-                        $translated = Json::loadFile($definitionPath);
+            foreach ($options as $key => $value) {
+                $translated = $value;
+                if (in_array($key, array('source', 'destination', 'utility'))) {
+                    $endpoint = $etlConfig->getDataEndpoint($value);
+                    if ($endpoint instanceof iRdbmsEndpoint) {
+                        $translated = $endpoint->getSchema();
+                    } elseif ($endpoint instanceof File) {
+                        $translated = realpath($endpoint->getPath());
+                    } else {
+                        $translated = json_encode($translated);
                     }
-
-                    $action[$key] = $translated;
+                } elseif ($key === 'definition_file' && isset($value)) {
+                    $definitionPath = $options->paths->action_definition_dir . "/$value";
+                    $translated = Json::loadFile($definitionPath);
                 }
-                $pipeline['actions'][] = $action;
-            }
 
-            $results[] = $pipeline;
+                $action[$key] = $translated;
+            }
         }
 
-        return $app->json($results);
+        return $app->json(
+            array(
+                'success' => true,
+                'results' => $results
+            )
+        );
     }
 
     /**
