@@ -77,7 +77,7 @@ class FilterListBuilder extends Loggable
         $this->currentRealm = \Realm\Realm::factory($realmName);
 
         // Generate the lists for each dimension and each pairing of dimensions.
-        foreach ($this->currentRealm->getGroupByObjects() as $groupById => $groupByObj) {
+        foreach ($this->currentRealm->getGroupByObjects() as $groupByObj) {
             $this->buildDimensionLists($realmQuery, $groupByObj);
         }
     }

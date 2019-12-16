@@ -1203,8 +1203,7 @@ SQL;
 
         // Use the group by instance specific to the situation to
         // construct where clause and add it to the current query object
-        $whereObj = $group_by->addWhereJoin($this, $this->_data_table, $operation, $whereConstraint);
-        return $whereObj;
+        return $group_by->addWhereJoin($this, $this->_data_table, $operation, $whereConstraint);
     }
 
     public function addFilter($group_by_name)

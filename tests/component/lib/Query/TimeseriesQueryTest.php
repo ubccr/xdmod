@@ -57,7 +57,7 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
             self::$logger
         );
 
-        // Simulate HighChartTimeseries2::configure()
+        // Simulate HighChartTimeseries2 configure
 
         $data_description = (object) array(
             'sort_type' => 'value_desc',
