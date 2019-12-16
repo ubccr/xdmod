@@ -26,6 +26,40 @@ interface iQuery
      *   be used to add WHERE conditions to the Query.
      */
 
+     // If there are statistics that should always be added for a specific Realm, specify them in
+    // the Realm configuration and add them in the Query constructor. These don't appear to be
+    // needed so lets wait and see.
+    //
+    // Jobs:
+    // $statisticId = 'job_count'
+    // $controlStats = array('started_job_count', 'running_job_count')
+    //
+    // Cloud Aggregate:
+    // $statisticId = 'cloud_num_sessions_ended'
+    // $controlStats = array('cloud_num_sessions_started', 'cloud_num_sessions_running')
+    // Cloud Timeseries:
+    // $statisticId = 'cloud_num_sessions_running'
+    // $controlStats = array('cloud_num_sessions_started', 'cloud_num_sessions_running')
+    //
+    // Storage: None
+    //
+    // Accounts:
+    // $controlStats = array('weight')
+    //
+    // Allocations:
+    // $statisticId = 'rate_of_usage'
+    // $controlStats = array('weight')
+    //
+    // Requests:
+    // $controlStats = array('request_count')
+    //
+    // Allocations:
+    // $controlStats = array('weight')
+    //
+    // SUPREMM:
+    // $statisticId = 'job_count'
+    // $controlStats = array('started_job_count', 'running_job_count')
+
     public function __construct(
         $realmId,
         $aggregationUnitName,

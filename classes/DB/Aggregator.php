@@ -20,11 +20,6 @@ class Aggregator extends Loggable
      */
     protected $realmName = null;
 
-    public function __construct(Logger $logger = null)
-    {
-        parent::__construct($logger);
-    }
-
     /**
      * Update the filter lists associated with this aggregator's realm.
      *

@@ -123,7 +123,7 @@ class TimeseriesQuery extends Query implements iQuery
 
         $select_group_by = array();
 
-        foreach ($groups as $group_key => $group) {
+        foreach ($groups as $group) {
             $select_group_by[] = $group->getQualifiedName(false);
         }
 

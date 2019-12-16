@@ -338,7 +338,6 @@ class SimpleDataset
 
         foreach ($stats as $stat) {
             $stat_unit  = $stat->getUnit();
-            $stat_alias = $stat->getId();
 
             $data_unit = '';
             if (substr( $stat_unit, -1 ) == '%') {

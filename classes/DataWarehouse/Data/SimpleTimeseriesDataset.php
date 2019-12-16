@@ -77,14 +77,13 @@ class SimpleTimeseriesDataset extends SimpleDataset
             $hasWhere ? "'" . $where_value . "'" : null  // where values
         );
 
-        $dataObject = $this->assembleDataObject(
+        return $this->assembleDataObject(
             $column_name,
             $is_dimension,
             $hasWhere,
             $wherecolumn_name,
             $where_value
         );
-        return $dataObject;
     }
 
     //-------------------------------------------------
