@@ -8,7 +8,6 @@ use ETL\DataEndpoint\File;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\Utilities;
 use Exception;
-use http\Exception\InvalidArgumentException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,6 +30,7 @@ class ETLControllerProvider extends BaseControllerProvider
         $class = get_class($this);
 
         $controller->get("$root/pipelines", "$class::getPipelines");
+        $controller->post("$root/pipelines", "$class::getPipelines");
     }
 
     /**
@@ -43,77 +43,72 @@ class ETLControllerProvider extends BaseControllerProvider
     {
         $this->authorize($request, array(ROLE_ID_MANAGER));
 
-        $pipeline = $this->getStringParam($request, 'pipeline');
-        $action = $this->getStringParam($request, 'action');
-
-        $results = array();
         $etlConfig = $this->retrieveETLConfig();
 
-        if (empty($pipeline) && !empty($action)){
-            throw new InvalidArgumentException("");
-        } elseif (empty($pipeline) && empty($action)) {
-            $pipelineNames = $etlConfig->getSectionNames();
-            sort($pipelineNames);
-            $results = array_reduce(
-                $pipelineNames,
-                function ($carry, $item) {
-                    $carry[] = array(
-                        'text' => $item,
-                        'dtype' => 'pipeline',
-                        'pipeline' => $item,
-                    );
-                    return $carry;
-                },
-                $results
-            );
-        } elseif (!empty($pipeline)) {
-            $actions = $etlConfig->getConfiguredActionNames($pipeline);
-            sort($actions);
-            $results = array_reduce(
-                $actions,
-                function ($carry, $item) {
-                    $carry[] = array(
-                        'text' => $item,
-                        'dtype' => 'action',
-                        'action'=> $item,
-                        'leaf' => true
-                    );
-                    return $carry;
-                },
-                $results
-            );
-        } else {
-            $action = array(
-                'text' => $action
-            );
-            $options = $etlConfig->getActionOptions($action, $pipeline);
+        $pipelineNames = $etlConfig->getSectionNames();
+        sort($pipelineNames);
 
-            foreach ($options as $key => $value) {
-                $translated = $value;
-                if (in_array($key, array('source', 'destination', 'utility'))) {
-                    $endpoint = $etlConfig->getDataEndpoint($value);
-                    if ($endpoint instanceof iRdbmsEndpoint) {
-                        $translated = $endpoint->getSchema();
-                    } elseif ($endpoint instanceof File) {
-                        $translated = realpath($endpoint->getPath());
-                    } else {
-                        $translated = json_encode($translated);
-                    }
-                } elseif ($key === 'definition_file' && isset($value)) {
-                    $definitionPath = $options->paths->action_definition_dir . "/$value";
-                    $translated = Json::loadFile($definitionPath);
+        $results = array();
+        foreach ($pipelineNames as $pipelineName) {
+            $pipeline = array(
+                'name' => $pipelineName
+            );
+
+            $actions = $etlConfig->getConfiguredActionNames($pipelineName);
+            if (!empty($actions)) {
+                $pipeline['children'] = array();
+            }
+
+            foreach ($actions as $actionName) {
+                $action = array(
+                    'name' => $actionName
+                );
+
+                $options = $etlConfig->getActionOptions($actionName, $pipelineName);
+                if (!empty($options)) {
+                    $action['children'] = array();
                 }
 
-                $action[$key] = $translated;
+                foreach ($options as $key => $value) {
+                    $translated = $value;
+                    if (in_array($key, array('source', 'destination', 'utility'))) {
+                        $endpoint = $etlConfig->getDataEndpoint($value);
+                        if ($endpoint instanceof iRdbmsEndpoint) {
+                            $translated = $endpoint->getSchema();
+                        } elseif ($endpoint instanceof File) {
+                            $translated = realpath($endpoint->getPath());
+                        } else {
+                            $translated = json_encode($translated);
+                        }
+                    } elseif ($key === 'definition_file' && isset($value)) {
+                        $definitionPath = $options->paths->action_definition_dir . "/$value";
+                        $translated = $this->convertForTreeGrid(Json::loadFile($definitionPath));
+                    } elseif (is_object($value) || is_array($value)) {
+                       $translated = $this->convertForTreeGrid($value);
+                    }
+
+                    $option = array(
+                        'name' => $key
+                    );
+
+                    if (is_array($translated)) {
+                        $option['children'] = $translated;
+                    } else {
+                        $option['value'] = $translated;
+                        $option['leaf'] = true;
+                    }
+
+                    #$action[$key] = $translated;
+                    $action['children'][] = $option;
+                }
+                $pipeline['children'][] = $action;
             }
+
+            $results[] = $pipeline;
         }
 
-        return $app->json(
-            array(
-                'success' => true,
-                'results' => $results
-            )
-        );
+
+        return $app->json($results);
     }
 
     /**
@@ -137,5 +132,44 @@ class ETLControllerProvider extends BaseControllerProvider
         );
         Utilities::setEtlConfig($etlConfig);
         return $etlConfig;
+    }
+
+    protected function convertForTreeGrid($source)
+    {
+        $results = array();
+
+        $keys = array();
+        $isArray = is_array($source);
+        $isObject = is_object($source);
+
+        if ($isArray) {
+            $keys = array_keys($source);
+        } elseif ($isObject) {
+            $keys = get_object_vars($source);
+        }
+
+        foreach($keys as $key) {
+            $value = null;
+            if ($isArray) {
+                $value = $source[$key];
+            } elseif ($isObject) {
+                $value = $source->$key;
+            }
+
+            $item = array(
+                'name' => "$key"
+            );
+
+            if (is_object($value) || is_array($value)) {
+                $item['children'] = $this->convertForTreeGrid($value);
+            } else {
+                $item['value'] = $value;
+                $item['leaf'] = true;
+            }
+
+            $results[] = $item;
+        }
+
+        return $results;
     }
 }

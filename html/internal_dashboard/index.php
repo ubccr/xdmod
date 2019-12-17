@@ -195,6 +195,13 @@ require_once 'user_check.php';
   <script type="text/javascript" src="js/Dashboard/FramePanel.js"></script>
   <script type="text/javascript" src="js/Dashboard/Viewport.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="../gui/lib/extjs/examples/ux/treegrid/treegrid.css"/>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewer.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewerTreeTab.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewerTree.js"></script>
