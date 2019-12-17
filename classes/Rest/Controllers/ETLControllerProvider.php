@@ -98,7 +98,6 @@ class ETLControllerProvider extends BaseControllerProvider
                         $option['leaf'] = true;
                     }
 
-                    #$action[$key] = $translated;
                     $action['children'][] = $option;
                 }
                 $pipeline['children'][] = $action;
