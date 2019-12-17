@@ -346,7 +346,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
         // Non-integer ID.
         list($content, $info, $headers) = self::$helpers['usr']->delete('rest/warehouse/export/request/abc');
         $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
-        $this->assertEquals(404, $info['http_code'], 'HTTP response code');
+        $this->assertEquals(4, floor($info['http_code'] / 100), 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Trying to delete a non-existent request.

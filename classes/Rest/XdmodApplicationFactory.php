@@ -115,9 +115,36 @@ class XdmodApplicationFactory
         // SETUP: the authentication Middleware to be run before the route is.
         $app->before("\Rest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
 
+
+        // allow for anything requesting an OPTIONS to return a 204
+        // more information at https://jamesowers.co.uk/2016/06/28/silex-cors-preflight-access-control-allow-origin.html
+
+        $app->options("{anything}", function () {
+            return new \Symfony\Component\HttpFoundation\JsonResponse(null, 204);
+        })->assert("anything", ".*");
+
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
         $app->after(function (Request $request, Response $response, Application $app) {
+            $origin = $request->headers->get('Origin');
+            if ($origin !== null) {
+                try {
+                    $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
+                    if (!empty($corsDomains)){
+                        $allowedCorsDomains = explode(',', $corsDomains);
+                        if (in_array($origin, $allowedCorsDomains)) {
+                            $response->headers->set('Access-Control-Allow-Origin', $origin);
+                            $response->headers->set('Access-Control-Allow-Headers', 'x-requested-with');
+                            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+                            $response->headers->set('Vary', 'Origin');
+                        }
+                    }
+                } catch (Exception $e) {
+                    // this catches if the section or config item does not exist
+                    // in that case we just carry on
+                }
+
+            }
             if (PDODB::debugging()) {
                 $debugInfo = PDODB::debugInfo();
 
