@@ -32,8 +32,12 @@ Email `ccr-xdmod-help` at `buffalo.edu` for support.  Please include the followi
 - The output of `xdmod-check-config`
 - PHP and MySQL version (e.g, the output from `php --version`, `mysql --version`, and the SQL command `SHOW VARIABLES LIKE "%version%";`)
 - The output of `php -i`
+- Any messages in the XDMoD exceptions log `/var/log/xdmod/exceptions.log`
 - A description of the problem you are experiencing
 - Detailed steps to reproduce the problem
+
+If the problem is observed when trying to access the web portal then please also include any
+messages in the web server error log `/var/log/xdmod/apache-error.log`
 
 Mailing List
 ------------
