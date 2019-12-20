@@ -120,7 +120,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT long_name AS field_label FROM modw_cloud.account WHERE id IN (_filter_) ORDER BY display'
+            'SELECT display AS field_label FROM modw_cloud.account WHERE account_id IN (_filter_) ORDER BY display'
         );
     }
 }

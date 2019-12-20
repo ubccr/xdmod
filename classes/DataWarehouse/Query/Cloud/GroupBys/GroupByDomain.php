@@ -103,6 +103,31 @@ class GroupByDomain extends GroupBy
         $this->addOrder($query);
     }
 
+    public function addWhereJoin(Query &$query, Table $data_table, $multi_group, $operation, $whereConstraint) {
+        $query->addTable($this->table);
+        $domainIdField = new TableField($this->table, $this->_id_field_name);
+
+        $query->addWhereCondition(
+            new WhereCondition(
+                $domainIdField,
+                '=',
+                new TableField($data_table, 'domain_id')
+            )
+        );
+        // the where condition that specifies the constraint on the joined table
+        if (is_array($whereConstraint)) {
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
+        }
+
+        $query->addWhereCondition(
+            new WhereCondition(
+                $domainIdField,
+                $operation,
+                $whereConstraint
+            )
+        );
+    }
+
     /**
      * Add this GroupBy's order by clauses to the provided `Query` instance.
      *
@@ -137,5 +162,18 @@ class GroupByDomain extends GroupBy
         } else {
             return $this->getName() . '_' . $columnName;
         }
+    }
+
+    public function pullQueryParameters(&$request)
+    {
+        return parent::pullQueryParameters2($request, '_filter_', 'domain_id');
+    }
+
+    public function pullQueryParameterDescriptions(&$request)
+    {
+        return parent::pullQueryParameterDescriptions2(
+            $request,
+            'SELECT name AS field_label FROM modw_cloud.domains WHERE id IN (_filter_) ORDER BY id'
+        );
     }
 }

@@ -23,7 +23,7 @@ class GroupByServiceProvider extends \DataWarehouse\Query\Cloud\GroupBy
     public function __construct()
     {
         parent::__construct(
-            'service_provider',
+            'provider',
             array(),
             'SELECT DISTINCT
                 gt.organization_id,
@@ -40,6 +40,32 @@ class GroupByServiceProvider extends \DataWarehouse\Query\Cloud\GroupBy
         $this->_order_id_field_name = 'order_id';
         $this->modw_schema = new Schema('modw');
         $this->configuration_table = new Table($this->modw_schema, 'serviceprovider', 'sp');
+    }
+
+    public function addWhereJoin(Query &$query, Table $data_table, $multi_group, $operation, $whereConstraint) {
+        $query->addTable($this->configuration_table);
+        $service_provider_id_field = new TableField($this->configuration_table, $this->_id_field_name);
+
+        $query->addWhereCondition(
+            new WhereCondition(
+                $service_provider_id_field,
+                '=',
+                new TableField($data_table, 'service_provider')
+            )
+        );
+
+        // the where condition that specifies the constraint on the joined table
+        if (is_array($whereConstraint)) {
+            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
+        }
+
+        $query->addWhereCondition(
+            new WhereCondition(
+                $service_provider_id_field,
+                $operation,
+                $whereConstraint
+            )
+        );
     }
 
     public function applyTo(Query &$query, Table $data_table, $multi_group = false)
