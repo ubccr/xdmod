@@ -73,12 +73,24 @@ try {
             <br>
             <a href="javascript:contactAdmin()">Contact a system administrator.</a>
         </p>
+        <script>
+           try {
+               var href = window.top.location.href;
+           }
+           catch(exception){
+               window.top.postMessage({
+                   application:'xdmod',
+                   action: 'error',
+                   info: '<?php echo $message; ?>'
+               },'*');
+           }
+        </script>
       </body>
       </html>
     <?php
     } else {
     ?>
-<body onload="loadPortal()">
+<body>
   <center>
     <table border=0 width=100% height=100%>
         <tr>
@@ -96,6 +108,18 @@ try {
         </tr>
     </table>
   </center>
+  <script>
+      try {
+          var href = window.top.location.href;
+          loadPortal();
+      }
+      catch(exception){
+          window.top.postMessage({
+              application:'xdmod',
+              action: 'loginComplete'
+          },'*');
+      }
+</script>
 </body>
 </html>
 
