@@ -26,6 +26,7 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
             this.help.html = '<img src="/gui/images/help/job-multi-component.svg" />';
         } else {
             this.help.html = '<img src="/gui/images/help/job-component.svg" />';
+            page_size = 10;
         }
 
         var jobEfficiency = function (value, metadata, record) {
