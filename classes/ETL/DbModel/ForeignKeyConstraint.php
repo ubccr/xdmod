@@ -188,15 +188,15 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
         }
 
         if ($this->on_delete != $cmp->on_delete
-            && !in_array($this->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
-            && !in_array($cmp->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
+            && !(in_array($this->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
+                 && in_array($cmp->on_delete, array(null, 'RESTRICT', 'NO ACTION')))
         ) {
             return -2;
         }
 
         if ($this->on_update != $cmp->on_update
-            && !in_array($this->on_update, array(null, 'RESTRICT', 'NO ACTION'))
-            && !in_array($cmp->on_update, array(null, 'RESTRICT', 'NO ACTION'))
+            && !(in_array($this->on_update, array(null, 'RESTRICT', 'NO ACTION'))
+                 && in_array($cmp->on_update, array(null, 'RESTRICT', 'NO ACTION')))
         ) {
             return -3;
         }

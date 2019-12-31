@@ -72,7 +72,7 @@ Ingest all HPcDB jobs to the data warehouse:
 
 Aggregate:
 
-    $ xdmod-ingestor --aggregate=jobs --last-modified-start-date "$last_modified_start_date"
+    $ xdmod-ingestor --aggregate=job --last-modified-start-date "$last_modified_start_date"
 
 **Cloud:**
 

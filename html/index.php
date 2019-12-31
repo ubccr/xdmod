@@ -109,8 +109,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
     <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
-    <script type="text/javascript" src="gui/lib/ie-object-values-polyfill.js"></script>
+    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -340,6 +339,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         });
 
         print "CCR.xdmod.features = " . json_encode($features) . ";\n";
+        print "CCR.xdmod.timezone = " . json_encode(date_default_timezone_get()) . ";\n";
         ?>
 
     </script>
@@ -383,10 +383,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
     <?php endif; ?>
 
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
-        <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
-    <?php endif; ?>
+    <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
+    <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>

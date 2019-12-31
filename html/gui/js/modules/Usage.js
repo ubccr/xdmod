@@ -2174,7 +2174,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         group_by: n.attributes.group_by,
                                         x_axis: false,
                                         log_scale: chartToolbar.getLogScale() == 'y',
-                                        has_std_err: 'y',
+                                        has_std_err: chartToolbar.getEnableErrors(),
                                         std_err: chartToolbar.getShowErrorBars() == 'y',
                                         std_err_labels: chartToolbar.getShowErrorLabels() == 'y',
                                         value_labels: chartToolbar.getShowAggregateLabels() == 'y' || dt == 'pie',

@@ -29,7 +29,8 @@
             "instance_type_id": "COALESCE(itype.instance_type_id, 1)",
             "image_id": "COALESCE(img.image_id, 1)",
             "event_data": "raw.event_data",
-            "root_volume_type_id": "COALESCE(atype.asset_type_id, -1)"
+            "root_volume_type_id": "COALESCE(atype.asset_type_id, -1)",
+            "service_provider": "COALESCE(sp.organization_id, 1)"
         },
 
         "joins": [
@@ -65,10 +66,17 @@
                 "type": "LEFT OUTER"
             },
             {
+                "name": "serviceprovider",
+                "schema": "${UTILITY_SCHEMA}",
+                "type": "LEFT",
+                "alias": "sp",
+                "on": "sp.short_name = raw.service_provider"
+            },
+            {
                 "name": "instance",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "i",
-                "on": "i.provider_identifier = raw.provider_instance_identifier AND i.resource_id = raw.resource_id",
+                "on": "i.provider_identifier = raw.provider_instance_identifier AND i.resource_id = raw.resource_id AND i.service_provider = COALESCE(sp.organization_id, 1)",
                 "type": "LEFT OUTER"
             },
             {

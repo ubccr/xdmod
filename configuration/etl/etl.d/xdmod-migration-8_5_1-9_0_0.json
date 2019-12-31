@@ -15,6 +15,7 @@
                 "cloud_openstack/raw_event.json",
                 "cloud_common/session_records.json",
                 "cloud_common/event.json",
+                "cloud_common/instance.json",
                 "cloud_common/cloudfact_by_.json"
             ],
             "endpoints": {

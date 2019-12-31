@@ -2829,6 +2829,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     singleClickExpand: true,
                                     type: 'metric',
                                     text: realm_metrics[rm].text,
+                                    has_std_err: realm_metrics[rm].std_err,
                                     iconCls: 'chart',
                                     category: category,
                                     realm: realm,
@@ -2861,6 +2862,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                                             group_by: d,
                                                             metric: n.attributes.metric,
                                                             realm: n.attributes.realm,
+                                                            has_std_err: n.attributes.has_std_err,
                                                             category: n.attributes.category
                                                         };
                                                         Ext.apply(config, this.defaultDatasetConfig);

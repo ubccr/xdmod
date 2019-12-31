@@ -1,0 +1,1 @@
+{"reference":{"name":"resource_allocations","engine":"MyDatabaseEngine","MyAddedColumn":"Newly added column","columns":[{"name":"resource","type":"varchar(128)","nullable":false}]},"reference_to_array":[{"object1":"value"},{"object2":"value"}]}
