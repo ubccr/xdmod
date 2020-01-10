@@ -113,7 +113,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT long_name AS field_label FROM modw_cloud.instance_type WHERE id IN (_filter_) ORDER BY instance_type_id'
+            'SELECT display AS field_label FROM modw_cloud.instance_type WHERE instance_type_id IN (_filter_) ORDER BY instance_type_id'
         );
     }
 }

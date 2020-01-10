@@ -121,11 +121,12 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
                             return this.y.toString();
                         }
                         if (this.series.type === 'pie') {
-                            var x = this.point.name;
-                            if (this.point.name.length > settings.maxL + 3) {
-                                x = this.point.name.substring(0, settings.maxL - 3);
+                            var lines = this.point.name.wordWrap(settings.wrap, '\t').split('\t');
+                            if (lines.length > 2) {
+                                lines[1] += '...';
                             }
-                            return '<b>' + x.wordWrap(settings.wrap, '</b><br/><b>') + '</b><br/>' + Highcharts.numberFormat(this.y, settings.decimals);
+
+                            return '<b>' + lines.slice(0, 2).join('</b><br/><b>') + '</b><br/>' + Highcharts.numberFormat(this.y, settings.decimals);
                         }
 
                         if (settings.value_labels && settings.error_labels) {

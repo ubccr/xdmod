@@ -299,7 +299,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
      * @return A human-readable error message
      */
 
-    private function jsonLastErrorMsg($errorCode)
+    protected function jsonLastErrorMsg($errorCode)
     {
         $message = "";
 

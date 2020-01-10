@@ -112,7 +112,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT long_name AS field_label FROM modw.memory_buckets WHERE id IN (_filter_) ORDER BY id'
+            'SELECT description AS field_label FROM modw_cloud.memory_buckets WHERE id IN (_filter_) ORDER BY id'
         );
     }
 }

@@ -123,7 +123,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT description AS field_label FROM modw.processor_buckets  WHERE id IN (_filter_) ORDER BY id'
+            'SELECT description AS field_label FROM modw_cloud.processor_buckets  WHERE id IN (_filter_) ORDER BY id'
         );
     }
 }
