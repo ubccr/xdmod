@@ -104,7 +104,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
 
         if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile->state_reconstruction_fields, $requiredKeys, $messages) ) {
             $this->logAndThrowException(
-                sprintf("Error verifying definition file 'state_construction_fields' section: %s", implode(', ', $messages))
+                sprintf("Error verifying definition file 'state_reconstruction_fields' section: %s", implode(', ', $messages))
             );
         }
 
@@ -130,7 +130,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         if ( 0 != count($missingColumnNames) ) {
             $this->logAndThrowException(
                 sprintf(
-                    "The following columns from the update configuration were not found in table '%s': %s",
+                    "The following columns from the state_reconstruction_fields configuration were not found in table '%s': %s",
                     $this->etlDestinationTable->getFullName(),
                     implode(", ", $missingColumnNames)
                 )
@@ -164,12 +164,17 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
     protected function transform(array $srcRecord, &$orderId)
     {
         // We want to just flush when we hit the dummy row
-        if ($srcRecord[array_keys($srcRecord)[1]] === 0) {
+        if ($srcRecord[array_keys($srcRecord)[0]] == 0) {
             if (isset($this->_instance_state)) {
                 return array($this->_instance_state);
             } else {
                 return array();
             }
+        }
+
+        if ($this->_instance_state === null) {
+            $this->initInstance($srcRecord);
+            return array();
         }
 
         $transformedRecord = array();
@@ -211,7 +216,6 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         // is lost. To work around this we add a dummy row filled with zeroes.
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
-        //$subSelect = "(SELECT DISTINCT instance_id from modw_cloud.event WHERE last_modified > \"" . $this->getEtlOverseerOptions()->getLastModifiedStartDate() . "\")";
 
         $sql = "$sql UNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY ".$orderby;
 

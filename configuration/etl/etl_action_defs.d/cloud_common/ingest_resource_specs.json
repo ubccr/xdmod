@@ -28,6 +28,8 @@
             "alias": "r"
         }]
     },
+    "#": "This object contains the fields needed for constructing beginning and end times",
+    "#": "for the records retrieved in the source query ",
     "state_reconstruction_fields": {
         "end_time": "end_date",
         "new_row": [

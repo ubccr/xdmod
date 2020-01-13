@@ -9,6 +9,7 @@ namespace ComponentTests\ETL;
 use ETL\Ingestor\StateReconstructorTransformIngestor;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
+use ETL\EtlOverseerOptions;
 
 /**
  * Test Cloud State FSM
