@@ -115,7 +115,6 @@ class XdmodApplicationFactory
         // SETUP: the authentication Middleware to be run before the route is.
         $app->before("\Rest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
 
-
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
         $app->after(function (Request $request, Response $response, Application $app) {
@@ -202,12 +201,17 @@ class XdmodApplicationFactory
                     $origin = $_SERVER['HTTP_ORIGIN'];
                     if (in_array($origin, $allowedCorsDomains)) {
                         // if these headers change we will need to update the `after` above
-                        http_response_code(204);
-                        header('Access-Control-Allow-Origin: '. $origin);
-                        header('Access-Control-Allow-Headers: x-requested-with');
-                        header('Access-Control-Allow-Credentials: true');
-                        header('Vary: Origin');
-                        exit();
+                        return new Response(
+                            '',
+                            204, /* ignored use header `X-Status-Code` */
+                            [
+                                'X-Status-Code' => 204,
+                                'Vary' => 'Origin',
+                                'Access-Control-Allow-Origin' => $origin,
+                                'Access-Control-Allow-Headers' => 'x-requested-with',
+                                'Access-Control-Allow--Credentials' => 'true'
+                            ]
+                        );
                     }
                 }
             }
