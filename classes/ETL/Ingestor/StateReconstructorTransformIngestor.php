@@ -81,10 +81,11 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         reset($this->etlDestinationTableList);
         $this->etlDestinationTable = current($this->etlDestinationTableList);
         $etlTableKey = key($this->etlDestinationTableList);
+
         if ( count($this->etlDestinationTableList) > 1 ) {
             $this->logger->warning(
                 sprintf(
-                    "%s does not support multiple ETL destination tables, using first table with key: '%s'",
+                    "%s does not support multiple ETL destination tables, using only first table with key: '%s'",
                     $this,
                     $etlTableKey
                 )
@@ -116,7 +117,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
 
         $orderby_fields = explode(',', $this->parsedDefinitionFile->state_reconstruction_fields->order_by[0]);
         $orderby_fields_array = [];
-        foreach($orderby_fields as $key => $value){
+        foreach($orderby_fields as $value){
             $orderby_fields_array[] = explode(' ', trim($value))[0];
         }
 
@@ -171,11 +172,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
     {
         // We want to just flush when we hit the dummy row
         if ($srcRecord[array_keys($srcRecord)[0]] == 0) {
-            if (isset($this->_instance_state)) {
-                return array($this->_instance_state);
-            } else {
-                return array();
-            }
+            return (isset($this->_instance_state)) : array($this->_instance_state) ? array();
         }
 
         if ($this->_instance_state === null) {
@@ -185,7 +182,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
 
         $transformedRecord = array();
 
-        $a = array_filter($this->_new_row_fields, function($field) use($srcRecord){
+        $a = array_filter($this->_new_row_fields, function ($field) use ($srcRecord) {
             return $this->_instance_state[$field] !== $srcRecord[$field];
         });
 
@@ -213,7 +210,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         $i = 1;
         $orderby = $this->parsedDefinitionFile->state_reconstruction_fields->order_by[0];
 
-        foreach($this->parsedDefinitionFile->destination_record_map->$destination_tables[0] as $key => $value){
+        foreach($this->parsedDefinitionFile->destination_record_map->$destination_tables[0] as $value){
             $orderby = preg_replace("/\b$value\b/", $i, $orderby);
             $i++;
         }
@@ -223,9 +220,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
 
-        $sql = "$sql UNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY ".$orderby;
-
-        return $sql;
+        return "$sql UNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY ".$orderby;
     }
 
     public function transformHelper(array $srcRecord)
