@@ -16,7 +16,7 @@ class RawData
         $realms = array();
 
         $raw = XdmodConfiguration::factory('rawstatistics.json', CONFIG_DIR)->toStdClass();
-         
+
         if (!property_exists($raw, 'realms')) {
             return $realms;
         }
@@ -25,10 +25,8 @@ class RawData
 
         foreach($raw->realms as $realmConfig)
         {
-            if (property_exists($realmConfig, 'raw_data')) {
-                if ($realmConfig->raw_data === false) {
-                    continue;
-                }
+            if (property_exists($realmConfig, 'raw_data') && $realmConfig->raw_data === false) {
+                continue;
             }
 
             if (in_array($realmConfig->name, $allowedRealms)) {
