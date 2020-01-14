@@ -1,12 +1,18 @@
 <?php
 /* ==========================================================================================
-* This class simulates a Finite State Machine to reconstruct discrete run cycles of virtual machines.
-* It first grabs a list of raw events, which must then be sorted by instance and time to ensure
-* proper sequential reconstruction. It then iterates over the sorted list and generates event pairs
-* by taking the first start event it finds for a unique instance id and pairing it with the next stop event.
+* This class simulates a Finite State Machine to construct a start and end time for specific thing. Given a list of
+* records with a time when the record is related to, this class will create records with start and end times based on
+* criteria specified in the action definition file.
 *
-* If no stop event is found, either the start event is treated as the stop, or a default stop time may be provided
-* by specifiying an "end_time" variable in the ETL Overseer at the point of ingestion.
+* To use this ingestor the following json object should be present in your action definition file
+*
+* state_reconstruction_fields: {
+*      "end_time": "",
+*      "new_row": [],
+*      "update_row": [],
+*      "reset_row": [],
+*      "order_by": []
+*  }
 *
 * @author Greg Dean <gmdean@buffalo.edu>
 * @date 2019-12-18
