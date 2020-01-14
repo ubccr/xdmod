@@ -116,13 +116,6 @@ class XdmodApplicationFactory
         $app->before("\Rest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
 
 
-        // allow for anything requesting an OPTIONS to return a 204
-        // more information at https://jamesowers.co.uk/2016/06/28/silex-cors-preflight-access-control-allow-origin.html
-
-        $app->options("{anything}", function () {
-            return new \Symfony\Component\HttpFoundation\JsonResponse(null, 204);
-        })->assert("anything", ".*");
-
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
         $app->after(function (Request $request, Response $response, Application $app) {
@@ -133,6 +126,7 @@ class XdmodApplicationFactory
                     if (!empty($corsDomains)){
                         $allowedCorsDomains = explode(',', $corsDomains);
                         if (in_array($origin, $allowedCorsDomains)) {
+                            // If these headers change similar updates will need to be made to the `error` section below
                             $response->headers->set('Access-Control-Allow-Origin', $origin);
                             $response->headers->set('Access-Control-Allow-Headers', 'x-requested-with');
                             $response->headers->set('Access-Control-Allow-Credentials', 'true');
@@ -197,12 +191,32 @@ class XdmodApplicationFactory
 
         // SETUP: error handler
         $app->error(function (\Exception $e, $code) use ($app) {
-                $exceptionOutput = \handle_uncaught_exception($e);
-                return new Response(
-                    $exceptionOutput['content'],
-                    $exceptionOutput['httpCode'],
-                    $exceptionOutput['headers']
-                );
+            if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS'){
+                try {
+                    $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
+                } catch (\Exception $cors) {
+                    $corsDomains = null;
+                }
+                if (!empty($corsDomains)){
+                    $allowedCorsDomains = explode(',', $corsDomains);
+                    $origin = $_SERVER['HTTP_ORIGIN'];
+                    if (in_array($origin, $allowedCorsDomains)) {
+                        // if these headers change we will need to update the `after` above
+                        http_response_code(204);
+                        header('Access-Control-Allow-Origin: '. $origin);
+                        header('Access-Control-Allow-Headers: x-requested-with');
+                        header('Access-Control-Allow-Credentials: true');
+                        header('Vary: Origin');
+                        exit();
+                    }
+                }
+            }
+            $exceptionOutput = \handle_uncaught_exception($e);
+            return new Response(
+                $exceptionOutput['content'],
+                $exceptionOutput['httpCode'],
+                $exceptionOutput['headers']
+            );
         });
 
         // Set the application instance as the global instance and return it.
