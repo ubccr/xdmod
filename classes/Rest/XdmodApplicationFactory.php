@@ -209,7 +209,7 @@ class XdmodApplicationFactory
                                 'Vary' => 'Origin',
                                 'Access-Control-Allow-Origin' => $origin,
                                 'Access-Control-Allow-Headers' => 'x-requested-with',
-                                'Access-Control-Allow--Credentials' => 'true'
+                                'Access-Control-Allow-Credentials' => 'true'
                             ]
                         );
                     }
