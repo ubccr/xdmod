@@ -172,7 +172,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
     {
         // We want to just flush when we hit the dummy row
         if ($srcRecord[array_keys($srcRecord)[0]] == 0) {
-            return (isset($this->_instance_state)) : array($this->_instance_state) ? array();
+            return (isset($this->_instance_state)) ? array($this->_instance_state) : array();
         }
 
         if ($this->_instance_state === null) {
