@@ -367,7 +367,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         } elseif ($realm !== null) {
             $result = $this->processHistoryRequest($app, $user, $realm, $action);
         } else {
-            $result = $this->processHistoryDefaultRealmRequest($app, $action);
+            $result = $this->processHistoryDefaultRealmRequest($app, $user, $action);
         }
 
         return $result;
@@ -1472,17 +1472,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobDataSet(XDUser $user, $realm, $jobId, $action)
     {
-        $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
-
-        $realmExists = false;
-        foreach ($rawstats['realms'] as $item) {
-            if ($item['name'] === $realm) {
-                $realmExists = true;
-                break;
-            }
-        }
-
-        if (!$realmExists) {
+        if (!\DataWarehouse\Access\RawData::realmExists($user, $realm)) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
@@ -1760,20 +1750,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    private function processHistoryDefaultRealmRequest(Application $app, $action)
+    private function processHistoryDefaultRealmRequest(Application $app, XDUser $user, $action)
     {
-        $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
-
         $results = array();
 
-        if (isset($rawstats['realms'])) {
-            foreach($rawstats['realms'] as $realmconfig) {
-                $results[] = array(
-                    'dtype' => 'realm',
-                    'realm' => $realmconfig['name'],
-                    'text' => $realmconfig['display']
-                );
-            }
+        foreach(\DataWarehouse\Access\RawData::getRawDataRealms($user) as $realmconfig) {
+            $results[] = array(
+                'dtype' => 'realm',
+                'realm' => $realmconfig->name,
+                'text' => $realmconfig->display
+            );
         }
 
         return $app->json(
@@ -2071,18 +2057,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
-        $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
-
-        $realmExists = count(
-            array_filter(
-                $rawstats['realms'],
-                function ($item) use ($realm) {
-                    return $item['name'] === $realm;
-                }
-            )
-        ) > 0;
-
-        if (!$realmExists) {
+        if (!\DataWarehouse\Access\RawData::realmExists($user, $realm)) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
