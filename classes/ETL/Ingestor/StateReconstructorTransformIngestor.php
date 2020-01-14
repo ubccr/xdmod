@@ -72,7 +72,16 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
             return;
         }
 
+        $messages = null;
         $this->initialized = false;
+        $actionDefinitionRequiredKeys = array( 'state_reconstruction_fields' => 'object' );
+        $stateReconstructorRequiredKeys = array(
+            'end_time'   => 'string',
+            'new_row' => 'array',
+            'update_row' => 'array',
+            'reset_row' => 'array',
+            'order_by' => 'array'
+        );
 
         parent::initialize($etlOverseerOptions);
 
@@ -92,24 +101,11 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
             );
         }
 
-        $requiredKeys = array(
-            'state_reconstruction_fields' => 'object'
-        );
-
-        $messages = null;
-        if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile, $requiredKeys, $messages) ) {
+        if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile, $actionDefinitionRequiredKeys, $messages) ) {
             $this->logAndThrowException(sprintf("Definition file error: %s", implode(', ', $messages)));
         }
 
-        $requiredKeys = array(
-            'end_time'   => 'string',
-            'new_row' => 'array',
-            'update_row' => 'array',
-            'reset_row' => 'array',
-            'order_by' => 'array'
-        );
-
-        if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile->state_reconstruction_fields, $requiredKeys, $messages) ) {
+        if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile->state_reconstruction_fields, $stateReconstructorRequiredKeys, $messages) ) {
             $this->logAndThrowException(
                 sprintf("Error verifying definition file 'state_reconstruction_fields' section: %s", implode(', ', $messages))
             );
@@ -223,7 +219,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         return "$sql UNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY ".$orderby;
     }
 
-    public function transformHelper(array $srcRecord)
+    public function transformHelper(array $srcRecord, $orderId = 0)
     {
         return $this->transform($srcRecord, $orderId);
     }
