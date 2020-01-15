@@ -127,7 +127,7 @@ class XdmodApplicationFactory
                         if (in_array($origin, $allowedCorsDomains)) {
                             // If these headers change similar updates will need to be made to the `error` section below
                             $response->headers->set('Access-Control-Allow-Origin', $origin);
-                            $response->headers->set('Access-Control-Allow-Headers', 'x-requested-with');
+                            $response->headers->set('Access-Control-Allow-Headers', 'x-requested-with, content-type');
                             $response->headers->set('Access-Control-Allow-Credentials', 'true');
                             $response->headers->set('Vary', 'Origin');
                         }
@@ -208,7 +208,7 @@ class XdmodApplicationFactory
                                 'X-Status-Code' => 204,
                                 'Vary' => 'Origin',
                                 'Access-Control-Allow-Origin' => $origin,
-                                'Access-Control-Allow-Headers' => 'x-requested-with',
+                                'Access-Control-Allow-Headers' => 'x-requested-with, content-type',
                                 'Access-Control-Allow-Credentials' => 'true'
                             ]
                         );
