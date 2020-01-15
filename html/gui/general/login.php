@@ -51,9 +51,18 @@ try {
   </style>
   <script type="text/javascript">
     function loadPortal() {
-      setTimeout(function(){
-        parent.location.href = '/index.php' + document.location.hash;
-      }, 1500);
+        try {
+            var href = window.top.location.href;
+            setTimeout(function(){
+                parent.location.href = '/index.php' + document.location.hash;
+            }, 1500);
+        }
+        catch(exception){
+            window.top.postMessage({
+                application:'xdmod',
+                action: 'loginComplete'
+            },'*');
+        }
     }
 
     function contactAdmin() {
@@ -81,7 +90,7 @@ try {
                window.top.postMessage({
                    application:'xdmod',
                    action: 'error',
-                   info: '<?php echo $message; ?>'
+                   info: <?php echo json_encode($message); ?>
                },'*');
            }
         </script>
@@ -90,7 +99,7 @@ try {
     <?php
     } else {
     ?>
-<body>
+<body onload="loadPortal()">
   <center>
     <table border=0 width=100% height=100%>
         <tr>
@@ -108,18 +117,6 @@ try {
         </tr>
     </table>
   </center>
-  <script>
-      try {
-          var href = window.top.location.href;
-          loadPortal();
-      }
-      catch(exception){
-          window.top.postMessage({
-              application:'xdmod',
-              action: 'loginComplete'
-          },'*');
-      }
-</script>
 </body>
 </html>
 
