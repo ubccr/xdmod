@@ -291,17 +291,28 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             title: 'Search History',
             collapsible: true,
             collapsed: false,
-            layout: 'border',
+            layout: 'card',
+            activeItem: 0,
             collapseFirst: false,
             pinned: false,
             plugins: new Ext.ux.collapsedPanelTitlePlugin('Navigation'),
             width: 250,
             items: [
+                new CCR.xdmod.ui.AssistPanel({
+                    region: 'center',
+                    border: true,
+                    headerText: 'No saved searches',
+                    subHeaderText: 'Use the search button above to find jobs',
+                    userManualRef: 'job+viewer'
+                }),
                 self.searchHistoryPanel
             ],
             listeners: {
                 collapse: function (p) {
 
+                },
+                history_exists: function (hasHistory) {
+                    this.getLayout().setActiveItem(hasHistory ? 1 : 0);
                 },
                 expand: function (p) {
                     if (p.pinned) {
@@ -1843,17 +1854,16 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             // It wasn't found, so we need to create it.
             var upsertPromise = self._upsertSearch(realm, searchTitle, null, [jobData], null);
             upsertPromise.then(function (data) {
-                var realmNode = self.searchHistoryPanel.root.findChild('text', realm);
-                var path = self._getPath(realmNode);
-                var recordId = recordId || data.results.recordid;
-                path.push({
+                var path = [{
+                    dtype: 'realm',
+                    value: realm
+                }, {
                     dtype: 'recordid',
-                    value: recordId
-                });
-                path.push({
+                    value: data.results.recordid
+                }, {
                     dtype: 'jobid',
                     value: jobId
-                });
+                }];
                 self.fireEvent('reload_root', path);
                 self.historyEventWaiting = false;
             });
