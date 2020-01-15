@@ -190,7 +190,7 @@ class XdmodApplicationFactory
 
         // SETUP: error handler
         $app->error(function (\Exception $e, $code) use ($app) {
-            if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS'){
+            if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS' && array_key_exists('HTTP_ORIGIN', $_SERVER)){
                 try {
                     $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
                 } catch (\Exception $cors) {
@@ -203,7 +203,7 @@ class XdmodApplicationFactory
                         // if these headers change we will need to update the `after` above
                         return new Response(
                             '',
-                            204, /* ignored use header `X-Status-Code` */
+                            204, /* in `$app->error` this value is ignored use header `X-Status-Code` to force a different status code */
                             [
                                 'X-Status-Code' => 204,
                                 'Vary' => 'Origin',
