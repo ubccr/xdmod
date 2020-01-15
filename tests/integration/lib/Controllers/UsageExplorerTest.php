@@ -165,7 +165,6 @@ EOF;
             "height" => "590",
             "legend_type" => "bottom_center",
             "font_size" => "3",
-            "interactive_elements" => "y",
             "controller_module" => "user_interface"
         );
 
@@ -276,7 +275,6 @@ EOF;
     "height": "590",
     "legend_type": "bottom_center",
     "font_size": "3",
-    "interactive_elements": "y",
     "controller_module": "user_interface"
 }
 EOF;
@@ -489,7 +487,6 @@ EOF;
             'height' => '706',
             'legend_type' => 'bottom_center',
             'font_size' => '3',
-            'interactive_elements' => 'y',
             'operation' => 'get_charts',
             'controller_module' => 'user_interface'
         );
