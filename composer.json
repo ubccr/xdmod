@@ -278,7 +278,7 @@
                 "license": "AGPL-3.0",
                 "homepage": "http://itextpdf.com",
                 "dist": {
-                    "url": "http://central.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
+                    "url": "https://repo1.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
                     "type": "file",
                     "shasum": "892bfb3e97074a61123b3b2d7caa2db112750864"
                 }
