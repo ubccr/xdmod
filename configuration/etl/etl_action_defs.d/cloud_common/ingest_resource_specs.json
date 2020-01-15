@@ -47,7 +47,9 @@
           "memory_mb"
         ],
         "order_by": [
-          "resource_id DESC, hostname DESC, start_date ASC"
+          "resource_id DESC",
+          "hostname DESC",
+          "start_date ASC"
         ]
     }
 }
