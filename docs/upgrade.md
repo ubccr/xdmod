@@ -102,64 +102,27 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.5.0 Upgrade Notes
+8.7.0 Upgrade Notes
 -------------------
 
-Open XDMoD 8.5.0 is a major release that includes new features along with many
+Open XDMoD 8.7.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 8.1.0, 8.1.1 or 8.1.2 to 8.5.0.
+You may upgrade directly from 8.5.0 or 8.5.1 to 8.7.0.
 
 ### Configuration File Changes
 
 The `xdmod-upgrade` script will migrate user editable configuration files to
 the new version.
 
-- Changes `resources.json`:
-    - No longer uses `resource_type_id` and now uses `resource_type` which
-      references the resource type key name from `resource_types.json`.
-- Changes `resource_types.json`:
-    - This file now uses a new format.
-- Changes `portal_settings.ini`:
-    - Adds `user_dashboard` option.
-    - Adds data warehouse batch export configuration options.
-- Changes `datawarehouse.json` and files in `datawarehouse.d/`:
-    - Reorganizes data warehouse configuration.
-- Changes `roles.json` and files in `roles.d`:
-    - Reorganizes role configuration.
-    - Adds permissions for data warehouse batch export
-- Changes files in `etl/`:
-    - Various additions, improvements and bug fixes.
-- Changes `cron` configuration:
-    - Adds cron job for data warehouse batch export.
+TODO: Add list of changes here.
 
 ### Database Changes
 
 The `xdmod-upgrade` script will migrate the database schemas to the new
 version.  Tables may be altered the first time they are used during ingestion.
 
-- Adds `mod_hpcdb`.`resource_type_realms` table.
-- Changes `mod_hpcdb`.`hpcdb_resource_types` primary key.
-- Changes `mod_hpcdb`.`hpcdb_resources` foreign key constraint.
-- Alters `mod_shredder`.`staging_resource_config` table.
-- Adds `mod_shredder`.`staging_resource_type_realms` table.
-- Increases `modw_cloud`.`openstack_raw_event`.`user_name` column length.
-- Increases `mod_hpcdb`.`hpcdb_system_accounts`.`username` column length.
-- Increases `modw`.`systemaccount`.`username` column length.
-- Increases `mod_shredder`.`staging_storage_usage`.`user_name` column length.
-- Increases `mod_shredder`.`staging_storage_usage`.`pi_name` column length.
-- Adds `modw`.`jobfact_by_day_joblist` table.
-- Adds `modw`.`batch_export_requests` table.
-- Adds `moddb`.`ReportTemplateChartsStaging` table.
-- Adds `moddb`.`ReportTemplatesStaging` table.
-
-8.5.1 Upgrade Notes
--------------------
-
-Open XDMoD 8.5.1 is a bug fix release that fixes an issue with detecting
-enabled realms when only one resource is configured.
-
-You may upgrade directly from 8.1.0, 8.1.1, 8.1.2 or 8.5.0 to 8.5.1.
+TODO: Add list of changes here.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql

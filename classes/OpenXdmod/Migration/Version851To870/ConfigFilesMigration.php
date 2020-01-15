@@ -1,15 +1,18 @@
 <?php
-namespace OpenXdmod\Migration\Version811To812;
+/**
+ * Update config files from version 8.5.1 To 8.7.0.
+ */
+
+namespace OpenXdmod\Migration\Version851To870;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
-/**
- * Update config files from version 8.1.1 To 8.1.2.
- *
- * Update portal_settings.ini with the new version number.
- */
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
+
+    /**
+     * Update portal_settings.ini with the new version number.
+     */
     public function execute()
     {
         $this->assertPortalSettingsIsWritable();
