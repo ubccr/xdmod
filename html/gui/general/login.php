@@ -51,9 +51,18 @@ try {
   </style>
   <script type="text/javascript">
     function loadPortal() {
-      setTimeout(function(){
-        parent.location.href = '/index.php' + document.location.hash;
-      }, 1500);
+        try{
+            var href = window.top.location.href;
+            setTimeout(function(){
+                parent.location.href = '/index.php' + document.location.hash;
+            }, 1500);
+        }
+        catch(exception){
+            window.top.postMessage({
+                application:'xdmod',
+                action: 'loginComplete'
+            },'*');
+        }
     }
 
     function contactAdmin() {
@@ -73,6 +82,18 @@ try {
             <br>
             <a href="javascript:contactAdmin()">Contact a system administrator.</a>
         </p>
+        <script>
+           try {
+               var href = window.top.location.href;
+           }
+           catch(exception){
+               window.top.postMessage({
+                   application:'xdmod',
+                   action: 'error',
+                   info: <?php echo json_encode($message); ?>
+               },'*');
+           }
+        </script>
       </body>
       </html>
     <?php
