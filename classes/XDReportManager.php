@@ -1327,11 +1327,7 @@ class XDReportManager
             $timeframe_type = $iq[0]['timeframe_type'];
         }
 
-        if (is_array($insertion_rank) && array_key_exists('start_date', $insertion_rank) && array_key_exists('end_date', $insertion_rank) && !(is_null($insertion_rank['start_date'])) && !(is_null($insertion_rank['end_date']))) {
-            $start_date = $insertion_rank['start_date'];
-            $end_date = $insertion_rank['end_date'];
-        }
-        elseif (strtolower($timeframe_type) == 'user defined') {
+        if (strtolower($timeframe_type) == 'user defined') {
             $start_date = $active_start;
             $end_date = $active_end;
         }
@@ -1608,16 +1604,12 @@ class XDReportManager
      * \param outputdir the name of an existing, writable directory in which to put the files.
      * \param report_id the identifier for the report
      * \param export_format the specified export format
-     * \param start_date the start date for output
-     * \param end_date the end date for output
      * \returns The name of the report file that was written
      */
     private function writeXMLConfiguration(
         $outputdir,
         $report_id,
-        $export_format = null,
-        $start_date = null,
-        $end_date = null
+        $export_format = null
     ) {
         $dom = new \DOMDocument("1.0");
 
@@ -1692,24 +1684,22 @@ class XDReportManager
                 $entry['title']
             );
 
-            if ((is_null($start_date) || is_null($end_date))) {
-                // Use start and end date from report if start or end date is not supplied as function parameters
-                if (strtolower($entry['timeframe_type']) == 'user defined') {
-                    list($start_date, $end_date)
-                        = explode(' to ', $entry['comments']);
-                }
-                else {
-                    $e = \xd_date\getEndpoints($entry['timeframe_type']);
-
-                    $start_date = $e['start_date'];
-                    $end_date   = $e['end_date'];
-                }
+            if (strtolower($entry['timeframe_type']) == 'user defined') {
+                list($start_date, $end_date)
+                    = explode(' to ', $entry['comments']);
             }
+            else {
+                $e = \xd_date\getEndpoints($entry['timeframe_type']);
+
+                $start_date = $e['start_date'];
+                $end_date   = $e['end_date'];
+            }
+
             // Update comments and hyperlink so reporting engine can
             // work with the correct chart (image)
             $entry['comments'] = $start_date . ' to ' . $end_date;
 
-            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'], "start_date" => $start_date, "end_date" => $end_date) );
+            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ) );
             $imagefilename = $outputdir . "/" . $entry['order'] . ".png";
             file_put_contents($imagefilename, $imagedata);
 
@@ -1795,7 +1785,7 @@ class XDReportManager
         return $report_filename;
     }
 
-    public function buildReport($report_id, $export_format, $start_date = null, $end_date = null)
+    public function buildReport($report_id, $export_format)
     {
 
         if (
@@ -1857,7 +1847,7 @@ class XDReportManager
 
         // Generate a report definition (XML) to be used as the input to
         // the Jasper Report Builder application
-        $this->writeXMLConfiguration($template_path, $report_id, $export_format, $start_date, $end_date);
+        $this->writeXMLConfiguration($template_path, $report_id, $export_format);
 
         $charts_per_page = $this->getReportChartsPerPage($report_id);
 
