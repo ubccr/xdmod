@@ -207,6 +207,7 @@ Primary configuration file. Contains:
 - PhantomJS path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
 - Database configuration
+- Integration settings (see [Inegrations](integrations.html) for details)
 
 ### datawarehouse.json
 
