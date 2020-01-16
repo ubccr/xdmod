@@ -102,7 +102,6 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         }
 
         $messages = null;
-        $this->initialized = false;
         $actionDefinitionRequiredKeys = array( 'state_reconstruction_fields' => 'object' );
         $stateReconstructorRequiredKeys = array(
             'end_time'   => 'string',
