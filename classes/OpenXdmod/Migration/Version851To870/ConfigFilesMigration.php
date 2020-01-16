@@ -16,6 +16,10 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
     public function execute()
     {
         $this->assertPortalSettingsIsWritable();
-        $this->writePortalSettingsFile();
+        $this->writePortalSettingsFile(
+            array(
+                'cors_domains' => ''
+            )
+        );
     }
 }
