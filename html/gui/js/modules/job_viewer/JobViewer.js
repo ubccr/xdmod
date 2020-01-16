@@ -389,6 +389,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
      * @returns {*}
      */
     formatData: function (val, units) {
+        var formatBytes = function (value, unitname, precision) {
+            if (value < 0) {
+                return 'NA';
+            }
+            return XDMoD.utils.format.convertToBinaryPrefix(value, unitname, precision);
+        };
+
         switch (units) {
             case "TODO":
             case "":
@@ -412,13 +419,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             case 'bytes':
             case 'B':
             case 'B/s':
-                return XDMoD.utils.format.convertToBinaryPrefix(val, units, 4);
+                return formatBytes(val, units, 4);
                 break;
             case 'kilobyte':
-                return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0, 'byte', 4);
+                return formatBytes(val * 1024.0, 'byte', 4);
                 break;
             case 'megabyte':
-                return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0 * 1024.0, 'byte', 4);
+                return formatBytes(val * 1024.0 * 1024.0, 'byte', 4);
                 break;
             case 'joules':
                 return Ext.util.Format.number(val / 3.6e6, '0,000.000') + ' kWh';
@@ -654,7 +661,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             id: valueColumnId,
                             renderer: function (value, metadata, record) {
                                 var fmt = String(self.formatData(value, record.get('units')));
-                                if (fmt.indexOf(value) !== 0) {
+                                if (fmt === 'NA') {
+                                    metadata.attr = 'ext:qtip="This information is not available"';
+                                } else if (fmt.indexOf(value) !== 0) {
                                     metadata.attr = 'ext:qtip="' + value + ' ' + record.get('units') + '"';
                                 }
                                 return fmt;
