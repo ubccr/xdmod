@@ -1088,7 +1088,7 @@ class XDReportManager
     }
 
     private function generateCachedFilename(
-        $insertion_rank,
+        array $insertion_rank,
         $volatile = false,
         $base_name_only = false
     ) {
@@ -1097,8 +1097,6 @@ class XDReportManager
                 = is_array($insertion_rank) && isset($insertion_rank['did'])
                 ? $insertion_rank['did']
                 : '';
-
-            $this->ripTransform($insertion_rank, 'did');
 
             if (
                 is_array($insertion_rank)
@@ -1134,7 +1132,7 @@ class XDReportManager
                     . '/xd_report_volatile_'
                     . $this->_user_id
                     . '_'
-                    . $insertion_rank
+                    . $insertion_rank['rank']
                     . $duplication_id
                     . '.png';
             }
@@ -1153,19 +1151,9 @@ class XDReportManager
         }
     }
 
-    private function ripTransform(&$arr, $item)
-    {
-        if (is_array($arr) && isset($arr[$item])) {
-            unset($arr[$item]);
-            if (count($arr) == 1) {
-                $arr = array_pop($arr);
-            }
-        }
-    }
-
     public function fetchChartBlob(
         $type,
-        $insertion_rank,
+        array $insertion_rank,
         $chart_id_cache_file = null
     ) {
         $pdo = DB::factory('database');
@@ -1208,7 +1196,7 @@ class XDReportManager
 
                         $blob = $this->fetchChartBlob(
                             'chart_pool',
-                            $insertion_rank['rank'],
+                            $insertion_rank,
                             $chart_config_file
                         );
 
@@ -1238,8 +1226,6 @@ class XDReportManager
                 exit;
                 break;
             case 'chart_pool':
-                $this->ripTransform($insertion_rank, 'did');
-
                 $iq = $pdo->query(
                     "
                         SELECT chart_id, image_data
@@ -1249,12 +1235,12 @@ class XDReportManager
                     ",
                     array(
                         'user_id' => $this->_user_id,
-                        'insertion_rank' => $insertion_rank
+                        'insertion_rank' => $insertion_rank['rank']
                     )
                 );
 
                 $trace = "user_id = {$this->_user_id},"
-                    . " insertion_rank = $insertion_rank";
+                    . " insertion_rank = " . $insertion_rank['rank'];
                 break;
             case 'cached':
                 $temp_file = $this->generateCachedFilename($insertion_rank);
@@ -1461,7 +1447,7 @@ class XDReportManager
 
     public function generateChartBlob(
         $type,
-        $insertion_rank,
+        array $insertion_rank,
         $start_date,
         $end_date
     ) {
@@ -1485,7 +1471,7 @@ class XDReportManager
                 else {
                     return $this->generateChartBlob(
                         'chart_pool',
-                        $insertion_rank['rank'],
+                        $insertion_rank,
                         $start_date,
                         $end_date
                     );
@@ -1502,7 +1488,7 @@ class XDReportManager
                     ",
                     array(
                         'user_id'        => $this->_user_id,
-                        'insertion_rank' => $insertion_rank,
+                        'insertion_rank' => $insertion_rank['rank'],
                     )
                 );
                 break;
@@ -1561,7 +1547,7 @@ class XDReportManager
                     ",
                     array(
                         'user_id'        => $this->_user_id,
-                        'insertion_rank' => $insertion_rank,
+                        'insertion_rank' => $insertion_rank['rank'],
                         'image_data'     => "$start_date,$end_date;"
                                             . $raw_png_data
                     )
