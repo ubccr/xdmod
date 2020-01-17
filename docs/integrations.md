@@ -8,10 +8,10 @@ The Open XDMoD application settings to enabled this are described below.
 ## Open XDMoD Settings
 
 ### Cross-Origin Resource Sharing (CORS)
-To allow CORS set a list of domains that are allowed to communicate with Open XDMoD via
+To allow CORS  a list of domains that are allowed to communicate with Open XDMoD is configured in
 the `domains` setting in the `cors` section of `portal_settings.ini`.
 
-This is a comma separated list of both the scheme and authority
+This setting is a comma separated list where each item contains the scheme, host, and optional port.
 ```
 [cors]
 domains=https://integratedapp.example.tld,https://dev-integratedapp.example.tld:8080
