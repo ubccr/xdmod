@@ -1,21 +1,34 @@
 # Integrations
 
-XDMoD can be integrated with other Applications such as [Open OnDemand](https://openondemand.org/)
+Open XDMoD can be integrated with other applications such as [Open OnDemand](https://openondemand.org/)
 
-## Settings
+To enable integration, the Open XDMoD instance must be configured to give explicit permission to the browser.
+The Open XDMoD application settings to enabled this are described below.
+
+## Open XDMoD Settings
 
 ### Cross-Origin Resource Sharing (CORS)
-To allow CORS set a list of domains that are allowed to communicate with XDMoD via
+To allow CORS set a list of domains that are allowed to communicate with Open XDMoD via
 the `domains` setting in the `cors` section of `portal_settings.ini`.
 
-**NOTE: This setting can open up XDMoD to security risks if used wrong.
+This is a comma separated list of both the scheme and authority
+```
+[cors]
+domains=https://integratedapp.example.tld,https://dev-integratedapp.example.tld:8080
+```
+
+**NOTE: This setting can open up Open XDMoD to security risks if used improperly.
 Only enable it if you know what you are doing**
 
-## Single Sign-on (SSO) Embedding
-XDMoD allows for single sign on embedding.  When [SSO](simpleSAMLphp.html) is configured with the same IDP
-XDMoD can be embedded in an iframe at the login endpoint and automatically logged in.
+## Integration Guide
 
-When XDMoD detects login within an iframe it will send a `postMessage` to `window.top`
+### Single Sign-on (SSO) Embedding
+Open XDMoD allows for single sign on embedding so that end users do not have to explicitly sign
+in to XDMoD after they have already signed in to the other integrated application.
+When [SSO](simpleSAMLphp.html) is configured with the same IdP XDMoD can be embedded in an
+iframe at the login endpoint and iusers will be automatically logged in.
+
+When Open XDMoD detects a login within an iframe it will send a `postMessage` to `window.top`
 
 The following is an example of how to handle this
 
