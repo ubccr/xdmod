@@ -180,7 +180,7 @@
         "description_html": "A resource is defined as any infrastructure that hosts virtual machines.",
         "name": "Resource"
     },
-    "service_provider": {
+    "provider": {
         "attribute_table": "serviceprovider",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
