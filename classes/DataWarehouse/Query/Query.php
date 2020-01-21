@@ -121,7 +121,7 @@ class Query extends Loggable
                     'db' => false,
                     'mail' => false,
                     'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => PEAR_LOG_TRACE
+                    'fileLogLevel' => PEAR_LOG_NOTICE
                 )
             );
         }
