@@ -1,4 +1,14 @@
 <?php
+$filters = array(
+    'format' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => RESTRICTION_REPORT_FORMATS)
+    ),
+    'report_loc' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => RESTRICTION_REPORT_TMPDIR)
+    )
+);
 
 \xd_security\assertParametersSet(array(
     'report_loc',
@@ -6,12 +16,15 @@
 ));
 
 try {
-    if (XDReportManager::isValidFormat($_GET['format']) == false) {
+
+    $get = filter_input_array(INPUT_GET, $filters);
+
+    if (XDReportManager::isValidFormat($get['format']) == false) {
         print "Invalid format specified";
         exit;
     }
 
-    $output_format = $_GET['format'];
+    $output_format = $get['format'];
 
     $user = \xd_security\getLoggedInUser();
 
@@ -21,9 +34,9 @@ try {
 
     // Resolve absolute path to report document on backend
 
-    $report_id = preg_replace('/(.+)-(.+)-(.+)/', '$1-$2', $_GET['report_loc']);
+    $report_id = preg_replace('/(.+)-(.+)-(.+)/', '$1-$2', $get['report_loc']);
 
-    $working_directory = sys_get_temp_dir() . '/' . $_GET['report_loc'];
+    $working_directory = sys_get_temp_dir() . '/' . $get['report_loc'];
 
     $report_file = $working_directory.'/'.$report_id.'.'.$output_format;
 
