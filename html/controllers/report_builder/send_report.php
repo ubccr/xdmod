@@ -1,37 +1,41 @@
 <?php
 
+$filters = array(
+    'build_only' => array('filter' => FILTER_VALIDATE_BOOLEAN, 'flags' => FILTER_NULL_ON_FAILURE),
+    'report_id' => array('filter' => FILTER_VALIDATE_REGEXP, 'options' => array('regexp' => RESTRICTION_REPORT_ID)),
+    'start_date' => array('filter' => FILTER_VALIDATE_REGEXP, 'options' => array('regexp' => RESTRICTION_REPORT_DATE)),
+    'end_date' => array('filter' => FILTER_VALIDATE_REGEXP, 'options' => array('regexp' => RESTRICTION_REPORT_DATE)),
+    'export_format' => array('filter' => FILTER_VALIDATE_REGEXP, 'options' => array('regexp' => RESTRICTION_REPORT_FORMATS))
+);
+
    try {
+
+      $userdata = filter_input_array(INPUT_POST, $filters);
       
       $user = \xd_security\getLoggedInUser();
       
       $rm = new XDReportManager($user);
       	
-      \xd_security\assertParametersSet(array(
-         'report_id',
-         'build_only'
-      ));
-         
-      $report_id = $_POST['report_id'];
-      $build_only = $_POST['build_only'];
-         
-      // ==========================================================================        
-   
-      $export_format = XDReportManager::DEFAULT_FORMAT;
-      
-      if (isset($_POST['export_format']) && (XDReportManager::isValidFormat($_POST['export_format']) == true)) {
-         $export_format = $_POST['export_format'];
-      }   
-
-      if (isset($_POST['start_date']) && !empty($_POST['start_date']) && isset($_POST['end_date']) && !empty($_POST['end_date'])) {
-         $start_date = $_POST['start_date'];
-         $end_date = $_POST['end_date'];
-      } else {
-         $start_date = null;
-         $end_date = null;
+      $report_id = $userdata['report_id'];
+      if ($report_id === null) {
+          \xd_response\presentError('Invalid value specified for report_id');
       }
 
+      $build_only = $userdata['build_only'];
+      if ($build_only === null) {
+          \xd_response\presentError('Invalid value specified for build_only');
+      }
+
+      $export_format = $userdata['export_format'];
+    if ($export_format === null) {
+        $export_format = XDReportManager::DEFAULT_FORMAT;
+    }
+
+      $start_date = $userdata['start_date'];
+      $end_date = $userdata['end_date'];
+
       $returnData['action'] = 'send_report';  
-      $returnData['build_only'] = ($build_only == "true");         
+      $returnData['build_only'] = $build_only;
       
       try {
             
@@ -40,7 +44,7 @@
          $working_dir = $build_response['template_path'];
          $report_filename = $build_response['report_file'];
          
-         if ($build_only == "true") {
+         if ($build_only) {
    
             // Present enough information so that the download_report controller can serve up the file
             // (and provide appropriate cleanup) afterwards.
