@@ -449,7 +449,7 @@ class EtlConfiguration extends Configuration
     protected function merge(Configuration $localConfigObj, $overwrite = false)
     {
         if ( ! $localConfigObj instanceof EtlConfiguration ) {
-            $this-logAndThrowException("Local config object is not of type EtlConfiguration");
+            $this->logAndThrowException("Local config object is not of type EtlConfiguration");
         }
 
         parent::merge($localConfigObj, $overwrite);
