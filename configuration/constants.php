@@ -187,12 +187,12 @@ define('RESTRICTION_REPORT_SCHEDULE', '/^Once|Daily|Weekly|Monthly|Quarterly|Sem
 define('RESTRICTION_REPORT_DELIVERY', '/^E-Mail$/');
 
 define('RESTRICTION_REPORT_CHART_TYPE', '/^chart_pool|volatile|report|cached$/');
-define('RESTRICTION_REPORT_CHART_REF', '/^[0-9]+(\-[0-9]+)?;[0-9]+$/');
+define('RESTRICTION_REPORT_CHART_REF', '/^[0-9]+(-[0-9]+)?;[0-9]+$/');
 define('RESTRICTION_REPORT_CHART_DID', '/^_d[0-9]+$/');
 
-define('RESTRICTION_CHART_CACHEREF', '/^([0-9]{4}(-[0-9]{2}){2};){2};(?(xd_report_volatile_)xd_report_volatile_[0-9]+|[0-9]+-[0-9\.]+);[0-9]+$/');
+define('RESTRICTION_CHART_CACHEREF', '/^([0-9]{4}(-[0-9]{2}){2};){2}(?(?=xd_report_volatile_)xd_report_volatile_[0-9]+;[0-9]+(_d[0-9]+)?|[0-9]+-[0-9\.]+;[0-9]+)$/');
 
-define('RESTRICTION_REPORT_TMPDIR', '/^[0-9]+-[0-9\.]+-[a-zA-Z0-9\.]+/');
+define('RESTRICTION_REPORT_TMPDIR', '/^[0-9]+-[0-9\.]+-[a-zA-Z0-9\.]+$/');
 
 /**
  * Colors
