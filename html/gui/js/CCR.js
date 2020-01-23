@@ -1384,6 +1384,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         listeners: {
             close: function () {
                 XDMoD.TrackEvent('Login Window', 'Closed Window');
+            },
+            activate: function () {
+                txtLoginUsername.focus(false);
             }
         }
     });
