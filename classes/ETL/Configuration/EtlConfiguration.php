@@ -525,9 +525,9 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    public function cleanup()
+    public function cleanup($deepCleanup = false)
     {
-        parent::cleanup();
+        parent::cleanup($deepCleanup);
         $this->parentDefaults = null;
     }  // cleanup()
 

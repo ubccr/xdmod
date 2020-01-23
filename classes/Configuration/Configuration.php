@@ -131,6 +131,12 @@ class Configuration extends Loggable implements iConfiguration
 
     protected $localConfigDir = null;
 
+
+    /**
+     * @var array of filenames of local configuration files
+     */
+    protected $localConfigFiles = array();
+
     /**
      * @var boolean Flag indicating that the directory for local configuration files has been
      * scanned and the list of filenames has been stored for use.
