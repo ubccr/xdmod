@@ -426,7 +426,7 @@ class QueryHandler extends Loggable
      * Update the downloaded datetime for a record.
      *
      * @param integer $id Export request primary key.
-     * @return integer Count of deleted rows--should be 1 if successful.
+     * @return integer Count of updated rows--should be 1 if successful.
      */
     public function updateDownloadedDatetime($id)
     {
