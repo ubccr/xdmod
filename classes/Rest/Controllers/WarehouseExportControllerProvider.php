@@ -50,7 +50,14 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function __construct(array $params = [])
     {
         parent::__construct($params);
-        $this->logger = Log::factory('data-warehouse-export-rest');
+        $this->logger = Log::factory(
+            'data-warehouse-export-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);
     }
