@@ -386,9 +386,9 @@ class QueryHandler extends Loggable
                        export_expired,
                        export_expires_datetime,
                        export_created_datetime,
-                       downloaded_datetime,
                        export_file_format,
                        requested_datetime,
+                       downloaded_datetime,
                        ";
         $fromTable = "FROM batch_export_requests ";
         $userClause = "AND user_id = :user_id ";
