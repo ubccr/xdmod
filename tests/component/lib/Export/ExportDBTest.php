@@ -454,6 +454,7 @@ class ExportDBTest extends BaseTest
             'export_created_datetime',
             'export_file_format',
             'requested_datetime',
+            'downloaded_datetime',
             'state'
         );
 
