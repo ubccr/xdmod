@@ -44,6 +44,9 @@ class QueryHandler extends Loggable
     const LOG_ID_KEY = 'id';
     const LOG_USER_ID_KEY = 'user_id';
     const LOG_STACKTRACE_KEY = 'stacktrace';
+    const LOG_REALM_KEY = 'realm';
+    const LOG_START_DATE_KEY = 'start_date';
+    const LOG_END_DATE_KEY = 'end_date';
 
     /**
      * Database handle.
@@ -129,9 +132,9 @@ class QueryHandler extends Loggable
 
             $params = array(
                 self::LOG_USER_ID_KEY => $userId,
-                'realm' => $realm,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
+                self::LOG_REALM_KEY => $realm,
+                self::LOG_START_DATE_KEY => $startDate,
+                self::LOG_END_DATE_KEY => $endDate,
                 'export_file_format' => $format
             );
 
@@ -141,9 +144,9 @@ class QueryHandler extends Loggable
                 self::LOG_EVENT_KEY => 'INSERT',
                 self::LOG_TABLE_KEY => self::LOG_TABLE,
                 self::LOG_USER_ID_KEY => $userId,
-                'realm' => $realm,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
+                self::LOG_REALM_KEY => $realm,
+                self::LOG_START_DATE_KEY => $startDate,
+                self::LOG_END_DATE_KEY => $endDate,
                 'format' => $format
             ]);
 

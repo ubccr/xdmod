@@ -26,6 +26,12 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      const LOG_ID_KEY = 'id';
      const LOG_USER_ID_KEY = 'user_id';
 
+     // Constants used in JSON responses.
+     const JSON_SUCCESS_KEY = 'success';
+     const JSON_MESSAGE_KEY = 'message';
+     const JSON_DATA_KEY = 'data';
+     const JSON_TOTAL_KEY = 'total';
+
     /**
      * @var DataWarehouse\Export\QueryHandler
      */
@@ -100,9 +106,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         return $app->json(
             [
-                'success' => true,
-                'data' => array_values($realms),
-                'total' => count($realms)
+                self::JSON_SUCCESS_KEY => true,
+                self::JSON_DATA_KEY => array_values($realms),
+                self::JSON_TOTAL_KEY => count($realms)
             ]
         );
     }
@@ -121,9 +127,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $results = $this->queryHandler->listUserRequestsByState($user->getUserId());
         return $app->json(
             [
-                'success' => true,
-                'data' => $results,
-                'total' => count($results)
+                self::JSON_SUCCESS_KEY => true,
+                self::JSON_DATA_KEY => $results,
+                self::JSON_TOTAL_KEY => count($results)
             ]
         );
     }
@@ -193,10 +199,10 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         return $app->json([
-            'success' => true,
-            'message' => 'Created export request',
-            'data' => [['id' => $id]],
-            'total' => 1
+            self::JSON_SUCCESS_KEY => true,
+            self::JSON_MESSAGE_KEY => 'Created export request',
+            self::JSON_DATA_KEY => [['id' => $id]],
+            self::JSON_TOTAL_KEY => 1
         ]);
     }
 
@@ -299,10 +305,10 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         ]);
 
         return $app->json([
-            'success' => true,
-            'message' => 'Deleted export request',
-            'data' => [['id' => $id]],
-            'total' => 1
+            self::JSON_SUCCESS_KEY => true,
+            self::JSON_MESSAGE_KEY => 'Deleted export request',
+            self::JSON_DATA_KEY => [['id' => $id]],
+            self::JSON_TOTAL_KEY => 1
         ]);
     }
 
@@ -373,15 +379,15 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         return $app->json([
-            'success' => true,
-            'message' => 'Deleted export requests',
-            'data' => array_map(
+            self::JSON_SUCCESS_KEY => true,
+            self::JSON_MESSAGE_KEY => 'Deleted export requests',
+            self::JSON_DATA_KEY => array_map(
                 function ($id) {
                     return ['id' => $id];
                 },
                 $requestIds
             ),
-            'total' => count($requestIds)
+            self::JSON_TOTAL_KEY => count($requestIds)
         ]);
     }
 }
