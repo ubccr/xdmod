@@ -50,6 +50,7 @@ class FileManager extends Loggable
             );
         } catch (Exception $e) {
             $this->logger->err([
+                'module' => 'data-warehouse-export',
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
@@ -149,6 +150,7 @@ class FileManager extends Loggable
     public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
         $this->logger->info([
+            'module' => 'data-warehouse-export',
             'message' => 'Writing data to file',
             'format' => $format
         ]);
@@ -170,6 +172,7 @@ class FileManager extends Loggable
             );
 
             $this->logger->debug([
+                'module' => 'data-warehouse-export',
                 'message' => 'Created file writer',
                 'file_writer' => $fileWriter
             ]);
@@ -185,6 +188,7 @@ class FileManager extends Loggable
             return $dataFile;
         } catch (Exception $e) {
             $this->logger->err([
+                'module' => 'data-warehouse-export',
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
@@ -205,6 +209,7 @@ class FileManager extends Loggable
         $zipFile = $this->getExportDataFilePath($request['id']);
 
         $this->logger->info([
+            'module' => 'data-warehouse-export',
             'message' => 'Creating zip file',
             'batch_export_request.id' => $request['id'],
             'data_file' => $dataFile,
@@ -245,6 +250,7 @@ class FileManager extends Loggable
             return $zipFile;
         } catch (Exception $e) {
             $this->logger->err([
+                'module' => 'data-warehouse-export',
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
@@ -263,6 +269,7 @@ class FileManager extends Loggable
         $zipFile = $this->getExportDataFilePath($id);
 
         $this->logger->info([
+            'module' => 'data-warehouse-export',
             'message' => 'Removing export file',
             'batch_export_request.id' => $id,
             'zip_file' => $zipFile
@@ -285,6 +292,7 @@ class FileManager extends Loggable
             $exportFile = $this->getExportDataFilePath($id);
             if (is_file($exportFile)) {
                 $this->logger->info([
+                    'module' => 'data-warehouse-export',
                     'message' => 'Removing export file',
                     'batch_export_request.id' => $id,
                     'zip_file' => $exportFile

@@ -19,6 +19,7 @@ class FileWriterFactory extends Loggable
     public function createFileWriter($format, $file)
     {
         $this->logger->debug([
+            'module' => 'data-warehouse-export',
             'message' => 'Creating new file writer',
             'format' => $format,
             'file' => $file

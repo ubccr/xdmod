@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use CCR\DB;
+use CCR\Log;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
@@ -27,11 +28,17 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      */
     private $realmManager;
 
+    /**
+     * @var \CCR\Log
+     */
+    private $logger;
+
     public function __construct(array $params = [])
     {
         parent::__construct($params);
+        $this->logger = Log::factory('data-warehouse-export-rest');
         $this->realmManager = new RealmManager();
-        $this->queryHandler = new QueryHandler();
+        $this->queryHandler = new QueryHandler($this->logger);
     }
 
     /**
@@ -231,6 +238,18 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
+        $this->logger->info([
+            'module' => 'data-warehouse-export',
+            'message' => 'Sending data warehouse export file',
+            'event' => 'DOWNLOAD',
+            'id' => $id,
+            'user_id' => $user->getUserId()
+        ]);
+
+        if ($request['downloaded_datetime'] === null) {
+            $this->queryHandler->updateDownloadedDatetime($request['id']);
+        }
+
         return $app->sendFile(
             $file,
             200,
@@ -262,6 +281,14 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         if ($count === 0) {
             throw new NotFoundHttpException('Export request not found');
         }
+
+        $this->logger->info([
+            'module' => 'data-warehouse-export',
+            'message' => 'Deleted data warehouse export request',
+            'event' => 'DELETE_BY_USER',
+            'id' => $id,
+            'user_id' => $user->getUserId()
+        ]);
 
         return $app->json([
             'success' => true,
@@ -319,6 +346,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
+                $this->logger->info([
+                    'module' => 'data-warehouse-export',
+                    'message' => 'Deleted data warehouse export request',
+                    'event' => 'DELETE_BY_USER',
+                    'id' => $id,
+                    'user_id' => $user->getUserId()
+                ]);
             }
 
             $dbh->commit();
