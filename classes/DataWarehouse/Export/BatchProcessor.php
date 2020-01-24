@@ -16,6 +16,15 @@ use xd_utilities;
 
 class BatchProcessor extends Loggable
 {
+    // Constants used in log messages.
+    const LOG_MODULE_KEY = 'module';
+    const LOG_MODULE = 'data-warehouse-export';
+    const LOG_MESSAGE_KEY = 'message';
+    const LOG_EVENT_KEY = 'event';
+    const LOG_REQUEST_ID_KEY = 'batch_export_request.id';
+    const LOG_USER_ID_KEY = 'Users.id';
+    const LOG_STACKTRACE_KEY = 'stacktrace';
+
     /**
      * Database handle for moddb.
      * @var \CCR\DB\iDatabase
@@ -108,8 +117,8 @@ class BatchProcessor extends Loggable
     private function processSubmittedRequests()
     {
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Processing submitted requests'
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Processing submitted requests'
         ]);
         foreach ($this->queryHandler->listSubmittedRecords() as $request) {
             $this->processSubmittedRequest($request);
@@ -123,20 +132,24 @@ class BatchProcessor extends Loggable
      */
     private function processSubmittedRequest(array $request)
     {
+        $requestId = $request['id'];
+        $userId = $request['user_id']
+
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Processing request',
-            'batch_export_request.id' => $request['id']
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Processing request',
+            self::LOG_USER_ID_KEY => $userId,
+            self::LOG_REQUEST_ID_KEY => $requestId
         ]);
 
-        $user = XDUser::getUserByID($request['user_id']);
+        $user = XDUser::getUserByID($userId);
 
         if ($user === null) {
             $this->logger->err([
-                'module' => 'data-warehouse-export',
-                'message' => 'User not found',
-                'Users.id' => $request['user_id'],
-                'batch_export_request.id' => $request['id']
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'User not found',
+                self::LOG_USER_ID_KEY => $userId,
+                self::LOG_REQUEST_ID_KEY => $requestId
             ]);
             return;
         }
@@ -144,7 +157,7 @@ class BatchProcessor extends Loggable
         try {
             $this->dbh->beginTransaction();
             if (!$this->dryRun) {
-                $this->queryHandler->submittedToAvailable($request['id']);
+                $this->queryHandler->submittedToAvailable($requestId);
             }
             $dataSet = $this->getDataSet($request, $user);
             $format = $this->dryRun ? 'null' : $request['export_file_format'];
@@ -154,35 +167,35 @@ class BatchProcessor extends Loggable
             }
 
             $this->logger->info([
-                'module' => 'data-warehouse-export',
-                'event' => 'CREATED_EXPORT_FILE',
-                'message' => 'Created data warehouse export zip file',
-                'Users.id' => $request['user_id'],
-                'batch_export_request.id' => $request['id'],
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_EVENT_KEY => 'CREATED_EXPORT_FILE',
+                self::LOG_MESSAGE_KEY => 'Created data warehouse export zip file',
+                self::LOG_USER_ID_KEY => $userId,
+                self::LOG_REQUEST_ID_KEY => $requestId,
                 'file_path' => $zipFile
             ]);
 
             // Delete file that was added to zip archive.
             if (!$this->dryRun && !unlink($dataFile)) {
                 $this->logger->err([
-                    'module' => 'data-warehouse-export',
-                    'message' => sprintf('Failed to delete temporary data file "%s"', $dataFile)
+                    self::LOG_MODULE_KEY => self::LOG_MODULE,
+                    self::LOG_MESSAGE_KEY => sprintf('Failed to delete temporary data file "%s"', $dataFile)
                 ]);
             }
 
             // Query for same record to get expiration date.
-            $request = $this->queryHandler->getRequestRecord($request['id']);
+            $request = $this->queryHandler->getRequestRecord($requestId);
             $this->sendExportSuccessEmail($user, $request);
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
             $this->logger->err([
-                'module' => 'data-warehouse-export',
-                'message' => 'Failed to export data: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'Failed to export data: ' . $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
             ]);
             if (!$this->dryRun) {
-                $this->queryHandler->submittedToFailed($request['id']);
+                $this->queryHandler->submittedToFailed($requestId);
             }
             $this->sendExportFailureEmail($user, $request, $e);
         }
@@ -197,8 +210,8 @@ class BatchProcessor extends Loggable
     private function processExpiringRequests()
     {
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Processing expiring requests'
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Processing expiring requests'
         ]);
         foreach ($this->queryHandler->listExpiringRecords() as $request) {
             $this->processExpiringRequest($request);
@@ -213,15 +226,15 @@ class BatchProcessor extends Loggable
     private function processExpiringRequest(array $request)
     {
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Expiring request',
-            'batch_export_request.id' => $request['id']
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Expiring request',
+            self::LOG_REQUEST_ID_KEY => $request['id']
         ]);
 
         if ($this->dryRun) {
             $this->logger->notice([
-                'module' => 'data-warehouse-export',
-                'message' => 'dry run: Not expiring export file'
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'dry run: Not expiring export file'
             ]);
             return;
         }
@@ -234,9 +247,9 @@ class BatchProcessor extends Loggable
         } catch (Exception $e) {
             $this->dbh->rollback();
             $this->logger->err([
-                'module' => 'data-warehouse-export',
-                'message' => 'Failed to expire record: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'Failed to expire record: ' . $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
             ]);
         }
     }
@@ -250,8 +263,8 @@ class BatchProcessor extends Loggable
     private function processDeletedRequests()
     {
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Processing deleted requests'
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Processing deleted requests'
         ]);
         $this->fileManager->removeDeletedRequests(
             array_map(
@@ -274,13 +287,13 @@ class BatchProcessor extends Loggable
     private function getDataSet(array $request, XDUser $user)
     {
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Querying data',
-            'Users.id' => $user->getUserID(),
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Querying data',
+            self::LOG_USER_ID_KEY => $user->getUserID(),
             'user_email' => $user->getEmailAddress(),
             'user_first_name' => $user->getFirstName(),
             'user_last_name' => $user->getLastName(),
-            'batch_export_request.id' => $request['id'],
+            self::LOG_REQUEST_ID_KEY => $request['id'],
             'realm' => $request['realm'],
             'start_date' => $request['start_date'],
             'end_date' => $request['end_date']
@@ -289,8 +302,8 @@ class BatchProcessor extends Loggable
         try {
             $className = $this->realmManager->getRawDataQueryClass($request['realm']);
             $this->logger->debug([
-                'module' => 'data-warehouse-export',
-                'message' => sprintf('Instantiating query class "%s"', $className)
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => sprintf('Instantiating query class "%s"', $className)
             ]);
             $query = new $className(
                 [
@@ -303,9 +316,9 @@ class BatchProcessor extends Loggable
             return $dataSet;
         } catch (Exception $e) {
             $this->logger->err([
-                'module' => 'data-warehouse-export',
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
             ]);
             throw new Exception('Failed to create batch export query', 0, $e);
         }
@@ -321,16 +334,16 @@ class BatchProcessor extends Loggable
     {
         if ($this->dryRun) {
             $this->logger->notice([
-                'module' => 'data-warehouse-export',
-                'message' => 'dry run: Not sending success email'
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'dry run: Not sending success email'
             ]);
             return;
         }
 
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'event' => 'SENDING_SUCCESS_EMAIL',
-            'message' => 'Sending success email'
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_EVENT_KEY => 'SENDING_SUCCESS_EMAIL',
+            self::LOG_MESSAGE_KEY => 'Sending success email'
         ]);
 
         // Remove time from expiration date time.
@@ -372,17 +385,17 @@ class BatchProcessor extends Loggable
     ) {
         if ($this->dryRun) {
             $this->logger->notice([
-                'module' => 'data-warehouse-export',
-                'message' => 'dry run: Not sending failure email'
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'dry run: Not sending failure email'
             ]);
             return;
         }
 
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'event' => 'SENDING_FAILURE_EMAIL',
-            'message' => 'Sending failure email',
-            'batch_export_request.id' => $request['id']
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_EVENT_KEY => 'SENDING_FAILURE_EMAIL',
+            self::LOG_MESSAGE_KEY => 'Sending failure email',
+            self::LOG_REQUEST_ID_KEY => $request['id']
         ]);
 
         $message = $e->getMessage();

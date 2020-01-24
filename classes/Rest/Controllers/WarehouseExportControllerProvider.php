@@ -18,6 +18,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
+    // Constants used in log messages.
+     const LOG_MODULE_KEY = 'module';
+     const LOG_MODULE = 'data-warehouse-export';
+     const LOG_MESSAGE_KEY = 'message';
+     const LOG_EVENT_KEY = 'event';
+     const LOG_ID_KEY = 'id';
+     const LOG_USER_ID_KEY = 'user_id';
+
     /**
      * @var DataWarehouse\Export\QueryHandler
      */
@@ -239,11 +247,11 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Sending data warehouse export file',
-            'event' => 'DOWNLOAD',
-            'id' => $id,
-            'user_id' => $user->getUserId()
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Sending data warehouse export file',
+            self::LOG_EVENT_KEY => 'DOWNLOAD',
+            self::LOG_ID_KEY => $id,
+            self::LOG_USER_ID_KEY => $user->getUserId()
         ]);
 
         if ($request['downloaded_datetime'] === null) {
@@ -283,11 +291,11 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         $this->logger->info([
-            'module' => 'data-warehouse-export',
-            'message' => 'Deleted data warehouse export request',
-            'event' => 'DELETE_BY_USER',
-            'id' => $id,
-            'user_id' => $user->getUserId()
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Deleted data warehouse export request',
+            self::LOG_EVENT_KEY => 'DELETE_BY_USER',
+            self::LOG_ID_KEY => $id,
+            self::LOG_USER_ID_KEY => $user->getUserId()
         ]);
 
         return $app->json([
@@ -347,11 +355,11 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                     throw new NotFoundHttpException('Export request not found');
                 }
                 $this->logger->info([
-                    'module' => 'data-warehouse-export',
-                    'message' => 'Deleted data warehouse export request',
-                    'event' => 'DELETE_BY_USER',
-                    'id' => $id,
-                    'user_id' => $user->getUserId()
+                    self::LOG_MODULE_KEY => self::LOG_MODULE,
+                    self::LOG_MESSAGE_KEY => 'Deleted data warehouse export request',
+                    self::LOG_EVENT_KEY => 'DELETE_BY_USER',
+                    self::LOG_ID_KEY => $id,
+                    self::LOG_USER_ID_KEY => $user->getUserId()
                 ]);
             }
 
