@@ -29,9 +29,25 @@ namespace DataWarehouse\Export;
 
 use Exception;
 use CCR\DB;
+use CCR\Loggable;
+use Log;
 
-class QueryHandler
+class QueryHandler extends Loggable
 {
+    // Constants used in log messages.
+    const LOG_MODULE_KEY = 'module';
+    const LOG_MODULE = 'data-warehouse-export';
+    const LOG_MESSAGE_KEY = 'message';
+    const LOG_EVENT_KEY = 'event';
+    const LOG_TABLE_KEY = 'table';
+    const LOG_TABLE = 'moddb.batch_export_requests';
+    const LOG_ID_KEY = 'id';
+    const LOG_USER_ID_KEY = 'user_id';
+    const LOG_STACKTRACE_KEY = 'stacktrace';
+    const LOG_REALM_KEY = 'realm';
+    const LOG_START_DATE_KEY = 'start_date';
+    const LOG_END_DATE_KEY = 'end_date';
+
     /**
      * Database handle.
      * @var \CCR\DB\iDatabase
@@ -68,8 +84,9 @@ class QueryHandler
      */
     private $whereDeleted = "WHERE is_deleted = 1 ";
 
-    public function __construct()
+    public function __construct(Log $logger = null)
     {
+        parent::__construct($logger);
         $this->dbh = DB::factory('database');
     }
 
@@ -121,11 +138,28 @@ class QueryHandler
                 'export_file_format' => $format
             );
 
+            $this->logger->info([
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'Creating data warehouse export record',
+                self::LOG_EVENT_KEY => 'INSERT',
+                self::LOG_TABLE_KEY => self::LOG_TABLE,
+                self::LOG_USER_ID_KEY => $userId,
+                self::LOG_REALM_KEY => $realm,
+                self::LOG_START_DATE_KEY => $startDate,
+                self::LOG_END_DATE_KEY => $endDate,
+                'format' => $format
+            ]);
+
             $id = $this->dbh->insert($sql, $params);
             $this->dbh->commit();
             return $id;
         } catch (Exception $e) {
             $this->dbh->rollBack();
+            $this->logger->err([
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'Record creation failed: ' . $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
+            ]);
             throw $e;
         }
     }
@@ -169,6 +203,13 @@ class QueryHandler
                 SET export_succeeded = 0 " .
                 $this->whereSubmitted .
                 "AND id = :id";
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Transitioning data warehouse export record to failed state',
+            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_FAILED',
+            self::LOG_TABLE_KEY => self::LOG_TABLE,
+            self::LOG_ID_KEY => $id
+        ]);
         return $this->dbh->execute($sql, array('id' => $id));
     }
 
@@ -201,6 +242,14 @@ class QueryHandler
             'id' => $id
         );
 
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Transitioning data warehouse export record to available state',
+            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_AVAILABLE',
+            self::LOG_TABLE_KEY => self::LOG_TABLE,
+            self::LOG_ID_KEY => $id
+        ]);
+
         return $this->dbh->execute($sql, $params);
     }
 
@@ -214,6 +263,13 @@ class QueryHandler
     {
         $sql = "UPDATE batch_export_requests SET export_expired = 1 " .
                 $this->whereAvailable . 'AND id = :id';
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Transitioning data warehouse export record to expired state',
+            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_EXPIRED',
+            self::LOG_TABLE_KEY => self::LOG_TABLE,
+            self::LOG_ID_KEY => $id
+        ]);
         return $this->dbh->execute($sql, array('id' => $id));
     }
 
@@ -332,6 +388,7 @@ class QueryHandler
                        export_created_datetime,
                        export_file_format,
                        requested_datetime,
+                       downloaded_datetime,
                        ";
         $fromTable = "FROM batch_export_requests ";
         $userClause = "AND user_id = :user_id ";
@@ -356,6 +413,33 @@ class QueryHandler
     public function deleteRequest($id, $userId)
     {
         $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Deleting data warehouse export record',
+            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_DELETED',
+            self::LOG_TABLE_KEY => self::LOG_TABLE,
+            self::LOG_ID_KEY => $id,
+            self::LOG_USER_ID_KEY => $userId
+        ]);
         return $this->dbh->execute($sql, array('request_id' => $id, 'user_id' => $userId));
+    }
+
+    /**
+     * Update the downloaded datetime for a record.
+     *
+     * @param integer $id Export request primary key.
+     * @return integer Count of updated rows--should be 1 if successful.
+     */
+    public function updateDownloadedDatetime($id)
+    {
+        $sql = 'UPDATE batch_export_requests SET downloaded_datetime = NOW() WHERE id = :request_id';
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Updating data warehouse export record downloaded datetime',
+            self::LOG_EVENT_KEY => 'UPDATE_DOWNLOADED_DATETIME',
+            self::LOG_TABLE_KEY => self::LOG_TABLE,
+            self::LOG_ID_KEY => $id
+        ]);
+        return $this->dbh->execute($sql, ['request_id' => $id]);
     }
 }

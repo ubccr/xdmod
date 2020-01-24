@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use CCR\DB;
+use CCR\Log;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
@@ -17,6 +18,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
+    // Constants used in log messages.
+     const LOG_MODULE_KEY = 'module';
+     const LOG_MODULE = 'data-warehouse-export';
+     const LOG_MESSAGE_KEY = 'message';
+     const LOG_EVENT_KEY = 'event';
+     const LOG_ID_KEY = 'id';
+     const LOG_USER_ID_KEY = 'user_id';
+
+     // Constants used in JSON responses.
+     const JSON_SUCCESS_KEY = 'success';
+     const JSON_MESSAGE_KEY = 'message';
+     const JSON_DATA_KEY = 'data';
+     const JSON_TOTAL_KEY = 'total';
+
     /**
      * @var DataWarehouse\Export\QueryHandler
      */
@@ -27,11 +42,24 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      */
     private $realmManager;
 
+    /**
+     * @var \CCR\Log
+     */
+    private $logger;
+
     public function __construct(array $params = [])
     {
         parent::__construct($params);
+        $this->logger = Log::factory(
+            'data-warehouse-export-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
         $this->realmManager = new RealmManager();
-        $this->queryHandler = new QueryHandler();
+        $this->queryHandler = new QueryHandler($this->logger);
     }
 
     /**
@@ -85,9 +113,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         return $app->json(
             [
-                'success' => true,
-                'data' => array_values($realms),
-                'total' => count($realms)
+                self::JSON_SUCCESS_KEY => true,
+                self::JSON_DATA_KEY => array_values($realms),
+                self::JSON_TOTAL_KEY => count($realms)
             ]
         );
     }
@@ -106,9 +134,9 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $results = $this->queryHandler->listUserRequestsByState($user->getUserId());
         return $app->json(
             [
-                'success' => true,
-                'data' => $results,
-                'total' => count($results)
+                self::JSON_SUCCESS_KEY => true,
+                self::JSON_DATA_KEY => $results,
+                self::JSON_TOTAL_KEY => count($results)
             ]
         );
     }
@@ -178,10 +206,10 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         return $app->json([
-            'success' => true,
-            'message' => 'Created export request',
-            'data' => [['id' => $id]],
-            'total' => 1
+            self::JSON_SUCCESS_KEY => true,
+            self::JSON_MESSAGE_KEY => 'Created export request',
+            self::JSON_DATA_KEY => [['id' => $id]],
+            self::JSON_TOTAL_KEY => 1
         ]);
     }
 
@@ -231,6 +259,18 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Sending data warehouse export file',
+            self::LOG_EVENT_KEY => 'DOWNLOAD',
+            self::LOG_ID_KEY => $id,
+            self::LOG_USER_ID_KEY => $user->getUserId()
+        ]);
+
+        if ($request['downloaded_datetime'] === null) {
+            $this->queryHandler->updateDownloadedDatetime($request['id']);
+        }
+
         return $app->sendFile(
             $file,
             200,
@@ -263,11 +303,19 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException('Export request not found');
         }
 
+        $this->logger->info([
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Deleted data warehouse export request',
+            self::LOG_EVENT_KEY => 'DELETE_BY_USER',
+            self::LOG_ID_KEY => $id,
+            self::LOG_USER_ID_KEY => $user->getUserId()
+        ]);
+
         return $app->json([
-            'success' => true,
-            'message' => 'Deleted export request',
-            'data' => [['id' => $id]],
-            'total' => 1
+            self::JSON_SUCCESS_KEY => true,
+            self::JSON_MESSAGE_KEY => 'Deleted export request',
+            self::JSON_DATA_KEY => [['id' => $id]],
+            self::JSON_TOTAL_KEY => 1
         ]);
     }
 
@@ -319,6 +367,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
+                $this->logger->info([
+                    self::LOG_MODULE_KEY => self::LOG_MODULE,
+                    self::LOG_MESSAGE_KEY => 'Deleted data warehouse export request',
+                    self::LOG_EVENT_KEY => 'DELETE_BY_USER',
+                    self::LOG_ID_KEY => $id,
+                    self::LOG_USER_ID_KEY => $user->getUserId()
+                ]);
             }
 
             $dbh->commit();
@@ -331,15 +386,15 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         return $app->json([
-            'success' => true,
-            'message' => 'Deleted export requests',
-            'data' => array_map(
+            self::JSON_SUCCESS_KEY => true,
+            self::JSON_MESSAGE_KEY => 'Deleted export requests',
+            self::JSON_DATA_KEY => array_map(
                 function ($id) {
                     return ['id' => $id];
                 },
                 $requestIds
             ),
-            'total' => count($requestIds)
+            self::JSON_TOTAL_KEY => count($requestIds)
         ]);
     }
 }

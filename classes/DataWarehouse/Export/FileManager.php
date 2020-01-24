@@ -15,6 +15,14 @@ use xd_utilities;
  */
 class FileManager extends Loggable
 {
+    // Constants used in log messages.
+    const LOG_MODULE_KEY = 'module';
+    const LOG_MODULE = 'data-warehouse-export';
+    const LOG_MESSAGE_KEY = 'message';
+    const LOG_STACKTRACE_KEY = 'stacktrace';
+    const LOG_REQUEST_ID_KEY = 'batch_export_request.id';
+    const LOG_ZIP_FILE_KEY = 'zip_file';
+
     /**
      * Data warehouse batch export directory path.
      *
@@ -50,8 +58,9 @@ class FileManager extends Loggable
             );
         } catch (Exception $e) {
             $this->logger->err([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
             ]);
             throw new Exception('Export directory is not configured', 0, $e);
         }
@@ -149,7 +158,8 @@ class FileManager extends Loggable
     public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
         $this->logger->info([
-            'message' => 'Writing data to file',
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Writing data to file',
             'format' => $format
         ]);
 
@@ -170,7 +180,8 @@ class FileManager extends Loggable
             );
 
             $this->logger->debug([
-                'message' => 'Created file writer',
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => 'Created file writer',
                 'file_writer' => $fileWriter
             ]);
 
@@ -185,8 +196,9 @@ class FileManager extends Loggable
             return $dataFile;
         } catch (Exception $e) {
             $this->logger->err([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
             ]);
             throw new Exception('Failed to write data set to file', 0, $e);
         }
@@ -205,10 +217,11 @@ class FileManager extends Loggable
         $zipFile = $this->getExportDataFilePath($request['id']);
 
         $this->logger->info([
-            'message' => 'Creating zip file',
-            'batch_export_request.id' => $request['id'],
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Creating zip file',
+            self::LOG_REQUEST_ID_KEY => $request['id'],
             'data_file' => $dataFile,
-            'zip_file' => $zipFile
+            self::LOG_ZIP_FILE_KEY => $zipFile
         ]);
 
         try {
@@ -245,8 +258,9 @@ class FileManager extends Loggable
             return $zipFile;
         } catch (Exception $e) {
             $this->logger->err([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                self::LOG_MODULE_KEY => self::LOG_MODULE,
+                self::LOG_MESSAGE_KEY => $e->getMessage(),
+                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
             ]);
             throw new Exception('Failed to create zip file', 0, $e);
         }
@@ -263,9 +277,10 @@ class FileManager extends Loggable
         $zipFile = $this->getExportDataFilePath($id);
 
         $this->logger->info([
-            'message' => 'Removing export file',
-            'batch_export_request.id' => $id,
-            'zip_file' => $zipFile
+            self::LOG_MODULE_KEY => self::LOG_MODULE,
+            self::LOG_MESSAGE_KEY => 'Removing export file',
+            self::LOG_REQUEST_ID_KEY => $id,
+            self::LOG_ZIP_FILE_KEY => $zipFile
         ]);
 
         if (!unlink($zipFile)) {
@@ -285,9 +300,10 @@ class FileManager extends Loggable
             $exportFile = $this->getExportDataFilePath($id);
             if (is_file($exportFile)) {
                 $this->logger->info([
-                    'message' => 'Removing export file',
-                    'batch_export_request.id' => $id,
-                    'zip_file' => $exportFile
+                    self::LOG_MODULE_KEY => self::LOG_MODULE,
+                    self::LOG_MESSAGE_KEY => 'Removing export file',
+                    self::LOG_REQUEST_ID_KEY => $id,
+                    self::LOG_ZIP_FILE_KEY => $exportFile
                 ]);
                 if (!unlink($exportFile)) {
                     throw new Exception(sprintf(
