@@ -131,10 +131,10 @@ class QueryHandler extends Loggable
                     (NOW(), :user_id, :realm, :start_date, :end_date, :export_file_format)";
 
             $params = array(
-                self::LOG_USER_ID_KEY => $userId,
-                self::LOG_REALM_KEY => $realm,
-                self::LOG_START_DATE_KEY => $startDate,
-                self::LOG_END_DATE_KEY => $endDate,
+                'user_id' => $userId,
+                'realm' => $realm,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
                 'export_file_format' => $format
             );
 
@@ -238,7 +238,7 @@ class QueryHandler extends Loggable
 
         $params = array(
             'expires_in_days' => $expires_in_days,
-            self::LOG_ID_KEY => $id
+            'id' => $id
         );
 
         $this->logger->info([
