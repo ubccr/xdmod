@@ -133,7 +133,7 @@ class BatchProcessor extends Loggable
     private function processSubmittedRequest(array $request)
     {
         $requestId = $request['id'];
-        $userId = $request['user_id']
+        $userId = $request['user_id'];
 
         $this->logger->info([
             self::LOG_MODULE_KEY => self::LOG_MODULE,
