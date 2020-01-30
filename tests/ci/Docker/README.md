@@ -65,10 +65,10 @@ below is an example.
 ```bash
 #!/bin/bash
 XDMOD_GIT_USER=${XDMOD_GIT_USER:-'ubccr'}
-XDMOD_GIT_BRANCH=${XDMOD_GIT_USER:-'xdmod8.5'}
+XDMOD_GIT_BRANCH=${XDMOD_GIT_BRANCH:-'xdmod8.5'}
 #upgrade if you dont want to reingest data and are not testing that portion
 #otherwise fresh_install
-DMOD_TEST_MODE=${XDMOD_TEST_MODE:-'upgrade'}
+XDMOD_TEST_MODE=${XDMOD_TEST_MODE:-'upgrade'}
 
 SRCDIR=/root/src/github.com/ubccr
 
