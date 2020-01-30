@@ -2,7 +2,7 @@
 
 Currently we only use docker for development, testing, and demonstration.
 
-wWe start a docker with the following commmand
+We start a docker with the following commmand
 
 **NOTE:**
 Make changes to `-v`, `-p`, `--env-file` as appropriate.
@@ -19,7 +19,7 @@ docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306
 ~/bin/services start
 ```
 
-## Developmnet
+## Development
 
 To help with develpoment when using docker you can enable xdebug by running the following script inside of docker.
 This has to be done before starting apache.
