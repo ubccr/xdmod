@@ -5,12 +5,12 @@ Currently we only use docker for development, testing, and demonstration.
 We start a docker with the following commmand
 
 **NOTE:**
-Make changes to `-v`, `-p`, `--env-file` as appropriate.
+Make changes to `-v`, `-p`, `--env-file` and Dockerfile version as appropriate.
 
-Look at the repos main Dockerfile to get the current docker.
+Look at the repo's main Dockerfile to get the current version. Here we use 8.5.1:
 
 ```bash
-docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306 -p 8080:8080 --env-file ~/xdmod.env tas-tools-ext-01.ccr.xdmod.org/centos7_6-open8.1.2:latest /bin/bash
+docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306 -p 8080:8080 --env-file ~/xdmod.env tas-tools-ext-01.ccr.xdmod.org/centos7_6-open8.5.1:latest /bin/bash
 ```
 
 ## Demonstration
