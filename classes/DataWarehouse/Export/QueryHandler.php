@@ -35,18 +35,7 @@ use Log;
 class QueryHandler extends Loggable
 {
     // Constants used in log messages.
-    const LOG_MODULE_KEY = 'module';
     const LOG_MODULE = 'data-warehouse-export';
-    const LOG_MESSAGE_KEY = 'message';
-    const LOG_EVENT_KEY = 'event';
-    const LOG_TABLE_KEY = 'table';
-    const LOG_TABLE = 'moddb.batch_export_requests';
-    const LOG_ID_KEY = 'id';
-    const LOG_USER_ID_KEY = 'user_id';
-    const LOG_STACKTRACE_KEY = 'stacktrace';
-    const LOG_REALM_KEY = 'realm';
-    const LOG_START_DATE_KEY = 'start_date';
-    const LOG_END_DATE_KEY = 'end_date';
 
     /**
      * Database handle.
@@ -139,14 +128,14 @@ class QueryHandler extends Loggable
             );
 
             $this->logger->info([
-                self::LOG_MODULE_KEY => self::LOG_MODULE,
-                self::LOG_MESSAGE_KEY => 'Creating data warehouse export record',
-                self::LOG_EVENT_KEY => 'INSERT',
-                self::LOG_TABLE_KEY => self::LOG_TABLE,
-                self::LOG_USER_ID_KEY => $userId,
-                self::LOG_REALM_KEY => $realm,
-                self::LOG_START_DATE_KEY => $startDate,
-                self::LOG_END_DATE_KEY => $endDate,
+                'module' => self::LOG_MODULE,
+                'message' => 'Creating data warehouse export record',
+                'event' => 'INSERT',
+                'table' => 'moddb.batch_export_requests',
+                'user_id' => $userId,
+                'realm' => $realm,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
                 'format' => $format
             ]);
 
@@ -156,9 +145,9 @@ class QueryHandler extends Loggable
         } catch (Exception $e) {
             $this->dbh->rollBack();
             $this->logger->err([
-                self::LOG_MODULE_KEY => self::LOG_MODULE,
-                self::LOG_MESSAGE_KEY => 'Record creation failed: ' . $e->getMessage(),
-                self::LOG_STACKTRACE_KEY => $e->getTraceAsString()
+                'module' => self::LOG_MODULE,
+                'message' => 'Record creation failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString()
             ]);
             throw $e;
         }
@@ -204,11 +193,11 @@ class QueryHandler extends Loggable
                 $this->whereSubmitted .
                 "AND id = :id";
         $this->logger->info([
-            self::LOG_MODULE_KEY => self::LOG_MODULE,
-            self::LOG_MESSAGE_KEY => 'Transitioning data warehouse export record to failed state',
-            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_FAILED',
-            self::LOG_TABLE_KEY => self::LOG_TABLE,
-            self::LOG_ID_KEY => $id
+            'module' => self::LOG_MODULE,
+            'message' => 'Transitioning data warehouse export record to failed state',
+            'event' => 'UPDATE_STATE_TO_FAILED',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
         ]);
         return $this->dbh->execute($sql, array('id' => $id));
     }
@@ -243,11 +232,11 @@ class QueryHandler extends Loggable
         );
 
         $this->logger->info([
-            self::LOG_MODULE_KEY => self::LOG_MODULE,
-            self::LOG_MESSAGE_KEY => 'Transitioning data warehouse export record to available state',
-            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_AVAILABLE',
-            self::LOG_TABLE_KEY => self::LOG_TABLE,
-            self::LOG_ID_KEY => $id
+            'module' => self::LOG_MODULE,
+            'message' => 'Transitioning data warehouse export record to available state',
+            'event' => 'UPDATE_STATE_TO_AVAILABLE',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
         ]);
 
         return $this->dbh->execute($sql, $params);
@@ -264,11 +253,11 @@ class QueryHandler extends Loggable
         $sql = "UPDATE batch_export_requests SET export_expired = 1 " .
                 $this->whereAvailable . 'AND id = :id';
         $this->logger->info([
-            self::LOG_MODULE_KEY => self::LOG_MODULE,
-            self::LOG_MESSAGE_KEY => 'Transitioning data warehouse export record to expired state',
-            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_EXPIRED',
-            self::LOG_TABLE_KEY => self::LOG_TABLE,
-            self::LOG_ID_KEY => $id
+            'module' => self::LOG_MODULE,
+            'message' => 'Transitioning data warehouse export record to expired state',
+            'event' => 'UPDATE_STATE_TO_EXPIRED',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
         ]);
         return $this->dbh->execute($sql, array('id' => $id));
     }
@@ -414,12 +403,12 @@ class QueryHandler extends Loggable
     {
         $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
         $this->logger->info([
-            self::LOG_MODULE_KEY => self::LOG_MODULE,
-            self::LOG_MESSAGE_KEY => 'Deleting data warehouse export record',
-            self::LOG_EVENT_KEY => 'UPDATE_STATE_TO_DELETED',
-            self::LOG_TABLE_KEY => self::LOG_TABLE,
-            self::LOG_ID_KEY => $id,
-            self::LOG_USER_ID_KEY => $userId
+            'module' => self::LOG_MODULE,
+            'message' => 'Deleting data warehouse export record',
+            'event' => 'UPDATE_STATE_TO_DELETED',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id,
+            'user_id' => $userId
         ]);
         return $this->dbh->execute($sql, array('request_id' => $id, 'user_id' => $userId));
     }
@@ -434,11 +423,11 @@ class QueryHandler extends Loggable
     {
         $sql = 'UPDATE batch_export_requests SET downloaded_datetime = NOW() WHERE id = :request_id';
         $this->logger->info([
-            self::LOG_MODULE_KEY => self::LOG_MODULE,
-            self::LOG_MESSAGE_KEY => 'Updating data warehouse export record downloaded datetime',
-            self::LOG_EVENT_KEY => 'UPDATE_DOWNLOADED_DATETIME',
-            self::LOG_TABLE_KEY => self::LOG_TABLE,
-            self::LOG_ID_KEY => $id
+            'module' => self::LOG_MODULE,
+            'message' => 'Updating data warehouse export record downloaded datetime',
+            'event' => 'UPDATE_DOWNLOADED_DATETIME',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
         ]);
         return $this->dbh->execute($sql, ['request_id' => $id]);
     }
