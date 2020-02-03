@@ -55,6 +55,27 @@
         }
       },
       "truncate_destination": true
+    },
+    {
+      "#": "AclStagingTableManagement should always be run after any changes have been made to the files ( tables ) found below.",
+      "name": "AclStagingTableManagement",
+      "class": "ManageTables",
+      "description": "Manage the various Acl related tables.",
+      "definition_file_list": [
+        "acls/staging/modules.json",
+        "acls/staging/realms.json",
+        "acls/staging/hierarchies.json",
+        "acls/staging/acl_types.json",
+        "acls/staging/acls.json",
+        "acls/staging/group_bys.json",
+        "acls/staging/statistics.json",
+        "acls/staging/acl_hierarchies.json",
+        "acls/staging/user_acls.json",
+        "acls/staging/acl_group_bys.json",
+        "acls/staging/tabs.json",
+        "acls/staging/acl_tabs.json",
+        "acls/staging/user_acl_group_by_parameters.json"
+      ]
     }
   ]
 }

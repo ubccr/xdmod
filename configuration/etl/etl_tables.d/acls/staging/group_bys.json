@@ -1,0 +1,32 @@
+{
+  "table_definition": {
+    "$ref-with-overwrite": "etl_tables.d/acls/group_bys.json#/table_definition",
+    "$overwrite": {
+      "name": "group_bys_staging",
+      "foreign_key_constraints": [
+        {
+          "name": "fk_gb_staging_module_id",
+          "columns": [
+            "module_id"
+          ],
+          "referenced_table": "modules_staging",
+          "referenced_columns": [
+            "module_id"
+          ],
+          "on_delete": "CASCADE"
+        },
+        {
+          "name": "fk_gb_staging_realm_id",
+          "columns": [
+            "realm_id"
+          ],
+          "referenced_table": "realms_staging",
+          "referenced_columns": [
+            "realm_id"
+          ],
+          "on_delete": "CASCADE"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "table_definition": {
+    "$ref-with-overwrite": "etl_tables.d/acls/modules.json#/table_definition",
+    "$overwrite": {
+      "name": "modules_staging"
+    }
+  }
+}
