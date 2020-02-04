@@ -2,15 +2,15 @@
 
 Currently we only use docker for development, testing, and demonstration.
 
-wWe start a docker with the following commmand
+We start a docker with the following commmand
 
 **NOTE:**
-Make changes to `-v`, `-p`, `--env-file` as appropriate.
+Make changes to `-v`, `-p`, `--env-file` and Dockerfile version as appropriate.
 
-Look at the repos main Dockerfile to get the current docker.
+Look at the repo's main Dockerfile to get the current version. Here we use 8.5.1:
 
 ```bash
-docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306 -p 8080:8080 --env-file ~/xdmod.env tas-tools-ext-01.ccr.xdmod.org/centos7_6-open8.1.2:latest /bin/bash
+docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306 -p 8080:8080 --env-file ~/xdmod.env tas-tools-ext-01.ccr.xdmod.org/centos7_6-open8.5.1:latest /bin/bash
 ```
 
 ## Demonstration
@@ -19,7 +19,7 @@ docker run --rm -h xdmod8_5 --shm-size 2g -it -v ~/scratch:/scratch -p 3306:3306
 ~/bin/services start
 ```
 
-## Developmnet
+## Development
 
 To help with develpoment when using docker you can enable xdebug by running the following script inside of docker.
 This has to be done before starting apache.
@@ -65,10 +65,10 @@ below is an example.
 ```bash
 #!/bin/bash
 XDMOD_GIT_USER=${XDMOD_GIT_USER:-'ubccr'}
-XDMOD_GIT_BRANCH=${XDMOD_GIT_USER:-'xdmod8.5'}
+XDMOD_GIT_BRANCH=${XDMOD_GIT_BRANCH:-'xdmod8.5'}
 #upgrade if you dont want to reingest data and are not testing that portion
 #otherwise fresh_install
-DMOD_TEST_MODE=${XDMOD_TEST_MODE:-'upgrade'}
+export XDMOD_TEST_MODE=${XDMOD_TEST_MODE:-'upgrade'}
 
 SRCDIR=/root/src/github.com/ubccr
 
