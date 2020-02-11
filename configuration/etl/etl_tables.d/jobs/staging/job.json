@@ -125,6 +125,11 @@
                 "nullable": false
             },
             {
+                "name": "gpu_count",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
                 "name": "cpu_req",
                 "type": "int(10) unsigned",
                 "nullable": true

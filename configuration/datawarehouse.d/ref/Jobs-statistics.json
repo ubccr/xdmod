@@ -28,12 +28,27 @@
         "timeseries_formula": "COALESCE(SUM(agg.cpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
         "unit": "CPU Hour"
     },
+    "avg_gpu_hours": {
+        "aggregate_formula": "COALESCE(SUM(agg.gpu_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
+        "description_html": "The average GPU hours (number of GPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the GPU usage is aggregated. For example, if a job used 1000 GPUs for one minute, it would be aggregated as 1000 GPU minutes or 16.67 GPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "name": "GPU Hours: Per Job",
+        "precision": 2,
+        "timeseries_formula": "COALESCE(SUM(agg.gpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
+        "unit": "GPU Hour"
+    },
     "avg_job_size_weighted_by_cpu_hours": {
         "description_html": "The average ${ORGANIZATION_NAME} job size weighted by CPU Hours. Defined as <br><i>Average Job Size Weighted By CPU Hours: </i> sum(i = 0 to n){ job i core count * job i cpu hours}/sum(i =  0 to n){job i cpu hours}",
         "formula": "COALESCE(SUM(agg.processor_count * agg.cpu_time) / SUM(agg.cpu_time),0)",
         "name": "Job Size: Weighted By CPU Hours",
         "precision": 1,
         "unit": "Core Count"
+    },
+    "avg_job_size_weighted_by_gpu_hours": {
+        "description_html": "The average ${ORGANIZATION_NAME} job size weighted by GPU Hours. Defined as <br><i>Average Job Size Weighted By GPU Hours: </i> sum(i = 0 to n){ job i core count * job i gpu hours}/sum(i =  0 to n){job i gpu hours}",
+        "formula": "COALESCE(SUM(agg.processor_count * agg.gpu_time) / SUM(agg.gpu_time), 0)",
+        "name": "Job Size: Weighted By GPU Hours",
+        "precision": 1,
+        "unit": "GPU Count"
     },
     "avg_node_hours": {
         "aggregate_formula": "COALESCE(SUM(agg.node_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
@@ -50,6 +65,14 @@
         "precision": 1,
         "timeseries_formula": "COALESCE(SUM(agg.processor_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
         "unit": "Core Count"
+    },
+    "avg_gpus": {
+        "aggregate_formula": "COALESCE(SUM(agg.gpu_count * CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
+        "description_html": "TThe average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of GPUs used by a (parallel) job.",
+        "name": "GPU Count: Per Job",
+        "precision": 1,
+        "timeseries_formula": "COALESCE(SUM(agg.gpu_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
+        "unit": "GPU Count"
     },
     "avg_waitduration_hours": {
         "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits before execution on the designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
@@ -154,6 +177,19 @@
         },
         "unit": "Core Count"
     },
+    "sem_avg_gpus": {
+        "aggregate_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-gpu-agg.sql"
+        },
+        "description_html": "The standard error of the number of GPUs. <br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
+        "name": "Std Dev: GPU Count: Per Job",
+        "precision": 2,
+        "show_in_catalog": false,
+        "timeseries_formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-gpu-time.sql"
+        },
+        "unit": "GPU Count"
+    },
     "sem_avg_waitduration_hours": {
         "description_html": "The standard error of the average time, in hours, an ${ORGANIZATION_NAME} job had to wait until it began to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "formula": {
@@ -197,6 +233,13 @@
         "name": "CPU Hours: Total",
         "precision": 1,
         "unit": "CPU Hour"
+    },
+    "total_gpu_hours": {
+        "description_html": "The total GPU hours (number of GPUs x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the GPU usage is aggregated. For example, if a job used 1000 GPUs for one minute, it would be aggregated as 1000 GPU minutes or 16.67 GPU hours.<br /><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "formula": "COALESCE(SUM(agg.gpu_time), 0) / 3600.0",
+        "name": "GPU Hours: Total",
+        "precision": 1,
+        "unit": "GPU Hour"
     },
     "total_node_hours": {
         "description_html": "The total node hours (number of nodes x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
