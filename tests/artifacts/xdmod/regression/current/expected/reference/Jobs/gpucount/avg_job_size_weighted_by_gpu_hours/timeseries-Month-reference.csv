@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0] Job Size: Weighted By GPU Hours (GPU Count)","[2] Job Size: Weighted By GPU Hours (GPU Count)"
+2016-12,0.0000,12.0000
+2017-01,0.0000,12.0000
+---------

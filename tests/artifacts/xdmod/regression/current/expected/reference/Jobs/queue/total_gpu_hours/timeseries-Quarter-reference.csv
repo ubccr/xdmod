@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[focaccia] GPU Hours: Total","[bannock] GPU Hours: Total","[barm] GPU Hours: Total","[black] GPU Hours: Total","[brioche] GPU Hours: Total","[brown] GPU Hours: Total","[chapti] GPU Hours: Total","[cornbread] GPU Hours: Total","[croutons] GPU Hours: Total","[crumpet] GPU Hours: Total","[nann] GPU Hours: Total","[panettone] GPU Hours: Total","[pikelet] GPU Hours: Total","[pita] GPU Hours: Total","[potbrood] GPU Hours: Total","[pumpernickel] GPU Hours: Total","[roti] GPU Hours: Total","[white] GPU Hours: Total"
+"2016 Q4",465.4928,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",41.4200,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000
+---------

@@ -46,6 +46,10 @@
                     "class": "GroupByJobSize"
                 },
                 {
+                    "name": "gpucount",
+                    "class": "GroupByGPUCount"
+                },
+                {
                     "name": "jobwalltime",
                     "class": "GroupByJobTime"
                 },
@@ -119,6 +123,10 @@
                     "class": "TotalCPUHoursStatistic"
                 },
                 {
+                    "name": "total_gpu_hours",
+                    "class": "TotalGPUHoursStatistic"
+                },
+                {
                     "name": "total_waitduration_hours",
                     "class": "TotalWaitHoursStatistic"
                 },
@@ -137,6 +145,15 @@
                 {
                     "name": "sem_avg_cpu_hours",
                     "class": "SEMAverageCPUHoursStatistic",
+                    "visible": false
+                },
+                {
+                    "name": "avg_gpu_hours",
+                    "class": "AverageGPUHoursStatistic"
+                },
+                {
+                    "name": "sem_avg_gpu_hours",
+                    "class": "SEMAverageGPUHoursStatistic",
                     "visible": false
                 },
                 {
@@ -198,6 +215,10 @@
                 {
                     "name": "avg_job_size_weighted_by_cpu_hours",
                     "class": "JobSizeWeightedByCPUHours"
+                },
+                {
+                    "name": "avg_job_size_weighted_by_gpu_hours",
+                    "class": "JobSizeWeightedByGPUHours"
                 },
                 {
                     "name": "active_resource_count",

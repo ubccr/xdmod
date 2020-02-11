@@ -18,6 +18,7 @@ class JobViewerTest extends BaseTest
         return array(
             'nsfdirectorate',
             'parentscience',
+            'gpucount',
             'jobsize',
             'jobwaittime',
             'jobwalltime',

@@ -1,0 +1,14 @@
+title
+"GPU Hours: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"GPU Hours: Per Job","Std Dev: GPU Hours: Per Job"
+phillips,0.12528739,0.11548767898762237
+frearson,0.00000000,0
+mortorq,0.00000000,0
+pozidriv,0.00000000,0
+robertson,0.00000000,0
+---------

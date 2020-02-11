@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0] Wall Hours: Total","[2] Wall Hours: Total"
+2016,110965.4692,232.7464
+2017,16757.8808,20.7100
+---------

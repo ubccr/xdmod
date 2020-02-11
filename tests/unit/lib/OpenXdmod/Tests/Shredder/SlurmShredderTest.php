@@ -7,6 +7,7 @@ namespace OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
 use OpenXdmod\Shredder;
+use Log;
 use TestHarness\TestFiles;
 
 /**
@@ -20,9 +21,12 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
 
     protected $db;
 
+    protected $logger;
+
     public function setUp()
     {
         $this->db = new NullDB();
+        $this->logger = Log::singleton('null');
     }
 
     /**
@@ -62,7 +66,7 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
             ->method('getResourceConfig')
             ->willReturn(array());
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger($this->logger);
 
         $shredder->setResource('testresource');
 
@@ -99,8 +103,26 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
                 }
             ));
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger($this->logger);
 
+        $shredder->shredLine($line);
+    }
+
+    /**
+     * @dataProvider accountingLogWithGpuGresProvider
+     */
+    public function testJobGpuGresParsing($line, $gpuCount)
+    {
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->once())
+            ->method('insertRow')
+            ->with(new \PHPUnit_Framework_Constraint_ArraySubset(['ngpus' => $gpuCount]));
+        $shredder->setLogger($this->logger);
         $shredder->shredLine($line);
     }
 
@@ -137,5 +159,10 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
     public function accountingLogWithJobArraysProvider()
     {
         return $this->getTestCases('accounting-logs-with-job-arrays');
+    }
+
+    public function accountingLogWithGpuGresProvider()
+    {
+        return $this->getTestCases('accounting-logs-with-gpu-gres');
     }
 }
