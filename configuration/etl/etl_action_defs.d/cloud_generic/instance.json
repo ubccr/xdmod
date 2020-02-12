@@ -39,9 +39,9 @@
         ],
 
         "groupby": [
-            "resource_id",
-            "provider_instance_identifier",
-            "service_provider"
+            "raw.resource_id",
+            "raw.provider_instance_identifier",
+            "raw.service_provider"
         ]
     }
 }
