@@ -178,7 +178,10 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
     protected function initInstance($srcRecord)
     {
         $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_date'];
-        $this->_instance_state = array_merge($srcRecord, ['start_date' => date('Y-m-d', strtotime($srcRecord['event_date'])), 'end_date' => $default_end_time]);
+        $start_day_id = date('Y', strtotime($srcRecord['event_date'])) * 100000 + date('z', strtotime($srcRecord['event_date']));
+        $end_day_id =  date('Y', strtotime($default_end_time)) * 100000 + date('z', strtotime($default_end_time));
+
+        $this->_instance_state = array_merge($srcRecord, ['start_date' => date('Y-m-d', strtotime($srcRecord['event_date'])), $this->_end_time_field => $default_end_time, 'start_day_id' => $start_day_id, 'end_day_id' => $end_day_id]);
     }
 
     /**
@@ -196,6 +199,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
     protected function updateInstance($srcRecord)
     {
         $this->_instance_state[$this->_end_time_field] = date('Y-m-d', strtotime($srcRecord['event_date']));
+        $this->_instance_state['end_day_id'] = date('Y', strtotime($srcRecord['event_date'])) * 100000 + date('z', strtotime($srcRecord['event_date']));
     }
 
     /**

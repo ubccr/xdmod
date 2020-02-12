@@ -1,0 +1,47 @@
+{
+    "hypervisors": [
+        {
+            "hypervisor_hostname": "srv-p24-36.cbls.ccr.buffalo.edu",
+            "id": 1,
+            "memory_mb": 196514,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "srv-p24-32.cbls.ccr.buffalo.edu",
+            "id": 2,
+            "memory_mb": 196514,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "srv-p24-35.cbls.ccr.buffalo.edu",
+            "id": 3,
+            "memory_mb": 196514,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "srv-p24-34.cbls.ccr.buffalo.edu",
+            "id": 5,
+            "memory_mb": 196514,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "srv-p24-33.cbls.ccr.buffalo.edu",
+            "id": 6,
+            "memory_mb": 196514,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "srv-p24-37.cbls.ccr.buffalo.edu",
+            "id": 16,
+            "memory_mb": 262030,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "srv-p24-41.cbls.ccr.buffalo.edu",
+            "id": 19,
+            "memory_mb": 262098,
+            "vcpus": 16
+        }
+    ],
+    "ts": "2018-04-26T22:30:02Z"
+}

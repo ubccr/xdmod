@@ -9,7 +9,9 @@
             "vcpus": "vcpus",
             "memory_mb": "memory_mb",
             "start_date": "start_date",
-            "end_date": "end_date"
+            "end_date": "end_date",
+            "start_day_id": "start_day_id",
+            "end_day_id": "end_day_id"
         }
     },
     "source_query": {
@@ -20,7 +22,9 @@
             "memory_mb": "r.memory_mb",
             "event_date": "r.spec_date",
             "start_date": -1,
-            "end_date": -1
+            "end_date": -1,
+            "start_day_id": -1,
+            "end_day_id": -1
         },
         "joins": [{
             "name": "raw_resource_specs",

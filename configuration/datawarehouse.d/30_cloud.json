@@ -105,6 +105,10 @@
                 {
                     "name": "cloud_avg_rv_storage_reserved",
                     "class": "AverageRootVolumeStorageReservedStatistic"
+                },
+                {
+                    "name": "cloud_core_utilization",
+                    "class": "CoreUtilizationStatistic"
                 }
             ]
         }

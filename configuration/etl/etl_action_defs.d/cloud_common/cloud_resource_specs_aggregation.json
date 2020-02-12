@@ -1,0 +1,47 @@
+{
+    "#": "Aggregation of Cloud resource specification data",
+        "table_definition": {
+            "$ref": "${table_definition_dir}/common/hpcdb/resourcespecsfact_by_.json#/table_definition"
+        },
+        "aggregation_period_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "resource_id IN ${VALUE}",
+                "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
+            }
+        },
+        "destination_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "resource_id IN ${VALUE}",
+                "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
+            }
+        },
+        "source_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "crs.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "crs.resource_id NOT IN ${VALUE}"
+            },
+            "records": {
+                "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+                "year": "${:YEAR_VALUE}",
+                "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+                "resource_id": "crs.resource_id",
+                "core_hours_available": "SUM(((IF(crs.end_day_id <= ${:PERIOD_END_DAY_ID}, crs.end_day_id, ${:PERIOD_END_DAY_ID}) - IF(crs.start_day_id >= ${:PERIOD_START_DAY_ID}, crs.start_day_id, ${:PERIOD_START_DAY_ID})) + 1) * crs.vcpus * 24)"
+            },
+            "groupby": [
+              "${AGGREGATION_UNIT}_id",
+              "year",
+              "${AGGREGATION_UNIT}",
+              "resource_id"
+            ],
+            "joins":[
+              {
+                  "name": "cloud_resource_specs",
+                  "alias": "crs",
+                  "schema": "${SOURCE_SCHEMA}"
+              }
+            ],
+            "where": [
+              "crs.start_day_id <= ${:PERIOD_END_DAY_ID} AND crs.end_day_id >= ${:PERIOD_START_DAY_ID}"
+          ]
+     }
+}

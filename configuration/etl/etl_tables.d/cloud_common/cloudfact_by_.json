@@ -121,6 +121,16 @@
                 "type": "int(11)",
                 "nullable": true,
                 "comment": "DIMENSION: A service provider is an institution that hosts resources."
+            },{
+                "name": "core_hours_available",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A service provider is an institution that hosts resources."
+            },{
+                "name": "vcpus",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A service provider is an institution that hosts resources."
             }
         ],
 

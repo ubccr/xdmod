@@ -64,6 +64,29 @@
             "class": "StateReconstructorTransformIngestor",
             "definition_file": "cloud_common/ingest_resource_specs.json",
             "description": "Reconstructs discrete runs from cloud events"
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ],
+            "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Aggregate DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_aggregates",
+                  "create_schema_if_not_exists": true,
+                  "truncate_destination": false
+              }
+           }
         }
     ]
 }

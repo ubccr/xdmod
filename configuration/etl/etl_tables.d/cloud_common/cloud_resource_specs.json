@@ -44,6 +44,16 @@
                 "name": "end_date",
                 "type": "date",
                 "nullable": true
+            },
+            {
+                "name": "start_day_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "end_day_id",
+                "type": "int(11) unsigned",
+                "nullable": true
             }
         ],
 

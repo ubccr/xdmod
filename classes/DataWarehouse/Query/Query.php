@@ -465,6 +465,11 @@ class Query
         return $this->_min_date_id;
     }
 
+    public function getMaxDateId()
+    {
+        return $this->_max_date_id;
+    }
+
     public function getRawStatement($limit = null, $offset = null, $extraHavingClause = null)
     {
         $query_string = $this->getQueryString($limit, $offset, $extraHavingClause);
