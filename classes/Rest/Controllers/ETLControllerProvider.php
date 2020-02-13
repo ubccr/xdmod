@@ -8,6 +8,7 @@ use ETL\DataEndpoint\File;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\Utilities;
 use Exception;
+use RecursiveRegexIterator;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,6 +32,9 @@ class ETLControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/pipelines", "$class::getPipelines");
         $controller->post("$root/pipelines", "$class::getPipelines");
+
+        $controller->get("$root/files", "$class::getFileNames");
+        $controller->post("$root/files", "$class::getFileNames");
     }
 
     /**
@@ -84,7 +88,7 @@ class ETLControllerProvider extends BaseControllerProvider
                         $definitionPath = $options->paths->action_definition_dir . "/$value";
                         $translated = $this->convertForTreeGrid(Json::loadFile($definitionPath));
                     } elseif (is_object($value) || is_array($value)) {
-                       $translated = $this->convertForTreeGrid($value);
+                        $translated = $this->convertForTreeGrid($value);
                     }
 
                     $option = array(
@@ -108,6 +112,42 @@ class ETLControllerProvider extends BaseControllerProvider
 
 
         return $app->json($results);
+    }
+
+    public function getFileNames(Request $request, Application $app)
+    {
+        $query = $request->get('query');
+
+        // Make sure that if they send an empty string then we still set query to null.
+        $query = !empty($query) ? $query : null;
+
+        $etlDir = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'etl'));
+
+        $jsonFiles = new \RegexIterator(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($etlDir)
+            ),
+            '/^.+\.json$/',
+            RecursiveRegexIterator::GET_MATCH
+        );
+
+        $results = array();
+        foreach ($jsonFiles as $jsonFile) {
+            $rawName = $jsonFile[0];
+            $startPos = strpos($rawName, $etlDir) !== false ? strlen($etlDir) + 1 : 0;
+            $fileName = substr($rawName, $startPos);
+            if ($query === null ||
+                ($query !== null && preg_match(".*$query.*", $fileName) !== false)
+            ) {
+                $results[] = array('name' => $fileName);
+            }
+        }
+
+        return $app->json(
+            array(
+                'results' => $results
+            )
+        );
     }
 
     /**
@@ -147,7 +187,7 @@ class ETLControllerProvider extends BaseControllerProvider
             $keys = get_object_vars($source);
         }
 
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $value = null;
             if ($isArray) {
                 $value = $source[$key];
