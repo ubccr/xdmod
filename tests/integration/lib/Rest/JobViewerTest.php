@@ -103,7 +103,7 @@ class JobViewerTest extends BaseTest
 
         $this->assertArrayHasKey('success', $resdata);
         $this->assertTrue($resdata['success']);
-        $this->assertGreaterThan(count($resdata['results']), 0);
+        $this->assertGreaterThan(0, count($resdata['results']));
     }
 
     public function testResourceEndPoint()
