@@ -1,0 +1,35 @@
+{
+      "table_definition": {
+          "$ref": "${table_definition_dir}/cloud_common/cloud_resource_specs.json#/table_definition"
+      },
+      "source_query": {
+          "records": {
+              "resource_id": "r1.resource_id",
+              "hostname": "r1.hostname",
+              "vcpus": "r1.vcpus",
+              "memory_mb": "r1.memory_mb",
+              "start_date": "r1.spec_date",
+              "end_date": "IF(MIN(r2.spec_date) IS NOT NULL, MIN(r2.spec_date) - INTERVAL 1 DAY, CURDATE())",
+              "start_day_id": "YEAR(r1.spec_date) * 100000 + DAYOFYEAR(r1.spec_date)",
+              "end_day_id": "IF(MIN(r2.spec_date) IS NOT NULL, YEAR(r2.spec_date) * 100000 + DAYOFYEAR(r2.spec_date - INTERVAL 1 DAY), YEAR(CURDATE()) * 100000 + DAYOFYEAR(CURDATE()))"
+          },
+          "joins": [{
+              "name": "raw_resource_specs",
+              "schema": "${SOURCE_SCHEMA}",
+              "alias": "r1"
+          },
+          {
+              "name": "raw_resource_specs",
+              "schema": "${SOURCE_SCHEMA}",
+              "alias": "r2",
+              "type": "LEFT",
+              "on": "r1.resource_id = r2.resource_id AND r1.hostname = r2.hostname AND r1.spec_date < r2.spec_date AND (r1.memory_mb != r2.memory_mb OR r1.vcpus != r2.vcpus)"
+          }],
+          "groupby": [
+              "r1.resource_id",
+              "r1.hostname",
+              "r1.memory_mb",
+              "r1.vcpus"
+          ]
+      }
+}

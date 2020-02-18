@@ -61,9 +61,9 @@
         },
         {
             "name": "CloudResourceSpecsReconstructor",
-            "class": "StateReconstructorTransformIngestor",
-            "definition_file": "cloud_common/ingest_resource_specs.json",
-            "description": "Reconstructs discrete runs from cloud events"
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_common/resource_specifications.json",
+            "description": "Sets a start and end time for memory and vcpu paring for a compute node on a cloud resource"
         },
         {
             "#": "Asset data must be aggregated post ingestion",
