@@ -669,8 +669,8 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     }
                 }
             }
-            xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/', 'ref-' + realmName.toLowerCase() + '-statistics', statistics);
-            xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/', 'ref-' + realmName.toLowerCase() + '-group-bys', groupBys);
+            xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/ref/', realmName.toLowerCase() + '-statistics', statistics);
+            xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/ref/', realmName.toLowerCase() + '-group-bys', groupBys);
             xdmodInteg.write();
 		}
         var rawstats = {};

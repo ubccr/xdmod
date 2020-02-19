@@ -69,13 +69,13 @@
         }
     },
     "none": {
-        "$ref": "datawarehouse.d/ref-group-by-none.json"
+        "$ref": "datawarehouse.d/ref/group-by-none.json"
     },
     "day": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/day"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
     },
     "month": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/month"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
     },
     "person": {
         "attribute_table": "person",
@@ -141,7 +141,7 @@
         "name": "Project"
     },
     "quarter": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/quarter"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
     },
     "resource": {
         "attribute_table": "resourcefact",
@@ -330,6 +330,6 @@
         "name": "VM Size: Memory"
     },
     "year": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/year"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
     }
 }

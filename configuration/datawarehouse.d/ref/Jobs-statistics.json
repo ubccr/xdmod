@@ -96,13 +96,13 @@
     },
     "normalized_avg_processors": {
         "aggregate_formula": {
-            "$include": "datawarehouse.d/include-Jobs-norm-avg-proc-agg.sql"
+            "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-agg.sql"
         },
         "description_html": "The percentage average size ${ORGANIZATION_NAME} job over total machine cores.<br><i>Normalized Job Size: </i>The percentage total number of processor cores used by a (parallel) job over the total number of cores on the machine.",
         "name": "Job Size: Normalized",
         "precision": 1,
         "timeseries_formula": {
-            "$include": "datawarehouse.d/include-Jobs-norm-avg-proc-time.sql"
+            "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-time.sql"
         },
         "unit": "% of Total Cores"
     },
@@ -117,47 +117,47 @@
     },
     "sem_avg_cpu_hours": {
         "aggregate_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-cpu-hours-agg.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-cpu-hours-agg.sql"
         },
         "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
         "name": "Std Dev: CPU Hours: Per Job",
         "precision": 2,
         "show_in_catalog": false,
         "timeseries_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-cpu-hours-time.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-cpu-hours-time.sql"
         },
         "unit": "CPU Hour"
     },
     "sem_avg_node_hours": {
         "aggregate_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-node-hours-agg.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-node-hours-agg.sql"
         },
         "description_html": "The standard error of the average node hours by each ${ORGANIZATION_NAME} job.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "name": "Std Dev: Node Hours: Per Job",
         "precision": 2,
         "show_in_catalog": false,
         "timeseries_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-node-hours-time.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-node-hours-time.sql"
         },
         "unit": "Node Hour"
     },
     "sem_avg_processors": {
         "aggregate_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-proc-agg.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-proc-agg.sql"
         },
         "description_html": "The standard error of the average size ${ORGANIZATION_NAME} job in number of cores. <br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "name": "Std Dev: Job Size: Per Job",
         "precision": 2,
         "show_in_catalog": false,
         "timeseries_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-proc-time.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-proc-time.sql"
         },
         "unit": "Core Count"
     },
     "sem_avg_waitduration_hours": {
         "description_html": "The standard error of the average time, in hours, an ${ORGANIZATION_NAME} job had to wait until it began to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-wait-hours.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wait-hours.sql"
         },
         "name": "Std Dev: Wait Hours: Per Job",
         "precision": 2,
@@ -166,14 +166,14 @@
     },
     "sem_avg_wallduration_hours": {
         "aggregate_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-wall-hours-agg.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wall-hours-agg.sql"
         },
         "description_html": "The standard error of the average time each ${ORGANIZATION_NAME} job took to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "name": "Std Dev: Wall Hours: Per Job",
         "precision": 2,
         "show_in_catalog": false,
         "timeseries_formula": {
-            "$include": "datawarehouse.d/include-Jobs-sem-avg-wall-hours-time.sql"
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-wall-hours-time.sql"
         },
         "unit": "Hour"
     },
@@ -221,13 +221,13 @@
     },
     "utilization": {
         "aggregate_formula": {
-            "$include": "datawarehouse.d/include-Jobs-util-agg.sql"
+            "$include": "datawarehouse.d/include/Jobs-util-agg.sql"
         },
         "description_html": "The percentage of the ${ORGANIZATION_NAME} obligation of a resource that has been utilized by ${ORGANIZATION_NAME} jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by ${ORGANIZATION_NAME} jobs over a given time period divided by the total CPU hours that the system is contractually required to provide to ${ORGANIZATION_NAME} during that period. It does not include non-${ORGANIZATION_NAME} jobs.<br/>It is worth noting that this value is a rough estimate in certain cases where the resource providers don't provide accurate records of their system specifications, over time.",
         "name": "${ORGANIZATION_NAME} Utilization",
         "precision": 2,
         "timeseries_formula": {
-            "$include": "datawarehouse.d/include-Jobs-util-time.sql"
+            "$include": "datawarehouse.d/include/Jobs-util-time.sql"
         },
         "unit": "%"
     }
