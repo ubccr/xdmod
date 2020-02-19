@@ -22,7 +22,7 @@ try {
 
     $get = filter_input_array(INPUT_GET, $filters);
 
-    if (XDReportManager::isValidFormat($get['format']) == false) {
+    if (!XDReportManager::isValidFormat($get['format'])) {
         print "Invalid format specified";
         exit;
     }
