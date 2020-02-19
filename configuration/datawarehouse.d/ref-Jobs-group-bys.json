@@ -50,7 +50,7 @@
         "$ref": "datawarehouse.d/ref-group-by-time-period.json#/month"
     },
     "nodecount": {
-        "datawarehouse.d/ref-group-by-common.json#/nodecount"
+        "$ref": "datawarehouse.d/ref-group-by-common.json#/nodecount"
     },
     "none": {
         "$ref": "datawarehouse.d/ref-group-by-none.json"
@@ -62,13 +62,13 @@
         "$ref": "datawarehouse.d/ref-group-by-hierarchy.json#/parentscience"
     },
     "person": {
-        "datawarehouse.d/ref-group-by-common.json#/person"
+        "$ref": "datawarehouse.d/ref-group-by-common.json#/person"
     },
     "pi": {
-        "datawarehouse.d/ref-group-by-common.json#/pi"
+        "$ref": "datawarehouse.d/ref-group-by-common.json#/pi"
     },
     "provider": {
-        "datawarehouse.d/ref-group-by-common.json#/provider"
+        "$ref": "datawarehouse.d/ref-group-by-common.json#/provider"
     },
     "quarter": {
         "$ref": "datawarehouse.d/ref-group-by-time-period.json#/quarter"
