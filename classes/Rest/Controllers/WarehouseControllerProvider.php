@@ -762,10 +762,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $query->addOrderBy($config->order_by->field, $dirn);
 
         $dataset = new \DataWarehouse\Data\SimpleDataset($query);
-
+        $results = $dataset->getResults($limit, $start);
+        foreach($results as &$val){
+            $val['name'] = $val[$config->group_by . '_name'];
+            $val['id'] = $val[$config->group_by . '_id'];
+            $val['short_name'] = $val[$config->group_by . '_short_name'];
+            $val['order_id'] = $val[$config->group_by . '_order_id'];
+            unset($val[$config->group_by . '_id']);
+            unset($val[$config->group_by . '_name']);
+            unset($val[$config->group_by . '_short_name']);
+            unset($val[$config->group_by . '_order_id']);
+        }
         return $app->json(
             array(
-                'results' => $dataset->getResults($limit, $start),
+                'results' => $results,
                 'total' => $dataset->getTotalPossibleCount(),
                 'success' => true
             )
