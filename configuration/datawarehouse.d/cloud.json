@@ -6,12 +6,12 @@
         "aggregate_table_prefix": "cloudfact_by_",
         "aggregate_table_alias": "agg",
         "min_aggregation_unit": "quarter",
-        "order": 2,
+        "order": 30,
         "group_bys": {
-            "$ref": "datawarehouse.d/ref/Cloud-group-bys.json"
+            "$ref": "datawarehouse.d/ref-Cloud-group-bys.json"
         },
         "statistics": {
-            "$ref": "datawarehouse.d/ref/Cloud-statistics.json"
+            "$ref": "datawarehouse.d/ref-Cloud-statistics.json"
         }
     }
 }

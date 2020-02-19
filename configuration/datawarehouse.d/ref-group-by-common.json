@@ -1,10 +1,4 @@
 {
-    "day": {
-        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
-    },
-    "fieldofscience": {
-        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
-    },
     "jobsize": {
         "attribute_table": "processor_buckets",
         "attribute_table_schema": "modw",
@@ -39,41 +33,6 @@
         "data_sort_order": null,
         "description_html": "A categorization of jobs into discrete groups based on the number of cores used by each job.",
         "name": "Job Size"
-    },
-    "jobwaittime": {
-        "attribute_table": "job_wait_times",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "job_wait_time_bucket_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "job_wait_times"
-                }
-            ],
-            "orderby": [
-                "id"
-            ],
-            "records": {
-                "id": "id",
-                "name": "description",
-                "order_id": "id",
-                "short_name": "description"
-            }
-        },
-        "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "bar",
-                "timeseries": "area"
-            }
-        },
-        "data_sort_order": null,
-        "description_html": "A categorization of jobs into discrete groups based on the total linear time each job waited.",
-        "name": "Job Wait Time"
     },
     "jobwalltime": {
         "attribute_table": "job_times",
@@ -110,9 +69,6 @@
         "description_html": "A categorization of jobs into discrete groups based on the total linear time each job took to execute.",
         "name": "Job Wall Time"
     },
-    "month": {
-        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
-    },
     "nodecount": {
         "attribute_table": "nodecount",
         "attribute_table_schema": "modw",
@@ -140,15 +96,6 @@
         "category": "Administrative",
         "description_html": "A categorization of jobs into discrete groups based on node count.",
         "name": "Node Count"
-    },
-    "none": {
-        "$ref": "datawarehouse.d/ref/group-by-none.json"
-    },
-    "nsfdirectorate": {
-        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
-    },
-    "parentscience": {
-        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
     "person": {
         "attribute_table": "person",
@@ -235,9 +182,6 @@
         "description_html": "A service provider is an institution that hosts resources.",
         "name": "Service Provider"
     },
-    "quarter": {
-        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
-    },
     "queue": {
         "additional_join_constraints": [
             {
@@ -309,34 +253,6 @@
         "description_html": "A resource is a remote computer that can run jobs.",
         "name": "Resource"
     },
-    "resource_type": {
-        "attribute_table": "resourcetype",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "resourcetype_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "resourcetype"
-                }
-            ],
-            "orderby": [
-                "description"
-            ],
-            "records": {
-                "id": "id",
-                "name": "description",
-                "order_id": "description",
-                "short_name": "abbrev"
-            }
-        },
-        "category": "Administrative",
-        "description_html": "A categorization of resources into by their general capabilities.",
-        "name": "Resource Type"
-    },
     "username": {
         "alternate_group_by_columns": [
             "username"
@@ -367,8 +283,5 @@
         "category": "Administrative",
         "description_html": "The specific system username of the users who ran jobs",
         "name": "System Username"
-    },
-    "year": {
-        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
     }
 }
