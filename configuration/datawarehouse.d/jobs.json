@@ -5,13 +5,13 @@
         "aggregate_table_prefix": "jobfact_by_",
         "datasource": "HPcDB",
         "group_bys": {
-            "$ref": "datawarehouse.d/ref-Jobs-group-bys.json"
+            "$ref": "datawarehouse.d/ref/Jobs-group-bys.json"
         },
         "module": "xdmod",
         "name": "Jobs",
         "order": 1,
         "statistics": {
-            "$ref": "datawarehouse.d/ref-Jobs-statistics.json"
+            "$ref": "datawarehouse.d/ref/Jobs-statistics.json"
         }
     }
 }

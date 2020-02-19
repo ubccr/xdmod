@@ -1,12 +1,12 @@
 {
     "day": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/day"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
     },
     "fieldofscience": {
-        "$ref": "datawarehouse.d/ref-group-by-hierarchy.json#/fieldofscience"
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
     },
     "jobsize": {
-        "$ref": "datawarehouse.d/ref-group-by-common.json#/jobsize"
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/jobsize"
     },
     "jobwaittime": {
         "attribute_table": "job_wait_times",
@@ -44,34 +44,34 @@
         "name": "Job Wait Time"
     },
     "jobwalltime": {
-        "$ref": "datawarehouse.d/ref-group-by-common.json#/jobwalltime"
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/jobwalltime"
     },
     "month": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/month"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
     },
     "nodecount": {
-        "$ref": "datawarehouse.d/ref-group-by-common.json#/nodecount"
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/nodecount"
     },
     "none": {
-        "$ref": "datawarehouse.d/ref-group-by-none.json"
+        "$ref": "datawarehouse.d/ref/group-by-none.json"
     },
     "nsfdirectorate": {
-        "$ref": "datawarehouse.d/ref-group-by-hierarchy.json#/nsfdirectorate"
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
     },
     "parentscience": {
-        "$ref": "datawarehouse.d/ref-group-by-hierarchy.json#/parentscience"
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
     "person": {
-        "$ref": "datawarehouse.d/ref-group-by-common.json#/person"
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/person"
     },
     "pi": {
-        "$ref": "datawarehouse.d/ref-group-by-common.json#/pi"
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/pi"
     },
     "provider": {
-        "$ref": "datawarehouse.d/ref-group-by-common.json#/provider"
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
     },
     "quarter": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/quarter"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
     },
     "queue": {
         "additional_join_constraints": [
@@ -204,6 +204,6 @@
         "name": "System Username"
     },
     "year": {
-        "$ref": "datawarehouse.d/ref-group-by-time-period.json#/year"
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
     }
 }
