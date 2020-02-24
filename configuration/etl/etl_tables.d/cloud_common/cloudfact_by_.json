@@ -123,7 +123,7 @@
                 "comment": "DIMENSION: A service provider is an institution that hosts resources."
             },{
                 "name": "core_hours_available",
-                "type": "int(11)",
+                "type": "bigint(42)",
                 "nullable": true,
                 "comment": "DIMENSION: A service provider is an institution that hosts resources."
             },{
