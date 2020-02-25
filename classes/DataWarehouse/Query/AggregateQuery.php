@@ -38,8 +38,6 @@
 
 namespace DataWarehouse\Query;
 
-use Log as Logger;  // CCR implementation of PEAR logger
-
 class AggregateQuery extends Query implements iQuery
 {
     /**

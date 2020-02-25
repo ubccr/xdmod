@@ -227,7 +227,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     // representation of a PHP constant so convert it to an integer in order to
                     // properly use it. See https://php.net/manual/en/function.array-multisort.php
                     $sortOrder = null;
-                    eval('$sortOrder = $value');
+                    $sortOrder = constant($value);
                     $this->setSortOrder($sortOrder);
                     break;
                 case 'description_html':

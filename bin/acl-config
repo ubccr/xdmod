@@ -213,12 +213,10 @@ function main()
 
         // Process the realms provided by this module, if any.
         foreach ( $realmObjects as $realmId => $realmObj ) {
-            $groupBys = $realmObj->getGroupByIds();
-            $statistics = $realmObj->getStatisticIds();
             $results[$module]['realms'][$realmId] = array(
                 'display_name' => $realmObj->getName(),
-                'group_bys' => json_decode(json_encode($groupBys), true),
-                'statistics' => json_decode(json_encode($statistics), true)
+                'group_bys' => $realmObj->getGroupByIds(),
+                'statistics' => $realmObj->getStatisticIds()
             );
         }
     }

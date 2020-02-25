@@ -5,7 +5,7 @@
 
 namespace Realm;
 
-use Log as Logger;  // PEAR logger
+use Log as Logger;
 
 interface iRealm
 {
@@ -154,7 +154,7 @@ interface iRealm
     public function getModuleName();
 
     /**
-     * @return boolean TRUE if the realm is disabled and should not be visible iat all to the
+     * @return boolean TRUE if the realm is disabled and should not be visible at all to the
      *   system.
      */
 
@@ -282,7 +282,7 @@ interface iRealm
      *   individual statistics.
      */
 
-    public function getDefaultWeighgtStatName();
+    public function getDefaultWeightStatName();
 
     /**
      * @return string The smallest aggregation unit that this realm supports. Some realms simply do

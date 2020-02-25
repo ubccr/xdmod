@@ -15,9 +15,12 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
+        $dbh = DB::factory('datawarehouse');
+        $dbh->execute("UPDATE moddb.batch_export_requests SET realm = 'Jobs' WHERE realm = 'jobs'");
+        $dbh->execute("UPDATE moddb.batch_export_requests SET realm = 'SUPREMM' WHERE realm = 'supremm'");
+
         // NOTE: It's possible that this should be removed after the GroupBy
         // refactoring is merged.
-        $dbh = DB::factory('datawarehouse');
         $dbh->execute('DROP TABLE IF EXISTS modw_filters.Storage_person___username');
         $dbh->execute('DROP TABLE IF EXISTS modw_filters.Storage_pi___username');
         $dbh->execute('DROP TABLE IF EXISTS modw_filters.Storage_username');
