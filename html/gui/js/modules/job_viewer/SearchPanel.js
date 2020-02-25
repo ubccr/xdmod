@@ -1618,8 +1618,8 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
 
                         value = params[field][i];
                         var displayPromises = [
-                            self._findFieldDisplay.call(self, field),
-                            self._findFieldValueDisplay.call(self, field, value)
+                            self._findFieldDisplay.call(self, field, realm),
+                            self._findFieldValueDisplay.call(self, field, value, realm)
                         ];
 
                         /**
@@ -1672,10 +1672,11 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
      *
      * @returns {RSVP.Promise}
      */
-    _findFieldDisplay: function(field) {
+    _findFieldDisplay: function (field, realm) {
         var self = this;
         var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
-            '/dimensions/' + field + '/name?token=' + XDMoD.REST.token;
+            '/dimensions/' + field + '/name?token=' + XDMoD.REST.token +
+            '&realm=' + realm;
 
         return this._getPromise(url, ['results', 'name']);
     },
@@ -1689,12 +1690,13 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
      *
      * @return {RSVP.Promise}
      */
-    _findFieldValueDisplay: function(field, value) {
+    _findFieldValueDisplay: function (field, value, realm) {
         var self = this;
         var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
             '/dimensions/' + field +
             '/values/' + value +
-            '/name?token=' + XDMoD.REST.token;
+            '/name?token=' + XDMoD.REST.token +
+            '&realm=' + realm;
 
         return this._getPromise(url, ['results', 'name']);
     },

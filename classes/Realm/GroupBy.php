@@ -1276,6 +1276,13 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
 
         $queryObj = new DbQuery($queryConfig, '`', $this->logger);
+        $joins = $queryObj->joins;
+        foreach ($joins as $join) {
+            if (!isset($join->schema)) {
+                $join->schema = $this->attributeTableSchema;
+            }
+        }
+        $queryObj->joins = $joins;
         $sql = $queryObj->getSql();
 
         $this->logger->debug(sprintf("%s: Fetch attribute values with query\n%s", $this, $sql));
