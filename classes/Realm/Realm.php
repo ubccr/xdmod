@@ -9,6 +9,7 @@ namespace Realm;
 
 use Log as Logger;  // CCR implementation of PEAR logger
 use Configuration\Configuration;
+use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use ETL\VariableStore;
 
 class Realm extends \CCR\Loggable implements iRealm
@@ -690,7 +691,10 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getGroupByObject($shortName)
     {
         if ( ! isset($this->groupByConfigs->$shortName) ) {
-            $this->logAndThrowException(sprintf("No GroupBy found with id '%s'", $shortName));
+            $this->logger->warning(sprintf("No GroupBy found with id '%s' in Realm: %s", $shortName, $this->name));
+            throw new UnknownGroupByException(
+                sprintf("No GroupBy found with id '%s' in Realm: %s", $shortName, $this->name)
+            );
         } elseif ( isset($this->groupByConfigs->$shortName->disabled) && $this->groupByConfigs->$shortName->disabled ) {
             $this->logAndThrowException(sprintf("Attempt to access disabled GroupBy '%s'", $shortName));
         }
