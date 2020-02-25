@@ -8,7 +8,7 @@
 
 namespace Realm;
 
-use Log as Logger;  // PEAR logger
+use Log as Logger;
 
 interface iGroupBy
 {
@@ -35,32 +35,24 @@ interface iGroupBy
     public function getRealm();
 
     /**
-     * Note: Was getName()
-     *
      * @return string The short internal identifier.
      */
 
     public function getId();
 
     /**
-     * Note: Was getLabel()
-     *
      * @return string The human-readable display name.
      */
 
     public function getName();
 
     /**
-     * Note: Was getInfo()
-     *
      * @return string The description of the statistic formatted for display in a web browser.
      */
 
     public function getHtmlDescription();
 
     /**
-     * Note: Was getDescription()
-     *
      * @return string The name and description together formatted for display in a web browser.
      */
 
@@ -103,8 +95,6 @@ interface iGroupBy
     public function getOrder();
 
     /**
-     * Note: was setOrderbyStat()
-     *
      * Set the desired sort order as defined by the PHP array_multisort() function.
      * @see https://php.net/manual/en/function.array-multisort.php
      *
@@ -114,8 +104,6 @@ interface iGroupBy
     public function setSortOrder($sortOrder = SORT_DESC);
 
     /**
-     * Note: was getOrderByStatOption()
-     *
      * @return int|null The current sort order where NULL means no sorting.
      */
 
@@ -136,8 +124,6 @@ interface iGroupBy
     public function isAggregationUnit();
 
     /**
-     * Note: Was pullQueryParameters()
-     *
      * Check the request for filters associated with attributes supported by this group by and
      * construct an array of Parameter objects that can be added to a query to restrict the results
      * to those matching these attributes. This uses information from the "attribute_filter"
@@ -152,14 +138,12 @@ interface iGroupBy
      *
      * @param array $request The HTTP request
      *
-     * @return array An arrray of \DataWarehouse\Query\Model\Parameter objects
+     * @return array An array of \DataWarehouse\Query\Model\Parameter objects
      */
 
     public function generateQueryFiltersFromRequest(array $request);
 
     /**
-     * Note: Was pullQueryParameterDescriptions()
-     *
      * Check the request for filters associated with attributes supported by this group by and
      * construct an array of human-readable strings that can be used to display the filters on a
      * chart. This is tyically "<label> = <filter>" or "<label> = (<filter_1>, ..., <filter_n>)".
@@ -174,12 +158,10 @@ interface iGroupBy
      *
      * @param array $request The HTTP request
      *
-     * @return array An arrray of label strings, typically of the form "label = string"
+     * @return array An array of label strings, typically of the form "label = string"
      */
 
     public function generateQueryParameterLabelsFromRequest(array $request);
-
-    // are these called with all arguments?
 
     /**
      * Apply the current GroupBy to the specified Query.
@@ -205,8 +187,6 @@ interface iGroupBy
      * @param string $operation The comparison operation used by the WHERE condition (e.g., "IN",
      *   "=", etc.)
      * @param string $value The acceptable values of the WHERE condition
-     * Note: $data_table is not needed here was we can use Query::getDataTable()
-     * Note: $multi_join is not needed here as it is only ever called at Query.php:1044 with "true"
      */
 
     public function addWhereJoin(\DataWarehouse\Query\iQuery $query, $aggregateTableName, $operation, $whereConstraint);
@@ -297,43 +277,43 @@ interface iGroupBy
     public function getDefaultOffset();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultLogScale();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultShowTrendLine();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultShowErrorBars();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultShowGuideLines();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultShowAggregateLabels();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultShowErrorLabels();
 
     /**
-     * @return string
+     * @return string "y" or "n".
      */
 
     public function getDefaultEnableErrors();

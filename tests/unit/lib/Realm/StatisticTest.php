@@ -6,7 +6,7 @@
 namespace UnitTesting\Realm;
 
 use CCR\Log as Logger;
-use \Realm\Realm;
+use Realm\Realm;
 
 class StatisticTest extends \PHPUnit_Framework_TestCase
 {

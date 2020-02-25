@@ -9,7 +9,7 @@ class QueryDescripter
 {
 
     /**
-     * @var Realm The Realm that we are querying.
+     * @var \Realm\Realm The Realm that we are querying.
      */
     private $realm = null;
 
@@ -271,7 +271,7 @@ class QueryDescripter
      *
      * @param array $request An associative array of GET/POST request variables
      *
-     * @return array An arrray of \DataWarehouse\Query\Model\Parameter objects
+     * @return array An array of \DataWarehouse\Query\Model\Parameter objects
      */
 
     public function pullQueryParameters(&$request)
@@ -297,7 +297,7 @@ class QueryDescripter
      *
      * @param array $request An associative array of GET/POST request variables
      *
-     * @return array An arrray of label strings
+     * @return array An array of label strings
      */
 
     public function pullQueryParameterDescriptions(&$request)

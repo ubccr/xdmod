@@ -38,7 +38,7 @@ class FilterListBuilder extends Loggable
     private static $rolesDimensionNames = null;
 
     /**
-     * @var Realm The Realm that we are currently operating on.
+     * @var \Realm\Realm The Realm that we are currently operating on.
      */
 
     private $currentRealm = null;

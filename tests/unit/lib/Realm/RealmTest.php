@@ -6,7 +6,7 @@
 namespace UnitTesting\Realm;
 
 use CCR\Log as Logger;
-use \Realm\Realm;
+use Realm\Realm;
 
 class RealmTest extends \PHPUnit_Framework_TestCase
 {
@@ -230,9 +230,9 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $expected = 1;
         $this->assertEquals($expected, $generated, "getOrder()");
 
-        $generated = $realm->getDefaultWeighgtStatName();
+        $generated = $realm->getDefaultWeightStatName();
         $expected = 'weight';
-        $this->assertEquals($expected, $generated, "getDefaultWeighgtStatName()");
+        $this->assertEquals($expected, $generated, "getDefaultWeightStatName()");
 
         $generated = $realm->getMinimumAggregationUnit();
         $this->assertNull($generated, "getMinimumAggregationUnit()");

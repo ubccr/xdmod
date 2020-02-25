@@ -368,7 +368,7 @@ class Realm extends \CCR\Loggable implements iRealm
                 continue;
             }
 
-            // The method that we cann is determined by the class we are instantiating. For Realms
+            // The method that we call is determined by the class we are instantiating. For Realms
             // use late static binding. For other classes use the class name specified unless the
             // configuration explicitly provides a class name.
 
@@ -744,10 +744,10 @@ class Realm extends \CCR\Loggable implements iRealm
     }
 
     /**
-     * @see iRealm::getDefaultWeighgtStatName()
+     * @see iRealm::getDefaultWeightStatName()
      */
 
-    public function getDefaultWeighgtStatName()
+    public function getDefaultWeightStatName()
     {
         return 'weight';
     }

@@ -1,15 +1,15 @@
 <?php
 
+namespace DataWarehouse\Data;
+
+use CCR\DB;
+
 /**
  * This class represents a set of timeseries data columns
  *
  * @author Amin Ghadersohi
  * @author Jeanette Sperhac
  */
-
-namespace DataWarehouse\Data;
-
-use CCR\DB;
 
 class SimpleTimeseriesDataset extends SimpleDataset
 {
