@@ -57,6 +57,9 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
     public function initialize(stdClass $config)
     {
         if (!isset($config->name)) {
+            if (!isset($config->columns) || !is_array($config->columns)) {
+                $this->logAndThrowException('"columns" must be an array');
+            }
             $config->name = $this->generateForeignKeyConstraintName($config->columns);
         }
 

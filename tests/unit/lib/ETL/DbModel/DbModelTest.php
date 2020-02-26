@@ -117,6 +117,74 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test index initialization error.
+     *
+     * @expectedException Exception
+     * @expectedExceptionMessage "columns" must be an array
+     */
+    public function testIndexInitializationError()
+    {
+        $config = (object) [
+            'name' => 'initialize_error',
+            'columns' => [
+                (object) [
+                    'name' => 'column1',
+                    'type' => 'int(11)',
+                    'nullable' => false,
+                    'default' => 0,
+                    'comment' => 'This is my comment'
+                ]
+            ],
+            'indexes' => [
+                (object) [
+                    'type' => 'PRIMARY'
+                ]
+            ]
+        ];
+
+        $table = new Table($config);
+        $table->verify();
+    }
+
+    /**
+     * Test foreign key constraint initialization error.
+     *
+     * @expectedException Exception
+     * @expectedExceptionMessage "columns" must be an array
+     */
+    public function testForeignKeyConstraintInitializationError()
+    {
+        $config = (object) [
+            'name' => 'initialize_error',
+            'columns' => [
+                (object) [
+                    'name' => 'column1',
+                    'type' => 'int(11)',
+                    'nullable' => false
+                ]
+            ],
+            'indexes' => [
+                (object) [
+                    'columns' => [
+                        'column1'
+                    ]
+                ]
+            ],
+            'foreign_key_constraints' => [
+                (object) [
+                    'referenced_table' => 'other_table',
+                    'referenced_columns' => [
+                        'id'
+                    ]
+                ]
+            ]
+        ];
+
+        $table = new Table($config);
+        $table->verify();
+    }
+
+    /**
      * Test table verification error
      *
      * @expectedException Exception
