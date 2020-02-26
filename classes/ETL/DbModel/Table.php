@@ -359,6 +359,7 @@ ORDER BY index_name ASC";
 SELECT
     tc.constraint_name AS name,
     GROUP_CONCAT(kcu.column_name ORDER BY position_in_unique_constraint ASC) AS columns,
+    kcu.referenced_table_schema AS referenced_schema,
     kcu.referenced_table_name AS referenced_table,
     GROUP_CONCAT(kcu.referenced_column_name ORDER BY position_in_unique_constraint ASC) AS referenced_columns,
     rc.update_rule AS on_update,
@@ -677,6 +678,12 @@ ORDER BY trigger_name ASC";
 
         $foreignKeyConstraintCreateList = array();
         foreach ( $this->foreign_key_constraints as $name => $constraint ) {
+            // The table schema may have been set after the table was initially
+            // created. If the foreign key constraint doesn't explicitly define
+            // a schema, default to the table's schema.
+            if ( null === $constraint->schema ) {
+                $constraint->schema = $this->schema;
+            }
             $foreignKeyConstraintCreateList[$name] = $constraint->getSql($includeSchema);
         }
 
@@ -1105,10 +1112,18 @@ ORDER BY trigger_name ASC";
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
-                        $constraint = ( is_object($item) && $item instanceof ForeignKeyConstraint
-                                   ? $item
-                                   : new ForeignKeyConstraint($item, $this->systemQuoteChar, $this->logger) );
-                        $this->properties[$property][$constraint->name] = $constraint;
+                        if ( is_object($item) && $item instanceof ForeignKeyConstraint ) {
+                            $this->properties[$property][$item->name] = $item;
+                        } else {
+                            if ( $item instanceof stdClass ) {
+                                // Default to the schema of the parent table.
+                                if ( ! isset($item->schema) ) {
+                                    $item->schema = $this->schema;
+                                }
+                            }
+                            $constraint = new ForeignKeyConstraint($item, $this->systemQuoteChar, $this->logger);
+                            $this->properties[$property][$constraint->name] = $constraint;
+                        }
                     }
                 }
                 break;

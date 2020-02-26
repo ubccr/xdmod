@@ -1,0 +1,105 @@
+{
+    "Table with simplest foreign key constraint": [
+        {
+            "table_definition": {
+                "name": "test",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "other_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_other_id",
+                        "columns": [
+                            "other_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "name": "fk_other",
+                        "columns": [
+                            "other_id"
+                        ],
+                        "referenced_table": "other",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        },
+        [
+            "CREATE TABLE IF NOT EXISTS `test` (\n  `id` int(11) NOT NULL auto_increment,\n  `other_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`),\n  INDEX `idx_other_id` (`other_id`),\n  CONSTRAINT `fk_other` FOREIGN KEY (`other_id`) REFERENCES `other` (`id`)\n) ENGINE = innodb;"
+        ]
+    ],
+    "Table with complex foreign key constraint": [
+        {
+            "table_definition": {
+                "name": "test",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "other_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_other_id",
+                        "columns": [
+                            "other_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "name": "fk_other",
+                        "columns": [
+                            "other_id"
+                        ],
+                        "referenced_schema": "mod_other",
+                        "referenced_table": "other",
+                        "referenced_columns": [
+                            "id"
+                        ],
+                        "on_delete": "SET NULL",
+                        "on_update": "CASCADE"
+                    }
+                ]
+            }
+        },
+        [
+            "CREATE TABLE IF NOT EXISTS `test` (\n  `id` int(11) NOT NULL auto_increment,\n  `other_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`),\n  INDEX `idx_other_id` (`other_id`),\n  CONSTRAINT `fk_other` FOREIGN KEY (`other_id`) REFERENCES `mod_other`.`other` (`id`) ON DELETE SET NULL ON UPDATE CASCADE\n) ENGINE = innodb;"
+        ]
+    ]
+}

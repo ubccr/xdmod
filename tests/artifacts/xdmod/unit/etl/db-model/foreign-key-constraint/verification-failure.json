@@ -1,0 +1,134 @@
+{
+    "Empty columns": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [],
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "Missing referenced table": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "Missing referenced columns": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_table": "ref_table"
+                    }
+                ]
+            }
+        }
+    ]
+}
