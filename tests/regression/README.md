@@ -1,33 +1,72 @@
-The regression tests use the integration test framework, which is designed to be used to run tests against an installed and working XDMoD instance.
+# Open XDMoD Regression Tests
 
-The tests require a valid user account on XDMoD. The username and password are read from a file called testing.json in the `tests/ci` directory. Please follow the instructions there to setup the password file.
+The regression tests use the integration test framework, which is designed to
+run tests against an installed and working Open XDMoD instance.
 
-Run the tests with ./runtests.sh
+The tests require valid user accounts on Open XDMoD for every user role that
+will be tested. The username and password pairs are read from a file called
+`testing.json` in the `tests/ci` directory. Please follow the instructions in
+the `README.md` file in that directory to setup the password file.
 
-# Generating test source data
+Run the tests with `./runtests.sh`.
 
-run the maketests.js on an installed and working XDMoD instance. This will generate test input data in a directory. Copy these test files to the artifact input directory.
+# Generating Expected Test Results
 
-# Generating the expected results
+Run this command on an installed and working Open XDMoD instance:
 
-Run the tests without anything and a folder will be created $baseDir/expected/{host_name} containing the results
+```sh
+REG_TEST_FORCE_GENERATION=1 REG_TEST_ALL=1 ./runtests.sh
+```
 
-To turn this into the reference dataset rename the host_name folder to reference
+This will generate the expected test output data in
+`tests/artifacts/xdmod/regression/current/expected/{host_name}`.  To update the
+reference dataset copy these files to the artifact reference directory
+(`tests/artifacts/xdmod/regression/current/expected/reference/`).
 
-# Available Environment Variables
+## Environment Variables
 
-REG_TEST_USER_ROLE the role in secrets.json to use If this is not passed in public user is assume and no authentication is done
+### `XDMOD_REALMS`
 
-REG_TEST_BASE used to override the base directory for test artifacts
+Comma separated list of realms that should be tested.  Valid realm names can be
+found in the `name` column of the `moddb.realms` database table.
 
-The rest are generally used for federation testing but might be useful for other tests as well
+If not set all realms found in the database will be tested.
 
-REG_TEST_RESOURCE used to set a resource to test against
+### `REG_TEST_ALL`
 
-REG_TEST_REGEX comma separated list of regular expresses to replace in result ex. /(?:Instance One|OpenXDMoD - Federation)/,/\s((?:daywalk|sunscrn))/,/\s((?:daywalk-instanceo))/,/\s((?:sunscrn-instanceb))/,/(?:Instance One|OpenXDMoD - Federation)\s/
+Set to `1` to run all regression tests.  Otherwise only a randomly selected
+fraction of the tests will run.
 
-REG_TEST_REPLACE comma separated list of replacements for the regular expressions
+### `REG_TEST_FORCE_GENERATION`
 
-REG_TEST_FORMAT expected format default csv
+Set to `1` to force generation of test data.
 
-REG_TEST_ALT_EXPECTED hostname to validate data against
+### `REG_TEST_BASE`
+
+Used to override the base directory for test artifacts.
+
+### `REG_TIME_LOGDIR`
+
+If set, timing data will be written to files in the specified directory.
+
+### `REG_TEST_ALT_EXPECTED`
+
+Used to specify an alternate hostname that will be used to validate data.
+
+### `REG_TEST_USER_ROLE`
+
+This environment variable is set by the `runtests.sh` script and should not be
+set unless manually running individual tests for a single user role.
+
+The role in `testing.json` to use.  If not set the public user is assumed and
+no authentication is done.
+
+### `REG_TEST_REGEX`
+
+Comma separated list of regular expressions to replace in results.
+
+e.g. `/(?:Instance One|OpenXDMoD - Federation)/,/\s((?:daywalk|sunscrn))/,/\s((?:daywalk-instanceo))/,/\s((?:sunscrn-instanceb))/,/(?:Instance One|OpenXDMoD - Federation)\s/`
+
+### `REG_TEST_REPLACE`
+
+Comma separated list of replacements for the regular expressions.
