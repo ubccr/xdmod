@@ -46,7 +46,7 @@ if [ "$REG_TEST_ALL" = "1" ]; then
     set +e
     if [[ "$XDMOD_REALMS" == *"jobs"* ]];
     then
-        $phpunit $(log_opts "UsageCharts-pub") --filter UsageChartsTest . #TODO: Implement UsageChartsTest for Cloud and Storage realms
+        $phpunit $(log_opts "Charts-pub") --filter ChartsTest . #TODO: Implement UsageChartsTest for Cloud and Storage realms
     fi
 
     for role in ${roles[@]}; do
@@ -62,7 +62,7 @@ else
 
     if [[ "$XDMOD_REALMS" == *"jobs"* ]];
     then
-        $phpunit $(log_opts "UsageCharts-pub") --filter UsageChartsTest . & #TODO: Implement UsageChartsTest for Cloud and Storage realms
+        $phpunit $(log_opts "Charts-pub") --filter ChartsTest . & #TODO: Implement UsageChartsTest for Cloud and Storage realms
         pids+=($!)
     fi
 

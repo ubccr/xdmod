@@ -89,9 +89,15 @@ class GroupByUsername extends \DataWarehouse\Query\Jobs\GroupBy
             $whereConstraint="('". implode("','", $whereConstraint) ."')";
         }
 
+        $id_field = new \DataWarehouse\Query\Model\TableField(
+            $this->systemaccount_table,
+            $this->_id_field_name,
+            $this->getIdColumnName($multi_group)
+        );
+
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
-                $systemaccounttable_id_field,
+                $id_field,
                 $operation,
                 $whereConstraint
             )
