@@ -25,7 +25,7 @@
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
                 "resource_id": "crs.resource_id",
-                "core_hours_available": "SUM(((IF(crs.end_day_id <= ${:PERIOD_END_DAY_ID}, crs.end_day_id, ${:PERIOD_END_DAY_ID}) - IF(crs.start_day_id >= ${:PERIOD_START_DAY_ID}, crs.start_day_id, ${:PERIOD_START_DAY_ID})) + 1) * crs.vcpus * 24)"
+                "core_time_available": "SUM(((IF(crs.end_day_id <= ${:PERIOD_END_DAY_ID}, crs.end_day_id, ${:PERIOD_END_DAY_ID}) - IF(crs.start_day_id >= ${:PERIOD_START_DAY_ID}, crs.start_day_id, ${:PERIOD_START_DAY_ID})) + 1) * crs.vcpus * 24 * 3600)"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",

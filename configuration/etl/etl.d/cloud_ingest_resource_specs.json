@@ -60,6 +60,15 @@
             }
         },
         {
+            "name": "CloudResourceSpecsAddEndDay",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_common/resource_specification_end_day.sql"
+            ]
+        },
+        {
             "name": "CloudResourceSpecsReconstructor",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_common/resource_specifications.json",

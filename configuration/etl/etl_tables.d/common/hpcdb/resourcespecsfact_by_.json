@@ -28,10 +28,10 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
             },{
-                "name": "core_hours_available",
-                "type": "int(11)",
+                "name": "core_time_available",
+                "type": "bigint(42)",
                 "nullable": false,
-                "comment": "DIMENSION: Number of core hours available for a time period"
+                "comment": "DIMENSION: Amount of core time in seconds available for a time period"
             }
         ],
 

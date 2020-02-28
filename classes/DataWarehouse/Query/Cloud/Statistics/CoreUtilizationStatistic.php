@@ -6,7 +6,7 @@ class CoreUtilizationStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
 
-        $sql = 'COALESCE((SUM(jf.core_time) / jf.core_hours_available) * 100, 0)';
+        $sql = 'COALESCE((SUM(jf.core_time) / SUM(DISTINCT jf.core_time_available)) * 100, 0)';
         //var_dump($query_instance->getQueryType());
         if ($query_instance->getQueryType() == 'aggregate') {
             $agg_unit = $query_instance->getAggregationUnit()->getUnitName();
@@ -14,7 +14,7 @@ class CoreUtilizationStatistic extends \DataWarehouse\Query\Cloud\Statistic
             $agg_id = $agg_unit."_id";
 
             $core_hours_sql = '
-               SELECT SUM(rsa.core_hours_available) * 3600 FROM modw_aggregates.resourcespecsfact_by_'.$agg_unit.' as rsa WHERE rsa.'.$agg_id.' BETWEEN '.$query_instance->getMinDateId().' AND '. $query_instance->getMaxDateId().')';
+               SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_'.$agg_unit.' as rsa WHERE rsa.'.$agg_id.' BETWEEN '.$query_instance->getMinDateId().' AND '. $query_instance->getMaxDateId().')';
 
             $sql = "COALESCE((SUM(jf.core_time) / ($core_hours_sql) * 100, 0)";
         }
