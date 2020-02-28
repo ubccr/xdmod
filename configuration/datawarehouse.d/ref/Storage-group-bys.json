@@ -3,32 +3,7 @@
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
     },
     "fieldofscience": {
-        "attribute_table": "fieldofscience_hierarchy",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "fos_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "fieldofscience_hierarchy"
-                }
-            ],
-            "orderby": [
-                "description"
-            ],
-            "records": {
-                "id": "id",
-                "name": "description",
-                "order_id": "description",
-                "short_name": "description"
-            }
-        },
-        "category": "Administrative",
-        "description_html": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
-        "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}"
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
     },
     "month": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
@@ -40,35 +15,7 @@
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
     },
     "parentscience": {
-        "alternate_group_by_columns": [
-            "parent_id"
-        ],
-        "attribute_table": "fieldofscience_hierarchy",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "fos_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "fieldofscience_hierarchy"
-                }
-            ],
-            "orderby": [
-                "parent_description"
-            ],
-            "records": {
-                "id": "parent_id",
-                "name": "parent_description",
-                "order_id": "parent_description",
-                "short_name": "parent_description"
-            }
-        },
-        "category": "Administrative",
-        "description_html": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
-        "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}"
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
     "mountpoint": {
         "attribute_table": "mountpoint",
@@ -87,6 +34,7 @@
             "orderby": [
                 "path"
             ],
+            "query_hint": "DISTINCT",
             "records": {
                 "id": "mountpoint_id",
                 "name": "path",
@@ -106,194 +54,72 @@
         "name": "Mountpoint"
     },
     "person": {
-        "attribute_table": "person",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "person_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "person"
-                }
-            ],
-            "orderby": [
-                "order_id"
-            ],
-            "records": {
-                "id": "id",
-                "name": "long_name",
-                "order_id": "order_id",
-                "short_name": "short_name"
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
             }
         },
-        "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
-        "description_html": "A person who is on a PIs allocation, hence able run jobs on resources.",
-        "name": "User"
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person"
     },
     "pi": {
-        "attribute_table": "piperson",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "person_id": "principalinvestigator_person_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "piperson"
-                }
-            ],
-            "orderby": [
-                "order_id"
-            ],
-            "records": {
-                "id": "person_id",
-                "name": "long_name",
-                "order_id": "order_id",
-                "short_name": "short_name"
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
             }
         },
-        "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
-        "description_html": "The principal investigator of a project has a valid allocation, which can be used by him/her or the members of the project to run jobs on.",
-        "name": "PI"
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi"
     },
     "quarter": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
     },
     "resource": {
-        "attribute_table": "resourcefact",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "resource_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
+        "$overwrite": {
+            "attribute_to_aggregate_table_key_map": [
                 {
-                    "alias": "rf",
-                    "name": "resourcefact"
-                },
-                {
-                    "alias": "rs",
-                    "name": "resourcespecs",
-                    "on": "rf.id = rs.resource_id"
+                    "id": "resource_id"
                 }
             ],
-            "orderby": [
-                "rf.code",
-                "rf.name"
-            ],
-            "records": {
-                "id": "rf.id",
-                "name": "rf.code",
-                "order_id": "id",
-                "short_name": "rf.code"
-            },
-            "where": [
-                "rs.processors IS NOT NULL"
-            ]
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
+            }
         },
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
-        "description_html": "A resource is a remote computer that can run jobs.",
-        "name": "Resource"
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/resource"
     },
     "resource_type": {
-        "attribute_table": "resourcetype",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "resourcetype_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "resourcetype"
-                }
-            ],
-            "orderby": [
-                "description"
-            ],
-            "records": {
-                "id": "id",
-                "name": "description",
-                "order_id": "description",
-                "short_name": "abbrev"
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
             }
         },
-        "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
-        "description_html": "A categorization of resources into by their general capabilities.",
-        "name": "Resource Type"
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/resource_type"
     },
     "username": {
-        "alternate_group_by_columns": [
-            "username"
-        ],
-        "attribute_table": "systemaccount",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "systemaccount_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
-                {
-                    "name": "systemaccount"
-                }
-            ],
-            "orderby": [
-                "username"
-            ],
-            "records": {
-                "id": "username",
-                "name": "username",
-                "order_id": "username",
-                "short_name": "username"
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
             }
         },
-        "category": "Administrative",
-        "chart_options": {
-            "dataset_display_type": {
-                "aggregate": "h_bar",
-                "timeseries": "line"
-            },
-            "dataset_type": "timeseries"
-        },
-        "description_html": "The specific system username of the users who ran jobs",
-        "name": "System Username"
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/username"
     },
     "year": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
