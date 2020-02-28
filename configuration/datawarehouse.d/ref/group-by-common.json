@@ -240,11 +240,12 @@
                 "rf.code",
                 "rf.name"
             ],
+            "query_hint": "DISTINCT",
             "records": {
                 "id": "rf.id",
-                "name": "rf.code",
+                "name": "REPLACE(rf.code, '-', ' ')",
                 "order_id": "id",
-                "short_name": "rf.code"
+                "short_name": "REPLACE(rf.code, '-', ' ')"
             },
             "where": [
                 "rs.processors IS NOT NULL"
@@ -252,6 +253,34 @@
         },
         "description_html": "A resource is a remote computer that can run jobs.",
         "name": "Resource"
+    },
+    "resource_type": {
+        "attribute_table": "resourcetype",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "resourcetype_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "resourcetype"
+                }
+            ],
+            "orderby": [
+                "description"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "description",
+                "short_name": "abbrev"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A categorization of resources into by their general capabilities.",
+        "name": "Resource Type"
     },
     "username": {
         "alternate_group_by_columns": [
@@ -273,6 +302,7 @@
             "orderby": [
                 "username"
             ],
+            "query_hint": "DISTINCT",
             "records": {
                 "id": "username",
                 "name": "username",
