@@ -9,32 +9,58 @@
 
 require_once dirname(__FILE__) . '/../configuration/linker.php';
 
+use \DataWarehouse\Access\ReportGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Rest\Utilities\Authentication;
 
 $emptyBlobs = array('fa0a056630132658467089d779e0e177', '02477ed21bfccd97c1dc2b18d5f1916a');
 
+$filters = array(
+    'type' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_CHART_TYPE_REGEX)
+    ),
+    'ref' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_CHART_REF_REGEX)
+    ),
+    'did' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_CHART_DID_REGEX)
+    ),
+    'start' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_DATE_REGEX)
+    ),
+    'end' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_DATE_REGEX)
+    ),
+);
+
 try {
     $request = Request::createFromGlobals();
     $user = Authentication::authenticateUser($request);
+
+    $request = filter_var_array($_REQUEST, $filters, false);
 
     if ($user === null) {
         throw new AccessDeniedHttpException('User not authenticated');
     }
 
-    if (!isset($_REQUEST['type'])) {
+    if (!isset($request['type'])) {
         throw new Exception("Thumbnail type not set");
     }
 
-    if (!isset($_REQUEST['ref'])) {
+    if (!isset($request['ref'])) {
         throw new Exception("Thumbnail reference not set");
     }
 
-    switch ($_REQUEST['type']) {
+    switch ($request['type']) {
         case 'chart_pool':
         case 'volatile':
-            $num_matches = preg_match('/^(\d+);(\d+)$/', $_REQUEST['ref'], $matches);
+            $num_matches = preg_match('/^(\d+);(\d+)$/', $request['ref'], $matches);
 
             if ($num_matches == 0) {
                 throw new Exception("Invalid thumbnail reference set");
@@ -42,24 +68,24 @@ try {
 
             $user_id = $matches[1];
 
-            if (isset($_REQUEST['start']) && isset($_REQUEST['end'])) {
+            if (isset($request['start']) && isset($request['end'])) {
                 $insertion_rank = array(
                     'rank' => $matches[2],
-                    'start_date' => $_REQUEST['start'],
-                    'end_date' => $_REQUEST['end'],
-                    'did' => isset($_REQUEST['did']) ? $_REQUEST['did'] : '',
+                    'start_date' => $request['start'],
+                    'end_date' => $request['end'],
+                    'did' => isset($request['did']) ? $request['did'] : '',
                 );
             } else {
                 $insertion_rank = array(
                     'rank' => $matches[2],
-                    'did' => isset($_REQUEST['did']) ? $_REQUEST['did'] : '',
+                    'did' => isset($request['did']) ? $request['did'] : '',
                 );
             }
 
             break;
 
         case 'report':
-            $num_matches = preg_match('/^((\d+)-(.+));(\d+)$/', $_REQUEST['ref'], $matches);
+            $num_matches = preg_match('/^((\d+)-(.+));(\d+)$/', $request['ref'], $matches);
 
             if ($num_matches == 0) {
                 throw new Exception("Invalid thumbnail reference set");
@@ -70,18 +96,18 @@ try {
             break;
 
         case 'cached':
-            $num_matches = preg_match('/^((\d+)-(.+));(\d+)$/', $_REQUEST['ref'], $matches);
+            $num_matches = preg_match('/^((\d+)-(.+));(\d+)$/', $request['ref'], $matches);
 
             if ($num_matches == 0) {
                 throw new Exception("Invalid thumbnail reference set");
             }
 
-            if (!isset($_REQUEST['start']) || !isset($_REQUEST['end'])) {
+            if (!isset($request['start']) || !isset($request['end'])) {
                 throw new Exception("Start and end dates not set");
             }
 
-            $valid_start = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $_REQUEST['start']);
-            $valid_end = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $_REQUEST['end']);
+            $valid_start = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $request['start']);
+            $valid_end = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $request['end']);
 
             if (($valid_start * $valid_end) == 0) {
                 throw new Exception("Invalid start and/or end date supplied");
@@ -92,16 +118,16 @@ try {
             $insertion_rank = array(
                 'report_id' => $matches[1],
                 'ordering' => $matches[4],
-                'start_date' => $_REQUEST['start'],
-                'end_date' => $_REQUEST['end'],
+                'start_date' => $request['start'],
+                'end_date' => $request['end'],
             );
             break;
 
         default:
-            throw new Exception("Invalid thumbnail type value supplied: " . $_REQUEST['type']);
+            throw new Exception("Invalid thumbnail type value supplied: " . $request['type']);
             break;
 
-    } // switch($_REQUEST['type'])
+    } // switch($request['type'])
 
     if ($user_id !== $user->getUserID()) {
         throw new AccessDeniedHttpException('Invalid user id');
@@ -111,7 +137,7 @@ try {
 
     header("Content-Type: image/png");
 
-    $blob = $rm->fetchChartBlob($_REQUEST['type'], $insertion_rank);
+    $blob = $rm->fetchChartBlob($request['type'], $insertion_rank);
 
     $image_data_header = substr($blob, 0, 8);
 
