@@ -83,7 +83,7 @@ class HighChartTimeseries2 extends HighChart2
     }
 
     //-------------------------------------------------
-    // getDataname( $stat, $limit )
+    // getDataname( $stat, $remainder_count )
     //
     // Based on inspection of the Statistic Alias for the dataset,
     // what operation should be reported for the remainder set?
@@ -91,7 +91,7 @@ class HighChartTimeseries2 extends HighChart2
     // @param is $dataObj->getStatistic()->getAlias(); or $data_description->metric
     // @param is number of full datasets to represent in chart
     //-------------------------------------------------
-    private function getDataname($stat, $limit) {
+    private function getDataname($stat, $remainder_count) {
 
             // use statistics alias for object
             //$stat = $dataObj->getStatistic()->getAlias(); or $data_description->metric
@@ -103,18 +103,18 @@ class HighChartTimeseries2 extends HighChart2
             // Determine label for the summary dataset
             $dataname
                 = ($useMean ? 'Avg of ' : 'All ')
-                . ($this->_total - $limit)
+                . $remainder_count
                 . ' Others';
 
         if ($isMin) {
             $dataname
             = 'Minimum over all '
-            . ($this->_total - $limit)
+            . $remainder_count
             . ' others';
         } elseif ($isMax) {
             $dataname
             = 'Maximum over all '
-            . ($this->_total - $limit)
+            . $remainder_count
             . ' others';
         } // if $isMin
 
@@ -505,7 +505,7 @@ class HighChartTimeseries2 extends HighChart2
                 }
 
                 $dataTruncated = false;
-                if ( $summarizeDataseries && $this->_total > $limit )
+                if ( $summarizeDataseries && $datagroupFullCount > $limit )
                 {
                     // Run one more query containing everything that was NOT in the top n.
                     // Populate SimpleTimeseriesData object yAxisTruncateObj with this
@@ -519,7 +519,7 @@ class HighChartTimeseries2 extends HighChart2
                     );
 
                     // set the remainder dataset label for plotting
-                    $dataname = $this->getDataname($data_description->metric, $limit );
+                    $dataname = $this->getDataname($data_description->metric, $datagroupFullCount - $limit );
                     $yAxisTruncateObj->setGroupName($dataname );
                     // set label on the dataseries' legend
                     $yAxisTruncateObj->setName($dataname );

@@ -62,40 +62,12 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $helper->logout();
     }
 
-    public function getChartRequest($realm, $group_by, $metric)
+    public function getChartRequest($settings)
     {
-        $dataseries = array (
-            array (
-                'id' => 0.1356380402688,
-                'metric' => $metric,
-                'category' => '',
-                'realm' => $realm,
-                'group_by' => $group_by,
-                'x_axis' => false,
-                'log_scale' => false,
-                'has_std_err' => false,
-                'std_err' => false,
-                'std_err_labels' => false,
-                'value_labels' => false,
-                'display_type' => 'line',
-                'line_type' => '',
-                'line_width' => '',
-                'combine_type' => 'side',
-                'sort_type' => 'value_desc',
-                'filters' => array (
-                    'data' => array (),
-                    'total' => 0,
-                ),
-                'ignore_global' => false,
-                'long_legend' => true,
-                'trend_line' => false,
-                'color' => '',
-                'shadow' => '',
-                'visibility' => '',
-                'z_index' => 0,
-                'enabled' => true,
-            )
-        );
+        $dataseries = array();
+        foreach ($settings as $setting) {
+            $dataseries[] = $this->generateDataSeries($setting);
+        }
 
         $chartSettings = array(
             'show_title' => 'y',
@@ -135,6 +107,43 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         return $chartSettings;
     }
 
+    private function generateDataSeries($settings)
+    {
+        static $dataseries_id = 0.1356380402;
+        $dataseries_id += 0.0000000001;
+
+        return array (
+            'id' => $dataseries_id,
+            'metric' => $settings['metric'],
+            'category' => '',
+            'realm' => $settings['realm'],
+            'group_by' => $settings['group_by'],
+            'x_axis' => false,
+            'log_scale' => false,
+            'has_std_err' => false,
+            'std_err' => false,
+            'std_err_labels' => false,
+            'value_labels' => false,
+            'display_type' => 'line',
+            'line_type' => '',
+            'line_width' => '',
+            'combine_type' => 'side',
+            'sort_type' => 'value_desc',
+            'filters' => array (
+                'data' => array (),
+                'total' => 0,
+            ),
+            'ignore_global' => false,
+            'long_legend' => true,
+            'trend_line' => false,
+            'color' => '',
+            'shadow' => '',
+            'visibility' => '',
+            'z_index' => 0,
+            'enabled' => true,
+        );
+    }
+
     /**
      * These test cases cover the four different 'show remainder' cases: min, max, avg and sum.
      */
@@ -143,7 +152,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $tests = array();
 
         $tests[] = array(
-            $this->getChartRequest('Jobs', 'username', 'total_cpu_hours'),
+            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'))),
             array(
                 'total' => 55,
                 'series_data' => array(
@@ -157,7 +166,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
-            $this->getChartRequest('Jobs', 'pi', 'max_processors'),
+            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'pi', 'metric' => 'max_processors'))),
             array (
                 'total' => '34',
                 'series_data' => array (
@@ -171,7 +180,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
-            $this->getChartRequest('Jobs', 'person', 'total_wallduration_hours'),
+            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'person', 'metric' => 'total_wallduration_hours'))),
             array (
                 'total' => '55',
                 'series_data' => array (
@@ -185,7 +194,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
-            $this->getChartRequest('Jobs', 'queue', 'min_processors'),
+            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'queue', 'metric' => 'min_processors'))),
             array (
                 'total' => '17',
                 'series_data' => array (
@@ -198,6 +207,27 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             )
         );
 
+        $tests[] = array(
+            $this->getChartRequest(array(
+                array('realm' => 'Jobs', 'group_by' => 'person', 'metric' => 'total_wallduration_hours'),
+                array('realm' => 'Jobs', 'group_by' => 'queue', 'metric' => 'total_wallduration_hours')
+            )),
+            array (
+                'total' => '55',
+                'series_data' => array (
+                    array('name' => 'Moorhen [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 20518.0064, 'percentage' => null),
+                    array('name' => 'Honey-buzzard [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 8276.1947, 'percentage' => null),
+                    array('name' => 'Grey, Lesser [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 5534.6542, 'percentage' => null),
+                    array('name' => 'Lapwing [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 2761.8142, 'percentage' => null),
+                    array('name' => 'All 51 Others [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 5231.8753, 'percentage' => null),
+                    array('name' => 'white [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 32448.9128, 'percentage' => null),
+                    array('name' => 'black [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 7527.9847, 'percentage' => null),
+                    array('name' => 'pikelet [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 1112.6033, 'percentage' => null),
+                    array('name' => 'croutons [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 481.5464, 'percentage' => null),
+                    array('name' => 'All 13 Others [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 751.4976, 'percentage' => null)
+                ),
+            )
+        );
         return $tests;
     }
 }
