@@ -1,0 +1,10 @@
+title
+"Core Hours Utilization: (%): by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[1] Core Hours Utilization: (%)","[2 - 3] Core Hours Utilization: (%)","[4 - 7] Core Hours Utilization: (%)"
+2018-04,0.7977,0.3674,0.3704
+---------

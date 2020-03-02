@@ -22,8 +22,8 @@ class CoreUtilizationStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             $sql,
             'cloud_core_utilization',
-            'Core Hours Utilization: Percent',
-            'Percent',
+            'Core Hours Utilization:',
+            '%',
             0
         );
     }

@@ -1,0 +1,14 @@
+title
+"Core Hours Utilization: (%): by Instance Type"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"Instance Type","Core Hours Utilization: (%)"
+c1.m4,0.0414
+c4.m16,0.0194
+c2.m4,0.0192
+c1.m1,0.0003
+c2.m8,0.0000
+---------

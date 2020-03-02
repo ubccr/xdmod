@@ -1,0 +1,10 @@
+title
+"Core Hours Utilization: (%): by Provider"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Provider,"Core Hours Utilization: (%)"
+"screw - Screwdriver",0.0803
+---------

@@ -1,0 +1,10 @@
+title
+"Core Hours Utilization: (%): by Domain"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Default] Core Hours Utilization: (%)"
+2018,0.0803
+---------

@@ -1,0 +1,10 @@
+title
+"Core Hours Utilization: (%): by Submission Venue"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"Submission Venue","Core Hours Utilization: (%)"
+"OpenStack API",0.2786
+---------

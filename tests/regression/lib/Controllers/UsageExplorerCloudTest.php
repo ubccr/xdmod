@@ -56,6 +56,7 @@ class UsageExplorerCloudTest extends \PHPUnit_Framework_TestCase
             'cloud_num_sessions_started',
             'cloud_avg_wallduration_hours',
             'cloud_core_time',
+            'cloud_core_utilization',
             'cloud_wall_time',
             'cloud_avg_cores_reserved',
             'cloud_avg_memory_reserved',
