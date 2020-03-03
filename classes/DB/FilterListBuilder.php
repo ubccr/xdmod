@@ -2,6 +2,7 @@
 
 use CCR\DB;
 use CCR\DB\MySQLHelper;
+use CCR\Loggable;
 use DB\Exceptions\TableNotFoundException;
 use DataWarehouse\Query\GroupBy;
 use DataWarehouse\Query\Query;
