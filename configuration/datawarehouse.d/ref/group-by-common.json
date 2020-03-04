@@ -286,6 +286,10 @@
         "alternate_group_by_columns": [
             "username"
         ],
+        "attribute_filter_map_query":{
+            "systemaccount_id": "SELECT DISTINCT id FROM modw.systemaccount WHERE username IN (__filter_values__)"
+        },
+        "attribute_description_query": "SELECT DISTINCT username AS filter_name FROM modw.systemaccount WHERE username IN (__filter_values__) ORDER BY username",
         "attribute_table": "systemaccount",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
