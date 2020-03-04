@@ -121,11 +121,6 @@
                 "type": "int(11)",
                 "nullable": true,
                 "comment": "DIMENSION: A service provider is an institution that hosts resources."
-            },{
-                "name": "core_time_available",
-                "type": "bigint(42)",
-                "nullable": true,
-                "comment": "DIMENSION: Amount of core time in seconds available in this time period."
             }
         ],
 

@@ -5,15 +5,22 @@ class CoreUtilizationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
+        $agg_unit = $query_instance->getAggregationUnit()->getUnitName();
+        $agg_id = $agg_unit."_id";
 
-        $sql = 'COALESCE((SUM(jf.core_time) / SUM(DISTINCT jf.core_time_available)) * 100, 0)';
+        $sql = 'COALESCE(SUM(jf.core_time) / (SELECT
+            SUM(rf.core_time_available)
+        FROM
+            modw_aggregates.resourcespecsfact_by_'.$agg_unit.' rf
+        WHERE
+            rf.'.$agg_id.' = jf.'.$agg_id.'
+                AND FIND_IN_SET(rf.resource_id,
+                    GROUP_CONCAT(DISTINCT jf.host_resource_id)) <> 0) * 100, 0)';
 
         if ($query_instance->getQueryType() == 'aggregate') {
-            $agg_unit = $query_instance->getAggregationUnit()->getUnitName();
-            $agg_id = $agg_unit."_id";
-
             $core_hours_sql = '
-               SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_'.$agg_unit.' as rsa WHERE rsa.'.$agg_id.' BETWEEN '.$query_instance->getMinDateId().' AND '. $query_instance->getMaxDateId().')';
+               SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_'.$agg_unit.' as rsa WHERE rsa.'.$agg_id.' BETWEEN '.$query_instance->getMinDateId().' AND '. $query_instance->getMaxDateId().
+               ' AND FIND_IN_SET(rsa.resource_id, GROUP_CONCAT(DISTINCT jf.host_resource_id)) <> 0)';
 
             $sql = "COALESCE((SUM(jf.core_time) / ($core_hours_sql) * 100, 0)";
         }

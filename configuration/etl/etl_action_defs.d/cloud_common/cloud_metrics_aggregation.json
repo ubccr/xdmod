@@ -45,8 +45,7 @@
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
                 "submission_venue_id": "sr.submission_venue_id",
                 "domain_id": "sr.domain_id",
-                "service_provider": "sr.service_provider",
-                "core_time_available": "COALESCE(rsa.core_time_available, 0)"
+                "service_provider": "sr.service_provider"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
@@ -75,12 +74,6 @@
                   "schema": "${UTILITY_SCHEMA}",
                   "alias": "task_resource",
                   "on": "task_resource.id = sr.resource_id"
-              },{
-                  "name": "resourcespecsfact_by_${AGGREGATION_UNIT}",
-                  "schema": "modw_aggregates",
-                  "alias": "rsa",
-                  "type": "LEFT",
-                  "on": "rsa.resource_id = sr.resource_id AND rsa.${AGGREGATION_UNIT}_id = ${:PERIOD_ID}"
               }
             ],
             "where": [
