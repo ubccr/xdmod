@@ -275,7 +275,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $optionalConfigTypes = array(
             'additional_join_constraints' => 'array',
             'alternate_group_by_columns' => 'array',
-            'attribute_description_query' => 'int',
+            'attribute_description_query' => 'string',
             'attribute_filter_map_query' => 'object',
             'attribute_table_schema' => 'string',
             'category' => 'string',
@@ -460,6 +460,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             false === $this->attributeValuesQuery->getRecord('name') // For historical reasons, the long name is simply "name"
         ) {
             $this->logAndThrowException('The attribute_values_query key must specify id, short_name, and long_name columns');
+        }
+
+        if ( $this->attributeDescriptionSql && count($this->attributeToAggregateKeyMap) > 1 ){
+            $this->logAndThrowException('The attribute_description_query does not work with more than one ');
         }
 
         // Note that we are using the table name itself as an alias. If needed, we can add an
@@ -834,14 +838,13 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             // although it is unclear if we can differentiate between strings and numerics stored as
             // strings.
 
-            $whereConditions = array();
             foreach ( $attributeKeyFilters as $attributeKey => $filterValues ) {
-                $whereConditions[] = sprintf('%s IN (%s)', $attributeKey, implode(',', $filterValues));
+                $filters = "'" . implode("','", $filterValues) . "'";
             }
 
             $query = str_replace(
                 '__filter_values__',
-                sprintf("'%s'", implode(' AND ', $whereConditions)),
+                $filters,
                 $this->attributeDescriptionSql
             );
         }
