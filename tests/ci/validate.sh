@@ -38,6 +38,13 @@ then
     exitcode=1
 fi
 
+# ensure tables absent
+tblcount=$(echo 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '"'"'moddb '"'"' AND table_name = '"'"'ReportTemplateACL'"'" | mysql -N information_schema)
+if [ $tblcount -ne 0 ];
+then
+    echo "Extraneous tables found in database"
+fi
+
 if ! mysqldump -d moddb report_template_acls | grep -q "ON DELETE CASCADE"
 then
     echo "Missing/incorrect foreign key constraint on report_template_acls table"

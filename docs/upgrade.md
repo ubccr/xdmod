@@ -120,5 +120,8 @@ the new version.
 The `xdmod-upgrade` script will migrate the database schemas to the new
 version.  Tables may be altered the first time they are used during ingestion.
 
+- The `moddb`.`ReportTemplateACL` database table is no longer used and is
+removed by the upgrade script.
+
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
