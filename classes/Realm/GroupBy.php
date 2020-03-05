@@ -829,7 +829,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             // Execute the attribute values query, selecting only the long_name column
 
             $query = new DbQuery($queryConfig, '`', $this->logger);
-            $query = sprintf('SELECT name FROM (%s) avq', $query->getSql());
+            $query = $query->getSql();
         } else {
             // Construct the where conditions for each key column and replace the placeholder in the
             // attribute description query.
