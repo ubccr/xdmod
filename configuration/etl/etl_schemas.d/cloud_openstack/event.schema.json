@@ -65,7 +65,7 @@
         "type": "string"
       },
       "user_name": {
-        "type": "string"
+        "type": [ "string", "null" ]
       },
       "root_gb": {
         "type": "integer"

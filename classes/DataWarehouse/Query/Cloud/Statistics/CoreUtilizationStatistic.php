@@ -10,11 +10,10 @@ class CoreUtilizationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
         if ($query_instance->getQueryType() == 'aggregate') {
             $agg_unit = $query_instance->getAggregationUnit()->getUnitName();
-            $agg_table = "cloudfact_by_" . $agg_unit;
             $agg_id = $agg_unit."_id";
 
             $core_hours_sql = '
-               SELECT SUM(rsa.core_time_avasilable) FROM modw_aggregates.resourcespecsfact_by_'.$agg_unit.' as rsa WHERE rsa.'.$agg_id.' BETWEEN '.$query_instance->getMinDateId().' AND '. $query_instance->getMaxDateId().')';
+               SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_'.$agg_unit.' as rsa WHERE rsa.'.$agg_id.' BETWEEN '.$query_instance->getMinDateId().' AND '. $query_instance->getMaxDateId().')';
 
             $sql = "COALESCE((SUM(jf.core_time) / ($core_hours_sql) * 100, 0)";
         }

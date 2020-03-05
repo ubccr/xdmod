@@ -15,7 +15,9 @@
                 "cloud_openstack/raw_event.json",
                 "cloud_common/session_records.json",
                 "cloud_common/event.json",
-                "cloud_common/instance.json"
+                "cloud_common/instance.json",
+                "cloud_common/raw_resource_specs.json",
+                "cloud_common/cloud_resource_specs.json"
             ],
             "endpoints": {
                 "destination": {
@@ -97,8 +99,35 @@
                 }
             }
         },
-
-
+        {
+            "#": "IngestCloudResourceSpecification",
+            "name": "CloudResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ],
+            "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Aggregate DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_aggregates",
+                  "create_schema_if_not_exists": true,
+                  "truncate_destination": false
+              }
+           }
+        },
         {
             "#": "Events must be ingested after all other dimensions",
             "name": "OpenStackCloudStagingEventIngestor",

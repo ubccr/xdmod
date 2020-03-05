@@ -1,6 +1,6 @@
 -- This sql statement inserts -1 values for the memory_mb and vcpus for a day that a compute node has been
 -- removed from the most recently ingested resource specifications file. The -1 helps when setting start and
--- end times of a cpu and memory configuration for a compute node. 
+-- end times of a cpu and memory configuration for a compute node.
 INSERT INTO modw_cloud.raw_resource_specs (hostname, resource_id, memory_mb, vcpus, fact_date) SELECT
 	rs.hostname,
 	rs.resource_id,

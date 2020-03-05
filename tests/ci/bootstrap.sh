@@ -72,7 +72,7 @@ then
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
-        sudo -u xdmod php /data/xdmod/tools/etl/etl_overseer.php -p ingest-cloud-resource-specs -d "CLOUD_RESOURCE_SPECS_DIRECTORY=$REF_DIR/openstack_resource_specs" -r openstack -v debug
+        sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-cloud-resource-specs -d "CLOUD_RESOURCE_SPECS_DIRECTORY=$REF_DIR/openstack_resource_specs" -r openstack -v debug
     fi
     sudo -u xdmod xdmod-ingestor
 
@@ -124,7 +124,7 @@ then
 
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
-        sudo -u xdmod php /data/xdmod/tools/etl/etl_overseer.php -p ingest-cloud-resource-specs -d "CLOUD_RESOURCE_SPECS_DIRECTORY=$REF_DIR/openstack_resource_specs" -r openstack -v debug
+        sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-cloud-resource-specs -d "CLOUD_RESOURCE_SPECS_DIRECTORY=$REF_DIR/openstack_resource_specs" -r openstack -v debug
         sudo -u xdmod xdmod-ingestor
     fi
 fi
