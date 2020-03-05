@@ -18,11 +18,11 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
-        - composer install -q
+        - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
-        - composer install -q
+        - composer install --no-progress
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
