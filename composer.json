@@ -32,7 +32,8 @@
         "ubccr/simplesamlphp-module-authglobus": "^1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8"
+        "phpunit/phpunit": "~4.8",
+        "ccampbell/chromephp": "^4.1"
     },
     "repositories": [
         {
