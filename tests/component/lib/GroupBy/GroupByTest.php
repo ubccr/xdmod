@@ -55,7 +55,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $parameters = $obj->generateQueryParameterLabelsFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
-        $expected = "User = ( Warbler, Cetti's, Shearwater, Great, Moorhen )";
+        $expected = "User = ( Moorhen, Shearwater, Great, Warbler, Cetti's )";
         $this->assertEquals($generated, $expected, 'generateQueryFiltersFromRequest()');
 
         // GroupBy with a multi-column key (2 columns in attribute table and 2 in aggregate table).
