@@ -1,7 +1,10 @@
 language: none
 env:
-    - XDMOD_TEST_MODE=fresh_install
-    - XDMOD_TEST_MODE=upgrade
+    global:
+        - COMPOSER_ALLOW_SUPERUSER=1
+    matrix:
+        - XDMOD_TEST_MODE=fresh_install
+        - XDMOD_TEST_MODE=upgrade
 build:
     cache: true
     cache_dir_list:
@@ -15,12 +18,11 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
-        - export COMPOSER_ALLOW_SUPERUSER=1
-        - composer install --no-progress -q
+        - composer install -q
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
-        - composer install --no-progress -q
+        - composer install -q
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
