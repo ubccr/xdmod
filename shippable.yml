@@ -1,7 +1,10 @@
 language: none
 env:
-    - XDMOD_TEST_MODE=fresh_install
-    - XDMOD_TEST_MODE=upgrade
+    global:
+        - COMPOSER_ALLOW_SUPERUSER=1
+    matrix:
+        - XDMOD_TEST_MODE=fresh_install
+        - XDMOD_TEST_MODE=upgrade
 build:
     cache: true
     cache_dir_list:
