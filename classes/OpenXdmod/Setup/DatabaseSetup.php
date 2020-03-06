@@ -148,7 +148,8 @@ EOT
             'shredder-bootstrap',
             'staging-bootstrap',
             'hpcdb-bootstrap',
-            'acls-xdmod-management'
+            'acls-xdmod-management',
+            'gateways.bootstrap'
         ), $logger);
 
 
