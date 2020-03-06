@@ -1129,35 +1129,35 @@ SQL;
         $groupedRoleParameters = array();
         $roleParameterDescriptions = array();
         foreach ($role_parameters as $role_parameter_dimension => $role_parameter_value) {
-        $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
+            $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
 
-        if (is_array($role_parameter_value)) {
-            $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
-            $role_parameter_values = $role_parameter_value;
-        } else {
-            $param = array($role_parameter_dimension.'_filter' => $role_parameter_value);
-            $role_parameter_values = array($role_parameter_value);
-        }
-
-        $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
-
-        if (array_key_exists($role_parameter_dimension, $groupedRoleParameters)) {
-            $role_parameters_value_list = &$groupedRoleParameters[$role_parameter_dimension]['dimensionValues'];
-            foreach ($role_parameter_values as $current_role_parameter_value) {
-                if (in_array($current_role_parameter_value, $role_parameters_value_list)) {
-                    continue;
-                }
-
-                $role_parameters_value_list[] = $current_role_parameter_value;
+            if (is_array($role_parameter_value)) {
+                $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
+                $role_parameter_values = $role_parameter_value;
+            } else {
+                $param = array($role_parameter_dimension.'_filter' => $role_parameter_value);
+                $role_parameter_values = array($role_parameter_value);
             }
-        } else {
-            $groupedRoleParameters[$role_parameter_dimension] = array(
-                'groupBy' => $group_by_instance,
-                'dimensionValues' => $role_parameter_values,
-            );
-        }
 
-        $roleParameterDescriptions = array_merge($roleParameterDescriptions, $group_by_instance->generateQueryParameterLabelsFromRequest($param));
+            $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
+
+            if (array_key_exists($role_parameter_dimension, $groupedRoleParameters)) {
+                $role_parameters_value_list = &$groupedRoleParameters[$role_parameter_dimension]['dimensionValues'];
+                foreach ($role_parameter_values as $current_role_parameter_value) {
+                    if (in_array($current_role_parameter_value, $role_parameters_value_list)) {
+                        continue;
+                    }
+
+                    $role_parameters_value_list[] = $current_role_parameter_value;
+                }
+            } else {
+                $groupedRoleParameters[$role_parameter_dimension] = array(
+                    'groupBy' => $group_by_instance,
+                    'dimensionValues' => $role_parameter_values,
+                );
+            }
+
+            $roleParameterDescriptions = array_merge($roleParameterDescriptions, $group_by_instance->generateQueryParameterLabelsFromRequest($param));
         }
 
         $this->roleParameters = $groupedRoleParameters;

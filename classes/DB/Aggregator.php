@@ -9,8 +9,7 @@
  */
 use CCR\Loggable;
 
-use Log as Logger;  // CCR implementation of PEAR logger
-use CCR\Loggable;
+use Log as Logger;
 
 class Aggregator extends Loggable
 {
