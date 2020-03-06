@@ -1,0 +1,133 @@
+{
+    "+roles": {
+        "+default": {
+            "+query_descripters": [
+                {
+                    "realm": "Gateways",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "acronym"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "gateway"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobsize"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobwalltime"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobwaittime"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "nodecount"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "nsfdirectorate"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "parentscience"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "fieldofscience"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "pi"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "queue"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "person"
+                }
+            ]
+        },
+        "+pub": {
+            "+query_descripters": [
+                {
+                    "realm": "Gateways",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "acronym"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "gateway"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobsize"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobwalltime"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobwaittime"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "nodecount"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "nsfdirectorate"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "parentscience"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "fieldofscience"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "pi"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "queue"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "person"
+                }
+            ]
+        }
+    }
+}
+

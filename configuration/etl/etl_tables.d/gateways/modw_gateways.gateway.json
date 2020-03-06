@@ -1,0 +1,79 @@
+{
+  "table_definition": {
+    "comment": "Science Gateways",
+    "engine": "myisam",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci",
+    "columns": [
+      {
+        "type": "int(11)",
+        "charset": null,
+        "collation": null,
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "name": "proxy_person_id"
+      },
+      {
+        "type": "varchar(100)",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_general_ci",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "name": "short_name"
+      },
+      {
+        "type": "varchar(1000)",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_general_ci",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "name": "long_name"
+      },
+      {
+        "type": "varchar(100)",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_general_ci",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "name": "acronym"
+      },
+      {
+        "type": "int(11)",
+        "charset": null,
+        "collation": null,
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "name": "order_id"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "proxy_person_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "foreign_key_constraints": [],
+    "triggers": [],
+    "schema": "modw_gateways",
+    "name": "gateway"
+  }
+}
