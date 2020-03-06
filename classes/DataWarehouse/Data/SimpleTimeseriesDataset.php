@@ -246,15 +246,6 @@ class SimpleTimeseriesDataset extends SimpleDataset
         } elseif ( strpos($stat, 'max_') !== false ) {
             $operation = "MAX";
 
-        } else {
-            $useMean
-                = strpos($stat, 'avg_') !== false
-                || strpos($stat, 'count') !== false
-                || strpos($stat, 'utilization') !== false
-                || strpos($stat, 'rate') !== false
-                || strpos($stat, 'expansion_factor') !== false;
-
-            $operation = $useMean ? "AVG" : "SUM";  
         } // if strpos
 
         return $operation;
@@ -726,7 +717,6 @@ class SimpleTimeseriesDataset extends SimpleDataset
         // assign column names for returned data:
         $values_column_name    = $column_name; 
         $start_ts_column_name  = $aggunit_name . '_start_ts';
-        $count_ts_column_name = 'count_by_ts_unit';
 
         $query_classname = '\\DataWarehouse\\Query\\' . $realm . '\\Timeseries';
 
@@ -783,12 +773,17 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $statAlias =  $dataObject->getStatistic()->getAlias();
         $operation = $this->getSummaryOperation($statAlias);
 
+        $useMean = $operation === 'SUM' && (strpos($statAlias, 'avg_') !== false
+                || strpos($statAlias, 'count') !== false
+                || strpos($statAlias, 'utilization') !== false
+                || strpos($statAlias, 'rate') !== false
+                || strpos($statAlias, 'expansion_factor') !== false);
+
         // Now perform the summarization, making use of the Query class query string, fetch:
         //    * the timeseries unit appropriate to the time aggregation level, 
         //    * the actual count of values being summarized over (for normalizing averaging)
         //    * the averaged/min/max/summed data over the time aggregation unit.
         $query_string = "SELECT t.$start_ts_column_name AS $start_ts_column_name, 
-                                count( t.$start_ts_column_name ) as $count_ts_column_name, 
                                 $operation( t.$column_name ) AS $column_name "
                         . " FROM ( "
                         .   $q->getQueryString()
@@ -861,24 +856,9 @@ class SimpleTimeseriesDataset extends SimpleDataset
                         $columnTypes[$values_column_name]['precision']
                     );
 
-                    if ($operation == 'AVG') {
-                        if (!array_key_exists($count_ts_column_name, $row)) {
-                            throw new \Exception(
-                                get_class($this) .":".  __FUNCTION__ ."()"
-                                . " count_ts_column_name=$count_ts_column_name does not"
-                                . " exist in the dataset."
-                            );
-                        } else {
-                            $countTsCurrentValue = $this->convertSQLtoPHP(
-                                $row[$count_ts_column_name],
-                                $columnTypes[$values_column_name]['native_type'],
-                                $columnTypes[$values_column_name]['precision']
-                            );
-
-                            // if we are taking AVG, correct it to 'avg of n others', n is $normalizeBy value
-                            $dataCurrentValue = $dataCurrentValue * ($countTsCurrentValue / $normalizeBy); 
-                        }
-                    } // if AVG
+                    if ($useMean) {
+                        $dataCurrentValue /= $normalizeBy;
+                    }
 
                     // stuff it onto the array
                     $dataValues[] = $dataCurrentValue;
