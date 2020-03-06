@@ -31,7 +31,8 @@
             ],
             "orderby": [
                 "instance_type_id"
-            ]
+            ],
+            "query_hint": "DISTINCT"
         }
     },
     "domain": {

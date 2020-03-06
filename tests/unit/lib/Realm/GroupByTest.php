@@ -228,7 +228,7 @@ username AS `id`,
 username AS `short_name`,
 username AS `name`,
 username AS `order_id`
-FROM `systemaccount`
+FROM `modw`.`systemaccount`
 ORDER BY username
 SQL;
         $this->assertEquals($expected, $generated, 'getAttributeValuesQuery()->getSql()');
