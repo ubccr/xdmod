@@ -7,6 +7,7 @@
  * @author: Amin Ghadersohi 8/1/2013
  *
  */
+use CCR\Loggable;
 
 class Aggregator extends Loggable
 {
