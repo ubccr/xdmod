@@ -6,7 +6,8 @@
 
 namespace Realm;
 
-use Log as Logger;  // PEAR logger
+use Log as Logger;
+use CCR\DB;
 use ETL\DbModel\Query as DbQuery;
 use \DataWarehouse\Query\Model\OrderBy;
 use \DataWarehouse\Query\Model\Parameter;
@@ -314,7 +315,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'attribute_values_query':
                     $this->attributeValuesQuery = new DbQuery($value, '`', $logger);
-                    $this->attributeValuesQueryAsStdClass = $this->attributeValuesQuery->toStdClass();
                     break;
                 case 'attribute_filter_map_query':
                     $this->attributeFilterMapSqlList = (array) $value;
@@ -459,8 +459,16 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             false === $this->attributeValuesQuery->getRecord('short_name') ||
             false === $this->attributeValuesQuery->getRecord('name') // For historical reasons, the long name is simply "name"
         ) {
-            $this->logAndThrowException('The attribute_values_query key must specify id, short_name, and long_name columns');
+            $this->logAndThrowException('The attribute_values_query key must specify id, short_name, and name columns');
         }
+
+        // Ensure that the schema of the first join in the attributes_values_query defaults to the attributes_value_schema
+        if (!isset($this->attributeValuesQuery->joins[0]->schema)) {
+            $joins = $this->attributeValuesQuery->joins;
+            $joins[0]->schema = $this->attributeTableSchema;
+            $this->attributeValuesQuery->joins = $joins;
+        }
+        $this->attributeValuesQueryAsStdClass = $this->attributeValuesQuery->toStdClass();
 
         if ( $this->attributeDescriptionSql && count($this->attributeToAggregateKeyMap) > 1 ){
             $this->logAndThrowException('The attribute_description_query does not work with more than one ');
@@ -854,8 +862,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $this->logger->debug(
             sprintf("%s Fetch query parameter labels with query\n%s", $this, $query)
         );
-
-        $stmt = \DataWarehouse::connect()->query($query, array(), true);
+        $db = DB::factory('datawarehouse');
+        $stmt = $db->handle()->prepare($query);
+        $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
 
         $labels = array();
@@ -1279,13 +1288,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
 
         $queryObj = new DbQuery($queryConfig, '`', $this->logger);
-        $joins = $queryObj->joins;
-        foreach ($joins as $join) {
-            if (!isset($join->schema)) {
-                $join->schema = $this->attributeTableSchema;
-            }
-        }
-        $queryObj->joins = $joins;
         $sql = $queryObj->getSql();
 
         $this->logger->debug(sprintf("%s: Fetch attribute values with query\n%s", $this, $sql));
