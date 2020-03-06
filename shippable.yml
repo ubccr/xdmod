@@ -42,27 +42,6 @@ build:
         - cat /var/log/xdmod/exceptions.log
         - cat /var/log/xdmod/query.log
         - cat /var/log/xdmod/apache-access.log
-integrations:
-  notifications:
-    - integrationName: slack-notification-xdmod
-      type: slack
-      recipients: "#shippable"
-      on_success: change
-      on_failure: always
-      on_cancel: never
-      on_start: never
-      on_pull_request: never
-resources:
-  - name: xdmod-time-trigger
-    type: time
-    versionTemplate:
-      interval: "0 2 * * *" # UTC
-  - name: slack_notif
-    type: notification
-    integration: slack-notification-xdmod
-    versionTemplate:
-      recipients:
-        - "#shippable"
 jobs:
     - name: xdmod_runCI
       type: runCI
