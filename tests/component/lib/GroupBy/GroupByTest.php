@@ -55,8 +55,8 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $parameters = $obj->generateQueryParameterLabelsFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
-        $expected = "User = ( Moorhen, Shearwater, Great, Warbler, Cetti's )";
-        $this->assertEquals($generated, $expected, 'generateQueryFiltersFromRequest()');
+        $expected = "User = (  Moorhen,  Shearwater, Great,  Warbler, Cetti's )";
+        $this->assertEquals($expected, $generated, 'generateQueryFiltersFromRequest()');
 
         // GroupBy with a multi-column key (2 columns in attribute table and 2 in aggregate table).
         // Multi-column keys use a carat (^) to separate the keys in filters.
@@ -69,8 +69,8 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $parameters = $obj->generateQueryParameterLabelsFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
-        $expected = "Resource = ( Frearson-frearson, Mortorq-mortorq, Phillips-phillips )";
-        $this->assertEquals($generated, $expected, 'generateQueryFiltersFromRequest()');
+        $expected = "Resource = (  Frearson-frearson,  Mortorq-mortorq,  Phillips-phillips )";
+        $this->assertEquals($expected, $generated, 'generateQueryFiltersFromRequest()');
     }
 
     /**

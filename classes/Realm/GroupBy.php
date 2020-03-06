@@ -462,12 +462,14 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $this->logAndThrowException('The attribute_values_query key must specify id, short_name, and name columns');
         }
 
-        // Ensure that the schema of the first join in the attributes_values_query defaults to the attributes_value_schema
-        if (!isset($this->attributeValuesQuery->joins[0]->schema)) {
-            $joins = $this->attributeValuesQuery->joins;
-            $joins[0]->schema = $this->attributeTableSchema;
-            $this->attributeValuesQuery->joins = $joins;
+        // Ensure that the schema of the joins in the attributes_values_query defaults to the attributes_value_schema
+        $joins = $this->attributeValuesQuery->joins;
+        foreach ($joins as $join) {
+            if (!isset($join->schema)) {
+                $join->schema = $this->attributeTableSchema;
+            }
         }
+        $this->attributeValuesQuery->joins = $joins;
         $this->attributeValuesQueryAsStdClass = $this->attributeValuesQuery->toStdClass();
 
         if ( $this->attributeDescriptionSql && count($this->attributeToAggregateKeyMap) > 1 ){
@@ -876,8 +878,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // semi-colon? Some labels that already contain comas such as "Last Name, First Name".
 
         $labelString = sprintf(
-            ( $filterCount > 1 ? '( %s )' : '%s' ),
-            implode(', ', $labels)
+            ( $filterCount > 1 ? '(  %s )' : '%s' ),
+            implode(',  ', $labels)
         );
 
         $labelList[] = sprintf('%s = %s', $this->getName(), $labelString);
