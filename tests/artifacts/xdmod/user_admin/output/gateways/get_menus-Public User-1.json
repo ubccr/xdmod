@@ -71,8 +71,8 @@
   },
   {
     "text": "Gateways by Gateway Community User",
-    "id": "group_by_Gateways_person",
-    "group_by": "person",
+    "id": "group_by_Gateways_proxy_person",
+    "group_by": "proxy_person",
     "query_group": "tg_usage",
     "category": "Gateways",
     "realm": "Gateways",
@@ -85,8 +85,8 @@
   },
   {
     "text": "Gateways by Gateway PI",
-    "id": "group_by_Gateways_pi",
-    "group_by": "pi",
+    "id": "group_by_Gateways_gateway_pi",
+    "group_by": "gateway_pi",
     "query_group": "tg_usage",
     "category": "Gateways",
     "realm": "Gateways",
