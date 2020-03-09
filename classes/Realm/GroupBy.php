@@ -216,7 +216,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $disabled = false;
 
     /**
-     * @see iRealm::factory()
+     * @see iGroupBy::factory()
      */
 
     public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null)
@@ -665,11 +665,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         return $this->isAggregationUnit;
     }
 
-    /*
-     * DEVNOTE: Is there really any reason why we should not always treat these methods as $multi =
-     * true and prefix them by the group by id? It would likely make the query more readable.
-     */
-
     /**
      * Qualify the given column name by prefixing it with the id of this group by so it is unique
      * when used in a Query.
@@ -893,8 +888,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         return $labelList;
     }
 
-    // are these called with all arguments?
-
     /**
      * Note: It is likely that we can remove the $multi_group parameter and always assume that
      * multiple group bys are being included by always prefixing the group by's attributes with the
@@ -1078,6 +1071,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * the query.
      *
      * @param string $formula The SQL column or formula
+     *
+     * @param Query $query used when using an aggrigation unit
      *
      * @return string The formula with aliases changed to the group by table alias, or with an alias
      *   added if only a column was specified.

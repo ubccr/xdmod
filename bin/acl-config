@@ -1450,7 +1450,7 @@ FROM (
         a.acl_id       AS acl_id,
         gb.group_by_id AS group_by_id,
         s.statistic_id AS statistic_id,
-        :visible       AS visible,
+        1              AS visible,
         :enabled       AS enabled
     FROM acls_staging a, group_bys_staging gb, statistics_staging s, modules_staging m, realms_staging r
     WHERE BINARY m.name       = BINARY :module_name    AND
@@ -1522,7 +1522,6 @@ SQL;
                 ':acl_name' => $acl,
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticId,
-                ':visible' => 1,
                 ':enabled' => ( !$disable ? 1 : 0 )
             );
 
