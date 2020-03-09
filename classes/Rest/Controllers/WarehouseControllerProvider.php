@@ -1039,9 +1039,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realmName = $request->get('realm');
         Acls::hasDataAccess($user, $realmName, $dimensionId);
 
-        $valueName = MetricExplorer::getDimensionValueName($user, $dimensionId, $valueId);
-        $success = !empty($valueName);
-
         $realm = \Realm\Realm::factory($realmName);
         $groupBy = $realm->getGroupByObject($dimensionId);
 
