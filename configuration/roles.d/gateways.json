@@ -44,7 +44,7 @@
                 },
                 {
                     "realm": "Gateways",
-                    "group_by": "pi"
+                    "group_by": "gateway_pi"
                 },
                 {
                     "realm": "Gateways",
@@ -60,7 +60,7 @@
                 },
                 {
                     "realm": "Gateways",
-                    "group_by": "person"
+                    "group_by": "proxy_person"
                 }
             ]
         },
@@ -108,7 +108,7 @@
                 },
                 {
                     "realm": "Gateways",
-                    "group_by": "pi"
+                    "group_by": "gateways_pi"
                 },
                 {
                     "realm": "Gateways",
@@ -124,7 +124,7 @@
                 },
                 {
                     "realm": "Gateways",
-                    "group_by": "person"
+                    "group_by": "proxy_person"
                 }
             ]
         }

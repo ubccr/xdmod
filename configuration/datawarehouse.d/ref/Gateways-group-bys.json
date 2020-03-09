@@ -85,14 +85,14 @@
     "parentscience": {
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
-    "person": {
+    "proxy_person": {
         "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person",
 	"$overwrite": {
             "description_html": "A user who runs jobs on resources on behalf of a Gateway.",
             "name": "Gateway Community User"
         }
     },
-    "pi": {
+    "gateway_pi": {
         "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi",
 	"$overwrite": {
             "description_html": "The principal investigator of a Gateway is the manager of the Gateway.",
