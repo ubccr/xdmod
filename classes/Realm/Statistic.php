@@ -226,9 +226,11 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     // The sort order is specified in the JSON config file as the string
                     // representation of a PHP constant so convert it to an integer in order to
                     // properly use it. See https://php.net/manual/en/function.array-multisort.php
-                    $sortOrder = null;
-                    $sortOrder = constant($value);
-                    $this->setSortOrder($sortOrder);
+                    if (!empty($value)){
+                        $this->setSortOrder(constant($value));
+                    } else {
+                        $this->setSortOrder(null);
+                    }
                     break;
                 case 'description_html':
                     $this->description = trim($value);
