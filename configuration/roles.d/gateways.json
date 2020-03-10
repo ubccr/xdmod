@@ -108,7 +108,7 @@
                 },
                 {
                     "realm": "Gateways",
-                    "group_by": "gateways_pi"
+                    "group_by": "gateway_pi"
                 },
                 {
                     "realm": "Gateways",
