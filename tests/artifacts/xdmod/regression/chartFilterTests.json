@@ -1,0 +1,480 @@
+[
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "nsfdirectorate",
+            "filter_values": [
+                "Biological Sciences",
+                "Computer and Information Science and Engineering"
+            ]
+        },
+        "expected": {
+            "subtitle": "Decanal Unit = ( Biological Sciences,  Computer and Information Science and Engineering )",
+            "yvalue": 25996.9961
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "parentscience",
+            "filter_values": [
+                "Arts",
+                "Astronomical Sciences"
+            ]
+        },
+        "expected": {
+            "subtitle": "Department = ( Arts,  Astronomical Sciences )",
+            "yvalue": 13191.3847
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "jobsize",
+            "filter_values": [
+                "1",
+                "2"
+            ]
+        },
+        "expected": {
+            "subtitle": "Job Size = ( 1,  2 )",
+            "yvalue": 30462.9564
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "jobwaittime",
+            "filter_values": [
+                "0 - 1s",
+                "1 - 30s"
+            ]
+        },
+        "expected": {
+            "subtitle": "Job Wait Time = ( 0 - 1s,  1 - 30s )",
+            "yvalue": 80575.1892
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "jobwalltime",
+            "filter_values": [
+                "0 - 1s",
+                "1 - 30s"
+            ]
+        },
+        "expected": {
+            "subtitle": "Job Wall Time = ( 0 - 1s,  1 - 30s )",
+            "yvalue": 165.0647
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "nodecount",
+            "filter_values": [
+                "1",
+                "2"
+            ]
+        },
+        "expected": {
+            "subtitle": "Node Count = ( 1,  2 )",
+            "yvalue": 156343.2975
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "pi",
+            "filter_values": [
+                "Accentor, Alpine",
+                "Bittern"
+            ]
+        },
+        "expected": {
+            "subtitle": "PI = ( Accentor, Alpine,  Bittern )",
+            "yvalue": 3499.8997
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "fieldofscience",
+            "filter_values": [
+                "Algebra and Number Theory",
+                "Arts"
+            ]
+        },
+        "expected": {
+            "subtitle": "PI Group = ( Algebra and Number Theory,  Arts )",
+            "yvalue": 4917.6697
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "queue",
+            "filter_values": [
+                "bannock",
+                "barm"
+            ]
+        },
+        "expected": {
+            "subtitle": "Queue = ( bannock,  barm )",
+            "yvalue": 284.0378
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "resource",
+            "filter_values": [
+                "frearson",
+                "mortorq"
+            ]
+        },
+        "expected": {
+            "subtitle": "Resource = ( frearson,  mortorq )",
+            "yvalue": 91806.4789
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "resource_type",
+            "filter_values": [
+                "High-performance computing"
+            ]
+        },
+        "expected": {
+            "subtitle": "Resource Type =  High-performance computing",
+            "yvalue": 222229.6297
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "username",
+            "filter_values": [
+                "allga",
+                "alpsw"
+            ]
+        },
+        "expected": {
+            "subtitle": "System Username = ( allga,  alpsw )",
+            "yvalue": 527.7511
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "person",
+            "filter_values": [
+                "Auk, Little",
+                "Bunting, Black-headed"
+            ]
+        },
+        "expected": {
+            "subtitle": "User = ( Auk, Little,  Bunting, Black-headed )",
+            "yvalue": 537.1039
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "nsfdirectorate",
+            "filter_values": [
+                "Biological Sciences",
+                "Computer and Information Science and Engineering"
+            ]
+        },
+        "expected": {
+            "subtitle": "Decanal Unit = ( Biological Sciences,  Computer and Information Science and Engineering )",
+            "yvalue": 169384097792000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "parentscience",
+            "filter_values": [
+                "Arts",
+                "Astronomical Sciences"
+            ]
+        },
+        "expected": {
+            "subtitle": "Department = ( Arts,  Astronomical Sciences )",
+            "yvalue": 12472681216000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "mountpoint",
+            "filter_values": [
+                "/data",
+                "/projects"
+            ]
+        },
+        "expected": {
+            "subtitle": "Mountpoint = ( /data,  /projects )",
+            "yvalue": 484814080384000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "pi",
+            "filter_values": [
+                "Bittern",
+                "Black-headed, Great"
+            ]
+        },
+        "expected": {
+            "subtitle": "PI = ( Bittern,  Black-headed, Great )",
+            "yvalue": 129104640000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "fieldofscience",
+            "filter_values": [
+                "Algebra and Number Theory",
+                "Arts"
+            ]
+        },
+        "expected": {
+            "subtitle": "PI Group = ( Algebra and Number Theory,  Arts )",
+            "yvalue": 8966348672000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "resource",
+            "filter_values": [
+                "recex",
+                "torx"
+            ]
+        },
+        "expected": {
+            "subtitle": "Resource = ( recex,  torx )",
+            "yvalue": 800728364160000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "resource_type",
+            "filter_values": [
+                "Storage grid",
+                "Tape storage resource"
+            ]
+        },
+        "expected": {
+            "subtitle": "Resource Type = ( Storage grid,  Tape storage resource )",
+            "yvalue": 800728364160000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "username",
+            "filter_values": [
+                "alete",
+                "alpsw"
+            ]
+        },
+        "expected": {
+            "subtitle": "System Username = ( alete,  alpsw )",
+            "yvalue": 2970522240000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Storage",
+            "metric": "avg_logical_usage",
+            "date": "2018-12-28",
+            "filter_dimension": "person",
+            "filter_values": [
+                "Auk, Great",
+                "Auk, Little"
+            ]
+        },
+        "expected": {
+            "subtitle": "User = ( Auk, Great,  Auk, Little )",
+            "yvalue": 40448713728000
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "domain",
+            "filter_values": [
+                "Default",
+                "adjunct"
+            ]
+        },
+        "expected": {
+            "subtitle": "Domain = ( Default,  adjunct )",
+            "yvalue": 2828.6375
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "project",
+            "filter_values": [
+                "aalmsaee",
+                "aashwani"
+            ]
+        },
+        "expected": {
+            "subtitle": "Project = ( aalmsaee,  aashwani )",
+            "yvalue": 253.1089
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "resource",
+            "filter_values": [
+                "nutsetters",
+                "openstack"
+            ]
+        },
+        "expected": {
+            "subtitle": "Resource = ( nutsetters,  openstack )",
+            "yvalue": 129483.1408
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "submission_venue",
+            "filter_values": [
+                "OpenStack API"
+            ]
+        },
+        "expected": {
+            "subtitle": "Submission Venue =  OpenStack API",
+            "yvalue": 129483.1408
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "username",
+            "filter_values": [
+                "aalmsaee",
+                "aashwani"
+            ]
+        },
+        "expected": {
+            "subtitle": "System Username = ( aalmsaee,  aashwani )",
+            "yvalue": 253.1089
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "person",
+            "filter_values": [
+                "aalmsaee",
+                "aashwani"
+            ]
+        },
+        "expected": {
+            "subtitle": "User = ( aalmsaee,  aashwani )",
+            "yvalue": 253.1089
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "vm_size",
+            "filter_values": [
+                "1",
+                "2 - 3"
+            ]
+        },
+        "expected": {
+            "subtitle": "VM Size: Cores = ( 1,  2 - 3 )",
+            "yvalue": 13394.1358
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
+            "filter_dimension": "vm_size_memory",
+            "filter_values": [
+                "< 2 GB",
+                "2 - 4 GB"
+            ]
+        },
+        "expected": {
+            "subtitle": "VM Size: Memory = ( < 2 GB,  2 - 4 GB )",
+            "yvalue": 13348.1492
+        }
+    }
+]
