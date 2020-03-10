@@ -17,4 +17,18 @@ class Utilities
         }
         return $result;
     }
+
+    /**
+     * returns an array containing the names of the realms that are
+     * available to be tested. This comes from the XDMOD_REALMS environment
+     * variable
+     */
+    public static function getRealmsToTest()
+    {
+        $realm_list = getenv('XDMOD_REALMS');
+        if ($realm_list === false) {
+            return array();
+        }
+        return explode(',', $realm_list);
+    }
 }
