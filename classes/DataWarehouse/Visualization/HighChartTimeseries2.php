@@ -165,8 +165,6 @@ class HighChartTimeseries2 extends HighChart2
                 $prevCategory = $category;
             }
 
-            // Determine statistic name. In this case use the Aggregate classname to get the stat.
-            // (Speculative). August 2015
             try
             {
                 $realm = \Realm\Realm::factory($data_description->realm);

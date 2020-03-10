@@ -195,8 +195,8 @@ class Query extends Loggable
     public $_db_profile = 'datawarehouse'; //The name of the db settings in portal_settings.ini
 
     /**
-     * @return string The short identifier for the realm that this query is constructed for. This is
-     *   named getRealmName() for historical reasons.
+     * @return string The short identifier for the realm that this query is constructed for.
+     *   This is named getRealmName() for historical reasons.
      */
 
     public function getRealmName()
@@ -773,7 +773,7 @@ FROM (
 ) AS a WHERE a.total IS NOT NULL
 SQL;
         $data_query = sprintf(
-            $format, // "SELECT\nCOUNT(*) AS row_count\nFROM (\nSELECT\nSUM(1) AS total\nFROM\n%s\nWHERE\n%s%s\n) AS a WHERE a.total IS NOT NULL",
+            $format,
             implode(",\n    ", $select_tables),
             implode("\n    AND ", $wheres),
             ( count($groups) > 0 ? "GROUP BY\n    " . implode(",\n    ", $groups) : "" )

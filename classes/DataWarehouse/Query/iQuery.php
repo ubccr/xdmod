@@ -26,7 +26,7 @@ interface iQuery
      *   be used to add WHERE conditions to the Query.
      */
 
-     // If there are statistics that should always be added for a specific Realm, specify them in
+    // If there are statistics that should always be added for a specific Realm, specify them in
     // the Realm configuration and add them in the Query constructor. These don't appear to be
     // needed so lets wait and see.
     //
@@ -77,20 +77,20 @@ interface iQuery
      * substitution. Note that rather than clearing and setting variables, we are using overwrite()
      * so we do not clear variables that may be set elsewhere.
      *
-     * @return VariableStore The updated variable store object
+     * @return \ETL\VariableStore The updated variable store object
      */
 
     public function updateVariableStore();
 
     /**
-     * @return VariableStore The current variable store for this query. Note that it is safer to
+     * @return \ETL\VariableStore The current variable store for this query. Note that it is safer to
      *    access the variable store via updateVariableStore() so that its data is updated.
      */
 
     public function getVariableStore();
 
     /**
-     * @return Realm The object that represents the realm that is query is generating data for.
+     * @return \Realm\iRealm The object that represents the realm that is query is generating data for.
      */
 
     public function getRealm();

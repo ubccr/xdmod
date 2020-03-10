@@ -86,9 +86,6 @@ class ComplexDataset
                 );
             }
 
-            // Determine query class, then instantiate it
-            // this is quite horrible, and I apologize, but it beats 900 lines of
-            // redundant code, no? --JMS
             $query_classname = '\\DataWarehouse\\Query\\' .
                 ( $query_type == 'aggregate' ? 'AggregateQuery' : 'TimeseriesQuery');
 

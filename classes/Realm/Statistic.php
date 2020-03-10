@@ -130,7 +130,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $variableStore = null;
 
     /**
-     * @see iRealm::factory()
+     * @see iStatistic::factory()
      */
 
     public static function factory($shortName, \stdclass $config, Realm $realm, Logger $logger = null)

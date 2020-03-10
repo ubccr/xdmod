@@ -206,7 +206,8 @@
             }
         },
         "description_html": "A service provider is an institution that hosts resources.",
-        "name": "Provider"
+        "name": "Provider",
+        "show_in_catalog": false
     },
     "submission_venue": {
         "attribute_table": "submission_venue",

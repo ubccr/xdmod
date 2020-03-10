@@ -166,7 +166,7 @@ interface iGroupBy
     /**
      * Apply the current GroupBy to the specified Query.
      *
-     * @param Query $query The query that this GroupBy will be added to.
+     * @param \DataWarehouse\Query\iQuery $query The query that this GroupBy will be added to.
      * @param bool $multi_group TRUE if this query can have multiple group bys. This is only set to
      *   TRUE in Query::addGroupBy() and set to FALSE if a group by/dimension is specified in the
      *   Query class constructor.
@@ -181,8 +181,8 @@ interface iGroupBy
      *  3. Add a WHERE condition to the query ensuring that the descriptive attributes are
      *     constrained according to the value supplied.
      *
-     * @param Query $query The query that this GroupBy will be added to.
-     * @param string The full name of the aggregate table including aggregation unit (e.g.,
+     * @param \DataWarehouse\Query\iQuery $query The query that this GroupBy will be added to.
+     * @param string $aggregateTableName (The full name of the aggregate table including aggregation unit (e.g.,
      *   jobfact_by_day)
      * @param string $operation The comparison operation used by the WHERE condition (e.g., "IN",
      *   "=", etc.)
@@ -194,7 +194,7 @@ interface iGroupBy
     /**
      * Add an ORDER BY clause to the specified query.
      *
-     * @param Query $query The query that this GroupBy will be added to.
+     * @param \DataWarehouse\Query\iQuery $query The query that this GroupBy will be added to.
      * @param bool $multi_group TRUE if this query can have multiple group bys. This is only set to
      *   TRUE in Query::addGroupBy() and set to FALSE if a group by/dimension is specified in the
      *   Query class constructor.

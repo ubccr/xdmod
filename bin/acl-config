@@ -215,8 +215,9 @@ function main()
         foreach ( $realmObjects as $realmId => $realmObj ) {
             $results[$module]['realms'][$realmId] = array(
                 'display_name' => $realmObj->getName(),
-                'group_bys' => $realmObj->getGroupByIds(),
-                'statistics' => $realmObj->getStatisticIds()
+                'show_in_catalog' => $realmObj->showInMetricCatalog(),
+                'group_bys' => $realmObj->getGroupByObjects(),
+                'statistics' => $realmObj->getStatisticObjects()
             );
         }
     }
@@ -1450,7 +1451,7 @@ FROM (
         a.acl_id       AS acl_id,
         gb.group_by_id AS group_by_id,
         s.statistic_id AS statistic_id,
-        1              AS visible,
+        :visible       AS visible,
         :enabled       AS enabled
     FROM acls_staging a, group_bys_staging gb, statistics_staging s, modules_staging m, realms_staging r
     WHERE BINARY m.name       = BINARY :module_name    AND
@@ -1497,30 +1498,39 @@ SQL;
             continue;
         }
 
-        $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
+        $groupByName = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
 
-        if ( ! in_array($groupBy, $realms[$realm]['group_bys']) ) {
-            $log->warning(sprintf("Group by '%s' not defined for realm '%s', skipping.", $groupBy, $realm));
+        if ( ! array_key_exists($groupByName, $realms[$realm]['group_bys']) ) {
+            $log->warning(sprintf("Group by '%s' not defined for realm '%s', skipping.", $groupByName, $realm));
             continue;
         }
 
         $realmData = $realms[$realm];
         if (!isset($realmData['statistics'])) {
-            $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
+            $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupByName ]");
             continue;
         }
 
+        $groupBy = isset($realmData['group_bys'][$groupByName]) ? $realmData['group_bys'][$groupByName] : null;
+        if (!isset($groupBy)) {
+            $log->warning("No group by $groupByName found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupByName ]");
+            continue;
+        }
         $statistics = $realmData['statistics'];
-        foreach ($statistics as $statisticId) {
+        foreach ($statistics as $statisticId  => $statisticData) {
 
-            $id = "[ $module, $realm, $acl, $groupBy, $statisticId ]";
-
+            $id = "[ $module, $realm, $acl, $groupByName, $statisticId ]";
+            $visible = 1;
+            if (!$realmData['show_in_catalog'] || !$statisticData->showInMetricCatalog()) {
+                $visible = 0;
+            }
             $params = array(
                 ':module_name' => $module,
                 ':realm_name' => $realm,
                 ':acl_name' => $acl,
-                ':group_by_name' => $groupBy,
+                ':group_by_name' => $groupByName,
+                ':visible' => $visible,
                 ':statistic_name' => $statisticId,
                 ':enabled' => ( !$disable ? 1 : 0 )
             );
@@ -1544,9 +1554,9 @@ SQL;
 
             $totalInserted += $inserted;
             if ($inserted === 0) {
-                $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupBy, $statisticId ]");
+                $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupByName, $statisticId ]");
             } elseif ($inserted === 1) {
-                $log->info("[SUCCESS] Created Query Descriptor [ $module, $realm, $acl, $groupBy, $statisticId ]");
+                $log->info("[SUCCESS] Created Query Descriptor [ $module, $realm, $acl, $groupByName, $statisticId ]");
             }
         }
         $processed = count($statistics);
@@ -1664,11 +1674,11 @@ SQL;
             $updateQuery,
             array(
                 ':realm_display' => $realmDisplay,
-                ':realm_name'    => $realmName
+                ':realm_name'    => $realmId
             )
         );
         if ($updated === 1) {
-            $log->info("Updated Realm [$realmName] with display [$realmDisplay]");
+            $log->info("Updated Realm [$realmId] with display [$realmDisplay]");
         } else {
             $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
         }
@@ -1723,7 +1733,7 @@ SQL;
     }
     $totalInserted = 0;
 
-    foreach ($groupBys as $groupById) {
+    foreach ($groupBys as $groupById => $groupByData) {
 
         $parameters = array(
             ':group_by_name' => $groupById,
@@ -1800,7 +1810,7 @@ SQL;
         $log->debug($query);
     }
     $totalInserted = 0;
-    foreach ($statistics as $statisticId) {
+    foreach ($statistics as $statisticId => $statisticData) {
 
         $parameters = array(
             ':statistic_name' => $statisticId,

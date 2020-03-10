@@ -1072,7 +1072,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      *
      * @param string $formula The SQL column or formula
      *
-     * @param Query $query used when using an aggrigation unit
+     * @param Query $query Used to determine the table alias when the GroupBy is an aggregation unit.
      *
      * @return string The formula with aliases changed to the group by table alias, or with an alias
      *   added if only a column was specified.

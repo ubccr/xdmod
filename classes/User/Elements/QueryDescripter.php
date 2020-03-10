@@ -9,7 +9,7 @@ class QueryDescripter
 {
 
     /**
-     * @var \Realm\Realm The Realm that we are querying.
+     * @var \Realm\iRealm The Realm that we are querying.
      */
     private $realm = null;
 

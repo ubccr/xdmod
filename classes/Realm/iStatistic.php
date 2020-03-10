@@ -86,7 +86,7 @@ interface iStatistic
      * are applied to the formula. The generic Statistic::getFormula() can be overriden as needed to
      * apply advanced logic.
      *
-     * @param Query $query The target Query that this formula will be embedded in. Note that the
+     * @param \DataWarehouse\Query\iQuery $query The target Query that this formula will be embedded in. Note that the
      *   formula will not actually be added to the query by this function.
      *
      * @return string The statistic formula and alias, which is an SQL fragment that can be embedded

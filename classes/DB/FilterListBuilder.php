@@ -5,7 +5,7 @@ use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Loggable;
 use DB\Exceptions\TableNotFoundException;
-use Realm\GroupBy;
+use Realm\iGroupBy;
 use DataWarehouse\Query\iQuery;
 use DataWarehouse\Query\TimeAggregationUnit;
 
@@ -37,7 +37,7 @@ class FilterListBuilder extends Loggable
     private static $rolesDimensionNames = null;
 
     /**
-     * @var \Realm\Realm The Realm that we are currently operating on.
+     * @var \Realm\iRealm The Realm that we are currently operating on.
      */
 
     private $currentRealm = null;
@@ -87,10 +87,10 @@ class FilterListBuilder extends Loggable
      * NOTE: This function does not support dimensions with multi-column keys even though the
      *       GroupBy classes do. It must be refactored in order to support them. -SMG 2019-09-09
      *
-     * @param Query   $realmQuery A query for the realm the dimension is in.
-     * @param GroupBy $groupBy    The dimension's GroupBy to build lists for.
+     * @param iQuery   $realmQuery A query for the realm the dimension is in.
+     * @param iGroupBy $groupBy    The dimension's GroupBy to build lists for.
      */
-    public function buildDimensionLists(iQuery $realmQuery, GroupBy $groupBy)
+    public function buildDimensionLists(iQuery $realmQuery, iGroupBy $groupBy)
     {
         // Check that the given dimension has associated filter lists.
         // If it does not, stop.
@@ -236,11 +236,11 @@ class FilterListBuilder extends Loggable
     /**
      * Check if a given dimension has filter lists associated with it.
      *
-     * @param  GroupBy $groupBy The GroupBy for the dimension to check.
+     * @param  iGroupBy $groupBy The GroupBy for the dimension to check.
      * @return boolean          An indicator of if there are lists for the
      *                          given dimension.
      */
-    private function checkDimensionForLists(GroupBy $groupBy)
+    private function checkDimensionForLists(iGroupBy $groupBy)
     {
         $dimensionId = $groupBy->getId();
 
@@ -250,11 +250,11 @@ class FilterListBuilder extends Loggable
     /**
      * Check if a given dimension has roles associated with it.
      *
-     * @param  GroupBy $groupBy The GroupBy for the dimension to check.
+     * @param  iGroupBy $groupBy The GroupBy for the dimension to check.
      * @return boolean          An indicator of if there are roles that use the
      *                          given dimension.
      */
-    private function checkDimensionForRoles(GroupBy $groupBy)
+    private function checkDimensionForRoles(iGroupBy $groupBy)
     {
         // If the set of dimensions associated with roles has not yet been
         // generated, do so now.
@@ -282,11 +282,11 @@ class FilterListBuilder extends Loggable
     /**
      * Create a new Query constructed around the given GroupBy.
      *
-     * @param  Query   $realmQuery A Query of the class of the desired result.
-     * @param  GroupBy $groupBy    The GroupBy to construct the Query around.
+     * @param  iQuery   $realmQuery A Query of the class of the desired result.
+     * @param  iGroupBy $groupBy    The GroupBy to construct the Query around.
      * @return Query               A Query constructed around $groupBy.
      */
-    private function createDimensionQuery(iQuery $realmQuery, GroupBy $groupBy)
+    private function createDimensionQuery(iQuery $realmQuery, iGroupBy $groupBy)
     {
         $queryClassName = get_class($realmQuery);
         return new $queryClassName(
@@ -301,13 +301,13 @@ class FilterListBuilder extends Loggable
     /**
      * Get data about how a dimension is stored in the database.
      *
-     * @param  Query   $realmQuery A query for the realm the dimension is in.
-     * @param  GroupBy $groupBy    The GroupBy for the dimension to get data for.
+     * @param  iQuery   $realmQuery A query for the realm the dimension is in.
+     * @param  iGroupBy $groupBy    The GroupBy for the dimension to get data for.
      * @return array            Data about the dimension, including:
      *                              * type: The data type used to represent IDs
      *                                      for the dimension.
      */
-    private function getDimensionDatabaseProperties(iQuery $realmQuery, GroupBy $groupBy)
+    private function getDimensionDatabaseProperties(iQuery $realmQuery, iGroupBy $groupBy)
     {
         $db = DB::factory('datawarehouse');
         $helper = MySQLHelper::factory($db);
