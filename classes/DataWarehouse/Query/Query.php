@@ -13,7 +13,7 @@ namespace DataWarehouse\Query;
 use Configuration\XdmodConfiguration;
 use Exception;
 
-use Log as Logger;  // PEAR logger
+use Log as Logger;
 use CCR\Loggable;
 use CCR\DB;
 use CCR\DB\PDODB;
@@ -114,6 +114,14 @@ class Query extends Loggable
         // If the logger was not passed in, create one specifically for the query logs
 
         if ( null === $logger ) {
+            try {
+                $sqlDebug = \xd_utilities\filter_var(
+                    \xd_utilities\getConfiguration('general', 'sql_debug_mode'),
+                    FILTER_VALIDATE_BOOLEAN
+                );
+            } catch (Exception $e) {
+                $sqlDebug = false;
+            }
             $logger = \CCR\Log::factory(
                 'datawarehouse.query',
                 array(
@@ -121,7 +129,7 @@ class Query extends Loggable
                     'db' => false,
                     'mail' => false,
                     'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => PEAR_LOG_NOTICE
+                    'fileLogLevel' => $sqlDebug ? PEAR_LOG_DEBUG : PEAR_LOG_NOTICE
                 )
             );
         }
