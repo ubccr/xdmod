@@ -875,7 +875,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // semi-colon? Some labels that already contain comas such as "Last Name, First Name".
 
         $labelString = sprintf(
-            ( $filterCount > 1 ? '(  %s )' : '%s' ),
+            ( $filterCount > 1 ? '( %s )' : ' %s' ),
             implode(',  ', $labels)
         );
 
