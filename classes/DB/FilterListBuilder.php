@@ -6,6 +6,7 @@ use CCR\DB\MySQLHelper;
 use CCR\Loggable;
 use DB\Exceptions\TableNotFoundException;
 use Realm\iGroupBy;
+use Realm\iRealm;
 use DataWarehouse\Query\iQuery;
 use DataWarehouse\Query\TimeAggregationUnit;
 
@@ -35,12 +36,6 @@ class FilterListBuilder extends Loggable
      * @var array|null
      */
     private static $rolesDimensionNames = null;
-
-    /**
-     * @var \Realm\iRealm The Realm that we are currently operating on.
-     */
-
-    private $currentRealm = null;
 
     /**
      * Build filter lists for all realms' dimensions.
@@ -73,11 +68,11 @@ class FilterListBuilder extends Loggable
         );
 
         // Get the dimensions in the given realm.
-        $this->currentRealm = \Realm\Realm::factory($realmName);
+        $currentRealm = \Realm\Realm::factory($realmName);
 
         // Generate the lists for each dimension and each pairing of dimensions.
-        foreach ($this->currentRealm->getGroupByObjects() as $groupByObj) {
-            $this->buildDimensionLists($realmQuery, $groupByObj);
+        foreach ($currentRealm->getGroupByObjects() as $groupByObj) {
+            $this->buildDimensionLists($realmQuery, $groupByObj, $currentRealm);
         }
     }
 
@@ -89,8 +84,9 @@ class FilterListBuilder extends Loggable
      *
      * @param iQuery   $realmQuery A query for the realm the dimension is in.
      * @param iGroupBy $groupBy    The dimension's GroupBy to build lists for.
+     * @param iRealm   $realm      The realm currently being used.
      */
-    public function buildDimensionLists(iQuery $realmQuery, iGroupBy $groupBy)
+    private function buildDimensionLists(iQuery $realmQuery, iGroupBy $groupBy, iRealm $currentRealm)
     {
         // Check that the given dimension has associated filter lists.
         // If it does not, stop.
@@ -144,7 +140,7 @@ class FilterListBuilder extends Loggable
 
         // Generate list tables pairing this dimension with every other
         // dimension in the realm that's associated with roles.
-        $realmGroupBys = $this->currentRealm->getGroupByNames();
+        $realmGroupBys = $currentRealm->getGroupByNames();
 
         foreach ($realmGroupBys as $realmGroupById => $realmGroupByNames) {
             // If this dimension is the given dimension, skip it.
@@ -155,7 +151,7 @@ class FilterListBuilder extends Loggable
 
             // If this dimension does not have lists associated with it
             // or is not associated with any roles, skip it.
-            $realmGroupBy = $this->currentRealm->getGroupByObject($realmGroupById);
+            $realmGroupBy = $currentRealm->getGroupByObject($realmGroupById);
             if (!$this->checkDimensionForLists($realmGroupBy) || !$this->checkDimensionForRoles($realmGroupBy)) {
                 continue;
             }
