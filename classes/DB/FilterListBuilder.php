@@ -40,8 +40,8 @@ class FilterListBuilder extends Loggable
      */
     public function __construct()
     {
-        if ($this->_logger === null) {
-            $this->_logger = Log::singleton('null');
+        if ($this->logger === null) {
+            $this->logger = Log::singleton('null');
         }
     }
 
@@ -53,7 +53,7 @@ class FilterListBuilder extends Loggable
         $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'datawarehouse.json',
             CONFIG_DIR,
-            $this->_logger
+            $this->logger
         );
 
         // Get the realms to be processed.
@@ -106,28 +106,23 @@ class FilterListBuilder extends Loggable
 
         $db = DB::factory('datawarehouse');
         $targetSchema = FilterListHelper::getSchemaName();
-        $mainTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$mainTableName'");
-        if (empty($mainTableExistsResults)) {
-            try {
-                $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
-            } catch (TableNotFoundException $e) {
-                $this->_logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
-                return;
-            }
 
-            $dimensionColumnType = $dimensionProperties['type'];
-
+        try {
+            $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
+        } catch (TableNotFoundException $e) {
+            $this->logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
+            return;
+        }
+        $dimensionColumnType = $dimensionProperties['type'];
+        try {
+            $db->beginTransaction();
+            $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$mainTableName}`;");
             $db->execute(
                 "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
                     `{$dimensionName}` {$dimensionColumnType} NOT NULL,
                     PRIMARY KEY (`{$dimensionName}`)
                 );"
             );
-        }
-
-        try {
-            $db->beginTransaction();
-
             $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
 
             $selectTables = $dimensionQuery->getSelectTables();
@@ -139,7 +134,6 @@ class FilterListBuilder extends Loggable
             $selectTablesStr = implode(', ', $selectTables);
             $wheresStr = implode(' AND ', $wheres);
 
-            $db->execute("TRUNCATE TABLE `{$targetSchema}`.`{$mainTableName}`");
             $db->execute(
                 "INSERT INTO
                     `{$targetSchema}`.`{$mainTableName}`
@@ -208,7 +202,7 @@ class FilterListBuilder extends Loggable
                     $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
                     $secondDimensionColumnType = $secondDimensionProperties['type'];
                 } catch (TableNotFoundException $e) {
-                    $this->_logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
+                    $this->logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
                     continue;
                 }
                 $db->execute(
@@ -330,7 +324,7 @@ class FilterListBuilder extends Loggable
     {
         $db = DB::factory('datawarehouse');
         $helper = MySQLHelper::factory($db);
-        $helper->setLogger($this->_logger);
+        $helper->setLogger($this->logger);
 
         // TODO After GroupBy is refactored, use GroupBy methods to get the
         // table and column names,
