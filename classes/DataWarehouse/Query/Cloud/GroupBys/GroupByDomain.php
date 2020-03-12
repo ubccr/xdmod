@@ -1,179 +1,117 @@
 <?php
-
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
-use DataWarehouse\Query\Cloud\GroupBy as GroupBy;
-use DataWarehouse\Query\Model\FormulaField;
-use DataWarehouse\Query\Model\OrderBy;
-use DataWarehouse\Query\Model\Schema as Schema;
-use DataWarehouse\Query\Model\Table as Table;
-use DataWarehouse\Query\Model\TableField;
-use DataWarehouse\Query\Model\WhereCondition;
-use DataWarehouse\Query\Query;
-
-/**
- * Class GroupByDomain
- *
- * @package DataWarehouse\Query\Cloud\GroupBys
- */
-class GroupByDomain extends GroupBy
+class GroupByDomain extends \DataWarehouse\Query\Cloud\GroupBy
 {
-    /**
-     * The fields that data including this GroupBy should be ordered by.
-     *
-     * @var array
-     */
-    private $_order_fields;
-
-    /**
-     * The schema that this data resides in.
-     *
-     * @var Schema
-     */
-    private $schema;
-
-    /**
-     * The table that this data resides in.
-     *
-     * @var Table
-     */
-    private $table;
-
-    /**
-     * @see GroupBy::getLabel
-     */
     public static function getLabel()
     {
         return 'Domain';
     }
 
-    /**
-     * @see GroupBy::getInfo
-     */
     public function getInfo()
     {
-        return "A domain is a high-level container for projects, users and groups";
+        return 'A domain is a high-level container for projects, users and groups';
     }
-
     public function __construct()
     {
         parent::__construct(
             'domain',
             array(),
-            '
-                SELECT DISTINCT
-                    d.id,
-                    d.name as short_name,
-                    d.name as long_name
-                FROM modw_cloud.domains d
-                ORDER BY resource_id, name
-            '
+            'SELECT DISTINCT
+                d.name AS id,
+                d.name AS short_name,
+                d.name AS long_name
+            FROM domains d
+            WHERE 1
+            ORDER BY gt.id',
+            array()
         );
-
-        $this->_id_field_name = 'id';
-        $this->_long_name_field_name = 'name';
+        $this->_id_field_name = 'name';
         $this->_short_name_field_name = 'name';
-        $this->_order_fields = array('resource_id','name');
-
-        $this->schema = new Schema('modw_cloud');
-        $this->table = new Table($this->schema, 'domains', 'dm');
+        $this->_long_name_field_name = 'name';
+        $this->_order_id_field_name = 'name';
+        $this->schema = new \DataWarehouse\Query\Model\Schema('modw_cloud');
+        $this->table = new \DataWarehouse\Query\Model\Table($this->schema, 'domains', 'dm');
     }
 
-    /**
-     * @see GroupBy::applyTo()
-     */
-    public function applyTo(Query &$query, Table $dataTable, $multiGroup = false)
+    public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
     {
         $query->addTable($this->table);
 
-        $domainIdField = new TableField($this->table, $this->_id_field_name, $this->getColumnName('id', $multiGroup));
-        $domainNameField = new TableField($this->table, $this->_long_name_field_name, $this->getColumnName('name', $multiGroup));
+        $domainIdField = new \DataWarehouse\Query\Model\TableField($this->table, 'id');
+        $agg_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'domain_id');
 
-        $query->addField($domainIdField);
-        $query->addField(new TableField($this->table, $this->_long_name_field_name, $this->getColumnName('name', $multiGroup)));
-        $query->addField(new TableField($this->table, $this->_short_name_field_name, $this->getColumnName('short_name', $multiGroup)));
-        $query->addField(new TableField($this->table, $this->_id_field_name, $this->getColumnName('order_id', $multiGroup)));
+        $query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition(
+            $domainIdField,
+            '=',
+            $agg_id_field
+        ));
 
-        $query->addGroup($domainNameField);
+        $id_field = new \DataWarehouse\Query\Model\TableField($this->table, $this->_id_field_name, $this->getIdColumnName($multi_group));
+        $name_field =  new \DataWarehouse\Query\Model\TableField($this->table, $this->_long_name_field_name, $this->getLongNameColumnName($multi_group));
+        $shortname_field =  new \DataWarehouse\Query\Model\TableField($this->table, $this->_short_name_field_name, $this->getShortNameColumnName($multi_group));
+        $order_id_field = new \DataWarehouse\Query\Model\TableField($this->table, $this->_order_id_field_name, $this->getOrderIdColumnName($multi_group));
 
-        $fkField = new TableField($dataTable, 'domain_id');
+        $query->addField($order_id_field);
+        $query->addField($id_field);
+        $query->addField($name_field);
+        $query->addField($shortname_field);
 
-        $query->addWhereCondition(new WhereCondition($domainIdField, '=', $fkField));
+        $query->addGroup($id_field);
 
         $this->addOrder($query);
     }
 
-    public function addWhereJoin(Query &$query, Table $data_table, $multi_group, $operation, $whereConstraint) {
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint) {
         $query->addTable($this->table);
-        $domainIdField = new TableField($this->table, $this->_id_field_name);
 
-        $query->addWhereCondition(
-            new WhereCondition(
-                $domainIdField,
-                '=',
-                new TableField($data_table, 'domain_id')
-            )
-        );
-        // the where condition that specifies the constraint on the joined table
+        $domainIdField = new \DataWarehouse\Query\Model\TableField($this->table, 'id');
+        $agg_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'domain_id');
+
+        // the where condition that specifies the join of the tables
+        $query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition(
+            $domainIdField,
+            '=',
+            $agg_id_field
+        ));
+
         if (is_array($whereConstraint)) {
             $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
         }
 
+        $id_field = new \DataWarehouse\Query\Model\TableField(
+            $this->table,
+            $this->_id_field_name,
+            $this->getIdColumnName($multi_group)
+        );
+
         $query->addWhereCondition(
-            new WhereCondition(
-                $domainIdField,
+            new \DataWarehouse\Query\Model\WhereCondition(
+                $id_field,
                 $operation,
                 $whereConstraint
             )
         );
     }
 
-    /**
-     * Add this GroupBy's order by clauses to the provided `Query` instance.
-     *
-     * @param Query $query      The query to add this GroupBy's order by clauses to.
-     * @param bool $multi_group Whether or not there are multiple Group By's?
-     * @param string $dir       Which direction the order by's are to sort.
-     * @param bool $prepend     Whether or not to prepend or append this Group By's order by clauses.
-     */
-    public function addOrder(Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
+    public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
-        foreach($this->_order_fields as $orderFieldName) {
-            $orderGroupBy = new OrderBy(new TableField($this->table, $orderFieldName), $dir, $this->getName());
-            if ($prepend === true) {
-                $query->prependOrder($orderGroupBy);
-            } else {
-                $query->addOrder($orderGroupBy);
-            }
-        }
-    }
-
-    /**
-     * Conditionally format $columnName based on $multiGroup.
-     *
-     * @param $columnName
-     * @param bool $multiGroup
-     * @return string
-     */
-    private function getColumnName($columnName, $multiGroup = false)
-    {
-        if ($multiGroup === false) {
-            return $columnName;
+        $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->table, $this->_order_id_field_name), $dir, $this->getName());
+        if ($prepend === true) {
+            $query->prependOrder($orderField);
         } else {
-            return $this->getName() . '_' . $columnName;
+            $query->addOrder($orderField);
         }
     }
-
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'domain_id');
+        return parent::pullQueryParameters2($request, 'SELECT id FROM modw_cloud.domains WHERE name IN (_filter_)', 'domain_id');
     }
-
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT name AS field_label FROM modw_cloud.domains WHERE id IN (_filter_) ORDER BY id'
+            'SELECT DISTINCT name AS field_label FROM modw_cloud.domains WHERE name IN (_filter_) ORDER BY name'
         );
     }
 }

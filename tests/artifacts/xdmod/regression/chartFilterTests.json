@@ -362,8 +362,8 @@
             ]
         },
         "expected": {
-            "subtitle": "Domain = ( Default,  adjunct )",
-            "yvalue": 2828.6375
+            "subtitle": "Domain = ( adjunct,  Default )",
+            "yvalue": 81277.6197
         }
     },
     {
