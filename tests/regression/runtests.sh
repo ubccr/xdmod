@@ -9,9 +9,8 @@ then
     junit_output_dir="$2"
 fi
 
-if [ -z $XDMOD_REALMS ]; then
-    export XDMOD_REALMS=$(echo `mysql -Ne "SELECT name FROM moddb.realms"` | tr ' ' ',')
-fi
+XDMOD_REALMS=${XDMOD_REALMS:-'jobs,storage,cloud'}
+export XDMOD_REALMS
 
 # Output PHPUnit logging options.  First argument is a unique identifier that
 # will be used in the log file name.
