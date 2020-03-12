@@ -84,8 +84,7 @@ build($realms, $logger);
 function build($realms, $logger){
 
     try {
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($logger);
+        $filterListBuilder = new FilterListBuilder($logger);
         if (count($realms) > 0){
             foreach($realms as $realm){
                 if(!empty($realm)){
