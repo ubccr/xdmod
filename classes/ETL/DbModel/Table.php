@@ -1141,6 +1141,11 @@ ORDER BY trigger_name ASC";
                 break;
 
             case 'schema':
+                // Changing the schema is not allowed.
+                if (isset($this->properties[$property])) {
+                    $this->logAndThrowException('Table schema may not be changed');
+                }
+
                 // Set schema for all SchemaEntity properties if not set.
                 foreach ($this->foreign_key_constraints as $constraint) {
                     if ($constraint->schema === null) {
