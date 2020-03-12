@@ -4,7 +4,6 @@ namespace IntegrationTests;
 
 use \TestHarness\Utilities;
 
-
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     protected static $XDMOD_REALMS;
