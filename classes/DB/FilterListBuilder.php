@@ -116,8 +116,8 @@ class FilterListBuilder extends Loggable
         $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$mainTableName}`;");
         $db->execute(
             "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
-                `{$dimensionName}` {$dimensionColumnType} NOT NULL,
-                PRIMARY KEY (`{$dimensionName}`)
+                `{$dimensionId}` {$dimensionColumnType} NOT NULL,
+                PRIMARY KEY (`{$dimensionId}`)
             );"
         );
         $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
@@ -199,10 +199,10 @@ class FilterListBuilder extends Loggable
             $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$pairTableName}`");
             $db->execute(
                 "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
-                    `{$firstDimensionName}` {$firstDimensionColumnType} NOT NULL,
-                    `{$secondDimensionName}` {$secondDimensionColumnType} NOT NULL,
-                    PRIMARY KEY (`{$firstDimensionName}`, `{$secondDimensionName}`),
-                    INDEX `idx_second_dimension` (`{$secondDimensionName}` ASC)
+                    `{$firstDimensionId}` {$firstDimensionColumnType} NOT NULL,
+                    `{$secondDimensionId}` {$secondDimensionColumnType} NOT NULL,
+                    PRIMARY KEY (`{$firstDimensionId}`, `{$secondDimensionId}`),
+                    INDEX `idx_second_dimension` (`{$secondDimensionId}` ASC)
                 )"
             );
 
