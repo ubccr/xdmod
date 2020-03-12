@@ -36,16 +36,6 @@ class FilterListBuilder extends Loggable
     private static $rolesDimensionNames = null;
 
     /**
-     * Construct filter list builder.
-     */
-    public function __construct()
-    {
-        if ($this->_logger === null) {
-            $this->_logger = Log::singleton('null');
-        }
-    }
-
-    /**
      * Build filter lists for all realms' dimensions.
      */
     public function buildAllLists()
@@ -53,7 +43,7 @@ class FilterListBuilder extends Loggable
         $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'datawarehouse.json',
             CONFIG_DIR,
-            $this->_logger
+            $this->logger
         );
 
         // Get the realms to be processed.
@@ -106,56 +96,42 @@ class FilterListBuilder extends Loggable
 
         $db = DB::factory('datawarehouse');
         $targetSchema = FilterListHelper::getSchemaName();
-        $mainTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$mainTableName'");
-        if (empty($mainTableExistsResults)) {
-            try {
-                $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
-            } catch (TableNotFoundException $e) {
-                $this->_logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
-                return;
-            }
-
-            $dimensionColumnType = $dimensionProperties['type'];
-
-            $db->execute(
-                "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
-                    `{$dimensionName}` {$dimensionColumnType} NOT NULL,
-                    PRIMARY KEY (`{$dimensionName}`)
-                );"
-            );
-        }
 
         try {
-            $db->beginTransaction();
-
-            $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
-
-            $selectTables = $dimensionQuery->getSelectTables();
-            $selectFields = $dimensionQuery->getSelectFields();
-            $wheres = $dimensionQuery->getWhereConditions();
-
-            $idField = $selectFields['id'];
-
-            $selectTablesStr = implode(', ', $selectTables);
-            $wheresStr = implode(' AND ', $wheres);
-
-            $db->execute("TRUNCATE TABLE `{$targetSchema}`.`{$mainTableName}`");
-            $db->execute(
-                "INSERT INTO
-                    `{$targetSchema}`.`{$mainTableName}`
-                SELECT DISTINCT
-                    $idField
-                FROM $selectTablesStr
-                WHERE $wheresStr"
-            );
-
-            $db->commit();
-
-            $this->builtListTables[$mainTableName] = true;
-        } catch (Exception $e) {
-            $db->rollBack();
-            throw $e;
+            $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
+        } catch (TableNotFoundException $e) {
+            $this->logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
+            return;
         }
+        $dimensionColumnType = $dimensionProperties['type'];
+        $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$mainTableName}`;");
+        $db->execute(
+            "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
+                `{$dimensionName}` {$dimensionColumnType} NOT NULL,
+                PRIMARY KEY (`{$dimensionName}`)
+            );"
+        );
+        $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
+
+        $selectTables = $dimensionQuery->getSelectTables();
+        $selectFields = $dimensionQuery->getSelectFields();
+        $wheres = $dimensionQuery->getWhereConditions();
+
+        $idField = $selectFields['id'];
+
+        $selectTablesStr = implode(', ', $selectTables);
+        $wheresStr = implode(' AND ', $wheres);
+
+        $db->execute(
+            "INSERT INTO
+                `{$targetSchema}`.`{$mainTableName}`
+            SELECT DISTINCT
+                $idField
+            FROM $selectTablesStr
+            WHERE $wheresStr"
+        );
+
+        $this->builtListTables[$mainTableName] = true;
 
         // Generate list tables pairing this dimension with every other
         // dimension in the realm that's associated with roles.
@@ -200,61 +176,50 @@ class FilterListBuilder extends Loggable
 
             // Generate the pair table. If the pair table does not exist,
             // create it.
-            $pairTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$pairTableName'");
-            if (empty($pairTableExistsResults)) {
-                try {
-                    $firstDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $firstGroupBy);
-                    $firstDimensionColumnType = $firstDimensionProperties['type'];
-                    $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
-                    $secondDimensionColumnType = $secondDimensionProperties['type'];
-                } catch (TableNotFoundException $e) {
-                    $this->_logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
-                    continue;
-                }
-                $db->execute(
-                    "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
-                        `{$firstDimensionName}` {$firstDimensionColumnType} NOT NULL,
-                        `{$secondDimensionName}` {$secondDimensionColumnType} NOT NULL,
-                        PRIMARY KEY (`{$firstDimensionName}`, `{$secondDimensionName}`),
-                        INDEX `idx_second_dimension` (`{$secondDimensionName}` ASC)
-                    )"
-                );
-            }
-
             try {
-                $db->beginTransaction();
-
-                $firstSelectTables = $firstDimensionQuery->getSelectTables();
-                $firstSelectFields = $firstDimensionQuery->getSelectFields();
-                $firstWheres = $firstDimensionQuery->getWhereConditions();
-                $secondSelectTables = $secondDimensionQuery->getSelectTables();
-                $secondSelectFields = $secondDimensionQuery->getSelectFields();
-                $secondWheres = $secondDimensionQuery->getWhereConditions();
-
-                $firstIdField = $firstSelectFields['id'];
-                $secondIdField = $secondSelectFields['id'];
-
-                $selectTablesStr = implode(', ', array_unique(array_merge($firstSelectTables, $secondSelectTables)));
-                $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
-
-                $db->execute("TRUNCATE TABLE `{$targetSchema}`.`{$pairTableName}`");
-                $db->execute(
-                    "INSERT INTO
-                        `{$targetSchema}`.`{$pairTableName}`
-                    SELECT DISTINCT
-                        $firstIdField,
-                        $secondIdField
-                    FROM $selectTablesStr
-                    WHERE $wheresStr"
-                );
-
-                $db->commit();
-
-                $this->builtListTables[$pairTableName] = true;
-            } catch (Exception $e) {
-                $db->rollBack();
-                throw $e;
+                $firstDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $firstGroupBy);
+                $firstDimensionColumnType = $firstDimensionProperties['type'];
+                $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
+                $secondDimensionColumnType = $secondDimensionProperties['type'];
+            } catch (TableNotFoundException $e) {
+                $this->logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
+                continue;
             }
+            $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$pairTableName}`");
+            $db->execute(
+                "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
+                    `{$firstDimensionName}` {$firstDimensionColumnType} NOT NULL,
+                    `{$secondDimensionName}` {$secondDimensionColumnType} NOT NULL,
+                    PRIMARY KEY (`{$firstDimensionName}`, `{$secondDimensionName}`),
+                    INDEX `idx_second_dimension` (`{$secondDimensionName}` ASC)
+                )"
+            );
+
+
+            $firstSelectTables = $firstDimensionQuery->getSelectTables();
+            $firstSelectFields = $firstDimensionQuery->getSelectFields();
+            $firstWheres = $firstDimensionQuery->getWhereConditions();
+            $secondSelectTables = $secondDimensionQuery->getSelectTables();
+            $secondSelectFields = $secondDimensionQuery->getSelectFields();
+            $secondWheres = $secondDimensionQuery->getWhereConditions();
+
+            $firstIdField = $firstSelectFields['id'];
+            $secondIdField = $secondSelectFields['id'];
+
+            $selectTablesStr = implode(', ', array_unique(array_merge($firstSelectTables, $secondSelectTables)));
+            $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
+
+            $db->execute(
+                "INSERT INTO
+                    `{$targetSchema}`.`{$pairTableName}`
+                SELECT DISTINCT
+                    $firstIdField,
+                    $secondIdField
+                FROM $selectTablesStr
+                WHERE $wheresStr"
+            );
+
+            $this->builtListTables[$pairTableName] = true;
         }
     }
 
@@ -330,7 +295,7 @@ class FilterListBuilder extends Loggable
     {
         $db = DB::factory('datawarehouse');
         $helper = MySQLHelper::factory($db);
-        $helper->setLogger($this->_logger);
+        $helper->setLogger($this->logger);
 
         // TODO After GroupBy is refactored, use GroupBy methods to get the
         // table and column names,
