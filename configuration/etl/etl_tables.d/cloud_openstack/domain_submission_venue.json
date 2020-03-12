@@ -47,29 +47,6 @@
         ],
         "type": "BTREE"
       }
-    ],
-    "foreign_key_constraints": [
-      {
-        "name": "fk_dsv_domain_id",
-        "columns": [
-          "domain_id"
-        ],
-        "referenced_table": "domains",
-        "referenced_columns": [
-          "id"
-        ],
-        "on_delete": "CASCADE"
-      },
-      {
-        "name": "fk_dsv_submission_venue_id",
-        "columns": [
-          "submission_venue_id"
-        ],
-        "referenced_table": "submission_venue",
-        "referenced_columns": [
-          "submission_venue_id"
-        ]
-      }
     ]
   }
 }
