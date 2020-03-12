@@ -74,7 +74,7 @@ class ComplexDataset
 
             try {
                 $stat = $realm->getStatisticObject($data_description->metric);
-                $statLabel = $stat->getId();
+                $statLabel = $stat->getName();
                 $metrics[$statLabel] = $stat->getHtmlDescription();
             } catch (\Exception $ex) {
                 continue;
