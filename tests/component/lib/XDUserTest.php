@@ -630,7 +630,7 @@ class XDUserTest extends BaseTest
     public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -786,7 +786,7 @@ class XDUserTest extends BaseTest
     public function testIsCenterDirectorOfOrganizationValidCenter($userName, $organizationId, $expected)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

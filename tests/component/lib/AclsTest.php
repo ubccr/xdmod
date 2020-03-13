@@ -65,7 +65,7 @@ TXT;
     public function testHasDataAccess(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $userName = $options['username'];
@@ -170,7 +170,7 @@ TXT;
     public function testGetQueryDescripters(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -379,7 +379,7 @@ TXT;
     public function testAclsGetDisabledMenus(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $username = $options['username'];

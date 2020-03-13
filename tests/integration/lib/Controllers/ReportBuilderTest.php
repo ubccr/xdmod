@@ -88,7 +88,7 @@ class ReportBuilderTest extends BaseTest
     public function testEnumAvailableCharts(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -149,7 +149,7 @@ class ReportBuilderTest extends BaseTest
     public function testEnumReports(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -211,7 +211,7 @@ class ReportBuilderTest extends BaseTest
     public function testCreateReport(array $options)
     {
         //TODO: Needs further integration for other realms
-        if (!in_array("Jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

@@ -73,7 +73,7 @@ describe('Metric Explorer', function metricExplorer() {
         });
     });
     // TODO: Add tests for storage and cloud realms
-    if (XDMOD_REALMS.includes('Jobs')) {
+    if (XDMOD_REALMS.includes('jobs')) {
         describe('Create and save a chart', function () {
             it('Add data via metric catalog', function () {
                 me.createNewChart(chartName, 'Timeseries', 'Line');
