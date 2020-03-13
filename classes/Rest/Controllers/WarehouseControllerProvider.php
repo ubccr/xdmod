@@ -994,27 +994,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
     public function getDimensionName(Request $request, Application $app, $dimensionId)
     {
         $user = $this->getUserFromRequest($request);
-        $realm = $request->get('realm');
+        $dimensionName = MetricExplorer::getDimensionName($user, $dimensionId);
+        $success = !empty($dimensionName);
 
-        Acls::hasDataAccess($user, $realm, $dimensionId);
-
-        $realmObj = \Realm\Realm::factory($realm);
-        if ($realmObj->groupByExists($dimensionId)){
-            $status = 200;
-            $groupBy = $realmObj->getGroupByObject($dimensionId);
-            $payload = array(
-                'success' => true,
-                'results' => array(
-                    'name' => $groupBy->getName()
-                )
-            );
-        } else {
-            $status = 404;
-            $payload = array(
-                'success' => false,
-                'message' => "Unable to find a name for dimension: $dimensionId"
-            );
-        }
+        $status = $success ? 200 : 404;
+        $payload = $success
+                 ? array(
+                     'success' => $success,
+                     'results' => array(
+                         'name' => $dimensionName
+                     ))
+                 : array(
+                         'success' => false,
+                         'message' => "Unable to find a name for dimension: $dimensionId"
+                 );
 
         return $app->json(
             $payload,
@@ -1036,34 +1029,21 @@ class WarehouseControllerProvider extends BaseControllerProvider
     public function getDimensionValueName(Request $request, Application $app, $dimensionId, $valueId)
     {
         $user = $this->getUserFromRequest($request);
-        $realmName = $request->get('realm');
-        Acls::hasDataAccess($user, $realmName, $dimensionId);
+        $valueName = MetricExplorer::getDimensionValueName($user, $dimensionId, $valueId);
+        $success = !empty($valueName);
 
-        $realm = \Realm\Realm::factory($realmName);
-        $groupBy = $realm->getGroupByObject($dimensionId);
-
-        $possibleValues = $groupBy->getAttributeValues(array(
-            'id' => $valueId
-        ));
-
-        $success = !empty($possibleValues);
-
-        if ($success) {
-            $status = 200;
-            $payload = array(
-                'success' => $success,
-                'results' => array(
-                    'name' => $possibleValues[0]['short_name']
-                )
-            );
-        }
-        else {
-            $status = 404;
-            $payload =  array(
-                'success' => $success,
-                'message' => "Unable to find a name for dimension: $dimensionId | value: $valueId"
-            );
-        }
+        $status = $success ? 200 : 404;
+        $payload = $success
+                 ? array(
+                     'success' => $success,
+                     'results' => array(
+                         'name' => $valueName
+                     )
+                 )
+                 : array(
+                     'success' => $success,
+                     'message' => "Unable to find a name for dimesion: $dimensionId | value: $valueId"
+                 );
 
         return $app->json(
             $payload,
