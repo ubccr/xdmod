@@ -683,22 +683,11 @@ ORDER BY trigger_name ASC";
 
         $foreignKeyConstraintCreateList = array();
         foreach ( $this->foreign_key_constraints as $name => $constraint ) {
-            // The table schema may have been set after the table was initially
-            // created. If the foreign key constraint doesn't explicitly define
-            // a schema, default to the table's schema.
-            if ( null === $constraint->schema ) {
-                $constraint->schema = $this->schema;
-            }
             $foreignKeyConstraintCreateList[$name] = $constraint->getSql($includeSchema);
         }
 
         $triggerCreateList = array();
         foreach ( $this->triggers as $name => $trigger ) {
-            // The table schema may have been set after the table was initially created. If the trigger
-            // doesn't explicitly define a schema, default to the table's schema.
-            if ( null === $trigger->schema ) {
-                $trigger->schema = $this->schema;
-            }
             $triggerCreateList[$name] = $trigger->getSql($includeSchema);
         }
 
@@ -974,9 +963,6 @@ ORDER BY trigger_name ASC";
         // --------------------------------------------------------------------------------
         // Process triggers
 
-        // The table schema may have been set after the table was initially created. If the trigger
-        // doesn't explicitly define a schema, default to the table's schema.
-
         $currentTriggerNames = $this->getTriggerNames();
         $destTriggerNames = $destination->getTriggerNames();
 
@@ -987,8 +973,9 @@ ORDER BY trigger_name ASC";
         // Drop triggers first, then alter, then create
 
         foreach ( $dropTriggerNames as $name ) {
+            $schema = $this->getTrigger($name)->schema;
             $triggerList[] = "DROP TRIGGER " .
-                ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
+                ( null !== $schema && $includeSchema ? $this->quote($schema) . "." : "" ) .
                 $this->quote($name) . ";";
         }
 
@@ -998,8 +985,9 @@ ORDER BY trigger_name ASC";
                 continue;
             }
 
+            $schema = $this->getTrigger($name)->schema;
             $triggerList[] = "DROP TRIGGER " .
-                ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
+                ( null !== $schema && $includeSchema ? $this->quote($schema) . "." : "" ) .
                 $this->quote($name) . ";";
             $triggerList[] = $destination->getTrigger($name)->getSql($includeSchema);
         }
@@ -1072,7 +1060,7 @@ ORDER BY trigger_name ASC";
     public function __set($property, $value)
     {
         // If we are not setting a property that is a special case, just call the main setter
-        $specialCaseProperties = array('columns', 'indexes', 'foreign_key_constraints', 'triggers');
+        $specialCaseProperties = array('columns', 'indexes', 'foreign_key_constraints', 'triggers', 'schema');
 
         if ( ! in_array($property, $specialCaseProperties) ) {
             parent::__set($property, $value);
@@ -1155,6 +1143,26 @@ ORDER BY trigger_name ASC";
                         }
                     }
                 }
+                break;
+
+            case 'schema':
+                // Changing the schema is not allowed.
+                if (isset($this->properties[$property])) {
+                    $this->logAndThrowException('Table schema may not be changed');
+                }
+
+                // Set schema for all SchemaEntity properties if not set.
+                foreach ($this->foreign_key_constraints as $constraint) {
+                    if ($constraint->schema === null) {
+                        $constraint->schema = $value;
+                    }
+                }
+                foreach ($this->triggers as $trigger) {
+                    if ($trigger->schema === null) {
+                        $trigger->schema = $value;
+                    }
+                }
+                $this->properties[$property] = $value;
                 break;
 
             default:

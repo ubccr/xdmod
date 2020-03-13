@@ -206,6 +206,42 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test inheriting of schema from table.
+     */
+    public function testSchemaInheritance()
+    {
+        $schemaName = 'my_schema';
+        $config = (object) [
+            'schema' => $schemaName,
+            'name' => 'test',
+            'engine' => 'InnoDB',
+            'columns' => [
+                (object) [
+                    'name' => 'id',
+                    'type' => 'int(11)'
+                ]
+            ],
+            'indexes' => [
+                (object) [
+                    'columns' => ['id']
+                ]
+            ],
+            'foreign_key_constraints' => [
+                (object) [
+                    'columns' => ['id'],
+                    'referenced_table' => 'other',
+                    'referenced_columns' => ['id']
+                ]
+            ]
+        ];
+        $table = new Table($config, '`', self::$logger);
+        $table->verify();
+        foreach ($table->foreign_key_constraints as $constraint) {
+            $this->assertEquals($schemaName, $constraint->schema);
+        }
+    }
+
+    /**
      * Convert associative arrays to stdClass recursively.
      *
      * @param array $obj
