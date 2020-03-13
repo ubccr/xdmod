@@ -618,7 +618,7 @@ EOF;
         //TODO: Needs further integration for storage realm
         $realmData = array();
 
-        if (in_array("Cloud", self::getRealms())) {
+        if (in_array("cloud", self::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
