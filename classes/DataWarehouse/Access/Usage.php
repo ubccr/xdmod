@@ -107,8 +107,7 @@ class Usage extends Common
                 $errorstat = \Realm\Realm::getStandardErrorStatisticFromStatistic(
                     $userStatistic
                 );
-
-                if (in_array($errorstat, $realm->getStatisticIds()) ) {
+                if ($realm->statisticExists($errorstat)) {
                     $statUsageChartSettings['enable_errors'] = 'y';
                 }
                 $statUsageChartSettings['statistic'] = $userStatistic;
@@ -181,11 +180,6 @@ class Usage extends Common
 
             // Get the request's group by.
             $usageGroupBy = \xd_utilities\array_get($this->request, 'group_by', 'none');
-            if ( ! $realm->groupByExists($usageGroupBy) ) {
-                throw new UnknownGroupByException(
-                    sprintf('Query: Unknown Group By "%s" Specified', $usageGroupBy)
-                );
-            }
             $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
             // Get whether or not the request is for a timeseries chart.
             $usageIsTimeseries = \xd_utilities\array_get($this->request, 'dataset_type') === 'timeseries';

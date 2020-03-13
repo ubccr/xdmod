@@ -521,10 +521,10 @@ var generateGroupBy = function (itemAlias, column)
     var label = column.label;
     var description = column.comments;
     for( var tagidx in column.dynamictags ) {
-        label = label.replace(':label_' + tagidx, column.dynamictags[tagidx]);
-        label = label.replace(':Label_' + tagidx, wordToUpper(column.dynamictags[tagidx]));
-        description = description.replace(':label_' + tagidx, column.dynamictags[tagidx]);
-        description = description.replace(':Label_' + tagidx, wordToUpper(column.dynamictags[tagidx]));
+        label = label.replace(new RegExp(':label_' + tagidx, 'g'), column.dynamictags[tagidx]);
+        label = label.replace(new RegExp(':Label_' + tagidx, 'g'), wordToUpper(column.dynamictags[tagidx]));
+        description = description.replace(new RegExp(':label_' + tagidx, 'g'), column.dynamictags[tagidx]);
+        description = description.replace(new RegExp(':Label_' + tagidx, 'g'), wordToUpper(column.dynamictags[tagidx]));
     }
     return {
         attribute_table: column.dimension_table,
