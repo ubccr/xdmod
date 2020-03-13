@@ -71,7 +71,7 @@ class UserInterfaceTest extends BaseUserAdminTest
         # Check expected file
         $expected = array();
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, "output/" . strtolower($realm));
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, "output/$realm");
 
             # Create missing files/directories
             if (!is_file($expectedOutputFile)) {

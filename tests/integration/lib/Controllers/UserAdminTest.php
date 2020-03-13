@@ -283,7 +283,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         # Handle special case where there's no PI data (Cloud Realm enabled only)
-        if (self::getRealms() == array("Cloud")) {
+        if (self::getRealms() == array("cloud")) {
             return Json::loadFile(
                 $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
             );
@@ -342,7 +342,7 @@ class UserAdminTest extends BaseUserAdminTest
         # Check expected file
         $expected = array();
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/" . strtolower($realm));
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
 
             if(!is_file($expectedOutputFile)) {
                 $newFile = array();
