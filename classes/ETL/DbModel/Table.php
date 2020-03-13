@@ -170,6 +170,11 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
             }
         }  // foreach ( $this->indexes as $index )
 
+
+        if ( count($this->foreign_key_constraints) > 0 && $this->engine !== 'innodb' ) {
+            $this->logAndThrowException('Foreign key constraints are only supported by InnoDB');
+        }
+
         // Verify foreign key constraint columns match table columns and are
         // contained in the beginning of an index.
 
