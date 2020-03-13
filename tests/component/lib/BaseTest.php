@@ -61,7 +61,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $xdmod_realms = array();
         $rawRealms = Realms::getRealms();
         foreach($rawRealms as $item) {
-            array_push($xdmod_realms, $item->name);
+            array_push($xdmod_realms, strtolower($item->name));
         }
         self::$XDMOD_REALMS = $xdmod_realms;
     }

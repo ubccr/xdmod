@@ -1,47 +1,50 @@
 <?php
+require_once dirname(__FILE__).'/../../configuration/linker.php';
 
-   $returnData = array();
-   
-   try
-   {
-   
-      $end_date = date('Y-m-d');
-      $start_date = date('Y-m-d',  mktime(0, 0, 0, date("m"), date("d")-30, date("Y")));
+$returnData = array();
 
-      if(isset($_GET['start_date']))
-      {
-         $start_date = $_GET['start_date'];
-      }
-      
-      if(isset($_GET['end_date']))
-      {
-         $end_date = $_GET['end_date'];
-      }
+try
+{
+    $end_date = date('Y-m-d');
+    $start_date = date('Y-m-d',  mktime(0, 0, 0, date("m"), date("d")-30, date("Y")));
 
-      $aggregation_unit = 'auto';
-      
-      if(isset($_GET['aggregation_unit']))
-      {
-         $aggregation_unit = $_GET['aggregation_unit'];
-      }
+    if(isset($_GET['start_date'])){
+        $start_date = $_GET['start_date'];
+    }
 
-      $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date,$end_date,'none', 'all');
-      $results = $query->execute();
+    if(isset($_GET['end_date'])){
+        $end_date = $_GET['end_date'];
+    }
 
-      $returnData =  array(
-            'totalCount' => 1, 
-            'message' =>'', 
-            'data' => array($results),
-            'success' => true
-      );
+    $aggregation_unit = 'auto';
+    $availableAggregationUnits = array_keys(\DataWarehouse\Query\TimeAggregationUnit::getRegsiteredAggregationUnits());
+    if(isset($_GET['aggregation_unit'])){
+        $key = array_search($_GET['aggregation_unit'], $availableAggregationUnits);
+        if(!is_null($key)){
+            $aggregation_unit = $availableAggregationUnits[$key];
+        }
+    }
 
-   }
-   catch(Exception $ex) {
+    $query = new \DataWarehouse\Query\AggregateQuery(
+        'Jobs',
+        $aggregation_unit,
+        $start_date,
+        $end_date,
+        'none',
+        'all'
+    );
+    $results = $query->execute();
 
-      \xd_response\presentError($ex->getMessage());
-      
-   }
+    $returnData =  array(
+        'totalCount' => 1,
+        'message' =>'',
+        'data' => array($results),
+        'success' => true
+    );
 
-   \xd_controller\returnJSON($returnData);
+}
+catch(Exception $ex) {
+    \xd_response\presentError($ex->getMessage());
+}
 
-?>
+\xd_controller\returnJSON($returnData);

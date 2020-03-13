@@ -579,6 +579,7 @@ FROM acl_group_bys agb
   JOIN statistics s
     ON s.statistic_id = agb.statistic_id
   LEFT JOIN statistics sem
+-- Example: Statistic id is avg_jobs_running while SEM statistic id is em_avg_jobs_running
     ON sem.name = CONCAT('sem_', s.name)
 WHERE
   ua.user_id = :user_id
@@ -938,8 +939,8 @@ SQL;
         $db = DB::factory('database');
 
         $query = <<<SQL
-SELECT a.* 
-FROM acls a 
+SELECT a.*
+FROM acls a
   JOIN acl_types at ON a.acl_type_id = at.acl_type_id
 WHERE at.name = :acl_type_name
 SQL;
@@ -1168,7 +1169,7 @@ SELECT DISTINCT agb.realm_id
 
     WHERE
       r.name = :realm_name AND
-      gb.name = :group_by_name 
+      gb.name = :group_by_name
 SQL;
         // Query to tell whether or not they have a 'query descriptor' and it's disabled but still
         // visible.
@@ -1185,14 +1186,12 @@ SELECT DISTINCT agb.realm_id
 
     WHERE agb.enabled = false AND
           r.name = :realm_name AND
-          gb.name = :group_by_name 
+          gb.name = :group_by_name
 
 SQL;
 
-        // NOTE: we explicitly strtolower the $realmName because it is often passed in ucfirst which
-        // will not match realms.name values.
         $params = array(
-            ':realm_name' => strtolower($realmName),
+            ':realm_name' => $realmName,
             ':group_by_name' => $groupByName,
             ':user_id' => $user->getUserID()
         );

@@ -93,8 +93,6 @@ class HighChartTimeseries2 extends HighChart2
     //-------------------------------------------------
     private function getDataname($stat, $remainder_count) {
 
-            // use statistics alias for object
-            //$stat = $dataObj->getStatistic()->getAlias(); or $data_description->metric
             $useMean = $this->useMean($stat );
 
             $isMin = strpos($stat, 'min_') !== false ;
@@ -167,18 +165,16 @@ class HighChartTimeseries2 extends HighChart2
                 $prevCategory = $category;
             }
 
-            // Determine statistic name. In this case use the Aggregate classname to get the stat.
-            // (Speculative). August 2015
-            $query_classname = '\\DataWarehouse\\Query\\'.$data_description->realm.'\\Aggregate';
             try
             {
-                $stat = $query_classname::getStatistic($data_description->metric);
+                $realm = \Realm\Realm::factory($data_description->realm);
+                $stat = $realm->getStatisticObject($data_description->metric);
             }
             catch(\Exception $ex)
             {
                 continue;
             }
-            $this->_chart['metrics'][$stat->getLabel(false)] = $stat->getInfo();
+            $this->_chart['metrics'][$stat->getName(false)] = $stat->getHtmlDescription();
 
             // determine axisId
             if($this->_shareYAxis)
@@ -215,16 +211,11 @@ class HighChartTimeseries2 extends HighChart2
             // === mind you, this is also a big long loop ===
             foreach($yAxisDataDescriptions as $data_description_index => $data_description)
             {
-                //if($data_description->display_type == 'pie') $data_description->display_type = 'line';
-                $query_classname = '\\DataWarehouse\\Query\\'.$data_description->realm.'\\Timeseries';
-
-                $query = new $query_classname(
+                $query = new \DataWarehouse\Query\TimeseriesQuery(
+                    $data_description->realm,
                     $this->_aggregationUnit,
                     $this->_startDate,
-                    $this->_endDate,
-                    null,
-                    null,
-                    array()
+                    $this->_endDate
                 );
 
                 // @refer ComplexDataset::determineRoleParameters()
@@ -266,25 +257,25 @@ class HighChartTimeseries2 extends HighChart2
                 // @refer ComplexDataset::init()
                 $dataSources[$query->getDataSource()] = 1;
                 $group_by = $query->addGroupBy($data_description->group_by);
-                $this->_chart['dimensions'][$group_by->getLabel()] = $group_by->getInfo();
+                $this->_chart['dimensions'][$group_by->getName()] = $group_by->getHtmlDescription();
                 $query->addStat($data_description->metric);
                 if (
                     $data_description->std_err == 1
                     || (
                         property_exists($data_description, 'std_err_labels')
                         && $data_description->std_err_labels
-                    )
-                ) {
-                    try
-                    {
-                         $query->addStat('sem_'.$data_description->metric);
+                    )) {
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $data_description->metric
+                    );
+                    if ($query->getRealm()->statisticExists($semStatId)) {
+                        $query->addStat($semStatId);
                     }
-                    catch(\Exception $ex)
-                    {
+                    else {
                         $data_description->std_err = 0;
                         $data_description->std_err_labels = false;
                     }
-                } // if($data_description->std_err == 1)
+                }
 
                 $query->addOrderByAndSetSortInfo($data_description);
 
@@ -299,7 +290,7 @@ class HighChartTimeseries2 extends HighChart2
                 // JMS: to here we have the ComplexDataset::init() function
 
                 $statisticObject = $query->_stats[$data_description->metric];
-                $decimals = $statisticObject->getDecimals();
+                $decimals = $statisticObject->getPrecision();
 
                 $defaultYAxisLabel = 'yAxis'.$yAxisIndex;
                 $yAxisLabel = ($data_description->combine_type=='percent'? '% of ':'').(
@@ -428,7 +419,6 @@ class HighChartTimeseries2 extends HighChart2
                         'labels' => $this->_swapXY ? array(
                             'enabled' => true,
                             'staggerLines' => 1,
-                            //'step' => round( ( $font_size < 0 ? 0 : $font_size + 5 ) / 11 ),
                             'format' => $xAxisLabelFormat,
                             'style' => array(
                                 'fontWeight'=> 'normal',
@@ -439,8 +429,6 @@ class HighChartTimeseries2 extends HighChart2
                         : array(
                             'enabled' => true,
                             'staggerLines' => 1,
-                            //'overflow' => 'justify',
-                            //'step' => ceil(($font_size<0?0:$font_size+11  ) / 11),
                             'rotation' => $xAxisData->getName() != 'Year'  && $expectedDataPointCount > 25 ? -90 : 0,
                             'format' => $xAxisLabelFormat,
                             'style' => array(
@@ -459,8 +447,11 @@ class HighChartTimeseries2 extends HighChart2
 
                 if($data_description->std_err == 1)
                 {
-                    $semStatisticObject = $query->_stats['sem_'.$data_description->metric];
-                    $semDecimals = $semStatisticObject->getDecimals();
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $data_description->metric
+                    );
+                    $semStatisticObject = $query->_stats[$semStatId];
+                    $semDecimals = $semStatisticObject->getPrecision();
                 }
 
                 // get the full dataset count: how many unique values in the dimension we group by?
@@ -475,12 +466,6 @@ class HighChartTimeseries2 extends HighChart2
                 // thru dataset.
 
                 // Query for the top $limit categories in the realm, over the selected time period
-                //$datagroupDataObject = $dataset->getColumnSortedMax($data_description->metric,
-                //                                                        'dim_'.$data_description->group_by,
-                //                                                        $limit,
-                //                                                        $offset,
-                //                                                        $data_description->realm);
-                // Roll back to the 'old way' of getting top-n sorted dimension values:
                 $datagroupDataObject = $dataset->getColumnUniqueOrdered(
                     'dim_'.$data_description->group_by,
                     $limit,
@@ -620,9 +605,7 @@ class HighChartTimeseries2 extends HighChart2
                         if($data_description->display_type == 'pie')
                         {
                             throw new \Exception(get_class($this)." ERROR: chart display_type 'pie' reached in timeseries plot.");
-                        }
-                        else // ($data_description->display_type != 'pie')
-                        {
+                        } else {
                             if($this->_swapXY)
                             {
                                 $dataLabelsConfig  = array_merge(
@@ -728,7 +711,6 @@ class HighChartTimeseries2 extends HighChart2
                             'yAxis' => $yAxisIndex,
                             'lineWidth' =>  $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
                             'showInLegend' => $data_description->display_type != 'pie',
-                            //'innerSize' => min(100,(100.0/$totalSeries)*count($this->_chart['series'])).'%',
                             'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline',
                             'marker' => array(
                                 'enabled' => $showMarker,

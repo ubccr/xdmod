@@ -45,9 +45,9 @@ class UsageExplorerTest extends BaseTest
 
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 400);
-        $this->assertEquals($response[0]['message'], $expectedMessage);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(400, $response[1]['http_code']);
+        $this->assertEquals($expectedMessage, $response[0]['message']);
     }
 
     public function corruptDataProvider()
@@ -71,7 +71,7 @@ class UsageExplorerTest extends BaseTest
         $tests[] = array($view, 'start_date param is not in the correct format of Y-m-d.');
 
         $view['group_by'] = "elephants";
-        $tests[] = array($view, 'Query: Unknown Group By "elephants" Specified');
+        $tests[] = array($view, "No GroupBy found with id 'elephants' in Realm: Jobs");
 
         return $tests;
     }

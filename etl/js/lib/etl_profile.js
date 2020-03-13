@@ -9,7 +9,7 @@
  * @requirements:
  *	node.js
  *
- */ 
+ */
 var events = require('events'),
     util = require('util'),
     Schema = require('./schema.js'),
@@ -39,19 +39,7 @@ var ETLProfile = module.exports = function (etlProfile) {
 }
 util.inherits(ETLProfile, events.EventEmitter);
 
-var arrayUnique = function(array, comparisonfn) {
-    var a = array.concat();
-    for(var i=0; i<a.length; ++i) {
-        for(var j=i+1; j<a.length; ++j) {
-            if(0 === comparisonfn(a[i],a[j]) )
-                a.splice(j--, 1);
-        }
-    }
-
-    return a;
-};
-
-var CamelCase = function(input, insertSpaces) { 
+var CamelCase = function (input, insertSpaces) {
     var tmp = input.charAt(0).toUpperCase() + input.slice(1);
     return tmp.replace(/_(.)/g, function(match, group) {
         if(insertSpaces) {
@@ -75,16 +63,6 @@ var Namealize = function(input) {
         input = input.substring(0, input.length-3);
     }
     return CamelCase(input, true);
-}
-
-var camelCase = function(input, insertSpaces) { 
-    return input.replace(/_(.)/g, function(match, group) {
-        if(insertSpaces) {
-            return " " + group.toUpperCase();
-        } else {
-            return group.toUpperCase();
-        }
-    });
 }
 
 /* Create a new string with the first letter capitalized
@@ -202,7 +180,7 @@ ETLProfile.prototype.processDataset = function (dataset, totalCores, coreIndex, 
 };
 
 /*
-* @returns the dynamic tables for the etl profile. 
+* @returns the dynamic tables for the etl profile.
 */
 ETLProfile.prototype.getTables = function () {
     var unionFields = util._extend({}, this.schema.derivedFields),
@@ -265,7 +243,7 @@ ETLProfile.prototype.getTableDocumentation = function () {
 };
 
 /*
-* Creates the dynamic tables for the etl profile. 
+* Creates the dynamic tables for the etl profile.
 */
 ETLProfile.prototype.createOutputTables = function (outputmode) {
     var self = this;
@@ -273,12 +251,12 @@ ETLProfile.prototype.createOutputTables = function (outputmode) {
         if (this.output.dbEngine === 'mysqldb') {
 			//todo: handle already existing table case. use alter table
 			//detect removed/modified column(s) and their type. one way to
-			//detect renamed columns is to look for old name in comment 
+            // detect renamed columns is to look for old name in comment
 			//(ie. comment 'old_name:comment_text'). This could be documented
 			//convention. can get table structure before doing the query, but
 			//after the list of fields get generated inside the table class
-			
-			//todo: create a table for metric errors 
+
+            // todo: create a table for metric errors
 			//todo: create a table for logging etl runs
 			//todo: create a table for etl profiles
 			//todo: create a table to hold a list of all datasets across all etl profiles
@@ -301,7 +279,7 @@ ETLProfile.prototype.createOutputTables = function (outputmode) {
 			var mysqlConfig = util._extend({
 				multipleStatements: true,
                 connectionLimit: poolConnectionMax
-			}, this.output.config); 
+            }, this.output.config);
             switch( outputmode ) {
                 case 'sql':
                     var mysqlConnection = mysql.createConnection(mysqlConfig);
@@ -320,9 +298,9 @@ ETLProfile.prototype.createOutputTables = function (outputmode) {
                     self.emit('error', 'Unsupported output mode ' + outputmode);
             }
         } else {
-            //other db engines not yet supported. , this class can be specialized 
-			//or modularized at that time. 
-			this.emit('error', this.output.dbEngine + ' is an unsupported dbEngine: ' 
+            // other db engines not yet supported. , this class can be specialized
+            // or modularized at that time.
+            this.emit('error', this.output.dbEngine + ' is an unsupported dbEngine: '
 								+ util.inspect(this.output) );
         }
     } catch (exception) {
@@ -331,7 +309,7 @@ ETLProfile.prototype.createOutputTables = function (outputmode) {
 }
 
 /*
-* @returns the dynamic aggregation tables for the etl profile. 
+* @returns the dynamic aggregation tables for the etl profile.
 */
 ETLProfile.prototype.getAggregationTables = function () {
     var unionFields = util._extend({}, this.schema.derivedFields),
@@ -340,9 +318,9 @@ ETLProfile.prototype.getAggregationTables = function () {
         var dataset = this.datasets[iit];
         util._extend(unionFields, dataset.mapping.attributes);
     }
-	
+
 	function addAggregationField(agg, f, field){
-		if(agg.table !== undefined && agg.table !== null) { 
+        if (agg.table !== undefined && agg.table !== null) {
 			if (tables[agg.table] === undefined) {
 				tables[agg.table] = new DynamicTable({
 					name: agg.table,
@@ -376,13 +354,13 @@ ETLProfile.prototype.getAggregationTables = function () {
 			throw Error('ETLProfile.prototype.getAggregationTables: addAggregationField(agg, f, field): agg.table is required: agg: ' + util.inspect(agg));
 		}
 	}
-	
+
     for (var field in unionFields) {
         var f = unionFields[field] = this.schema.getField(field);
         if (f === undefined || f === null) {
             f = unionFields[field] = this.schema.getDerivedField(field);
         }
-		
+
 		if(f.agg !== undefined && f.agg !== null) {
 			if(f.agg instanceof Array){
 				for(var i in f.agg) {
@@ -403,26 +381,26 @@ ETLProfile.prototype.getAggregationTables = function () {
 				field.def = null;
 				field.sqlType = sqlType(field.type, field.length);
 				table.columns[f] = field;
-				
+
 			}
 		}
 	}
-	
+
     return tables;
 }
 
 /*
-* Creates and updates an aggregated table per dynamic tables in the etl profile. 
+* Creates and updates an aggregated table per dynamic tables in the etl profile.
 */
 ETLProfile.prototype.aggregate = function () {
     var self = this;
-	try { 
+    try {
         if (this.output.dbEngine === 'mysqldb') {
             etlv2.generateDefinitionFiles(this, config.xdmodBuildConfigDir);
         } else {
-            //other db engines not yet supported. , this class can be specialized 
-			//or modularized at that time. 
-			this.emit('error', this.output.dbEngine + ' is an unsupported dbEngine: ' 
+            // other db engines not yet supported. , this class can be specialized
+            // or modularized at that time.
+            this.emit('error', this.output.dbEngine + ' is an unsupported dbEngine: '
 								+ util.inspect(this.output) );
         }
     } catch (exception) {
@@ -437,32 +415,13 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
     realms["+realms"][realmName] = { "schema": "N/A", "table": "N/A", "datasource": realmName, group_bys: [], statistics: [] };
     var realmConfig = realms["+realms"][realmName];
 
-    var aggFolder = config.xdmodBuildRoot + '/classes/DataWarehouse/Query/' + realmName + '/GroupBys';
-    var statFolder = config.xdmodBuildRoot + '/classes/DataWarehouse/Query/' + realmName + '/Statistics';
-    this.addStatistic = function(name, className, classSrc) {
+    this.addStatistic = function (name) {
         realmConfig.statistics.push({
-            name: name,
-            class: className
+            name: name
         });
-        fs.writeFileSync(statFolder + '/' + className + '.php', classSrc);	
     };
-
-    this.addGroupBy = function(name, className, classSrc, roleAccessConfig) {
-        if( ! classSrc ) {
-            var sourceFile = realmConfigRoot + '/output_db/Query/' + realmName + '/GroupBys/' + className + '.php';
-            classSrc = fs.readFileSync(sourceFile, 'utf-8');
-        }
-
-        realmConfig.group_bys.push({
-            name: name,
-            class: className
-        });
-
-        if( ! name.match(/^(day|month|quarter|year)$/) ) {
-            roles.push( { realm: realmName, group_by: name, config: roleAccessConfig } );
-        }
-
-        fs.writeFileSync(aggFolder + '/' + className + '.php', classSrc);	
+    this.addGroupBy = function (name, roleAccessConfig) {
+        roles.push({ realm: realmName, group_by: name, config: roleAccessConfig });
     };
 
     this.namecomparison = function(keyname) {
@@ -487,7 +446,7 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
     };
 
     this.mkdirandwrite = function(dirname, filename, data) {
- 
+
         try {
             fs.mkdirSync(dirname);
         } catch (exception) {
@@ -520,16 +479,6 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
     };
 
     this.write = function() {
-
-        // Sort realm configuration data and output
-
-        realmConfig.group_bys.sort( self.groupbysorter("name") );
-        realmConfig.group_bys = arrayUnique(realmConfig.group_bys, self.namecomparison("name"));
-
-        realmConfig.statistics.sort(self.namecomparison("name"));
-        realmConfig.statistics = arrayUnique(realmConfig.statistics, self.namecomparison("name"));
-
-        self.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d', realmName.toLowerCase(), realms);
 
         // Sort role configuration data and output
 
@@ -567,21 +516,52 @@ var extractandsubst = function(column, item) {
     return result;
 };
 
-var generateGroupBy = function(aggTemplate, itemAlias, className, column)
+var generateGroupBy = function (itemAlias, column)
 {
-    var aggCode = aggTemplate.replace(/_NAME_/g , itemAlias);
-    aggCode = aggCode.replace(/_AGGREGATE_COLUMN_/g , column.name);
-    aggCode = aggCode.replace(/_GROUPBY_CLASS_/g, className);
-    aggCode = aggCode.replace(/_DIMENSION_TABLE_/g, column.dimension_table);
-    aggCode = aggCode.replace(/_INFO_/g, column.comments);
-    aggCode = aggCode.replace(/_LABEL_/g, column.label || itemAlias);
-    aggCode = aggCode.replace(/_CATEGORY_/g, column.category || 'unknown');
-    aggCode = aggCode.replace(/\:field_name/g, column.name);
+    var label = column.label;
+    var description = column.comments;
     for( var tagidx in column.dynamictags ) {
-        aggCode = aggCode.replace( new RegExp(":label_"+tagidx, "g"), column.dynamictags[tagidx] );
-        aggCode = aggCode.replace(new RegExp(":Label_" + tagidx, "g"), wordToUpper(column.dynamictags[tagidx]));
+        label = label.replace(new RegExp(':label_' + tagidx, 'g'), column.dynamictags[tagidx]);
+        label = label.replace(new RegExp(':Label_' + tagidx, 'g'), wordToUpper(column.dynamictags[tagidx]));
+        description = description.replace(new RegExp(':label_' + tagidx, 'g'), column.dynamictags[tagidx]);
+        description = description.replace(new RegExp(':Label_' + tagidx, 'g'), wordToUpper(column.dynamictags[tagidx]));
     }
-    return aggCode;
+    return {
+        attribute_table: column.dimension_table,
+        attribute_table_schema: 'modw_supremm',
+        attribute_to_aggregate_table_key_map: [
+            {
+                id: column.name
+            }
+        ],
+        attribute_values_query: {
+            joins: [
+                {
+                    name: column.name
+                }
+            ],
+            orderby: [
+                'id'
+            ],
+            records: {
+                id: 'id',
+                name: 'description',
+                order_id: 'id',
+                short_name: 'description'
+            }
+        },
+        category: column.category || 'unknown',
+        chart_options: {
+            combine_method: 'stack',
+            dataset_display_type: {
+                aggregate: 'bar'
+            },
+            dataset_type: 'aggregate'
+        },
+        data_sort_order: null,
+        description_html: description,
+        name: label || itemAlias
+    };
 }
 
 var writeRealmMetadata = function (realm, profileVersion) {
@@ -595,10 +575,9 @@ var writeRealmMetadata = function (realm, profileVersion) {
 
 ETLProfile.prototype.integrateWithXDMoD = function () {
     var self = this;
-	var escape = require('mysql').escape;
-	try { 
+    try {
         var roles = [];
-		
+
         var tables = this.getAggregationTables();
 
 		for (var t in tables) {
@@ -606,20 +585,20 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 			var table = tables[t];
 			var realmName = table.meta.realmName;
 
-    writeRealmMetadata(realmName, this.version);
-
-			var statTemplate = fs.readFileSync(this.root + '/output_db/Query/' + realmName + '/Statistics/template.stat.php', 'utf8');
-			var aggTemplate = fs.readFileSync(this.root + '/output_db/Query/' + realmName + '/GroupBys/template.groupby.php', 'utf8');
-
+            writeRealmMetadata(realmName, this.version);
+            var groupBys = {};
+            try {
+                groupBys = JSON.parse(fs.readFileSync(this.root + '/output_db/groupbys.json', 'utf8'));
+            } catch (err) {
+                // dont do anyting just be cool man
+            }
             var xdmodInteg = new xdmodIntegrator(realmName, this.root);
 
-            xdmodInteg.addGroupBy( "none", "GroupByNone", null, this.schema.groupByNoneRoleConfig );
-            xdmodInteg.addGroupBy( "day", "GroupByDay", null );
-            xdmodInteg.addGroupBy( "month", "GroupByMonth", null );
-            xdmodInteg.addGroupBy( "quarter", "GroupByQuarter", null );
-            xdmodInteg.addGroupBy( "year", "GroupByYear", null );
-            
+            xdmodInteg.addGroupBy('none', this.schema.groupByNoneRoleConfig);
+
 			self.emit('message', 'Processing table: ' + table.schema + '.' + table.name);
+
+            var statistics = {};
 
 			var tableColumns = table.getAggregationTableFields();
 
@@ -628,11 +607,9 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                 if(tableColumns[tc].label) {
 
                     var itemAlias = tableColumns[tc].alias || tableColumns[tc].name;
-                    var className = camelCase("GroupBy_" + tableColumns[tc].name);
+                    xdmodInteg.addGroupBy(itemAlias, tableColumns[tc].roles);
 
-                    var aggCode = generateGroupBy(aggTemplate, itemAlias, className, tableColumns[tc]);
-
-                    xdmodInteg.addGroupBy(itemAlias, className, aggCode, tableColumns[tc].roles);
+                    groupBys[itemAlias] = generateGroupBy(itemAlias, tableColumns[tc]);
 
                 } else if (tableColumns[tc].dimension ) {
 
@@ -642,65 +619,60 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     }
                     for(var i = 0; i < items.length; i++) {
                         var itemName = items[i];
-                        var className = camelCase("GroupBy_" + itemName);
 
-                        var aggCode = null;
                         if(tableColumns[tc].dimension_table) {
                             tableColumns[tc].label = CamelCase(itemName);
-                            aggCode = generateGroupBy(aggTemplate, itemName, className, tableColumns[tc]);
+                            groupBys[itemName] = generateGroupBy(itemName, tableColumns[tc]);
                         }
-
-                        xdmodInteg.addGroupBy(itemName, className, aggCode, tableColumns[tc].roles);
+                        xdmodInteg.addGroupBy(itemName, tableColumns[tc].roles);
                     }
                 }
 
 				for(var st in tableColumns[tc].stats) {
-					var statCode = statTemplate + '';
-					var statsname = tableColumns[tc].stats[st].name;
-					if(statsname === undefined) {
-						statsname = tableColumns[tc].name;
-					} else {
-						statsname = statsname.replace(":field_name", tableColumns[tc].name);
-					}
-					var className = statsname + '_Statistic';
+                    var statsname = tableColumns[tc].stats[st].name;
+                    var fieldName = tableColumns[tc].name;
+                    if (statsname === undefined) {
+                        statsname = fieldName;
+                    } else {
+                        statsname = statsname.replace(':field_name', fieldName);
+                    }
 
-					var label = tableColumns[tc].stats[st].label.replace(":field_name", tableColumns[tc].name);
-                    var description = tableColumns[tc].stats[st].description.replace(":field_name", tableColumns[tc].name);
-					for( var tagidx in tableColumns[tc].dynamictags ) {
-						label = label.replace( ":label_"+tagidx, tableColumns[tc].dynamictags[tagidx] );
-						label = label.replace(":Label_" + tagidx, wordToUpper(tableColumns[tc].dynamictags[tagidx]));
-                        description = description.replace( ":label_"+tagidx, tableColumns[tc].dynamictags[tagidx] );
-                        description = description.replace(":Label_" + tagidx, wordToUpper(tableColumns[tc].dynamictags[tagidx]));
-					}
-
-					statCode = statCode.replace('_STAT_CLASS_', className);
-					statCode = statCode.replace('_FORMULA_', escape( tableColumns[tc].stats[st].sql.replace(/\:field_name/g, tableColumns[tc].name)));
-					statCode = statCode.replace('_NAME_', escape(statsname.replace(":field_name", tableColumns[tc].name)))
-					statCode = statCode.replace('_LABEL_', escape(label) );
-					statCode = statCode.replace('_UNIT_', escape(tableColumns[tc].stats[st].unit))
-					statCode = statCode.replace('_INFO_', escape(description) );
+                    var label = tableColumns[tc].stats[st].label.replace(':field_name', fieldName);
+                    var description = tableColumns[tc].stats[st].description.replace(':field_name', fieldName);
+                    for (var tagidx in tableColumns[tc].dynamictags) {
+                        if (tableColumns[tc].dynamictags.hasOwnProperty(tagidx)) {
+                            var lSubStr = ':label_' + tagidx;
+                            var uSubStr = ':Label_' + tagidx;
+                            var replacement = tableColumns[tc].dynamictags[tagidx];
+                            label = label.replace(lSubStr, replacement);
+                            label = label.replace(uSubStr, wordToUpper(replacement));
+                            description = description.replace(lSubStr, replacement);
+                            description = description.replace(uSubStr, wordToUpper(replacement));
+                        }
+                    }
                     var decimals = 1;
-                    if( 'decimals' in tableColumns[tc].stats[st]) {
+                    if ('decimals' in tableColumns[tc].stats[st]) {
                         decimals = tableColumns[tc].stats[st].decimals;
                     }
-                    statCode = statCode.replace('_DECIMALS_', escape(decimals) );
 
-                    var whereclause = 'NULL';
-                    if('requirenotnull' in tableColumns[tc].stats[st]) {
-                        var whereclause = "new \\DataWarehouse\\Query\\Model\\WhereCondition(" +
-                            escape(tableColumns[tc].stats[st].requirenotnull.replace(":field_name", tableColumns[tc].name)) +
-                            ", 'IS NOT', 'NULL' )";
+                    xdmodInteg.addStatistic(statsname);
+                    statistics[statsname] = {
+                        aggregate_formula: tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name).replace(':timeseries', 0),
+                        description_html: description,
+                        name: label,
+                        precision: decimals,
+                        timeseries_formula: tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name).replace(':timeseries', 1),
+                        unit: tableColumns[tc].stats[st].unit
+                    };
+                    if ('requirenotnull' in tableColumns[tc].stats[st]) {
+                        statistics[statsname].additional_where_condition = [tableColumns[tc].name, 'IS NOT', 'NULL'];
                     }
-                    statCode = statCode.replace('_WHERECLAUSE_', whereclause);
-
-                    xdmodInteg.addStatistic(statsname, className, statCode);
-				}
-
-			}
-
+                }
+            }
+            xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/ref/', realmName.toLowerCase() + '-statistics', statistics);
+            xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/ref/', realmName.toLowerCase() + '-group-bys', groupBys);
             xdmodInteg.write();
 		}
-
         var rawstats = {};
         var tables = this.getTables();
         for( var t in tables) {
@@ -735,9 +707,8 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
             var sorting = require("./sorting.js");
             rawstats[tableName].sort(sorting.dynamicSortMultiple("dtype", "group", "units", "name"));
         }
-    var rawStatisticsConfigFile = config.xdmodBuildConfigDir + '/rawstatisticsconfig.json';
+        var rawStatisticsConfigFile = config.xdmodBuildConfigDir + '/rawstatisticsconfig.json';
         fs.writeFileSync(rawStatisticsConfigFile, JSON.stringify(rawstats, null, 4));
-
     } catch (exception) {
         self.emit('error', util.inspect(exception));
     }
@@ -769,7 +740,7 @@ var getRegressionTests = function(dataset) {
 };
 
 /*
-* Creates the dynamic tables for the etl profile. 
+* Creates the dynamic tables for the etl profile.
 */
 ETLProfile.prototype.regressionTests = function () {
     var self = this;
@@ -820,7 +791,7 @@ ETLProfile.prototype.regressionTests = function () {
                 });
                 if( transformed.errors ) {
                     self.emit('error', JSON.stringify(transformed.errors,null, 4) ) ;
-                } 
+                }
                 if( transformed.warnings ) {
                     self.emit('error', JSON.stringify(transformed.warnings, null, 4) ) ;
                 }

@@ -169,7 +169,7 @@ class SimpleTimeseriesData extends SimpleData
     {
         $values = $this->getValues();
         $sems = $this->getErrors();
-        $stat = $this->getStatistic()->getAlias();
+        $stat = $this->getStatistic()->getId();
 
         $isMin = strpos($stat, 'min_') !== false ;
         $isMax = strpos($stat, 'max_') !== false ;
