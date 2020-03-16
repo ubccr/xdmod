@@ -2,8 +2,25 @@
 
 namespace RegressionTests\Controllers;
 
+use TestHarness\Utilities;
+
 class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 {
+    private static $chartFilterTestData = array();
+
+    public static function tearDownAfterClass()
+    {
+        // This is used to write expected results file for the
+        // testChartFilters test. The output file is just written to
+        // the current directory for review.
+        if (!empty(self::$chartFilterTestData)) {
+            file_put_contents(
+                'chartFilterTests_generated.json',
+                json_encode(self::$chartFilterTestData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
+            );
+        }
+    }
+
     /* If the 'expected' value is set to null then the test harness will
      * use this function to print out the results from the api call. This
      * can be used to generate new expected test results.
@@ -22,6 +39,94 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             );
         }
         var_export($result);
+    }
+
+    /**
+     * See the filterTestsProvider for instructions on how to generate
+     * new tests for this function or update the expected values.
+     *
+     * @dataProvider filterTestsProvider
+     */
+    public function testChartFilters($helper, $settings, $expected)
+    {
+        $global_settings = array(
+            'filters' => $this->getFiltersByValue($helper, $settings['realm'], $settings['filter_dimension'], $settings['filter_values']),
+            'date' => $settings['date']
+        );
+
+        $requestData = $this->getChartRequest(array(array('realm' => $settings['realm'], 'group_by' => 'none', 'metric' => $settings['metric'])), $global_settings);
+
+        $response = $helper->post('controllers/metric_explorer.php', null, $requestData);
+
+        if ($response[1]['http_code'] != 200) {
+            var_export($response);
+        }
+
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $chartStore = json_decode($response[0]);
+        $this->assertNotNull($chartStore);
+
+        $chartData = $chartStore->data[0];
+
+        $this->assertEquals($expected['subtitle'], $chartData->subtitle->text);
+        if (isset($expected['yvalue'])) {
+            $this->assertEquals($expected['yvalue'], $chartData->series[0]->data[0]->y);
+        } else {
+            self::$chartFilterTestData[] = array(
+                'settings' => $settings,
+                'expected' => array(
+                    'subtitle' => $expected['subtitle'],
+                    'yvalue' => $chartData->series[0]->data[0]->y
+                )
+            );
+        }
+    }
+
+    private function getFiltersByValue($helper, $realm, $dimension, $values)
+    {
+        $dimensionValues = $this->getDimensionValues($helper, $realm, $dimension);
+
+        $filters = array();
+
+        foreach ($values as $value) {
+            foreach ($dimensionValues as $dimVal) {
+                if ($value === $dimVal['name']) {
+                    $filters[] = array(
+                        'value_id' => $dimVal['id'],
+                        'dimension_id' => $dimension,
+                        'checked' => true
+                    );
+                    break;
+                }
+            }
+        }
+
+        $this->assertEquals(count($filters), count($values));
+
+        return $filters;
+    }
+
+    private function getDimensionValues($helper, $realm, $dimension)
+    {
+        $params = array(
+            'operation' => 'get_dimension',
+            'dimension_id' => $dimension,
+            'realm' => $realm,
+            'public_user' => false,
+            'start' => '0',
+            'limit' => '10000',
+            'selectedFilterIds' => ''
+        );
+
+        $response = $helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $this->assertEquals($response[0]['totalCount'], count($response[0]['data']));
+
+        return $response[0]['data'];
     }
 
     /**
@@ -62,20 +167,29 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $helper->logout();
     }
 
-    public function getChartRequest($settings)
+    public function getChartRequest($data_settings, $global_settings = null)
     {
         $dataseries = array();
-        foreach ($settings as $setting) {
+        foreach ($data_settings as $setting) {
             $dataseries[] = $this->generateDataSeries($setting);
         }
+
+        $filterlist = isset($global_settings['filters']) ? $global_settings['filters'] : array();
+
+        $global_filters = array(
+            'data' => $filterlist,
+            'total' => count($filterlist)
+        );
+
+        $testdate = isset($global_settings['date']) ? $global_settings['date'] : '2016-12-31';
 
         $chartSettings = array(
             'show_title' => 'y',
             'timeseries' => 'y',
             'aggregation_unit' => 'Auto',
-            'start_date' => '2016-12-31',
-            'end_date' => '2016-12-31',
-            'global_filters' => '%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D',
+            'start_date' => $testdate,
+            'end_date' => $testdate,
+            'global_filters' => urlencode(json_encode($global_filters)),
             'title' => 'Metric Explorer Test Chart',
             'show_filters' => 'true',
             'show_warnings' => 'true',
@@ -149,6 +263,10 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      */
     public function remainderChartProvider()
     {
+        if (!in_array('jobs', Utilities::getRealmsToTest())) {
+            return array();
+        }
+
         $tests = array();
 
         $tests[] = array(
@@ -229,5 +347,94 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             )
         );
         return $tests;
+    }
+
+    /**
+     * Generate test scenarios for all of the possible filters for each realm. This
+     * function is called by the dataProvider when the expected tests file is absent.
+     * This queries XDMoD to get a list of dimensions and dimension values for each realm
+     * and is intended to be run against a known working XDMoD to generate a baseline
+     * set of values for regression testing.
+     */
+    private function generateFilterTests()
+    {
+        // Generate test scenario for filter tests.
+        $baseConfig = array(
+            array('realm' => 'Jobs', 'metric' => 'total_cpu_hours', 'date' => '2016-12-31'),
+            array('realm' => 'Storage', 'metric' => 'avg_logical_usage', 'date' => '2018-12-28'),
+            array('realm' => 'Cloud', 'metric' => 'cloud_core_time', 'date' => '2019-06-26')
+        );
+
+        $output = array();
+
+        $helper = new \TestHarness\XdmodTestHelper();
+        $helper->authenticate('cd');
+
+        foreach ($baseConfig as $config)
+        {
+            $response = $helper->get('rest/v1/warehouse/dimensions', array('realm' => $config['realm']));
+            foreach ($response[0]['results'] as $dimConfig)
+            {
+                $dimension = $dimConfig['id'];
+                $dimensionValues = $this->getDimensionValues($helper, $config['realm'], $dimension);
+
+                $testConfig = array(
+                    'settings' => array(
+                        'realm' => $config['realm'],
+                        'metric' => $config['metric'],
+                        'date' => $config['date'],
+                        'filter_dimension' => $dimension,
+                        'filter_values' => array()
+                    ),
+                    'expected' => array()
+                );
+
+                foreach ($dimensionValues as $dimval) {
+                    $testConfig['settings']['filter_values'][] = $dimval['name'];
+                    $testConfig['expected']['subtitle'] .= ' ' . $dimval['name'] . ', ';
+
+                    if (count($testConfig['settings']['filter_values']) > 1) {
+                        break;
+                    }
+                }
+                if (count($testConfig['settings']['filter_values']) === 1) {
+                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' =  ' . $testConfig['settings']['filter_values'][0] ;
+                } else {
+                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode($testConfig['settings']['filter_values'], ',  ') . ' )';
+                }
+
+                $output[] = $testConfig;
+            }
+        }
+
+        return $output;
+    }
+
+    public function filterTestsProvider()
+    {
+        $data_file = realpath(__DIR__ . '/../../../artifacts/xdmod/regression/chartFilterTests.json');
+        if (file_exists($data_file)) {
+            $inputs = json_decode(file_get_contents($data_file), true);
+        } else {
+            // Generate test permutations. The expected values for the data points are not set.
+            // this causes the test function to record the values and they are then written
+            // to a file in the tearDownAfterClass function.
+            $inputs = $this->generateFilterTests();
+        }
+
+        $helper = new \TestHarness\XdmodTestHelper();
+        $helper->authenticate('cd');
+
+        $enabledRealms = Utilities::getRealmsToTest();
+
+        $output = array();
+        foreach ($inputs as $test)
+        {
+            if (in_array(strtolower($test['settings']['realm']), $enabledRealms)) {
+                $output[] = array($helper, $test['settings'], $test['expected']);
+            }
+        }
+
+        return $output;
     }
 }

@@ -30,7 +30,7 @@ class RoleRestrictionsStringBuilder
                 $parameterGroupBy = $parameterOptions['groupBy'];
                 $parameterValueNames = array();
                 foreach ($parameterOptions['dimensionValues'] as $valueId) {
-                    $parameterPossibleValues = $parameterGroupBy->getPossibleValues(array(
+                    $parameterPossibleValues = $parameterGroupBy->getAttributeValues(array(
                         'id' => $valueId,
                     ));
                     if (empty($parameterPossibleValues)) {
@@ -43,7 +43,7 @@ class RoleRestrictionsStringBuilder
                 if (count($parameterValueNames) > 1) {
                     $parameterValueNamesString = "($parameterValueNamesString)";
                 }
-                $parameterLabel = $parameterGroupBy->getLabel();
+                $parameterLabel = $parameterGroupBy->getName();
                 $parameterStrings[$parameterLabel] = $parameterLabel . ' = ' . $parameterValueNamesString;
             }
             ksort($parameterStrings);

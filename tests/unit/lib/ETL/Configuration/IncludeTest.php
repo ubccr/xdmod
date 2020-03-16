@@ -29,7 +29,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
             'file' => false,
             'db' => false,
             'mail' => false,
-            'consoleLogLevel' => Log::WARNING
+            'consoleLogLevel' => Log::EMERG
         );
         $logger = Log::factory('PHPUnit', $conf);
 

@@ -1,0 +1,127 @@
+{
+    "day": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
+    },
+    "fieldofscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
+    },
+    "month": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
+    },
+    "none": {
+        "$ref": "datawarehouse.d/ref/group-by-none.json"
+    },
+    "nsfdirectorate": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
+    },
+    "parentscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
+    },
+    "mountpoint": {
+        "attribute_table": "mountpoint",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "mountpoint_id": "mountpoint_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "mountpoint"
+                }
+            ],
+            "orderby": [
+                "path"
+            ],
+            "query_hint": "DISTINCT",
+            "records": {
+                "id": "mountpoint_id",
+                "name": "path",
+                "order_id": "path",
+                "short_name": "path"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "h_bar",
+                "timeseries": "line"
+            },
+            "dataset_type": "timeseries"
+        },
+        "description_html": "Storage by Mountpoint",
+        "name": "Mountpoint"
+    },
+    "person": {
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
+            }
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person"
+    },
+    "pi": {
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
+            }
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi"
+    },
+    "quarter": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
+    },
+    "resource": {
+        "$overwrite": {
+            "attribute_to_aggregate_table_key_map": [
+                {
+                    "id": "resource_id"
+                }
+            ],
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
+            }
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/resource"
+    },
+    "resource_type": {
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
+            }
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/resource_type"
+    },
+    "username": {
+        "$overwrite": {
+            "chart_options": {
+                "dataset_display_type": {
+                    "aggregate": "h_bar",
+                    "timeseries": "line"
+                },
+                "dataset_type": "timeseries"
+            }
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/username"
+    },
+    "year": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+    }
+}

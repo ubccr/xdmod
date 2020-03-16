@@ -1,0 +1,14 @@
+{
+    "#": "Add a statistic to the Cloud realm",
+    "Cloud": {
+        "statistics": {
+            "disabled_core_time": {
+                "disabled": true,
+                "formula": "COALESCE(SUM(agg.core_time) / 3600.0, 0)",
+                "name": "Core Hours: Total",
+                "description_html": "This statistic is disabled",
+                "unit": "Hours"
+            }
+        }
+    }
+}

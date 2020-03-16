@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+XDMOD_REALMS=${XDMOD_REALMS:-'jobs,storage,cloud'}
+export XDMOD_REALMS
+
 echo "Integration tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 
 UATCU=""

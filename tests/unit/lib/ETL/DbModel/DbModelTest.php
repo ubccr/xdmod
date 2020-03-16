@@ -147,44 +147,6 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test foreign key constraint initialization error.
-     *
-     * @expectedException Exception
-     * @expectedExceptionMessage "columns" must be an array
-     */
-    public function testForeignKeyConstraintInitializationError()
-    {
-        $config = (object) [
-            'name' => 'initialize_error',
-            'columns' => [
-                (object) [
-                    'name' => 'column1',
-                    'type' => 'int(11)',
-                    'nullable' => false
-                ]
-            ],
-            'indexes' => [
-                (object) [
-                    'columns' => [
-                        'column1'
-                    ]
-                ]
-            ],
-            'foreign_key_constraints' => [
-                (object) [
-                    'referenced_table' => 'other_table',
-                    'referenced_columns' => [
-                        'id'
-                    ]
-                ]
-            ]
-        ];
-
-        $table = new Table($config);
-        $table->verify();
-    }
-
-    /**
      * Test table verification error
      *
      * @expectedException Exception
@@ -204,37 +166,6 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             'indexes' => array( (object) array(
                 'columns' => array('column1', 'missing_column')
             ))
-        );
-
-        $table = new Table($config);  // No logger here
-        $table->verify();
-    }
-
-    /**
-     * Test foreign key constraint verification error
-     *
-     * @expectedException Exception
-     * @expectedExceptionMessage Columns in foreign key constraint 'invalid_fk' must be contained at the beginning of an index
-     */
-
-    public function testForeignKeyConstraintVerificationError()
-    {
-        // Foreign key constraint with no corresponding index.
-        $config = (object) array(
-            'name' => "fk_verification_error",
-            'columns' => array( (object) array(
-                'name' => 'column1',
-                'type' => 'int(11)',
-                'nullable' => true,
-            )),
-            'foreign_key_constraints' => array( (object) array(
-                'name' => 'invalid_fk',
-                'columns' => array('column1'),
-                'referenced_table' => 'other_table',
-                'referenced_columns' => array(
-                    'other_column',
-                ),
-            )),
         );
 
         $table = new Table($config);  // No logger here
@@ -325,38 +256,6 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             . " BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END";
         $this->assertEquals($expected, $generated);
 
-    }
-
-    /**
-     * Confirm foreign key contraint changes work.
-     */
-    public function testAlterTableContraints()
-    {
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
-
-        $origTable = new Table($config, '`', self::$logger);
-        $fkconfig = (object) array(
-            'columns' => array('new_column'),
-            'referenced_table' => 'other_table',
-            'referenced_columns' => array('other_column'),
-            'on_delete' => 'NO ACTION'
-        );
-        $origTable->addForeignKeyConstraint($fkconfig);
-
-        $targetTable = new Table($config, '`', self::$logger);
-        $fkconfig1 = (object) array(
-            'columns' => array('new_column'),
-            'referenced_table' => 'other_table',
-            'referenced_columns' => array('other_column'),
-            'on_delete' => 'CASCADE'
-        );
-        $targetTable->addForeignKeyConstraint($fkconfig1);
-
-        $sql = $origTable->getAlterSql($targetTable);
-
-        $this->assertCount(2, $sql);
-        $this->assertEquals("ALTER TABLE `test_db_model`\nDROP FOREIGN KEY `fk_new_column`;", trim($sql[0]));
-        $this->assertEquals("ALTER TABLE `test_db_model`\nADD CONSTRAINT `fk_new_column` FOREIGN KEY (`new_column`) REFERENCES `other_table` (`other_column`) ON DELETE CASCADE;", trim($sql[1]));
     }
 
     /**
