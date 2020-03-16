@@ -1,0 +1,180 @@
+{
+    "active_person_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/active_person_count",
+        "$overwrite": {
+            "description_html": "The total number of  ${REALM_NAME} users that used ${ORGANIZATION_NAME} resources.",
+            "name": "Number of ${REALM_NAME} Users: Active"
+        }
+    },
+    "active_pi_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/active_pi_count",
+        "$overwrite": {
+            "description_html": "The total number of  ${REALM_NAME} PIs that used ${ORGANIZATION_NAME} resources.",
+            "name": "Number of ${REALM_NAME} PIs: Active"
+        }
+    },
+    "active_resource_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/active_resource_count",
+        "$overwrite": {
+            "description_html": "The total number of active ${ORGANIZATION_NAME} resources using ${REALM_NAME}.",
+            "name": "Number of ${REALM_NAME} Resources: Active"
+        }
+    },
+    "avg_cpu_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_cpu_hours",
+        "$overwrite": {
+            "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "CPU Hours: Per ${REALM_NAME} Job"
+	}
+    },
+    "avg_job_size_weighted_by_cpu_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_job_size_weighted_by_cpu_hours",
+	"$overwrite": {
+	    "description_html": "The average ${ORGANIZATION_NAME} ${REALM_NAME} job size weighted by CPU Hours. Defined as <br><i>Average Job Size Weighted By CPU Hours: </i> sum(i = 0 to n){ job i core count * job i cpu hours}/sum(i =  0 to n){job i cpu hours}",
+            "name": "Job Size: Weighted By ${REALM_NAME} CPU Hours"
+	}
+    },
+    "avg_node_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_node_hours",
+	"$overwrite": {
+	    "description_html": "The average node hours (number of nodes x wall time hours) per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "Node Hours: Per ${REALM_NAME} Job"
+	}
+    },
+    "avg_processors": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_processors",
+	"$overwrite": {
+	    "description_html": "The average job size per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+            "name": "Job Size: Per ${REALM_NAME} Job"
+	}
+    },
+    "avg_waitduration_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_waitduration_hours",
+	"$overwrite": {
+            "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} ${REALM_NAME} job waits before execution on the designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
+            "name": "Wait Hours: Per ${REALM_NAME} Job"
+	}
+    },
+    "avg_wallduration_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_wallduration_hours",
+	"$overwrite": {
+            "description_html": "The average time, in hours, a ${REALM_NAME} job takes to execute.<br/>In timeseries view mode, the statistic shows the average wall time per job per time period. In aggregate view mode the statistic only includes the job wall hours between the defined time range. The wall hours outside the time range are not included in the calculation.<br /> <i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.",
+            "name": "Wall Hours: Per ${REALM_NAME} Job"
+	}
+    },
+    "expansion_factor": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/expansion_factor",
+	"$overwrite": {
+	    "description_html": "The average job size per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job."
+	}
+    },
+    "job_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/job_count",
+        "$overwrite": {
+            "description_html": "The total number of ${ORGANIZATION_NAME} ${REALM_NAME} jobs that ended within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "Number of ${REALM_NAME} Jobs Ended"
+	}
+    },
+    "max_processors": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/max_processors",
+	"$overwrite": {
+	     "description_html": "The maximum size ${ORGANIZATION_NAME} ${REALM_NAME} job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.",
+             "name": "Job Size: Max via ${REALM_NAME}"
+	}
+    },
+    "min_processors": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/min_processors",
+	"$overwrite": {
+            "description_html": "The minimum size ${ORGANIZATION_NAME} ${REALM_NAME} job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.",
+            "name": "Job Size: Min via ${REALM_NAME}"
+	}
+    },
+    "normalized_avg_processors": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/normalized_avg_processors",
+	"$overwrite": {
+	    "description_html": "The percentage average size ${ORGANIZATION_NAME} ${REALM_NAME} job over total machine cores.<br><i>Normalized Job Size: </i>The percentage total number of processor cores used by a (parallel) job over the total number of cores on the machine.",
+            "name": "Job Size: Normalized via ${REALM_NAME}"
+	}
+    },
+    "running_job_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/running_job_count", 
+        "$overwrite": {
+            "description_html": "The total number of ${ORGANIZATION_NAME} ${REALM_NAME} jobs that are running.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "Number of Jobs ${REALM_NAME} Running"
+	}
+    },
+    "sem_avg_cpu_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_cpu_hours",
+	"$overwrite": {
+	}
+    },
+    "sem_avg_node_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_node_hours",
+	"$overwrite": {
+	}
+    },
+    "sem_avg_processors": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_processors",
+	"$overwrite": {
+	}
+    },
+    "sem_avg_waitduration_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_waitduration_hours",
+	"$overwrite": {
+	}
+    },
+    "sem_avg_wallduration_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_wallduration_hours",
+	"$overwrite": {
+	}
+    },
+    "started_job_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/started_job_count",
+        "$overwrite": {
+	    "description_html": "The total number of ${ORGANIZATION_NAME} ${REALM_NAME} jobs that started executing within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+	    "name": "Number of ${REALM_NAME} Jobs Started"
+	}
+    },
+    "submitted_job_count": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/submitted_job_count",
+        "$overwrite": {
+    	    "description_html": "The total number of ${ORGANIZATION_NAME} ${REALM_NAME} jobs that submitted/queued within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+    	    "name": "Number of ${REALM_NAME} Jobs Submitted"
+	}
+    },
+    "total_cpu_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_cpu_hours",
+        "$overwrite": {
+            "description_html": "The total CPU hours (number of CPU cores x wall time hours) used by ${ORGANIZATION_NAME} ${REALM_NAME} jobs.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br /><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "CPU Hours: ${REALM_NAME} Total"
+	}
+    },
+    "total_node_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_node_hours",
+	"$overwrite": {
+            "description_html": "The total node hours (number of nodes x wall time hours) used by ${ORGANIZATION_NAME} ${REALM_NAME} jobs.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "Node Hours: ${REALM_NAME} Total"
+	}
+    },
+    "total_waitduration_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_waitduration_hours",
+	"$overwrite": {
+	    "description_html": "The total time, in hours, ${ORGANIZATION_NAME} ${REALM_NAME} jobs waited before execution on their designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
+            "name": "Wait Hours: ${REALM_NAME} Total"
+	}
+    },
+    "total_wallduration_hours": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_wallduration_hours",
+	"$overwrite": {
+            "description_html": "The total time, in hours, ${ORGANIZATION_NAME} ${REALM_NAME} jobs took to execute.<br/><i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+            "name": "Wall Hours: Total via ${REALM_NAME}"
+	}
+    },
+    "utilization": {
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/utilization",
+        "$overwrite": {
+            "description_html": "The percentage of the ${ORGANIZATION_NAME} obligation of a resource that has been utilized by ${ORGANIZATION_NAME} ${REALM_NAME} jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by ${ORGANIZATION_NAME} jobs over a given time period divided by the total CPU hours that the system is contractually required to provide to ${ORGANIZATION_NAME} during that period. It does not include non-${ORGANIZATION_NAME} jobs.<br/>It is worth noting that this value is a rough estimate in certain cases where the resource providers don't provide accurate records of their system specifications, over time.",
+            "name": "${ORGANIZATION_NAME} Utilization via ${REALM_NAME}"
+	}
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/gateways/modw_gateways.gateway.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "proxy_person_id": "id",
+            "short_name": "first_name",
+            "long_name": "long_name",
+            "order_id": "order_id"
+        },
+        "joins": [
+            {
+                "name": "person",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "p"
+            }
+        ],
+        "where": [
+            "p.last_name = '${community-user}'"
+        ]
+    }
+}

@@ -1,0 +1,74 @@
+{
+    "table_definition": {
+	"$ref": "${table_definition_dir}/jobs/xdw/jobfact_by_.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+		"${AGGREGATION_UNIT}_id": "${AGGREGATION_UNIT}_id",
+		"${AGGREGATION_UNIT}": "${AGGREGATION_UNIT}",
+		"year": "year",
+		"record_resource_id": "record_resource_id",
+		"task_resource_id": "task_resource_id",
+		"resource_organization_id": "resource_organization_id",
+		"resourcetype_id": "resourcetype_id",
+		"systemaccount_id": "systemaccount_id",
+		"submission_venue_id": "submission_venue_id",
+		"job_record_type_id": "job_record_type_id",
+		"job_task_type_id": "job_task_type_id",
+		"queue": "queue",
+		"allocation_id": "allocation_id",
+		"account_id": "account_id",
+		"requesting_person_id": "requesting_person_id",
+		"person_id": "person_id",
+		"person_organization_id": "person_organization_id",
+		"person_nsfstatuscode_id": "person_nsfstatuscode_id",
+		"fos_id": "fos_id",
+		"principalinvestigator_person_id": "principalinvestigator_person_id",
+		"piperson_organization_id": "piperson_organization_id",
+		"job_time_bucket_id": "job_time_bucket_id",
+		"job_wait_time_bucket_id": "job_wait_time_bucket_id",
+		"node_count": "node_count",
+		"processor_count": "processor_count",
+		"processorbucket_id": "processorbucket_id",
+		"submitted_job_count": "submitted_job_count",
+		"ended_job_count": "ended_job_count",
+		"started_job_count": "started_job_count",
+		"running_job_count": "running_job_count",
+		"wallduration": "wallduration",
+		"sum_wallduration_squared": "sum_wallduration_squared",
+		"waitduration": "waitduration",
+		"sum_waitduration_squared": "sum_waitduration_squared",
+		"local_charge_su": "local_charge_su",
+		"local_charge_xdsu": "local_charge_xdsu",
+		"local_charge_nu": "local_charge_nu",
+		"adjusted_charge_su": "adjusted_charge_su",
+		"adjusted_charge_xdsu": "adjusted_charge_xdsu",
+		"adjusted_charge_nu": "adjusted_charge_nu",
+		"task_local_charge_su": "task_local_charge_su",
+		"task_local_charge_xdsu": "task_local_charge_xdsu",
+		"task_local_charge_nu": "task_local_charge_nu",
+		"task_adjusted_charge_su": "task_adjusted_charge_su",
+		"task_adjusted_charge_xdsu": "task_adjusted_charge_xdsu",
+		"task_adjusted_charge_nu": "task_adjusted_charge_nu",
+		"sum_local_charge_xdsu_squared": "sum_local_charge_xdsu_squared",
+		"cpu_time": "cpu_time",
+		"sum_cpu_time_squared": "sum_cpu_time_squared",
+		"node_time": "node_time",
+		"sum_node_time_squared": "sum_node_time_squared",
+		"sum_weighted_expansion_factor": "sum_weighted_expansion_factor",
+		"sum_job_weights": "sum_job_weights",
+		"#job_id_list": "job_id_list",
+		"#last_modified": "last_modified"
+        },
+        "joins": [
+            {
+                "name": "jobfact_by_${AGGREGATION_UNIT}",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jf"
+            }
+        ],
+        "where": [
+            "jf.person_id in (select proxy_person_id from modw_gateways.gateway)"
+        ]
+    }
+}

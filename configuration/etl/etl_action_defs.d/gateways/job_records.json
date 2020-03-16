@@ -1,0 +1,56 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/gateways/modw_gateways.job_records.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+		"job_record_id": "job_record_id",
+		"job_record_origin_id": "job_record_origin_id",
+		"resource_id": "resource_id",
+		"resourcetype_id": "resourcetype_id",
+		"resource_state_id": "resource_state_id",
+		"resource_country_id": "resource_country_id",
+		"resource_organization_id": "resource_organization_id",
+		"resource_organization_type_id": "resource_organization_type_id",
+		"allocation_resource_id": "allocation_resource_id",
+		"person_id": "person_id",
+		"person_organization_id": "person_organization_id",
+		"person_nsfstatuscode_id": "person_nsfstatuscode_id",
+		"account_id": "account_id",
+		"allocation_id": "allocation_id",
+		"request_id": "request_id",
+		"fos_id": "fos_id",
+		"principalinvestigator_person_id": "principalinvestigator_person_id",
+		"piperson_organization_id": "piperson_organization_id",
+		"job_record_type_id": "job_record_type_id",
+		"submission_venue_id": "submission_venue_id",
+		"queue": "queue",
+		"submit_time_ts": "submit_time_ts",
+		"start_time_ts": "start_time_ts",
+		"end_time_ts": "end_time_ts",
+		"start_day_id": "start_day_id",
+		"end_day_id": "end_day_id",
+		"local_charge_su": "local_charge_su",
+		"adjusted_charge_su": "adjusted_charge_su",
+		"local_charge_xdsu": "local_charge_xdsu",
+		"adjusted_charge_xdsu": "adjusted_charge_xdsu",
+		"local_charge_nu": "local_charge_nu",
+		"adjusted_charge_nu": "adjusted_charge_nu",
+		"conversion_factor": "conversion_factor",
+		"completed": "completed",
+		"federation_instance_id": "federation_instance_id",
+		"last_modified": "last_modified",
+		"is_deleted": "is_deleted"
+        },
+        "joins": [
+            {
+                "name": "job_records",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jr"
+            }
+        ],
+        "where": [
+            "jr.person_id in (select proxy_person_id from modw_gateways.gateway)"
+        ]
+    }
+}
