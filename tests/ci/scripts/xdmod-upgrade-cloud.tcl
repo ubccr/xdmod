@@ -3,6 +3,14 @@
 # XDMoD instance. This script will fail if run against an already installed
 # XDMoD.
 
+proc confirmUpgrade { } {
+    expect {
+        timeout { send_user "\nFailed to get prompt\n"; exit 1 }
+        -re "\nDo you want to continue .*\\\] "
+    }
+    send yes\n
+}
+
 #-------------------------------------------------------------------------------
 # Configuration settings for the XDMoD resources
 
@@ -21,9 +29,11 @@ source [file join [file dirname [info script]] helper-functions.tcl]
 # they should typically not be changed as they need to match up with the
 # settings in the docker container
 
-set timeout 240
+set timeout 180
 spawn "xdmod-setup"
 
+#answerQuestion {Do you want to continue (yes, no)? [no] } Yes
+confirmUpgrade
 # Enter config settings for each resource
 selectMenuOption 4
 foreach resource $resources {

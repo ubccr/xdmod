@@ -2,6 +2,24 @@
     "module": "xdmod",
     "migration-8_5_1-9_0_0": [
         {
+            "name": "DeleteCloudAutoincrementColumns",
+            "description": "Post-ingest updates for massaging Open Stack data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migrations/cloud-migration-8-5-1_9-0-0.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud Realm Tables",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                }
+            }
+        },
+        {
             "name": "update-modw_cloud-tables",
             "description": "Update modw_cloud tables",
             "namespace": "ETL\\Maintenance",
@@ -15,6 +33,8 @@
                 "cloud_openstack/raw_event.json",
                 "cloud_common/session_records.json",
                 "cloud_common/event.json",
+                "cloud_common/account.json",
+                "cloud_common/instance_type.json",
                 "cloud_common/instance.json"
             ],
             "endpoints": {

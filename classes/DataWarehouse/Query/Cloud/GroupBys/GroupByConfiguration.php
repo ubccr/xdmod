@@ -26,18 +26,19 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
             'configuration',
             array(),
             'SELECT DISTINCT
-                gt.id,
+                gt.display as id,
                 gt.instance_type AS short_name,
                 gt.display AS long_name,
                 gt.instance_type_id AS order_id
             FROM instance_type gt
             WHERE 1
-            ORDER BY order_id'
+            ORDER BY order_id',
+            array()
         );
-        $this->_id_field_name = 'instance_type_id';
+        $this->_id_field_name = 'display';
         $this->_long_name_field_name = 'display';
-        $this->_short_name_field_name = 'instance_type';
-        $this->_order_id_field_name = 'instance_type_id';
+        $this->_short_name_field_name = 'display';
+        $this->_order_id_field_name = 'display';
         $this->modw_schema = new Schema('modw_cloud');
         $this->configuration_table = new Table($this->modw_schema, 'instance_type', 'p');
     }
@@ -58,9 +59,9 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
         $query->addGroup($configurationtable_id_field);
 
+        $instance_type_table_id_field = new TableField($this->configuration_table, 'instance_type_id');
         $datatable_configuration_id_field = new TableField($data_table, 'instance_type_id');
-        $query->addWhereCondition(new WhereCondition($configurationtable_id_field, '=', $datatable_configuration_id_field));
-        $query->addWhereCondition(new WhereCondition(new TableField($this->configuration_table, 'resource_id'), '=', new TableField($data_table, 'host_resource_id')));
+        $query->addWhereCondition(new WhereCondition($instance_type_table_id_field, '=', $datatable_configuration_id_field));
 
         $this->addOrder($query, $multi_group);
     }
@@ -70,12 +71,12 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
         // construct the join between the main data_table and this group by table
         $query->addTable($this->configuration_table);
 
-        $configurationtable_id_field = new TableField($this->configuration_table, $this->_id_field_name);
+        $instance_type_table_id_field = new TableField($this->configuration_table, 'instance_type_id');
         $datatable_configuration_id_field = new TableField($data_table, 'instance_type_id');
 
         // the where condition that specifies the join of the tables
-        $query->addWhereCondition(new WhereCondition($configurationtable_id_field, '=', $datatable_configuration_id_field));
-        $query->addWhereCondition(new WhereCondition(new TableField($this->configuration_table, 'resource_id'), '=', new TableField($data_table, 'host_resource_id')));
+        $query->addWhereCondition(new WhereCondition($instance_type_table_id_field, '=', $datatable_configuration_id_field));
+
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
             $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
@@ -106,14 +107,14 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'instance_type_id');
+        return parent::pullQueryParameters2($request, 'SELECT DISTINCT instance_type_id FROM modw_cloud.instance_type WHERE display IN (_filter_)', 'instance_type_id');
     }
 
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT display AS field_label FROM modw_cloud.instance_type WHERE instance_type_id IN (_filter_) ORDER BY instance_type_id'
+            'SELECT display AS field_label FROM modw_cloud.instance_type WHERE display IN (_filter_) ORDER BY instance_type_id'
         );
     }
 }

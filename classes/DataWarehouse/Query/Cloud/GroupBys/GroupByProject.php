@@ -26,16 +26,16 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
             'project',
             array(),
             'SELECT distinct
-                gt.account_id,
+                gt.display as id,
                 gt.display as short_name,
-                gt.provider_account as long_name
+                gt.display as long_name
             FROM account gt
             WHERE 1
             ORDER BY gt.ACCOUNT_ID'
         );
-        $this->_id_field_name = 'account_id';
+        $this->_id_field_name = 'display';
         $this->_long_name_field_name = 'display';
-        $this->_short_name_field_name = 'provider_account';
+        $this->_short_name_field_name = 'display';
         $this->_order_id_field_name = 'display';
         $this->modw_schema = new Schema('modw_cloud');
         $this->account_table = new Table($this->modw_schema, 'account', 'acc');
@@ -57,12 +57,10 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
 
         $query->addGroup($accounttable_id_field);
 
+        $account_table_id_field = new TableField($this->account_table, 'account_id');
         $datatable_account_id_field = new TableField($data_table, 'account_id');
-        $datatable_host_resource_id_field = new TableField($data_table, 'host_resource_id');
-        $accounttable_resource_id_field = new TableField($this->account_table, 'resource_id');
 
-        $query->addWhereCondition(new WhereCondition($accounttable_id_field, '=', $datatable_account_id_field));
-        $query->addWhereCondition(new WhereCondition($accounttable_resource_id_field, '=', $datatable_host_resource_id_field));
+        $query->addWhereCondition(new WhereCondition($account_table_id_field, '=', $datatable_account_id_field));
 
         $this->addOrder($query, $multi_group);
     }
@@ -72,7 +70,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
         // construct the join between the main data_table and this group by table
         $query->addTable($this->account_table);
 
-        $accounttable_id_field = new TableField($this->account_table, $this->_id_field_name);
+        $accounttable_id_field = new TableField($this->account_table, 'account_id');
         $datatable_account_id_field = new TableField($data_table, 'account_id');
 
         // the where condition that specifies the join of the tables
@@ -113,14 +111,14 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'account_id');
+        return parent::pullQueryParameters2($request, 'SELECT DISTINCT account_id FROM modw_cloud.account WHERE display in (_filter_)', 'account_id');
     }
 
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            'SELECT display AS field_label FROM modw_cloud.account WHERE account_id IN (_filter_) ORDER BY display'
+            'SELECT display AS field_label FROM modw_cloud.account WHERE display IN (_filter_) ORDER BY display'
         );
     }
 }

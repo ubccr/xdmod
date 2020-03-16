@@ -72,6 +72,7 @@ then
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        #sudo -u xdmod php /data/xdmod/tools/etl/etl_overseer.php -p ingest-cloud-resource-specs -d "CLOUD_RESOURCE_SPECS_DIRECTORY=$REF_DIR/openstack_resource_specs" -r openstack -v debug
     fi
     sudo -u xdmod xdmod-ingestor
 
@@ -93,6 +94,14 @@ fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
+    if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
+      ~/bin/services start
+      expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
+      sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+      sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+      sudo -u xdmod xdmod-ingestor
+      ~/bin/services stop
+    fi
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
 
@@ -119,7 +128,7 @@ then
 
     #
     if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
-        expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
+        #expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
 
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
