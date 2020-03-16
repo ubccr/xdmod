@@ -1,10 +1,10 @@
 title
-"Core Hours Utilization: (%): by Domain"
+"Core Hour Utilization (Hours): by Domain"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Month,"[Default] Core Hours Utilization: (%)"
+Month,"[Default] Core Hour Utilization (Hours)"
 2018-04,1.5355
 ---------

@@ -1,11 +1,11 @@
 title
-"Core Hours Utilization: (%): by VM Size: Memory"
+"Core Hour Utilization (Hours): by VM Size: Memory"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-"VM Size: Memory","Core Hours Utilization: (%)"
+"VM Size: Memory","Core Hour Utilization (Hours)"
 "2 - 4 GB",0.2103
 "8 - 16 GB",0.0672
 "< 2 GB",0.0011
