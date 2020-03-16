@@ -99,6 +99,7 @@ try {
         $query_classname = '\\DataWarehouse\\Query\\' . $data_description->realm . '\\RawData';
 
         $query = new $query_classname(
+            $data_description->realm,
             'day',
             $start_date,
             $end_date,
@@ -147,15 +148,13 @@ try {
         // As a small optimization only compute the total count the first time (ie when the offset is 0)
         if($offset === null or $offset == 0) {
             $privquery = new $query_classname(
+                $data_description->realm,
                 'day',
                 $start_date,
                 $end_date,
                 null,
                 $data_description->metric,
-                array(),
-                'tg_usage',
-                array(),
-                false
+                array()
             );
             $privquery->setRoleParameters($groupedRoleParameters);
             $privquery->setFilters($data_description->filters);

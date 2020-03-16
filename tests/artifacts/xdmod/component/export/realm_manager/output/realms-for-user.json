@@ -3,7 +3,7 @@
         "usr",
         [
             {
-                "name": "jobs",
+                "name": "Jobs",
                 "display": "Jobs"
             }
         ]

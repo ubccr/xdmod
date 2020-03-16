@@ -739,8 +739,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new AccessDeniedException('access denied to ' . json_encode($forbiddenStats));
         }
 
-        $query_classname = '\DataWarehouse\Query\\' . $config->realm . '\Aggregate';
-        $query = new $query_classname($config->aggregation_unit, $config->start_date, $config->end_date, $config->group_by);
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            $config->realm,
+            $config->aggregation_unit,
+            $config->start_date,
+            $config->end_date,
+            $config->group_by
+        );
 
         $allRoles = $user->getAllRoles();
         $query->setMultipleRoleParameters($allRoles, $user);
@@ -757,10 +762,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $query->addOrderBy($config->order_by->field, $dirn);
 
         $dataset = new \DataWarehouse\Data\SimpleDataset($query);
-
+        $results = $dataset->getResults($limit, $start);
+        foreach($results as &$val){
+            $val['name'] = $val[$config->group_by . '_name'];
+            $val['id'] = $val[$config->group_by . '_id'];
+            $val['short_name'] = $val[$config->group_by . '_short_name'];
+            $val['order_id'] = $val[$config->group_by . '_order_id'];
+            unset($val[$config->group_by . '_id']);
+            unset($val[$config->group_by . '_name']);
+            unset($val[$config->group_by . '_short_name']);
+            unset($val[$config->group_by . '_order_id']);
+        }
         return $app->json(
             array(
-                'results' => $dataset->getResults($limit, $start),
+                'results' => $results,
                 'total' => $dataset->getTotalPossibleCount(),
                 'success' => true
             )
@@ -898,10 +913,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $serviceProviderDimensionId = 'provider';
         if ($multipleProvidersSupported) {
-            $serviceProviderGroupBy = \DataWarehouse\Query\Jobs\Aggregate::getGroupBy($serviceProviderDimensionId);
-            $serviceProviderDimensionName = $serviceProviderGroupBy->getLabel();
+            $jobsRealm = \Realm\Realm::factory('Jobs');
+            $serviceProviderGroupBy = $jobsRealm->getGroupByObject($serviceProviderDimensionId);
+            $serviceProviderDimensionName = $serviceProviderGroupBy->getName();
             $dimensionIdsToNames[$serviceProviderDimensionId] = $serviceProviderDimensionName;
-            $serviceProviders = $serviceProviderGroupBy->getPossibleValues();
+            $serviceProviders = $serviceProviderGroupBy->getAttributeValues();
             foreach ($serviceProviders as $serviceProvider) {
                 $filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']] = array(
                     'valueName' => $serviceProvider['short_name'],
@@ -1248,7 +1264,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestException('Invalid search parameters specified in params object');
         } else {
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
-            $query = new $QueryClass("day", $startDate, $endDate, null, "", array());
+            $query = new $QueryClass($realm, "day", $startDate, $endDate, null, "", array());
 
             $allRoles = $user->getAllRoles();
             $query->setMultipleRoleParameters($allRoles, $user);
@@ -1571,7 +1587,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoId,
         $action
     ) {
-    
+
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1611,7 +1627,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoId,
         $action
     ) {
-    
+
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1648,7 +1664,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoId,
         $action
     ) {
-    
+
 
         switch ($infoId) {
             case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
@@ -1684,7 +1700,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $jobId,
         $action
     ) {
-    
+
         $JobMetaDataClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $JobMetaDataClass();
         $jobMetaData = $info->getJobMetadata($user, $jobId);
