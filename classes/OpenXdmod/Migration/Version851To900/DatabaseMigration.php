@@ -5,6 +5,7 @@ use Exception;
 use OpenXdmod\Setup\Console;
 use FilterListBuilder;
 use CCR\DB;
+use ETL\Utilities;
 
 /**
 * Migrate databases from version 8.5.1 to 9.0.0.
@@ -29,5 +30,10 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             $this->logger->warning('Failed to build filter list: '  . $e->getMessage());
             $this->logger->warning('You may need to run xdmod-build-filter-lists manually');
         }
+
+        // Create and populate gateway realm's schema
+        Utilities::runEtlPipeline(array(
+            'gateways.bootstrap'
+        ), $this->logger);
     }
 }
