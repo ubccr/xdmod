@@ -2,13 +2,6 @@
     "configuration": {
         "name": "Instance Type",
         "description_html": "The instance type of a virtual machine.",
-        "additional_join_constraints": [
-            {
-                "attribute_expr": "resource_id",
-                "operation": "=",
-                "aggregate_expr": "host_resource_id"
-            }
-        ],
         "attribute_table_schema": "modw_cloud",
         "attribute_table": "instance_type",
         "attribute_to_aggregate_table_key_map": [
@@ -19,10 +12,10 @@
         "order": 6,
         "attribute_values_query": {
             "records": {
-                "id": "instance_type_id",
-                "short_name": "instance_type",
+                "id": "display",
+                "short_name": "display",
                 "name": "display",
-                "order_id": "instance_type_id"
+                "order_id": "display"
             },
             "joins": [
                 {
@@ -33,7 +26,11 @@
                 "instance_type_id"
             ],
             "query_hint": "DISTINCT"
-        }
+        },
+        "attribute_filter_map_query": {
+            "instance_type_id": "SELECT instance_type_id FROM modw_cloud.instance_type WHERE display IN (__filter_values__)"
+        },
+        "attribute_description_query": "SELECT DISTINCT display AS filter_name FROM modw_cloud.instance_type WHERE display IN (__filter_values__) ORDER BY display"
     },
     "domain": {
         "alternate_group_by_columns": [
@@ -115,15 +112,12 @@
         "name": "User"
     },
     "project": {
-        "additional_join_constraints": [
-            {
-                "attribute_expr": "resource_id",
-                "operation": "=",
-                "aggregate_expr": "host_resource_id"
-            }
-        ],
         "attribute_table": "account",
         "attribute_table_schema": "modw_cloud",
+        "attribute_filter_map_query": {
+            "account_id": "SELECT account_id FROM modw_cloud.account WHERE display in (__filter_values__)"
+        },
+        "attribute_description_query": "SELECT DISTINCT display AS filter_name FROM modw_cloud.account WHERE display IN (__filter_values__) ORDER BY display",
         "attribute_to_aggregate_table_key_map": [
             {
                 "account_id": "account_id"
@@ -139,10 +133,10 @@
                 "display"
             ],
             "records": {
-                "id": "account_id",
+                "id": "display",
                 "name": "display",
                 "order_id": "display",
-                "short_name": "provider_account"
+                "short_name": "display"
             }
         },
         "category": "Administrative",
