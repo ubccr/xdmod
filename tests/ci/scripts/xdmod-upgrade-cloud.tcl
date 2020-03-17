@@ -29,7 +29,7 @@ source [file join [file dirname [info script]] helper-functions.tcl]
 # they should typically not be changed as they need to match up with the
 # settings in the docker container
 
-set timeout 180
+set timeout 240
 spawn "xdmod-setup"
 
 #answerQuestion {Do you want to continue (yes, no)? [no] } Yes

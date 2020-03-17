@@ -72,7 +72,6 @@ then
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
-        #sudo -u xdmod php /data/xdmod/tools/etl/etl_overseer.php -p ingest-cloud-resource-specs -d "CLOUD_RESOURCE_SPECS_DIRECTORY=$REF_DIR/openstack_resource_specs" -r openstack -v debug
     fi
     sudo -u xdmod xdmod-ingestor
 
@@ -95,6 +94,8 @@ fi
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
+      # Ingesting data before running the yum install to upgrade xdmod allows us to
+      # more accurately test the case of upgrading when you have data for two cloud resources
       ~/bin/services start
       expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
       sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
@@ -128,8 +129,8 @@ then
 
     #
     if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
-        #expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
-
+        # Ingesting the previous data again allows us to test functionality that
+        # was added in the upgraded version such as the Provider and Domain group bys
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
         sudo -u xdmod xdmod-ingestor
