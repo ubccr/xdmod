@@ -84,7 +84,7 @@ class MetricExplorer extends Common
 
         $dataset_classname
             = $timeseries
-            ? '\DataWarehouse\Data\SimpleTimeseriesDataset'
+            ? '\DataWarehouse\Data\TimeseriesDataset'
             : '\DataWarehouse\Data\SimpleDataset';
 
         $highchart_classname

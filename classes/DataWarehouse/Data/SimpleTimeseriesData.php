@@ -22,6 +22,11 @@ class SimpleTimeseriesData extends SimpleData
         parent::__construct($name);
     }
 
+    public function addDatum($time, $value, $error_value) {
+        $this->_start_ts[] = $time;
+        $this->_values[] = $value;
+        $this->_errors[] = $error_value;
+    }
     /**
      *  JMS June 2015
      */
