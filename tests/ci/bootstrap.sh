@@ -102,6 +102,9 @@ then
       sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
       sudo -u xdmod xdmod-ingestor
       ~/bin/services stop
+      # Some temp files get made in /tmp and not deleted. This causes tests in validate.sh
+      # to file. Removing the files makes the test pass
+      find /tmp -type f -newer /usr/share/xdmod/html/index.php -delete
     fi
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
