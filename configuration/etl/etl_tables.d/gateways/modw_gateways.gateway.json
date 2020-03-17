@@ -73,7 +73,6 @@
     ],
     "foreign_key_constraints": [],
     "triggers": [],
-    "schema": "modw_gateways",
     "name": "gateway"
   }
 }
