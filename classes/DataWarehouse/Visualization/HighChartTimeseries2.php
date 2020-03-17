@@ -66,23 +66,6 @@ class HighChartTimeseries2 extends HighChart2
         $this->_queryType = 'timeseries';
     }
 
-    //-------------------------------------------------
-    // useMean( $stat )
-    // Based on inspection of the Statistic Alias for the dataset,
-    // should the mean of the values be computed for the remainder set?
-    //
-    // @param is $dataObj->getStatistic()->getAlias(); or $data_description->metric
-    //-------------------------------------------------
-    private function useMean($stat) {
-            $retVal
-                = strpos($stat, 'avg_') !== false
-                || strpos($stat, 'count') !== false
-                || strpos($stat, 'utilization') !== false
-                || strpos($stat, 'rate') !== false
-                || strpos($stat, 'expansion_factor') !== false;
-            return $retVal;
-    }
-
     // ---------------------------------------------------------
     // configure()
     //
@@ -409,7 +392,7 @@ class HighChartTimeseries2 extends HighChart2
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 // @refer HighChart2 line 866
 
-                foreach($yAxisDataObjectsArray as $yIndex => $yAxisDataObject)
+                foreach($yAxisDataObjectsArray as $yAxisDataObject)
                 {
                     if( $yAxisDataObject != null)
                     {
