@@ -61,6 +61,13 @@
         "description_html": "The gateway from which the job was submitted.",
         "name": "Gateway"
     },
+    "gateway_pi": {
+        "$overwrite": {
+            "description_html": "The principal investigator of a Gateway is the manager of the Gateway.",
+            "name": "Gateway PI"
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi"
+    },
     "jobsize": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/jobsize"
     },
@@ -85,22 +92,15 @@
     "parentscience": {
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
-    "proxy_person": {
-        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person",
-	"$overwrite": {
-            "description_html": "A user who runs jobs on resources on behalf of a Gateway.",
-            "name": "Gateway Community User"
-        }
-    },
-    "gateway_pi": {
-        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi",
-	"$overwrite": {
-            "description_html": "The principal investigator of a Gateway is the manager of the Gateway.",
-            "name": "Gateway PI"
-	}
-    },
     "provider": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
+    },
+    "proxy_person": {
+        "$overwrite": {
+            "description_html": "A user who runs jobs on resources on behalf of a Gateway.",
+            "name": "Gateway Community User"
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person"
     },
     "quarter": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"

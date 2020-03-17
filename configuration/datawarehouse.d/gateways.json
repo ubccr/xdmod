@@ -1,15 +1,15 @@
 {
     "Gateways": {
-        "name": "Gateways",
-        "datasource": "HPcDB",
         "aggregate_schema": "modw_gateways",
-        "aggregate_table_prefix": "gatewayfact_by_",
         "aggregate_table_alias": "agg",
-        "min_aggregation_unit": "day",
-        "order": 35,
+        "aggregate_table_prefix": "gatewayfact_by_",
+        "datasource": "HPcDB",
         "group_bys": {
             "$ref": "datawarehouse.d/ref/Gateways-group-bys.json"
         },
+        "min_aggregation_unit": "day",
+        "name": "Gateways",
+        "order": 35,
         "statistics": {
             "$ref": "datawarehouse.d/ref/Gateways-statistics.json"
         }
