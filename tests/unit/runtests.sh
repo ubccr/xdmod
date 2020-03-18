@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $BASEDIR/../ci/runtest-include.sh
 echo "Unit tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
