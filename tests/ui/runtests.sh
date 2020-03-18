@@ -1,10 +1,6 @@
 #!/bin/bash
-# This file is generally used in the docker build to speed things up.
-# Set it to something different if you want to use your own.
-
-if [ -z $XDMOD_REALMS ]; then
-    export XDMOD_REALMS=$(echo `mysql -Ne "SELECT name FROM moddb.realms"` | tr ' ' ',')
-fi
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $BASEDIR/../ci/runtest-include.sh
 
 SHMSIZEK=`df -k /dev/shm | grep shm | awk '{print $2}'`
 if (( $SHMSIZEK < 2000000 )); then
@@ -14,6 +10,8 @@ if (( $SHMSIZEK < 2000000 )); then
     echo "***************************************************************"
 fi
 
+# This file is generally used in the docker build to speed things up.
+# Set it to something different if you want to use your own.
 CACHEFILE='/tmp/browser-tests-node-modules.tar.gz'
 set -e
 set -o pipefail

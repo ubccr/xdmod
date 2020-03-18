@@ -1,4 +1,6 @@
 #!/bin/sh
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $BASEDIR/../ci/runtest-include.sh
 echo "Unit tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 PHPUNITARGS=""
 if [ "$1" = "coverage" ];
@@ -14,5 +16,5 @@ if [ ! -x "$phpunit" ]; then
     exit 127
 fi
 
-$phpunit ${PHPUNITARGS} .
+$phpunit $(log_opts "unit" "all") ${PHPUNITARGS} .
 exit $?
