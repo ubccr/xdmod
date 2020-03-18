@@ -7,7 +7,9 @@
             {
                 "alias": "jt",
                 "name": "job_tasks",
-                "schema": "${SOURCE_SCHEMA}"
+                "on": "jt.person_id = gateway.proxy_person_id",
+                "schema": "${SOURCE_SCHEMA}",
+                "type": "STRAIGHT"
             }
         ],
         "records": {
@@ -56,9 +58,6 @@
             "uid_number": "uid_number",
             "waitduration": "waitduration",
             "wallduration": "wallduration"
-        },
-        "where": [
-            "jt.person_id in (select proxy_person_id from modw_gateways.gateway)"
-        ]
+        }
     }
 }
