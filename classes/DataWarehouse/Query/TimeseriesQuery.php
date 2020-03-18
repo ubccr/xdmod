@@ -97,6 +97,8 @@ class TimeseriesQuery extends Query implements iQuery
     /**
      * returns the equivalent aggregate query instance that has
      * identical statistics, groupbys and where conditions.
+     *
+     * @return AggregateQuery
      */
     public function getAggregateQuery()
     {
@@ -134,43 +136,45 @@ class TimeseriesQuery extends Query implements iQuery
      * This call does not change the sort order of the timeseries query
      * itself, rather it is used to change the sort order of the associated
      * aggregrate query that is returned by the getAggregateQuery() function.
+     * @param stdClass $data_description Data description object that includes the sort information.
+     * @return void
      */
     public function addOrderByAndSetSortInfo($data_description)
     {
         switch ($data_description->sort_type) {
             case 'value_asc':
                 $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->metric,
-                    'direction' => 'asc'
-                )
+                    array(
+                        'column_name' => $data_description->metric,
+                        'direction' => 'asc'
+                    )
                 );
                 break;
 
             case 'value_desc':
                 $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->metric,
-                    'direction' => 'desc'
-                )
+                    array(
+                        'column_name' => $data_description->metric,
+                        'direction' => 'desc'
+                    )
                 );
                 break;
 
             case 'label_asc':
                 $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->group_by,
-                    'direction' => 'asc'
-                )
+                    array(
+                        'column_name' => $data_description->group_by,
+                        'direction' => 'asc'
+                    )
                 );
                 break;
 
             case 'label_desc':
                 $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->group_by,
-                    'direction' => 'desc'
-                )
+                    array(
+                        'column_name' => $data_description->group_by,
+                        'direction' => 'desc'
+                    )
                 );
                 break;
         }

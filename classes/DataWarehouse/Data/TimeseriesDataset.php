@@ -12,20 +12,39 @@ use \DataWarehouse\Query\Model\Schema;
 use \DataWarehouse\Query\Model\WhereCondition;
 use \DataWarehouse\Query\Model\OrderBy;
 
+/**
+ * TimeseriesDataset class is used to generate one or more
+ * data series from a query.
+ */
 class TimeseriesDataset
 {
-    // The summarized dataseries is assigned a dedicated group id value. This
-    // is used by the frontend code in the Usage Tab to not generate a
-    // drilldown tooltip @refer html/gui/js/DrillDownMenu.js The visualization
-    // class also checks this to set the remainder flag on the dataset for hte
-    // metric explorer.
+    /**
+     * The summarized dataseries is assigned a dedicated group id value. This
+     * is used by the frontend code in the Usage Tab to not generate a
+     * drilldown tooltip @refer html/gui/js/DrillDownMenu.js The visualization
+     * class also checks this to set the remainder flag on the dataset for the
+     * metric explorer.
+     */
     const SUMMARY_GROUP_ID = -99999;
 
+    /**
+     * @var TimeseriesQuery. The timeseries query instance that is used to generate the dataset.
+     */
     protected $query;
+
+    /**
+     * @var AggregateQuery. The associated aggregate query used to generate the dataset.
+     */
     protected $agg_query;
 
+    /**
+     * @var The number of series in the dataset.
+     */
     protected $series_count = null;
 
+    /**
+     * @param TimeseriesQuery $query The timeseries query instance that is used to generate the dataset.
+     */
     public function __construct(TimeseriesQuery $query)
     {
         $this->query = $query;
@@ -37,6 +56,9 @@ class TimeseriesDataset
      * Get the ordered list of data series identifiers based on the
      * aggregate query. This is used to order the datasets that are returned
      * from the timeseries query.
+     * @param integer $limit  The number of data series ids to return.
+     * @param integer $offset The start offset for the data series.
+     * @return array
      */
     protected function getSeriesIds($limit, $offset)
     {
@@ -59,6 +81,7 @@ class TimeseriesDataset
      * Get the time-based and space-based groupby class instances from the underlying
      * query class. Note this class only supports a single space-based group by
      * class per query.
+     * @return array containing two elements: the time-based groupby and the space-based groupby.
      */
     protected function getGroupByClasses()
     {
@@ -77,9 +100,14 @@ class TimeseriesDataset
     }
 
     /**
-     * return an array of timeseries datasets. If the summarize flag is set true and there
-     * are more data series that the $limit then $limit + 1 datasets will be returned with
-     * the last one being the summarized version of the remainder.
+     * Generate the datasets for a query. This executes the necessary queries
+     * and returns the results as SimpleTimeseriesData instances.
+     * @param integer $limit     The total number of series to return.
+     * @param integer $offset    The offset of the first series.
+     * @param boolean $summarize Whether to generate a summary data series also. If
+     *                           summarize is true then $limit + 1 SimpleTimeseriesData
+     *                           instances will be returned.
+     * @return array of timeseries datasets. If the summarize flag is set true and there
      */
     public function getDatasets($limit, $offset, $summarize)
     {
@@ -167,6 +195,9 @@ class TimeseriesDataset
     /**
      * The choice of summary algorithm is determined based on the alias name
      * for the statistic.
+     * @param string  $column_name The alias of the statistic to be summarized.
+     * @param integer $normalizeBy The total number of series to be summarized.
+     * @return array the sql fragment, series name and summariation algorthm type.
      */
     protected function getSummaryOp($column_name, $normalizeBy)
     {
@@ -200,6 +231,15 @@ class TimeseriesDataset
         return array($sql, $series_name, $type);
     }
 
+    /**
+     * Generate the summary dataset for a query.
+     *
+     * @param string  $column_name       The sql alias for the statistic to summarize.
+     * @param string  $where_name        The id of the GroupBy class that is being used.
+     * @param integer $normalizeBy       The total number of distinct groups in the data.
+     * @param array   $whereExcludeArray Array of values to exclude from the summary calculation.
+     * @return SimpleDataset
+     */
     protected function getSummarizedColumn(
         $column_name,
         $where_name,
@@ -259,7 +299,9 @@ class TimeseriesDataset
     }
 
     /**
-    * Build a SimpleTimeseriesData object containing the timeseries data.
+     * Build a SimpleTimeseriesData object containing the timestamps for
+     * the time range of the query.
+    * @return SimpleTimeseriesData
     */
     public function getTimestamps()
     {
@@ -281,8 +323,9 @@ class TimeseriesDataset
     }
 
     /**
-     * Returns the number of data series in this dataset. The count is determined from the
+     * Get the total number of series in the dataset. The count is determined from the
      * aggregate version of the supplied timeseries query.
+     * @return the number of data series in this dataset.
      */
     public function getUniqueCount()
     {
@@ -292,6 +335,9 @@ class TimeseriesDataset
         return $this->series_count;
     }
 
+    /**
+     * @see SimpleDataset::export
+     */
     public function export($export_title = 'title')
     {
         $exportData = array(
