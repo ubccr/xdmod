@@ -28,7 +28,8 @@ reference dataset copy these files to the artifact reference directory
 ### `XDMOD_REALMS`
 
 Comma separated list of realms that should be tested.  Valid realm names can be
-found in the `name` column of the `moddb.realms` database table.
+found in the `name` column of the `moddb.realms` database table and must be in
+lower case.
 
 ### `REG_TEST_ALL`
 
