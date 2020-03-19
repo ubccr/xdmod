@@ -30,8 +30,6 @@ reference dataset copy these files to the artifact reference directory
 Comma separated list of realms that should be tested.  Valid realm names can be
 found in the `name` column of the `moddb.realms` database table.
 
-If not set all realms found in the database will be tested.
-
 ### `REG_TEST_ALL`
 
 Set to `1` to run all regression tests.  Otherwise only a randomly selected
