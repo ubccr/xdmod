@@ -70,7 +70,6 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $chartData = $chartStore->data[0];
 
         $this->assertEquals($expected['subtitle'], $chartData->subtitle->text);
-
         if (isset($expected['yvalue'])) {
             $this->assertEquals($expected['yvalue'], $chartData->series[0]->data[0]->y);
         } else {
