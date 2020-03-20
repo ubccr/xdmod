@@ -14,8 +14,8 @@ use Xdmod\SlurmGresParser;
 class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 {
     /**
-     * Drop possibly corrupt storage realm filters and rebuild them.  Prompt
-     * user and re-ingest slurm GPU data if desired.
+     * Update batch export request realm names, rebuild storage filters lists.
+     * Prompt user and re-ingest slurm GPU data if desired.
      */
     public function execute()
     {
