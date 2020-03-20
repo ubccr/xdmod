@@ -24,7 +24,6 @@ ON
   i.resource_id = acc.resource_id AND i.account_id = acc.account_id
 SET
   i.account_id = acc.new_account_id;
-
 //
 ALTER TABLE modw_cloud.instance_type MODIFY instance_type_id INT NOT NULL;
 ALTER TABLE modw_cloud.instance_type DROP INDEX increment_key;
@@ -62,8 +61,8 @@ ON
 SET
   ev.instance_id = i.new_instance_id;
 -- On the session_records table the instance_id column is part of the primary key and
--- in order to update it the primary key needs to be removed, update to the new instance_id
--- and then reapply the primary key
+-- in order to update it the primary key needs to be removed then the instance_id can
+-- be updated and the primary key reapplied
 ALTER TABLE modw_cloud.session_records DROP PRIMARY KEY;
 UPDATE
   modw_cloud.session_records as sr
