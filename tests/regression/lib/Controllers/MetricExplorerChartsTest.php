@@ -70,6 +70,10 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $chartData = $chartStore->data[0];
 
         $this->assertEquals($expected['subtitle'], $chartData->subtitle->text);
+        if($expected['subtitle'] == "Instance Type =  c1.m1"){
+        //if($expected['subtitle'] == 'Domain = ( adjunct,  Default )'){
+          //var_dump($chartData);
+        }
         if (isset($expected['yvalue'])) {
             $this->assertEquals($expected['yvalue'], $chartData->series[0]->data[0]->y);
         } else {

@@ -33,7 +33,7 @@ set timeout 240
 spawn "xdmod-setup"
 
 #answerQuestion {Do you want to continue (yes, no)? [no] } Yes
-confirmUpgrade
+#confirmUpgrade
 # Enter config settings for each resource
 selectMenuOption 4
 foreach resource $resources {

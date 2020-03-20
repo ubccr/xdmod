@@ -387,6 +387,21 @@
             "realm": "Cloud",
             "metric": "cloud_core_time",
             "date": "2019-06-26",
+            "filter_dimension": "configuration",
+            "filter_values": [
+                "m1.medium"
+            ]
+        },
+        "expected": {
+            "subtitle": "Instance Type =  m1.medium",
+            "yvalue": 29635.5067
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
             "filter_dimension": "resource",
             "filter_values": [
                 "nutsetters",
