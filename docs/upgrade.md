@@ -110,6 +110,11 @@ enhancements and bug fixes.
 
 You may upgrade directly from 8.5.0 or 8.5.1.
 
+This is the first version of Open XDMoD that supports GPU data in the jobs
+realm.  Since Open XDMoD 6.5 data from slurm (`ReqGRES`) has been ingested into
+the database, but not displayed in the portal.  These jobs may now be
+re-ingested and any GPU data will be used.
+
 ### Configuration File Changes
 
 The `xdmod-upgrade` script will migrate user editable configuration files to
@@ -122,6 +127,12 @@ version.  Tables may be altered the first time they are used during ingestion.
 
 - The `moddb`.`ReportTemplateACL` database table is no longer used and is
 removed by the upgrade script.
+- The following tables are altered to store GPU data:
+  `mod_shredder`.`shredded_job_slurm`, `mod_shredder`.`shredded_job`,
+  `mod_shredder`.`staging_job`, `mod_hpcdb`.`hpcdb_jobs`, `modw`.`job_tasks`,
+  and tables in `modw_aggregates` prefixed with `jobfact_by_`.
+- New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
+  Count".
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
