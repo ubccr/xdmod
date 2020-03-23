@@ -28,7 +28,7 @@
                 "type": "int(5)",
                 "nullable": false,
                 "default": null,
-                "comments": "Number of vcpus available on the associated node."
+                "comment": "Number of vcpus available on the associated node."
             },
             {
                 "name": "fact_date",
