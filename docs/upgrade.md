@@ -123,5 +123,14 @@ version.  Tables may be altered the first time they are used during ingestion.
 - The `moddb`.`ReportTemplateACL` database table is no longer used and is
 removed by the upgrade script.
 
+- The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
+tables have had database schemas changed to better support the local and global filters
+in the Metric Explorer. If upgrading from a previous version of OpenXDMoD be sure
+to run `xdmod-upgrade` before shredding and ingesting your data.
+
+- Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
+tables any saved charts or reports using the Account or Configuration group by in the
+Cloud realm should be recreated.
+
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
