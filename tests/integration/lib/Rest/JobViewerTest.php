@@ -444,6 +444,59 @@ class JobViewerTest extends BaseTest
         $this->xdmodhelper->logout();
     }
 
+    /**
+     * Test that the search history save new search correctly sanitizes the text input.
+     * @return void
+     */
+    public function testSearchSaving() {
+
+        $input = array(
+            "text" => "Typing in <script>alert(1)</script>",
+            "searchterms" => array(
+                "params" => array(
+                    "start_date" => "2020-01-09",
+                    "end_date" => "2020-01-15",
+                    "realm" => "Jobs",
+                    "limit" => 24,
+                    "start" => 0,
+                    "params" => "{\"resource\":[\"1\"]}"
+                )
+            ),
+            "results" => array(
+                array(
+                    'resource' => 'pozidriv',
+                    'name' => 'blah',
+                    "jobid" => 42520494,
+                    "text" => "pozidriv-5138",
+                    "dtype" => "jobid",
+                    "local_job_id" => "5138"
+                )
+            )
+        );
+
+        $this->xdmodhelper->authenticate('cd');
+        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history', array('realm' => 'Jobs'), array('data' => json_encode($input)));
+
+        $this->assertEquals(200, $response[1]['http_code']);
+        $result = $response[0];
+        $this->assertTrue($result['success']);
+
+        $this->assertEquals($input['searchterms'], $result['results']['searchterms']);
+        $this->assertEquals($input['results'], $result['results']['results']);
+
+        $this->assertEquals('Typing in &lt;script&gt;alert(1)&lt;/script&gt;', $result['results']['text']);
+
+        // get the record id
+        $recordId = $result['results'][$result['results']['dtype']];
+
+        // remove the dummy saved search.
+        $response = $this->xdmodhelper->delete(self::ENDPOINT . 'search/history/' . $recordId, array('realm' => 'Jobs'));
+
+        $this->assertEquals(200, $response[1]['http_code']);
+        $result = $response[0];
+        $this->assertTrue($result['success']);
+    }
+
     public function testJobMetadata() {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
