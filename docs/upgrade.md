@@ -124,9 +124,8 @@ version.  Tables may be altered the first time they are used during ingestion.
 removed by the upgrade script.
 
 - The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
-tables have had database schemas changed to better support the local and global filters
-in the Metric Explorer. If upgrading from a previous version of OpenXDMoD be sure
-to run `xdmod-upgrade` before shredding and ingesting your data.
+tables have had their Primary Keys changed to better support the local and global filters
+in the Metric Explorer.
 
 - Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
 tables any saved charts or reports using the Account or Configuration group by in the
