@@ -34,7 +34,7 @@
                 "cloud_common/session_records.json",
                 "cloud_common/event.json",
                 "cloud_common/raw_resource_specs.json",
-                "cloud_common/cloud_resource_specs.json"
+                "cloud_common/cloud_resource_specs.json",
                 "cloud_common/account.json",
                 "cloud_common/instance_type.json",
                 "cloud_common/instance.json"
