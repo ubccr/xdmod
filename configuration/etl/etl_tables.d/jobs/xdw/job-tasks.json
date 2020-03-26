@@ -147,6 +147,13 @@
                 "comment": "Number of processor cores consumed"
             },
             {
+                "name": "gpu_count",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Number of GPUs consumed"
+            },
+            {
                 "name": "memory_kb",
                 "type": "int(11)",
                 "nullable": false,
@@ -170,6 +177,12 @@
                 "type": "decimal(18,0)",
                 "nullable": false,
                 "comment": "The amount of the cpu time (processor_count * wallduration)"
+            },
+            {
+                "name": "gpu_time",
+                "type": "decimal(18,0)",
+                "nullable": false,
+                "comment": "The amount of the GPU time (gpu_count * wallduration)"
             },
             {
                 "name": "local_charge_su",

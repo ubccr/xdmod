@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Molecular Biosciences] GPU Hours: Total","[Arts] GPU Hours: Total","[Astronomical Sciences] GPU Hours: Total","[Atmospheric Sciences] GPU Hours: Total","[Chemical, Thermal Systems] GPU Hours: Total","[Chemistry] GPU Hours: Total","[Computer and Computation Research] GPU Hours: Total","[Design and Manufacturing Systems] GPU Hours: Total","[Earth Sciences] GPU Hours: Total","[Electrical and Communication Systems] GPU Hours: Total","[Environmental Biology] GPU Hours: Total","[Materials Research] GPU Hours: Total","[Mathematical Sciences] GPU Hours: Total","[Mechanical and Structural Systems] GPU Hours: Total","[Microelectronic Information Processing Systems] GPU Hours: Total","[Physics] GPU Hours: Total","[Polar Programs] GPU Hours: Total","[Social and Economic Science] GPU Hours: Total"
+2016-12,465.4928,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017-01,41.4200,0.0000,0.0000,0.0000,0,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0,0.0000,0.0000
+---------
