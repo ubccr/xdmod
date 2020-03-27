@@ -46,7 +46,6 @@
                 "cloud_common/event_asset.json",
                 "cloud_common/raw_resource_specs.json",
                 "cloud_common/cloud_resource_specs.json",
-                "common/hpcdb/resourcespecsfact_by_.json",
                 "cloud_openstack/raw_event.json",
                 "cloud_openstack/raw_instance_type.json",
                 "cloud_openstack/raw_volume.json",
