@@ -60,7 +60,12 @@ EOT
             Utilities::runEtlPipeline(
                 ['jobs-gpu-re-ingest-8_5_1-9_0_0', 'jobs-xdw-aggregate'],
                 $this->logger,
-                ['last-modified-start-date' => $lastModifiedStartDate]
+                [
+                    'last-modified-start-date' => $lastModifiedStartDate,
+                    'option-overrides' => [
+                        'analyze_table' => false
+                    ]
+                ]
             );
             $builder = new FilterListBuilder();
             $builder->setLogger($this->logger);
