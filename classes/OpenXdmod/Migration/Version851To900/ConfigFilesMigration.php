@@ -26,8 +26,6 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             )
         );
 
-        foreach ($this->modulePortalSettingsPaths as $moduleName => $modulePortalSettingsPath) {
-            $this->writeModulePortalSettingsFile($moduleName);
-        }
+        $this->writeModulePortalSettingsFiles();
     }
 }
