@@ -537,7 +537,7 @@ var generateGroupBy = function (itemAlias, column)
         attribute_values_query: {
             joins: [
                 {
-                    name: column.name
+                    name: column.dimension_table
                 }
             ],
             orderby: [
