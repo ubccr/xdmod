@@ -134,5 +134,13 @@ removed by the upgrade script.
 - New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
   Count".
 
+- The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
+tables have had their Primary Keys changed to better support the local and global filters
+in the Metric Explorer.
+
+- Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
+tables any saved charts or reports using the Account or Configuration group by in the
+Cloud realm should be recreated.
+
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
