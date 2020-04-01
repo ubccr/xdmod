@@ -2,7 +2,7 @@
 - A full working installation of XDMoD. [XDMoD install instructions](install.html)
 
 ## What are cloud metrics?
-The Cloud realm in XDMoD tracks events that occur in cloud infrastructure systems which can also referred to as Infrastructure as a Service(IaaS) cloud computing systems. A variety of events are tracked such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs.
+The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure systems which can also be referred to as Infrastructure as a Service (IaaS) cloud computing systems. A variety of events are tracked such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs.
 
 ## Available metrics
 - Average Memory Reserved Weighted By Wall Hours (Bytes)
@@ -38,7 +38,7 @@ The Cloud realm in XDMoD tracks events that occur in cloud infrastructure system
 - VM Size: Memory
   - A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.
 - Domain
-  - A domain is a high-level container for projects, users and groups in Open Stack
+  - A domain is a high-level container for projects, users and groups in Open Stack.
 - Submission Venue
   - The venue that a job or cloud instance was initiated from.
 
