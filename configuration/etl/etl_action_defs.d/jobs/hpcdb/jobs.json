@@ -28,6 +28,7 @@
             "exit_state": "j.exit_state",
             "nodecount": "j.node_count",
             "processors": "j.cpu_count",
+            "gpucount": "j.gpu_count",
             "cpu_req": "j.cpu_req",
             "mem_req": "j.mem_req",
             "timelimit": "j.timelimit",

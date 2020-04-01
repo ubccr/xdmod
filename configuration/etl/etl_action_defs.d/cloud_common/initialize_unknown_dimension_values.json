@@ -15,19 +15,10 @@
 
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_common/account.json#/table_definition"
-        },
-        {
             "$ref": "${table_definition_dir}/cloud_common/host.json#/table_definition"
         },
         {
             "$ref": "${table_definition_dir}/cloud_common/image.json#/table_definition"
-        },
-        {
-            "$ref": "${table_definition_dir}/cloud_common/instance.json#/table_definition"
-        },
-        {
-            "$ref": "${table_definition_dir}/cloud_common/instance_type.json#/table_definition"
         }
     ],
 
@@ -61,12 +52,6 @@
     },
 
     "destination_record_map": {
-        "account": {
-            "resource_id": "resource_id",
-            "account_id": "unknown_id",
-            "provider_account": "unknown_key",
-            "display": "unknown_display"
-        },
         "host": {
             "resource_id": "resource_id",
             "host_id": "unknown_id",
@@ -76,18 +61,6 @@
             "resource_id": "resource_id",
             "image_id": "unknown_id",
             "image": "unknown_key"
-        },
-        "instance": {
-            "resource_id": "resource_id",
-            "instance_id": "unknown_id",
-            "account_id": "unknown_id",
-            "provider_identifier": "unknown_key"
-        },
-        "instance_type": {
-            "resource_id": "resource_id",
-            "instance_type_id": "unknown_id",
-            "instance_type": "unknown_key",
-            "display": "unknown_display"
         }
     }
 }

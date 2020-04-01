@@ -208,6 +208,14 @@
                 "batchExport": true
             },
             {
+                "name": "GPUs",
+                "tableAlias": "jt",
+                "column": "gpu_count",
+                "group": "Allocated Resource",
+                "documentation": "The number of GPUs that were assigned to the job.",
+                "batchExport": true
+            },
+            {
                 "name": "Memory Used",
                 "tableAlias": "jt",
                 "column": "memory_kb",
@@ -241,6 +249,15 @@
                 "group": "Allocated Resource",
                 "units": "seconds",
                 "documentation": "The amount of CPU core time (Core Count * Wall Time)",
+                "batchExport": true
+            },
+            {
+                "name": "GPU Time",
+                "tableAlias": "jt",
+                "column": "gpu_time",
+                "group": "Allocated Resource",
+                "units": "seconds",
+                "documentation": "The amount of GPU time (GPU Count * Wall Time)",
                 "batchExport": true
             },
             {

@@ -34,6 +34,41 @@
         "description_html": "A categorization of jobs into discrete groups based on the number of cores used by each job.",
         "name": "Job Size"
     },
+    "gpucount": {
+        "attribute_table": "gpu_buckets",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "gpubucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "gpu_buckets"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of jobs into discrete groups based on the number of GPUs used by each job.",
+        "name": "GPU Count"
+    },
     "jobwalltime": {
         "attribute_table": "job_times",
         "attribute_table_schema": "modw",

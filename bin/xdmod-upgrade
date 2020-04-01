@@ -299,5 +299,6 @@ Usage: xdmod-upgrade [-v]
         databases that you are upgrading.  This option is necessary when
         the version number in portal_settings.ini does not match the
         version of your config files and databases.
+
 EOF;
 }

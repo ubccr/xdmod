@@ -244,6 +244,9 @@ class Utilities
         if( array_key_exists('variable-overrides', $params) ){
             $configOptions['config_variables'] = $params['variable-overrides'];
         }
+        if (array_key_exists('option-overrides', $params)) {
+            $configOptions['option_overrides'] = $params['option-overrides'];
+        }
 
         $etlConfig = EtlConfiguration::factory(
             CONFIG_DIR . '/etl/etl.json',

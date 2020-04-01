@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] Number of Jobs Ended","[2] Number of Jobs Ended"
+"2016 Q4",54747,0
+"2017 Q1",16564,2
+---------

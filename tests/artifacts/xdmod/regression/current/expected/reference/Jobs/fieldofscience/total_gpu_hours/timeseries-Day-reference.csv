@@ -1,0 +1,20 @@
+title
+"GPU Hours: Total: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Biophysics] GPU Hours: Total","[Algebra and Number Theory] GPU Hours: Total","[Arts] GPU Hours: Total","[Biochemistry and Molecular Structure and Function] GPU Hours: Total","[Cell Biology] GPU Hours: Total","[Computer and Computation Theory] GPU Hours: Total","[Decision, Risk, and Management Science] GPU Hours: Total","[Design and Computer-Integrated Engineering] GPU Hours: Total","[Design, Tools, and Test] GPU Hours: Total","[Economics] GPU Hours: Total","[Emerging Technologies Initiation] GPU Hours: Total","[Experimental Systems] GPU Hours: Total","[Extragalactic Astronomy and Cosmology] GPU Hours: Total","[Fluid, Particulate, and Hydraulic Systems] GPU Hours: Total","[Galactic Astronomy] GPU Hours: Total","[Geology and Paleontology] GPU Hours: Total","[Geophysics] GPU Hours: Total","[Global Atmospheric Research] GPU Hours: Total","[Law and Social Sciences] GPU Hours: Total","[Mechanics and Materials] GPU Hours: Total","[Metals, Ceramics, and Electronic Materials] GPU Hours: Total","[Operations Research and Production Systems] GPU Hours: Total","[Organic and Macromolecular Chemistry] GPU Hours: Total","[Physical Chemistry] GPU Hours: Total","[Polar Aeronomy and Astrophysics] GPU Hours: Total","[Polar Meteorology] GPU Hours: Total","[Polar Ocean and Climate Systems] GPU Hours: Total","[Quantum Electronics, Waves, and Beams] GPU Hours: Total","[Seismology] GPU Hours: Total","[Sociology] GPU Hours: Total","[Solid State Chemistry and Polymers] GPU Hours: Total","[Solid-State and Microstructures] GPU Hours: Total","[Statistics and Probability] GPU Hours: Total","[Stellar Astronomy and Astrophysics] GPU Hours: Total","[Structures and Building Systems] GPU Hours: Total","[Systematic and Population Biology] GPU Hours: Total","[Systems Prototyping and Fabrication] GPU Hours: Total","[Tectonics] GPU Hours: Total","[Theoretical Physics] GPU Hours: Total","[Volcanology and Mantle Geochemistry] GPU Hours: Total"
+2016-12-22,33.4928,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,48.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,48.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,48.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,48.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0
+2016-12-27,48.0000,0,0,0.0000,0.0000,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0.0000,0,0,0,0.0000,0,0.0000,0.0000,0,0.0000,0.0000,0,0,0,0,0,0
+2016-12-28,48.0000,0.0000,0,0.0000,0.0000,0,0,0,0,0,0,0.0000,0,0,0.0000,0,0,0,0,0,0,0.0000,0.0000,0.0000,0,0,0,0.0000,0,0.0000,0.0000,0,0.0000,0.0000,0,0,0.0000,0,0.0000,0.0000
+2016-12-29,48.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0,0,0.0000,0.0000,0,0,0.0000,0,0,0.0000,0,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0,0.0000,0.0000
+2016-12-30,48.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2016-12-31,48.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0
+2017-01-01,41.4200,0.0000,0.0000,0,0.0000,0,0,0.0000,0,0.0000,0.0000,0.0000,0,0,0.0000,0.0000,0,0.0000,0,0.0000,0,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0,0.0000,0.0000,0,0,0
+---------

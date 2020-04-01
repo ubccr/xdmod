@@ -22,6 +22,7 @@ CREATE TABLE ${DESTINATION_SCHEMA}.`shredded_job_slurm` (
   `state` varchar(32) DEFAULT NULL,
   `nnodes` int(10) unsigned NOT NULL,
   `ncpus` int(10) unsigned NOT NULL,
+  `ngpus` int(10) unsigned NOT NULL DEFAULT '0',
   `req_cpus` int(10) unsigned DEFAULT NULL,
   `req_mem` varchar(32) DEFAULT NULL,
   `req_gres` text NOT NULL,
