@@ -110,7 +110,8 @@
             {
                 "name": "gpucount",
                 "type": "int(11)",
-                "nullable": true
+                "nullable": false,
+                "default": 0
             },
             {
                 "name": "cpu_req",

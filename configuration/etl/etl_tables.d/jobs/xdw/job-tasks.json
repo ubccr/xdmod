@@ -150,7 +150,7 @@
                 "name": "gpu_count",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
+                "default": 0,
                 "comment": "Number of GPUs consumed"
             },
             {
