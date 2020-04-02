@@ -474,7 +474,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             this._retrieveSelected(node);
 
             this.ownerCt.setTitle("Editing Search: " + this.title);
-            Ext.getCmp('job-viewer-search-name').setValue(this.title);
+            Ext.getCmp('job-viewer-search-name').setValue(Ext.util.Format.htmlDecode(params.text));
 
             if (!this.ownerCt.isVisible()) {
                 this.ownerCt.show();
@@ -1456,7 +1456,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
         var selected = self._resultsToJSON(self._getSelectedRecords());
 
         var params = {
-            text: Ext.util.Format.htmlEncode(title),
+            text: title,
             searchterms: {
                 params: self.resultsStore.searchParams
             },

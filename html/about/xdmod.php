@@ -16,14 +16,14 @@
 </tr>
 </table>
 <br>
-<p>Funded by the National Science Foundation, XDMoD (<a href="https://xdmod.ccr.buffalo.edu" target="_blank">https://xdmod.ccr.buffalo.edu/</a>) is designed to audit and facilitate the operation and utilization of XSEDE, the most advanced and robust collection of integrated advanced digital resources and services in the world.  Similarly, Open XDMoD (<a href="http://open.xdmod.org" target="_blank">http://open.xdmod.org</a>), the open source version of XDMoD, is designed to provide similar capability to academic and industrial HPC centers.</p>
+<p>Funded by the National Science Foundation, XDMoD (<a href="https://xdmod.ccr.buffalo.edu" target="_blank" rel="noopener noreferrer">https://xdmod.ccr.buffalo.edu/</a>) is designed to audit and facilitate the operation and utilization of XSEDE, the most advanced and robust collection of integrated advanced digital resources and services in the world.  Similarly, Open XDMoD (<a href="http://open.xdmod.org" target="_blank" rel="noopener noreferrer">http://open.xdmod.org</a>), the open source version of XDMoD, is designed to provide similar capability to academic and industrial HPC centers.</p>
 
 <p><b>
 When referencing XDMoD, please cite the following publication: <br><br>
 Jeffrey T. Palmer, Steven M. Gallo, Thomas R. Furlani, Matthew D. Jones, Robert L. DeLeon, Joseph P. White, Nikolay Simakov, Abani K. Patra, Jeanette Sperhac, Thomas Yearke, Ryan Rathsam, Martins Innus, Cynthia D. Cornelius, James C. Browne, William L. Barth, Richard T. Evans,
 "Open XDMoD: A Tool for the Comprehensive Management of High-Performance Computing Resources",
 <i>Computing in Science &amp; Engineering</i>, Vol 17, Issue 4, 2015, pp. 52-62.
-<a href="http://dx.doi.org/10.1109/MCSE.2015.68" target="_blank">10.1109/MCSE.2015.68</a>
+<a href="http://dx.doi.org/10.1109/MCSE.2015.68" target="_blank" rel="noopener noreferrer">10.1109/MCSE.2015.68</a>
 </b></p>
 
 <p id="about-xdmod-version-number">XDMoD Version: <?php print xd_versioning\getPortalVersion(true); ?></p>

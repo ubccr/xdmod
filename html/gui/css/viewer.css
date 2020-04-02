@@ -416,26 +416,6 @@ h3 {
 	width: 80px;
 }
 
-.summary_key {
-	text-align: right;
-	vertical-align:  top;
-	valign: top;
- 	color:#15428b;
-	font-weight:bold; 
-    font-size: 10px;
-    font-family: arial,verdana,sans-serif;
-}
-
-.summary_value {
-	text-align: right;
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:12px;
-	letter-spacing:0px;
-	font-weight:bold;
-	padding-right: 30px;
-
-}
-
 .kernel_description_label {
 	font-family: arial, "Times New Roman",Times,serif;
 	font-size:14px;

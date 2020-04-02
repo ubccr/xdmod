@@ -89,16 +89,16 @@ New Acls:         %s
 EML;
 
     const USER_NOTIFICATION_EMAIL = <<<EML
-
 Dear %s,
 
-This email is to notify you that XDMoD has detected a change in your organization affiliation. We
-have taken steps to ensure that this is accurately reflected in our systems. If you have any questions
-or concerns please contact us @ %s.
+The organization associated with your XDMoD user account has been automatically
+updated from %s to %s. You will no longer be able to view non-public data
+from %s.
 
-Thank You,
+If you were not expecting this change or the new organization affiliation is
+incorrect then please contact support at %s.
 
-XDMoD
+%s
 EML;
 
     /**
@@ -503,7 +503,7 @@ EML;
         $pdo = DB::factory('database');
 
         $userCheck = $pdo->query("
-         SELECT username, password, email_address, first_name, middle_name, last_name,
+         SELECT id, username, password, email_address, first_name, middle_name, last_name,
          time_created, time_last_updated, password_last_updated, account_is_active, organization_id, person_id, field_of_science, token, user_type, sticky
          FROM Users
          WHERE id=:id
@@ -523,7 +523,7 @@ EML;
             $user->_update_token = false;
         }
 
-        $user->_id = $uid;
+        $user->_id = $userCheck[0]['id'];
 
         $user->_account_is_active = ($userCheck[0]['account_is_active'] == '1');
 
@@ -2515,6 +2515,8 @@ SQL;
                     )
                 );
 
+                $contactAddress = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
+
                 // Notify the user that there was an organization change detected.
                 MailWrapper::sendMail(
                     array(
@@ -2522,9 +2524,14 @@ SQL;
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
                             $this->getFormalName(),
-                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                            $userOrganizationName,
+                            $currentOrganizationName,
+                            $userOrganizationName,
+                            $contactAddress,
+                            MailWrapper::getMaintainerSignature()
                         ),
-                        'toAddress' => $this->getEmailAddress()
+                        'toAddress' => $this->getEmailAddress(),
+                        'replyAddress' => $contactAddress
                     )
                 );
             }
@@ -2622,15 +2629,9 @@ SQL;
      * @return integer[] an array of the resourcefact.id values
      *
      * @throws Exception if there is a problem connecting to / querying the database.
-     * @throws Exception if the user this function is called for is not a Center [Director|Staff]
      */
     public function getResources($resourceNames = array())
     {
-        // We need to make sure that this function is only called for Center [Director|Staff]
-        if ( ! ( $this->hasAcl(ROLE_ID_CENTER_DIRECTOR) ||  $this->hasAcl(ROLE_ID_CENTER_STAFF) ) ) {
-            throw new Exception('Unable to complete action. User is not authorized.');
-        }
-
         $db = DB::factory('database');
 
         $query = <<<SQL

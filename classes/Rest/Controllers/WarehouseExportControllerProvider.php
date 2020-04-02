@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use CCR\DB;
+use CCR\Log;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
@@ -17,6 +18,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
+    // Constants used in log messages.
+     const LOG_MODULE = 'data-warehouse-export';
+
     /**
      * @var DataWarehouse\Export\QueryHandler
      */
@@ -27,12 +31,24 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      */
     private $realmManager;
 
+    /**
+     * @var \CCR\Log
+     */
+    private $logger;
+
     public function __construct(array $params = [])
     {
         parent::__construct($params);
-        $this->fileManager = new FileManager();
+        $this->logger = Log::factory(
+            'data-warehouse-export-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
         $this->realmManager = new RealmManager();
-        $this->queryHandler = new QueryHandler();
+        $this->queryHandler = new QueryHandler($this->logger);
     }
 
     /**
@@ -166,13 +182,17 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('format must be CSV or JSON');
         }
 
-        $id = $this->queryHandler->createRequestRecord(
-            $user->getUserId(),
-            $realm,
-            $startDate->format('Y-m-d'),
-            $endDate->format('Y-m-d'),
-            $format
-        );
+        try {
+            $id = $this->queryHandler->createRequestRecord(
+                $user->getUserId(),
+                $realm,
+                $startDate->format('Y-m-d'),
+                $endDate->format('Y-m-d'),
+                $format
+            );
+        } catch (Exception $e) {
+            throw new BadRequestHttpException('Failed to create export request: ' . $e->getMessage());
+        }
 
         return $app->json([
             'success' => true,
@@ -217,7 +237,8 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('Requested data is not available');
         }
 
-        $file = $this->fileManager->getExportDataFilePath($id);
+        $fileManager = new FileManager();
+        $file = $fileManager->getExportDataFilePath($id);
 
         if (!is_file($file)) {
             throw new NotFoundHttpException('Exported data not found');
@@ -227,6 +248,18 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Sending data warehouse export file',
+            'event' => 'DOWNLOAD',
+            'id' => $id,
+            'Users.id' => $user->getUserId()
+        ]);
+
+        if ($request['downloaded_datetime'] === null) {
+            $this->queryHandler->updateDownloadedDatetime($request['id']);
+        }
+
         return $app->sendFile(
             $file,
             200,
@@ -234,7 +267,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 'Content-type' => 'application/zip',
                 'Content-Disposition' => sprintf(
                     'attachment; filename="%s"',
-                    $this->fileManager->getZipFileName($request)
+                    $fileManager->getZipFileName($request)
                 )
             ]
         );
@@ -258,6 +291,14 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         if ($count === 0) {
             throw new NotFoundHttpException('Export request not found');
         }
+
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Deleted data warehouse export request',
+            'event' => 'DELETE_BY_USER',
+            'id' => $id,
+            'Users.id' => $user->getUserId()
+        ]);
 
         return $app->json([
             'success' => true,
@@ -315,6 +356,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
+                $this->logger->info([
+                    'module' => self::LOG_MODULE,
+                    'message' => 'Deleted data warehouse export request',
+                    'event' => 'DELETE_BY_USER',
+                    'id' => $id,
+                    'Users.id' => $user->getUserId()
+                ]);
             }
 
             $dbh->commit();

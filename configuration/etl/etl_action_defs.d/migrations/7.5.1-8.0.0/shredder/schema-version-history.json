@@ -1,5 +1,0 @@
-{
-    "table_definition": {
-        "$ref": "${table_definition_dir}/common/shredder/schema-version-history.json#/table_definition"
-    }
-}

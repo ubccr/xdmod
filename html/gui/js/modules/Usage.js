@@ -977,7 +977,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             //
                             // Open XDMoD Default: CPU Hours: Total
                             // XDMoD Default: XD SUs Charged: Total
-                            var defaultStatistic = CCR.xdmod.features.xsede ? "total_su" : "total_cpu_hours";
+                            var defaultStatistic = CCR.xdmod.features.xsede ? 'total_su' : 'total_cpu_hours';
                             var jobCountNode = child.findChild("statistic", defaultStatistic);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);
@@ -1375,7 +1375,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     this.legendTypeComboBox.enable();
                     this.chartTitleField.enable();
 
-                    parameters.interactive_elements = 'y';
                     chartStore.removeAll(true);
 
                     //var restoreTool = images.getTool('restore');
@@ -2174,7 +2173,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         group_by: n.attributes.group_by,
                                         x_axis: false,
                                         log_scale: chartToolbar.getLogScale() == 'y',
-                                        has_std_err: 'y',
+                                        has_std_err: chartToolbar.getEnableErrors(),
                                         std_err: chartToolbar.getShowErrorBars() == 'y',
                                         std_err_labels: chartToolbar.getShowErrorLabels() == 'y',
                                         value_labels: chartToolbar.getShowAggregateLabels() == 'y' || dt == 'pie',

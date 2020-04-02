@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] Node Hours: Total","[2] Node Hours: Total"
+"2016 Q4",138214.4364,232.7464
+"2017 Q1",17835.8547,20.7100
+---------

@@ -88,8 +88,8 @@ class BatchProcessTest extends BaseTest
         list($user) = self::$dbh->query("SELECT id FROM Users WHERE username = 'normaluser'");
 
         // Create records and set one to be expiring.
-        self::$submittedRequestId = self::$queryHandler->createRequestRecord($user['id'], 'jobs', '2019-01-01', '2019-01-31', 'CSV');
-        self::$expiringRequestId = self::$queryHandler->createRequestRecord($user['id'], 'jobs', '2019-01-01', '2019-01-31', 'JSON');
+        self::$submittedRequestId = self::$queryHandler->createRequestRecord($user['id'], 'Jobs', '2019-01-01', '2019-01-31', 'CSV');
+        self::$expiringRequestId = self::$queryHandler->createRequestRecord($user['id'], 'Jobs', '2019-01-01', '2019-01-31', 'JSON');
         self::$queryHandler->submittedToAvailable(self::$expiringRequestId);
         self::$dbh->execute(
             'UPDATE batch_export_requests SET export_expires_datetime = :expiration_date WHERE id = :id',

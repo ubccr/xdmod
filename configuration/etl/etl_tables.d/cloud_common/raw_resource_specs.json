@@ -1,0 +1,52 @@
+{
+    "#": "Record types are global to all cloud resources",
+
+    "table_definition": {
+        "name": "raw_resource_specs",
+        "engine": "MyISAM",
+        "comment": "Record type: accounting, administrative, derived, etc.",
+        "columns": [
+            {
+                "name": "hostname",
+                "type": "varchar(225)",
+                "nullable": false
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "vcpus",
+                "type": "int(5)",
+                "nullable": false,
+                "default": null
+            },
+            {
+                "name": "spec_date",
+                "type": "date",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "hostname",
+                    "memory_mb",
+                    "vcpus",
+                    "spec_date"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

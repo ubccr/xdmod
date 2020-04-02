@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeZone;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
+use Xdmod\SlurmGresParser;
 
 class Slurm extends Shredder
 {
@@ -126,6 +127,7 @@ class Slurm extends Shredder
         'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submit_time AS SIGNED), 0)',
         'node_count'      => 'nnodes',
         'cpu_count'       => 'ncpus',
+        'gpu_count'       => 'ngpus',
         'cpu_req'         => 'req_cpus',
         'mem_req'         => 'req_mem',
         'timelimit'       => 'timelimit',
@@ -171,6 +173,11 @@ class Slurm extends Shredder
     protected $timeZone;
 
     /**
+     * @var \Xdmod\SlurmGresParser
+     */
+    private $gresParser;
+
+    /**
      * @inheritdoc
      */
     public function __construct(iDatabase $db)
@@ -180,6 +187,7 @@ class Slurm extends Shredder
         self::$columnCount = count(self::$columnNames);
 
         $this->timeZone = new DateTimeZone('UTC');
+        $this->gresParser = new SlurmGresParser();
     }
 
     /**
@@ -250,6 +258,9 @@ class Slurm extends Shredder
         foreach ($timeKeys as $key) {
             $job[$key] = $this->parseTimeField($job[$key]);
         }
+
+        $gres = $this->gresParser->parseReqGres($job['req_gres']);
+        $job['ngpus'] = $this->gresParser->getGpuCountFromGres($gres);
 
         $job['cluster_name'] = $this->getResource();
 

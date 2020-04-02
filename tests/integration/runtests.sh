@@ -1,17 +1,9 @@
-#!/bin/sh
+#!/bin/bash
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $BASEDIR/../ci/runtest-include.sh
 set -e
 
 echo "Integration tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
-
-UATCU=""
-UATXCU=""
-
-# Set output directory
-if [ "$1" = "--junit-output-dir" ];
-then
-    UATCU="--log-junit $2/xdmod-int-uat-cu.xml"
-    UATXCU="--log-junit $2/xdmod-int-uat-minus-cu.xml"
-fi
 
 cd $(dirname $0)
 phpunit="$(readlink -f ../../vendor/bin/phpunit)"
@@ -22,9 +14,9 @@ if [ ! -x "$phpunit" ]; then
 fi
 
 # Run the tests in UserAdminTest.createUsers
-$phpunit --testsuite default --group UserAdminTest.createUsers $UATCU
+$phpunit --testsuite default --group UserAdminTest.createUsers $(log_opts "integration" "UserAdminTest.createUsers")
 
 # Run everything else
-$phpunit --testsuite default --exclude-group UserAdminTest.createUsers $UATXCU
+$phpunit --testsuite default --exclude-group UserAdminTest.createUsers $(log_opts "integration" "All")
 
 ./email-subject-test.sh

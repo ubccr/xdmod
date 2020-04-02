@@ -61,6 +61,10 @@ XDMoD.Module.JobViewer.SearchHistoryTree = Ext.extend(Ext.tree.TreePanel, {
 
 
         if (success) {
+            if (options.node.isRoot) {
+                this.ownerCt.fireEvent('history_exists', data.results.length > 0);
+            }
+
             var nodes = this._processNodes(rawNodes);
             var node = CCR.exists(options) && CCR.exists(options.node) ? options.node : null;
 

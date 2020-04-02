@@ -18,6 +18,7 @@ class JobViewerTest extends BaseTest
         return array(
             'nsfdirectorate',
             'parentscience',
+            'gpucount',
             'jobsize',
             'jobwaittime',
             'jobwalltime',
@@ -56,7 +57,7 @@ class JobViewerTest extends BaseTest
         $resdata = $response[0];
 
         $this->assertArrayHasKey('success', $resdata);
-        $this->assertEquals(true, $resdata['success']);
+        $this->assertTrue($resdata['success']);
 
         $dimids = array();
         foreach ($resdata['results'] as $dimension) {
@@ -102,8 +103,8 @@ class JobViewerTest extends BaseTest
         $resdata = $response[0];
 
         $this->assertArrayHasKey('success', $resdata);
-        $this->assertEquals(true, $resdata['success']);
-        $this->assertEquals(true, count($resdata['results']) > 0);
+        $this->assertTrue($resdata['success']);
+        $this->assertGreaterThan(0, count($resdata['results']));
     }
 
     public function testResourceEndPoint()
@@ -126,7 +127,7 @@ class JobViewerTest extends BaseTest
         $resdata = $response[0];
 
         $this->assertArrayHasKey('success', $resdata);
-        $this->assertEquals(true, $resdata['success']);
+        $this->assertTrue($resdata['success']);
 
         foreach($resdata['results'] as $resource)
         {
@@ -167,7 +168,7 @@ class JobViewerTest extends BaseTest
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
 
         $this->assertArrayHasKey('success', $result[0]);
-        $this->assertEquals($result[0]['success'], true);
+        $this->assertTrue($result[0]['success']);
         $this->assertArrayHasKey('results', $result[0]);
         $this->assertCount(1, $result[0]['results']);
 
@@ -222,7 +223,7 @@ class JobViewerTest extends BaseTest
             $response = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
             $this->assertEquals(403, $response[1]['http_code']);
             $this->assertArrayHasKey('success', $response[0]);
-            $this->assertEquals(false, $response[0]['success']);
+            $this->assertFalse($response[0]['success']);
             $this->xdmodhelper->logout();
         }
     }
@@ -237,8 +238,8 @@ class JobViewerTest extends BaseTest
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', array() );
 
         $this->assertArrayHasKey('success', $result[0]);
-        $this->assertEquals($result[0]['success'], false);
-        $this->assertEquals($result[1]['http_code'], 400);
+        $this->assertFalse($result[0]['success']);
+        $this->assertEquals(400, $result[1]['http_code']);
 
         $this->xdmodhelper->logout();
     }
@@ -373,8 +374,8 @@ class JobViewerTest extends BaseTest
         $result = $xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
 
         $this->assertArrayHasKey('success', $result[0]);
-        $this->assertEquals($result[0]['success'], false);
-        $this->assertEquals($result[1]['http_code'], 400);
+        $this->assertFalse($result[0]['success']);
+        $this->assertEquals(400, $result[1]['http_code']);
 
         if ($isfinal) {
             $xdmodhelper->logout();
@@ -401,8 +402,8 @@ class JobViewerTest extends BaseTest
 
         $this->xdmodhelper->authenticate('cd');
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
-        $this->assertEquals($result[0]['success'], false);
-        $this->assertEquals($result[1]['http_code'], 400);
+        $this->assertFalse($result[0]['success']);
+        $this->assertEquals(400, $result[1]['http_code']);
 
         $this->xdmodhelper->logout();
     }
@@ -424,7 +425,7 @@ class JobViewerTest extends BaseTest
 
         $this->xdmodhelper->authenticate('usr');
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
-        $this->assertEquals(true, $result[0]['success']);
+        $this->assertTrue($result[0]['success']);
         $this->assertEquals(200, $result[1]['http_code']);
 
         $this->assertEquals(9, $result[0]['totalCount']);
@@ -442,6 +443,59 @@ class JobViewerTest extends BaseTest
         }
 
         $this->xdmodhelper->logout();
+    }
+
+    /**
+     * Test that the search history save new search correctly sanitizes the text input.
+     * @return void
+     */
+    public function testSearchSaving() {
+
+        $input = array(
+            "text" => "Typing in <script>alert(1)</script>",
+            "searchterms" => array(
+                "params" => array(
+                    "start_date" => "2020-01-09",
+                    "end_date" => "2020-01-15",
+                    "realm" => "Jobs",
+                    "limit" => 24,
+                    "start" => 0,
+                    "params" => "{\"resource\":[\"1\"]}"
+                )
+            ),
+            "results" => array(
+                array(
+                    'resource' => 'pozidriv',
+                    'name' => 'blah',
+                    "jobid" => 42520494,
+                    "text" => "pozidriv-5138",
+                    "dtype" => "jobid",
+                    "local_job_id" => "5138"
+                )
+            )
+        );
+
+        $this->xdmodhelper->authenticate('cd');
+        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history', array('realm' => 'Jobs'), array('data' => json_encode($input)));
+
+        $this->assertEquals(200, $response[1]['http_code']);
+        $result = $response[0];
+        $this->assertTrue($result['success']);
+
+        $this->assertEquals($input['searchterms'], $result['results']['searchterms']);
+        $this->assertEquals($input['results'], $result['results']['results']);
+
+        $this->assertEquals('Typing in &lt;script&gt;alert(1)&lt;/script&gt;', $result['results']['text']);
+
+        // get the record id
+        $recordId = $result['results'][$result['results']['dtype']];
+
+        // remove the dummy saved search.
+        $response = $this->xdmodhelper->delete(self::ENDPOINT . 'search/history/' . $recordId, array('realm' => 'Jobs'));
+
+        $this->assertEquals(200, $response[1]['http_code']);
+        $result = $response[0];
+        $this->assertTrue($result['success']);
     }
 
     public function testJobMetadata() {

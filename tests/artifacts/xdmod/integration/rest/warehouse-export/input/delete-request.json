@@ -2,9 +2,9 @@
     "Normal user": [
         "usr",
         {
-            "realm": "jobs",
-            "start_date": "2018-01-01",
-            "end_date": "2018-12-31",
+            "realm": "Jobs",
+            "start_date": "2018-02-01",
+            "end_date": "2018-02-28",
             "format": "CSV"
         },
         200,
@@ -13,9 +13,9 @@
     "PI": [
         "pi",
         {
-            "realm": "jobs",
-            "start_date": "2018-01-01",
-            "end_date": "2018-12-31",
+            "realm": "Jobs",
+            "start_date": "2018-02-01",
+            "end_date": "2018-02-28",
             "format": "CSV"
         },
         200,
@@ -24,9 +24,9 @@
     "Center director": [
         "cd",
         {
-            "realm": "jobs",
-            "start_date": "2018-01-01",
-            "end_date": "2018-12-31",
+            "realm": "Jobs",
+            "start_date": "2018-02-01",
+            "end_date": "2018-02-28",
             "format": "CSV"
         },
         200,

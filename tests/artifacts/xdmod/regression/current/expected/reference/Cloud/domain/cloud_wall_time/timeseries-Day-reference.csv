@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Unknown - NutSetters] Wall Hours: Total"
+Day,"[Default] Wall Hours: Total"
 2018-04-18,37.9025
 2018-04-19,122.3267
 2018-04-20,73.0686

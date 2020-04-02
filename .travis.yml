@@ -13,6 +13,7 @@ env:
         - NODE_VERSION=6
         - XDMOD_TEST_ARTIFACTS_MIRROR="$HOME/xdmod-test-artifacts.git"
         - XDMOD_IS_CORE=true
+        - XDMOD_REALMS='jobs,storage,cloud'
 
 # Add dependency directories to the Travis cache
 cache:
