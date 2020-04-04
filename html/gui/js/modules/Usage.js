@@ -659,6 +659,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 CCR.xdmod.ui.actionLogout.defer(1000);
 
                             }
+                            if (resp.success === false) {
+                                Ext.MessageBox.alert("Error", resp.message);
+                            }
 
                         } //if (resp.message)
 
