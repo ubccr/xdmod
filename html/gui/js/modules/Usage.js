@@ -660,7 +660,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                             }
                             if (resp.success === false) {
-                                Ext.MessageBox.alert("Error", resp.message);
+                                Ext.MessageBox.alert('Error', resp.message);
                             }
 
                         } //if (resp.message)
