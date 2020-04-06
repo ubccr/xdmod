@@ -630,9 +630,6 @@ describe('Report Generator', function () {
             it('Click "Save" in "Save As" window', function () {
                 reportGeneratorPage.confirmSaveReportAs();
             });
-            it('Close "Save As" window', function () {
-                reportGeneratorPage.closeSaveReportAs();
-            });
             it('Return to "My Reports"', function () {
                 reportGeneratorPage.returnToMyReports();
             });
