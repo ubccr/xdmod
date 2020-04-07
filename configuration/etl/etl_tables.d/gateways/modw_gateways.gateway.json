@@ -1,41 +1,34 @@
 {
   "table_definition": {
-    "comment": "Science Gateways",
+    "name": "gateway",
+    "comment": "Listing of Science Gateways",
     "engine": "myisam",
     "charset": "utf8mb4",
     "collation": "utf8mb4_general_ci",
     "columns": [
       {
         "type": "int(11)",
-        "charset": null,
-        "collation": null,
         "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
+        "hints": "Foreign key to the person table",
+        "comment": "person_id for the gateway's proxy, or Community, user",
         "name": "proxy_person_id"
       },
       {
         "type": "varchar(100)",
         "charset": "utf8mb4",
         "collation": "utf8mb4_general_ci",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
+        "nullable": false,
+        "hints": "Derived from gateway's Community User name in the person table",
+        "comment": "Short name of the science gateway",
         "name": "short_name"
       },
       {
         "type": "varchar(1000)",
         "charset": "utf8mb4",
         "collation": "utf8mb4_general_ci",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
+        "nullable": false,
+        "hints": "Derived from gateway's Community User name in the person table",
+        "comment": "Long name of the science gateway",
         "name": "long_name"
       },
       {
@@ -44,20 +37,13 @@
         "collation": "utf8mb4_general_ci",
         "nullable": true,
         "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
+        "comment": "Acronym, if known, for the science gateway",
         "name": "acronym"
       },
       {
         "type": "int(11)",
-        "charset": null,
-        "collation": null,
         "nullable": true,
         "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
         "name": "order_id"
       }
     ],
