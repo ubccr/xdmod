@@ -216,6 +216,9 @@ function main()
             case 'group-to-hierarchy':
                 updateGroupToHierarchy($data);
                 break;
+            case 'cloud-project-to-pi':
+                updateCloudProjectToPI($data);
+                break;
             default:
                 $logger->crit("Unknown type '$type'");
                 exit(1);
@@ -242,6 +245,27 @@ function main()
 
     exit;
 }
+
+function updateCloudProjectToPI(array $piToProject){
+    global $db, $logger;
+
+    $logger->debug('Updating PI information for Cloud realm');
+
+    $sql = "
+    INSERT INTO
+      modw_cloud.staging_pi_to_project (pi_name, project_name, resource_name)
+    VALUES
+      (:pi, :project_name, :resource_name) ON DUPLICATE KEY UPDATE pi_name = VALUES(pi_name), resource_name = VALUES(resource_name)";
+
+    foreach($piToProject as $row){
+        $db->execute($sql, array(
+          ":pi" => $row[0],
+          ":project_name" => $row[1],
+          ":resource_name" => $row[2]
+        ));
+    }
+}
+
 
 /**
  * Update people's names.
