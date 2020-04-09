@@ -241,6 +241,7 @@
             "orderby": [
                 "id"
             ],
+            "query_hint": "DISTINCT",
             "records": {
                 "id": "id",
                 "name": "id",
