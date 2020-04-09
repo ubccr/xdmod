@@ -60,7 +60,7 @@
     },
     "avg_processors": {
         "aggregate_formula": "COALESCE(SUM(agg.processor_count * CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
-        "description_html": "TThe average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+        "description_html": "The average job size per ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
         "name": "Job Size: Per Job",
         "precision": 1,
         "timeseries_formula": "COALESCE(SUM(agg.processor_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
@@ -68,7 +68,7 @@
     },
     "avg_gpus": {
         "aggregate_formula": "COALESCE(SUM(agg.gpu_count * CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
-        "description_html": "TThe average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of GPUs used by a (parallel) job.",
+        "description_html": "The average job size per ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of GPUs used by a (parallel) job.",
         "name": "GPU Count: Per Job",
         "precision": 1,
         "timeseries_formula": "COALESCE(SUM(agg.gpu_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
@@ -90,7 +90,7 @@
         "unit": "Hour"
     },
     "expansion_factor": {
-        "description_html": "The average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+        "description_html": "The average job size per ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
         "formula": "COALESCE(SUM(agg.sum_weighted_expansion_factor)/SUM(agg.sum_job_weights),0)",
         "name": "User Expansion Factor",
         "precision": 1,
