@@ -2,6 +2,7 @@
     "xdmod": {
         "portal": {
             "js": [
+                "gui/js/modules/job_viewer/JobGrid.js",
                 "gui/js/modules/dashboard/ChartComponent.js",
                 "gui/js/modules/dashboard/JobComponent.js",
                 "gui/js/modules/dashboard/SavedChartsReportsComponent.js",
