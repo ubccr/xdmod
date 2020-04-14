@@ -12,7 +12,7 @@ The Cloud realm in XDMoD tracks events that occur in cloud infrastructure system
 - Average Wall Hours per Session
   - The average wall time that a session was running, in hours.
 - Core Hour Utilization: %
-  - A percentage that shows how many core hours were reserved over a time period against how many core hours a resource had available during that time period.
+  - A percentage that shows how many core hours were allocated to VM's that were running over a time period against how many core hours a resource had available during that time period.
 - Core Hours: Total
   - The total number of core hours consumed by running sessions.
 - Number of Sessions Ended
