@@ -9,7 +9,7 @@
         "joins": [
             {
                 "schema": "${SOURCE_SCHEMA}",
-                "name": "staging_storage_usage",
+                "name": "staging_pi_to_project",
                 "alias": "pi"
             }
         ]

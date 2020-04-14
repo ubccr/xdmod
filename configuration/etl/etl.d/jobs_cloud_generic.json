@@ -245,7 +245,15 @@
             "name": "GenericCloudAccountIngestor",
             "description": "Generic cloud account data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_generic/account.json"
+            "definition_file": "cloud_generic/account.json",
+            "endpoints": {
+                "utility": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         },
         {
             "name": "GenericCloudHostIngestor",
