@@ -34,7 +34,7 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "pi",
                 "type": "LEFT",
-                "on": "raw.project_name = pi.project_name AND rf.code = pi.resource_name"
+                "on": "raw.provider_account = pi.project_name AND rf.code = pi.resource_name"
             },
             {
                 "name": "account",
