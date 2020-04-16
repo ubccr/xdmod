@@ -1,5 +1,5 @@
 {
-    "#": "Record types are global to all cloud resources",
+    "#": "Lists mapping of cloud project name to Principal Investigator on a cloud resource",
 
     "table_definition": {
         "name": "staging_pi_to_project",
