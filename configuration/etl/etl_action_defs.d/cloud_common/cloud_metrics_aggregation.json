@@ -79,7 +79,6 @@
                   "name": "account",
                   "schema": "${SOURCE_SCHEMA}",
                   "alias": "a",
-                  "type": "LEFT",
                   "on": "instance.account_id = a.account_id"
               }
             ],
