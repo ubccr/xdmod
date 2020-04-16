@@ -141,6 +141,10 @@
         {
           "realm": "Cloud",
           "group_by": "username"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi"
         }
       ],
       "summary_charts": [
@@ -581,6 +585,10 @@
         {
           "realm": "Cloud",
           "group_by": "username"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi"
         }
       ],
       "summary_charts": [
@@ -886,6 +894,10 @@
         {
           "realm": "Cloud",
           "group_by": "username"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi"
         }
       ],
       "summary_charts": [
@@ -1191,6 +1203,10 @@
         {
           "realm": "Cloud",
           "group_by": "username"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi"
         }
       ],
       "summary_charts": [
@@ -1496,6 +1512,10 @@
         {
           "realm": "Cloud",
           "group_by": "username"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi"
         }
       ],
       "summary_charts": [
