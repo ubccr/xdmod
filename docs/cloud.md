@@ -107,13 +107,19 @@ the -t flag should be set to cloud-project-to-pi. An example of the command is b
 
 After importing this data you must ingest it for the date range of any data you have already shredded.
 
-    xdmod-ingestor --start-date 2012-01-01 --end-date 2012-12-31
+    xdmod-ingestor --last-modified-start-date 2012-01-01
 
 ### Format
 The format of the csv file into set a project to PI association is shown below
 
     pi,project_name,resource_name
     pi2,project_name2,resource_name
+
+The first column should be the username of the PI as seen in your resources event log files. The second column is the name of the project
+as seen in your resources event log files. The third column is the name of the resource in XDMoD.
+
+If you want the first and last name of the PI to be shown instead of their username when viewing this data you should add the PI username and
+first and last name to the `names.csv` file and ingested. Details on doing this can be found in the [`User/PI Names`](user-names.md) documentation.
 
 ## Adding and enabling cloud resources
 
