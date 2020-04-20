@@ -256,6 +256,16 @@
             }
         },
         {
+            "name": "UpdateCloudProjectToPI",
+            "description": "Update project in account table to have a PI",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_common/pi_to_account.sql"
+            ]
+        },
+        {
             "name": "GenericCloudHostIngestor",
             "description": "Generic cloud host data",
             "class": "DatabaseIngestor",

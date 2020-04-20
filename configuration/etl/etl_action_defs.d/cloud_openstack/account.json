@@ -12,8 +12,7 @@
         "records": {
             "resource_id": "raw.resource_id",
             "provider_account": "raw.project_id",
-            "display": "raw.project_name",
-            "principalinvestigator_person_id": "COALESCE(p.person_id, -1)"
+            "display": "raw.project_name"
         },
 
         "joins": [
@@ -21,34 +20,6 @@
                 "name": "openstack_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
-            },
-            {
-                "name": "resourcefact",
-                "schema": "${UTILITY_SCHEMA}",
-                "alias": "rf",
-                "type": "LEFT",
-                "on": "raw.resource_id = rf.id"
-            },
-            {
-                "name": "staging_pi_to_project",
-                "schema": "${SOURCE_SCHEMA}",
-                "alias": "pi",
-                "type": "LEFT",
-                "on": "raw.project_name = pi.project_name AND rf.code = pi.resource_name"
-            },
-            {
-                "name": "account",
-                "schema": "${UTILITY_SCHEMA}",
-                "alias": "a",
-                "type": "LEFT",
-                "on": "pi.pi_name = a.charge_number"
-            },
-            {
-                "name": "principalinvestigator",
-                "schema": "${UTILITY_SCHEMA}",
-                "alias": "p",
-                "type": "LEFT",
-                "on": "a.id = p.request_id"
             }
         ],
 
