@@ -8,6 +8,6 @@ LEFT JOIN
   modw.account as acc ON pi.pi_name = acc.charge_number
 LEFT JOIN
   modw.principalinvestigator as p ON acc.id = p.request_id
-SET 
+SET
   a.principalinvestigator_person_id = COALESCE(p.person_id, -1)
 //
