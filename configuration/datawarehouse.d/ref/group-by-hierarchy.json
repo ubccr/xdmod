@@ -1,6 +1,5 @@
 {
     "fieldofscience": {
-        "attribute_table": "fieldofscience_hierarchy",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -31,7 +30,6 @@
         "alternate_group_by_columns": [
             "directorate_id"
         ],
-        "attribute_table": "fieldofscience_hierarchy",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -75,7 +73,6 @@
         "alternate_group_by_columns": [
             "parent_id"
         ],
-        "attribute_table": "fieldofscience_hierarchy",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {

@@ -12,7 +12,6 @@
                 "name": "None",
                 "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database (excludes non-${ORGANIZATION_NAME} usage).",
                 "attribute_table_schema": "modw",
-                "attribute_table": "dual",
                 "is_aggregation_unit": true,
                 "attribute_to_aggregate_table_key_map": [],
                 "order": 1,
@@ -34,7 +33,6 @@
                 "name": "Day",
                 "description_html": "Day",
                 "attribute_table_schema": "modw",
-                "attribute_table": "days",
                 "is_aggregation_unit": true,
                 "attribute_to_aggregate_table_key_map": [
                     {
@@ -65,7 +63,6 @@
                 "name": "Month",
                 "description_html": "Month",
                 "attribute_table_schema": "modw",
-                "attribute_table": "months",
                 "is_aggregation_unit": true,
                 "attribute_to_aggregate_table_key_map": [
                     {
@@ -96,7 +93,6 @@
                 "name": "Instance Type",
                 "description_html": "The instance type of a virtual machine.",
                 "attribute_table_schema": "modw_cloud",
-                "attribute_table": "instance_type",
                 "attribute_to_aggregate_table_key_map": [
                     {
                         "instance_type_id": "instance_type_id"

@@ -13,7 +13,6 @@
                 "name": "None",
                 "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database (excludes non-${ORGANIZATION_NAME} usage).",
                 "attribute_table_schema": "modw",
-                "attribute_table": "dual",
                 "is_aggregation_unit": true,
                 "attribute_to_aggregate_table_key_map": [
                 ],
@@ -36,7 +35,6 @@
                 "name": "Day",
                 "description_html": "Day",
                 "attribute_table_schema": "modw",
-                "attribute_table": "days",
                 "is_aggregation_unit": true,
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "day_id" }
@@ -65,7 +63,6 @@
                 "name": "Month",
                 "description_html": "Month",
                 "attribute_table_schema": "modw",
-                "attribute_table": "months",
                 "is_aggregation_unit": true,
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "month_id" }
@@ -93,7 +90,6 @@
             "resource": {
                 "name": "Resource",
                 "description_html": "A resource is a remote computer that can run jobs.",
-                "attribute_table": "resourcefact",
                 "attribute_table_schema": "modw",
                 "order": 4,
                 "#": "Multi-column key",
@@ -134,7 +130,6 @@
                 "description_html": "A person who is on a PIs allocation, hence able run jobs on resources.",
                 "category": "Administrative",
                 "attribute_table_schema": "modw",
-                "attribute_table": "person",
                 "order": 5,
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "person_id" }
@@ -161,7 +156,6 @@
                 "name": "System Username",
                 "description_html": "The specific system username of the users who ran jobs.",
                 "attribute_table_schema": "modw",
-                "attribute_table": "systemaccount",
                 "order": 6,
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "systemaccount_id" }
@@ -190,7 +184,6 @@
                 "name": "Queue",
                 "description_html": "Queue pertains to the low level job queues on each resource.",
                 "attribute_table_schema": "modw",
-                "attribute_table": "queue",
                 "order": 7,
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "queue" }
@@ -224,7 +217,6 @@
                 "disabled": true,
                 "name": "Disabled Group By",
                 "description_html": "Disabled GroupBy",
-                "attribute_table": "unknown",
                 "attribute_to_aggregate_table_key_map": [
                 ],
                 "attribute_values_query": {
