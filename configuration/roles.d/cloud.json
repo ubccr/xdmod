@@ -175,6 +175,7 @@
                 {
                     "realm": "Cloud",
                     "group_by": "pi"
+<<<<<<< HEAD
                 },
                 {
                     "realm": "Cloud",
@@ -187,6 +188,8 @@
                 {
                     "realm": "Cloud",
                     "group_by": "parentscience"
+=======
+>>>>>>> c86d45658e797f0d4f565cdc94d1d1770a742b10
                 }
             ]
         }

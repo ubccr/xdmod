@@ -793,6 +793,10 @@ row.
 
         Fields: groupname, hierachy item name
 
+    cloud-project-to-pi
+
+        Fields: pi_name, project_name, resource
+
 NOTE: After updating any names or hierarchy items it is necessary to
 reingest your data for the changes to be applied to the datawarehouse.
 Hierarchy changes also require reaggregating data for the entire time
