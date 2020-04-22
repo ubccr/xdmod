@@ -126,14 +126,11 @@
                 "type": "int(11)",
                 "nullable": true,
                 "default": null
-<<<<<<< HEAD
             },{
                 "name": "fos_id",
                 "type": "int(11)",
                 "nullable": true,
                 "default": null
-=======
->>>>>>> c86d45658e797f0d4f565cdc94d1d1770a742b10
             }
         ],
 
