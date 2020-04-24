@@ -536,7 +536,7 @@ class HighChartTimeseries2 extends HighChart2
                         if($multiCategory)
                         {
                             $dataSeriesName = (
-                                DataWarehouse::getCategoryForRealm($data_description->realm)
+                                $data_description->category
                                 . ': '
                                 . $dataSeriesName
                             );

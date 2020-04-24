@@ -109,7 +109,7 @@ class QueryDescripter
 
     public function getRealmName()
     {
-        return $this->realm->getId();
+        return $this->realm->getName();
     }
 
     public function getGroupByName()

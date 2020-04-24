@@ -984,11 +984,11 @@ SQL;
         }
 
         $query = <<<SQL
-        SELECT DISTINCT
-            r.display as realm,
-            gb.name as group_by,
-            !agb.enabled as not_enabled,
-            agb.visible
+SELECT
+    r.name as realm,
+    gb.name as group_by,
+    MAX(agb.enabled) as enabled,
+    MAX(agb.visible) as visible
 FROM group_bys gb
   JOIN realms r ON gb.realm_id = r.realm_id
   JOIN acl_group_bys agb
@@ -1055,7 +1055,8 @@ SQL;
             $query .= " AND s.name = :statistic_name\n";
             $params[':statistic_name'] = $statisticName;
         }
-
+        $query .= "\nGROUP BY 1,2";
+        $query .= "\nORDER BY 1,2,3,4 DESC";
         $results = array();
         $sorted = array();
 
