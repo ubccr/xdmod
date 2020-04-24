@@ -271,7 +271,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -289,7 +289,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -307,7 +307,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD HPcDB",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -325,13 +325,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -346,13 +346,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -367,13 +367,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD HPcDB",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -388,7 +388,7 @@
                 "source": {
                     "type": "mysql",
                     "name": "XDMoD HPcDB",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
