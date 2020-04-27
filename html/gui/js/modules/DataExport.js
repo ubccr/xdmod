@@ -23,7 +23,8 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             root: 'data',
             fields: [
                 { name: 'id', type: 'string' },
-                { name: 'name', type: 'string' }
+                { name: 'name', type: 'string' },
+                { name: 'fields', type: 'auto' }
             ]
         });
 
@@ -102,6 +103,28 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             }
         );
 
+        this.realmDescriptionPanel = new Ext.Panel({
+            border: false,
+            flex: 1,
+            autoScroll: true,
+            padding: 5,
+            data: {
+                name: ''
+            },
+            tpl: [
+                '<tpl if="name != \'\'">',
+                '<p><b>{name} Realm Fields</b></p>',
+                '<ul>',
+                '<tpl for="fields">',
+                '<li><b>{name}</b>: {documentation}</li>',
+                '</tpl>',
+                '</ul>',
+                '</tpl>'
+            ]
+        });
+
+        this.requestForm.on('realmselected', this.realmDescriptionPanel.update, this.realmDescriptionPanel);
+
         this.items = [
             {
                 xtype: 'panel',
@@ -116,12 +139,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                 },
                 items: [
                     this.requestForm,
-                    {
-                        // Spacer panel
-                        xtype: 'panel',
-                        border: false,
-                        flex: 1
-                    }
+                    this.realmDescriptionPanel
                 ]
             },
             this.requestsGrid
@@ -143,6 +161,7 @@ XDMoD.Module.DataExport.openDownloadWindow = function (requestId) {
  */
 XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
     initComponent: function () {
+        this.addEvents('realmselected');
         this.maxDateRangeText = '1 year';
         this.maxDateRangeInMilliseconds = 1000 * 60 * 60 * 24 * 365;
 
@@ -178,7 +197,12 @@ XDMoD.Module.DataExport.RequestForm = Ext.extend(Ext.form.FormPanel, {
                             editable: false,
                             triggerAction: 'all',
                             mode: 'local',
-                            store: this.realmsStore
+                            store: this.realmsStore,
+                            listeners: {
+                                select: function (combo, record) {
+                                    this.fireEvent('realmselected', record.json);
+                                }.bind(this)
+                            }
                         },
                         {
                             xtype: 'datefield',
@@ -398,7 +422,7 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     format: 'Y-m-d'
                 },
                 {
-                    header: 'Actions',
+                    header: 'Download',
                     xtype: 'actioncolumn',
                     dataIndex: 'state',
                     scope: this,
@@ -415,14 +439,6 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                     },
                     items: [
                         {
-                            icon: 'gui/images/report_generator/delete_report.png',
-                            tooltip: 'Delete Request',
-                            iconCls: 'data-export-action-icon',
-                            handler: function (grid, rowIndex) {
-                                this.deleteRequest(grid.store.getAt(rowIndex));
-                            }
-                        },
-                        {
                             icon: 'gui/images/report_generator/download_report.png',
                             tooltip: 'Download Exported Data',
                             getClass: function (v, metaData) {
@@ -430,6 +446,27 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                             },
                             handler: function (grid, rowIndex) {
                                 this.downloadRequest(grid.store.getAt(rowIndex));
+                            }
+                        }
+                    ]
+                },
+                {
+                    header: 'Other Actions',
+                    xtype: 'actioncolumn',
+                    dataIndex: 'state',
+                    scope: this,
+                    // See comment above.
+                    renderer: function (state, metaData) {
+                        metaData.rowState = state; // eslint-disable-line no-param-reassign
+                        return '';
+                    },
+                    items: [
+                        {
+                            icon: 'gui/images/report_generator/delete_report.png',
+                            tooltip: 'Delete Request',
+                            iconCls: 'data-export-action-icon',
+                            handler: function (grid, rowIndex) {
+                                this.deleteRequest(grid.store.getAt(rowIndex));
                             }
                         },
                         {
