@@ -4,8 +4,6 @@
 
    // @class XDUserProfile
 
-   require_once dirname(__FILE__).'/../configuration/linker.php';
-
    class XDUserProfile {
 
       const TARGET_SCHEMA = 'moddb.UserProfiles';
