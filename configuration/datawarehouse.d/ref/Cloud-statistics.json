@@ -40,14 +40,14 @@
         "formula": "COALESCE(SUM(agg.num_sessions_ended), 0)",
         "name": "Number of Sessions Ended",
         "precision": 0,
-        "unit": "Sessions"
+        "unit": "Number of Sessions"
     },
     "cloud_num_sessions_running": {
         "aggregate_formula": "COALESCE(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0)",
         "timeseries_formula": "COALESCE(SUM(agg.num_sessions_running), 0)",
         "name": "Number of Sessions Active",
         "description_html": "The total number of sessions on a cloud resource.<br/><b>Session:</b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br/><b>Start:</b> A session start event is defined as the initial creation, resume from pause/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (e.g. a state report) is treated as the start of a new session.<br/><b>Stop:</b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.",
-        "unit": "Sessions",
+        "unit": "Number of Sessions",
         "precision": 2
     },
     "cloud_num_sessions_started": {
@@ -55,7 +55,7 @@
         "formula": "COALESCE(SUM(agg.num_sessions_started), 0)",
         "name": "Number of Sessions Started",
         "precision": 0,
-        "unit": "Sessions"
+        "unit": "Number of Sessions"
     },
     "cloud_wall_time": {
         "description_html": "The average number of cores assigned to running sessions, weighted by wall hours.<br/><b>Core Hours</b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br/><b>Wall Time:</b> The duration between the start and end times of an individual session.<br/><b>Session:</b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
