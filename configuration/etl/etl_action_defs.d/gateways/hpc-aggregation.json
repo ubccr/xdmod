@@ -23,7 +23,7 @@
     },
     "source_query": {
         "$ref-with-overwrite": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query",
-        "overwrite": {
+        "$overwrite": {
             "joins": [
                 {
                     "name": "job_tasks",
