@@ -22,59 +22,46 @@
         "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/destination_query"
     },
     "source_query": {
-        "overseer_restrictions": {
-            "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query.overseer_restrictions"
-        },
-        "query_hint": "SQL_NO_CACHE",
-        "records": {
-            "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query.records"
-        },
-        "groupby": [
-            "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query.groupby"        
-        ],
-        "joins": [
-            {
-                "name": "job_tasks",
-                "schema": "${SOURCE_SCHEMA}",
-                "alias": "task"
-            },
-            {
-                "name": "job_records",
-                "schema": "${SOURCE_SCHEMA}",
-                "alias": "record",
-                "on": "record.job_record_id = task.job_record_id",
-                "type": "STRAIGHT"
-            },
-            {
-                "name": "resourcefact",
-                "schema": "${UTILITY_SCHEMA}",
-                "alias": "requested_resource",
-                "on": "requested_resource.id = record.resource_id"
-            },
-            {
-                "name": "resourcefact",
-                "schema": "${UTILITY_SCHEMA}",
-                "alias": "task_resource",
-                "on": "task_resource.id = task.resource_id"
-            },
-            {
-                "name": "gateway",
-                "schema": "modw_gateways",
-                "alias": "gw_record",
-                "on": "gw_record.proxy_person_id = record.person_id"
-            },
-            {
-                "name": "gateway",
-                "schema": "modw_gateways",
-                "alias": "gw_task",
-                "on": "gw_task.proxy_person_id = task.person_id"
-            }
-        ],
-        "where": [
-            "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query.where"                
-        ],
-        "macros": [
-            "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query.macros"        
-        ]
+        "$ref-with-overwrite": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query",
+        "overwrite": {
+            "joins": [
+                {
+                    "name": "job_tasks",
+                    "schema": "${SOURCE_SCHEMA}",
+                    "alias": "task"
+                },
+                {
+                    "name": "job_records",
+                    "schema": "${SOURCE_SCHEMA}",
+                    "alias": "record",
+                    "on": "record.job_record_id = task.job_record_id",
+                    "type": "STRAIGHT"
+                },
+                {
+                    "name": "resourcefact",
+                    "schema": "${UTILITY_SCHEMA}",
+                    "alias": "requested_resource",
+                    "on": "requested_resource.id = record.resource_id"
+                },
+                {
+                    "name": "resourcefact",
+                    "schema": "${UTILITY_SCHEMA}",
+                    "alias": "task_resource",
+                    "on": "task_resource.id = task.resource_id"
+                },
+                {
+                    "name": "gateway",
+                    "schema": "modw_gateways",
+                    "alias": "gw_record",
+                    "on": "gw_record.proxy_person_id = record.person_id"
+                },
+                {
+                    "name": "gateway",
+                    "schema": "modw_gateways",
+                    "alias": "gw_task",
+                    "on": "gw_task.proxy_person_id = task.person_id"
+                }
+            ]
+        }
     }
 }
