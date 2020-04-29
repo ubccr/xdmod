@@ -4,6 +4,9 @@
         "description_html": "The instance type of a virtual machine.",
         "attribute_table_schema": "modw_cloud",
         "attribute_table": "instance_type",
+        "alternate_group_by_columns": [
+            "display"
+        ],
         "attribute_to_aggregate_table_key_map": [
             {
                 "instance_type_id": "instance_type_id"
@@ -114,6 +117,9 @@
     "project": {
         "attribute_table": "account",
         "attribute_table_schema": "modw_cloud",
+        "alternate_group_by_columns": [
+            "display"
+        ],
         "attribute_filter_map_query": {
             "account_id": "SELECT account_id FROM modw_cloud.account WHERE display in (__filter_values__)"
         },
