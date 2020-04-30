@@ -185,7 +185,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "The principal investigator of a project has a valid allocation, which can be used by him/her or the members of the project to run jobs on.",
+        "description_html": "The principal investigator of a project.",
         "name": "PI"
     },
     "provider": {
@@ -351,7 +351,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "The specific system username of the users who ran jobs",
+        "description_html": "The specific system username of the users who ran jobs.",
         "name": "System Username"
     }
 }
