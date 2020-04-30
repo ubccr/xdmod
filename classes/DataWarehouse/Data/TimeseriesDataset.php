@@ -129,6 +129,11 @@ class TimeseriesDataset
             }
 
             $this->query->addWhereAndJoin($spaceGroup->getId(), 'IN', $seriesIds);
+        } else {
+            // this happens when the offset is greater than the number of series. This
+            // can occur when muliple datasets with different numbers of series
+            // are plotted on the same chart.
+            return array();
         }
 
         $statement = $this->query->getRawStatement();
