@@ -23,6 +23,7 @@ var events = require('events'),
 	config = require('../config.js');
 var etlv2 = require('./etlv2.js');
 var fs = require('fs');
+var glob = require('glob');
 
 var ETLProfile = module.exports = function (etlProfile) {
     etlProfile.init();
@@ -587,10 +588,10 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 
             writeRealmMetadata(realmName, this.version);
             var groupBys = {};
-            try {
-                groupBys = JSON.parse(fs.readFileSync(this.root + '/output_db/groupbys.json', 'utf8'));
-            } catch (err) {
-                // dont do anyting just be cool man
+            var includefiles = glob.sync(this.root + '/output_db/groupbys*.json');
+            includefiles.sort();
+            for (let i = 0; i < includefiles.length; i++) {
+                Object.assign(groupBys, JSON.parse(fs.readFileSync(includefiles[i], 'utf8')));
             }
             var xdmodInteg = new xdmodIntegrator(realmName, this.root);
 
