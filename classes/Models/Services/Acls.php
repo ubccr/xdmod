@@ -987,7 +987,7 @@ SQL;
 SELECT
     r.name as realm,
     gb.name as group_by,
-    MAX(agb.enabled) as enabled,
+    !MAX(agb.enabled) as not_enabled,
     MAX(agb.visible) as visible
 FROM group_bys gb
   JOIN realms r ON gb.realm_id = r.realm_id
