@@ -108,6 +108,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             flex: 1,
             autoScroll: true,
             padding: 5,
+            bodyCssClass: 'comments_description',
             data: {
                 name: ''
             },
