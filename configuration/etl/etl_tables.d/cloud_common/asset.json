@@ -99,6 +99,13 @@
                     "asset_id"
                 ],
                 "is_unique": true
+            },
+            {
+                "name": "idx_provider_identifier",
+                "columns": [
+                    "provider_identifier"
+                ],
+                "is_unique": false
             }
         ]
     }
