@@ -2,8 +2,8 @@
 
 namespace DataWarehouse\Export;
 
-use CCR\DB;
-use Configuration\XdmodConfiguration;
+use DataWarehouse\Access\BatchExport;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use Exception;
 use Models\Services\Realms;
 use XDUser;
@@ -14,14 +14,8 @@ use XDUser;
 class RealmManager
 {
     /**
-     * Database handle for moddb.
-     * @var \CCR\DB\iDatabase
-     */
-    private $dbh;
-
-    /**
      * Raw statistics configuration.
-     * @var \Configuration\XdmodConfiguration
+     * @var \DataWarehouse\Data\RawStatisticsConfiguration
      */
     private $config;
 
@@ -30,11 +24,7 @@ class RealmManager
      */
     public function __construct()
     {
-        $this->dbh = DB::factory('database');
-        $this->config = XdmodConfiguration::assocArrayFactory(
-            'rawstatistics.json',
-            CONFIG_DIR
-        );
+        $this->config = RawStatisticsConfiguration::factory();
     }
 
     /**
@@ -50,7 +40,7 @@ class RealmManager
             function ($realm) {
                 return $realm['name'];
             },
-            $this->config['realms']
+            $this->config->getBatchExportRealms()
         );
 
         return array_filter(
@@ -69,13 +59,10 @@ class RealmManager
      */
     public function getRealmsForUser(XDUser $user)
     {
-        // Returns data from moddb.realms.display column.
-        $userRealms = Realms::getRealmsForUser($user);
-
         return array_filter(
             $this->getRealms(),
-            function ($realm) use ($userRealms) {
-                return in_array($realm->getDisplay(), $userRealms);
+            function ($realm) use ($user) {
+                return BatchExport::realmExists($user, $realm->getDisplay());
             }
         );
     }
@@ -112,7 +99,7 @@ class RealmManager
         // Realm rawstatistics configuration.
         $realmConfig = null;
 
-        foreach ($this->config['realms'] as $realm) {
+        foreach ($this->config->getBatchExportRealms() as $realm) {
             if ($realm['display'] == $realmObj->getDisplay()) {
                 $realmConfig = $realm;
                 break;

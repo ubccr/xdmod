@@ -275,7 +275,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
         $rawDataRealms = array_map(
             function ($item) {
-                return $item->name;
+                return $item['name'];
             },
             $rawRealmConfig
         );
