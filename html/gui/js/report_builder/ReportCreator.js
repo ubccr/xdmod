@@ -131,6 +131,11 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                 thumbnailChartLayoutPreview;
         }, this, {single: true});
 
+        // Declare variable before they are used, but cannot be defined here
+        // due to circular references.
+        var btnSaveReport;
+        var btnSaveReportAs;
+
         this.dirtyConfig = function (field, nv, ov) {
             CCR.xdmod.reporting.dirtyState = true;
             self.needsSave = true;
@@ -1042,7 +1047,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             p.expandGeneralInfo = false;
         });
 
-        var btnSaveReport = new Ext.Button({
+        btnSaveReport = new Ext.Button({
             iconCls: 'btn_save',
             text: 'Save',
             disabled: true,
@@ -1056,7 +1061,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             }
         });
 
-        var btnSaveReportAs = new Ext.Button({
+        btnSaveReportAs = new Ext.Button({
             iconCls: 'btn_save',
             text: 'Save As',
             tooltip: 'Create and save a copy of this report.',
