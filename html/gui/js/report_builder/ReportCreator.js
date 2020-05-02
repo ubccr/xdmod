@@ -501,17 +501,17 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                     if (success) {
                         self.parent.reportsOverview.reportStore.reload();
 
+                        btnSaveReport.setDisabled(true);
+                        self.needsSave = false;
+                        CCR.xdmod.reporting.dirtyState = false;
+
+                        self.setReportID(responseData.report_id);
+
+                        // This reload triggers (server-side)
+                        // cache cleanup
+                        flushReloadReportCharts(responseData.report_id);
+
                         if (!generateCopy) {
-                            btnSaveReport.setDisabled(true);
-                            self.needsSave = false;
-                            CCR.xdmod.reporting.dirtyState = false;
-
-                            self.setReportID(responseData.report_id);
-
-                            // This reload triggers (server-side)
-                            // cache cleanup
-                            flushReloadReportCharts(responseData.report_id);
-
                             var action =
                                 responseData.phase.slice(0,1).toUpperCase() +
                                 responseData.phase.slice(1) + 'd';
@@ -533,6 +533,8 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                                 }
                             );
                         } else {
+                            self.setReportName(reportData.report_name);
+
                             XDMoD.TrackEvent(
                                 'Report Generator (Report Editor)',
                                 'Report successfully saved as a copy',
