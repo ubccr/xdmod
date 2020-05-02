@@ -630,6 +630,9 @@ describe('Report Generator', function () {
             it('Click "Save" in "Save As" window', function () {
                 reportGeneratorPage.confirmSaveReportAs();
             });
+            it('Check copied report name', function () {
+                expect(reportGeneratorPage.getReportName(), 'Report name is correct').to.be.equal(testReport.name);
+            });
             it('Edit copied report', function () {
                 testReport.header = 'Header for copied report';
                 reportGeneratorPage.setHeaderText(testReport.header);
