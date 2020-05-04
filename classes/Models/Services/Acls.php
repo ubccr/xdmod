@@ -1056,7 +1056,7 @@ SQL;
             $params[':statistic_name'] = $statisticName;
         }
         $query .= "\nGROUP BY 1,2";
-        $query .= "\nORDER BY 1,2,3,4 DESC";
+        $query .= "\nORDER BY 1,2 DESC";
         $results = array();
         $sorted = array();
 
