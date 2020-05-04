@@ -18,7 +18,6 @@
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
     "mountpoint": {
-        "attribute_table": "mountpoint",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {

@@ -1,7 +1,5 @@
 <?php
 
-	require_once dirname(__FILE__).'/../configuration/linker.php';
-
 	/*
 	 * @Class XDController
 	 * XDMoD Controller Class
