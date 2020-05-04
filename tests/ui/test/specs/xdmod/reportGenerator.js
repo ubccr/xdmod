@@ -630,6 +630,18 @@ describe('Report Generator', function () {
             it('Click "Save" in "Save As" window', function () {
                 reportGeneratorPage.confirmSaveReportAs();
             });
+            it('Check copied report name', function () {
+                expect(reportGeneratorPage.getReportName(), 'Report name is correct').to.be.equal(testReport.name);
+            });
+            it('Edit copied report', function () {
+                testReport.header = 'Header for copied report';
+                reportGeneratorPage.setHeaderText(testReport.header);
+                testReport.chartsPerPage = testReport.chartsPerPage === 1 ? 2 : 1;
+                reportGeneratorPage.setNumberOfChartsPerPage(testReport.chartsPerPage);
+            });
+            it('Save report', function () {
+                reportGeneratorPage.saveReport();
+            });
             it('Return to "My Reports"', function () {
                 reportGeneratorPage.returnToMyReports();
             });
@@ -643,6 +655,14 @@ describe('Report Generator', function () {
                 expect(reportRow.getDeliveryFormat(), 'Delivery format is correct').to.be.equal(testReport.deliveryFormat);
                 expect(reportRow.getNumberOfCharts(), 'Number of charts of is correct').to.be.equal(testReport.numberOfCharts);
                 expect(reportRow.getNumberOfChartsPerPage(), 'Number of charts per page is correct').to.be.equal(testReport.chartsPerPage);
+            });
+            it('Edit copied report and compare values', function () {
+                reportGeneratorPage.getMyReportsRows()[2].doubleClick();
+                expect(reportGeneratorPage.getHeaderText(), 'Header text is correct').to.be.equal(testReport.header);
+                expect(reportGeneratorPage.getNumberOfChartsPerPage(), 'Number of charts per page is correct').to.be.equal(testReport.chartsPerPage);
+            });
+            it('Return to "My Reports"', function () {
+                reportGeneratorPage.returnToMyReports();
             });
         });
 
