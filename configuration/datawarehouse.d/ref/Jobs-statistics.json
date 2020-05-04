@@ -22,7 +22,7 @@
     },
     "avg_cpu_hours": {
         "aggregate_formula": "COALESCE(SUM(agg.cpu_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
-        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.",
         "name": "CPU Hours: Per Job",
         "precision": 2,
         "timeseries_formula": "COALESCE(SUM(agg.cpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
@@ -30,7 +30,7 @@
     },
     "avg_gpu_hours": {
         "aggregate_formula": "COALESCE(SUM(agg.gpu_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
-        "description_html": "The average GPU hours (number of GPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the GPU usage is aggregated. For example, if a job used 1000 GPUs for one minute, it would be aggregated as 1000 GPU minutes or 16.67 GPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The average GPU hours (number of GPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the GPU usage is aggregated. For example, if a job used 1000 GPUs for one minute, it would be aggregated as 1000 GPU minutes or 16.67 GPU hours.",
         "name": "GPU Hours: Per Job",
         "precision": 2,
         "timeseries_formula": "COALESCE(SUM(agg.gpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
@@ -52,7 +52,7 @@
     },
     "avg_node_hours": {
         "aggregate_formula": "COALESCE(SUM(agg.node_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
-        "description_html": "The average node hours (number of nodes x wall time hours) per ${ORGANIZATION_NAME} job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The average node hours (number of nodes x wall time hours) per ${ORGANIZATION_NAME} job.",
         "name": "Node Hours: Per Job",
         "precision": 2,
         "timeseries_formula": "COALESCE(SUM(agg.node_time) / SUM(agg.running_job_count), 0) / 3600.0",
@@ -60,7 +60,7 @@
     },
     "avg_processors": {
         "aggregate_formula": "COALESCE(SUM(agg.processor_count * CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
-        "description_html": "TThe average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+        "description_html": "The average job size per ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
         "name": "Job Size: Per Job",
         "precision": 1,
         "timeseries_formula": "COALESCE(SUM(agg.processor_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
@@ -68,7 +68,7 @@
     },
     "avg_gpus": {
         "aggregate_formula": "COALESCE(SUM(agg.gpu_count * CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
-        "description_html": "TThe average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of GPUs used by a (parallel) job.",
+        "description_html": "The average job size per ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of GPUs used by a (parallel) job.",
         "name": "GPU Count: Per Job",
         "precision": 1,
         "timeseries_formula": "COALESCE(SUM(agg.gpu_count * agg.running_job_count) / SUM(agg.running_job_count), 0)",
@@ -90,14 +90,14 @@
         "unit": "Hour"
     },
     "expansion_factor": {
-        "description_html": "The average job size per  ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+        "description_html": "The average job size per ${ORGANIZATION_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
         "formula": "COALESCE(SUM(agg.sum_weighted_expansion_factor)/SUM(agg.sum_job_weights),0)",
         "name": "User Expansion Factor",
         "precision": 1,
         "unit": "User Expansion Factor"
     },
     "job_count": {
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that ended within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that ended within the selected duration.",
         "formula": "COALESCE(SUM(agg.ended_job_count), 0)",
         "name": "Number of Jobs Ended",
         "precision": 0,
@@ -132,7 +132,7 @@
     "running_job_count": {
         "#": "Support different formulas for aggregate and timeseries queries",
         "aggregate_formula": "COALESCE(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that are running.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that are running.",
         "name": "Number of Jobs Running",
         "precision": 0,
         "timeseries_formula": "SUM(agg.running_job_count)",
@@ -142,7 +142,7 @@
         "aggregate_formula": {
             "$include": "datawarehouse.d/include/Jobs-sem-avg-cpu-hours-agg.sql"
         },
-        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.",
         "name": "Std Dev: CPU Hours: Per Job",
         "precision": 2,
         "show_in_catalog": false,
@@ -214,35 +214,35 @@
         "unit": "Hour"
     },
     "started_job_count": {
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that started executing within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that started executing within the selected duration.",
         "formula": "COALESCE(SUM(agg.started_job_count), 0)",
         "name": "Number of Jobs Started",
         "precision": 0,
         "unit": "Number of Jobs"
     },
     "submitted_job_count": {
-        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that submitted/queued within the selected duration.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total number of ${ORGANIZATION_NAME} jobs that submitted/queued within the selected duration.<i>",
         "formula": "COALESCE(SUM(agg.submitted_job_count), 0)",
         "name": "Number of Jobs Submitted",
         "precision": 0,
         "unit": "Number of Jobs"
     },
     "total_cpu_hours": {
-        "description_html": "The total CPU hours (number of CPU cores x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.<br /><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total CPU hours (number of CPU cores x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.",
         "formula": "COALESCE(SUM(agg.cpu_time),0)/3600.0",
         "name": "CPU Hours: Total",
         "precision": 1,
         "unit": "CPU Hour"
     },
     "total_gpu_hours": {
-        "description_html": "The total GPU hours (number of GPUs x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the GPU usage is aggregated. For example, if a job used 1000 GPUs for one minute, it would be aggregated as 1000 GPU minutes or 16.67 GPU hours.<br /><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total GPU hours (number of GPUs x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/>For each job, the GPU usage is aggregated. For example, if a job used 1000 GPUs for one minute, it would be aggregated as 1000 GPU minutes or 16.67 GPU hours.",
         "formula": "COALESCE(SUM(agg.gpu_time), 0) / 3600.0",
         "name": "GPU Hours: Total",
         "precision": 1,
         "unit": "GPU Hour"
     },
     "total_node_hours": {
-        "description_html": "The total node hours (number of nodes x wall time hours) used by ${ORGANIZATION_NAME} jobs.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total node hours (number of nodes x wall time hours) used by ${ORGANIZATION_NAME} jobs.",
         "formula": "COALESCE(SUM(agg.node_time),0)/3600.0",
         "name": "Node Hours: Total",
         "precision": 1,
@@ -256,7 +256,7 @@
         "unit": "Hour"
     },
     "total_wallduration_hours": {
-        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs took to execute.<br/><i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",
+        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs took to execute.<br/><i>Wall Time:</i> Wall time is defined as the linear time between start and end time of execution for a particular job.",
         "formula": "COALESCE(SUM(agg.wallduration),0)/3600.0",
         "name": "Wall Hours: Total",
         "precision": 1,

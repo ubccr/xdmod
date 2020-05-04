@@ -8,6 +8,7 @@
     "CCR": false,
     "Ext": false,
     "ga": false,
+    "moment": false,
     "_gaq": false,
     "jQuery": false,
     "Highcharts": false,

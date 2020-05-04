@@ -10,7 +10,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
      */
     nameFieldConfig: {
         name: 'report_name',
-        fieldLabel: 'File Name',
+        fieldLabel: 'Report Name',
         emptyText: 'Required, ' + XDMoD.constants.maxReportNameLength + ' max',
         msgTarget: 'under',
 
@@ -849,7 +849,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
 
             maxLength: maxReportFooterLength,
             maxLengthText: 'Maximum length (' + maxReportFooterLength + ' characters) exceeded.',
-            
+
             listeners: {
                 change: function (t, newValue, oldValue) {
                     handleTextFieldChange(t, newValue, oldValue, 'footer text');

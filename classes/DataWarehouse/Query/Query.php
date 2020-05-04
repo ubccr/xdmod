@@ -1013,7 +1013,13 @@ SQL;
         $filterParameters = array();
         $filterParameterDescriptions = array();
         foreach ($groupedFilters as $filter_parameter_dimension => $filterValues) {
-            $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
+            try {
+                $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
+            } catch (\Exception $ex) {
+                // Specifically catch when a realm does not have a groupby, this allows
+                // that specific realm to not have the filter
+                continue;
+            }
             $param = array($filter_parameter_dimension.'_filter' => implode(',', $filterValues));
             $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
             $filterParameters[$filter_parameter_dimension] = array(
@@ -1137,7 +1143,13 @@ SQL;
         $groupedRoleParameters = array();
         $roleParameterDescriptions = array();
         foreach ($role_parameters as $role_parameter_dimension => $role_parameter_value) {
-            $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
+            try{
+                $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
+            } catch (\Exception $ex){
+                // Specifically catch when a realm does not have a groupby, this allows
+                // that specific realm to not have the filter
+                continue;
+            }
 
             if (is_array($role_parameter_value)) {
                 $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
