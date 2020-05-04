@@ -130,6 +130,66 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the scenario where multiple datasets are plotted but they have different
+     * number of dataseries and the paging has paged past the max of one of the series.
+     */
+    public function testChartPaging()
+    {
+        $helper = new \TestHarness\XdmodTestHelper();
+        $helper->authenticate('cd');
+
+        $requestData =  $this->getChartRequest(
+            array(
+                array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'),
+                array('realm' => 'Jobs', 'group_by' => 'none', 'metric' => 'total_cpu_hours'),
+            ),
+            array(
+                'start' => '4',
+                'showRemainder' => 'false'
+            )
+        );
+
+        $expected = array (
+            'total' => '55',
+            'series_data' => array(
+                array('name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844, 'percentage' => null),
+                array('name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733, 'percentage' => null),
+                array('name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52, 'percentage' => null),
+                array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null)
+            )
+        );
+
+        $response = $helper->post('controllers/metric_explorer.php', null, $requestData);
+
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $chartData = json_decode($response[0]);
+        $this->assertNotNull($chartData);
+
+        if ($expected === null) {
+            $this->output($chartData);
+            $this->markTestSkipped();
+            return;
+        }
+
+        $this->assertEquals($expected['total'], $chartData->totalCount);
+
+        $series = $chartData->data[0]->series;
+        $this->assertCount(count($expected['series_data']), $series);
+
+        $sdata = reset($expected['series_data']);
+
+        foreach ($series as $s) {
+            $this->assertEquals($sdata['name'], $s->name);
+            $this->assertEquals($sdata['y'], $s->data[0]->y, '', 1.0E-6);
+            $this->assertEquals($sdata['percentage'], $s->data[0]->percentage);
+            $sdata = next($expected['series_data']);
+        }
+
+        $helper->logout();
+    }
+
+    /**
      * @dataProvider remainderChartProvider
      */
     public function testChartData($requestData, $expected)
@@ -182,6 +242,8 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         );
 
         $testdate = isset($global_settings['date']) ? $global_settings['date'] : '2016-12-31';
+        $startOffset = isset($global_settings['start']) ? $global_settings['start'] : '0';
+        $showRemainder = isset($global_settings['showRemainder']) ? $global_settings['showRemainder'] : 'true';
 
         $chartSettings = array(
             'show_title' => 'y',
@@ -193,8 +255,8 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             'title' => 'Metric Explorer Test Chart',
             'show_filters' => 'true',
             'show_warnings' => 'true',
-            'show_remainder' => 'true',
-            'start' => '0',
+            'show_remainder' => $showRemainder,
+            'start' => $startOffset,
             'limit' => '4',
             'timeframe_label' => 'User Defined',
             'operation' => 'get_data',
