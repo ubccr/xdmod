@@ -1,7 +1,7 @@
 <?php
 namespace DataWarehouse\Query\Jobs;
 
-use Configuration\XdmodConfiguration;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Query\Model\FormulaField;
 use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
@@ -22,12 +22,12 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     ) {
         parent::__construct('Jobs', 'modw_aggregates', 'jobfact_by_day', array());
 
-        $config = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR)['Jobs'];
+        $config = RawStatisticsConfiguration::factory();
 
         // The data table is always aliased to "jf".
         $tables = ['jf' => $this->getDataTable()];
 
-        foreach ($config['tables'] as $tableDef) {
+        foreach ($config->getQueryTableDefinitions('Jobs') as $tableDef) {
             $alias = $tableDef['alias'];
             $table = new Table(
                 new Schema($tableDef['schema']),
@@ -98,15 +98,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         }
 
         if ($stat == "accounting" || $stat == 'batch') {
-            foreach ($config['fields'] as $field) {
-                // Replace hierarchy constants.
-                foreach (['name', 'documentation'] as $key) {
-                    $value = $field[$key];
-                    if (strpos($value, 'HIERARCHY_') === 0 && defined($value)) {
-                        $field[$key] = constant($value);
-                    }
-                }
-
+            foreach ($config->getQueryFieldDefinitions('Jobs') as $field) {
                 $alias = $field['name'];
                 if (isset($field['tableAlias']) && isset($field['column'])) {
                     $this->addField(new TableField(
