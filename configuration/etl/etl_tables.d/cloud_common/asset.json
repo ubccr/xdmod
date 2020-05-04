@@ -103,6 +103,7 @@
             {
                 "name": "idx_provider_identifier",
                 "columns": [
+                    "resource_id",
                     "provider_identifier"
                 ],
                 "is_unique": false
