@@ -45,7 +45,7 @@ try {
         $categories = DataWarehouse::getCategories();
 
         // Retrieve the realms that the user has access to
-        $realms = Realms::getRealmsForUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         // Filter the categories by those that the user has access to.
         $categories = array_map(function ($category) use ($realms) {

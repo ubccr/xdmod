@@ -1094,7 +1094,7 @@ class HighChart2
                 }
                 if($this->_multiCategory) {
                     $dataSeriesName = (
-                        DataWarehouse::getCategoryForRealm($data_description->realm)
+                        $data_description->category
                         . ': '
                         . $dataSeriesName
                     );
