@@ -1,0 +1,56 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "innodb",
+    "charset": "latin1",
+    "collation": "latin1_swedish_ci",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "Generated unique id for enduser table.",
+        "name": "enduser_id"
+      },
+      {
+        "type": "varchar(45)",
+        "charset": "latin1",
+        "collation": "latin1_swedish_ci",
+        "nullable": false,
+        "comment": "Username of the enduser on the specific gateway denoted by the proxy user having gateway_id",
+        "name": "username"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "User id of the enduser on the specific gateway denoted by the proxy user having gateway_id",
+        "name": "local_username_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "comment": "Foreign key to gateway.proxy_person_id, denotes the proxy user that runs jobs on resources at the behest of a gateway.",
+        "name": "gateway_id"
+      },
+      {
+        "type": "datetime",
+        "nullable": false,
+        "comment": "Last modified date for this record.",
+        "name": "last_modified"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "enduser_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "foreign_key_constraints": [],
+    "triggers": [],
+    "schema": "modw_gateways",
+    "name": "enduser"
+  }
+}
