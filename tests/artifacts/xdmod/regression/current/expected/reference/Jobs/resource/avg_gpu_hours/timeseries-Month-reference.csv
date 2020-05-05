@@ -1,0 +1,11 @@
+title
+"GPU Hours: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[phillips] GPU Hours: Per Job","[frearson] GPU Hours: Per Job","[mortorq] GPU Hours: Per Job","[pozidriv] GPU Hours: Per Job","[robertson] GPU Hours: Per Job"
+2016-12,0.13071968,0.00000000,0.00000000,0.00000000,0.00000000
+2017-01,0.08487705,0.00000000,0.00000000,0.00000000,0.00000000
+---------

@@ -28,6 +28,7 @@
             "exit_state": "exit_state",
             "node_count": "node_count",
             "cpu_count": "cpu_count",
+            "gpu_count": "gpu_count",
             "cpu_req": "cpu_req",
             "mem_req": "mem_req",
             "timelimit": "timelimit",

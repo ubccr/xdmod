@@ -1,0 +1,10 @@
+title
+"GPU Count: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+"High-performance computing",0.0001,0.000039661596951222156
+---------

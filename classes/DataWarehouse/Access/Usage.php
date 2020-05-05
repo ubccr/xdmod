@@ -1238,13 +1238,12 @@ class Usage extends Common
      *
      *   - 'pi':       modw.systemaccount ( username )
      *   - 'resource': modw.resourcefact  ( code )
-     *   - 'project':  modw_cloud.account ( display )
      *
      * If the $usageFilterValue is numeric or the $usageFilterType is not one of those currently
      * supported then array($usageFilterValue) is returned.
      *
      * @param string $usageFilterType the 'type' of filter to translate. Currently supported
-     *                                 values: pi, resource, project
+     *                                 values: pi, resource
      * @param string|int  $usageFilterValue the value to be translated
      * @return array of the translated values.
      * @throws Exception if there is a problem connecting to the db or executing a query.
@@ -1261,9 +1260,6 @@ class Usage extends Common
                 break;
             case 'resource':
                 $query = "SELECT id AS value FROM modw.resourcefact WHERE code = :value";
-                break;
-            case 'project':
-                $query = "SELECT account_id AS value FROM modw_cloud.account WHERE display = :value";
                 break;
         }
 

@@ -527,7 +527,6 @@ var generateGroupBy = function (itemAlias, column)
         description = description.replace(new RegExp(':Label_' + tagidx, 'g'), wordToUpper(column.dynamictags[tagidx]));
     }
     return {
-        attribute_table: column.dimension_table,
         attribute_table_schema: 'modw_supremm',
         attribute_to_aggregate_table_key_map: [
             {
@@ -537,7 +536,7 @@ var generateGroupBy = function (itemAlias, column)
         attribute_values_query: {
             joins: [
                 {
-                    name: column.name
+                    name: column.dimension_table
                 }
             ],
             orderby: [

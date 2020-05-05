@@ -291,6 +291,7 @@ TXT;
     {
         $groups = array(
             'fieldofscience',
+            'gpucount',
             'jobsize',
             'jobwalltime',
             'nodecount',
@@ -311,7 +312,9 @@ TXT;
             'active_pi_count',
             'active_resource_count',
             'avg_cpu_hours',
+            'avg_gpu_hours',
             'avg_job_size_weighted_by_cpu_hours',
+            'avg_job_size_weighted_by_gpu_hours',
             'avg_node_hours',
             'avg_processors',
             'avg_waitduration_hours',
@@ -325,6 +328,7 @@ TXT;
             'started_job_count',
             'submitted_job_count',
             'total_cpu_hours',
+            'total_gpu_hours',
             'total_node_hours',
             'total_waitduration_hours',
             'total_wallduration_hours',

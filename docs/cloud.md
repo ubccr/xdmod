@@ -2,9 +2,9 @@
 - A full working installation of XDMoD. [XDMoD install instructions](install.html)
 
 ## What are cloud metrics?
-The Cloud realm in XDMoD tracks events that occur in cloud infrastructure systems which can also referred to as Infrastructure as a Service(IaaS) cloud computing systems. A variety of events are tracked such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs. In this beta release we support an initial set of cloud metrics with additional metrics to be added in subsequent releases.
+The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure systems which can also be referred to as Infrastructure as a Service (IaaS) cloud computing systems. A variety of events are tracked such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs.
 
-## Available metrics (8.0beta)
+## Available metrics
 - Average Memory Reserved Weighted By Wall Hours (Bytes)
   - The average amount of memory (in bytes) reserved by running sessions, weighted by wall hours.
 - Average Root Volume Storage Reserved Weighed By Wall Hours (Bytes)
@@ -31,10 +31,18 @@ The Cloud realm in XDMoD tracks events that occur in cloud infrastructure system
   - The  project  associated  with  a  running  session  of  a virtual  machine.
 - Resource
   - A  resource  is  defined  as  any remote  infrastructure  that  hosts  cloud  instances.
+- User
+  - A person on a principal investigator's allocation, able to spin up and manipulate VM instances.
+- System Username
+  - The specific system username associated with a running session of a virtual machine.
 - VM Size: Cores
   - A categorization of sessions into discrete groups based on the number of cores used by each VM.
 - VM Size: Memory
   - A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.
+- Domain
+  - A domain is a high-level container for projects, users and groups in Open Stack.
+- Submission Venue
+  - The venue that a job or cloud instance was initiated from.
 
 
 ## Getting cloud metrics data

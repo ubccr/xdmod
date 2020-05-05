@@ -20,9 +20,15 @@
 
         "joins": [
             {
+                "name": "generic_cloud_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
                 "name": "event",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "ev"
+                "alias": "ev",
+                "on": "ev.resource_id = staging.resource_id AND ev.instance_id = staging.instance_id AND ev.event_time_ts = staging.event_time_ts AND ev.event_type_id = staging.event_type_id"
             },
             {
                 "name": "instance",

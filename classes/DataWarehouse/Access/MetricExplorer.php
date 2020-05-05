@@ -84,7 +84,7 @@ class MetricExplorer extends Common
 
         $dataset_classname
             = $timeseries
-            ? '\DataWarehouse\Data\SimpleTimeseriesDataset'
+            ? '\DataWarehouse\Data\TimeseriesDataset'
             : '\DataWarehouse\Data\SimpleDataset';
 
         $highchart_classname
@@ -701,7 +701,7 @@ class MetricExplorer extends Common
         // Check if the realms were specified, and if not, use all realms.
         $realmsSpecified = !empty($realms);
         if (!$realmsSpecified) {
-            $realms = self::getRealmsFromUser($user);
+            $realms = Realms::getRealmIdsForUser($user);
         }
 
         // Determine which aggregation unit to use for dimension values queries.
@@ -904,7 +904,7 @@ class MetricExplorer extends Common
         XDUser $user,
         $dimension_id
     ) {
-        $realms = self::getRealmsFromUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         foreach ($realms as $realm) {
             try {
@@ -935,7 +935,7 @@ class MetricExplorer extends Common
         XDUser $user,
         $dimension_id
     ) {
-        $realms = self::getRealmsFromUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         $dimensionRealms = array();
         foreach ($realms as $realm) {
@@ -977,7 +977,7 @@ class MetricExplorer extends Common
         $value_id,
         $getLongName = false
     ) {
-        $realms = self::getRealmsFromUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         $dimensionValueName = null;
         foreach ($realms as $realm) {
@@ -1000,17 +1000,6 @@ class MetricExplorer extends Common
         }
 
         return $dimensionValueName;
-    }
-
-    /**
-     * Get a list of realms available to a user.
-     *
-     * @param  XDUser $user       The user whose realms are being retrieved.
-     *
-     * @return array              The realms available to the user.
-     */
-    public static function getRealmsFromUser(XDUser $user) {
-        return Realms::getRealmsForUser($user);
     }
 
     /**

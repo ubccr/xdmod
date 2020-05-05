@@ -2,7 +2,6 @@
     "name": "${ORGANIZATION_NAME}",
     "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database.",
     "attribute_table_schema": "modw",
-    "attribute_table": "dual",
     "show_in_catalog": false,
     "is_aggregation_unit": true,
     "attribute_to_aggregate_table_key_map": [],
