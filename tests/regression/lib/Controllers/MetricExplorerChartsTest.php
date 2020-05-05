@@ -158,35 +158,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
                 array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null)
             )
         );
-
-        $response = $helper->post('controllers/metric_explorer.php', null, $requestData);
-
-        $this->assertEquals(200, $response[1]['http_code']);
-
-        $chartData = json_decode($response[0]);
-        $this->assertNotNull($chartData);
-
-        if ($expected === null) {
-            $this->output($chartData);
-            $this->markTestSkipped();
-            return;
-        }
-
-        $this->assertEquals($expected['total'], $chartData->totalCount);
-
-        $series = $chartData->data[0]->series;
-        $this->assertCount(count($expected['series_data']), $series);
-
-        $sdata = reset($expected['series_data']);
-
-        foreach ($series as $s) {
-            $this->assertEquals($sdata['name'], $s->name);
-            $this->assertEquals($sdata['y'], $s->data[0]->y, '', 1.0E-6);
-            $this->assertEquals($sdata['percentage'], $s->data[0]->percentage);
-            $sdata = next($expected['series_data']);
-        }
-
-        $helper->logout();
+        $this->testChartData($requestData, $expected);
     }
 
     /**
