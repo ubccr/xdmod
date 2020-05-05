@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[High-performance computing] GPU Count: Per Job"
+2016-12,0.0000
+2017-01,0.0002
+---------

@@ -145,7 +145,7 @@ class JsonPointer
                 if ( null !== self::$loggable ) {
                     self::$loggable->getLogger()->err('Invalid JSON');
                 }
-                return false;
+                throw new Exception('Invalid JSON');
             }
         } else {
             $jsonObj = $json;

@@ -361,7 +361,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         } elseif ($jobId !== null && $recordId !== null && $realm !== null) {
             $result = $this->processJobByJobId($app, $user, $realm, $jobId, $action);
         } elseif ($recordId !== null && $realm !== null) {
-            $result = $this->processHistoryRecordRequest($request, $app, $user, $recordId, $action);
+            $result = $this->getHistoryById($request, $app, $recordId);
         } elseif ($realm !== null && $title !== null) {
             $result = $this->getHistoryByTitle($request, $app, $realm, $title);
         } elseif ($realm !== null) {
@@ -1737,20 +1737,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * @param Request $request
-     * @param Application $app
-     * @param XDUser $user
-     * @param int $recordId
-     * @param string $action
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    private function processHistoryRecordRequest(Request $request, Application $app, XDUser $user, $recordId, $action)
-    {
-        $url = $request->getBasePath() . $request->getPathInfo() . "/$recordId?".$request->getQueryString();
-        return $app->redirect($url);
-    }
-
-    /**
      * @param Application $app
      * @param XDUser $user
      * @param string $realm
@@ -1791,13 +1777,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $results = array();
 
         foreach(\DataWarehouse\Access\RawData::getRawDataRealms($user) as $realmconfig) {
-            $history = $this->getUserStore($user, $realmconfig->name);
+            $history = $this->getUserStore($user, $realmconfig['name']);
             $records = $history->get();
             if (!empty($records)) {
                 $results[] = array(
                     'dtype' => 'realm',
-                    'realm' => $realmconfig->name,
-                    'text' => $realmconfig->display
+                    'realm' => $realmconfig['name'],
+                    'text' => $realmconfig['display']
                 );
             }
         }

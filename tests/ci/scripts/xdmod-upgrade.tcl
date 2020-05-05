@@ -21,6 +21,11 @@ proc confirmUpgrade { } {
 set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
+
+# Begin 9.0 migration
+provideInput {Re-ingest*} {yes}
+# End 9.0 migration
+
 expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1

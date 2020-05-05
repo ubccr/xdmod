@@ -18,6 +18,7 @@
                 "jobs/xdw/federation-instances.json",
                 "jobs/xdw/field-of-science-hierarchy.json",
                 "jobs/xdw/field-of-science.json",
+                "jobs/xdw/gpu-buckets.json",
                 "jobs/xdw/hosts.json",
                 "jobs/xdw/job-records.json",
                 "jobs/xdw/job-tasks.json",
@@ -91,6 +92,18 @@
                     "type": "jsonfile",
                     "name": "processorbuckets data",
                     "path": "jobs/xdw/processor-buckets.json"
+                }
+            }
+        },
+        {
+            "name": "gpu-buckets",
+            "definition_file": "jobs/xdw/gpu-buckets.json",
+            "description": "GPU buckets + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "gpu buckets data",
+                    "path": "jobs/xdw/gpu-buckets.json"
                 }
             }
         },

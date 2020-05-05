@@ -1,0 +1,13 @@
+title
+"GPU Count: Per Job: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] GPU Count: Per Job"
+2016-12-30,0.0000
+2016-12-31,0.0000
+2017-01-01,0.0000
+---------

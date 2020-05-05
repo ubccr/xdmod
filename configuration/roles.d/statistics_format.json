@@ -83,6 +83,23 @@
           ]
         },
         {
+          "title": "GPU Time (h)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_gpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_gpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
           "title": "Wait Time (h)",
           "items": [
             {
@@ -206,6 +223,23 @@
             {
               "title": "Avg (Per Job)",
               "fieldName": "avg_cpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.00"
+            }
+          ]
+        },
+        {
+          "title": "GPU Time (h)",
+          "items": [
+            {
+              "title": "Total",
+              "fieldName": "total_gpu_hours",
+              "numberType": "float",
+              "numberFormat": "#,#.0"
+            },
+            {
+              "title": "Avg (Per Job)",
+              "fieldName": "avg_gpu_hours",
               "numberType": "float",
               "numberFormat": "#,#.00"
             }

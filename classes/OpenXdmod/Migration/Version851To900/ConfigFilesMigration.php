@@ -25,5 +25,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
                'roadmap_url' => $roadmapUrl
             )
         );
+
+        $this->writeModulePortalSettingsFiles();
     }
 }

@@ -23,6 +23,21 @@ class SimpleTimeseriesData extends SimpleData
     }
 
     /**
+     * Add a data point to the timeseries data.
+     *
+     * @param mixed $time        The posix timestamp for the record.
+     * @param mixed $value       The value of the record.
+     * @param mixed $error_value The error value for the record.
+     *
+     * @return void
+     */
+    public function addDatum($time, $value, $error_value) {
+        $this->_start_ts[] = $time;
+        $this->_values[] = $value;
+        $this->_errors[] = $error_value;
+    }
+
+    /**
      *  JMS June 2015
      */
     public function getStartTs()

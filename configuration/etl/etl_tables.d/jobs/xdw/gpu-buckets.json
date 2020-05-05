@@ -1,0 +1,51 @@
+{
+    "table_definition": {
+        "name": "gpu_buckets",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "min_gpus",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "max_gpus",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "description",
+                "type": "char(16)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ]
+            },
+            {
+                "name": "uk_min_max",
+                "columns": [
+                    "min_gpus",
+                    "max_gpus"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "uk_description",
+                "columns": [
+                    "description"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

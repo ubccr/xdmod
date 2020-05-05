@@ -7,7 +7,6 @@
                 "name": "Alternate GroupBy Class Example",
                 "description_html": "Alternate GroupBy Class Example.",
                 "attribute_table_schema": "modw",
-                "attribute_table": "systemaccount",
                 "attribute_to_aggregate_table_key_map": [
                     { "id": "systemaccount_id" }
                 ],

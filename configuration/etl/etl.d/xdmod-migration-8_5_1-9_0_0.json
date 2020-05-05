@@ -1,5 +1,12 @@
 {
     "module": "xdmod",
+    "defaults": {
+        "jobs-gpu-re-ingest-8_5_1-9_0_0": {
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions"
+        }
+    },
     "migration-8_5_1-9_0_0": [
         {
             "name": "DeleteCloudAutoincrementColumns",
@@ -254,6 +261,191 @@
                     "config": "datawarehouse",
                     "schema": "modw_cloud",
                     "create_schema_if_not_exists": true
+                }
+            }
+        }
+    ],
+    "#": "Jobs realm GPU migrations separated so they can optionally be run from the interactive setup script",
+    "jobs-gpu-migration-8_5_1-9_0_0": [
+        {
+            "name": "update-modw-tables",
+            "description": "Update modw tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "jobs/xdw/gpu-buckets.json",
+                "jobs/xdw/job-tasks.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "update-mod_shredder-tables",
+            "description": "Update mod_shredder tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "jobs/shredder/job.json",
+                "jobs/staging/job.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "update-mod_shredder-shredded_job_slurm-table",
+            "description": "Update mod_shredder.shredded_job_slurm table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/shredder/alter-job-slurm.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "update-modw_hpcdb-tables",
+            "description": "Update modw_hpcdb tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "jobs/hpcdb/jobs.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD HPcDB",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        }
+    ],
+    "#": "Jobs realm GPU pipeline intentionally named to not match the automatically run migration pipelines",
+    "jobs-gpu-re-ingest-8_5_1-9_0_0": [
+        {
+            "name": "shredded_job_slurm-to-shredded_job",
+            "description": "",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/jobs-gpu/shredded_job_slurm-to-shredded_job.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "shredded_job-to-staging_job",
+            "description": "",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/jobs-gpu/shredded_job-to-staging_job.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "staging_job-to-hpcdb_jobs",
+            "description": "",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/jobs-gpu/staging_job-to-hpcdb_jobs.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD HPcDB",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "hpcdb_jobs-to-job_tasks",
+            "description": "",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/jobs-gpu/hpcdb_jobs-to-job_tasks.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD HPcDB",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "gpu-buckets",
+            "definition_file": "jobs/xdw/gpu-buckets.json",
+            "description": "GPU buckets + data",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "gpu buckets data",
+                    "path": "jobs/xdw/gpu-buckets.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
                 }
             }
         }

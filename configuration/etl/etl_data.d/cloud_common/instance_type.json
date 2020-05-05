@@ -1,0 +1,4 @@
+[
+    ["resource_id", "instance_type_id", "instance_type", "display", "description", "num_cores", "memory_mb", "disk_gb", "start_time", "end_time"],
+    [-1,            1,                  "Unknown",       "Unknown", null,            0,           0,           0,         0,            null]
+]

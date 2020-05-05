@@ -1,6 +1,5 @@
 {
     "jobsize": {
-        "attribute_table": "processor_buckets",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -34,8 +33,41 @@
         "description_html": "A categorization of jobs into discrete groups based on the number of cores used by each job.",
         "name": "Job Size"
     },
+    "gpucount": {
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "gpubucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "gpu_buckets"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of jobs into discrete groups based on the number of GPUs used by each job.",
+        "name": "GPU Count"
+    },
     "jobwalltime": {
-        "attribute_table": "job_times",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -70,7 +102,6 @@
         "name": "Job Wall Time"
     },
     "nodecount": {
-        "attribute_table": "nodecount",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -98,7 +129,6 @@
         "name": "Node Count"
     },
     "person": {
-        "attribute_table": "person",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -126,7 +156,6 @@
         "name": "User"
     },
     "pi": {
-        "attribute_table": "piperson",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -150,11 +179,10 @@
             }
         },
         "category": "Administrative",
-        "description_html": "The principal investigator of a project has a valid allocation, which can be used by him/her or the members of the project to run jobs on.",
+        "description_html": "The principal investigator of a project.",
         "name": "PI"
     },
     "provider": {
-        "attribute_table": "serviceprovider",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -190,7 +218,6 @@
                 "aggregate_expr": "task_resource_id"
             }
         ],
-        "attribute_table": "queue",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -206,6 +233,7 @@
             "orderby": [
                 "id"
             ],
+            "query_hint": "DISTINCT",
             "records": {
                 "id": "id",
                 "name": "id",
@@ -217,7 +245,15 @@
         "name": "Queue"
     },
     "resource": {
-        "attribute_table": "resourcefact",
+        "additional_join_constraints": [
+            {
+                 "attribute_table": "resourcefact",
+                 "attribute_expr": "id",
+                 "operation": "=",
+                 "aggregate_table": "resourcespecs",
+                 "aggregate_expr": "resource_id"
+            }
+        ],
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -227,35 +263,32 @@
         "attribute_values_query": {
             "joins": [
                 {
-                    "alias": "rf",
                     "name": "resourcefact"
                 },
                 {
-                    "alias": "rs",
                     "name": "resourcespecs",
-                    "on": "rf.id = rs.resource_id"
+                    "on": "resourcefact.id = resourcespecs.resource_id"
                 }
             ],
             "orderby": [
-                "rf.code",
-                "rf.name"
+                "resourcefact.code",
+                "resourcefact.name"
             ],
             "query_hint": "DISTINCT",
             "records": {
-                "id": "rf.id",
-                "name": "REPLACE(rf.code, '-', ' ')",
+                "id": "resourcefact.id",
+                "name": "REPLACE(resourcefact.code, '-', ' ')",
                 "order_id": "id",
-                "short_name": "REPLACE(rf.code, '-', ' ')"
+                "short_name": "REPLACE(resourcefact.code, '-', ' ')"
             },
             "where": [
-                "rs.processors IS NOT NULL"
+                "resourcespecs.processors IS NOT NULL"
             ]
         },
         "description_html": "A resource is a remote computer that can run jobs.",
         "name": "Resource"
     },
     "resource_type": {
-        "attribute_table": "resourcetype",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -290,7 +323,6 @@
             "systemaccount_id": "SELECT DISTINCT id FROM modw.systemaccount WHERE username IN (__filter_values__)"
         },
         "attribute_description_query": "SELECT DISTINCT username AS filter_name FROM modw.systemaccount WHERE username IN (__filter_values__) ORDER BY username",
-        "attribute_table": "systemaccount",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -315,7 +347,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "The specific system username of the users who ran jobs",
+        "description_html": "The specific system username of the users who ran jobs.",
         "name": "System Username"
     }
 }

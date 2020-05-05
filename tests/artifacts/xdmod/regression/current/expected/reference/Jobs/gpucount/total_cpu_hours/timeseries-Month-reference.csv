@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0] CPU Hours: Total","[2] CPU Hours: Total"
+2016-12,767983.0422,2792.9567
+2017-01,69531.3181,248.5200
+---------
