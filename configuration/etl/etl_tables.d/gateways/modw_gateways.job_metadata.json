@@ -9,8 +9,9 @@
       {
         "type": "int(11)",
         "nullable": false,
-        "name": "job_metadata_id",
-        "comment": "Generated primary key for table"
+        "name": "id",
+        "extra": "auto_increment",
+        "comment": "Generated primary key for job_metadata table"
       },
       {
         "type": "int(11)",
@@ -47,17 +48,13 @@
         "name": "job_datetime"
       },
       {
-        "type": "varchar(45)",
-        "charset": "latin1",
-        "collation": "latin1_swedish_ci",
+        "type": "varchar(200)",
         "nullable": true,
         "comment": "Name of script run on resource at behest of gateway",
         "name": "script_name"
       },
       {
-        "type": "varchar(255)",
-        "charset": "latin1",
-        "collation": "latin1_swedish_ci",
+        "type": "varchar(1000)",
         "nullable": true,
         "comment": "Path to script run on resource at behest of gateway",
         "name": "script_path"
@@ -72,7 +69,7 @@
     "indexes": [
       {
         "columns": [
-          "job_metadata_id"
+          "id"
         ],
         "type": "BTREE",
         "is_unique": true,

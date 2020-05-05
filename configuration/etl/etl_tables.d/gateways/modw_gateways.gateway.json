@@ -15,8 +15,6 @@
       },
       {
         "type": "varchar(100)",
-        "charset": "utf8mb4",
-        "collation": "utf8mb4_general_ci",
         "nullable": false,
         "hints": "Derived from gateway's Community User name in the person table",
         "comment": "Short name of the science gateway",
@@ -24,8 +22,6 @@
       },
       {
         "type": "varchar(1000)",
-        "charset": "utf8mb4",
-        "collation": "utf8mb4_general_ci",
         "nullable": false,
         "hints": "Derived from gateway's Community User name in the person table",
         "comment": "Long name of the science gateway",
@@ -33,8 +29,6 @@
       },
       {
         "type": "varchar(100)",
-        "charset": "utf8mb4",
-        "collation": "utf8mb4_general_ci",
         "nullable": true,
         "default": null,
         "comment": "Acronym, if known, for the science gateway",
