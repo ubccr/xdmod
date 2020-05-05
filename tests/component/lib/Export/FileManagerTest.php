@@ -191,9 +191,10 @@ class FileManagerTest extends BaseTest
         $zip = new ZipArchive();
         $openCode = $zip->open($zipFile, ZipArchive::CHECKCONS);
         $this->assertTrue($openCode, 'Open zip file');
-        $this->assertEquals(1, $zip->numFiles, 'File count in zip file');
+        $this->assertEquals(2, $zip->numFiles, 'File count in zip file');
         $dataFileName = self::$fileManager->getDataFileName($request);
         $this->assertEquals($dataFileName, $zip->getNameIndex(0), 'Data file name');
+        $this->assertEquals('README.txt', $zip->getNameIndex(1), 'README file name');
         $fileData = $zip->getFromName($dataFileName);
         $this->assertEquals($testData, $fileData, 'Data file contents');
         $zip->close();
