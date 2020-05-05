@@ -1,9 +1,10 @@
 {
   "table_definition": {
-    "comment": "",
-    "engine": "innodb",
-    "charset": "latin1",
-    "collation": "latin1_swedish_ci",
+    "name": "job_metadata",
+    "comment": "Metadata associated with gateways-submitted jobs",
+    "engine": "myisam",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci",
     "columns": [
       {
         "type": "int(11)",
@@ -42,7 +43,7 @@
       {
         "type": "datetime",
         "nullable": false,
-        "comment": "Date when job was submitted or run.",
+        "comment": "Date when job was submitted or run",
         "name": "job_datetime"
       },
       {
@@ -91,8 +92,6 @@
       }
     ],
     "foreign_key_constraints": [],
-    "triggers": [],
-    "schema": "modw_gateways",
-    "name": "job_metadata"
+    "triggers": []
   }
 }

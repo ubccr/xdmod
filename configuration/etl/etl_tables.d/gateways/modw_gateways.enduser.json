@@ -1,14 +1,15 @@
 {
   "table_definition": {
-    "comment": "",
-    "engine": "innodb",
-    "charset": "latin1",
-    "collation": "latin1_swedish_ci",
+    "name": "enduser",
+    "comment": "Associate local gateway enduser names with the gateway on which they are registered",
+    "engine": "myisam",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci",
     "columns": [
       {
         "type": "int(11)",
         "nullable": false,
-        "comment": "Generated unique id for enduser table.",
+        "comment": "Generated unique id for enduser table",
         "name": "enduser_id"
       },
       {
@@ -28,13 +29,13 @@
       {
         "type": "int(11)",
         "nullable": false,
-        "comment": "Foreign key to gateway.proxy_person_id, denotes the proxy user that runs jobs on resources at the behest of a gateway.",
+        "comment": "Foreign key to gateway.proxy_person_id, denotes the proxy user that runs jobs on resources at the behest of a gateway",
         "name": "gateway_id"
       },
       {
         "type": "datetime",
         "nullable": false,
-        "comment": "Last modified date for this record.",
+        "comment": "Last modified date for this record",
         "name": "last_modified"
       }
     ],
@@ -47,11 +48,9 @@
         "is_unique": true,
         "name": "PRIMARY"
       },
-    "indexes": [
       {
         "columns": [
           "username",
-          "local_username_id",
           "gateway_id"
         ],
         "type": "BTREE",
@@ -60,8 +59,6 @@
       }
     ],
     "foreign_key_constraints": [],
-    "triggers": [],
-    "schema": "modw_gateways",
-    "name": "enduser"
+    "triggers": []
   }
 }
