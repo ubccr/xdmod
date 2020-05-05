@@ -4,6 +4,7 @@ namespace DataWarehouse\Export;
 
 use CCR\Loggable;
 use DataWarehouse\Data\BatchDataset;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
 use Log;
@@ -35,6 +36,12 @@ class FileManager extends Loggable
     private $fileWriterFactory;
 
     /**
+     * Raw statistics configuration.
+     * @var \DataWarehouse\Data\RawStatisticsConfiguration;
+     */
+    private $rawStatsConfig;
+
+    /**
      * Construct a new file manager.
      *
      * @throws \Exception If the data warehouse export directory is not set.
@@ -45,6 +52,8 @@ class FileManager extends Loggable
         // parent constructor.
         $this->fileWriterFactory = new FileWriterFactory($logger);
         parent::__construct($logger);
+
+        $this->rawStatsConfig = RawStatisticsConfiguration::factory();
 
         try {
             $this->exportDir = xd_utilities\getConfiguration(
@@ -243,6 +252,15 @@ class FileManager extends Loggable
                 ));
             }
 
+            $readmeText = $this->getReadmeText($request['realm']);
+            if (!$zip->addFromString('README.txt', $readmeText)) {
+                throw new Exception(sprintf(
+                    'Failed to add "README.txt" to zip file "%s"',
+                    $dataFile,
+                    $zipFile
+                ));
+            }
+
             if (!$zip->close()) {
                 throw new Exception(sprintf(
                     'Failed to close zip file "%s"',
@@ -308,5 +326,28 @@ class FileManager extends Loggable
                 }
             }
         }
+    }
+
+    /**
+     * Get the contents for README.txt for a realm.
+     *
+     * @param string $realm The name of a realm.
+     * @return string
+     */
+    private function getReadmeText($realm)
+    {
+        $fields = $this->rawStatsConfig->getBatchExportFieldDefinitions($realm);
+
+        $text = "{$realm} Realm Fields\n\n";
+
+        foreach ($fields as $field) {
+            $text .= sprintf(
+                "%s: %s\n",
+                $field['name'],
+                $field['documentation']
+            );
+        }
+
+        return $text;
     }
 }
