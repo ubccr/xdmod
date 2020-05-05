@@ -135,9 +135,6 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      */
     public function testChartPaging()
     {
-        $helper = new \TestHarness\XdmodTestHelper();
-        $helper->authenticate('cd');
-
         $requestData =  $this->getChartRequest(
             array(
                 array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'),
