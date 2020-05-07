@@ -27,6 +27,7 @@ CREATE TABLE ${DESTINATION_SCHEMA}.`shredded_job_slurm` (
   `req_mem` varchar(32) DEFAULT NULL,
   `req_gres` text NOT NULL,
   `req_tres` text NOT NULL,
+  `alloc_tres` text NOT NULL,
   `timelimit` int(10) unsigned DEFAULT NULL,
   `node_list` mediumtext NOT NULL,
   PRIMARY KEY (`shredded_job_slurm_id`),
