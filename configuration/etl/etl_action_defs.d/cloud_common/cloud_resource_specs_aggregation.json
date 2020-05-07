@@ -5,6 +5,8 @@
         },
         "aggregation_period_query": {
             "overseer_restrictions": {
+                "last_modified_start_date": "last_modified >= ${VALUE}",
+                "last_modified_end_date": "last_modified <= ${VALUE}",
                 "include_only_resource_codes": "resource_id IN ${VALUE}",
                 "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
             }
@@ -25,7 +27,7 @@
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
                 "resource_id": "crs.resource_id",
-                "core_time_available": "SUM(((IF(crs.end_day_id <= ${:PERIOD_END_DAY_ID}, crs.end_day_id, ${:PERIOD_END_DAY_ID}) - IF(crs.start_day_id >= ${:PERIOD_START_DAY_ID}, crs.start_day_id, ${:PERIOD_START_DAY_ID})) + 1) * crs.vcpus * 24 * 3600)"
+                "core_time_available": "COALESCE(SUM(${wallduration}) * crs.vcpus, 0)"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
@@ -42,6 +44,18 @@
             ],
             "where": [
               "crs.start_day_id <= ${:PERIOD_END_DAY_ID} AND crs.end_day_id >= ${:PERIOD_START_DAY_ID}"
-          ]
+          ],
+          "macros": [{
+              "name": "wallduration",
+              "file": "statistic_ratio_case.sql",
+              "args": {
+                  "statistic": "(crs.end_date_ts - crs.start_date_ts)",
+                  "max": "${:PERIOD_SECONDS}",
+                  "src_start_ts": "crs.start_date_ts",
+                  "src_end_ts": "crs.end_date_ts",
+                  "dest_start_ts": "${:PERIOD_START_TS}",
+                  "dest_end_ts": "${:PERIOD_END_TS}"
+              }
+          }]
      }
 }

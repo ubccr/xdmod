@@ -36,13 +36,13 @@
                 "default": null
             },
             {
-                "name": "start_date",
-                "type": "date",
+                "name": "start_date_ts",
+                "type": "int(12) unsigned",
                 "nullable": false
             },
             {
-                "name": "end_date",
-                "type": "date",
+                "name": "end_date_ts",
+                "type": "int(12) unsigned",
                 "nullable": true
             },
             {
@@ -54,6 +54,13 @@
                 "name": "end_day_id",
                 "type": "int(11) unsigned",
                 "nullable": true
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
 
@@ -69,7 +76,7 @@
                     "hostname",
                     "memory_mb",
                     "vcpus",
-                    "start_date"
+                    "start_date_ts"
                 ],
                 "is_unique": true
             },
