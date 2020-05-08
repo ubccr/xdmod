@@ -282,7 +282,7 @@ function main()
             }
 
             $aclstatus = 0;
-            passthru('acl-config', $aclstatus);
+            passthru('__XDMOD_BIN_PATH__/acl-config', $aclstatus);
             if ($aclstatus !== 0) {
                 exit($aclstatus);
             }
