@@ -235,7 +235,15 @@ class DataWarehouseInitializer
         try {
             $this->logger->notice('Ingesting OpenStack event log data');
             Utilities::runEtlPipeline(
-                array('jobs-cloud-common', 'jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                array(
+                  'staging-ingest-common',
+                  'jobs-cloud-common',
+                  'jobs-cloud-import-users-openstack',
+                  'jobs-cloud-ingest-pi',
+                  'hpcdb-ingest-common',
+                  'hpcdb-xdw-ingest-common',
+                  'jobs-cloud-extract-openstack'
+                ),
                 $this->logger
             );
         }

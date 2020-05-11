@@ -220,7 +220,25 @@
             "name": "OpenStackCloudAccountIngestor",
             "description": "OpenStack cloud account data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/account.json"
+            "definition_file": "cloud_openstack/account.json",
+            "endpoints": {
+                "utility": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "UpdateCloudProjectToPI",
+            "description": "Update project in account table to have a PI",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_common/pi_to_account.sql"
+            ]
         },
         {
             "name": "OpenStackCloudHostIngestor",
