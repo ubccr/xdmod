@@ -115,6 +115,15 @@ realm.  Since Open XDMoD 6.5 data from slurm (`ReqGRES`) has been ingested into
 the database, but not displayed in the portal.  These jobs may now be
 re-ingested and any GPU data will be used.
 
+### Input File Format Changes
+
+The input file format for Slurm data has changed to include the `AllocTRES`
+field.  If you are generating Slurm input for the `xdmod-shredder` command then
+you will need to make the appropriate changes.  Refer to the [Slurm
+Notes](resource-manager-slurm.html#input-format) for the example `sacct`
+command.  If you are using the `xdmod-slurm-helper` command then no changes are
+necessary.
+
 ### Configuration File Changes
 
 The `xdmod-upgrade` script will migrate user editable configuration files to
