@@ -248,9 +248,7 @@ function main()
 
 function updateCloudProjectToPI(array $piToProject){
     global $db, $logger;
-
     $logger->debug('Updating PI information for Cloud realm');
-
     $sql = "
     INSERT INTO
       modw_cloud.staging_pi_to_project (pi_name, project_name, resource_name)
@@ -265,8 +263,6 @@ function updateCloudProjectToPI(array $piToProject){
         ));
     }
 }
-
-
 /**
  * Update people's names.
  *

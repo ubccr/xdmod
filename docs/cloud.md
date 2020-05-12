@@ -121,6 +121,14 @@ as seen in your resources event log files. The third column is the name of the r
 If you want the first and last name of the PI to be shown instead of their username when viewing this data you should add the PI username and
 first and last name to the `names.csv` file and ingested. Details on doing this can be found in the [`User/PI Names`](user-names.md) documentation.
 
+## Hierarchy
+
+Open XDMoD allows you to define a three level hierarchy that can be used to define various entities or groups and associate users with a group in
+the hierarchy. These can be decanal units and their associated departments or any hierarchy that is desired.  If defined, this hierarchy is used
+to generate charts that aggregate cloud metrics into groups based on users assigned to one of the groups.
+
+See the [Hierarchy Guide](hierarchy.html) for more details.
+
 ## Adding and enabling cloud resources
 
 ### Add a cloud resource
