@@ -30,11 +30,8 @@ if (isset($_POST['direct_to'])) {
   <link rel="stylesheet" type="text/css" href="css/dashboard.css">
   <link rel="stylesheet" type="text/css" href="css/management.css">
   <link rel="stylesheet" type="text/css" href="css/AdminPanel.css" />
-  <script type="text/javascript" src="../gui/lib/oldie-console-patch.js"></script>
-  <script type="text/javascript" src="../gui/lib/oldie-array-methods-patch.js"></script>
-  <script type="text/javascript" src="../gui/lib/ie-object-values-polyfill.js"></script>
+  <script type="text/javascript" src="../gui/lib/internet-explorer-polyfills.js"></script>
   <?php ExtJS::loadSupportScripts('../gui/lib'); ?>
-  <script type="text/javascript" src="../gui/lib/ext-oldie-history-patch.js"></script>
   <script type="text/javascript" src="../gui/lib/jquery/jquery-1.12.4.min.js"></script>
 
   <script type="text/javascript">
