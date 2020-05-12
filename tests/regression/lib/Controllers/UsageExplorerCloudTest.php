@@ -68,6 +68,7 @@ class UsageExplorerCloudTest extends \PHPUnit_Framework_TestCase
             'configuration',
             'resource',
             'person',
+            'pi',
             'username',
             'vm_size_memory',
             'vm_size',

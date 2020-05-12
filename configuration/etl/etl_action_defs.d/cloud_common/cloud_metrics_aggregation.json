@@ -45,7 +45,8 @@
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
                 "submission_venue_id": "sr.submission_venue_id",
                 "domain_id": "sr.domain_id",
-                "service_provider": "sr.service_provider"
+                "service_provider": "sr.service_provider",
+                "principalinvestigator_person_id": "a.principalinvestigator_person_id"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
@@ -74,6 +75,11 @@
                   "schema": "${UTILITY_SCHEMA}",
                   "alias": "task_resource",
                   "on": "task_resource.id = sr.resource_id"
+              },{
+                  "name": "account",
+                  "schema": "${SOURCE_SCHEMA}",
+                  "alias": "a",
+                  "on": "instance.account_id = a.account_id"
               }
             ],
             "where": [

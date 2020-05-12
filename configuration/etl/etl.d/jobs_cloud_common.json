@@ -25,6 +25,13 @@
             "options_class": "IngestorOptions",
             "truncate_destination": false,
             "enabled": true
+        },
+        "jobs-cloud-ingest-pi": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
+            "truncate_destination": false,
+            "enabled": true
         }
     },
 
@@ -53,7 +60,8 @@
                 "cloud_generic/raw_volume.json",
                 "cloud_common/domains.json",
                 "cloud_openstack/domain_submission_venue_staging.json",
-                "cloud_openstack/domain_submission_venue.json"
+                "cloud_openstack/domain_submission_venue.json",
+                "cloud_common/staging_cloud_project_to_pi.json"
             ]
         },
         {
@@ -177,6 +185,73 @@
                     "type": "jsonfile",
                     "name": "processor buckets data",
                     "path": "cloud_common/processor_buckets.json"
+                }
+            }
+        }
+    ],
+    "jobs-cloud-ingest-pi": [
+        {
+            "name": "pi-resource",
+            "description": "Ingest storage PI/Resource permutations",
+            "definition_file": "cloud_common/pi-resource.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "pi",
+            "description": "Ingest storage PIs",
+            "definition_file": "cloud_common/pi.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "union-user-pi--pi",
+            "description": "Ingest storage PIs (combined with users)",
+            "definition_file": "cloud_common/union-user-pi--pi.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "union-user-pi-resource--pi",
+            "description": "Ingest storage PI/Resource permutations (combined with User/Resource permutations)",
+            "definition_file": "cloud_common/union-user-pi-resource--pi.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "user-pi-resource",
+            "description": "Ingest storage User/PI/Resource permutations",
+            "definition_file": "cloud_common/user-pi-resource.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
                 }
             }
         }
