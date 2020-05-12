@@ -31,11 +31,6 @@ class BatchDataset extends Loggable implements Iterator
     private $dbh;
 
     /**
-     * @var array[]
-     */
-    private $docs;
-
-    /**
      * Statement handle for data set query.
      * @var \PDOStatement
      */
@@ -54,18 +49,11 @@ class BatchDataset extends Loggable implements Iterator
     private $currentRow = false;
 
     /**
-     * @var string[]
-     */
-    private $header = [];
-
-    /**
-     * Fields that need to be anonymized.
+     * Export field definitions.
      *
-     * Keys correspond to the field name.
-     *
-     * @var array
+     * @var array[]
      */
-    private $anonymousFields = [];
+    private $fields = [];
 
     /**
      * Salt used during deidentification.
@@ -91,7 +79,6 @@ class BatchDataset extends Loggable implements Iterator
         parent::__construct($logger);
 
         $this->query = $query;
-        $this->docs = $query->getColumnDocumentation();
         $this->dbh = DB::factory($query->_db_profile);
 
         try {
@@ -103,37 +90,8 @@ class BatchDataset extends Loggable implements Iterator
             $this->logger->warning('data_warehouse_export hash_salt is not set');
         }
 
-        foreach ($this->docs as $key => $doc) {
-            $export = isset($doc['batchExport']) ? $doc['batchExport'] : false;
-            $name = $doc['name'];
-
-            if (isset($doc['units']) && $doc['units'] === 'ts') {
-                $name .= ' (Timestamp)';
-            }
-
-            if ($export === true) {
-                $this->header[$key] = $name;
-            } elseif ($export === 'anonymize') {
-                $this->header[$key] = $name . ' (Deidentified)';
-                $this->anonymousFields[$key] = true;
-            } elseif ($export === false) {
-                // Skip field.
-            } else {
-                throw new Exception(sprintf(
-                    'Unknown "batchExport" option %s',
-                    var_export($export, true)
-                ));
-            }
-        }
-
-        $this->logger->debug(sprintf(
-            'Header: %s',
-            json_encode(array_values($this->header))
-        ));
-        $this->logger->debug(sprintf(
-            'Anonymous fields: %s',
-            json_encode(array_keys($this->anonymousFields))
-        ));
+        $rawStatsConfig = RawStatisticsConfiguration::factory();
+        $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions($query->getRealmName());
     }
 
     /**
@@ -143,7 +101,12 @@ class BatchDataset extends Loggable implements Iterator
      */
     public function getHeader()
     {
-        return array_values($this->header);
+        return array_map(
+            function ($field) {
+                return $field['display'];
+            },
+            $this->fields
+        );
     }
 
     /**
@@ -238,8 +201,9 @@ class BatchDataset extends Loggable implements Iterator
 
         $row = [];
 
-        foreach (array_keys($this->header) as $key) {
-            $row[] = isset($this->anonymousFields[$key])
+        foreach ($this->fields as $field) {
+            $key = $field['name'];
+            $row[] = $field['anonymize']
                 ? $this->anonymizeField($rawRow[$key])
                 : $rawRow[$key];
         }

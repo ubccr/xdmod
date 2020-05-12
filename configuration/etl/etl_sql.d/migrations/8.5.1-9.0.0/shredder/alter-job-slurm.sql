@@ -24,3 +24,23 @@ SET @statement = (
 PREPARE addColumnIfNotExists FROM @statement//
 EXECUTE addColumnIfNotExists//
 DEALLOCATE PREPARE addColumnIfNotExists//
+
+-- Same as above, but for alloc_tres.
+SET @statement = (
+    SELECT IF(
+        (
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_schema = '${DESTINATION_SCHEMA}'
+                AND table_name = 'shredded_job_slurm'
+                AND column_name = 'alloc_tres'
+        ) > 0,
+        'SELECT 1',
+        CONCAT(
+            'ALTER TABLE `${DESTINATION_SCHEMA}`.`shredded_job_slurm` ',
+            'ADD COLUMN `alloc_tres` text NOT NULL AFTER `req_tres`'
+        )
+    )
+)//
+PREPARE addColumnIfNotExists FROM @statement//
+EXECUTE addColumnIfNotExists//
+DEALLOCATE PREPARE addColumnIfNotExists//

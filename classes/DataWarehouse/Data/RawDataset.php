@@ -100,7 +100,7 @@ class RawDataset
                 }
             }
 
-            if ($this->userType == DEMO_USER_TYPE && $docs[$key]['visibility'] == 'non-public') {
+            if ($this->userType == DEMO_USER_TYPE && isset($docs[$key]['visibility']) && $docs[$key]['visibility'] == 'non-public') {
                 $redactlist[] = $value;
                 $value = "&lt;REDACTED&gt;";
             }

@@ -465,7 +465,7 @@ describe('Report Generator', function () {
                 reportGeneratorPage.createNewReport();
             });
             it('Check default values', function () {
-                expect(reportGeneratorPage.getFileName(), 'Default report file name').to.be.equal(defaultReport.name);
+                expect(reportGeneratorPage.getReportName(), 'Default report name').to.be.equal(defaultReport.name);
                 expect(reportGeneratorPage.getNumberOfChartsPerPage(), 'Default report number of charts per page').to.be.equal(defaultReport.chartsPerPage);
                 expect(reportGeneratorPage.getSchedule(), 'Default report schedule').to.be.equal(defaultReport.schedule);
                 expect(reportGeneratorPage.getDeliveryFormat(), 'Default report delivery format').to.be.equal(defaultReport.deliveryFormat);
@@ -518,8 +518,8 @@ describe('Report Generator', function () {
             it('Create a new report', function () {
                 reportGeneratorPage.createNewReport();
             });
-            it('Set file name', function () {
-                reportGeneratorPage.setFileName(testReport.name);
+            it('Set report name', function () {
+                reportGeneratorPage.setReportName(testReport.name);
             });
             it('Set report title', function () {
                 reportGeneratorPage.setReportTitle(testReport.title);
@@ -597,7 +597,7 @@ describe('Report Generator', function () {
             });
             it('Edit report and compare values', function () {
                 reportGeneratorPage.getMyReportsRows()[1].doubleClick();
-                expect(reportGeneratorPage.getFileName(), 'File name is correct').to.be.equal(testReport.name);
+                expect(reportGeneratorPage.getReportName(), 'Report name is correct').to.be.equal(testReport.name);
                 expect(reportGeneratorPage.getReportTitle(), 'Report title is correct').to.be.equal(testReport.title);
                 expect(reportGeneratorPage.getHeaderText(), 'Header text is correct').to.be.equal(testReport.header);
                 expect(reportGeneratorPage.getFooterText(), 'Footer text is correct').to.be.equal(testReport.footer);
@@ -624,11 +624,23 @@ describe('Report Generator', function () {
             it('Edit report', function () {
                 reportGeneratorPage.getMyReportsRows()[1].doubleClick();
             });
-            it('Click "Save As" and set file name', function () {
+            it('Click "Save As" and set report name', function () {
                 reportGeneratorPage.saveReportAs(testReport.name);
             });
             it('Click "Save" in "Save As" window', function () {
                 reportGeneratorPage.confirmSaveReportAs();
+            });
+            it('Check copied report name', function () {
+                expect(reportGeneratorPage.getReportName(), 'Report name is correct').to.be.equal(testReport.name);
+            });
+            it('Edit copied report', function () {
+                testReport.header = 'Header for copied report';
+                reportGeneratorPage.setHeaderText(testReport.header);
+                testReport.chartsPerPage = testReport.chartsPerPage === 1 ? 2 : 1;
+                reportGeneratorPage.setNumberOfChartsPerPage(testReport.chartsPerPage);
+            });
+            it('Save report', function () {
+                reportGeneratorPage.saveReport();
             });
             it('Return to "My Reports"', function () {
                 reportGeneratorPage.returnToMyReports();
@@ -643,6 +655,14 @@ describe('Report Generator', function () {
                 expect(reportRow.getDeliveryFormat(), 'Delivery format is correct').to.be.equal(testReport.deliveryFormat);
                 expect(reportRow.getNumberOfCharts(), 'Number of charts of is correct').to.be.equal(testReport.numberOfCharts);
                 expect(reportRow.getNumberOfChartsPerPage(), 'Number of charts per page is correct').to.be.equal(testReport.chartsPerPage);
+            });
+            it('Edit copied report and compare values', function () {
+                reportGeneratorPage.getMyReportsRows()[2].doubleClick();
+                expect(reportGeneratorPage.getHeaderText(), 'Header text is correct').to.be.equal(testReport.header);
+                expect(reportGeneratorPage.getNumberOfChartsPerPage(), 'Number of charts per page is correct').to.be.equal(testReport.chartsPerPage);
+            });
+            it('Return to "My Reports"', function () {
+                reportGeneratorPage.returnToMyReports();
             });
         });
 
@@ -668,8 +688,8 @@ describe('Report Generator', function () {
             it('Open the report', function () {
                 reportGeneratorPage.getMyReportsRows()[reportIndex].doubleClick();
             });
-            it('Set file name', function () {
-                reportGeneratorPage.setFileName(testReport.name);
+            it('Set report name', function () {
+                reportGeneratorPage.setReportName(testReport.name);
             });
             it('Set report title', function () {
                 reportGeneratorPage.setReportTitle(testReport.title);
@@ -715,7 +735,7 @@ describe('Report Generator', function () {
             });
             it('Edit report and compare values', function () {
                 reportGeneratorPage.getMyReportsRows()[reportIndex].doubleClick();
-                expect(reportGeneratorPage.getFileName(), 'File name is correct').to.be.equal(testReport.name);
+                expect(reportGeneratorPage.getReportName(), 'Report name is correct').to.be.equal(testReport.name);
                 expect(reportGeneratorPage.getReportTitle(), 'Report title is correct').to.be.equal(testReport.title);
                 expect(reportGeneratorPage.getHeaderText(), 'Header text is correct').to.be.equal(testReport.header);
                 expect(reportGeneratorPage.getFooterText(), 'Footer text is correct').to.be.equal(testReport.footer);

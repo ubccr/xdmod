@@ -1,6 +1,7 @@
 <?php
 
 use Models\Services\Acls;
+use Models\Services\Realms;
 
 @require_once('common.php');
 
@@ -41,6 +42,7 @@ foreach ($roles as $activeRole) {
         $realms = array();
         $groupByObjects = array();
 
+        $realmObjects = Realms::getRealmObjectsForUser($user);
         $query_descripter_realms = Acls::getQueryDescripters($user);
 
         foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups)
@@ -51,9 +53,11 @@ foreach ($roles as $activeRole) {
             }
             $seenstats = array();
 
+            $realmObject = $realmObjects[$query_descripter_realm];
+            $realmDisplay = $realmObject->getDisplay();
             $realms[$query_descripter_realm] = array(
                 'text' => $query_descripter_realm,
-                'category' => $category,
+                'category' => $realmDisplay,
                 'dimensions' => array(),
                 'metrics' => array(),
             );

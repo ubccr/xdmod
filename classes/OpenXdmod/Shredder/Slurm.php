@@ -12,7 +12,7 @@ use DateTime;
 use DateTimeZone;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
-use Xdmod\SlurmGresParser;
+use Xdmod\SlurmResourceParser;
 
 class Slurm extends Shredder
 {
@@ -55,6 +55,7 @@ class Slurm extends Shredder
         'reqmem',
         'reqgres',
         'reqtres',
+        'alloctres',
         'timelimit',
         'nodelist',
         'jobname',
@@ -88,6 +89,7 @@ class Slurm extends Shredder
         'req_mem',
         'req_gres',
         'req_tres',
+        'alloc_tres',
         'timelimit',
         'node_list',
         'job_name',
@@ -173,9 +175,9 @@ class Slurm extends Shredder
     protected $timeZone;
 
     /**
-     * @var \Xdmod\SlurmGresParser
+     * @var \Xdmod\SlurmResourceParser
      */
-    private $gresParser;
+    private $resourceParser;
 
     /**
      * @inheritdoc
@@ -187,7 +189,7 @@ class Slurm extends Shredder
         self::$columnCount = count(self::$columnNames);
 
         $this->timeZone = new DateTimeZone('UTC');
-        $this->gresParser = new SlurmGresParser();
+        $this->resourceParser = new SlurmResourceParser();
     }
 
     /**
@@ -259,8 +261,8 @@ class Slurm extends Shredder
             $job[$key] = $this->parseTimeField($job[$key]);
         }
 
-        $gres = $this->gresParser->parseReqGres($job['req_gres']);
-        $job['ngpus'] = $this->gresParser->getGpuCountFromGres($gres);
+        $tres = $this->resourceParser->parseAllocTres($job['alloc_tres']);
+        $job['ngpus'] = $this->resourceParser->getGpuCountFromTres($tres);
 
         $job['cluster_name'] = $this->getResource();
 

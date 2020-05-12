@@ -4,6 +4,7 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use CCR\Log;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
@@ -90,11 +91,16 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function getRealms(Request $request, Application $app)
     {
         $user = $this->authorize($request);
+
+        $config = RawStatisticsConfiguration::factory();
+
         $realms = array_map(
-            function ($realm) {
+            function ($realm) use ($config) {
+                $name = $realm->getName();
                 return [
-                    'id' => $realm->getName(),
-                    'name' => $realm->getDisplay()
+                    'id' => $name,
+                    'name' => $realm->getDisplay(),
+                    'fields' => $config->getBatchExportFieldDefinitions($name)
                 ];
             },
             $this->realmManager->getRealmsForUser($user)

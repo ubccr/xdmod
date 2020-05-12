@@ -10,6 +10,8 @@ namespace Realm;
 use Log as Logger;  // CCR implementation of PEAR logger
 use Configuration\Configuration;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
+use DataWarehouse\Query\Exceptions\UnavailableTimeAggregationUnitException;
+use DataWarehouse\Query\TimeAggregationUnit;
 use ETL\VariableStore;
 
 class Realm extends \CCR\Loggable implements iRealm
@@ -691,6 +693,11 @@ class Realm extends \CCR\Loggable implements iRealm
     public function getGroupByObject($shortName)
     {
         if ( ! isset($this->groupByConfigs->$shortName) ) {
+            if(TimeAggregationUnit::isTimeAggregationUnitName($shortName)){
+                $timeException = new UnavailableTimeAggregationUnitException(sprintf('Realm: %s, does not support aggregation by %s', $this->name, $shortName));
+                $timeException->errorData['unit'] = $shortName;
+                throw $timeException;
+            }
             $this->logger->warning(sprintf("No GroupBy found with id '%s' in Realm: %s", $shortName, $this->name));
             throw new UnknownGroupByException(
                 sprintf("No GroupBy found with id '%s' in Realm: %s", $shortName, $this->name)
