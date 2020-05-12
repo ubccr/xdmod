@@ -254,7 +254,6 @@ function updateCloudProjectToPI(array $piToProject){
       modw_cloud.staging_pi_to_project (pi_name, project_name, resource_name)
     VALUES
       (:pi, :project_name, :resource_name) ON DUPLICATE KEY UPDATE pi_name = VALUES(pi_name), resource_name = VALUES(resource_name)";
-
     foreach($piToProject as $row){
         $db->execute($sql, array(
           ":pi" => $row[0],
