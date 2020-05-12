@@ -1,4 +1,4 @@
-/* eslint no-extend-native: "off", no-bitwise: "off", no-param-reassign: "off" */
+/* eslint-disable */
 
 if (!Object.values) {
     Object.values = function (obj) {
