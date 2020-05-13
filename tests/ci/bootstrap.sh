@@ -121,11 +121,14 @@ then
     #
     if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
         expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
+        last_modified_start_date=$(date +'%F %T')
 
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
-        sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
         sudo -u xdmod xdmod-ingestor
+
+        sudo -u xdmod xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
+        sudo -u xdmod xdmod-ingestor --last-modified-start-date "$last_modified_start_date"
     fi
 fi
