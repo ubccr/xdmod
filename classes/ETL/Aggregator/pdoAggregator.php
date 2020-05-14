@@ -721,8 +721,9 @@ class pdoAggregator extends aAggregator
     {
         $time_start = microtime(true);
 
-        $this->logger->info(array(
+        $this->logger->notice(array(
             "message" => "aggregate start",
+            "action" => (string) $this,
             "unit" => $aggregationUnit,
             "start_date" => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
             "end_date" => ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
@@ -1051,6 +1052,7 @@ class pdoAggregator extends aAggregator
         $time = $time_end - $time_start;
 
         $this->logger->notice(array("message"      => "aggregate end",
+                                    "action"       => (string) $this,
                                     "unit"         => $aggregationUnit,
                                     "periods"      => $numAggregationPeriods,
                                     "start_date"   => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
