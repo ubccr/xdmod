@@ -145,6 +145,18 @@
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "fieldofscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "nsfdirectorate"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "parentscience"
         }
       ],
       "summary_charts": [
@@ -434,6 +446,18 @@
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "fieldofscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "nsfdirectorate"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "parentscience"
         }
       ]
     },
@@ -593,6 +617,18 @@
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "fieldofscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "nsfdirectorate"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "parentscience"
         }
       ],
       "summary_charts": [
@@ -902,6 +938,18 @@
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "fieldofscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "nsfdirectorate"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "parentscience"
         }
       ],
       "summary_charts": [
@@ -1211,6 +1259,18 @@
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "fieldofscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "nsfdirectorate"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "parentscience"
         }
       ],
       "summary_charts": [
@@ -1520,6 +1580,18 @@
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "fieldofscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "nsfdirectorate"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "parentscience"
         }
       ],
       "summary_charts": [

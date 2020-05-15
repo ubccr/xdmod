@@ -46,7 +46,8 @@
                 "submission_venue_id": "sr.submission_venue_id",
                 "domain_id": "sr.domain_id",
                 "service_provider": "sr.service_provider",
-                "principalinvestigator_person_id": "a.principalinvestigator_person_id"
+                "principalinvestigator_person_id": "a.principalinvestigator_person_id",
+                "fos_id": "a.fos_id"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
@@ -75,10 +76,12 @@
                   "schema": "${UTILITY_SCHEMA}",
                   "alias": "task_resource",
                   "on": "task_resource.id = sr.resource_id"
-              },{
+              },
+              {
                   "name": "account",
                   "schema": "${SOURCE_SCHEMA}",
                   "alias": "a",
+                  "type": "LEFT",
                   "on": "instance.account_id = a.account_id"
               }
             ],
