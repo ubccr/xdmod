@@ -239,10 +239,10 @@ class DataWarehouseInitializer
                   'staging-ingest-common',
                   'jobs-cloud-common',
                   'jobs-cloud-import-users-openstack',
-                  'jobs-cloud-ingest-pi',
                   'hpcdb-ingest-common',
                   'hpcdb-xdw-ingest-common',
-                  'jobs-cloud-extract-openstack'
+                  'jobs-cloud-extract-openstack',
+                  'jobs-cloud-ingest-pi',
                 ),
                 $this->logger
             );
