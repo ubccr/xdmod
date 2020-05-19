@@ -297,7 +297,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
         var welcome_message = '';
 
         if (CCR.xdmod.publicUser) {
-            welcome_message = 'Hello, <b><a id="sign_in_link" href="javascript:CCR.xdmod.ui.actionLogin()">Sign In</a></b> to view personalized information.';
+            welcome_message = 'Hello, <b><a id="sign_in_link" href="javascript:CCR.xdmod.ui.actionLogin()">Sign In</a></b> to view personalized information. welcome to xdmod';
         } else {
             welcome_message = 'Hello, <b id="welcome_message">' + Ext.util.Format.htmlEncode(CCR.xdmod.ui.fullName) + '</b> ' + additionalWelcomeDetails + ' (<a href="javascript:CCR.xdmod.ui.actionLogout()" id="logout_link">logout</a>)';
             if (CCR.xdmod.ui.isManager) {
