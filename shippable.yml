@@ -23,7 +23,8 @@ build:
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
-        - composer install --no-progress
+        - composer install --no-progress 
+        - ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - mv ./configuration/organization.json ./configuration/organization.json.old
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
@@ -36,8 +37,11 @@ build:
         - ./tests/ci/samlSetup.sh
         - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
         - ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit `pwd`/shippable/testresults/xdmod-sso-integration.xml
+        - php /usr/share/xdmod/combine_xdebug.php
+        - rsync -r /usr/share/xdmod/coverage_reports /root/src/github.com/Zi-3/xdmod/shippable/codecoverage
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - test ! -s /var/log/xdmod/apache-error.log
+
     on_failure:
         - cat /var/log/xdmod/apache-error.log
         - cat /var/log/xdmod/exceptions.log
