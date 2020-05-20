@@ -1,51 +1,40 @@
 <?php
+namespace CCR\CodeCoverage;
 
-#increase the memory limit
-ini_set('memory_limit', -1);
+xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 
-$baseDir = '__BASE_DIR__';
-$coverageDir = '__CODE_COVERAGE_DIR__';
-$installDir = '__INSTALL_DIR__';
-$reportDir = '__REPORT_DIR__';
+function end_coverage()
+{
+    $test_name = 'unknown_test';
+    if (isset($_COOKIE['test_name']) && !empty($_COOKIE['test_name'])) {
+        $test_name = $_COOKIE['test_name'];
+    } elseif (getenv('test_name') !== false) {
+        $test_name = getenv('test_name');
+    }
 
-include_once("$baseDir/vendor/autoload.php");
+    $test_name = preg_replace('/[\\\]+/', '_', $test_name);
+    $test_name = preg_replace('/::/', '-', $test_name);
 
-$coverageData = array();
-
-$coverageFiles = glob("$coverageDir/*.json");
-$count = count($coverageFiles);
-$i = 0;
-
-foreach ($coverageFiles as $coverageFile) {
-    $i++;
-    echo "Processing coverage ($i/$count) from $coverageFile". PHP_EOL;
-    $matches = array();
-    $codeCoverageData = json_decode(file_get_contents($coverageFile), JSON_OBJECT_AS_ARRAY);
-    if ($codeCoverageData !== null) {
-        $testName = str_ireplace("coverage-", "", basename($coverageFile, ".json"));
-        $testName = substr($testName, 0, strrpos($testName, '-'));
-        echo "Test Name: $testName\n";
-        echo "Coverage Keys: " . print_r(array_keys($coverageData), true) . PHP_EOL;
-        if (!array_key_exists($testName, $coverageData)) {
-            echo "\tGenerating new Code Coverage for : $testName\n";
-            $coverage = new PHP_CodeCoverage();
-            $coverage->filter()->addDirectoryToWhitelist("$installDir/classes");
-            $coverage->filter()->addDirectoryToWhitelist("$installDir/html/controllers");
-            $coverage->filter()->addDirectoryToWhitelist("$installDir/html/internal_dashboard");
-            $coverage->filter()->addDirectoryToWhitelist("$installDir/libraries");
-            $coverageData[$testName] = $coverage;
-        }
-        $testCoverage = $coverageData[$testName];
-        $testCoverage->append($codeCoverageData, $testName);
-
-        $coverageData[$testName] = $testCoverage;
+    try {
+        xdebug_stop_code_coverage(false);
+        $coverageName = '__CODE_COVERAGE_DIR__/coverage-' . $test_name . '-' . microtime(true);
+        $codecoverageData = json_encode(xdebug_get_code_coverage());
+        file_put_contents($coverageName . '.json', $codecoverageData);
+    } catch (Exception $ex) {
+        file_put_contents($coverageName . '.ex', $ex);
     }
 }
 
-echo "Generating final report..." . PHP_EOL;
-foreach($coverageData as $testName => $coverage) {
-    $report = new PHP_CodeCoverage_Report_XML();
-    $report->process($coverage, $reportDir . DIRECTORY_SEPARATOR . $testName);
+class coverage_dumper
+{
+    public function __destruct()
+    {
+        try {
+            end_coverage();
+        } catch (Exception $ex) {
+            echo (string)$ex;
+        }
+    }
 }
-echo "Report generated successfully" . PHP_EOL;
 
+$_coverage_dumper = new coverage_dumper();
