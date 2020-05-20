@@ -31,7 +31,7 @@ build:
         - cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - cp /etc/xdmod/organization.json ./configuration/organization.json
         - ./tests/integration/runtests.sh --junit-output-dir `pwd`/shippable/testresults
-       i - ./tests/regression/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults
+        - ./tests/regression/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults
         - ./tests/component/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults
         - ./tests/ci/samlSetup.sh
