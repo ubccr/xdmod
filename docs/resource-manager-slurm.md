@@ -57,11 +57,3 @@ $ xdmod-shredder -r *cluster* -f slurm -i /tmp/slurm.log
 prevent ambiguities caused by clock changes due to daylight savings. The
 shredder will assume input times are in UTC regardless of your system
 time zone.
-
-Unsupported Shredder Features
------------------------------
-
-The `xdmod-shredder` `-d`/`--dir` option was designed to work with the
-accounting log naming convention used by PBS/TORQUE. If you are not
-using the same convention (files are named `YYYYMMDD` corresponding to
-the date jobs ended), do not use this option.
