@@ -154,7 +154,7 @@ $conf = array(
 
 if ( NULL !== $scriptOptions['verbosity'] ) $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 
-$logger = Log::factory('DWI', $conf);
+$logger = Log::factory('etl_aggregation_table_manager', $conf);
 
 if ( NULL === $scriptOptions['config-file'] ||
      NULL === $scriptOptions['operation'] ) {
