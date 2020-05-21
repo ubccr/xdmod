@@ -6,9 +6,11 @@
  *
  *  @uses commands/waitForVisible, commands/click
  */
-module.exports = function waitAndClick(selector, ms) {
+
+ module.exports = function waitAndClick(selector, ms) {
     var thisMs = ms || 5000;
 
-    this.waitForVisible(selector, thisMs);
-    return this.click(selector);
+
+   this.waitForVisible(selector, thisMs);
+   return this.click(selector);
 };
