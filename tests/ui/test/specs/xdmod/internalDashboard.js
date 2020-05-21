@@ -167,7 +167,9 @@ describe('Internal Dashboard', function () {
                 it(`Change the "${value.label}" to "${value.updated}"`, function () {
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
                     browser.waitForVisible(inputTrigger);
-                    browser.click(inputTrigger);
+                    /*browser.clickSelectorAndWaitForMask(inputTrigger);*/
+                    /*browser.click(inputTrigger);*/
+                    browser.waitAndClick(inputTrigger);
 
                     const inputDropDown = page.selectors.combo.container;
                     browser.waitForVisible(inputDropDown);
@@ -211,8 +213,8 @@ describe('Internal Dashboard', function () {
                 });
                 it(`Check that the ${value.label} is back to ${value.expected}`, function () {
                     const userTypeInput = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
-
-                    browser.waitForVisible(userTypeInput);
+                    /*browser.waitForAllInvisible('.ext-el-mask');*/
+                    browser.waitForVisible(userTypeInput,50000);
                     const userType = browser.getValue(userTypeInput);
                     expect(userType).to.equal(value.expected);
                 });
