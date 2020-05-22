@@ -46,7 +46,7 @@ class LoginPage {
         });
         describe('Login', function login() {
             it('Click the login link', function clickLogin() {
-                browser.waitForInvisible('.ext-el-mask-msg');
+                browser.waitForInvisible('.ext-el-mask-msg',50000);
                 $('a[href*=actionLogin]').click();
             });
             it('Should Login', function doLogin() {
