@@ -5,40 +5,14 @@
 
 namespace OpenXdmod\Tests\Shredder;
 
-use CCR\DB\NullDB;
 use OpenXdmod\Shredder;
-use Log;
-use TestHarness\TestFiles;
 
 /**
  * PBS shredder test class.
  */
-class SlurmShredderTest extends \PHPUnit_Framework_TestCase
+class SlurmShredderTest extends JobShredderBaseTestCase
 {
     const TEST_GROUP = 'unit/shredder/slurm';
-
-    private $testFiles;
-
-    protected $db;
-
-    protected $logger;
-
-    public function setUp()
-    {
-        $this->db = new NullDB();
-        $this->logger = Log::singleton('null');
-    }
-
-    /**
-     * @return \TestHarness\TestFiles
-     */
-    public function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../../../..');
-        }
-        return $this->testFiles;
-    }
 
     public function testShredderConstructor()
     {
@@ -126,43 +100,18 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
         $shredder->shredLine($line);
     }
 
-    /**
-     * Load test data.
-     *
-     * The input must be in a line oriented file ending with ".log" and the
-     * output must be in a JSON file with a top level element that is an array.
-     * Each line in the input file and each element of the array will be
-     * returned together.
-     *
-     * @return array[]
-     */
-    private function getTestCases($name)
-    {
-        $files = $this->getTestFiles();
-
-        // Load input file into an array.
-        $inputFile = $files->getFile(self::TEST_GROUP, $name, 'input', '.log');
-        $inputData = file($inputFile, FILE_IGNORE_NEW_LINES);
-
-        // Output file must contain a JSON array.
-        $outputData = $files->loadJsonFile(self::TEST_GROUP, $name, 'output');
-
-        // Using array_map to zip input and output.
-        return array_map(null, $inputData, $outputData);
-    }
-
     public function accountingLogProvider()
     {
-        return $this->getTestCases('accounting-logs');
+        return $this->getLogFileTestCases('accounting-logs');
     }
 
     public function accountingLogWithJobArraysProvider()
     {
-        return $this->getTestCases('accounting-logs-with-job-arrays');
+        return $this->getLogFileTestCases('accounting-logs-with-job-arrays');
     }
 
     public function accountingLogWithGpuGresProvider()
     {
-        return $this->getTestCases('accounting-logs-with-gpu-gres');
+        return $this->getLogFileTestCases('accounting-logs-with-gpu-gres');
     }
 }
