@@ -166,11 +166,11 @@ describe('Internal Dashboard', function () {
                 });
                 it(`Change the "${value.label}" to "${value.updated}"`, function () {
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
-                    browser.waitForVisible(inputTrigger);
+                    browser.waitForVisible(inputTrigger,5000);
                     /*browser.clickSelectorAndWaitForMask(inputTrigger);*/
                     /*browser.click(inputTrigger);*/
-                    browser.waitAndClick(inputTrigger);
-
+                    browser.waitAndClick(inputTrigger,50000);
+ 
                     const inputDropDown = page.selectors.combo.container;
                     browser.waitForVisible(inputDropDown);
 
