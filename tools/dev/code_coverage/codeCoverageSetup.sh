@@ -397,7 +397,7 @@ pecl install Xdebug-2.4.1
 ### Ensure PHP knows about xdebug and enables code coverage
 echo "zend_extension=$(find /usr/lib64/php/modules/ -name xdebug.so)" > /etc/php.d/xdebug.ini
 
-#echo "xdebug.coverage_enable=1" >> /etc/php.d/xdebug.ini
+echo "xdebug.coverage_enable=1" >> /etc/php.d/xdebug.ini
 
 echo "xdebug.profiler_enable=1" >> /etc/php.d/xdebug.ini
 echo "xdebug.profiler_output_dir=${arg_l}" >> /etc/php.d/xdebug.ini
@@ -427,7 +427,7 @@ sed -i "s,__CODE_COVERAGE_DIR__,${arg_c},g" "${PREPEND_FILE_INSTALL_PATH}"
 ### ( Optional ) uncommenting the line below has Apache handle the auto-prepending
 ### as opposed to PHP. This will mean that code coverage will only be generated
 ### when a web request is made.
-# echo 'php_value auto_prepend_file "${PREPEND_FILE_INSTALL_PATH}"' > /etc/httpd/conf.d/codecoverage.conf
+ #echo 'php_value auto_prepend_file "${PREPEND_FILE_INSTALL_PATH}"' > /etc/httpd/conf.d/codecoverage.conf
 
 ### Pre-generating the location that our code coverage processing / reporting
 ### script will be copied to as we'll be referencing it a number of times.
@@ -438,9 +438,18 @@ cp "${arg_p}" "$PROCESS_FILE_INSTALL_PATH"
 
 ### Update the processing script w/ the required generated paths.
 sed -i "s,__BASE_DIR__,${arg_b},g" "${PROCESS_FILE_INSTALL_PATH}"
+echo
+echo ${arg_b}
 sed -i "s,__CODE_COVERAGE_DIR__,${arg_c},g" "${PROCESS_FILE_INSTALL_PATH}"
+echo
+echo ${arg_c}
 sed -i "s,__INSTALL_DIR__,${arg_i},g" "${PROCESS_FILE_INSTALL_PATH}"
+echo
+echo ${arg_i}
 sed -i "s,__REPORT_DIR__,${arg_r},g" "${PROCESS_FILE_INSTALL_PATH}"
+echo ${arg_r}
+echo 
+echo $PROCESS_FILE_INSTALL_PATH
 
 ### Create / Update privs for the directory that will contain the code coverage reports.
 mkdir "${arg_c}"

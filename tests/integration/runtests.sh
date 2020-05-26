@@ -14,7 +14,7 @@ if [ ! -x "$phpunit" ]; then
 fi
 
 # Run the tests in UserAdminTest.createUsers
-$phpunit --testsuite default --group UserAdminTest.createUsers $(log_opts "integration" "UserAdminTest.createUsers")
+$phpunit --testsuite default --group UserAdminTest.createUsers --stop-on-error --stop-on-failure $(log_opts "integration" "UserAdminTest.createUsers")
 
 # Run everything else
 $phpunit --testsuite default --exclude-group UserAdminTest.createUsers $(log_opts "integration" "All")
