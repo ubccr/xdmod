@@ -23,6 +23,7 @@ var events = require('events'),
 	config = require('../config.js');
 var etlv2 = require('./etlv2.js');
 var fs = require('fs');
+var sorting = require("./sorting.js");
 
 var ETLProfile = module.exports = function (etlProfile) {
     etlProfile.init();
@@ -213,6 +214,26 @@ ETLProfile.prototype.getTables = function () {
     }
 
     return tables;
+}
+
+/**
+ * Get the raw statistics configuration data.
+ *
+ * @return {object}
+ */
+ETLProfile.prototype.getRawStatisticsConfiguration = function () {
+    var rawStatsConfig = this.schema.rawStatistics;
+    var tables = this.getTables();
+
+    for (var t in tables) {
+        var tableName = tables[t].meta.schema + "." + tables[t].name;
+
+        if (tableName === rawStatsConfig.table) {
+            util._extend(rawStatsConfig.fields, tables[t].columns);
+        }
+    }
+
+    return rawStatsConfig;
 }
 
 /**
@@ -500,6 +521,118 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
 
 };
 
+/**
+ * Raw statistics integrator.
+ *
+ * @constructor
+ * @param {string} realmName - The name/ID of the realm.
+ * @param {string} realmDisplay - The display name of the realm.
+ * @param {number} realmOrder - The order prefix to prepend to the raw statistics configuration file.
+ */
+var RawStatsIntegrator = function (realmName, realmDisplay, realmOrder) {
+    /** @var {string} The realm/ID name. */
+    this.realmName = realmName;
+
+    /** @var {string} The realm display name. */
+    this.realmDisplay = realmDisplay;
+
+    /** @var {number} The raw statistics file order prefix. */
+    this.realmOrder = realmOrder;
+
+    /** @var {array} Raw statistics tables. */
+    this.tables = [];
+
+    /** @var {array} Raw statistics fields. */
+    this.fields = [];
+
+    /**
+     * @var {object} Used to lookup table alias.
+     * @private
+     */
+    this.tableAliases = {};
+
+    /**
+     * Get a unique identifier for a table definition.
+     *
+     * @private
+     * @param {string} schemaName - The name of the database schema.
+     * @param {string} tableName - The name of the database table.
+     * @param {string} foreignTableAlias - Alias of table this table is joined to.
+     * @param {string} foreignKey - Foreign key used to join the table.
+     */
+    this.getTableAliasKey = function (schemaName, tableName, foreignTableAlias, foreignKey) {
+        // This assumes that none of these values contain any dot characters.
+        return [schemaName, tableName, foreignTableAlias, foreignKey].join('.');
+    };
+
+    /**
+     * Add a table to the raw statistics configuration.
+     *
+     * @param {object} tableDef - Table definition.
+     * @param {string} tableDef.schema - Name of the database schema.
+     * @param {string} tableDef.name - Name of the database table.
+     * @param {string} tableDef.alias - Alias to use for this table.
+     * @param {object} tableDef.join - Join definition.
+     * @param {string} tableDef.join.primaryKey - Primary key of table this table is joined to.
+     * @param {string} tableDef.join.foreignTableAlias - Alias
+     * @param {string} tableDef.join.foreignKey - Foreign key used in join.
+     */
+    this.addTable = function (tableDef) {
+        this.tables.push(tableDef);
+        var key = this.getTableAliasKey(tableDef.schema, tableDef.name, tableDef.join.foreignTableAlias, tableDef.join.foreignKey);
+        this.tableAliases[key] = tableDef.alias;
+    };
+
+    /**
+     * Add a field to the raw statistics configuration.
+     *
+     * @param {object} field - Field definition.
+     */
+    this.addField = function (fieldDef) {
+        this.fields.push(fieldDef);
+    };
+
+    /**
+     * Find the alias of a table that's already been added.
+     *
+     * @param {string} schemaName - The name of the database schema.
+     * @param {string} tableName - The name of the database table.
+     * @param {string} foreignTableAlias - Alias of table this table is joined to.
+     * @param {string} foreignKey - Foreign key used to join the table.
+     * @return {string|null} The table's alias or null if the table has not been added.
+     */
+    this.getTableAlias = function (schemaName, tableName, foreignTableAlias, foreignKey) {
+        var key = this.getTableAliasKey(schemaName, tableName, foreignTableAlias, foreignKey);
+        return this.tableAliases[key] ? this.tableAliases[key] : null;
+    };
+
+    /**
+     * Write raw statistics configuration to file.
+     */
+    this.write = function () {
+        var rawStats = {
+            "+realms": [
+                {
+                    name: this.realmName,
+                    display: this.realmDisplay
+                }
+            ]
+        };
+
+        this.fields.sort(sorting.dynamicSortMultiple("dtype", "group", "units", "name"));
+
+        rawStats[realmName] = {
+            tables: this.tables,
+            fields: this.fields
+        };
+
+        fs.writeFileSync(
+            config.xdmodBuildConfigDir + "/rawstatistics.d/" + this.realmOrder + "_" + this.realmName.toLowerCase() + ".json",
+            JSON.stringify(rawStats, null, 4)
+        );
+    };
+};
+
 var extractandsubst = function(column, item) {
     if( !column.hasOwnProperty(item) ) {
         return null;
@@ -671,43 +804,76 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
             xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/ref/', realmName.toLowerCase() + '-statistics', statistics);
             xdmodInteg.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d/ref/', realmName.toLowerCase() + '-group-bys', groupBys);
             xdmodInteg.write();
-		}
-        var rawstats = {};
-        var tables = this.getTables();
-        for( var t in tables) {
-            var tableName = tables[t].meta.schema + "." + tables[t].name;
-            if( !(tableName in rawstats) ) {
-                rawstats[tableName] = [];
-            }
-            var columns = tables[t].columns;
-            for( var c in columns) {
-                var dtype = columns[c].dtype ? columns[c].dtype : (columns[c].queries ? "foreignkey" : "statistic" );
-                var group = columns[c].group ? columns[c].group : "misc";
-                var visibility = columns[c].visibility ? columns[c].visibility : 'public';
-                var batchExport = columns[c].batchExport ? columns[c].batchExport : false;
-
-                var name = extractandsubst(columns[c], "name");
-                if(!name) {
-                    name = Namealize(c, true);
-                }
-
-                rawstats[tableName].push({
-                    key: c,
-                    name: name,
-                    units: columns[c].unit,
-                    per: columns[c].per,
-                    documentation: columns[c].comments,
-                    dtype: dtype,
-                    visibility: visibility,
-                    batchExport: batchExport,
-                    group: group
-                });
-            }
-            var sorting = require("./sorting.js");
-            rawstats[tableName].sort(sorting.dynamicSortMultiple("dtype", "group", "units", "name"));
         }
-        var rawStatisticsConfigFile = config.xdmodBuildConfigDir + '/rawstatisticsconfig.json';
-        fs.writeFileSync(rawStatisticsConfigFile, JSON.stringify(rawstats, null, 4));
+
+        var rawStatsConfig = this.getRawStatisticsConfiguration();
+        var rawStatsInteg = new RawStatsIntegrator(rawStatsConfig.realmName, rawStatsConfig.realmDisplay, rawStatsConfig.realmOrder);
+        var i = 1;
+
+        for (var key in rawStatsConfig.fields) {
+            var col = rawStatsConfig.fields[key];
+            var columnName = key;
+            var alias = key;
+            var dtype = col.dtype ? col.dtype : (col.queries ? "foreignkey" : "statistic");
+            var group = col.group ? col.group : "misc";
+            var visibility = col.visibility ? col.visibility : 'public';
+            var batchExport = col.batchExport ? col.batchExport : false;
+
+            var name = extractandsubst(col, "name");
+            if (!name) {
+                name = Namealize(key, true);
+            }
+
+            // Default to using the fact table, but override for foreign
+            // key dtype.
+            var tableAlias = "jf";
+
+            if (dtype === "foreignkey" && col.join) {
+                var join = col.join;
+                var tableSchema = join.schema;
+                var tableName = join.table;
+                var foreignKey = join.foreignKey ? join.foreignKey : key;
+                alias = name;
+                columnName = join.column ? join.column : columnName;
+
+                tableAlias = rawStatsInteg.getTableAlias(tableSchema, tableName, "jf", foreignKey);
+
+                if (tableAlias === null) {
+                    tableAlias = "ft" + i;
+                    ++i;
+
+                    rawStatsInteg.addTable({
+                        schema: tableSchema,
+                        name: tableName,
+                        alias: tableAlias,
+                        join: {
+                            // All tables currently have primary key "id"
+                            // and are joined to the fact table "jf".
+                            primaryKey: "id",
+                            foreignTableAlias: "jf",
+                            foreignKey: foreignKey
+                        }
+                    });
+                }
+            }
+
+            rawStatsInteg.addField({
+                key: key,
+                alias: alias,
+                name: name,
+                tableAlias: tableAlias,
+                column: columnName,
+                dtype: dtype,
+                units: col.unit,
+                per: col.per,
+                documentation: col.comments,
+                visibility: visibility,
+                batchExport: batchExport,
+                group: group
+            });
+        }
+
+        rawStatsInteg.write();
     } catch (exception) {
         self.emit('error', util.inspect(exception));
     }
