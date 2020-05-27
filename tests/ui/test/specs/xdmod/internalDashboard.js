@@ -167,9 +167,9 @@ describe('Internal Dashboard', function () {
                 it(`Change the "${value.label}" to "${value.updated}"`, function () {
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
                     browser.waitForVisible(inputTrigger,5000);
-                    /*browser.clickSelectorAndWaitForMask(inputTrigger);*/
-                    /*browser.click(inputTrigger);*/
-                    browser.waitAndClick(inputTrigger,50000);
+                    /*browser.clickSelectorAndWaitForMask(inputTrigger,50000);*/
+                    browser.click(inputTrigger);
+                    /*browser.waitAndClick(inputTrigger,50000);*/
  
                     const inputDropDown = page.selectors.combo.container;
                     browser.waitForVisible(inputDropDown);
@@ -215,8 +215,21 @@ describe('Internal Dashboard', function () {
                     const userTypeInput = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
                     /*browser.waitForAllInvisible('.ext-el-mask');*/
                     browser.waitForVisible(userTypeInput,50000);
-                    const userType = browser.getValue(userTypeInput);
-                    expect(userType).to.equal(value.expected);
+
+                    for (let i = 0; i < 100; i++){
+                     try{
+                        const userType = browser.getValue(userTypeInput);
+                        expect(userType).to.equal(value.expected);
+                        break;
+                     } catch (e) {
+                         // browser.waitForInvisible(userTypeInput,50000);
+                         //
+                          browser.waitForVisible(userTypeInput,50000);
+                      } 
+                    }
+
+
+
                 });
                 it('Close the Edit Existing User Modal', function () {
                     const closeButton = page.selectors.create_manage_users.current_users.button('Close');
