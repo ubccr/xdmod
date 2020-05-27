@@ -216,7 +216,7 @@ describe('Internal Dashboard', function () {
                     /*browser.waitForAllInvisible('.ext-el-mask');*/
                     browser.waitForVisible(userTypeInput,50000);
 
-                    for (let i = 0; i < 100; i++){
+                  /*  for (let i = 0; i < 100; i++){
                      try{
                         const userType = browser.getValue(userTypeInput);
                         expect(userType).to.equal(value.expected);
@@ -226,7 +226,12 @@ describe('Internal Dashboard', function () {
                          //
                           browser.waitForVisible(userTypeInput,50000);
                       } 
-                    }
+                    }*/
+
+                          
+                        const userType = browser.getValue(userTypeInput);
+                        expect(userType).to.equal(value.expected);
+                   
 
 
 
