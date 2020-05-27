@@ -1214,11 +1214,16 @@ class pdoAggregator extends aAggregator
             }  // else ( $optimize )
 
             $numPeriodsProcessed++;
+            $periodDisplay = $periodId;
+            if ( 'day' === $aggregationUnit ) {
+                $dayDateTime = \DateTime::createFromFormat('Y00z', $periodId);
+                $periodDisplay .= ' ' . $dayDateTime->format('d m Y');
+            }
             $this->logger->info("Aggregated $aggregationUnit ("
                                 . ( $numPeriodsProcessed + $aggregationPeriodOffset)
                                 . "/"
                                 . $totalNumAggregationPeriods
-                                . ") $periodId records = $numRecords, time = " .
+                                . ") $periodDisplay records = $numRecords, time = " .
                                 round((microtime(true) - $dateIdStartTime), 2) . "s");
 
         }  // foreach ($aggregationPeriodList as $aggregationPeriodInfo)
