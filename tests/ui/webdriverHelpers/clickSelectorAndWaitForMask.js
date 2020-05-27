@@ -4,16 +4,18 @@
 
 
 
-module.exports = function clickSelectorAndWaitForMask(selector) {
- 
-       browser.waitForVisible(selector);
-        browser.waitForAllInvisible('.ext-el-mask');
+module.exports = function clickSelectorAndWaitForMask(selector,ms) {
+ var thisMS = ms || 50000;
+
+       browser.waitForVisible(selector,thisMS);
+
+        browser.waitForInvisible('.ext-el-mask',thisMS);
         for (let i = 0; i < 100; i++) {
             try {
                 browser.click(selector);
                 break;
             } catch (e) {
-                browser.waitForAllInvisible('.ext-el-mask');
+                browser.waitForInvisible('.ext-el-mask',thisMS);
                   
             }
         }
