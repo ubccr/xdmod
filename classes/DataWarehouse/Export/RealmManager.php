@@ -34,8 +34,6 @@ class RealmManager
      */
     public function getRealms()
     {
-        // The "name" values from rawstatistics match those in
-        // the moddb.realms.display column.
         $exportable = array_map(
             function ($realm) {
                 return $realm['name'];
@@ -46,7 +44,7 @@ class RealmManager
         return array_filter(
             Realms::getRealms(),
             function ($realm) use ($exportable) {
-                return in_array($realm->getDisplay(), $exportable);
+                return in_array($realm->getName(), $exportable);
             }
         );
     }
@@ -62,7 +60,7 @@ class RealmManager
         return array_filter(
             $this->getRealms(),
             function ($realm) use ($user) {
-                return BatchExport::realmExists($user, $realm->getDisplay());
+                return BatchExport::realmExists($user, $realm->getName());
             }
         );
     }
@@ -75,46 +73,6 @@ class RealmManager
      */
     public function getRawDataQueryClass($realmName)
     {
-        // The query classes use the "name" from the rawstatistics
-        // configuration, but the realm name is taken from moddb.realms.name.
-        // These use the same "display" name so that is used to find the
-        // correct class name.
-
-        // Realm model.
-        $realmObj = null;
-
-        foreach ($this->getRealms() as $realm) {
-            if ($realm->getName() == $realmName) {
-                $realmObj = $realm;
-                break;
-            }
-        }
-
-        if ($realmObj === null) {
-            throw new Exception(
-                sprintf('Failed to find model for realm "%s"', $realmName)
-            );
-        }
-
-        // Realm rawstatistics configuration.
-        $realmConfig = null;
-
-        foreach ($this->config->getBatchExportRealms() as $realm) {
-            if ($realm['display'] == $realmObj->getDisplay()) {
-                $realmConfig = $realm;
-                break;
-            }
-        }
-
-        if ($realmConfig === null) {
-            throw new Exception(
-                sprintf(
-                    'Failed to find rawstatistics configuration for realm "%s"',
-                    $realmName
-                )
-            );
-        }
-
-        return sprintf('\DataWarehouse\Query\%s\JobDataset', $realmConfig['name']);
+        return sprintf('\DataWarehouse\Query\%s\JobDataset', $realmName);
     }
 }
