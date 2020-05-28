@@ -354,8 +354,8 @@ class ReportGenerator {
                     selectNoReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="No Reports"]/ancestor::a',
                     invertSelectionButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="Invert Selection"]/ancestor::a',
                     newButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New"]',
-                    /*newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On"]',*/
-                    newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On" and not(ancestor::td[contains(@class,"x-hide-display")])]',
+                    newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On"]',
+                    //newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On" and not(ancestor::td[contains(@class,"x-hide-display")])]',
                     newBasedOnMenu: () => `//div[${classContains('x-menu-floating')} and .//img[${classContains('btn_selected_report')} or ${classContains('btn_report_template')}]]`,
                     newBasedOnRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[not(${classContains('x-menu-sep-li')})]`,
                     newBasedOnTemplateRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_report_template')}]]`,
