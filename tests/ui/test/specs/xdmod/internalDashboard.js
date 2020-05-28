@@ -229,8 +229,8 @@ describe('Internal Dashboard', function () {
                     }
 
                           
-                        /*const userType = browser.getValue(userTypeInput);
-                        expect(userType).to.equal(value.expected);*/
+                        //const userType = browser.getValue(userTypeInput);
+                        //expect(userType).to.equal(value.expected);
                    
 
 
