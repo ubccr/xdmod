@@ -16,7 +16,7 @@ spawn "xdmod-setup"
 
 selectMenuOption 1
 answerQuestion {Site Address} http://localhost:8080/
-provideInput {Email Address:} ccr-xdmod-help@buffalo.edu
+provideInput {Email Address:} xdmod@example.com
 answerQuestion {Java Path} /usr/bin/java
 answerQuestion {Javac Path} /usr/bin/javac
 provideInput {PhantomJS Path:} /usr/local/bin/phantomjs
