@@ -168,7 +168,7 @@ describe('Internal Dashboard', function () {
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
                     browser.waitForVisible(inputTrigger,5000);
                     /*browser.clickSelectorAndWaitForMask(inputTrigger,50000);*/
-                    browser.click(inputTrigger);
+                    browser.click(inputTrigger,50000,50000,50000,50000,50000);
                     /*browser.waitAndClick(inputTrigger,50000);*/
  
                     const inputDropDown = page.selectors.combo.container;
