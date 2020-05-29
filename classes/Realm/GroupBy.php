@@ -1170,7 +1170,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // aggregate column in the key map.
 
         foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-            $attributeTableField = new TableField($this->attributeTableObj, $attributeKey);
+            $pieces = explode('.', $attributeKey);
+            if ( count($pieces) === 2 ) {
+                $attributeTableField = new TableField(new Table($this->attributeTableObj->getSchema(), $pieces[0], $pieces[0]), $pieces[1]);
+            } else {
+                $attributeTableField = new TableField($this->attributeTableObj, $attributeKey);
+            }
             $aggregateTableField = new TableField($aggregateTableName, $aggregateKey);
             $where = new WhereCondition($attributeTableField, '=', $aggregateTableField);
             $this->logger->debug(sprintf('%s Add join condition: %s', $this, $where));
