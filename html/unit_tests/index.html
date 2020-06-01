@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Mocha Tests</title>
-  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+  <link href="https://unpkg.com/mocha@2.2.5/mocha.css" rel="stylesheet" />
 </head>
 <body>
   <div id="mocha"></div>
@@ -14,15 +14,15 @@
   <script src="./Array.prototype.includes.js"></script>
 
   <!-- Test harness scripts pulled from github CDN -->
-  <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
-  <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
-  <script src="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.js"></script>
-  <script src="https://cdn.rawgit.com/chaijs/chai/3.4.2/chai.js"></script>
-  <script src="https://cdn.rawgit.com/chaijs/chai-spies/0.7.1/chai-spies.js"></script>
+  <script src="https://unpkg.com/jquery@2.1.4/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/expect.js@0.3.1/index.js"></script>
+  <script src="https://unpkg.com/mocha@2.2.5/mocha.js"></script>
+  <script src="https://unpkg.com/chai@3.4.1/chai.js"></script>
+  <script src="https://unpkg.com/chai-spies@0.7.1/chai-spies.js"></script>
 
   <script>mocha.setup('bdd')</script>
   <script>expect = chai.expect</script>
-           
+
   <!-- ExtJS framework -->
   <script type="text/javascript" src="../gui/lib/extjs/adapter/ext/ext-base.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/ext-all-debug-w-comments.js"></script>
@@ -38,7 +38,7 @@
   <script type="text/javascript" src="../gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
   <script type="text/javascript" src="../gui/lib/groupdataview.js"></script>
   <script type="text/javascript" src="../gui/lib/groupcombo.js"></script>
-                                      
+
   <!-- Files to test -->
   <script>
 Ext.ns('CCR', 'CCR.xdmod', 'CCR.xdmod.ui', 'XDMoD.REST');
