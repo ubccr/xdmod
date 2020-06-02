@@ -122,13 +122,6 @@ try {
         'PHP GMP extension installed'
     );
 
-    _debug('Checking for mcrypt_cbc function');
-    $result = function_exists('mcrypt_cbc');
-    displayResult(
-        $result,
-        'PHP Mcrypt extension installed'
-    );
-
     _debug('Checking for curl_close function');
     $result = function_exists('curl_close');
     displayResult(

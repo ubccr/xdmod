@@ -22,6 +22,10 @@ if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
+
+    # Remove php-mcrypt until new Docker image is built without it.
+    yum -y remove php-mcrypt || true
+
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
@@ -95,6 +99,10 @@ fi
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+
+    # Remove php-mcrypt until new Docker image is built without it.
+    yum -y remove php-mcrypt || true
+
     ~/bin/services start
 
     # TODO: Replace diff files with hard fixes
