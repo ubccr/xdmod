@@ -113,14 +113,14 @@ class MyReportsRow {
      * Click the row.
      */
     click() {
-        browser.click(this.selector);
+        browser.click(this.selector,50000);
     }
 
     /**
      * Double click the row.
      */
     doubleClick() {
-        browser.doubleClick(this.selector);
+        browser.doubleClick(this.selector,50000);
     }
 
     /**
@@ -128,7 +128,7 @@ class MyReportsRow {
      */
     toggleSelection() {
         browser.keys('Control');
-        browser.click(this.selector);
+        browser.click(this.selector,50000);
         browser.keys('Control');
     }
 }
@@ -212,7 +212,7 @@ class AvailableChart {
      * Click the chart.
      */
     click() {
-        browser.click(this.selector);
+        browser.click(this.selector,50000);
     }
 
     /**
@@ -220,7 +220,7 @@ class AvailableChart {
      */
     toggleSelection() {
         browser.keys('Control');
-        browser.click(this.selector);
+        browser.click(this.selector,50000);
         browser.keys('Control');
     }
 }
