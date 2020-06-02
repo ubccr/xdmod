@@ -113,7 +113,8 @@ class MyReportsRow {
      * Click the row.
      */
     click() {
-        browser.click(this.selector,50000);
+         browser.click(this.selector,50000);
+         //browser.waitAndClick(this.selector,50000);
     }
 
     /**
@@ -129,6 +130,7 @@ class MyReportsRow {
     toggleSelection() {
         browser.keys('Control');
         browser.click(this.selector,50000);
+       // browser.waitAndClick(this.selector,50000);
         browser.keys('Control');
     }
 }
@@ -213,6 +215,7 @@ class AvailableChart {
      */
     click() {
         browser.click(this.selector,50000);
+        //browser.waitAndClick(this.selector,50000);
     }
 
     /**
@@ -221,6 +224,7 @@ class AvailableChart {
     toggleSelection() {
         browser.keys('Control');
         browser.click(this.selector,50000);
+        //browser.waitAndClick(this.selector,50000);
         browser.keys('Control');
     }
 }
@@ -306,14 +310,16 @@ class IncludedChart {
      * Click the chart.
      */
     click() {
-        browser.click(this.selector,500000);
+        browser.click(this.selector,50000);
+        //browser.waitAndClick(this.selector,50000);
     }
 
     /**
      * Click the date range to edit timeframe.
      */
     editTimeframe() {
-        browser.click(this.selectors.timeframeEditIcon,500000);
+        browser.click(this.selectors.timeframeEditIcon,50000);
+       // browser.waitAndClick(this.selector.timeframeEditIcon,50000);
     }
 
     /**
@@ -321,6 +327,7 @@ class IncludedChart {
      */
     resetTimeframe() {
         browser.click(this.selectors.timeframeResetIcon,50000);
+        //browser.waitAndClick(this.selector.timeframeResetIcon,50000);
     }
 
     /**
@@ -328,7 +335,8 @@ class IncludedChart {
      */
     toggleSelection() {
         browser.keys('Control');
-        browser.click(this.selector,500000);
+        browser.click(this.selector,50000);
+       // browser.waitAndClick(this.selector,50000);
         browser.keys('Control');
     }
 }
