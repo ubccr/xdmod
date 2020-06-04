@@ -191,6 +191,20 @@ try {
         'PHP PCRE extension installed'
     );
 
+    _debug('Checking for mb_convert_encoding function');
+    $result = function_exists('mb_convert_encoding');
+    displayResult(
+        $result,
+        'PHP Multibyte String extension installed'
+    );
+
+    _debug('Checking for apcu_exists function');
+    $result = function_exists('apcu_exists');
+    displayResult(
+        $result,
+        'PHP APC User Cache extension installed'
+    );
+
     _debug('Checking timezone');
     $tz = ini_get('date.timezone');
     $result = $tz !== null && $tz !== false;
