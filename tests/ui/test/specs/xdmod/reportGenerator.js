@@ -358,6 +358,7 @@ describe('Report Generator', function () {
             });
             it('No report templates available', function () {
                 expect(reportGeneratorPage.isNewBasedOnEnabled()).to.be.false;
+                 console.log();
             });
         });
 
