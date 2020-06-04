@@ -77,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
-%dir %attr(0775,apache,xdmod) %{_localstatedir}/log/%{name}
+%dir %attr(0770,apache,xdmod) %{_localstatedir}/log/%{name}
 
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %attr(0440,apache,xdmod) %{_sysconfdir}/%{name}/portal_settings.ini
