@@ -166,7 +166,7 @@ describe('Internal Dashboard', function () {
                 });
                 it(`Change the "${value.label}" to "${value.updated}"`, function () {
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
-                    browser.waitForVisible(inputTrigger,5000);
+                    browser.waitForVisible(inputTrigger,50000);
                     /*browser.clickSelectorAndWaitForMask(inputTrigger,50000);*/
                    // browser.click(inputTrigger,50000);
                     browser.waitAndClick(inputTrigger,50000);
@@ -190,7 +190,7 @@ describe('Internal Dashboard', function () {
                 });
                 it('Click the Close button', function () {
                     const closeButton = page.selectors.create_manage_users.current_users.button('Close');
-                    browser.waitAndClick(closeButton);
+                    browser.waitAndClick(closeButton,50000);
                 });
                 it('Ensure that the Unsaved Changes modal is presented', function () {
                     browser.waitForVisible(page.selectors.modal.containerByTitle('Unsaved Changes'));
@@ -259,8 +259,9 @@ describe('Internal Dashboard', function () {
             browser.waitForVisible(page.selectors.create_manage_users.window);
         });
         it('Ensure that the "Actions" button is visible and click it', function () {
-            browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.button());
-            browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.toolbar.actions.button());
+            browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.button(),5000);
+            browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.toolbar.actions.button(),5000);
+
         });
         it('Ensure that the Actions menu has been displayed', function () {
             browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.container);
