@@ -58,7 +58,7 @@ mkdir -p $RPM_BUILD_ROOT%{xdmod_export_dir}
 for file in exceptions.log query.log; do
     touch %{_localstatedir}/log/%{name}/$file
     chown apache:xdmod %{_localstatedir}/log/%{name}/$file
-    chmod 0664 %{_localstatedir}/log/%{name}/$file
+    chmod 0660 %{_localstatedir}/log/%{name}/$file
 done
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
