@@ -90,10 +90,10 @@ describe('Internal Dashboard', function () {
         });
         it('Select the "Existing Users" tab', function () {
             browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
-            browser.waitAndClick(page.selectors.user_management.tabs.existing_users());
+            browser.waitAndClick(page.selectors.user_management.tabs.existing_users(),5000);
         });
         it('Ensure that the "Existing Users" table is displayed', function () {
-            browser.waitForVisible(page.selectors.existing_users.table.container);
+            browser.waitForVisible(page.selectors.existing_users.table.container,50000);
         });
         it('Check that the username is displayed correctly', function () {
             const usernameCol = page.selectors.existing_users.table.col_for_user('btest', 'Username');
@@ -166,10 +166,10 @@ describe('Internal Dashboard', function () {
                 });
                 it(`Change the "${value.label}" to "${value.updated}"`, function () {
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
-                    browser.waitForVisible(inputTrigger,50000);
+                    browser.waitForVisible(inputTrigger,500000);
                     /*browser.clickSelectorAndWaitForMask(inputTrigger,50000);*/
                    // browser.click(inputTrigger,50000);
-                    browser.waitAndClick(inputTrigger,50000);
+                    browser.waitAndClick(inputTrigger,500000);
  
                     const inputDropDown = page.selectors.combo.container;
                     browser.waitForVisible(inputDropDown);
@@ -259,8 +259,8 @@ describe('Internal Dashboard', function () {
             browser.waitForVisible(page.selectors.create_manage_users.window);
         });
         it('Ensure that the "Actions" button is visible and click it', function () {
-            browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.button(),5000);
-            browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.toolbar.actions.button(),5000);
+            browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.button());
+            browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.toolbar.actions.button());
 
         });
         it('Ensure that the Actions menu has been displayed', function () {
