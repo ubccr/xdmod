@@ -16,9 +16,9 @@ describe('Internal Dashboard', function () {
             browser.waitForVisible(page.selectors.create_manage_users.window);
         });
         it('Select the "New User" tab', function () {
-            browser.waitAndClick(page.selectors.create_manage_users.tabs.new_user());
+            browser.waitAndClick(page.selectors.create_manage_users.tabs.new_user(),9000);
 
-            browser.waitForVisible(page.selectors.create_manage_users.new_user.container());
+            browser.waitForVisible(page.selectors.create_manage_users.new_user.container(),9000);
         });
         it('Populate User Information', function () {
             browser.waitForVisible(page.selectors.create_manage_users.new_user.first_name());

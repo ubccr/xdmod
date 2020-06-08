@@ -8,7 +8,7 @@
  */
 
  module.exports = function waitAndClick(selector, ms) {
-    var thisMs = ms || 5000;
+    var thisMs = ms || 50000;
 
 
    this.waitForVisible(selector, thisMs);
