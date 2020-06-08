@@ -8,6 +8,6 @@
  */
 
 module.exports = function waitForInvisible(selector, ms) {
-    var timeOut = ms || 5000;
+    var timeOut = ms || 50000;
     return this.waitForVisible(selector, timeOut, true);
 };
