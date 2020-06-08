@@ -89,8 +89,8 @@ describe('Internal Dashboard', function () {
             browser.waitForInvisible(page.selectors.create_manage_users.window);
         });
         it('Select the "Existing Users" tab', function () {
-            browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
-            browser.waitAndClick(page.selectors.user_management.tabs.existing_users(),5000);
+            browser.waitForVisible(page.selectors.user_management.tabs.existing_users(),50000);
+            browser.waitAndClick(page.selectors.user_management.tabs.existing_users(),50000);
         });
         it('Ensure that the "Existing Users" table is displayed', function () {
             browser.waitForVisible(page.selectors.existing_users.table.container,50000);
