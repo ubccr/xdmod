@@ -142,6 +142,11 @@ removed by the upgrade script.
   and tables in `modw_aggregates` prefixed with `jobfact_by_`.
 - New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
   Count".
+- Added another index to `mod_logger`.`log_table` to improve performance of
+  queries used by the administrative dashboard's "Log Data" tab.  If this table
+  contains tens of millions of rows it may take over an hour to add the index.
+  It may be desirable to delete old log data from this table before performing
+  the migration if the data is no longer needed.
 
 - The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
 tables have had their Primary Keys changed to better support the local and global filters
