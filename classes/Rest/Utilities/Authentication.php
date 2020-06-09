@@ -221,22 +221,6 @@ class Authentication
             ':init_time' => $_SESSION['xdInit'],
         );
 
-        $access_logfile = LOG_DIR . '/session_manager.log';
-
-        $logConf = array('mode' => 0644);
-
-        $sessionManagerLogger = Log::factory(
-            'file',
-            $access_logfile,
-            'SESSION_MANAGER',
-            $logConf
-        );
-
-        $sessionManagerLogger->log(
-            $_SERVER['REMOTE_ADDR'] . ' QUERY ' . $resolver_query
-            . ' PARAMS ' . json_encode($resolver_query_params)
-        );
-
         $pdo = DB::factory('database');
 
         $user_check = $pdo->query(
