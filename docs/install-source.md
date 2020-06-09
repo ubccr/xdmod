@@ -40,13 +40,13 @@ out of your system and log back in for this change to take effect.
 
 Update log directory and file ownership and permissions:
 
-    # chmod 775 /opt/xdmod/logs
+    # chmod 770 /opt/xdmod/logs
     # chown apache:xdmod /opt/xdmod/logs
     # touch /opt/xdmod/logs/exceptions.log
-    # chmod 664 /opt/xdmod/logs/exceptions.log
+    # chmod 660 /opt/xdmod/logs/exceptions.log
     # chown apache:xdmod /opt/xdmod/logs/exceptions.log
     # touch /opt/xdmod/logs/query.log
-    # chmod 664 /opt/xdmod/logs/query.log
+    # chmod 660 /opt/xdmod/logs/query.log
     # chown apache:xdmod /opt/xdmod/logs/query.log
 
 The `exceptions.log` and `query.log` may be written to by both Apache and Open
