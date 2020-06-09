@@ -163,25 +163,38 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         $select_tables = $this->getSelectTables();
         $select_fields = $this->getSelectFields();
 
+        if ( 0 == count($select_fields) ) {
+            $this->logAndThrowException("Cannot generate query string with no select fields");
+        }
+
         $select_order_by = $this->getSelectOrderBy();
 
-        $data_query = "SELECT DISTINCT ".implode(", ", $select_fields).
-            " FROM ".implode(", ", $select_tables).
-            " WHERE ".implode(" AND ", $wheres);
+        $format = <<<SQL
+SELECT DISTINCT
+  %s
+FROM
+  %s%s
+WHERE
+  %s
+%s%s%s%s
+SQL;
 
-        if (count($groups) > 0) {
-            $data_query .= " GROUP BY \n".implode(",\n", $groups);
-        }
-        if ($extraHavingClause != null) {
-            $data_query .= " HAVING " . $extraHavingClause . "\n";
-        }
-        if (count($select_order_by) > 0) {
-            $data_query .= " ORDER BY \n".implode(",\n", $select_order_by);
-        }
+        $data_query = sprintf(
+            $format,
+            implode(",\n  ", $select_fields),
+            implode(",\n  ", $select_tables),
+            ( "" == $this->getLeftJoinSql() ? "" : "\n" . $this->getLeftJoinSql() ),
+            implode("\n  AND ", $wheres),
+            ( count($groups) > 0 ? "GROUP BY " . implode(",\n  ", $groups) : "" ),
+            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
+        );
 
-        if ($limit !== null && $offset !== null) {
-            $data_query .= " LIMIT $limit OFFSET $offset";
-        }
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
+        );
+
         return $data_query;
     }
 }
