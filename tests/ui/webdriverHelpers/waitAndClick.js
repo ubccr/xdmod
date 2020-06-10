@@ -12,5 +12,5 @@
 
 
    this.waitForVisible(selector, thisMs);
-   return this.click(selector);
+   return this.click(selector,50000);
 };
