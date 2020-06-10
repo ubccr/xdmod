@@ -24,8 +24,8 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         $config = RawStatisticsConfiguration::factory();
 
-        // The data table is always aliased to "jf".
-        $tables = ['jf' => $this->getDataTable()];
+        // The data table is always aliased to "agg".
+        $tables = ['agg' => $this->getDataTable()];
 
         foreach ($config->getQueryTableDefinitions('Jobs') as $tableDef) {
             $alias = $tableDef['alias'];
