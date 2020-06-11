@@ -11,7 +11,7 @@ Source:        %{name}-%{version}__PRERELEASE__.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{release}-XXXXXX)
 BuildArch:     noarch
 BuildRequires: php-cli
-Requires:      httpd
+Requires:      httpd mod_ssl
 Requires:      mariadb >= 5.5.3
 Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring
 Requires:      php-pear-MDB2 php-pear-MDB2-Driver-mysql php-pecl-apcu
