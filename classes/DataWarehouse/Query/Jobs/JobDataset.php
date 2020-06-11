@@ -24,8 +24,8 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         $config = RawStatisticsConfiguration::factory();
 
-        // The data table is always aliased to "jf".
-        $tables = ['jf' => $this->getDataTable()];
+        // The data table is always aliased to "agg".
+        $tables = ['agg' => $this->getDataTable()];
 
         foreach ($config->getQueryTableDefinitions('Jobs') as $tableDef) {
             $alias = $tableDef['alias'];
@@ -145,5 +145,56 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     public function getColumnDocumentation()
     {
         return $this->documentation;
+    }
+
+    /**
+     * The query differs from the base class query because the same fact table
+     * row may correspond to multiple rows in the aggregate table (e.g. a job
+     * that runs over two days). Therefore the DISTINCT keyword is added to
+     * deduplicate.
+     *
+     * @see \DataWarehouse\Query\Query::getQueryString()
+     */
+    public function getQueryString($limit = null, $offset = null, $extraHavingClause = null)
+    {
+        $wheres = $this->getWhereConditions();
+        $groups = $this->getGroups();
+
+        $select_tables = $this->getSelectTables();
+        $select_fields = $this->getSelectFields();
+
+        if ( 0 == count($select_fields) ) {
+            $this->logAndThrowException("Cannot generate query string with no select fields");
+        }
+
+        $select_order_by = $this->getSelectOrderBy();
+
+        $format = <<<SQL
+SELECT DISTINCT
+  %s
+FROM
+  %s%s
+WHERE
+  %s
+%s%s%s%s
+SQL;
+
+        $data_query = sprintf(
+            $format,
+            implode(",\n  ", $select_fields),
+            implode(",\n  ", $select_tables),
+            ( "" == $this->getLeftJoinSql() ? "" : "\n" . $this->getLeftJoinSql() ),
+            implode("\n  AND ", $wheres),
+            ( count($groups) > 0 ? "GROUP BY " . implode(",\n  ", $groups) : "" ),
+            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
+        );
+
+        $this->logger->debug(
+            sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
+        );
+
+        return $data_query;
     }
 }
