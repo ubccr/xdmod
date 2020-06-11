@@ -9,6 +9,10 @@ REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
 REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
 
+function switch_off_ssl {
+    sed -i 's/SSLEngine on/SSLEngine off/g; s/\(^\s*\)\(Header always set Strict-Transport-Security\)/\1#\2/' /etc/httpd/conf.d/xdmod.conf
+}
+
 if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=jobs,storage,cloud
 fi
@@ -28,6 +32,7 @@ then
 
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    switch_off_ssl
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;

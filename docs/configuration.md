@@ -120,56 +120,68 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 Apache Configuration
 --------------------
 
-Uses port 8080 by default, if changed, must also be changed in
-`portal_settings.ini`.
+A template apache configuration file is provided. The path is `/etc/httpd/conf.d/xdmod.conf`
+in the RPM install and `etc/apache.d/xdmod.conf` in the source code install.
 
+The template configuration file includes appropriate configuration settings
+to enable the webserver listening on HTTPS port 8080.
+
+Valid SSL certificates will need to be installed and configured.  The template
+configuration file must be edited to specify the path to the SSL certificate
+file and SSL certificate key file. Refer to the [Apache SSL documentation](https://httpd.apache.org/docs/2.4/ssl/)
+for SSL configuration information.
+
+The name and port of the server must match with the `site_address` and `user_manual`
+configuration settings in `portal_settings.ini`.
+
+The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header
+to indicate to  web browsers that the XDMoD instance should only be accessed using HTTPS.
+
+```apache
     Listen 8080
     <VirtualHost *:8080>
-        DocumentRoot /usr/share/xdmod/html
-        <Directory /usr/share/xdmod/html>
-            Options FollowSymLinks
-            AllowOverride All
-            DirectoryIndex index.php
-            # Apache 2.4 access controls.
-            <IfModule mod_authz_core.c>
-                Require all granted
-            </IfModule>
-        </Directory>
-        <Directory /usr/share/xdmod/html/rest>
-            RewriteEngine On
-            RewriteRule (.*) index.php [L]
-        </Directory>
-    </VirtualHost>
+        # The ServerName and ServerAdmin parameters should be set to the
+        # appropriate values for the XDMoD instance.
+        ServerName localhost
+        #ServerAdmin postmaster@localhost
 
-We recommend that you use HTTPS in production.  This will require
-additional configuration.
-
-    Listen 443
-    <VirtualHost *:443>
-
-        # Customize this section using your SSL certificate.
+        # Production XDMoD instances should use HTTPS
         SSLEngine on
-        SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
-        SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+
+        # Update the SSLCertificateFile and SSLCertificateKeyFile parameters
+        # to the correct paths to your SSL certificate.
+        SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+        SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+
         <FilesMatch "\.(cgi|shtml|phtml|php)$">
             SSLOptions +StdEnvVars
         </FilesMatch>
 
+        # Use HTTP Strict Transport Security to force client to use secure connections only
+        Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
         DocumentRoot /usr/share/xdmod/html
+
         <Directory /usr/share/xdmod/html>
             Options FollowSymLinks
             AllowOverride All
-            DirectoryIndex index.php
+            DirectoryIndex index.php index.html
+
             # Apache 2.4 access controls.
             <IfModule mod_authz_core.c>
                 Require all granted
             </IfModule>
         </Directory>
+
         <Directory /usr/share/xdmod/html/rest>
             RewriteEngine On
             RewriteRule (.*) index.php [L]
         </Directory>
+
+        ErrorLog /var/log/xdmod/apache-error.log
+        CustomLog /var/log/xdmod/apache-access.log combined
     </VirtualHost>
+```
 
 Logrotate Configuration
 -----------------------
