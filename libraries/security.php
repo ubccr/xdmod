@@ -6,6 +6,20 @@
 namespace xd_security;
 
 /**
+ * Set the secure cookie flag for the session
+ */
+function setsecurecookie()
+{
+    $cParams = session_get_cookie_params();
+    session_set_cookie_params(
+        $cParams["lifetime"],
+        $cParams["path"],
+        $cParams['domain'],
+        true
+    );
+}
+
+/**
  * @param array $failover_methods
  *
  * @return \XDUser

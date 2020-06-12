@@ -185,6 +185,7 @@ class Authentication
         $token,
         $ip_address
     ) {
+        \xd_security\setsecurecookie();
         @session_start();
 
         // TODO: A REST API should not depend on the consumer
