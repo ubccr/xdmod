@@ -363,7 +363,9 @@ class ReportGenerator {
                     invertSelectionButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="Invert Selection"]/ancestor::a',
                     newButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New"]',
                     newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On"]',
+                    
                     //newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On" and not(ancestor::td[contains(@class,"x-hide-display")])]',
+                    
                     newBasedOnMenu: () => `//div[${classContains('x-menu-floating')} and .//img[${classContains('btn_selected_report')} or ${classContains('btn_report_template')}]]`,
                     newBasedOnRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[not(${classContains('x-menu-sep-li')})]`,
                     newBasedOnTemplateRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_report_template')}]]`,
@@ -540,9 +542,8 @@ class ReportGenerator {
     isNewBasedOnEnabled() {
         const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
         expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
-       // expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;    
-          
+       
 
 }
 
