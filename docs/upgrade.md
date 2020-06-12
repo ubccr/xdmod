@@ -129,6 +129,16 @@ necessary.
 The `xdmod-upgrade` script will migrate user editable configuration files to
 the new version.
 
+The example apache configuration file has changed to default to HTTPS.
+If the existing apache configuration file has been previously
+edited then it will not be replaced by an RPM upgrade.
+However, the RPM upgrade will replace the existing configuration file
+ with the new one if the existing file has not been modified from default.
+If you are upgrading an existing XDMoD installation that used the default
+apache configuration file (http port 8080) then it is recommended to
+switch to HTTPS and update the apache configuration with valid SSL certificates.
+XDMoD will still work with the previous HTTP only apache configuration.
+
 ### Database Changes
 
 The `xdmod-upgrade` script will migrate the database schemas to the new

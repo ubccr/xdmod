@@ -105,6 +105,10 @@ if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
 
+    # the apache conf file is marked noreplace, but the existing file
+    # is unedited so it does get replaced
+    switch_off_ssl
+
     # Remove php-mcrypt until new Docker image is built without it.
     yum -y remove php-mcrypt || true
 
