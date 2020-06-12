@@ -64,7 +64,7 @@ See the [Configuration Guide](configuration.html) for more details.
 Copy Configuration Files
 ------------------------
 
-    # cp /opt/xdmod/etc/apache.d/xdmod.conf /etc/apache2/conf.d/xdmod.conf
+    # cp /opt/xdmod/share/templates/apache.conf /etc/apache2/conf.d/xdmod.conf
 
     # cp /opt/xdmod/etc/cron.d/xdmod /etc/cron.d/xdmod
 
@@ -133,4 +133,4 @@ This command may be different depending on your operating system.
 Check Portal
 ------------
 
-    https://localhost:8080/
+    https://localhost/

@@ -550,7 +550,7 @@ function substitutePaths($dirs)
         '#/usr/lib/xdmod#'  => $dirs['lib'],
     ));
 
-    substituteInFile($destDir . $dirs['httpd'] . '/xdmod.conf', array(
+    substituteInFile($destDir . $dirs['data'] . '/templates/apache.conf', array(
         '#/usr/share/xdmod#' => $dirs['data'],
         '#/var/log/xdmod#'   => $dirs['log'],
         '#/etc/xdmod#'       => $dirs['conf'],

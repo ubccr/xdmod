@@ -120,11 +120,18 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 Apache Configuration
 --------------------
 
-A template apache configuration file is provided. The path is `/etc/httpd/conf.d/xdmod.conf`
-in the RPM install and `etc/apache.d/xdmod.conf` in the source code install.
+A template apache configuration file is provided. The path is `/usr/share/xdmod/templates/apache.conf`
+in the RPM install and `share/templates/apache.conf` in the source code install.
+This template file must be copied to the Apache configuration directory and
+edited to update site specific configuration setttings.
 
-The template configuration file includes appropriate configuration settings
-to enable the webserver listening on HTTPS port 8080.
+For Centos 7 and RHEL 7 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`
+For other Linux distributions consult the distribtion documentation
+to determine the path to the webserver configuration files.
+
+This template file must be modified to update site specific settings:
+
+The ServerName setting should be updated.
 
 Valid SSL certificates will need to be installed and configured.  The template
 configuration file must be edited to specify the path to the SSL certificate
@@ -138,12 +145,10 @@ The template configuration file also configures the webserver to send the `Stric
 to indicate to  web browsers that the XDMoD instance should only be accessed using HTTPS.
 
 ```apache
-    Listen 8080
-    <VirtualHost *:8080>
-        # The ServerName and ServerAdmin parameters should be set to the
-        # appropriate values for the XDMoD instance.
+    <VirtualHost *:443>
+        # The ServerName and ServerAdmin parameters should be updated.
         ServerName localhost
-        #ServerAdmin postmaster@localhost
+        ServerAdmin postmaster@localhost
 
         # Production XDMoD instances should use HTTPS
         SSLEngine on
@@ -177,6 +182,18 @@ to indicate to  web browsers that the XDMoD instance should only be accessed usi
             RewriteEngine On
             RewriteRule (.*) index.php [L]
         </Directory>
+
+        ## SimpleSAML Single Sign On authentication.
+        #SetEnv SIMPLESAMLPHP_CONFIG_DIR /etc/xdmod/simplesamlphp/config
+        #Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www
+        #<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
+        #    Options FollowSymLinks
+        #    AllowOverride All
+        #    # Apache 2.4 access controls.
+        #    <IfModule mod_authz_core.c>
+        #        Require all granted
+        #    </IfModule>
+        #</Directory>
 
         ErrorLog /var/log/xdmod/apache-error.log
         CustomLog /var/log/xdmod/apache-access.log combined

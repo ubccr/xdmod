@@ -9,8 +9,11 @@ REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
 REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
 
-function switch_off_ssl {
-    sed -i 's/SSLEngine on/SSLEngine off/g; s/\(^\s*\)\(Header always set Strict-Transport-Security\)/\1#\2/' /etc/httpd/conf.d/xdmod.conf
+function copy_template_httpd_conf {
+    sed -e 's/SSLEngine on/SSLEngine off/' \
+        -e 's/\(^\s*\)\(Header always set Strict-Transport-Security\)/\1#\2/' \
+        -e 's/\*:443/\*:8080/' \
+        -e 's/^#Listen 443/Listen 8080/' /usr/share/xdmod/templates/apache.conf > /etc/httpd/conf.d/xdmod.conf
 }
 
 if [ -z $XDMOD_REALMS ]; then
@@ -32,7 +35,7 @@ then
 
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
-    switch_off_ssl
+    copy_template_httpd_conf
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
@@ -105,9 +108,7 @@ if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
 
-    # the apache conf file is marked noreplace, but the existing file
-    # is unedited so it does get replaced
-    switch_off_ssl
+    copy_template_httpd_conf
 
     # Remove php-mcrypt until new Docker image is built without it.
     yum -y remove php-mcrypt || true
