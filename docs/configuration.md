@@ -165,7 +165,7 @@ to indicate to  web browsers that the XDMoD instance should only be accessed usi
         <Directory /usr/share/xdmod/html>
             Options FollowSymLinks
             AllowOverride All
-            DirectoryIndex index.php index.html
+            DirectoryIndex index.php
 
             # Apache 2.4 access controls.
             <IfModule mod_authz_core.c>
