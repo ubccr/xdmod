@@ -382,7 +382,7 @@ describe('Report Generator', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
         });
         it('Report templates available', function () {
-            expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
+             expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
         });
     });
 
