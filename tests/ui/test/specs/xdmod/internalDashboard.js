@@ -161,21 +161,16 @@ describe('Internal Dashboard', function () {
                     browser.waitForValue(usernameCol);
                     browser.doubleClick(usernameCol);
 
-                    browser.waitForVisible(page.selectors.create_manage_users.window);
-                    browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                    browser.waitForVisible(page.selectors.create_manage_users.window,50000);
+                    browser.waitForVisible(page.selectors.create_manage_users.current_users.container,50000);
                 });
 
                 it(`Change the "${value.label}" to "${value.updated}"`, function () {
-                    //const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
-                    //browser.waitForVisible(inputTrigger,500000);
-                    /*browser.clickSelectorAndWaitForMask(inputTrigger,50000);*/
-
-                    setTimeout(function(){
+                   
                     const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
                     browser.waitForVisible(inputTrigger);
-                    //browser.click(inputTrigger); 
-                         
-                    browser.waitAndClick(inputTrigger);
+                    //browser.click(inputTrigger);
+                    setTimeout(function(){ browser.click(inputTrigger)},2000);
 
                     const inputDropDown = page.selectors.combo.container;
                     browser.waitForVisible(inputDropDown);
@@ -183,17 +178,15 @@ describe('Internal Dashboard', function () {
                     const dropDownValue = page.selectors.combo.itemByText(value.updated);
                     browser.waitForVisible(dropDownValue);
                     browser.waitAndClick(dropDownValue);
-                     
+
                     browser.waitForInvisible(inputDropDown);
-                   },50000);
-                        setTimeout(function(){                   
 
                     const input = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
                     const updatedValue = browser.getValue(input);
-                   
-                    //expect(updatedValue).to.equal(value.updated);
                     expect(updatedValue).to.equal(value.updated);
-                    },50000);
+
+
+
                 });
                 it('Ensure that the user dirty message is shown', function () {
                     
