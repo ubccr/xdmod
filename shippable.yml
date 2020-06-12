@@ -37,7 +37,7 @@ build:
         - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
         - ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit `pwd`/shippable/testresults/xdmod-sso-integration.xml
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
-        - test ! -s /var/log/xdmod/apache-error.log
+        - [ `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0 ]
     on_failure:
         - cat /var/log/xdmod/apache-error.log
         - cat /var/log/xdmod/exceptions.log
