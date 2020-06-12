@@ -21,9 +21,9 @@ class GeneralSetup extends SetupItem
         $this->console->displaySectionHeader('General Setup');
 
         $this->console->displayMessage(<<<"EOT"
-The default Open XDMoD configuration creates an Apache virtual host on
-port 8080.  If you change or remove the port number (and use port 80 or
-443) you will need to change the Apache configuration as well.
+The template Apache configuration file uses a virtual host
+listening on HTTPS port 443. The Site Address specified
+here should match the settings in the Apache configuration.
 EOT
         );
         $this->console->displayBlankLine();
