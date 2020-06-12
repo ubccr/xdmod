@@ -522,7 +522,9 @@ class ReportGenerator {
      * @return {Boolean} True if the report generator page is enabled.
      */
     isEnabled() {
-        return browser.isExisting(this.selectors.tab());
+        
+       // setTimeout(function(){  return browser.isExisting(this.selectors.tab()) }, 3000);
+       return browser.isExisting(this.selectors.tab());
     }
 
     /**
@@ -537,9 +539,9 @@ class ReportGenerator {
      */
     isNewBasedOnEnabled() {
         const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
-        expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
-        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
-       // newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On" and not(ancestor::td[contains(@class,"x-hide-display")])]'    
+        setTimeout(function(){ expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1); }, 3000);
+       // expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
+        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;    
           
 
 }
