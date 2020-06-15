@@ -1452,7 +1452,7 @@ SQL;
      *
      * @param bool $distinct
      */
-    public function setDistinct($distinct)
+    protected function setDistinct($distinct)
     {
         $this->isDistinct = $distinct;
     }
