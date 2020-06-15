@@ -336,7 +336,7 @@ describe('Report Generator', function () {
         });
     });
 
-    loginPage.logout();
+    loginPage.logout('user',5000);
 
     // TODO: Add tests for storage and cloud realms
     if (XDMOD_REALMS.includes('jobs')) {
@@ -361,7 +361,7 @@ describe('Report Generator', function () {
             });
         });
 
-        loginPage.logout();
+        loginPage.logout('jobs',5000);
     }
 
     // Center staff
@@ -385,7 +385,7 @@ describe('Report Generator', function () {
         });
     });
 
-    loginPage.logout();
+    loginPage.logout('centerstaff',5000);
 
     // TODO: Add tests for storage and cloud realms
     if (XDMOD_REALMS.includes('jobs')) {
