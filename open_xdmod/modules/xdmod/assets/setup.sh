@@ -13,7 +13,3 @@ composer install --no-dev
 
 echo Installing npm managed dependencies
 npm install --production --prefix etl/js
-
-echo Compiling report builder code
-cd "$xdmod_dir/reporting/jasper_builder"
-bash ReportBuilder.sh -C

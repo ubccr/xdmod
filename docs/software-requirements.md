@@ -19,7 +19,6 @@ Open XDMoD requires the following software:
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
-- [Java][] 1.8 including the [JDK][]
 - [PhantomJS][] 2.1+
 - [ghostscript][] 9+
 - [cron][]
@@ -44,8 +43,7 @@ Open XDMoD requires the following software:
 [pear-mdb2-mysql]: https://pear.php.net/package/MDB2_Driver_mysql
 [php-mbstring]:    https://secure.php.net/manual/en/book.mbstring.php
 [php-pecl-apcu]:   https://www.php.net/manual/en/book.apcu.php
-[java]:            https://java.com/
-[jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[libreoffice]:     https://www.libreoffice.org
 [phantomjs]:       http://phantomjs.org/
 [ghostscript]:     https://www.ghostscript.com/
 [cron]:            https://en.wikipedia.org/wiki/Cron
@@ -76,7 +74,7 @@ added with this command for CentOS 7:
     # yum install httpd php php-cli php-mysql php-gd \
                   gmp-devel php-gmp php-pdo php-xml \
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
-                  java-1.8.0-openjdk java-1.8.0-openjdk-devel \
+                  libreoffice \
                   mariadb-server mariadb cronie logrotate \
                   ghostscript php-mbstring php-pecl-apcu jq
 
