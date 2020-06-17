@@ -70,7 +70,42 @@ EOT
             $builder = new FilterListBuilder();
             $builder->setLogger($this->logger);
             $builder->buildRealmLists('Jobs');
-        }
+          }
+            if (
+              \CCR\DB\MySQLHelper::DatabaseExists(
+                  $dbh->_db_host,
+                  $dbh->_db_port,
+                  $dbh->_db_username,
+                  $dbh->_db_password,
+                  'modw_cloud'
+              )
+            ) {
+                $sql = "SELECT * FROM modw_cloud.session_records WHERE start_event_type_id IN (4,6,17,19,45,55)";
+                $results = $dbh->query($sql);
+                $numSessions = count($results);
+
+                if (!empty($results)) {
+                    $console->displayMessage(<<<"EOT"
+***** This version of Open XDMoD fixes a bug in the cloud realm that created erroneous session. We have found $numSessions erroneous sessions.
+This upgrade will remove the offending sessions and re-aggregate your cloud data.
+EOT
+                    );
+                    $console->displayBlankLine();
+                    $reaggregateCloudRealm = $console->prompt(
+                        'Would you like to remove these rows',
+                        'yes',
+                        ['yes', 'no']
+                    );
+
+                    if ($reaggregateCloudRealm) {
+                        $deleteSessionRecordsSql = "DELETE FROM modw_cloud.session_records WHERE start_event_type_id IN (4,6,17,19,45,55)";
+                        $deleteEventReconstructedSql = "DELETE FROM modw_cloud.event_reconstructed where start_event_id IN (4,6,17,19,45,55)";
+
+                        $r = $dbh->execute($deleteSessionRecordsSql);
+                        $e = $dbh->execute($deleteEventReconstructedSql);
+                    }
+                }
+            }
     }
 
     /**
