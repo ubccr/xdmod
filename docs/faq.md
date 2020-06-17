@@ -175,6 +175,6 @@ sites should use the https:// prefix in the web address.
 
 ### Error "SSLCertificateFile: file '/etc/pki/tls/certs/localhost.crt' does not exist or is empty" when trying to start the webserver
 
-The example template apache configuration file must be edited to specify the path to
+The template Apache configuration file must be edited to specify the path to
 valid SSL certificates. See the [webserver configuration section](configuration.html#apache-configuration)
 for details on how to configure the server.
