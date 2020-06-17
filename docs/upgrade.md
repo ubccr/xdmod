@@ -31,7 +31,7 @@ After upgrading the RPM, you will need to manually update your Apache
 config file following the [Apache configuration](configuration.html#apache-configuration) instructions.
 
 If you have edited the previous Apache config file (`/etc/httpd/conf.d/xdmod.conf`) then
-it will be saved in `/etc/httpd/conf.d/xdmod.conf.rpmsave`. If the XDMoD instance was
+it will be saved in `/etc/httpd/conf.d/xdmod.conf.rpmsave`. If the Open XDMoD instance was
 using the original configuration unmodified then the old file will be removed.
 
 ### Download Latest Open XDMoD RPM package
