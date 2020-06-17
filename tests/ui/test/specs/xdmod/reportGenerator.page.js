@@ -555,8 +555,14 @@ class ReportGenerator {
      *
      * @return {Boolean} True if the button is enabled.
      */
-    isEditSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+
+    //isEditSelectedReportsEnabled() {
+      //  return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+    //}
+    //
+        isEditSelectedReportsEnabled() {
+        const visibleButtons = $$(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
+        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
