@@ -173,7 +173,6 @@ to indicate to  web browsers that the Open XDMoD instance should only be accesse
             AllowOverride All
             DirectoryIndex index.php
 
-            # Apache 2.4 access controls.
             <IfModule mod_authz_core.c>
                 Require all granted
             </IfModule>
@@ -190,7 +189,6 @@ to indicate to  web browsers that the Open XDMoD instance should only be accesse
         #<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
         #    Options FollowSymLinks
         #    AllowOverride All
-        #    # Apache 2.4 access controls.
         #    <IfModule mod_authz_core.c>
         #        Require all granted
         #    </IfModule>
