@@ -24,7 +24,7 @@ General Upgrade Notes
 RPM Upgrade Process
 -------------------
 
-The XDMoD 9.0 RPM no longer puts the example Apache configuration
+The Open XDMoD 9.0 RPM no longer puts the example Apache configuration
 into the Apache configuration directory. Instead an example configuration
 is provided in the `/usr/share/xdmod/templates` directory.
 After upgrading the RPM, you will need to manually update your Apache

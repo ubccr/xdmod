@@ -120,29 +120,30 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 Apache Configuration
 --------------------
 
-A template apache configuration file is provided. The path is `/usr/share/xdmod/templates/apache.conf`
+A template Apache configuration file is provided. The path is `/usr/share/xdmod/templates/apache.conf`
 in the RPM install and `share/templates/apache.conf` in the source code install.
 This template file must be copied to the Apache configuration directory and
-edited to update site specific configuration setttings.
+edited to update site specific configuration settings.
 
 For Centos 7 and RHEL 7 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`
-For other Linux distributions consult the distribtion documentation
+For other Linux distributions consult the distribution documentation
 to determine the path to the webserver configuration files.
 
 This template file must be modified to update site specific settings:
-
-The ServerName setting should be updated.
 
 Valid SSL certificates will need to be installed and configured.  The template
 configuration file must be edited to specify the path to the SSL certificate
 file and SSL certificate key file. Refer to the [Apache SSL documentation](https://httpd.apache.org/docs/2.4/ssl/)
 for SSL configuration information.
 
+The `ServerName` setting should be updated to match the server name in the SSL
+certificate.
+
 The name and port of the server must match with the `site_address` and `user_manual`
 configuration settings in `portal_settings.ini`.
 
 The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header
-to indicate to  web browsers that the XDMoD instance should only be accessed using HTTPS.
+to indicate to  web browsers that the Open XDMoD instance should only be accessed using HTTPS.
 
 ```apache
     <VirtualHost *:443>
@@ -150,7 +151,7 @@ to indicate to  web browsers that the XDMoD instance should only be accessed usi
         ServerName localhost
         ServerAdmin postmaster@localhost
 
-        # Production XDMoD instances should use HTTPS
+        # Production Open XDMoD instances should use HTTPS
         SSLEngine on
 
         # Update the SSLCertificateFile and SSLCertificateKeyFile parameters

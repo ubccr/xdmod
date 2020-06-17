@@ -169,8 +169,8 @@ and run `acl-config` again.
 
 ### Why do I see the error message "Bad Request Your browser sent a request that this server could not understand." in the browser instead of the portal?
 
-This message is displayed if an HTTPS site is accessed via the HTTP protocol. The default
-example webserver configuration in XDMoD 9.0 and later is to enable HTTPS. HTTPS
+This message is displayed if an HTTPS site is accessed via the HTTP protocol. The template
+Apache configuration file in Open XDMoD 9.0 and later enables HTTPS. HTTPS
 sites should use the https:// prefix in the web address.
 
 ### Error "SSLCertificateFile: file '/etc/pki/tls/certs/localhost.crt' does not exist or is empty" when trying to start the webserver
