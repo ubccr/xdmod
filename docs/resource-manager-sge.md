@@ -32,11 +32,3 @@ data, the unique key constraint on the `shredded_job_sge` table will
 prevent the insertion of this data, but will instead update the primary
 key. This will prevent duplicate data from being entered into the
 database, even though the entire log file will still be parsed.
-
-Unsupported Shredder Features
------------------------------
-
-The xdmod-shredder `-d`/`--dir` option was designed to work with the
-accounting log naming convention used by PBS/TORQUE. If you are not
-using the same convention (files are named `YYYYMMDD` corresponding to
-the current date), do not use this option.

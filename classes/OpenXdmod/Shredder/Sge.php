@@ -236,6 +236,7 @@ class Sge extends Shredder
         'date_key'        => 'FROM_UNIXTIME(MAX(end_time))',
         'job_id'          => 'job_number',
         'job_array_index' => 'task_number',
+        'job_id_raw'      => 'job_number',
         'job_name'        => 'job_name',
         'resource_name'   => 'clustername',
         'queue_name'      => 'qname',

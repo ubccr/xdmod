@@ -39,7 +39,8 @@ CREATE TABLE `log_table` (
   KEY `unique_id_idx` (`id`),
   KEY `ident_idx` (`ident`),
   KEY `priority_idx` (`priority`),
-  KEY `logscan` (`ident`,`priority`,`id`)
+  KEY `logscan` (`ident`,`priority`,`id`),
+  KEY `get_messages_idx` (`ident`,`logtime`,`priority`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `schema_version_history`;

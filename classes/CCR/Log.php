@@ -44,6 +44,8 @@ class Log
      *   - console         => False for no console logging.
      *   - file            => File name for file logger or false for no
      *                        file logging.
+     *   - mode            => File permissions mode (default 0660).
+     *   - dirmode         => Directory permissions mode (default 0770).
      *   - db              => False for no database logging.
      *   - mail            => False for no email logging.
      *   - emailTo         => Mail logger recipient.
@@ -170,9 +172,13 @@ class Log
             : LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident))
             . '.log';
 
+        $conf['mode'] = isset($conf['mode']) ? $conf['mode'] : 0660;
+        $conf['dirmode'] = isset($conf['dirmode']) ? $conf['dirmode'] : 0770;
+
         $fileConf = array(
             'append'     => true,
-            'mode'       => 0644,
+            'mode'       => $conf['mode'],
+            'dirmode'    => $conf['dirmode'],
             'lineFormat' => $conf['lineFormat'],
             'timeFormat' => $conf['timeFormat'],
         );

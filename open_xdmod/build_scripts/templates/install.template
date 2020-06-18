@@ -307,7 +307,7 @@ function installCrond($src, $dest)
 function installLog($src, $dest)
 {
     _info('Creating log directory');
-    createDir($dest, 0777);
+    createDir($dest, 0770);
 }
 
 function installFromMap($src, $dest, $mapSrc, $mapDest, array $options = array())

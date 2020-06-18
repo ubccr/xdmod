@@ -108,7 +108,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
     <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
@@ -275,7 +274,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
         $rawDataRealms = array_map(
             function ($item) {
-                return $item->name;
+                return $item['name'];
             },
             $rawRealmConfig
         );

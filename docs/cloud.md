@@ -27,6 +27,8 @@ The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure s
   - The instance type of the virtual machines.
 - Project
   - The  project  associated  with  a  running  session  of  a virtual  machine.
+- PI
+  - The principal investigator of a project has a valid allocation, which can be used by him/her or the members of the project to run VM's on.
 - Resource
   - A  resource  is  defined  as  any remote  infrastructure  that  hosts  cloud  instances.
 - User
@@ -96,6 +98,36 @@ If you choose to use the generic file format for ingesting event data each event
 ### Special notes
 - The instance_type attribute is a JSON Object with details of the instance type for the VM this event occurred on.
 - The block_devices attribute is a JSON object that lists information about block storage devices attached to this VM when the event occurred. If multiple storage devices are attached the should each be listed here as a separate JSON object.
+
+## Adding PI information
+PI information for the the cloud realm is ingested from a csv file using the `xdmod-ingest-csv` command. When ingesting the data
+the -t flag should be set to cloud-project-to-pi. An example of the command is below:
+
+    xdmod-ingest-csv -t cloud-project-to-pi -i /path/to/file.csv
+
+After importing this data you must ingest it for the date range of any data you have already shredded.
+
+    xdmod-ingestor --last-modified-start-date 2012-01-01
+
+### Format
+The format of the csv file into set a project to PI association is shown below
+
+    pi,project_name,resource_name
+    pi2,project_name2,resource_name
+
+The first column should be the username of the PI as seen in your resources event log files. The second column is the name of the project
+as seen in your resources event log files. The third column is the name of the resource in XDMoD.
+
+If you want the first and last name of the PI to be shown instead of their username when viewing this data you should add the PI username and
+first and last name to the `names.csv` file and ingested. Details on doing this can be found in the [`User/PI Names`](user-names.md) documentation.
+
+## Hierarchy
+
+Open XDMoD allows you to define a three level hierarchy that can be used to define various entities or groups and associate users with a group in
+the hierarchy. These can be decanal units and their associated departments or any hierarchy that is desired.  If defined, this hierarchy is used
+to generate charts that aggregate cloud metrics into groups based on users assigned to one of the groups.
+
+See the [Hierarchy Guide](hierarchy.html) for more details.
 
 ## Adding and enabling cloud resources
 

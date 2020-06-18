@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/user-pi-resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "user_name": "DISTINCT pi.pi_name",
+            "pi_name": "pi.pi_name",
+            "resource_name": "pi.resource_name"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi_to_project",
+                "alias": "pi"
+            }
+        ]
+    }
+}

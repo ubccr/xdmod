@@ -22,6 +22,10 @@ if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
+
+    # Remove php-mcrypt until new Docker image is built without it.
+    yum -y remove php-mcrypt || true
+
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
@@ -73,6 +77,7 @@ then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
     fi
+    sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
     sudo -u xdmod xdmod-ingestor
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
@@ -94,6 +99,10 @@ fi
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+
+    # Remove php-mcrypt until new Docker image is built without it.
+    yum -y remove php-mcrypt || true
+
     ~/bin/services start
 
     # TODO: Replace diff files with hard fixes
@@ -120,9 +129,14 @@ then
     #
     if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
         expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
+        last_modified_start_date=$(date +'%F %T')
 
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
         sudo -u xdmod xdmod-ingestor
+
+        sudo -u xdmod xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
+        sudo -u xdmod xdmod-ingestor --last-modified-start-date "$last_modified_start_date"
     fi
 fi

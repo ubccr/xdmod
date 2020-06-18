@@ -131,6 +131,11 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                 thumbnailChartLayoutPreview;
         }, this, {single: true});
 
+        // Declare variable before they are used, but cannot be defined here
+        // due to circular references.
+        var btnSaveReport;
+        var btnSaveReportAs;
+
         this.dirtyConfig = function (field, nv, ov) {
             CCR.xdmod.reporting.dirtyState = true;
             self.needsSave = true;
@@ -501,17 +506,17 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                     if (success) {
                         self.parent.reportsOverview.reportStore.reload();
 
+                        btnSaveReport.setDisabled(true);
+                        self.needsSave = false;
+                        CCR.xdmod.reporting.dirtyState = false;
+
+                        self.setReportID(responseData.report_id);
+
+                        // This reload triggers (server-side)
+                        // cache cleanup
+                        flushReloadReportCharts(responseData.report_id);
+
                         if (!generateCopy) {
-                            btnSaveReport.setDisabled(true);
-                            self.needsSave = false;
-                            CCR.xdmod.reporting.dirtyState = false;
-
-                            self.setReportID(responseData.report_id);
-
-                            // This reload triggers (server-side)
-                            // cache cleanup
-                            flushReloadReportCharts(responseData.report_id);
-
                             var action =
                                 responseData.phase.slice(0,1).toUpperCase() +
                                 responseData.phase.slice(1) + 'd';
@@ -533,6 +538,8 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                                 }
                             );
                         } else {
+                            self.setReportName(reportData.report_name);
+
                             XDMoD.TrackEvent(
                                 'Report Generator (Report Editor)',
                                 'Report successfully saved as a copy',
@@ -1040,7 +1047,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             p.expandGeneralInfo = false;
         });
 
-        var btnSaveReport = new Ext.Button({
+        btnSaveReport = new Ext.Button({
             iconCls: 'btn_save',
             text: 'Save',
             disabled: true,
@@ -1054,7 +1061,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             }
         });
 
-        var btnSaveReportAs = new Ext.Button({
+        btnSaveReportAs = new Ext.Button({
             iconCls: 'btn_save',
             text: 'Save As',
             tooltip: 'Create and save a copy of this report.',

@@ -296,11 +296,15 @@ Usage: xdmod-shredder [-v] -r resource -f format [-i file|-d dir]
         storage data.
 
     -d, --dir *directory*
-        Specify a directory containing log files to shred.  Log files in
-        the directory must be named in YYYYMMDD format where the file
-        name corresponds to the end date of the jobs it contains.  Only
-        files with dates that are more recent than the end date of the
-        most recent job will be shredded.
+        Specify a directory containing log files to shred.
+
+        For PBS format log files, files in the directory must be named in
+        YYYYMMDD format where the file name corresponds to the end date of the
+        jobs it contains.  Only files with dates that are more recent than the
+        end date of the most recent job will be shredded.
+
+        For all other formats, all files in the directory will be shredded.
+        Cloud and storage files must end in ".json".
 
     --host-filter *host-regex*
         Specify the host filter regex for jobs.  Any job that does not

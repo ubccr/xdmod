@@ -6,7 +6,7 @@ use OpenXdmod\Setup\Console;
 use FilterListBuilder;
 use CCR\DB;
 use ETL\Utilities;
-use Xdmod\SlurmGresParser;
+use Xdmod\SlurmResourceParser;
 
 /**
 * Migrate databases from version 8.5.1 to 9.0.0.
@@ -86,7 +86,7 @@ EOT
             $rows = $dbh->query("SELECT shredded_job_slurm_id AS id, req_gres FROM shredded_job_slurm WHERE req_gres != ''");
             $this->logger->notice('Updating slurm job records');
             $sth = $dbh->prepare('UPDATE shredded_job_slurm SET ngpus = :gpuCount WHERE shredded_job_slurm_id = :id');
-            $gresParser = new SlurmGresParser();
+            $gresParser = new SlurmResourceParser();
             foreach ($rows as $row) {
                 $gres = $gresParser->parseReqGres($row['req_gres']);
                 $gpuCount = $gresParser->getGpuCountFromGres($gres);

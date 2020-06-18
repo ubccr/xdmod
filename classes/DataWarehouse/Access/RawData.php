@@ -2,7 +2,7 @@
 
 namespace DataWarehouse\Access;
 
-use Configuration\XdmodConfiguration;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use XDUser;
 use Models\Services\Realms;
 
@@ -11,38 +11,38 @@ use Models\Services\Realms;
  */
 class RawData
 {
+    /**
+     * Get all the realms for a user.
+     *
+     * @param \XDUser $user
+     * @return array[] Raw data realm configurations enabled for user.
+     */
     public static function getRawDataRealms(XDUser $user)
     {
-        $realms = array();
-
-        $raw = XdmodConfiguration::factory('rawstatistics.json', CONFIG_DIR)->toStdClass();
-
-        if (!property_exists($raw, 'realms')) {
-            return $realms;
-        }
-
+        $config = RawStatisticsConfiguration::factory();
         $allowedRealms = Realms::getRealmsForUser($user);
 
-        foreach($raw->realms as $realmConfig)
-        {
-            if (property_exists($realmConfig, 'raw_data') && $realmConfig->raw_data === false) {
-                continue;
+        return array_filter(
+            $config->getRawDataRealms(),
+            function ($realmConfig) use ($allowedRealms) {
+                return in_array($realmConfig['name'], $allowedRealms);
             }
-
-            if (in_array($realmConfig->name, $allowedRealms)) {
-                $realms[] = $realmConfig;
-            }
-        }
-
-        return $realms;
+        );
     }
 
+    /**
+     * Check if a realm exists for a user.
+     *
+     * @param \XDUser $user
+     * @param string $realm
+     * @return boolean
+     */
     public static function realmExists(XDUser $user, $realm)
     {
         $realmlist = self::getRawDataRealms($user);
 
         foreach ($realmlist as $realmConfig) {
-            if ($realm == $realmConfig->name) {
+            if ($realm == $realmConfig['name']) {
                 return true;
             }
         }
