@@ -541,8 +541,8 @@ class ReportGenerator {
      */
     isNewBasedOnEnabled() {
         const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
-        setTimeout(() => { expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1); }, 5000);
-       // expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
+        //setTimeout(() => { expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1); }, 5000);
+       expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;  
          
         
