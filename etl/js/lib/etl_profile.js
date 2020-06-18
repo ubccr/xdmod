@@ -827,7 +827,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 
                 var name = extractandsubst(col, 'name');
                 if (!name) {
-                    name = Namealize(key, true);
+                    name = Namealize(key);
                 }
 
                 // Default to using the fact table, but override for foreign
