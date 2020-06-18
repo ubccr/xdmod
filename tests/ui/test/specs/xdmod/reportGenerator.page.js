@@ -540,12 +540,11 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isNewBasedOnEnabled() {
-      //setTimeout(function(){
         const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
-        setTimeout(() => { expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1); }, 2000);
+        setTimeout(() => { expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1); }, 5000);
        // expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;  
-         //},5000);  
+         
         
 
 }
@@ -560,9 +559,9 @@ class ReportGenerator {
       //  return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
     //}
     //
-        isEditSelectedReportsEnabled() {
+    isEditSelectedReportsEnabled() {
         const visibleButtons = $$(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
-        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
+        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null; 
     }
 
     /**
