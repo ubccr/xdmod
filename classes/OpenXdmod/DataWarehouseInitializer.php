@@ -319,7 +319,7 @@ class DataWarehouseInitializer
     public function aggregateCloudData($lastModifiedStartDate)
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            $this->logger->notice('Cloud realm not enabled, not aggregating');
             return;
         }
 
