@@ -840,7 +840,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     var tableName = join.table;
                     var foreignKey = join.foreignKey ? join.foreignKey : key;
                     alias = name;
-                    columnName = join.column ? join.column : columnName;
+                    columnName = join.column ? join.column : 'name';
 
                     tableAlias = rawStatsInteg.getTableAlias(tableSchema, tableName, 'jf', foreignKey);
 
