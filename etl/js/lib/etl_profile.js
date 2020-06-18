@@ -834,7 +834,11 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                 // key dtype.
                 var tableAlias = 'jf';
 
-                if (dtype === 'foreignkey' && col.join) {
+                if (dtype === 'foreignkey') {
+                    if (!col.join) {
+                        continue;
+                    }
+
                     var join = col.join;
                     var tableSchema = join.schema;
                     var tableName = join.table;
