@@ -83,13 +83,24 @@ EOT
         $dbh->beginTransaction();
         try {
             $this->logger->notice('Querying slurm job records');
-            $rows = $dbh->query("SELECT shredded_job_slurm_id AS id, req_gres FROM shredded_job_slurm WHERE req_gres != ''");
+            $rows = $dbh->query(<<<'EOSQL'
+SELECT shredded_job_slurm_id AS id, req_gres, req_tres
+FROM shredded_job_slurm
+WHERE req_gres != '' OR req_tres != ''
+EOSQL
+            );
             $this->logger->notice('Updating slurm job records');
             $sth = $dbh->prepare('UPDATE shredded_job_slurm SET ngpus = :gpuCount WHERE shredded_job_slurm_id = :id');
-            $gresParser = new SlurmResourceParser();
+            $resourceParser = new SlurmResourceParser();
             foreach ($rows as $row) {
-                $gres = $gresParser->parseReqGres($row['req_gres']);
-                $gpuCount = $gresParser->getGpuCountFromGres($gres);
+                $tres = $resourceParser->parseTres($row['req_tres']);
+                $gpuCount = $resourceParser->getGpuCountFromTres($tres);
+
+                if ($gpuCount === 0) {
+                    $gres = $resourceParser->parseGres($row['req_gres']);
+                    $gpuCount = $resourceParser->getGpuCountFromGres($gres);
+                }
+
                 $sth->execute(['gpuCount' => $gpuCount, 'id' => $row['id']]);
             }
             $dbh->commit();
