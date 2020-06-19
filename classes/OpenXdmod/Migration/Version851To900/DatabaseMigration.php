@@ -70,58 +70,50 @@ EOT
             $builder = new FilterListBuilder();
             $builder->setLogger($this->logger);
             $builder->buildRealmLists('Jobs');
-          }
-            if (
-              \CCR\DB\MySQLHelper::DatabaseExists(
-                  $dbh->_db_host,
-                  $dbh->_db_port,
-                  $dbh->_db_username,
-                  $dbh->_db_password,
-                  'modw_cloud'
-              )
-            ) {
-                $sql = "SELECT
-                          r.name,
-                        	sr.start_time,
-                          sr.end_time,
-                          i.provider_identifier,
-                          COALESCE(sa.username, 'Unknown') as username
-                        FROM
-                        	modw_cloud.session_records as sr
-                        LEFT JOIN
-                        	modw_cloud.instance as i on sr.instance_id = i.instance_id
-                        LEFT JOIN
-                        	modw.systemaccount as sa on sr.person_id = sa.person_id
-                        LEFT JOIN
-                        	modw.resourcefact as r on sr.resource_id = r.id
-                        WHERE
-                          sr.start_event_type_id IN (4,6,17,19,45,55)";
+        }
+        if (\CCR\DB\MySQLHelper::DatabaseExists($dbh->_db_host, $dbh->_db_port, $dbh->_db_username, $dbh->_db_password, 'modw_cloud')) {
+            $sql = "SELECT
+                      r.name,
+                    	sr.start_time,
+                      sr.end_time,
+                      i.provider_identifier,
+                      COALESCE(sa.username, 'Unknown') as username
+                    FROM
+                    	modw_cloud.session_records as sr
+                    LEFT JOIN
+                    	modw_cloud.instance as i on sr.instance_id = i.instance_id
+                    LEFT JOIN
+                    	modw.systemaccount as sa on sr.person_id = sa.person_id
+                    LEFT JOIN
+                    	modw.resourcefact as r on sr.resource_id = r.id
+                    WHERE
+                      sr.start_event_type_id IN (4,6,17,19,45,55)";
 
-                $erroneousSessions = $dbh->query($sql);
-                $numSessions = count($erroneousSessions);
+            $erroneousSessions = $dbh->query($sql);
+            $numSessions = count($erroneousSessions);
 
-                if (!empty($erroneousSessions)) {
-                    $sessionTable = $this->makeAsciiSessionTable($erroneousSessions);
-                    $console->displayMessage(<<<"EOT"
+            if (!empty($erroneousSessions)) {
+                $sessionTable = $this->makeAsciiSessionTable($erroneousSessions);
+                $console->displayMessage(<<<"EOT"
 This version of Open XDMoD fixes a bug in the cloud realm that created erroneous session. We have found $numSessions erroneous sessions.
 
 $sessionTable
 EOT
                     );
-                    $console->displayBlankLine();
-                    $deleteErroneousSessions = $console->prompt(
-                        'Would you like to remove these sessions and re-aggregate your cloud data',
-                        'yes',
-                        ['yes', 'no']
-                    );
+                $console->displayBlankLine();
+                $deleteErroneousSessions = $console->prompt(
+                    'Would you like to remove these sessions and re-aggregate your cloud data',
+                    'yes',
+                    ['yes', 'no']
+                );
 
-                    // We only need to delete the rows here. Re-aggregations is done in configuration/etl/etl.d/xdmod-migration-8_5_1-9_0_0.json
-                    if ($deleteErroneousSessions) {
-                        $dbh->execute("DELETE FROM modw_cloud.session_records WHERE start_event_type_id IN (4,6,17,19,45,55)");
-                        $dbh->execute("DELETE FROM modw_cloud.event_reconstructed where start_event_id IN (4,6,17,19,45,55)");
-                    }
+                // We only need to delete the rows here. Re-aggregations is done in configuration/etl/etl.d/xdmod-migration-8_5_1-9_0_0.json
+                if ($deleteErroneousSessions) {
+                    $dbh->execute("DELETE FROM modw_cloud.session_records WHERE start_event_type_id IN (4,6,17,19,45,55)");
+                    $dbh->execute("DELETE FROM modw_cloud.event_reconstructed where start_event_id IN (4,6,17,19,45,55)");
                 }
             }
+        }
     }
 
     /**
