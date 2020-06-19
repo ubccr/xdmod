@@ -38,6 +38,10 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
             $parameters
         );
 
+        // The same fact table row may correspond to multiple rows in the
+        // aggregate table (e.g. a job that runs over two days).
+        $this->setDistinct(true);
+
         // Override values set in Query::__construct() to use the fact table rather than the
         // aggregation table prefix from the Realm configuration.
 
@@ -113,64 +117,6 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
                 'end_time_ts'
             )
         );
-    }
-
-    /**
-     * The query differs from the base class query because the same fact table row
-     * may correspond to multiple rows in the aggregate table (e.g. a job that runs over
-     * two days). Therefore the DISTINCT keyword is added to dedupliate.
-     */
-    public function getQueryString($limit = null, $offset = null, $extraHavingClause = null)
-    {
-        $wheres = $this->getWhereConditions();
-        $groups = $this->getGroups();
-
-        $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
-
-        $select_order_by = $this->getSelectOrderBy();
-
-        $data_query = "SELECT DISTINCT ".implode(", ", $select_fields).
-            " FROM ".implode(", ", $select_tables).
-            " WHERE ".implode(" AND ", $wheres);
-
-        if (count($groups) > 0) {
-            $data_query .= " GROUP BY \n".implode(",\n", $groups);
-        }
-        if ($extraHavingClause != null) {
-            $data_query .= " HAVING " . $extraHavingClause . "\n";
-        }
-        if (count($select_order_by) > 0) {
-            $data_query .= " ORDER BY \n".implode(",\n", $select_order_by);
-        }
-
-        if ($limit !== null && $offset !== null) {
-            $data_query .= " LIMIT $limit OFFSET $offset";
-        }
-        return $data_query;
-    }
-
-    /**
-     * The query differs from the base class query because the same fact table row
-     * may correspond to multiple rows in the aggregate table (e.g. a job that runs over
-     * two days). Therefore the DISTINCT keyword is added to dedupliate.
-     */
-    public function getCountQueryString()
-    {
-        $wheres = $this->getWhereConditions();
-        $groups = $this->getGroups();
-
-        $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
-
-        $data_query = "SELECT COUNT(*) AS row_count FROM (SELECT DISTINCT ".implode(", ", $select_fields).
-            " FROM ".implode(", ", $select_tables).
-            " WHERE ".implode(" AND ", $wheres);
-
-        if (count($groups) > 0) {
-            $data_query .= " GROUP BY \n".implode(",\n", $groups);
-        }
-        return $data_query . ') as a';
     }
 
     public function getQueryType(){
