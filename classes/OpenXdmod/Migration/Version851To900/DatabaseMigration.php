@@ -74,18 +74,18 @@ EOT
         if (\CCR\DB\MySQLHelper::DatabaseExists($dbh->_db_host, $dbh->_db_port, $dbh->_db_username, $dbh->_db_password, 'modw_cloud')) {
             $sql = "SELECT
                       r.name,
-                    	sr.start_time,
+                      sr.start_time,
                       sr.end_time,
                       i.provider_identifier,
                       COALESCE(sa.username, 'Unknown') as username
                     FROM
-                    	modw_cloud.session_records as sr
+                      modw_cloud.session_records as sr
                     LEFT JOIN
-                    	modw_cloud.instance as i on sr.instance_id = i.instance_id
+                      modw_cloud.instance as i on sr.instance_id = i.instance_id
                     LEFT JOIN
-                    	modw.systemaccount as sa on sr.person_id = sa.person_id
+                      modw.systemaccount as sa on sr.person_id = sa.person_id
                     LEFT JOIN
-                    	modw.resourcefact as r on sr.resource_id = r.id
+                      modw.resourcefact as r on sr.resource_id = r.id
                     WHERE
                       sr.start_event_type_id IN (4,6,17,19,45,55)";
 
