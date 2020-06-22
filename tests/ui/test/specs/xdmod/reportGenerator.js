@@ -346,20 +346,20 @@ describe('Report Generator', function () {
         describe('Principal investigator default report generator state', function () {
             it('Report Generator is enabled', function () {
                 expect(reportGeneratorPage.isEnabled()).to.be.true;
-            });
+            },5000);
             it('Select Report Generator tab', function () {
                 reportGeneratorPage.selectTab();
-            });
+            },5000);
             it('No reports listed', function () {
                 expect(reportGeneratorPage.getMyReportsRows().length, 'No rows in the list of reports').to.be.equal(0);
-            });
+            },5000);
             it('No available charts listed', function () {
                 expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
-            });
+            },5000);
             it('No report templates available', function () {               
                 expect(reportGeneratorPage.isNewBasedOnEnabled()).to.be.false;
             
-            });
+            },5000);
         });
 
         loginPage.logout('jobs',5000);
