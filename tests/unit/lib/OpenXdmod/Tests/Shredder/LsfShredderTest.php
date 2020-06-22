@@ -40,7 +40,7 @@ class LsfShredderTest extends JobShredderBaseTestCase
             ->method('getResourceConfig')
             ->willReturn(array());
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger($this->logger);
 
         $shredder->setResource('testresource');
 
