@@ -102,7 +102,7 @@ EOT
                     );
                 $console->displayBlankLine();
                 $deleteErroneousSessions = $console->prompt(
-                    'Would you like to remove these sessions and re-aggregate your cloud data',
+                    'Would you like to remove these sessions',
                     'yes',
                     ['yes', 'no']
                 );
