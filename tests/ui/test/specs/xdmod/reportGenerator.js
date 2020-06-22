@@ -396,23 +396,23 @@ describe('Report Generator', function () {
         describe('Center director default report generator state', function () {
             it('Report Generator is enabled', function () {
                 expect(reportGeneratorPage.isEnabled()).to.be.true;
-            });
+            },5000);
             it('Select Report Generator tab', function () {
                 reportGeneratorPage.selectTab();
-            });
+            },5000);
             it('No reports listed', function () {
                 expect(reportGeneratorPage.getMyReportsRows().length, 'No rows in the list of reports').to.be.equal(0);
-            });
+            },5000);
             it('No available charts listed', function () {
                 expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
-            });
+            },5000);
             it('Buttons are disabled', function () {
                 expect(reportGeneratorPage.isEditSelectedReportsEnabled(), '"Edit" button is disabled').to.be.false;
                 expect(reportGeneratorPage.isPreviewSelectedReportsEnabled(), '"Preview" button is disabled').to.be.false;
                 expect(reportGeneratorPage.isSendSelectedReportsEnabled(), '"Send" button is disabled').to.be.false;
                 expect(reportGeneratorPage.isDownloadSelectedReportsEnabled(), '"Download" button is disabled').to.be.false;
                 expect(reportGeneratorPage.isDeleteSelectedReportsEnabled(), '"Delete" button is disabled').to.be.false;
-            });
+            },5000);
         });
         describe('Make usage tab charts available in the Report Generator', function () {
             usageTabCharts.forEach((testChart, index) => {
