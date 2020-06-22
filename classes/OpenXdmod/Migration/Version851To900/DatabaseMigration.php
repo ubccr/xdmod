@@ -83,11 +83,11 @@ EOT
         $dbh->beginTransaction();
         try {
             $this->logger->notice('Querying slurm job records');
-            $rows = $dbh->query(<<<'EOSQL'
+            $rows = $dbh->query(<<<'SQL'
 SELECT shredded_job_slurm_id AS id, req_gres, req_tres
 FROM shredded_job_slurm
 WHERE req_gres != '' OR req_tres != ''
-EOSQL
+SQL
             );
             $this->logger->notice('Updating slurm job records');
             $sth = $dbh->prepare('UPDATE shredded_job_slurm SET ngpus = :gpuCount WHERE shredded_job_slurm_id = :id');
