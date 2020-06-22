@@ -356,8 +356,7 @@ describe('Report Generator', function () {
             it('No available charts listed', function () {
                 expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
             });
-            it('No report templates available', function () {
-               
+            it('No report templates available', function () {               
                 expect(reportGeneratorPage.isNewBasedOnEnabled()).to.be.false;
             
             });
@@ -372,19 +371,19 @@ describe('Report Generator', function () {
     describe('Center staff default report generator state', function () {
         it('Report Generator is enabled', function () {
             expect(reportGeneratorPage.isEnabled()).to.be.true;
-        });
+        },500);
         it('Select Report Generator tab', function () {
             reportGeneratorPage.selectTab();
-        });
+        },500);
         it('Reports listed', function () {
             expect(reportGeneratorPage.getMyReportsRows().length, 'Rows in the list of reports').to.be.equal(0);
-        });
+        },500);
         it('No available charts listed', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
-        });
+        },500);
         it('Report templates available', function () {
              expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
-        });
+        },500);
     });
 
     loginPage.logout('centerstaff',5000);
