@@ -12,9 +12,9 @@ class SlurmResourceParser
 {
 
     /**
-     * Parse requested generic resource (GRES) scheduling field from sacct.
+     * Parse generic resource (GRES) scheduling fields from sacct.
      *
-     * Expected ReqGRES format is a list of resources separated by commas with
+     * Expected GRES format is a list of resources separated by commas with
      * the each resource using the form name[:type:count]
      *
      * e.g. gpu:p100:2,bandwidth:1G
@@ -32,7 +32,7 @@ class SlurmResourceParser
      * @return array[] Parsed data. An array of arrays for each resource split
      *     on ":".
      */
-    public function parseReqGres($gres) {
+    public function parseGres($gres) {
         if ($gres === '') {
             return [];
         }
@@ -49,11 +49,11 @@ class SlurmResourceParser
     }
 
     /**
-     * Determine the GPU count from parsed ReqGRES data.
+     * Determine the GPU count from parsed GRES data.
      *
-     * @see \Xdmod\SlurmResourceParser::parseReqGres
+     * @see \Xdmod\SlurmResourceParser::parseGres
      *
-     * @param array $gres Parsed ReqGRES data.
+     * @param array $gres Parsed GRES data.
      * @return int The GPU count.
      */
     public function getGpuCountFromGres(array $gres)
@@ -68,20 +68,20 @@ class SlurmResourceParser
     }
 
     /**
-     * Parse allocated trackable resources (AllocTRES) field from sacct.
+     * Parse requested trackable resources (ReqTRES or AllocTres) field from sacct.
      *
-     * Expected AllocGRES format is a list of resources separated by commas with
+     * Expected TRES format is a list of resources separated by commas with
      * the each resource using the form name=count
      *
      * e.g. billing=1,cpu=1,mem=100M,node=1
      *
      * @see https://slurm.schedmd.com/tres.html
      *
-     * @param string $tres AllocTRES field from sacct.
+     * @param string $tres ReqTRES or AllocTRES field from sacct.
      * @return array[] Parsed data. An array of arrays for each resource split
      *     on "=".
      */
-    public function parseAllocTres($tres)
+    public function parseTres($tres)
     {
         return array_map(
             function ($resource) {
@@ -94,7 +94,7 @@ class SlurmResourceParser
     /**
      * Determine the GPU count from parsed TRES data.
      *
-     * @see \Xdmod\SlurmResourceParser::parseAllocTres
+     * @see \Xdmod\SlurmResourceParser::parseTres
      *
      * @param array $tres Parsed TRES data.
      * @return int The GPU count.
