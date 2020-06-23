@@ -10,6 +10,7 @@ set resources [list]
 
 # Cloud Resources
 lappend resources [list openstack OpenStack cloud 123 234]
+lappend resources [list nutsetters NutSetters cloud 123 234]
 
 #-------------------------------------------------------------------------------
 

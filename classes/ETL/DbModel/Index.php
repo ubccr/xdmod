@@ -54,6 +54,9 @@ class Index extends NamedEntity implements iEntity
         // Local verifications
 
         if ( ! isset($config->name) ) {
+            if (!isset($config->columns) || !is_array($config->columns)) {
+                $this->logAndThrowException('"columns" must be an array');
+            }
             $config->name = $this->generateIndexName($config->columns);
         }
 

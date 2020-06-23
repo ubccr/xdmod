@@ -2,7 +2,7 @@
   "table_definition": {
     "name": "report_template_acls",
     "engine": "InnoDB",
-    "comments": "Tracks which acls have access to which report templates.",
+    "comment": "Tracks which acls have access to which report templates.",
     "columns": [
       {
         "name": "report_template_acl_id",
@@ -52,7 +52,8 @@
         "referenced_table": "acls",
         "referenced_columns": [
           "acl_id"
-        ]
+        ],
+        "on_delete": "CASCADE"
       }
     ]
   }

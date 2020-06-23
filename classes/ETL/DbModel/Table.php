@@ -170,6 +170,11 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
             }
         }  // foreach ( $this->indexes as $index )
 
+
+        if ( count($this->foreign_key_constraints) > 0 && $this->engine !== 'innodb' ) {
+            $this->logAndThrowException('Foreign key constraints are only supported by InnoDB');
+        }
+
         // Verify foreign key constraint columns match table columns and are
         // contained in the beginning of an index.
 
@@ -359,6 +364,7 @@ ORDER BY index_name ASC";
 SELECT
     tc.constraint_name AS name,
     GROUP_CONCAT(kcu.column_name ORDER BY position_in_unique_constraint ASC) AS columns,
+    kcu.referenced_table_schema AS referenced_schema,
     kcu.referenced_table_name AS referenced_table,
     GROUP_CONCAT(kcu.referenced_column_name ORDER BY position_in_unique_constraint ASC) AS referenced_columns,
     rc.update_rule AS on_update,
@@ -682,11 +688,6 @@ ORDER BY trigger_name ASC";
 
         $triggerCreateList = array();
         foreach ( $this->triggers as $name => $trigger ) {
-            // The table schema may have been set after the table was initially created. If the trigger
-            // doesn't explicitly define a schema, default to the table's schema.
-            if ( null === $trigger->schema ) {
-                $trigger->schema = $this->schema;
-            }
             $triggerCreateList[$name] = $trigger->getSql($includeSchema);
         }
 
@@ -735,6 +736,7 @@ ORDER BY trigger_name ASC";
         $alterList = array();
         $changeList = array();
         $triggerList = array();
+        $foreignKeyList = array();
 
         // --------------------------------------------------------------------------------
         // Process columns
@@ -954,15 +956,12 @@ ORDER BY trigger_name ASC";
             if ( 0 == $destForeignKeyConstraint->compare($this->getForeignKeyConstraint($name)) ) {
                 continue;
             }
-            $alterList[] = 'DROP FOREIGN KEY ' . $destForeignKeyConstraint->getName(true);
-            $alterList[] = 'ADD ' . $destForeignKeyConstraint->getSql($includeSchema);
+            $foreignKeyList[] = 'DROP FOREIGN KEY ' . $destForeignKeyConstraint->getName(true);
+            $foreignKeyList[] = 'ADD ' . $destForeignKeyConstraint->getSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
         // Process triggers
-
-        // The table schema may have been set after the table was initially created. If the trigger
-        // doesn't explicitly define a schema, default to the table's schema.
 
         $currentTriggerNames = $this->getTriggerNames();
         $destTriggerNames = $destination->getTriggerNames();
@@ -974,8 +973,9 @@ ORDER BY trigger_name ASC";
         // Drop triggers first, then alter, then create
 
         foreach ( $dropTriggerNames as $name ) {
+            $schema = $this->getTrigger($name)->schema;
             $triggerList[] = "DROP TRIGGER " .
-                ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
+                ( null !== $schema && $includeSchema ? $this->quote($schema) . "." : "" ) .
                 $this->quote($name) . ";";
         }
 
@@ -985,8 +985,9 @@ ORDER BY trigger_name ASC";
                 continue;
             }
 
+            $schema = $this->getTrigger($name)->schema;
             $triggerList[] = "DROP TRIGGER " .
-                ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
+                ( null !== $schema && $includeSchema ? $this->quote($schema) . "." : "" ) .
                 $this->quote($name) . ";";
             $triggerList[] = $destination->getTrigger($name)->getSql($includeSchema);
         }
@@ -998,7 +999,7 @@ ORDER BY trigger_name ASC";
         // --------------------------------------------------------------------------------
         // Put it all together
 
-        if ( 0 == count($alterList) && 0 == count($changeList) && 0 == count($triggerList) ) {
+        if ( 0 == count($alterList) && 0 == count($changeList) && 0 == count($triggerList) && 0 == count($foreignKeyList) ) {
             return false;
         }
 
@@ -1011,6 +1012,10 @@ ORDER BY trigger_name ASC";
 
         if ( 0 != count($changeList) ) {
             $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, implode(",\n", $changeList));
+        }
+
+        foreach ($foreignKeyList as $fkey) {
+            $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, $fkey);
         }
 
         if ( 0 != count($triggerList) ) {
@@ -1055,7 +1060,7 @@ ORDER BY trigger_name ASC";
     public function __set($property, $value)
     {
         // If we are not setting a property that is a special case, just call the main setter
-        $specialCaseProperties = array('columns', 'indexes', 'foreign_key_constraints', 'triggers');
+        $specialCaseProperties = array('columns', 'indexes', 'foreign_key_constraints', 'triggers', 'schema');
 
         if ( ! in_array($property, $specialCaseProperties) ) {
             parent::__set($property, $value);
@@ -1100,10 +1105,18 @@ ORDER BY trigger_name ASC";
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
-                        $constraint = ( is_object($item) && $item instanceof ForeignKeyConstraint
-                                   ? $item
-                                   : new ForeignKeyConstraint($item, $this->systemQuoteChar, $this->logger) );
-                        $this->properties[$property][$constraint->name] = $constraint;
+                        if ( is_object($item) && $item instanceof ForeignKeyConstraint ) {
+                            $this->properties[$property][$item->name] = $item;
+                        } else {
+                            if ( $item instanceof stdClass ) {
+                                // Default to the schema of the parent table.
+                                if ( ! isset($item->schema) ) {
+                                    $item->schema = $this->schema;
+                                }
+                            }
+                            $constraint = new ForeignKeyConstraint($item, $this->systemQuoteChar, $this->logger);
+                            $this->properties[$property][$constraint->name] = $constraint;
+                        }
                     }
                 }
                 break;
@@ -1130,6 +1143,29 @@ ORDER BY trigger_name ASC";
                         }
                     }
                 }
+                break;
+
+            case 'schema':
+                // The schema is not required, but may be defined in both the
+                // table definition and the destination endpoint.  This is fine
+                // as long as they both specify the same schema.
+                if (isset($this->properties[$property])
+                    && $this->properties[$property] != $value) {
+                    $this->logAndThrowException('Table schema may not be changed');
+                }
+
+                // Set schema for all SchemaEntity properties if not set.
+                foreach ($this->foreign_key_constraints as $constraint) {
+                    if ($constraint->schema === null) {
+                        $constraint->schema = $value;
+                    }
+                }
+                foreach ($this->triggers as $trigger) {
+                    if ($trigger->schema === null) {
+                        $trigger->schema = $value;
+                    }
+                }
+                $this->properties[$property] = $value;
                 break;
 
             default:

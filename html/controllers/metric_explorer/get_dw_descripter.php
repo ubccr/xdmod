@@ -1,6 +1,7 @@
 <?php
 
 use Models\Services\Acls;
+use Models\Services\Realms;
 
 @require_once('common.php');
 
@@ -41,6 +42,7 @@ foreach ($roles as $activeRole) {
         $realms = array();
         $groupByObjects = array();
 
+        $realmObjects = Realms::getRealmObjectsForUser($user);
         $query_descripter_realms = Acls::getQueryDescripters($user);
 
         foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups)
@@ -51,9 +53,11 @@ foreach ($roles as $activeRole) {
             }
             $seenstats = array();
 
+            $realmObject = $realmObjects[$query_descripter_realm];
+            $realmDisplay = $realmObject->getDisplay();
             $realms[$query_descripter_realm] = array(
                 'text' => $query_descripter_realm,
-                'category' => $category,
+                'category' => $realmDisplay,
                 'dimensions' => array(),
                 'metrics' => array(),
             );
@@ -65,14 +69,14 @@ foreach ($roles as $activeRole) {
 
                     $groupByName = $query_descripter->getGroupByName();
                     $group_by_object = $query_descripter->getGroupByInstance();
-                    $permittedStatistics = $group_by_object->getPermittedStatistics();
+                    $permittedStatistics = $group_by_object->getRealm()->getStatisticIds();
 
                     $groupByObjects[$query_descripter_realm . '_' . $groupByName] = array(
                         'object' => $group_by_object,
                         'permittedStats' => $permittedStatistics);
                     $realms[$query_descripter_realm]['dimensions'][$groupByName] = array(
-                        'text' => $groupByName == 'none' ? 'None' : $group_by_object->getLabel(),
-                        'info' => $group_by_object->getInfo()
+                        'text' => $groupByName == 'none' ? 'None' : $group_by_object->getName(),
+                        'info' => $group_by_object->getHtmlDescription()
                     );
 
                     $stats = array_diff($permittedStatistics, $seenstats);
@@ -82,14 +86,20 @@ foreach ($roles as $activeRole) {
 
                     $statsObjects = $query_descripter->getStatisticsClasses($stats);
                     foreach ($statsObjects as $realm_group_by_statistic => $statistic_object) {
-                        if ($statistic_object->isVisible()) {
-                            $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
-                                array(
-                                    'text' => $statistic_object->getLabel(),
-                                    'info' => $statistic_object->getInfo(),
-                                    'std_err' => in_array('sem_' . $realm_group_by_statistic, $permittedStatistics)
-                                );
+
+                        if ( ! $statistic_object->showInMetricCatalog() ) {
+                            continue;
                         }
+
+                        $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                            $realm_group_by_statistic
+                        );
+                        $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
+                            array(
+                                'text' => $statistic_object->getName(),
+                                'info' => $statistic_object->getHtmlDescription(),
+                                'std_err' => in_array($semStatId, $permittedStatistics)
+                            );
                         $seenstats[] = $realm_group_by_statistic;
                     }
                 }

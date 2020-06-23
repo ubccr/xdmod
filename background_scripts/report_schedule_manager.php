@@ -207,12 +207,12 @@ function getActiveFrequencies($verbose = false)
         $day_of_month == 3
         && in_array($month_index, $semi_annual_start_months)
     ) {
-        $activeFrequencies[] = 'Semi-annual';
+        $activeFrequencies[] = 'Semi-annually';
     }
 
     // Annually (January 3rd)
     if ($month_index == 1 && $day_of_month == 3) {
-        $activeFrequencies[] = 'Annual';
+        $activeFrequencies[] = 'Annually';
     }
 
     return $activeFrequencies;

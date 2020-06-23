@@ -19,6 +19,9 @@ Highcharts.setOptions ({
     lang: {
         // commas for thousands separators
         thousandsSep: '\u002c' // the humble comma
+    },
+    global: {
+        timezone: CCR.xdmod.timezone
     }
 });
 

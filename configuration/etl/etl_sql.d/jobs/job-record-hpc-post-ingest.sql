@@ -44,6 +44,7 @@ UPDATE
     ${DESTINATION_SCHEMA}.job_tasks task
 SET
     cpu_time = wallduration * processor_count,
+    gpu_time = wallduration * gpu_count,
     submit_time_ts =
     CASE
       WHEN (submit_time_ts > start_time_ts) OR submit_time_ts <= 0

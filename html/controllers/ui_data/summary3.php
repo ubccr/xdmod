@@ -51,14 +51,21 @@ try {
     if (in_array('Jobs', $enabledRealms)) {
         $query_descripter = new \User\Elements\QueryDescripter('Jobs', 'none');
 
-        $query = new \DataWarehouse\Query\Jobs\Aggregate($aggregation_unit, $start_date, $end_date, 'none', 'all', $query_descripter->pullQueryParameters($raw_parameters));
-
         // This try/catch block is intended to replace the "Base table or
         // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
 
         try {
+            $query = new \DataWarehouse\Query\AggregateQuery(
+                'Jobs',
+                $aggregation_unit,
+                $start_date,
+                $end_date,
+                'none',
+                'all',
+                $query_descripter->pullQueryParameters($raw_parameters)
+            );
             $result = $query->execute();
         } catch (PDOException $e) {
             if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {

@@ -193,12 +193,11 @@ class ExecuteSql extends aAction implements iAction
                 }
             }  // if ( is_object($sqlFile) )
 
-            $this->logger->info("Processing SQL file '$filename' with delimiter '$delimiter'");
 
             $sqlFileContents = file_get_contents($filename);
             $sqlFileContents = $this->variableStore->substitute(
                 $sqlFileContents,
-                "Undefined macros found in SQL"
+                "Undefined macros found in SQL file " . $filename
             );
 
             // Split the file on the delimiter and execute each statement. PDO without mysqlnd drivers
@@ -211,7 +210,7 @@ class ExecuteSql extends aAction implements iAction
             $sqlStatementList = array_filter(array_map('trim', $sqlStatementList));
             $numSqlStatements = count($sqlStatementList);
             $numStatementsProcessed = 0;
-
+            $this->logger->notice("Processing SQL file '$filename' using delimiter '$delimiter' containing $numSqlStatements statements");
             foreach ($sqlStatementList as $sql) {
 
                 // Remove comments from the SQL before executing for clarity.
@@ -232,9 +231,15 @@ class ExecuteSql extends aAction implements iAction
 
                 $sqlStartTime = microtime(true);
                 $numRowsAffected = 0;
+                $statementPosition = ($numStatementsProcessed + 1);
+                $statementPositionDisplay = "( $statementPosition / $numSqlStatements)";
                 try {
-                    $this->logger->info("Executing statement (" . ($numStatementsProcessed + 1) . "/$numSqlStatements)");
-                    $this->logger->debug("Executing SQL " . $this->destinationEndpoint . ":\n$sql");
+                    $this->logger->info(array(
+                        "message" => "Executing statement " . $statementPositionDisplay,
+                        "action" => (string) $this . '-sql-' . $statementPosition,
+                        "endpoint" => $this->destinationEndpoint,
+                        "sql" => $sql
+                    ));
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $numRowsAffected = $this->destinationHandle->execute($sql);
                     }
@@ -245,14 +250,21 @@ class ExecuteSql extends aAction implements iAction
                     );
                 }
 
-                $time = microtime(true) - $sqlStartTime;
-                $this->logger->debug("Affected $numRowsAffected rows. Elapsed time: " . round($time, 5));
+                $endTime = microtime(true);
+                $this->logger->info(array(
+                    "message" => "Finished executing statement " . $statementPositionDisplay,
+                    "action" => (string) $this . '-sql-' . $statementPosition,
+                    "rows" =>  $numRowsAffected,
+                    "start_time" => $sqlStartTime,
+                    "end_time" => $endTime,
+                    "elapsed_time" => $endTime - $sqlStartTime
+                ));
 
                 $numStatementsProcessed++;
 
             }  // foreach ($sqlStatementList as $sql)
 
-            $this->logger->info("Processed $numStatementsProcessed SQL statements");
+            $this->logger->notice("Finished Processing $numStatementsProcessed SQL statements");
 
         }  // foreach ( $this->options->sql_file_list as $sqlFile )
 

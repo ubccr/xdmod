@@ -159,7 +159,7 @@ if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 }
 
-$logger = Log::factory('DWI', $conf);
+$logger = Log::factory('etl_table_manager', $conf);
 
 if ( null === $scriptOptions['config-file'] ||
      null === $scriptOptions['operation'] ) {

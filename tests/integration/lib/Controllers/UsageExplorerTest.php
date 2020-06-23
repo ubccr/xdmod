@@ -45,9 +45,9 @@ class UsageExplorerTest extends BaseTest
 
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 400);
-        $this->assertEquals($response[0]['message'], $expectedMessage);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(400, $response[1]['http_code']);
+        $this->assertEquals($expectedMessage, $response[0]['message']);
     }
 
     public function corruptDataProvider()
@@ -71,7 +71,7 @@ class UsageExplorerTest extends BaseTest
         $tests[] = array($view, 'start_date param is not in the correct format of Y-m-d.');
 
         $view['group_by'] = "elephants";
-        $tests[] = array($view, 'Query: Unknown Group By "elephants" Specified');
+        $tests[] = array($view, "No GroupBy found with id 'elephants' in Realm: Jobs");
 
         return $tests;
     }
@@ -165,7 +165,6 @@ EOF;
             "height" => "590",
             "legend_type" => "bottom_center",
             "font_size" => "3",
-            "interactive_elements" => "y",
             "controller_module" => "user_interface"
         );
 
@@ -276,7 +275,6 @@ EOF;
     "height": "590",
     "legend_type": "bottom_center",
     "font_size": "3",
-    "interactive_elements": "y",
     "controller_module": "user_interface"
 }
 EOF;
@@ -489,7 +487,6 @@ EOF;
             'height' => '706',
             'legend_type' => 'bottom_center',
             'font_size' => '3',
-            'interactive_elements' => 'y',
             'operation' => 'get_charts',
             'controller_module' => 'user_interface'
         );
@@ -545,9 +542,9 @@ EOF;
         if ($expectedXpath !== null) {
             $xml = simplexml_load_string($originalResults[0]);
 
-            $results = $xml->xpath($expectedXpath);
+            $xmlValues = $xml->xpath($expectedXpath);
 
-            $actualValue = is_array($expectedValue) ? $results : array_pop($results);
+            $actualValue = is_array($expectedValue) ? $xmlValues : array_pop($xmlValues);
 
             $expectedCount = count($expectedValue);
             $actualCount = count($actualValue);
@@ -555,8 +552,8 @@ EOF;
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];
-                $actual = $actualValue[$i];
-                $this->assertEquals($expected, (string)$actual);
+                $actual = (string)$actualValue[$i];
+                $this->assertEquals($expected, $actual);
             }
         } else {
             $actual = $originalResults[0];
@@ -629,9 +626,9 @@ EOF;
                     'realm' => 'Cloud',
                     'filters' => array(
                         array(
-                            array('project' => '3'),
-                            array('project_filter' => '3'),
-                            array('project_filter'=> '"zealous"')
+                            array('project' => 'zealous'),
+                            array('project_filter' => 'zealous'),
+                            array('project_filter'=> 'zealous')
                         )
                     ),
                     'expected' => array(
@@ -651,8 +648,8 @@ EOF;
                     'realm' => 'Cloud',
                     'filters' => array(
                         array(
-                            array('project_filter' => '2,3,4'),
-                            array('project_filter'=> '\'zealous\',\'youthful\',\'zen\'')
+                            array('project_filter' => "zealous, youthful, zen"),
+                            array('project_filter'=> 'zealous, youthful, zen')
                         )
                     ),
                     'expected' => array(

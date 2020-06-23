@@ -291,17 +291,28 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             title: 'Search History',
             collapsible: true,
             collapsed: false,
-            layout: 'border',
+            layout: 'card',
+            activeItem: 0,
             collapseFirst: false,
             pinned: false,
             plugins: new Ext.ux.collapsedPanelTitlePlugin('Navigation'),
             width: 250,
             items: [
+                new CCR.xdmod.ui.AssistPanel({
+                    region: 'center',
+                    border: true,
+                    headerText: 'No saved searches',
+                    subHeaderText: 'Use the search button above to find jobs',
+                    userManualRef: 'job+viewer'
+                }),
                 self.searchHistoryPanel
             ],
             listeners: {
                 collapse: function (p) {
 
+                },
+                history_exists: function (hasHistory) {
+                    this.getLayout().setActiveItem(hasHistory ? 1 : 0);
                 },
                 expand: function (p) {
                     if (p.pinned) {
@@ -378,6 +389,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
      * @returns {*}
      */
     formatData: function (val, units) {
+        var formatBytes = function (value, unitname, precision) {
+            if (value < 0) {
+                return 'NA';
+            }
+            return XDMoD.utils.format.convertToBinaryPrefix(value, unitname, precision);
+        };
+
         switch (units) {
             case "TODO":
             case "":
@@ -401,13 +419,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             case 'bytes':
             case 'B':
             case 'B/s':
-                return XDMoD.utils.format.convertToBinaryPrefix(val, units, 4);
+                return formatBytes(val, units, 4);
                 break;
             case 'kilobyte':
-                return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0, 'byte', 4);
+                return formatBytes(val * 1024.0, 'byte', 4);
                 break;
             case 'megabyte':
-                return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0 * 1024.0, 'byte', 4);
+                return formatBytes(val * 1024.0 * 1024.0, 'byte', 4);
                 break;
             case 'joules':
                 return Ext.util.Format.number(val / 3.6e6, '0,000.000') + ' kWh';
@@ -643,7 +661,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             id: valueColumnId,
                             renderer: function (value, metadata, record) {
                                 var fmt = String(self.formatData(value, record.get('units')));
-                                if (fmt.indexOf(value) !== 0) {
+                                if (fmt === 'NA') {
+                                    metadata.attr = 'ext:qtip="This information is not available"';
+                                } else if (fmt.indexOf(value) !== 0) {
                                     metadata.attr = 'ext:qtip="' + value + ' ' + record.get('units') + '"';
                                 }
                                 return fmt;
@@ -1843,17 +1863,16 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             // It wasn't found, so we need to create it.
             var upsertPromise = self._upsertSearch(realm, searchTitle, null, [jobData], null);
             upsertPromise.then(function (data) {
-                var realmNode = self.searchHistoryPanel.root.findChild('text', realm);
-                var path = self._getPath(realmNode);
-                var recordId = recordId || data.results.recordid;
-                path.push({
+                var path = [{
+                    dtype: 'realm',
+                    value: realm
+                }, {
                     dtype: 'recordid',
-                    value: recordId
-                });
-                path.push({
+                    value: data.results.recordid
+                }, {
                     dtype: 'jobid',
                     value: jobId
-                });
+                }];
                 self.fireEvent('reload_root', path);
                 self.historyEventWaiting = false;
             });

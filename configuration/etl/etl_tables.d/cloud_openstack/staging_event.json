@@ -99,6 +99,20 @@
                 "nullable": true,
                 "default": null,
                 "comment": "Volume associated with the event."
+            },
+            {
+                "name": "domain_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "The domain associated with the event"
+            },
+            {
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "The service provider associated with the event"
             }
         ],
 

@@ -449,7 +449,7 @@ class EtlConfiguration extends Configuration
     protected function merge(Configuration $localConfigObj, $overwrite = false)
     {
         if ( ! $localConfigObj instanceof EtlConfiguration ) {
-            $this-logAndThrowException("Local config object is not of type EtlConfiguration");
+            $this->logAndThrowException("Local config object is not of type EtlConfiguration");
         }
 
         parent::merge($localConfigObj, $overwrite);
@@ -525,9 +525,9 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    public function cleanup()
+    public function cleanup($deepCleanup = false)
     {
-        parent::cleanup();
+        parent::cleanup($deepCleanup);
         $this->parentDefaults = null;
     }  // cleanup()
 

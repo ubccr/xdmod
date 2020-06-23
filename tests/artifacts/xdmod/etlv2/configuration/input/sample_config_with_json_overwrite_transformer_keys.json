@@ -1,0 +1,22 @@
+{
+    "reference": {
+        "$ref-with-overwrite": "file://${TMPDIR}/sample_config_with_variables.json#/key_one",
+        "$overwrite": {
+            "engine": "MyDatabaseEngine",
+            "MyAddedColumn": "Newly added column",
+            "columns": [
+                {
+                    "name": "resource",
+                    "type": "varchar(128)",
+                    "nullable": false
+                }
+            ]
+        }
+    },
+    "reference_to_array": {
+        "$ref-with-overwrite": "file://${TMPDIR}/sample_config_with_variables.json#/key_two",
+        "$overwrite": {
+            "MyAddedColumn": "Newly added column"
+        }
+    }
+}

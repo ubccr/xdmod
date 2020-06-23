@@ -367,7 +367,7 @@ class UserAdminTest extends BaseUserAdminTest
                     mkdir($filePath);
                 }
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
-                echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
+                $this->markTestSkipped("Generated Expected Output for UserAdminTest testGetMenus: $expectedOutputFile\n");
             }
 
             $resource = JSON::loadFile($expectedOutputFile);
@@ -440,7 +440,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         if (!is_file($expectedFileName)) {
             @file_put_contents($expectedFileName, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
-            $this->markTestSkipped();
+            $this->markTestSkipped("Generated Expected Output for UserAdminTest testGetTabs: $expectedFileName\n");
         }
         $expected = file_get_contents($expectedFileName);
         $this->assertJsonStringEqualsJsonString($expected, $actual['data'][0]['tabs']);

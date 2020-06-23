@@ -27,7 +27,7 @@ ini_set('memory_limit', -1);
  */
 $supportedUpgrades = array(
     '8.5.0' => '8.5.1',
-    '8.5.1' => '8.7.0'
+    '8.5.1' => '9.0.0'
 );
 
 /**
@@ -299,5 +299,6 @@ Usage: xdmod-upgrade [-v]
         databases that you are upgrading.  This option is necessary when
         the version number in portal_settings.ini does not match the
         version of your config files and databases.
+
 EOF;
 }

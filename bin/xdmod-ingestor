@@ -198,6 +198,12 @@ function main()
         exit(1);
     }
 
+    if ($realmToAggregate !== false
+        && !in_array($realmToAggregate, ['job', 'cloud', 'storage'])) {
+        $logger->crit("Invalid realm '$value' specified for aggregation");
+        exit(1);
+    }
+
     $hpcdbDb = DB::factory('hpcdb');
     $dwDb = DB::factory('datawarehouse');
 
@@ -276,7 +282,7 @@ function main()
             }
 
             $aclstatus = 0;
-            passthru('acl-config', $aclstatus);
+            passthru('__XDMOD_BIN_PATH__/acl-config', $aclstatus);
             if ($aclstatus !== 0) {
                 exit($aclstatus);
             }

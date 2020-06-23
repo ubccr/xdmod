@@ -2,7 +2,7 @@
 
 namespace IntegrationTests;
 
-use Models\Services\Realms;
+use \TestHarness\Utilities;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,25 +10,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        if(!isset(self::$XDMOD_REALMS)) {
-            $xdmod_realms = array();
-            $rawRealms = Realms::getRealms();
-            foreach($rawRealms as $item) {
-                array_push($xdmod_realms, $item->name);
-            }
-            self::$XDMOD_REALMS = $xdmod_realms;
-        }
+        self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
 
     public static function getRealms()
     {
-        if(!isset(self::$XDMOD_REALMS)) {
-            $xdmod_realms = array();
-            $rawRealms = Realms::getRealms();
-            foreach($rawRealms as $item) {
-                array_push($xdmod_realms, $item->name);
-            }
-            return $xdmod_realms;
-        }
+        return Utilities::getRealmsToTest();
     }
 }

@@ -51,6 +51,54 @@ SQL;
         }, array());
     }
 
+    public static function getRealmIdsForUser(\XDUser $user)
+    {
+        $query = <<<SQL
+            SELECT DISTINCT
+              r.name AS realm
+            FROM acl_group_bys agb
+              JOIN user_acls ua ON agb.acl_id = ua.acl_id
+              JOIN realms r ON r.realm_id = agb.realm_id
+            WHERE ua.user_id = :user_id
+            ORDER BY r.realm_id
+SQL;
+        $params = array(
+            ':user_id'=> $user->getUserID()
+        );
+
+        $db = DB::factory('database');
+        $rows = $db->query($query, $params);
+
+        return array_reduce($rows, function ($carry, $item) {
+            $carry[] = $item['realm'];
+            return $carry;
+        }, array());
+    }
+
+
+    public static function getRealmObjectsForUser(\XDUser $user)
+    {
+        $query = <<<SQL
+            SELECT DISTINCT
+              r.*
+            FROM acl_group_bys agb
+              JOIN user_acls ua ON agb.acl_id = ua.acl_id
+              JOIN realms r ON r.realm_id = agb.realm_id
+            WHERE ua.user_id = :user_id
+            ORDER BY r.realm_id
+SQL;
+        $params = array(
+            ':user_id'=> $user->getUserID()
+        );
+
+        $db = DB::factory('database');
+        $rows = $db->query($query, $params);
+
+        return array_reduce($rows, function ($carry, $item) {
+            $carry[$item['name']] = new Realm($item);
+            return $carry;
+        }, array());
+    }
     /**
      * Retrieve the Realms that are currently considered "enabled" for the current installation.
      *

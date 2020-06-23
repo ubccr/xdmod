@@ -191,9 +191,10 @@ class FileManagerTest extends BaseTest
         $zip = new ZipArchive();
         $openCode = $zip->open($zipFile, ZipArchive::CHECKCONS);
         $this->assertTrue($openCode, 'Open zip file');
-        $this->assertEquals(1, $zip->numFiles, 'File count in zip file');
+        $this->assertEquals(2, $zip->numFiles, 'File count in zip file');
         $dataFileName = self::$fileManager->getDataFileName($request);
         $this->assertEquals($dataFileName, $zip->getNameIndex(0), 'Data file name');
+        $this->assertEquals('README.txt', $zip->getNameIndex(1), 'README file name');
         $fileData = $zip->getFromName($dataFileName);
         $this->assertEquals($testData, $fileData, 'Data file contents');
         $zip->close();
@@ -229,7 +230,7 @@ class FileManagerTest extends BaseTest
         // Delete 2.
         $deletedRequestIds = [3, 4];
         $availableRequestIds = [1, 2, 5];
-        self::$fileManager->removeDeletedRequests($availableRequestIds);
+        self::$fileManager->removeDeletedRequests($deletedRequestIds);
         foreach ($deletedRequestIds as $id) {
             $file = self::$fileManager->getExportDataFilePath($id);
             $this->assertFileNotExists($file);

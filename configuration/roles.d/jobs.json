@@ -12,6 +12,10 @@
                 },
                 {
                     "realm": "Jobs",
+                    "group_by": "gpucount"
+                },
+                {
+                    "realm": "Jobs",
                     "group_by": "jobwalltime"
                 },
                 {

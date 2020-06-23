@@ -1,0 +1,27 @@
+title
+"GPU Count: Per Job: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+focaccia,0.3077,0.20013650333971736
+bannock,0.0000,0
+barm,0.0000,0
+black,0.0000,0
+brioche,0.0000,0
+brown,0.0000,0
+chapti,0.0000,0
+cornbread,0.0000,0
+croutons,0.0000,0
+crumpet,0.0000,0
+nann,0.0000,0
+panettone,0.0000,0
+pikelet,0.0000,0
+pita,0.0000,0
+potbrood,0.0000,0
+pumpernickel,0.0000,0
+roti,0.0000,0
+white,0.0000,0
+---------

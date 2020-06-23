@@ -1,0 +1,350 @@
+{
+    "Foreign key constraint without schema": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "Foreign key constraint with schema": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_schema": "ref_schema",
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "Foreign key constraint with ON DELETE": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ],
+                        "on_delete": "CASCADE"
+                    }
+                ]
+            }
+        }
+    ],
+    "Foreign key constraint with ON UPDATE": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ],
+                        "on_update": "CASCADE"
+                    }
+                ]
+            }
+        }
+    ],
+    "Foreign key constraint with ON UPDATE and ON DELETE": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ],
+                        "on_update": "CASCADE",
+                        "on_delete": "CASCADE"
+                    }
+                ]
+            }
+        }
+    ],
+    "Named Foreign key constraint": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk_id",
+                        "columns": [
+                            "fk_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "name": "fk_test",
+                        "columns": [
+                            "fk_id"
+                        ],
+                        "referenced_table": "ref_table",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "Multiple foreign key constraints": [
+        {
+            "table_definition": {
+                "name": "test_table",
+                "engine": "InnoDB",
+                "columns": [
+                    {
+                        "name": "id",
+                        "type": "int(11)",
+                        "nullable": false,
+                        "extra": "auto_increment"
+                    },
+                    {
+                        "name": "fk1_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    },
+                    {
+                        "name": "fk2_id",
+                        "type": "int(11)",
+                        "nullable": false
+                    }
+                ],
+                "indexes": [
+                    {
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk1_id",
+                        "columns": [
+                            "fk1_id"
+                        ]
+                    },
+                    {
+                        "name": "idx_fk2_id",
+                        "columns": [
+                            "fk2_id"
+                        ]
+                    }
+                ],
+                "foreign_key_constraints": [
+                    {
+                        "columns": [
+                            "fk1_id"
+                        ],
+                        "referenced_table": "ref_table1",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "columns": [
+                            "fk2_id"
+                        ],
+                        "referenced_table": "ref_table2",
+                        "referenced_columns": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

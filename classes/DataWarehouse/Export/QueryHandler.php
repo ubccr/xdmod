@@ -7,13 +7,13 @@
  *
  *  Recognized states enforced in this class:
  *
- *  State       export_succeeded    export_created_datetime     export_expired
- *  -----       ----------------    -----------------------     --------------
- *  Submitted   NULL                NULL                        FALSE
- *  Available   TRUE                NOT NULL                    FALSE
- *  Expired     TRUE                NOT NULL                    TRUE
- *  Failed      FALSE               NULL                        FALSE
- *  (Deleted)       not   present    in    database   or    filesystem
+ *  State       export_succeeded   export_created_datetime   export_expired   is_deleted
+ *  -----       ----------------   -----------------------   --------------   ----------
+ *  Submitted   NULL               NULL                      FALSE            FALSE
+ *  Available   TRUE               NOT NULL                  FALSE            FALSE
+ *  Expired     TRUE               NOT NULL                  TRUE             FALSE
+ *  Failed      FALSE              NULL                      FALSE            FALSE
+ *  Deleted     -                  -                         -                TRUE
  *
  *  State transitions enforced in this class:
  *
@@ -29,9 +29,14 @@ namespace DataWarehouse\Export;
 
 use Exception;
 use CCR\DB;
+use CCR\Loggable;
+use Log;
 
-class QueryHandler
+class QueryHandler extends Loggable
 {
+    // Constants used in log messages.
+    const LOG_MODULE = 'data-warehouse-export';
+
     /**
      * Database handle.
      * @var \CCR\DB\iDatabase
@@ -42,28 +47,35 @@ class QueryHandler
      * Definition of Submitted state.
      * @var string
      */
-    private $whereSubmitted = "WHERE export_succeeded IS NULL AND export_created_datetime IS NULL AND export_expired = 0 ";
+    private $whereSubmitted = "WHERE export_succeeded IS NULL AND export_created_datetime IS NULL AND export_expired = 0 AND is_deleted = 0 ";
 
     /**
      * Definition of Available state.
      * @var string
      */
-    private $whereAvailable = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 0 ";
+    private $whereAvailable = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 0 AND is_deleted = 0 ";
 
     /**
      * Definition of Expired state.
      * @var string
      */
-    private $whereExpired = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 1 ";
+    private $whereExpired = "WHERE export_succeeded = 1 AND export_created_datetime IS NOT NULL AND export_expired = 1 AND is_deleted = 0 ";
 
     /**
      * Definition of Failed state.
      * @var string
      */
-    private $whereFailed = "WHERE export_succeeded = 0 AND export_created_datetime IS NULL AND export_expired = 0 ";
+    private $whereFailed = "WHERE export_succeeded = 0 AND export_created_datetime IS NULL AND export_expired = 0 AND is_deleted = 0 ";
 
-    public function __construct()
+    /**
+     * Definition of Deleted state.
+     * @var string
+     */
+    private $whereDeleted = "WHERE is_deleted = 1 ";
+
+    public function __construct(Log $logger = null)
     {
+        parent::__construct($logger);
         $this->dbh = DB::factory('database');
     }
 
@@ -84,20 +96,61 @@ class QueryHandler
         $endDate,
         $format
     ) {
-        $sql = "INSERT INTO batch_export_requests
-                (requested_datetime, user_id, realm, start_date, end_date, export_file_format)
-                VALUES
-                (NOW(), :user_id, :realm, :start_date, :end_date, :export_file_format)";
+        try {
+            $this->dbh->beginTransaction();
 
-        $params = array(
-            'user_id' => $userId,
-            'realm' => $realm,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'export_file_format' => $format
-        );
+            // Check for duplicate submitted or available requests for the user.
+            $duplicates = array_filter(
+                $this->listUserRequestsByState($userId),
+                function ($request) use ($realm, $startDate, $endDate, $format) {
+                    return ($request['state'] == 'Submitted' || $request['state'] == 'Available')
+                        && $realm == $request['realm']
+                        && $startDate == $request['start_date']
+                        && $endDate == $request['end_date']
+                        && $format == $request['export_file_format'];
+                }
+            );
+            if (count($duplicates) > 0) {
+                throw new Exception('Cannot create duplicate request');
+            }
 
-        return $this->dbh->insert($sql, $params);
+            $sql = "INSERT INTO batch_export_requests
+                    (requested_datetime, user_id, realm, start_date, end_date, export_file_format)
+                    VALUES
+                    (NOW(), :user_id, :realm, :start_date, :end_date, :export_file_format)";
+
+            $params = array(
+                'user_id' => $userId,
+                'realm' => $realm,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'export_file_format' => $format
+            );
+
+            $this->logger->info([
+                'module' => self::LOG_MODULE,
+                'message' => 'Creating data warehouse export record',
+                'event' => 'INSERT',
+                'table' => 'moddb.batch_export_requests',
+                'user_id' => $userId,
+                'realm' => $realm,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'format' => $format
+            ]);
+
+            $id = $this->dbh->insert($sql, $params);
+            $this->dbh->commit();
+            return $id;
+        } catch (Exception $e) {
+            $this->dbh->rollBack();
+            $this->logger->err([
+                'module' => self::LOG_MODULE,
+                'message' => 'Record creation failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -139,6 +192,13 @@ class QueryHandler
                 SET export_succeeded = 0 " .
                 $this->whereSubmitted .
                 "AND id = :id";
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Transitioning data warehouse export record to failed state',
+            'event' => 'UPDATE_STATE_TO_FAILED',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
+        ]);
         return $this->dbh->execute($sql, array('id' => $id));
     }
 
@@ -171,6 +231,14 @@ class QueryHandler
             'id' => $id
         );
 
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Transitioning data warehouse export record to available state',
+            'event' => 'UPDATE_STATE_TO_AVAILABLE',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
+        ]);
+
         return $this->dbh->execute($sql, $params);
     }
 
@@ -184,6 +252,13 @@ class QueryHandler
     {
         $sql = "UPDATE batch_export_requests SET export_expired = 1 " .
                 $this->whereAvailable . 'AND id = :id';
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Transitioning data warehouse export record to expired state',
+            'event' => 'UPDATE_STATE_TO_EXPIRED',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
+        ]);
         return $this->dbh->execute($sql, array('id' => $id));
     }
 
@@ -249,6 +324,18 @@ class QueryHandler
     }
 
     /**
+     * Return details of all export requests presently in the Deleted state.
+     *
+     * @return array
+     */
+    public function listDeletedRecords()
+    {
+        $sql = 'SELECT id, user_id, realm, start_date, end_date, export_file_format, requested_datetime
+            FROM batch_export_requests ' . $this->whereDeleted . ' ORDER BY requested_datetime, id';
+        return $this->dbh->query($sql);
+    }
+
+    /**
      * Return details of export requests made by specified user.
      *
      * @param integer $userId
@@ -290,6 +377,7 @@ class QueryHandler
                        export_created_datetime,
                        export_file_format,
                        requested_datetime,
+                       downloaded_datetime,
                        ";
         $fromTable = "FROM batch_export_requests ";
         $userClause = "AND user_id = :user_id ";
@@ -313,7 +401,34 @@ class QueryHandler
      */
     public function deleteRequest($id, $userId)
     {
-        $sql = "DELETE FROM batch_export_requests WHERE id = :request_id AND user_id = :user_id";
+        $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Deleting data warehouse export record',
+            'event' => 'UPDATE_STATE_TO_DELETED',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id,
+            'user_id' => $userId
+        ]);
         return $this->dbh->execute($sql, array('request_id' => $id, 'user_id' => $userId));
+    }
+
+    /**
+     * Update the downloaded datetime for a record.
+     *
+     * @param integer $id Export request primary key.
+     * @return integer Count of updated rows--should be 1 if successful.
+     */
+    public function updateDownloadedDatetime($id)
+    {
+        $sql = 'UPDATE batch_export_requests SET downloaded_datetime = NOW() WHERE id = :request_id';
+        $this->logger->info([
+            'module' => self::LOG_MODULE,
+            'message' => 'Updating data warehouse export record downloaded datetime',
+            'event' => 'UPDATE_DOWNLOADED_DATETIME',
+            'table' => 'moddb.batch_export_requests',
+            'id' => $id
+        ]);
+        return $this->dbh->execute($sql, ['request_id' => $id]);
     }
 }

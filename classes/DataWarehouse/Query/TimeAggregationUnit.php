@@ -284,51 +284,39 @@ abstract class TimeAggregationUnit
     }
 
     /**
-     * Find the smallest aggregation unit available for a given realm.
+     * Find the smallest aggregation unit available for a given realm. Note that this may be
+     * specified in the Realm definition but we are checking for the smallest aggregation unit
+     * actually configued as a group by for this realm.
      *
-     * @param  string $realm The realm to find the smallest aggregation unit for.
-     * @return mixed         The name of the smallest aggregation unit, or null
-     *                       if it couldn't be found.
+     * @param string $realm The id of the realm to find the smallest aggregation unit for.
+     * @return string|null The name of the smallest aggregation unit, or null if it couldn't be
+     *   found.
      */
     public static function getMinUnitForRealm($realm)
     {
-        // Open the datawarehouse config.
-        $config = XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
-        $dw_config = $config['realms'];
-
-        // Find the config for the given realm.
-        $this_realm_config = null;
-        foreach ($dw_config as $key => $realm_config) {
-            if ($key === $realm) {
-                $this_realm_config = $realm_config;
-                break;
-            }
-        }
-
-        // If the given realm could not be found, return null.
-        if ($this_realm_config === null) {
+        try {
+            $realm = \Realm\Realm::factory($realm);
+        } catch ( \Exception $e ) {
+            // If the given realm could not be found, return null.
             return null;
         }
 
-        // Search through the realm's group bys for the smallest aggregation unit.
-        $realm_group_bys = $this_realm_config['group_bys'];
-        $min_unit = null;
-        $min_unit_length = PHP_INT_MAX;
-        foreach ($realm_group_bys as $realm_group_by) {
-            $realm_group_by_name = $realm_group_by['name'];
-            if (!array_key_exists($realm_group_by_name, self::$unit_sizes_in_days)) {
+        $groupByIds = $realm->getGroupByIds();
+        $minUnit = null;
+        $minUnitDays = PHP_INT_MAX;
+
+        foreach ( $groupByIds as $groupById ) {
+            if ( ! array_key_exists($groupById, self::$unit_sizes_in_days) ) {
                 continue;
             }
-
-            $realm_group_by_length = self::$unit_sizes_in_days[$realm_group_by_name];
-            if ($realm_group_by_length < $min_unit_length) {
-                $min_unit = $realm_group_by_name;
-                $min_unit_length = $realm_group_by_length;
+            $days = self::$unit_sizes_in_days[$groupById];
+            if ($days < $minUnitDays) {
+                $minUnit = $groupById;
+                $minUnitDays = $days;
             }
         }
 
-        // Return the name of the smallest aggregation unit found (or null).
-        return $min_unit;
+        return $minUnit;
     }
 
     /**

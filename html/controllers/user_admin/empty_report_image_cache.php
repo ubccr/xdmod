@@ -18,6 +18,7 @@
 
       $report_manager = new XDReportManager($target_user);
       $report_manager->emptyCache();
+      $report_manager->flushReportImageCache();
             
       $displayUsername = $target_user->getUsername();
 

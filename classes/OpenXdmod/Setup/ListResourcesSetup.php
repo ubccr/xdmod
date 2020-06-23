@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Setup;
 
+use Configuration\XdmodConfiguration;
 use DateTime;
 
 /**
@@ -43,7 +44,7 @@ class ListResourcesSetup extends SetupItem
             $this->console->displayBlankLine();
         }
 
-        $availableTypes = json_decode(file_get_contents(CONFIG_DIR . '/resource_types.json'));
+        $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
 
         foreach ($resources as $resource) {
             $specs = $this->getSpecsForResource($resource['resource']);
@@ -51,10 +52,10 @@ class ListResourcesSetup extends SetupItem
             // Look up the resource type in the list of available types
 
             $resourceType = 'UNK';
-            foreach ( $availableTypes as $type ) {
-                if ( $type->id == $resource['resource_type_id'] ) {
+            foreach ( $availableTypes as $name => $type ) {
+                if ( $name === $resource['resource_type'] ) {
                     // Note that Console::prompt() expects lowercase values for options
-                    $resourceType = strtolower($type->abbrev);
+                    $resourceType = strtolower($name);
                     break;
                 }
             }

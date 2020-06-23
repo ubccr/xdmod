@@ -1,0 +1,21 @@
+{
+  "table_definition": {
+    "$ref-with-overwrite": "etl_tables.d/acls/acl_types.json#/table_definition",
+    "$overwrite": {
+      "name": "acl_types_staging",
+      "foreign_key_constraints": [
+        {
+          "name": "fk_atp_staging_module_id",
+          "columns": [
+            "module_id"
+          ],
+          "referenced_table": "modules_staging",
+          "referenced_columns": [
+            "module_id"
+          ],
+          "on_delete": "CASCADE"
+        }
+      ]
+    }
+  }
+}

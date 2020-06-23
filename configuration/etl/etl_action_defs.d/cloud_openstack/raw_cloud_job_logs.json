@@ -15,6 +15,7 @@
 
     "destination_record_map": {
         "openstack_raw_event": {
+            "domain": "domain",
             "event_type": "event_type",
             "record_type": "record_type",
             "event_time_utc": "generated",
@@ -33,7 +34,8 @@
             "disk_gb": "disk_gb",
             "size": "size",
             "volume_id": "volume_id",
-            "state": "state"
+            "state": "state",
+            "service_provider": "service_provider"
         },
         "openstack_raw_instance_type": {
             "instance_type": "instance_type",

@@ -69,7 +69,7 @@ class SimpleData extends \Common\Identity
     // Helper function for debugging 
     // JMS April 2015
     public function __toString() {
-        $st = isset($this->_statistic) ? $this->getStatistic()->getAlias() : null;
+        $st = isset($this->_statistic) ? $this->getStatistic()->getId() : null;
 
         return "Data Name: {$this->getName()}\n"
             . "Statistic: {$st}\n"
@@ -101,7 +101,7 @@ class SimpleData extends \Common\Identity
      */
     public function truncate($limit, $showAverageOfOthers = false)
     {
-        $stat = $this->getStatistic()->getAlias();
+        $stat = $this->getStatistic()->getId();
 
         $isMin = strpos($stat, 'min_') !== false;
         $isMax = strpos($stat, 'max_') !== false;

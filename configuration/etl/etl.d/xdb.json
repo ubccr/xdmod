@@ -41,7 +41,6 @@
                 "xdb/colors.json",
                 "xdb/exception-email-addresses.json",
                 "xdb/report-charts.json",
-                "xdb/report-template-acl.json",
                 "xdb/report-template-charts.json",
                 "xdb/report-templates.json",
                 "xdb/reports.json",
@@ -65,18 +64,6 @@
                     "type": "jsonfile",
                     "name": "colors",
                     "path": "xdb/colors.json"
-                }
-            }
-        },
-        {
-            "name": "report-templates-acl",
-            "definition_file": "xdb/report-template-acl.json",
-            "description": "report-template-acl + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "report-template-acl",
-                    "path": "xdb/report-template-acl.json"
                 }
             }
         },

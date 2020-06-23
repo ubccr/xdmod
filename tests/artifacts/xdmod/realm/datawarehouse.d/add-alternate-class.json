@@ -1,0 +1,43 @@
+{
+    "#": "Add a group by to the Cloud realm",
+    "Cloud": {
+        "group_bys": {
+            "alternate_groupby_class": {
+                "class": "\\Realm\\GroupBy\\AlternateGroupBy.php",
+                "name": "Alternate GroupBy Class Example",
+                "description_html": "Alternate GroupBy Class Example.",
+                "attribute_table_schema": "modw",
+                "attribute_to_aggregate_table_key_map": [
+                    { "id": "systemaccount_id" }
+                ],
+                "order": 4,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "username",
+                        "short_name": "username",
+                        "name": "username",
+                        "order_id": "username"
+                    },
+                    "joins": [
+                        {
+                            "name": "systemaccount"
+                        }
+                    ],
+                    "orderby": [
+                        "username"
+                    ]
+                }
+            }
+        },
+        "statistics": {
+            "alternate_statistic_class": {
+                "class": "\\Realm\\Statistic\\AlternateStatistic.php",
+                "formula": "SUM(agg.core_time)",
+                "name": "Alternate Statistic Class Example",
+                "description_html": "Alternate Statistic Class Example.",
+                "unit": "Hours",
+                "order": 3
+            }
+        }
+    }
+}
