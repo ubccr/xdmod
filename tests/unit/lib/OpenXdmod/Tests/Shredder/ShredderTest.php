@@ -26,6 +26,6 @@ class ShredderTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnknownShredder()
     {
-        \OpenXdmod\Shredder::factory('unknown', $this->db);
+        Shredder::factory('unknown', $this->db);
     }
 }
