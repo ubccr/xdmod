@@ -20,6 +20,7 @@ try {
         if ($xdmodUser->getAccountStatus()) {
             $formal_name = $xdmodUser->getFormalName();
             $xdmodUser->postLogin();
+            \xd_rest\setCookies();
         } else {
             $message = 'Your account is currently inactive, please contact an administrator.';
         }
