@@ -363,7 +363,6 @@ class ReportGenerator {
                     invertSelectionButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="Invert Selection"]/ancestor::a',
                     newButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New"]',
                     //newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On"]',
-                    
                     newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On" and not(ancestor::td[contains(@class,"x-hide-display")])]',
                     newBasedOnMenu: () => `//div[${classContains('x-menu-floating')} and .//img[${classContains('btn_selected_report')} or ${classContains('btn_report_template')}]]`,
                     newBasedOnRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[not(${classContains('x-menu-sep-li')})]`,
@@ -540,27 +539,20 @@ class ReportGenerator {
      */
     isNewBasedOnEnabled() {
         const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
-        //setTimeout(() => { expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1); }, 5000);
-       expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
+        expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;  
-         
-        
-
-}
+    }
 
     /**
      * Check if the "Edit" button in the "My Reports" toolbar is enabled.
      *
      * @return {Boolean} True if the button is enabled.
      */
-
-    /*isEditSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
-    }*/
    
     isEditSelectedReportsEnabled() {
         const visibleButtons = $$(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
-        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null; 
+        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
+        //return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null; 
     }
 
     /**
@@ -569,7 +561,9 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isPreviewSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.previewButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+        const visibleButtons = $$(this.selectors.myReports.toolbar.previewButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
+        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
+        //return browser.getAttribute(this.selectors.myReports.toolbar.previewButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -602,7 +596,9 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isDeleteSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.deleteButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+        const visibleButtons = $$(this.selectors.myReports.toolbar.deleteButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
+        return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
+        //return browser.getAttribute(this.selectors.myReports.toolbar.deleteButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
