@@ -222,28 +222,21 @@ setTimeout(function(){
                 });
                 it(`Check that the ${value.label} is back to ${value.expected}`, function () {
                     const userTypeInput = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
-                    /*browser.waitForAllInvisible('.ext-el-mask');*/
                     browser.waitForVisible(userTypeInput,50000);
-
+                    //const userType = browser.getValue(userTypeInput);
+                    //expect(userType).to.equal(value.expected);
+                    
                     for (let i = 0; i < 100; i++){
                      try{
                         const userType = browser.getValue(userTypeInput);
                         expect(userType).to.equal(value.expected);
                         break;
                      } catch (e) {
-                         // browser.waitForInvisible(userTypeInput,50000);
-                         //
                           browser.waitForVisible(userTypeInput,50000);
                       } 
                     }
 
-                          
-                        //iconst userType = browser.getValue(userTypeInput);
-                        //expect(userType).to.equal(value.expected);
                    
-
-
-
                 });
                 it('Close the Edit Existing User Modal', function () {
                     const closeButton = page.selectors.create_manage_users.current_users.button('Close');
