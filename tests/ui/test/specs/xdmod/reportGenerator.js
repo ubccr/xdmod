@@ -371,19 +371,19 @@ describe('Report Generator', function () {
     describe('Center staff default report generator state', function () {
         it('Report Generator is enabled', function () {
             expect(reportGeneratorPage.isEnabled()).to.be.true;
-        },500);
+        },5000);
         it('Select Report Generator tab', function () {
             reportGeneratorPage.selectTab();
-        },500);
+        },5000);
         it('Reports listed', function () {
             expect(reportGeneratorPage.getMyReportsRows().length, 'Rows in the list of reports').to.be.equal(0);
-        },500);
+        },5000);
         it('No available charts listed', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
-        },500);
+        },5000);
         it('Report templates available', function () {
              expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
-        },500);
+        },5000);
     });
 
     loginPage.logout('centerstaff',5000);
