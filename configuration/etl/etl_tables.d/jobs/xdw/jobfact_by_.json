@@ -157,7 +157,7 @@
             {
                 "name": "processorbucket_id",
                 "type": "int(4)",
-                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processorbucket.id",
+                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processor_buckets.id",
                 "nullable": false
             },
             {
