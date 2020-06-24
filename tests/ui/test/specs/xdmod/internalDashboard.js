@@ -251,28 +251,28 @@ setTimeout(function(){
             browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
             browser.waitAndClick(page.selectors.user_management.tabs.existing_users());
             browser.waitForVisible(page.selectors.existing_users.table.container);
-        },50);
+        },5000);
         it('Double click the newly created user', function () {
             const usernameCol = page.selectors.existing_users.table.col_for_user('btest', 'Username');
             browser.waitForValue(usernameCol);
             browser.doubleClick(usernameCol);
-        },50);
+        },5000);
         it('Ensure that the Create & Manage Users Dialog opens', function () {
             browser.waitForVisible(page.selectors.create_manage_users.window);
-        },50);
+        },5000);
         it('Ensure that the "Actions" button is visible and click it', function () {
             browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.button());
             browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.toolbar.actions.button());
 
-        },50);
+        },5000);
         it('Ensure that the Actions menu has been displayed', function () {
             browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.container);
-        },50);
+        },5000);
         it('Click the "Delete This User" menu item', function () {
             const deleteUserItem = page.selectors.create_manage_users.current_users.toolbar.actions.itemWithText('Delete This Account');
             browser.waitForVisible(deleteUserItem);
             browser.click(deleteUserItem);
-        },50);
+        },5000);
         it('Confirm the deletion of the user', function () {
             const yesDelete = page.selectors.modal.buttonByText('Delete User', 'Yes');
             browser.waitAndClick(yesDelete);
@@ -280,45 +280,45 @@ setTimeout(function(){
             const deleteNotification = page.selectors.deleteSuccessNotification('btest');
             browser.waitForVisible(deleteNotification);
             browser.waitForInvisible(deleteNotification);
-        },50);
+        },5000);
         it('Close the User Management Dialog', function () {
             const close = page.selectors.create_manage_users.current_users.button('Close');
             browser.waitForVisible(close);
             browser.click(close);
-        },50);
+        },5000);
         it('Ensure that the "Existing Users" table is displayed', function () {
             browser.waitForVisible(page.selectors.existing_users.table.container);
-        },50);
+        },5000);
         it('Check that there is no username', function () {
             const usernameCol = page.selectors.existing_users.table.col_for_user('btest', 'Username');
             browser.waitForValue(usernameCol);
             const username = browser.getText(usernameCol);
             expect(username).to.not.equal('btest');
-        },50);
+        },5000);
         it('Check that there is no first name', function () {
             const firstNameCol = page.selectors.existing_users.table.col_for_user('btest', 'First Name');
             browser.waitForValue(firstNameCol);
             const firstName = browser.getText(firstNameCol);
             expect(firstName).to.not.equal('Bob');
-        },50);
+        },5000);
         it('Check that there is no name', function () {
             const lastNameCol = page.selectors.existing_users.table.col_for_user('btest', 'Last Name');
             browser.waitForValue(lastNameCol);
             const lastName = browser.getText(lastNameCol);
             expect(lastName).to.not.equal('Test');
-        },50);
+        },5000);
         it('Check that there is no email', function () {
             const emailCol = page.selectors.existing_users.table.col_for_user('btest', 'E-Mail Address');
             browser.waitForValue(emailCol);
             const email = browser.getText(emailCol);
             expect(email).to.not.equal('btest@example.com');
-        },50);
+        },5000);
         it('Check that there is no role', function () {
             const roleCol = page.selectors.existing_users.table.col_for_user('btest', 'Role(s)');
             browser.waitForValue(roleCol);
             const roles = browser.getText(roleCol);
             expect(roles).to.not.equal('User');
-        },50);
+        },5000);
     });
 
     page.logout();
