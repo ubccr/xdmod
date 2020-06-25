@@ -43,12 +43,12 @@
             },{
                 "name": "processorbucket_id",
                 "type": "int(4)",
-                "nullable": true,
+                "nullable": false,
                 "comment": "DIMENSION: Pre-determined processor bucket sizes. References processorbucket.id"
             },{
                 "name": "memorybucket_id",
                 "type": "int(4)",
-                "nullable": true,
+                "nullable": false,
                 "comment": "DIMENSION: Pre-determined memory bucket sizes. References memorybucket.id"
             },{
                 "name": "instance_type_id",
