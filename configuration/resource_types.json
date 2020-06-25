@@ -3,22 +3,19 @@
         "HPC": {
             "description": "High-performance computing",
             "realms": [
-                "Jobs",
-                "Gateways"
+                "Jobs"
             ]
         },
         "HTC": {
             "description": "High-throughput computing",
             "realms": [
-                "Jobs",
-                "Gateways"
+                "Jobs"
             ]
         },
         "DIC": {
             "description": "Data-intensive computing",
             "realms": [
-                "Jobs",
-                "Gateways"
+                "Jobs"
             ]
         },
         "Grid": {
