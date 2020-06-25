@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeZone;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
+use Xdmod\SlurmResourceParser;
 
 class Slurm extends Shredder
 {
@@ -54,6 +55,7 @@ class Slurm extends Shredder
         'reqmem',
         'reqgres',
         'reqtres',
+        'alloctres',
         'timelimit',
         'nodelist',
         'jobname',
@@ -87,6 +89,7 @@ class Slurm extends Shredder
         'req_mem',
         'req_gres',
         'req_tres',
+        'alloc_tres',
         'timelimit',
         'node_list',
         'job_name',
@@ -126,6 +129,7 @@ class Slurm extends Shredder
         'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submit_time AS SIGNED), 0)',
         'node_count'      => 'nnodes',
         'cpu_count'       => 'ncpus',
+        'gpu_count'       => 'ngpus',
         'cpu_req'         => 'req_cpus',
         'mem_req'         => 'req_mem',
         'timelimit'       => 'timelimit',
@@ -171,6 +175,11 @@ class Slurm extends Shredder
     protected $timeZone;
 
     /**
+     * @var \Xdmod\SlurmResourceParser
+     */
+    private $resourceParser;
+
+    /**
      * @inheritdoc
      */
     public function __construct(iDatabase $db)
@@ -180,6 +189,7 @@ class Slurm extends Shredder
         self::$columnCount = count(self::$columnNames);
 
         $this->timeZone = new DateTimeZone('UTC');
+        $this->resourceParser = new SlurmResourceParser();
     }
 
     /**
@@ -250,6 +260,9 @@ class Slurm extends Shredder
         foreach ($timeKeys as $key) {
             $job[$key] = $this->parseTimeField($job[$key]);
         }
+
+        $tres = $this->resourceParser->parseTres($job['alloc_tres']);
+        $job['ngpus'] = $this->resourceParser->getGpuCountFromTres($tres);
 
         $job['cluster_name'] = $this->getResource();
 

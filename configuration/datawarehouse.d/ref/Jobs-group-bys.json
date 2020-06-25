@@ -8,8 +8,10 @@
     "jobsize": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/jobsize"
     },
+    "gpucount": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/gpucount"
+    },
     "jobwaittime": {
-        "attribute_table": "job_wait_times",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {

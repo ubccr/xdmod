@@ -626,9 +626,9 @@ EOF;
                     'realm' => 'Cloud',
                     'filters' => array(
                         array(
-                            array('project' => '3'),
-                            array('project_filter' => '3'),
-                            array('project_filter'=> '"zealous"')
+                            array('project' => 'zealous'),
+                            array('project_filter' => 'zealous'),
+                            array('project_filter'=> 'zealous')
                         )
                     ),
                     'expected' => array(
@@ -648,8 +648,8 @@ EOF;
                     'realm' => 'Cloud',
                     'filters' => array(
                         array(
-                            array('project_filter' => '2,3,4'),
-                            array('project_filter'=> '\'zealous\',\'youthful\',\'zen\'')
+                            array('project_filter' => "zealous, youthful, zen"),
+                            array('project_filter'=> 'zealous, youthful, zen')
                         )
                     ),
                     'expected' => array(

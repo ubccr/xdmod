@@ -2,7 +2,7 @@ title
 "Average Cores Reserved Weighted By Wall Hours: by System Username"
 parameters
 
-"*Restricted To: User = Tern, C"
+"*Restricted To: PI = Tern, C OR User = Tern, C"
 start,end
 2018-04-18,2018-04-30
 ---------

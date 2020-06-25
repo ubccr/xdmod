@@ -110,6 +110,20 @@ enhancements and bug fixes.
 
 You may upgrade directly from 8.5.0 or 8.5.1.
 
+This is the first version of Open XDMoD that supports GPU data in the jobs
+realm.  Since Open XDMoD 6.5 data from slurm (`ReqGRES`) has been ingested into
+the database, but not displayed in the portal.  These jobs may now be
+re-ingested and any GPU data will be used.
+
+### Input File Format Changes
+
+The input file format for Slurm data has changed to include the `AllocTRES`
+field.  If you are generating Slurm input for the `xdmod-shredder` command then
+you will need to make the appropriate changes.  Refer to the [Slurm
+Notes](resource-manager-slurm.html#input-format) for the example `sacct`
+command.  If you are using the `xdmod-slurm-helper` command then no changes are
+necessary.
+
 ### Configuration File Changes
 
 The `xdmod-upgrade` script will migrate user editable configuration files to
@@ -122,6 +136,25 @@ version.  Tables may be altered the first time they are used during ingestion.
 
 - The `moddb`.`ReportTemplateACL` database table is no longer used and is
 removed by the upgrade script.
+- The following tables are altered to store GPU data:
+  `mod_shredder`.`shredded_job_slurm`, `mod_shredder`.`shredded_job`,
+  `mod_shredder`.`staging_job`, `mod_hpcdb`.`hpcdb_jobs`, `modw`.`job_tasks`,
+  and tables in `modw_aggregates` prefixed with `jobfact_by_`.
+- New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
+  Count".
+- Added another index to `mod_logger`.`log_table` to improve performance of
+  queries used by the administrative dashboard's "Log Data" tab.  If this table
+  contains tens of millions of rows it may take over an hour to add the index.
+  It may be desirable to delete old log data from this table before performing
+  the migration if the data is no longer needed.
+
+- The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
+tables have had their Primary Keys changed to better support the local and global filters
+in the Metric Explorer.
+
+- Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
+tables any saved charts or reports using the Account or Configuration group by in the
+Cloud realm should be recreated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql

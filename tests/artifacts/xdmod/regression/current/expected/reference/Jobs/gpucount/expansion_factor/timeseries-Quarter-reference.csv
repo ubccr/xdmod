@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] User Expansion Factor","[2] User Expansion Factor"
+"2016 Q4",3.1517,1.0000
+"2017 Q1",2.7567,1.0000
+---------

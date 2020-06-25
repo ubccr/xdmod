@@ -1,4 +1,6 @@
 #!/bin/bash
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $BASEDIR/../ci/runtest-include.sh
 echo "Component tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 # Implode an array using the specified separator
 
@@ -7,14 +9,11 @@ function implode_array {
     shift;
     echo "$*";
 }
-
 # Array of test groups to include based on testing environment. Note that only these groups will be
 # included.
 declare -a INCLUDE_ONLY_GROUPS
 # Array of test groups to exclude based on testing environment
 declare -a EXCLUDE_GROUPS
-
-PHPUNITARGS="$@"
 
 cd $(dirname $0)
 phpunit="$(readlink -f ../../vendor/bin/phpunit)"
@@ -55,14 +54,14 @@ if [ 0 -ne ${#INCLUDE_GROUPS[@]} ]; then
     INCLUDE_GROUP_OPTION="--group "$(implode_array , ${INCLUDE_ONLY_GROUPS[@]})
 fi
 
-$phpunit ${PHPUNITARGS} --testsuite=Export -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
+$phpunit $(log_opts "component" "export") --testsuite=Export -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
 
 # This test suite runs everything in lib/Roles
-$phpunit ${PHPUNITARGS} --testsuite=Roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
+$phpunit $(log_opts "component" "roles")  --testsuite=Roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
 
 # This test suite will be everything *but* lib/Roles ( which includes
 # new files / directories that may be added in the future ). We've split them out
 # as XDUserTest dynamically generates new users. Some of which will be center staff,
 # which messes with the tests in lib/Roles. Hence the splitting into two test
 # suites.
-$phpunit ${PHPUNITARGS} --testsuite=non-roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
+$phpunit $(log_opts "component" "non-roles")  --testsuite=non-roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION

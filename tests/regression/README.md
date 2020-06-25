@@ -15,7 +15,7 @@ Run the tests with `./runtests.sh`.
 Run this command on an installed and working Open XDMoD instance:
 
 ```sh
-REG_TEST_FORCE_GENERATION=1 REG_TEST_ALL=1 ./runtests.sh
+XDMOD_REALMS='jobs,storage,cloud' REG_TEST_FORCE_GENERATION=1 REG_TEST_ALL=1 ./runtests.sh
 ```
 
 This will generate the expected test output data in
@@ -28,9 +28,8 @@ reference dataset copy these files to the artifact reference directory
 ### `XDMOD_REALMS`
 
 Comma separated list of realms that should be tested.  Valid realm names can be
-found in the `name` column of the `moddb.realms` database table.
-
-If not set all realms found in the database will be tested.
+found in the `name` column of the `moddb.realms` database table and must be in
+lower case.
 
 ### `REG_TEST_ALL`
 

@@ -24,14 +24,14 @@ build:
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
         - composer install --no-progress
-        - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
+        - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - mv ./configuration/organization.json ./configuration/organization.json.old
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - cp /etc/xdmod/organization.json ./configuration/organization.json
-        - ./tests/integration/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
-        - ./tests/regression/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults/
-        - ./tests/component/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml
+        - ./tests/integration/runtests.sh --junit-output-dir `pwd`/shippable/testresults
+        - ./tests/regression/post_ingest_test.sh --junit-output-dir `pwd`/shippable/testresults
+        - ./tests/component/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults
         - ./tests/ci/samlSetup.sh
         - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
@@ -43,6 +43,27 @@ build:
         - cat /var/log/xdmod/exceptions.log
         - cat /var/log/xdmod/query.log
         - cat /var/log/xdmod/apache-access.log
+integrations:
+  notifications:
+    - integrationName: slack-notification-xdmod
+      type: slack
+      recipients: "#xms-shippable"
+      on_success: change
+      on_failure: always
+      on_cancel: never
+      on_start: never
+      on_pull_request: never
+resources:
+  - name: xdmod-time-trigger
+    type: time
+    versionTemplate:
+      interval: "0 2 * * *" # UTC
+  - name: slack_notif
+    type: notification
+    integration: slack-notification-xdmod
+    versionTemplate:
+      recipients:
+        - "#xms-shippable"
 jobs:
     - name: xdmod_runCI
       type: runCI

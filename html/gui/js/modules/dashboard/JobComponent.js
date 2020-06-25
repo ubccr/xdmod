@@ -14,10 +14,6 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
     initComponent: function () {
         var page_size = 9;
 
-        var formatDateWithTimezone = function (value) {
-            return moment(value * 1000).format('Y-MM-DD HH:mm:ss z');
-        };
-
         this.help = {
             title: 'Jobs'
         };
@@ -28,44 +24,6 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
             this.help.html = '<img src="/gui/images/help/job-component.svg" />';
             page_size = 10;
         }
-
-        var jobEfficiency = function (value, metadata, record) {
-            var getDataColor = function (data) {
-                var color = 'gray';
-                var steps = [{
-                    value: 0.25,
-                    color: '#FF0000'
-                }, {
-                    value: 0.50,
-                    color: '#FFB336'
-                }, {
-                    value: 0.75,
-                    color: '#DDDF00'
-                }, {
-                    value: 1,
-                    color: '#50B432'
-                }];
-
-                var i;
-                var step;
-                for (i = 0; i < steps.length; i++) {
-                    step = steps[i];
-                    if (data <= step.value) {
-                        color = step.color;
-                        break;
-                    }
-                }
-                return color;
-            };
-
-            if (record.data.cpu_user === null || record.data.cpu_user < 0) {
-                return '<div class="job-metric-na">N/A</div>';
-            }
-
-            metadata.attr = 'ext:qtip="CPU Usage ' + (record.data.cpu_user * 100.0).toFixed(1) + '%"';
-
-            return String.format('<div class="circle" style="background-color: {0}"></div>', getDataColor(record.data.cpu_user));
-        };
 
         // Sync date ranges
         var dateRanges = CCR.xdmod.ui.DurationToolbar.getDateRanges();
@@ -83,124 +41,19 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
         // view.
         var defaultParams = {};
 
-        var jobStore = new Ext.data.JsonStore({
-            restful: true,
-            url: XDMoD.REST.url + '/warehouse/search/jobs',
-            root: 'results',
-            autoLoad: true,
-            totalProperty: 'totalCount',
-            baseParams: {
+        var gridpanel = {
+            xtype: 'xdmod-jobgrid',
+            config: {
+                realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
                 start_date: date.start.format('Y-m-d'),
                 end_date: date.end.format('Y-m-d'),
-                realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
-                limit: page_size,
-                start: 0,
-                verbose: true,
-                params: JSON.stringify(defaultParams)
-            },
-            fields: [
-                { name: 'dtype', mapping: 'dtype', type: 'string' },
-                { name: 'resource', mapping: 'resource', type: 'string' },
-                { name: 'name', mapping: 'name', type: 'string' },
-                { name: 'jobid', mapping: 'jobid', type: 'int' },
-                { name: 'local_job_id', mapping: 'local_job_id', type: 'int' },
-                { name: 'text', mapping: 'text', type: 'string' },
-                'cpu_user',
-                'start_time_ts',
-                'end_time_ts'
-            ]
-        });
-
-        /* Set new search parameters for the job store and reset the
-         * paging to the beginning. Note that it is necessary to modify
-         * the baseParams because the paging toolbar is used. */
-        var resetStore = function (newParams) {
-            jobStore.setBaseParam('params', JSON.stringify(newParams));
-            jobStore.load({
-                params: {
-                    start: 0,
-                    limit: page_size
-                }
-            });
-        };
-
-        var columns = [{
-            header: 'Job Identifier',
-            width: 140,
-            tooltip: 'The job identifier includes the resource that ran the job and the id provided by the resource manager.',
-            dataIndex: 'text'
-        }, {
-            header: 'Start',
-            renderer: formatDateWithTimezone,
-            tooltip: 'The start time of the job',
-            width: 115,
-            fixed: true,
-            dataIndex: 'start_time_ts'
-        }, {
-            header: 'End',
-            renderer: formatDateWithTimezone,
-            tooltip: 'The end time of the job',
-            width: 115,
-            fixed: true,
-            dataIndex: 'end_time_ts'
-        }, {
-            header: 'CPU',
-            renderer: jobEfficiency,
-            tooltip: 'The average CPU usage for the job. The text NA indicates that the metric is unavailable.',
-            width: 40,
-            fixed: true,
-            dataIndex: 'cpu_user'
-        }];
-
-        if (this.config.multiuser) {
-            columns.splice(0, 0, {
-                header: 'Person',
-                width: 90,
-                sortable: true,
-                dataIndex: 'name'
-            });
-        }
-
-        var gridpanel = {
-            xtype: 'grid',
-            frame: true,
-            store: jobStore,
-            enableHdMenu: false,
-            loadMask: true,
-            stripeRows: true,
-            cls: 'job-component-grid',
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: true
-                },
-                columns: columns
-            }),
-            viewConfig: {
-                emptyText: '<div class="no-data-alert">No Job Records Found</div><div class="no-data-info">Job information only shows in XDMoD once the job has finished and there is a short delay between a job finishing and the job&apos;s data being available in XDMoD.</div>',
-                forceFit: true
-            },
-            bbar: new Ext.PagingToolbar({
-                store: jobStore,
-                displayInfo: true,
-                pageSize: page_size,
-                prependButtons: true
-            }),
-            sm: new Ext.grid.RowSelectionModel({
-                singleSelect: true
-            }),
-            listeners: {
-                rowclick: function (panel, rowIndex) {
-                    var store = panel.getStore();
-                    var info = store.getAt(rowIndex);
-                    var params = {
-                        action: 'show',
-                        realm: store.baseParams.realm,
-                        jobref: info.data[info.data.dtype]
-                    };
-                    Ext.History.add('job_viewer?' + Ext.urlEncode(params));
-                }
+                params: defaultParams,
+                multiuser: this.config.multiuser,
+                page_size: page_size
             }
         };
+
+        var self = this;
 
         if (this.config.multiuser) {
             gridpanel.tbar = {
@@ -250,10 +103,10 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
                         }),
                         listeners: {
                             select: function (combo, record) {
-                                resetStore({ person: [record.id] });
+                                self.getComponent(0).fireEvent('resetStore', { person: [record.id] });
                             },
                             reset: function () {
-                                resetStore(defaultParams);
+                                self.getComponent(0).fireEvent('resetStore', defaultParams);
                             }
                         }
                     })

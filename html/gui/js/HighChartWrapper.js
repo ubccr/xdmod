@@ -99,11 +99,9 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
                         for (var i = 0; i < this.series.length; i++) {
                             var series = this.series[i];
-                            if (!series.options.isRestrictedByRoles) {
-                                continue;
+                            if (series.options.isRestrictedByRoles && series.legendItem) {
+                                this.options.chart.events.helperFunctions.addBackgroundColor(series.legendItem, '#DFDFDF');
                             }
-
-                            this.options.chart.events.helperFunctions.addBackgroundColor(series.legendItem, '#DFDFDF');
                         }
                     }
                 ],

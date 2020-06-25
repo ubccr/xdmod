@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] Wait Hours: Per Job","[2] Wait Hours: Per Job"
+"2016 Q4",4.99060218,0.00027778
+"2017 Q1",1.71049414,0.00000000
+---------

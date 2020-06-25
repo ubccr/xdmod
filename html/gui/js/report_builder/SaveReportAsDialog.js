@@ -106,6 +106,7 @@ XDMoD.SaveReportAsDialog = Ext.extend(Ext.Window, {
       var aCallback = function(success, msg) {
 
          presentOverlay(success, msg);
+         self.close();
 
       };//aCallback
 

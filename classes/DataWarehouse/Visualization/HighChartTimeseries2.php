@@ -2,6 +2,7 @@
 namespace DataWarehouse\Visualization;
 
 use DataWarehouse;
+use DataWarehouse\Data\TimeseriesDataset;
 
 /*
 *
@@ -63,60 +64,6 @@ class HighChartTimeseries2 extends HighChart2
         );
 
         $this->_queryType = 'timeseries';
-    }
-
-    //-------------------------------------------------
-    // useMean( $stat )
-    // Based on inspection of the Statistic Alias for the dataset,
-    // should the mean of the values be computed for the remainder set?
-    //
-    // @param is $dataObj->getStatistic()->getAlias(); or $data_description->metric
-    //-------------------------------------------------
-    private function useMean($stat) {
-            $retVal
-                = strpos($stat, 'avg_') !== false
-                || strpos($stat, 'count') !== false
-                || strpos($stat, 'utilization') !== false
-                || strpos($stat, 'rate') !== false
-                || strpos($stat, 'expansion_factor') !== false;
-            return $retVal;
-    }
-
-    //-------------------------------------------------
-    // getDataname( $stat, $remainder_count )
-    //
-    // Based on inspection of the Statistic Alias for the dataset,
-    // what operation should be reported for the remainder set?
-    //
-    // @param is $dataObj->getStatistic()->getAlias(); or $data_description->metric
-    // @param is number of full datasets to represent in chart
-    //-------------------------------------------------
-    private function getDataname($stat, $remainder_count) {
-
-            $useMean = $this->useMean($stat );
-
-            $isMin = strpos($stat, 'min_') !== false ;
-            $isMax = strpos($stat, 'max_') !== false ;
-
-            // Determine label for the summary dataset
-            $dataname
-                = ($useMean ? 'Avg of ' : 'All ')
-                . $remainder_count
-                . ' Others';
-
-        if ($isMin) {
-            $dataname
-            = 'Minimum over all '
-            . $remainder_count
-            . ' others';
-        } elseif ($isMax) {
-            $dataname
-            = 'Maximum over all '
-            . $remainder_count
-            . ' others';
-        } // if $isMin
-
-            return $dataname;
     }
 
     // ---------------------------------------------------------
@@ -247,14 +194,6 @@ class HighChartTimeseries2 extends HighChart2
 
                 $query->setFilters($data_description->filters);
 
-                // TODO JMS: special case for Timeseries. Handle after init()
-                if($data_description->filters->total === 1 && $data_description->group_by === 'none')
-                {
-                    $data_description->group_by = $data_description->filters->data[0]->dimension_id;
-                }
-                // end TODO JMS: special case for Timeseries. Handle after init()
-
-                // @refer ComplexDataset::init()
                 $dataSources[$query->getDataSource()] = 1;
                 $group_by = $query->addGroupBy($data_description->group_by);
                 $this->_chart['dimensions'][$group_by->getName()] = $group_by->getHtmlDescription();
@@ -279,24 +218,14 @@ class HighChartTimeseries2 extends HighChart2
 
                 $query->addOrderByAndSetSortInfo($data_description);
 
-                // JMS:
-                // and here we instantiate the dataset.
-                // Note that while this var name is a ComplexDataset in the parent class
-                // the item it contains is a Simple*Dataset.
-                // so when we iterate over datasets in parent class we are fiddling with SImple*Datsets
-
-                $dataset = new \DataWarehouse\Data\SimpleTimeseriesDataset($query);
-
-                // JMS: to here we have the ComplexDataset::init() function
-
                 $statisticObject = $query->_stats[$data_description->metric];
                 $decimals = $statisticObject->getPrecision();
 
                 $defaultYAxisLabel = 'yAxis'.$yAxisIndex;
                 $yAxisLabel = ($data_description->combine_type=='percent'? '% of ':'').(
                                 ($this->_hasLegend && $dataSeriesCount > 1)
-                                    ? $dataset->getColumnUnit($data_description->metric, false)
-                                    : $dataset->getColumnLabel($data_description->metric, false)
+                                    ? $statisticObject->getUnit()
+                                    : $statisticObject->getName()
                                 );
                 if($this->_shareYAxis)
                 {
@@ -369,6 +298,8 @@ class HighChartTimeseries2 extends HighChart2
 
                     $this->_chart['yAxis'][] = $yAxis;
                 } // if($yAxis == null)
+
+                $dataset = new TimeseriesDataset($query);
 
                 $xAxisData = $dataset->getTimestamps();
 
@@ -454,72 +385,14 @@ class HighChartTimeseries2 extends HighChart2
                     $semDecimals = $semStatisticObject->getPrecision();
                 }
 
-                // get the full dataset count: how many unique values in the dimension we group by?
-                $datagroupFullCount = $dataset->getUniqueCount(
-                    $data_description->group_by,
-                    $data_description->realm
-                );
-                $this->_total = max($this->_total, $datagroupFullCount);
+                $this->_total = max($this->_total, $dataset->getUniqueCount());
 
-                // If summarizeDataseries (Usage), use $limit to minimize the number of sorted
-                // queries we must execute. If ME, use the $limit (default 10) to enable paging
-                // thru dataset.
-
-                // Query for the top $limit categories in the realm, over the selected time period
-                $datagroupDataObject = $dataset->getColumnUniqueOrdered(
-                    'dim_'.$data_description->group_by,
-                    $limit,
-                    $offset,
-                    $data_description->realm
-                );
-
-                // Use the top $limit categories to build an iterator with $limit objects inside:
-                $yAxisDataObjectsIterator = $dataset->getColumnIteratorBy(
-                    'met_'.$data_description->metric,
-                    $datagroupDataObject
-                );
-
-                // --- Set up dataset truncation for Usage tab support: ----
-                // Populate an array with our iterator contents, but only up to $limit.
-                // (implicitly) run the queries and populate the array, but only up to $limit:
-                // that is taken care of by the limit on datagroupDataObject above.
-                $yAxisDataObjectsArray = array();
-                foreach($yAxisDataObjectsIterator as $yAxisDataObject)
-                {
-                    $yAxisDataObjectsArray[] = $yAxisDataObject;
-                }
-
-                $dataTruncated = false;
-                if ( $summarizeDataseries && $datagroupFullCount > $limit )
-                {
-                    // Run one more query containing everything that was NOT in the top n.
-                    // Populate SimpleTimeseriesData object yAxisTruncateObj with this
-                    // summary information
-                    $yAxisTruncateObj = $dataset->getSummarizedColumn(
-                        $data_description->metric,
-                        $data_description->group_by,
-                        $this->_total - $limit,
-                        $yAxisDataObjectsIterator->getLimitIds(),
-                        $data_description->realm
-                    );
-
-                    // set the remainder dataset label for plotting
-                    $dataname = $this->getDataname($data_description->metric, $datagroupFullCount - $limit );
-                    $yAxisTruncateObj->setGroupName($dataname );
-                    // set label on the dataseries' legend
-                    $yAxisTruncateObj->setName($dataname );
-
-                    $yAxisDataObjectsArray[] = $yAxisTruncateObj;
-                    $dataTruncated = true;
-                }
-                unset($yAxisDataObjectsIterator);
+                $yAxisDataObjectsArray = $dataset->getDatasets($limit, $offset, $summarizeDataseries);
 
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 // @refer HighChart2 line 866
 
-                $numYAxisDataObjects = count($yAxisDataObjectsArray);
-
-                foreach($yAxisDataObjectsArray as $yIndex => $yAxisDataObject)
+                foreach($yAxisDataObjectsArray as $yAxisDataObject)
                 {
                     if( $yAxisDataObject != null)
                     {
@@ -574,7 +447,7 @@ class HighChartTimeseries2 extends HighChart2
                             ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                             $y_values_count == 1;
 
-                        $isRemainder = $dataTruncated && ($yIndex === $numYAxisDataObjects - 1);
+                        $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
                         $filterParametersTitle = $data_description->long_legend == 1?$query->getFilterParametersTitle():'';
                         if($filterParametersTitle != '')
@@ -663,7 +536,7 @@ class HighChartTimeseries2 extends HighChart2
                         if($multiCategory)
                         {
                             $dataSeriesName = (
-                                DataWarehouse::getCategoryForRealm($data_description->realm)
+                                $data_description->category
                                 . ': '
                                 . $dataSeriesName
                             );

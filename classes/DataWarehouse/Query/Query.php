@@ -101,6 +101,11 @@ class Query extends Loggable
 
     private $leftJoins = array();
 
+    /**
+     * @var bool True if this query should use DISTINCT.
+     */
+    private $isDistinct = false;
+
     public function __construct(
         $realmId,
         $aggregationUnitName,
@@ -722,7 +727,7 @@ SQL;
         $select_order_by = $this->getSelectOrderBy();
 
         $format = <<<SQL
-SELECT
+SELECT%s
   %s
 FROM
   %s%s
@@ -733,6 +738,7 @@ SQL;
 
         $data_query = sprintf(
             $format,
+            ( $this->isDistinct ? ' DISTINCT' : '' ),
             implode(",\n  ", $select_fields),
             implode(",\n  ", $select_tables),
             ( "" == $this->getLeftJoinSql() ? "" : "\n" . $this->getLeftJoinSql() ),
@@ -756,23 +762,14 @@ SQL;
         $groups = $this->getGroups();
 
         $select_tables = $this->getSelectTables();
-
-        $data_query = "select count(*) as row_count from (select sum(1) as total
-                      from \n".implode(",\n", $select_tables)."\n
-                        where \n".implode("\n and ", $wheres);
-
-        $data_query .= ") as a WHERE a.total IS NOT NULL";
-
-        if (count($groups) > 0) {
-            $data_query .= "\nGROUP BY\n".implode(",\n", $groups);
-        }
+        $select_fields = $this->getSelectFields();
 
         $format = <<<SQL
 SELECT
   COUNT(*) AS row_count
 FROM (
   SELECT
-  SUM(1) AS total
+  %s AS total
   FROM
     %s
   WHERE
@@ -782,6 +779,7 @@ FROM (
 SQL;
         $data_query = sprintf(
             $format,
+            ( $this->isDistinct ? 'DISTINCT ' . implode(', ', $select_fields) . ', 1' : 'SUM(1)' ),
             implode(",\n    ", $select_tables),
             implode("\n    AND ", $wheres),
             ( count($groups) > 0 ? "GROUP BY\n    " . implode(",\n    ", $groups) : "" )
@@ -1013,7 +1011,13 @@ SQL;
         $filterParameters = array();
         $filterParameterDescriptions = array();
         foreach ($groupedFilters as $filter_parameter_dimension => $filterValues) {
-            $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
+            try {
+                $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
+            } catch (\Exception $ex) {
+                // Specifically catch when a realm does not have a groupby, this allows
+                // that specific realm to not have the filter
+                continue;
+            }
             $param = array($filter_parameter_dimension.'_filter' => implode(',', $filterValues));
             $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
             $filterParameters[$filter_parameter_dimension] = array(
@@ -1137,7 +1141,13 @@ SQL;
         $groupedRoleParameters = array();
         $roleParameterDescriptions = array();
         foreach ($role_parameters as $role_parameter_dimension => $role_parameter_value) {
-            $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
+            try{
+                $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
+            } catch (\Exception $ex){
+                // Specifically catch when a realm does not have a groupby, this allows
+                // that specific realm to not have the filter
+                continue;
+            }
 
             if (is_array($role_parameter_value)) {
                 $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
@@ -1435,6 +1445,26 @@ SQL;
     public function isTimeseries()
     {
         return ($this instanceof TimeseriesQuery);
+    }
+
+    /**
+     * Set the query to use DISTINCT or not.
+     *
+     * @param bool $distinct
+     */
+    protected function setDistinct($distinct)
+    {
+        $this->isDistinct = $distinct;
+    }
+
+    /**
+     * Does this query use DISTINCT?
+     *
+     * @return bool True if the query uses DISTINCT.
+     */
+    public function isDistinct()
+    {
+        return $this->isDistinct;
     }
 
     /**

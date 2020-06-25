@@ -363,7 +363,7 @@
         },
         "expected": {
             "subtitle": "Domain = ( adjunct,  Default )",
-            "yvalue": 81277.6197
+            "yvalue": 81277.6131
         }
     },
     {
@@ -387,6 +387,21 @@
             "realm": "Cloud",
             "metric": "cloud_core_time",
             "date": "2019-06-26",
+            "filter_dimension": "configuration",
+            "filter_values": [
+                "m1.medium"
+            ]
+        },
+        "expected": {
+            "subtitle": "Instance Type =  m1.medium",
+            "yvalue": 29635.5067
+        }
+    },
+    {
+        "settings": {
+            "realm": "Cloud",
+            "metric": "cloud_core_time",
+            "date": "2019-06-26",
             "filter_dimension": "resource",
             "filter_values": [
                 "nutsetters",
@@ -395,7 +410,7 @@
         },
         "expected": {
             "subtitle": "Resource = ( nutsetters,  openstack )",
-            "yvalue": 129483.1408
+            "yvalue": 129483.1342
         }
     },
     {
@@ -410,7 +425,7 @@
         },
         "expected": {
             "subtitle": "Submission Venue =  OpenStack API",
-            "yvalue": 129483.1408
+            "yvalue": 129483.1342
         }
     },
     {

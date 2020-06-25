@@ -361,7 +361,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         } elseif ($jobId !== null && $recordId !== null && $realm !== null) {
             $result = $this->processJobByJobId($app, $user, $realm, $jobId, $action);
         } elseif ($recordId !== null && $realm !== null) {
-            $result = $this->processHistoryRecordRequest($request, $app, $user, $recordId, $action);
+            $result = $this->getHistoryById($request, $app, $recordId);
         } elseif ($realm !== null && $title !== null) {
             $result = $this->getHistoryByTitle($request, $app, $realm, $title);
         } elseif ($realm !== null) {
@@ -453,6 +453,38 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * retrieve and sanitize the search history parameters for a request
+     * throws and exception if the parameters are missing.
+     * @param Request $request The request.
+     * @return array decoded search parameters.
+     * @throws MissingMandatoryParametersException If the required parameters are absent.
+     */
+    private function getSearchParams(Request $request)
+    {
+        $data = $request->get('data');
+
+        if (!isset($data)) {
+            throw new MissingMandatoryParametersException(
+                'Malformed request. Expected \'data\' to be present.',
+                400
+            );
+        }
+
+        $decoded = json_decode($data, true);
+
+        if ($decoded === null || !isset($decoded['text']) ) {
+            throw new MissingMandatoryParametersException(
+                'Malformed request. Expected \'data.text\' to be present.',
+                400
+            );
+        }
+
+        $decoded['text'] = htmlspecialchars($decoded['text'], ENT_COMPAT | ENT_HTML5);
+
+        return $decoded;
+    }
+
+    /**
      * Attempt to create a new Search History record with the provided 'data'
      * form parameter.
      *
@@ -474,13 +506,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $history = $this->getUserStore($user, $realm);
 
-        $data = $request->get('data');
+        $decoded = $this->getSearchParams($request);
 
-        if (!isset($data)) {
-            throw new MissingMandatoryParametersException('Malformed request. Expected \'data\' to be present.', 400);
-        }
-
-        $decoded = json_decode($data, true);
         $recordId = $this->getIntParam($request, 'recordid');
 
         $created = is_numeric($recordId)
@@ -527,19 +554,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
 
         $action = 'updateHistory';
-        $required = array('data');
 
-
-        $params = $this->parseRestArguments($request, $required);
-        if (!isset($params) || !isset($params['data'])) {
-            throw new MissingMandatoryParametersException('Malformed request. Expected \'data\' to be present.', 400);
-        }
+        $data = $this->getSearchParams($request);
 
         $realm = $this->getStringParam($request, 'realm', true);
 
         $history = $this->getUserStore($user, $realm);
-
-        $data = json_decode($params['data'], true);
 
         $result = $history->upsert($id, $data);
 
@@ -1717,20 +1737,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * @param Request $request
-     * @param Application $app
-     * @param XDUser $user
-     * @param int $recordId
-     * @param string $action
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    private function processHistoryRecordRequest(Request $request, Application $app, XDUser $user, $recordId, $action)
-    {
-        $url = $request->getBasePath() . $request->getPathInfo() . "/$recordId?".$request->getQueryString();
-        return $app->redirect($url);
-    }
-
-    /**
      * @param Application $app
      * @param XDUser $user
      * @param string $realm
@@ -1771,13 +1777,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $results = array();
 
         foreach(\DataWarehouse\Access\RawData::getRawDataRealms($user) as $realmconfig) {
-            $history = $this->getUserStore($user, $realmconfig->name);
+            $history = $this->getUserStore($user, $realmconfig['name']);
             $records = $history->get();
             if (!empty($records)) {
                 $results[] = array(
                     'dtype' => 'realm',
-                    'realm' => $realmconfig->name,
-                    'text' => $realmconfig->display
+                    'realm' => $realmconfig['name'],
+                    'text' => $realmconfig['display']
                 );
             }
         }

@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/../configuration/linker.php';
-
 use CCR\DB;
 use CCR\Log;
 use CCR\MailWrapper;
