@@ -393,6 +393,17 @@ class Shredder
 
             while (($line = fgets($fh)) !== false) {
                 $lineNumber++;
+
+                // skip empty lines
+                if ($line === '') {
+                    $this->logger->debug([
+                        'message'     => 'Skipping blank line',
+                        'file'        => $file,
+                        'line_number' => $lineNumber
+                    ]);
+                    continue;
+                }
+
                 $recordCount++;
 
                 // Remove trailing whitespace.
