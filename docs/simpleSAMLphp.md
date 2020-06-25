@@ -81,6 +81,9 @@ To get a better idea of how these properties translate into expected behavior du
 | false                   | false        | The user is associated with the Unknown organization|
 
 Here is an example `authsources.php` file **note: keys 60 and 61 must be present** These check that the _mandatory_ username and organization properties are present.
+The values in section `40` should be left the same.  You should change the `keys` in this section to match what your IdP returns.
+To find what the IdP returns yoou can use the simple saml administration pages located at: https://YOURXDMODURL/simplesaml .
+More specifically if you have used this guide and named things the same you can use  https://YOURXDMODURL/simplesaml/module.php/core/authenticate.php?as=xdmod-sp .
 
 ```php
 <?php
