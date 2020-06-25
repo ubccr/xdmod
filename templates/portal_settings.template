@@ -76,6 +76,11 @@ version = "[:rest_version:]"
 ;         * Apereo CAS
 basic_auth = "[:rest_basic_auth:]"
 
+[cors]
+; this allows for specified domains (comma separated list) to
+; respond with cors headers allowing third party integration
+domains = "[:cors_domains:]"
+
 [mailer]
 sender_name = "[:mailer_sender_name:]"
 sender_email = "[:mailer_sender_email:]"

@@ -246,6 +246,10 @@ $ node app.js \
   --httpsPrivateKey <PATH TO PRIVATE KEY> --httpsCert <PATH TO PRIVATE KEY> --https true
 ```
 
+## Single Sign-on (SSO) Embedding
+see [Integrations][integrations] for more information
+
+[integrations]: integrations.html
 [ssp]: https://simplesamlphp.org/
 [ssp-config]: https://simplesamlphp.org/docs/stable/simplesamlphp-sp
 [ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus
