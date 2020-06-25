@@ -49,7 +49,7 @@
                 "name": "memorybucket_id",
                 "type": "int(4)",
                 "nullable": false,
-                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memorybucket.id"
+                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memory_buckets.id"
             },{
                 "name": "instance_type_id",
                 "type": "int(11)",
