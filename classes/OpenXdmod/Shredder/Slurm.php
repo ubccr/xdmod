@@ -261,7 +261,7 @@ class Slurm extends Shredder
             $job[$key] = $this->parseTimeField($job[$key]);
         }
 
-        $tres = $this->resourceParser->parseAllocTres($job['alloc_tres']);
+        $tres = $this->resourceParser->parseTres($job['alloc_tres']);
         $job['ngpus'] = $this->resourceParser->getGpuCountFromTres($tres);
 
         $job['cluster_name'] = $this->getResource();
