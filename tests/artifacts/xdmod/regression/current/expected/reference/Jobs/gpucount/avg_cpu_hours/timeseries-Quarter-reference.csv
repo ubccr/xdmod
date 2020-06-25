@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] CPU Hours: Per Job","[2] CPU Hours: Per Job"
+"2016 Q4",13.66323374,2792.95666667
+"2017 Q1",4.19773714,124.26000000
+---------

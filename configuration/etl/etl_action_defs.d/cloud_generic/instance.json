@@ -12,7 +12,8 @@
         "records": {
             "resource_id": "raw.resource_id",
             "account_id": "COALESCE(act.account_id, 1)",
-            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')"
+            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')",
+            "service_provider": "COALESCE(sp.organization_id, 1)"
         },
 
         "joins": [
@@ -27,12 +28,20 @@
                 "alias": "act",
                 "on": "act.provider_account = raw.provider_account AND act.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
+            },
+            {
+                "name": "serviceprovider",
+                "schema": "${UTILITY_SCHEMA}",
+                "type": "LEFT",
+                "alias": "sp",
+                "on": "sp.short_name = raw.service_provider"
             }
         ],
 
         "groupby": [
-            "resource_id",
-            "provider_instance_identifier"
+            "raw.resource_id",
+            "raw.provider_instance_identifier",
+            "raw.service_provider"
         ]
     }
 }

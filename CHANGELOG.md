@@ -1,5 +1,87 @@
-Open XDMoD Change Log
-=====================
+# Open XDMoD Change Log
+
+## 2019-10-29 v8.5.1
+
+- Bug Fixes
+    - General
+        - Fix bug parsing the `resources.json` configuration file when a single resource is defined in the file. ([\#1130](https://github.com/ubccr/xdmod/pull/1130))
+
+## 2019-10-21 v8.5.0
+
+- Bug Fixes
+    - General
+        - Ensure resourcetypes table is correctly populated. ([PR \#1108](https://github.com/ubccr/xdmod/pull/1108))
+        - Ensure summary controller only displays preset charts for realm… ([PR \#1096](https://github.com/ubccr/xdmod/pull/1096))
+        - `xdmod-update-resource-specs`: fix resources file name ([PR \#1085](https://github.com/ubccr/xdmod/pull/1085))
+        - Enable APCu cache for Configuration objects ([PR \#952](https://github.com/ubccr/xdmod/pull/952))
+        - Fix Query Descriptor Visibility ([PR \#911](https://github.com/ubccr/xdmod/pull/911))
+    - Job Viewer
+        - Fix bug in job viewer save search when multiple realms available ([PR \#1092](https://github.com/ubccr/xdmod/pull/1092))
+        - Fix display bugs in the error message for the job viewer analytics. ([PR \#1003](https://github.com/ubccr/xdmod/pull/1003))
+    - Internal Dashboard
+        - Fixing an infinite loop when discarding user changes ([PR \#1068](https://github.com/ubccr/xdmod/pull/1068))
+    - Metric Explorer
+        - Fix metric explorer metric and dimension display bug. ([PR \#1046](https://github.com/ubccr/xdmod/pull/1046))
+        - Enable aggregate view for all "Per Job" statistics in the Jobs realm. ([PR \#961](https://github.com/ubccr/xdmod/pull/961))
+    - User Dashboard
+        - Bug fixes: Add mask and make chart name unique ([PR \#1028](https://github.com/ubccr/xdmod/pull/1028))
+        - adding check to make sure Help Tips exist before making a help tour for a portlet ([PR \#1011](https://github.com/ubccr/xdmod/pull/1011))
+        - Bug Fixes and Changes ([PR \#979](https://github.com/ubccr/xdmod/pull/979))
+    - ETL
+        - Improve DirectorySanner to properly handle first file being empty ([PR \#931](https://github.com/ubccr/xdmod/pull/931))
+    - ACL
+        - Fix backup table detection bug in `acl-config`.  ([PR \#920](https://github.com/ubccr/xdmod/pull/920))
+- Enhancements
+    - Infrastructure
+        - Update DWI's `isRealmEnabled` to be config file based ([PR \#1102](https://github.com/ubccr/xdmod/pull/1102))
+        - Filter Realms processed by `acl-config` ([PR \#1000](https://github.com/ubccr/xdmod/pull/1000))
+    - ACL
+        - Updated to add resource_types and resource_type_realms ([PR \#1006](https://github.com/ubccr/xdmod/pull/1006))
+    - Job Viewer
+        - Add tooltips to jobviewer Summary value column ([PR \#984](https://github.com/ubccr/xdmod/pull/984))
+        - Convert Joules to kWh for display in job viewer. ([PR \#983](https://github.com/ubccr/xdmod/pull/983))
+        - Add Show raw data support for the Jobs Realm ([PR \#900](https://github.com/ubccr/xdmod/pull/900))
+    - General
+        - Performance improvements by providing caching for Configuration objects built from JSON configuration files ([PR \#950](https://github.com/ubccr/xdmod/pull/950))
+    - ETL
+        - Allow re-use of StructuredFile data endpoints with external filters ([PR \#944](https://github.com/ubccr/xdmod/pull/944))
+- Qa / Testing
+    - General
+        - Add Usage Explorer Tests ([PR \#1062](https://github.com/ubccr/xdmod/pull/1062))
+        - Multi realm installs - Allow for modification of enabled realms… ([PR \#1004](https://github.com/ubccr/xdmod/pull/1004))
+        - Improve robustness of UI tests ([PR \#994](https://github.com/ubccr/xdmod/pull/994))
+        - Update Travis YML to explicitly use Ubuntu 14.04 ([PR \#959](https://github.com/ubccr/xdmod/pull/959))
+        - Fixing timing issues in Metric Explorer UI Tests ([PR \#953](https://github.com/ubccr/xdmod/pull/953))
+        - Add Dockerfiles used for test builds ([PR \#935](https://github.com/ubccr/xdmod/pull/935))
+        - Less stringent DataWarehouse Descripter tests ([PR \#926](https://github.com/ubccr/xdmod/pull/926))
+        - enable all component tests and make sure they work ([PR \#902](https://github.com/ubccr/xdmod/pull/902))
+    - Infrastructure
+        - Wait for loading mask to disappear on SSO logout ([PR \#927](https://github.com/ubccr/xdmod/pull/927))
+- Documentation
+    - General
+        - Improve xdmod-ingestor documentation ([PR \#1016](https://github.com/ubccr/xdmod/pull/1016))
+        - Improve processor buckets documentation ([PR \#972](https://github.com/ubccr/xdmod/pull/972))
+- New Features
+    - Data Warehouse Export
+        - Add data warehouse batch export ([PR \#1010](https://github.com/ubccr/xdmod/pull/1010))
+    - Metric Explorer
+        - Add a view chart json button for developers ([PR \#988](https://github.com/ubccr/xdmod/pull/988))
+        - Add chart link button to metric explorer ([PR \#974](https://github.com/ubccr/xdmod/pull/974))
+    - User Dashboard
+        - Added reset summary page layout UI ([PR \#982](https://github.com/ubccr/xdmod/pull/982))
+        - Add JobPortlet ([PR \#976](https://github.com/ubccr/xdmod/pull/976))
+        - Adding New User Help Tour and functionality to reset if a user has seen a tour or not ([PR \#971](https://github.com/ubccr/xdmod/pull/971))
+        - Add recent charts and reports portlet ([PR \#968](https://github.com/ubccr/xdmod/pull/968))
+        - Add report thumbnails portlet ([PR \#967](https://github.com/ubccr/xdmod/pull/967))
+        - Add guided user tours ([PR \#962](https://github.com/ubccr/xdmod/pull/962))
+        - User Dashboard - Center Report Card: Support ([PR \#943](https://github.com/ubccr/xdmod/pull/943))
+        - User Dashboard - Summary Statistics Portlet ([PR \#930](https://github.com/ubccr/xdmod/pull/930))
+        - Initial Prototype of Novice User Portal ([PR \#909](https://github.com/ubccr/xdmod/pull/909))
+- Data Quality
+    - General
+        - Increase size of system username column ([PR \#1007](https://github.com/ubccr/xdmod/pull/1007))
+        - Update Average Wall Hours statistic to be exact rather than approximate in aggregate mode ([PR \#964](https://github.com/ubccr/xdmod/pull/964))
+        - Fix datatype of job_id column ([PR \#932](https://github.com/ubccr/xdmod/pull/932))
 
 ## 2019-05-06 v8.1.2
 

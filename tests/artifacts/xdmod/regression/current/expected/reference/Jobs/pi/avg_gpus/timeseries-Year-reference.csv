@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Chaffinch] GPU Count: Per Job","[Accentor, Alpine] GPU Count: Per Job","[Bittern] GPU Count: Per Job","[Blackbird] GPU Count: Per Job","[Bluetail, Red-flanked] GPU Count: Per Job","[Bufflehead] GPU Count: Per Job","[Bunting, Ortolan] GPU Count: Per Job","[Chiffchaff, Iberian] GPU Count: Per Job","[Dotterel] GPU Count: Per Job","[Dowitcher, Short-billed] GPU Count: Per Job","[Dunlin] GPU Count: Per Job","[Egret, Snowy] GPU Count: Per Job","[Fieldfare] GPU Count: Per Job","[Flycatcher, Taiga] GPU Count: Per Job","[Fulmar] GPU Count: Per Job","[Goose, Red-breasted] GPU Count: Per Job","[Gull, Glaucous-winged] GPU Count: Per Job","[Gull, Yellow-legged] GPU Count: Per Job","[Harrier, Hen] GPU Count: Per Job","[Jackdaw] GPU Count: Per Job","[Kestrel, Lesser] GPU Count: Per Job","[Lark, Calandra] GPU Count: Per Job","[Martin, Sand] GPU Count: Per Job","[Moorhen] GPU Count: Per Job","[Nuthatch] GPU Count: Per Job","[Petrel, Fea's] GPU Count: Per Job","[Scaup, Lesser] GPU Count: Per Job","[Shearwater, Balearic] GPU Count: Per Job","[Shearwater, Great] GPU Count: Per Job","[Shearwater, Macaronesian] GPU Count: Per Job","[Smew] GPU Count: Per Job","[Spotted, Great] GPU Count: Per Job","[Swift, Little] GPU Count: Per Job","[Tern, Caspian] GPU Count: Per Job","[Thrush, Hermit] GPU Count: Per Job","[Warbler, Blackpoll] GPU Count: Per Job","[Warbler, Cetti's] GPU Count: Per Job","[Warbler, Hooded] GPU Count: Per Job","[Warbler, Savi's] GPU Count: Per Job","[White, Great] GPU Count: Per Job","[Yellowthroat, Common] GPU Count: Per Job"
+2016,0.3333,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017,0.1481,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0,0.0000,0,0,0,0,0,0.0000,0.0000,0,0,0,0.0000,0,0.0000,0
+---------

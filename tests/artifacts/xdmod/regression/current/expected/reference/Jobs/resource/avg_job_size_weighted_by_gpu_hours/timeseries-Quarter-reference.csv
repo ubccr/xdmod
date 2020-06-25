@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[phillips] Job Size: Weighted By GPU Hours (GPU Count)","[frearson] Job Size: Weighted By GPU Hours (GPU Count)","[mortorq] Job Size: Weighted By GPU Hours (GPU Count)","[pozidriv] Job Size: Weighted By GPU Hours (GPU Count)","[robertson] Job Size: Weighted By GPU Hours (GPU Count)"
+"2016 Q4",12.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",12.0000,0.0000,0.0000,0.0000,0.0000
+---------

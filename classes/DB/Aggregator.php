@@ -7,24 +7,18 @@
  * @author: Amin Ghadersohi 8/1/2013
  *
  */
+use CCR\Loggable;
+
+use Log as Logger;
 
 class Aggregator extends Loggable
 {
-    public static $__initialized;
-
     /**
      * (Optional) The name of the realm associated with this aggregator.
      *
      * @var string|null
      */
     protected $realmName = null;
-
-    public function __construct()
-    {
-        if ($this->_logger === null) {
-            $this->_logger = Log::singleton('null');
-        }
-    }
 
     /**
      * Update the filter lists associated with this aggregator's realm.
@@ -37,8 +31,7 @@ class Aggregator extends Loggable
             return;
         }
 
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($this->_logger);
+        $filterListBuilder = new FilterListBuilder($this->logger);
         $filterListBuilder->buildRealmLists($this->realmName);
     }
 

@@ -161,7 +161,7 @@ function main()
         DIRECTORY_SEPARATOR,
         array(
             CONFIG_DIR,
-            'resource-specs.json'
+            'resource_specs.json'
         )
     );
 

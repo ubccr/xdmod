@@ -1,10 +1,10 @@
 title
-"Average Wall Hours per Session: by Resource"
+"Wall Hours: Per Session: by Resource"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Month,"[openstack] Average Wall Hours per Session"
+Month,"[openstack] Wall Hours: Per Session"
 2018-04,23.14954403
 ---------

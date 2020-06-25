@@ -1,0 +1,27 @@
+title
+"GPU Hours: Per Job: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"GPU Hours: Per Job"
+focaccia,38.99329060
+bannock,0.00000000
+barm,0.00000000
+black,0.00000000
+brioche,0.00000000
+brown,0.00000000
+chapti,0.00000000
+cornbread,0.00000000
+croutons,0.00000000
+crumpet,0.00000000
+nann,0.00000000
+panettone,0.00000000
+pikelet,0.00000000
+pita,0.00000000
+potbrood,0.00000000
+pumpernickel,0.00000000
+roti,0.00000000
+white,0.00000000
+---------

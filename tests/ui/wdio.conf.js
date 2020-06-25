@@ -64,7 +64,15 @@ if (process.env.WDIO_MODE === 'headless') {
 if (process.env.JUNIT_OUTDIR) {
     reporters.push('junit');
     reporterOptions.junit = {
-        outputDir: process.env.JUNIT_OUTDIR
+        outputDir: process.env.JUNIT_OUTDIR,
+        outputFileFormat: {
+            single: function (config) {
+                if (process.env.SSO) {
+                    return 'xdmod-ui-sso.xml';
+                }
+                return 'xdmod-ui.xml';
+            }
+        }
     };
 }
 

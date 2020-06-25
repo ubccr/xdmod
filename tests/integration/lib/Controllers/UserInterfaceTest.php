@@ -97,7 +97,7 @@ class UserInterfaceTest extends BaseUserAdminTest
                     mkdir($filePath);
                 }
                 file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
-                echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
+                $this->markTestSkipped("Generated Expected Output for UserInterfaceTest testGetMenus: $expectedOutputFile\n");
             }
 
             $expected = array_merge($expected, json_decode(file_get_contents($expectedOutputFile), true));

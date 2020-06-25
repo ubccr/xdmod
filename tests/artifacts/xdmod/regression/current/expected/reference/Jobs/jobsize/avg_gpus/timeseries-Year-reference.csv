@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[1] GPU Count: Per Job","[2] GPU Count: Per Job","[3 - 4] GPU Count: Per Job","[5 - 8] GPU Count: Per Job","[9 - 16] GPU Count: Per Job","[17 - 32] GPU Count: Per Job","[33 - 64] GPU Count: Per Job","[65 - 128] GPU Count: Per Job","[129 - 256] GPU Count: Per Job","[257 - 512] GPU Count: Per Job"
+2016,0.0000,0.0000,0.0000,0.0000,0.0001,0.0000,0.0000,0.0000,0.0000,0.0000
+2017,0.0000,0.0000,0.0000,0.0000,0.0008,0.0000,0.0000,0.0000,0.0000,0
+---------

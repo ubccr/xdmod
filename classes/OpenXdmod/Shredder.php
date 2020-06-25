@@ -1030,10 +1030,7 @@ class Shredder
         $resources = XdmodConfiguration::assocArrayFactory(
             'resources.json',
             CONFIG_DIR,
-            $this->logger,
-            array(
-                'force_array_return' => true
-            )
+            $this->logger
         );
 
         foreach ($resources as $resource) {

@@ -107,9 +107,32 @@
                 "comment": "FACT: (seconds) The wall duration of the sessions that were running during this period."
             },{
                 "name": "submission_venue_id",
-                "type": "int(5)",
+                "type": "int(11)",
                 "nullable": true,
                 "comment": "DIMENSION: The venue that a job or virtual machine was initiated from."
+            },
+            {
+                "name": "domain_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A domain is a high-level container for projects, users and groups."
+            },{
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A service provider is an institution that hosts resources."
+            },{
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "DIMENSION: The PI that owns the allocations that these VM's ran under. References principalinvestigator.person_id"
+            },{
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "DIMENSION: The field of science of the project to which the jobs belong"
             }
         ],
 

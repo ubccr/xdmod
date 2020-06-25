@@ -27,7 +27,7 @@ function getAbsoluteURL()
       $user = XDUser::getUserById($user_to_login_as);
 
       if (!XDUser::isAuthenticated($user)) {
-         print "Unknown user id $user_to_login_as";
+         print "Unknown user id specified in the REQUEST['uid'] parameter";
          exit;
       }
 

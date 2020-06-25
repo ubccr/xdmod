@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[1] Job Size: Weighted By GPU Hours (GPU Count)","[2] Job Size: Weighted By GPU Hours (GPU Count)","[3] Job Size: Weighted By GPU Hours (GPU Count)","[4] Job Size: Weighted By GPU Hours (GPU Count)","[5] Job Size: Weighted By GPU Hours (GPU Count)","[6] Job Size: Weighted By GPU Hours (GPU Count)","[7] Job Size: Weighted By GPU Hours (GPU Count)","[8] Job Size: Weighted By GPU Hours (GPU Count)","[9] Job Size: Weighted By GPU Hours (GPU Count)","[12] Job Size: Weighted By GPU Hours (GPU Count)","[14] Job Size: Weighted By GPU Hours (GPU Count)","[16] Job Size: Weighted By GPU Hours (GPU Count)","[20] Job Size: Weighted By GPU Hours (GPU Count)","[24] Job Size: Weighted By GPU Hours (GPU Count)","[28] Job Size: Weighted By GPU Hours (GPU Count)"
+2016,12.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017,12.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0,0,0,0.0000,0.0000,0,0
+---------

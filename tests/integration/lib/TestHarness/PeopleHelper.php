@@ -32,9 +32,12 @@ class PeopleHelper
     {
         $sql = 'SELECT id FROM person WHERE long_name = :name';
         $people = $this->dbh->query($sql, array('name' => $longName));
-        if (count($people) !== 1) {
+        $isUnknown = strtolower($longName) === 'unknown';
+
+        // We only care if there is more than one result if the $longName is not 'unknown'.
+        if (count($people) !== 1 && $isUnknown === false) {
             throw new Exception(
-                sprintf('Found %d people, expected 1', count($people))
+                sprintf('Found %d people, expected 1 for %s', count($people), $longName)
             );
         }
         return $people[0]['id'];

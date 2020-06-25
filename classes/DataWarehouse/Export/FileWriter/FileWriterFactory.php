@@ -9,6 +9,9 @@ use CCR\Loggable;
  */
 class FileWriterFactory extends Loggable
 {
+    // Constants used in log messages.
+    const LOG_MODULE = 'data-warehouse-export';
+
     /**
      * Create a file writer for the given format and file.
      *
@@ -19,6 +22,7 @@ class FileWriterFactory extends Loggable
     public function createFileWriter($format, $file)
     {
         $this->logger->debug([
+            'module' => self::LOG_MODULE,
             'message' => 'Creating new file writer',
             'format' => $format,
             'file' => $file

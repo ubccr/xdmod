@@ -34,9 +34,31 @@ $opts = array(
 $dryRun = false;
 $logLevel = Log::ERR;
 $recover = false;
-$isXSEDE = false;
+
+$lockFile = null;
+$lockFileHandle = null;
+$tables = array(
+    'modules',
+    'realms',
+    'hierarchies',
+    'statistics',
+    'group_bys',
+    'acl_types',
+    'acls',
+    'acl_group_bys',
+    'acl_hierarchies',
+    'tabs',
+    'acl_tabs',
+    'user_acls',
+    'user_acl_group_by_parameters'
+);
+
+$lockFile = new \ETL\LockFile(sys_get_temp_dir(), 'acl-config');
 
 try {
+
+    $lockFile->lock(array());
+
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
 
     foreach ($options as $key => $value) {
@@ -83,20 +105,25 @@ try {
 
     main();
 
+    $lockFile->unlock();
 } catch (Exception $e) {
     do {
         fwrite(STDERR, $e->getMessage() . "\n");
         fwrite(STDERR, $e->getTraceAsString() . "\n");
     } while ($e = $e->getPrevious());
+
+    $lockFile->unlock();
+
     exit(1);
 }
 
 /**
  *
+ * @throws Exception
  **/
 function main()
 {
-    global $dryRun, $log, $verify, $logLevel, $recover, $isXSEDE;
+    global $dryRun, $log, $verify, $logLevel, $tables;
 
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
@@ -113,9 +140,6 @@ function main()
         exit($result);
     }
 
-    // Make sure that all of the required tables are present
-    Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
-
     // a role/acl blacklist. 'default' doesn't actually exist so don't bother
     // processing it.
     $blacklist = array('default');
@@ -129,8 +153,6 @@ function main()
 
     // Module Retrieval
     $modules = Configuration::assocArrayFactory('modules.json', CONFIG_DIR, $log);
-
-    $isXSEDE = array_key_exists('xsede', $modules);
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
@@ -148,21 +170,26 @@ function main()
     // Configuration Files
     $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
     $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
-    $realmConfig = \Configuration\ModuleConfiguration::factory('datawarehouse.json', CONFIG_DIR, $log);
 
     foreach ($modules as $module => $moduleData) {
 
         $hierarchies = $hierarchyConfig->filterByModule($module);
         $roles = $roleConfig->filterByModule($module);
-        $realms = $realmConfig->filterByModule($module);
+
+        $realmObjects = array_filter(
+            \Realm\Realm::getRealmObjects(),
+            function ($obj) use ($module) {
+                return $module == $obj->getModuleName();
+            }
+        );
 
         // Process the hierarchies provided by this module, if any.
-        if (count(get_object_vars($hierarchies)) > 0 && property_exists($hierarchies, 'hierarchies')) {
+        if (is_object($hierarchies) && property_exists($hierarchies, 'hierarchies')) {
             $moduleHierarchies[$module] = json_decode(json_encode($hierarchies->hierarchies), true);
         }
 
         // Process the roles provided by this module, if any.
-        if (count(get_object_vars($roles)) > 0 && property_exists($roles, 'roles')) {
+        if (is_object($roles) && property_exists($roles, 'roles')) {
             $moduleRoles = $roles->roles;
 
             // for each defined role
@@ -185,16 +212,13 @@ function main()
         }
 
         // Process the realms provided by this module, if any.
-        if (property_exists($realms, 'realms')) {
-            foreach ($realms->realms as $realm => $data) {
-
-                $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
-                $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
-                $results[$module]['realms'][$realm] = array(
-                    'group_bys' => json_decode(json_encode($groupBys), true),
-                    'statistics' => json_decode(json_encode($statistics), true)
-                );
-            }
+        foreach ( $realmObjects as $realmId => $realmObj ) {
+            $results[$module]['realms'][$realmId] = array(
+                'display_name' => $realmObj->getName(),
+                'show_in_catalog' => $realmObj->showInMetricCatalog(),
+                'group_bys' => $realmObj->getGroupByObjects(),
+                'statistics' => $realmObj->getStatisticObjects()
+            );
         }
     }
 
@@ -240,18 +264,6 @@ function main()
     // the managed tables.
 
     /**
-     * This sql statement should serve as the select query that will be used to
-     * create the backup table 'user_acls_bkup'.
-     */
-    $userAclCreateBkup = <<<SQL
-    SELECT
-      ua.user_id,
-      a.name AS acl_name
-    FROM user_acls ua
-      JOIN acls a ON a.acl_id = ua.acl_id
-SQL;
-
-    /**
      * Serves as the insertion query to utilize when reconstituting the
      * user_acls table. Notice the 'LEFT JOIN' on 'acls' and accompanying
      * where clause 'a.acl_id IS NOT NULL'. These are to ensure that if an
@@ -259,32 +271,14 @@ SQL;
      * their way back into the system.
      */
     $userAclRepopulate = <<<SQL
-    INSERT INTO user_acls (user_id, acl_id)
+    INSERT INTO user_acls_staging (user_id, acl_id)
       SELECT
         ua.user_id,
         a.acl_id
-      FROM user_acls_bkup ua
-        LEFT JOIN acls a ON a.name = ua.acl_name
-      WHERE a.acl_id IS NOT NULL
-SQL;
-
-    /**
-     * to serve as the select query that will be used to create the backup
-     * table 'user_acl_group_by_parameters_bkup'.
-     */
-    $uagbpCreateBkup = <<<SQL
-    SELECT
-      uagbp.user_id,
-      a.name  AS acl_name,
-      m.name  AS group_by_module_name,
-      r.name  AS group_by_realm_name,
-      gb.name AS group_by_name,
-      uagbp.value
-    FROM user_acl_group_by_parameters uagbp
-      JOIN acls a ON a.acl_id = uagbp.acl_id
-      JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
-      JOIN realms r ON r.realm_id = gb.realm_id
-      JOIN modules m ON m.module_id = gb.module_id;
+      FROM user_acls ua
+        JOIN acls a ON ua.acl_id = a.acl_id
+        LEFT JOIN acls_staging ast ON ast.name = a.name
+      WHERE ast.acl_id IS NOT NULL
 SQL;
 
     /**
@@ -299,45 +293,38 @@ SQL;
      *   - group_bys
      */
     $uagbpRepopulate = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+INSERT INTO user_acl_group_by_parameters_staging(user_id, acl_id, group_by_id, value)
   SELECT
     uagbp.user_id,
     a.acl_id,
-    gb.group_by_id,
+    gbst.group_by_id,
     uagbp.value
-  FROM user_acl_group_by_parameters_bkup uagbp
-    LEFT JOIN acls a ON a.name = uagbp.acl_name
-    LEFT JOIN modules m ON m.name = uagbp.group_by_module_name
-    LEFT JOIN realms r ON r.name = uagbp.group_by_realm_name
-    LEFT JOIN group_bys gb
-      ON gb.name = uagbp.group_by_name AND
-         gb.module_id = m.module_id AND
-         gb.realm_id = r.realm_id
-  WHERE a.acl_id IS NOT NULL AND
-        m.module_id IS NOT NULL AND
-        r.realm_id IS NOT NULL AND
-        gb.group_by_id IS NOT NULL;
+  FROM user_acl_group_by_parameters uagbp
+    JOIN acls a ON uagbp.acl_id = a.acl_id
+    JOIN group_bys g on uagbp.group_by_id = g.group_by_id
+    JOIN modules m ON m.module_id = g.module_id
+    JOIN realms r ON r.realm_id = g.realm_id
+    LEFT JOIN acls_staging ast ON ast.name = a.name
+    LEFT JOIN modules_staging mst ON mst.name = m.name
+    LEFT JOIN realms_staging rst ON rst.name = r.name
+    LEFT JOIN group_bys_staging gbst
+      ON gbst.name = g.name AND
+         gbst.module_id = mst.module_id AND
+         gbst.realm_id = rst.realm_id
+  WHERE ast.acl_id IS NOT NULL AND
+        mst.module_id IS NOT NULL AND
+        rst.realm_id IS NOT NULL AND
+        gbst.group_by_id IS NOT NULL;
 SQL;
 
 
     $tablesToBeBackedUp = array(
         'user_acls' => array(
-            'create_sql' => $userAclCreateBkup,
             'populate_sql' => $userAclRepopulate
         ),
         'user_acl_group_by_parameters' => array(
-            'create_sql' => $uagbpCreateBkup,
-            'populate_sql' =>$uagbpRepopulate
+            'populate_sql' => $uagbpRepopulate
         )
-    );
-
-    $nonManagedBackupTables = array_reduce(
-        array_keys($tablesToBeBackedUp),
-        function($carry, $item) {
-            $carry[] = "${item}_bkup";
-            return $carry;
-        },
-        array()
     );
 
     /* acl-config "recovery" documentation
@@ -424,28 +411,9 @@ SQL;
      *   *after* a failed run but *before* acl-config is run with the --recover flag, then these
      *   changes will *not* be recovered.
      */
-    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, SCHEMA, false);
-
-    if ($backupTablesExist && !$recover) {
-        $log->err('Backup tables detected! ');
-        $log->err('Unable to continue!');
-        $log->err('This may indicate a failed previous run.');
-        $log->err('Please see the XDMoD Troubleshooting documentation to resolve.');
-        exit(1);
-    } elseif (!$backupTablesExist) {
-        if ($recover) {
-            $log->warning('Recover mode specified but no backup tables exist.');
-            $log->warning('Script execution will continue as normal.');
-        }
-        backupNonManagedTables($db, $tablesToBeBackedUp);
-    }
-
-    wipeManagedTables($db);
 
     // Create Managed Tables
     Utilities::runEtlPipeline(array('acls-xdmod-management'), $log, array('dryrun' => $dryRun));
-
-    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
@@ -486,99 +454,21 @@ SQL;
         processResult($db, $module, $moduleData, $modules);
     }
 
-    // Now re-populate the user related tables.
+    // Now re-populate the user related tables to their respective staging tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
-    // Make sure we drop the backup tables
-    dropTables($db, $nonManagedBackupTables);
+    // and finally, we DELETE * from  && INSERT INTO the final tables from the staging tables.
+    syncTableData($db, $tables);
 
-    // Run the acl cleanup scripts
-    Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
-}
-
-/**
- * Create a backup of the user related acl tables so that we can later re-populate
- * them
- *
- * @param iDatabase $db     the database that the user related tables will be backed
- *                          up in.
- * @param array     $tables
- * @throws Exception if a problem occurs while executing table backup sql.
- */
-function backupNonManagedTables(iDatabase $db, array $tables)
-{
-    global $dryRun, $log;
-    $log->info("Backing Up User Related Tables...");
-
-    foreach($tables as $table => $queries) {
-        $creationQuery = $queries['create_sql'];
-
-        $query = <<<SQL
-CREATE TABLE ${table}_bkup AS $creationQuery;
-SQL;
-
-        $log->debug("Backup query [$table]: $query");
-
-        if ($dryRun) {
-            $log->notice("Table[$table] would have been created");
-            continue;
-        }
-
-        // throws exception or returns row count
-        $rows = $db->execute($query);
-        $log->debug(sprintf('Inserted %d rows into %s', $rows, $table));
-    }
-
-    $log->info("User Related Tables Backed Up!");
-}
-
-/**
- * Attempt to drop the tables managed by this script.
- *
- * @param iDatabase $db
- * @throws Exception if a problem occurs while executing sql.
- */
-function wipeManagedTables(iDatabase $db)
-{
-    global $dryRun, $log;
-
-    $log->info("Wiping Managed Tables...");
-
-    $tables = array(
-        'user_acl_group_by_parameters',
-        'user_acls',
-        'acl_tabs',
-        'tabs',
-        'acl_hierarchies',
-        'acl_group_bys',
-        'report_template_acls',
-        'acls',
-        'acl_types',
-        'group_bys',
-        'statistics',
-        'hierarchies',
-        'realms',
-        'modules',
-        'resource_type_realms'
+    $stagingTables = array_map(
+        function ($item) {
+            return "{$item}_staging";
+        },
+        array_reverse($tables)
     );
+    dropTables($db, $stagingTables);
 
-    foreach($tables as $table) {
-        $query = <<<SQL
-DROP TABLE $table;
-SQL;
-        if ($dryRun) {
-            $log->info("Would have dropped: $table");
-            continue;
-        }
-
-        $log->debug("Dropping Table\n$query");
-
-        $db->execute($query);
-
-        $log->debug("Table dropped");
-    }
-
-    $log->info("Managed Tables Wiped!");
+    Utilities::runEtlPipeline(array('acls-import'), $log, array('dryrun' => $dryRun));
 }
 
 /**
@@ -610,7 +500,6 @@ function repopulateNonManagedTables(iDatabase $db, array $tables)
     $log->info("Re-Population of Tables Complete!");
 }
 
-
 /**
  *
  *
@@ -630,7 +519,7 @@ function processHierarchies(iDatabase $db, $hierarchies)
     //     - the same name / display as incoming
     //     - but a different module_id than incoming
     $query = <<<SQL
-    INSERT INTO hierarchies(module_id, name, display)
+    INSERT INTO hierarchies_staging(module_id, name, display)
     SELECT inc.module_id, inc.name, inc.display
     FROM
     (
@@ -638,10 +527,10 @@ function processHierarchies(iDatabase $db, $hierarchies)
           m.module_id AS module_id,
           :name       AS name,
           :display    AS display
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN hierarchies cur
+    LEFT JOIN hierarchies_staging cur
     ON BINARY cur.name    = BINARY inc.name    AND
        BINARY cur.display = BINARY cur.display
     WHERE cur.hierarchy_id IS NULL;
@@ -854,13 +743,13 @@ function createModule(iDatabase $db, $name, $display, $enabled)
     global $dryRun, $log;
 
     $query = <<<SQL
-    INSERT INTO modules(name, display, enabled)
+    INSERT INTO modules_staging(name, display, enabled)
     SELECT inc.*
     FROM (
         SELECT :name    AS name,
                :display AS display,
                :enabled AS enabled ) inc
-    LEFT JOIN modules cur
+    LEFT JOIN modules_staging cur
         ON BINARY cur.name    = BINARY inc.name    AND
            BINARY cur.display = BINARY inc.display
     WHERE cur.module_id IS NULL
@@ -888,7 +777,7 @@ SQL;
         $log->info("[ALREADY EXISTS] Retrieving Identifier for Module: $name");
         $select = <<<SQL
     SELECT m.module_id
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.name    = BINARY :name    AND
           BINARY m.display = BINARY :display
 SQL;
@@ -922,7 +811,7 @@ function associateModuleAndVersion(iDatabase $db, $moduleId, $moduleVersionId)
 
     $exists = <<<SQL
     SELECT m.module_id
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.module_id          = BINARY :module_id AND
           BINARY m.current_version_id = BINARY :current_version_id
 SQL;
@@ -947,7 +836,7 @@ SQL;
     }
 
     $query = <<<SQL
-    UPDATE modules
+    UPDATE modules_staging
     SET current_version_id = :current_version_id
     WHERE BINARY module_id = BINARY :module_id
 SQL;
@@ -1086,7 +975,7 @@ function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hier
         $aclTypeId = processAclType($db, $module, $type);
 
         $query = <<<SQL
-INSERT INTO acls(module_id, acl_type_Id, name, display, enabled)
+INSERT INTO acls_staging(module_id, acl_type_Id, name, display, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -1095,10 +984,10 @@ FROM (
         :name          AS name,
         :display       AS display,
         :enabled       AS enabled
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.name = BINARY :module_name
  ) inc
-LEFT JOIN acls cur
+LEFT JOIN acls_staging cur
   ON cur.acl_type_id = inc.acl_type_id AND
      BINARY cur.name = BINARY inc.name
 WHERE cur.acl_id IS NULL
@@ -1118,7 +1007,7 @@ SQL;
         );
     } else {
         $query = <<<SQL
-INSERT INTO acls(module_id, name, display, enabled)
+INSERT INTO acls_staging(module_id, name, display, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -1126,10 +1015,10 @@ FROM (
         :name          AS name,
         :display       AS display,
         :enabled       AS enabled
-    FROM modules m
+    FROM modules_staging m
     WHERE BINARY m.name = BINARY :module_name
  ) inc
-LEFT JOIN acls cur
+LEFT JOIN acls_staging cur
   ON BINARY cur.name        = BINARY inc.name
 WHERE cur.acl_id IS NULL;
 SQL;
@@ -1158,8 +1047,8 @@ SQL;
         $log->notice("[ALREADY EXISTS] Acl $msg");
         $query = <<<SQL
     SELECT a.acl_id
-    FROM acls a
-        JOIN modules m
+    FROM acls_staging a
+        JOIN modules_staging m
             ON a.module_id = m.module_id
     WHERE BINARY m.name    = BINARY :module_name AND
           BINARY a.name    = BINARY :name        AND
@@ -1206,17 +1095,17 @@ function processAclType(iDatabase $db, $module, $type)
     $log->info("Processing Acl Type...");
 
     $query = <<<SQL
-    INSERT INTO acl_types(module_id, name, display)
+    INSERT INTO acl_types_staging(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id       AS module_id,
             :acl_type_name    AS name,
             :acl_type_display AS display
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN acl_types cur
+    LEFT JOIN acl_types_staging cur
         ON BINARY cur.name  = BINARY inc.name
     WHERE cur.acl_type_id IS NULL;
 SQL;
@@ -1240,7 +1129,7 @@ SQL;
         // exists, attempt to retrieve the acl_type_id.
         $query = <<<SQL
     SELECT at.acl_type_id
-    FROM acl_types at
+    FROM acl_types_staging at
     WHERE BINARY at.name    = BINARY :acl_type_name
 SQL;
         $results = $db->query(
@@ -1281,7 +1170,7 @@ function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies)
     $log->notice("Processing Acl Hierarchy Records...");
 
     $query = <<<SQL
-    INSERT INTO acl_hierarchies(acl_id, hierarchy_id, level, filter_override)
+    INSERT INTO acl_hierarchies_staging(acl_id, hierarchy_id, level, filter_override)
     SELECT inc.*
     FROM (
         SELECT
@@ -1289,13 +1178,13 @@ function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies)
             h.hierarchy_id   AS hierarchy_id,
             :level           AS level,
             :filter_override AS filter_override
-        FROM acls a, hierarchies h, modules m
+        FROM acls_staging a, hierarchies_staging h, modules_staging m
         WHERE a.module_id        = m.module_id         AND
               h.module_id        = m.module_id         AND
               BINARY m.name      = BINARY :module_name AND
               BINARY a.name      = BINARY :acl_name
     ) inc
-    LEFT JOIN acl_hierarchies cur
+    LEFT JOIN acl_hierarchies_staging cur
         ON cur.acl_id              = inc.acl_id       AND
            cur.hierarchy_id        = inc.hierarchy_id AND
            BINARY cur.level        = BINARY inc.level
@@ -1304,15 +1193,12 @@ SQL;
 
     $log->debug($query);
 
-    if ( ! $dryRun ) {
+    if (!$dryRun) {
         $statement = $db->prepare($query);
     }
 
     $inserted = 0;
 
-    // Begin a transaction so that either all of the hierarchies are inserted or
-    // none of them are.
-    $db->beginTransaction();
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
         if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
@@ -1352,16 +1238,7 @@ SQL;
             $log->warning("[WARNING] Inserted more than one Acl Hierarchy Record for: $id");
         }
     }
-    $committed = $db->commit();
-    if ($committed === false) {
-        $log->warning("[FAIL] Attempt to commit hierarchies for Acl [$acl] failed.");
-        $rolledBack = $db->rollBack();
 
-        // We throw an Exception so that we do not leave the db in an inconsistent state.
-        if ($rolledBack === false) {
-            throw new Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
-        }
-    }
     $processed = count($hierarchies);
     $log->notice("Processed: $processed, Inserted: $inserted");
 }
@@ -1411,16 +1288,16 @@ function createTab(iDatabase $db, $module, $tab)
     $msg = "name: $tab";
 
     $query = <<<SQL
-    INSERT INTO tabs(module_id, name)
+    INSERT INTO tabs_staging(module_id, name)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
             :name       AS name
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN tabs cur
+    LEFT JOIN tabs_staging cur
         ON BINARY cur.name = BINARY inc.name
     WHERE cur.tab_id IS NULL;
 SQL;
@@ -1447,7 +1324,7 @@ SQL;
         $log->info("[ALREADY EXISTS] Tab: $msg");
         $query = <<<SQL
     SELECT t.tab_id
-    FROM tabs t
+    FROM tabs_staging t
     WHERE BINARY t.name = BINARY :name
 SQL;
         $params = array(
@@ -1487,18 +1364,18 @@ function relateAclAndTab(iDatabase $db, $aclName, $tabName)
     global $dryRun, $log;
 
     $query = <<<SQL
-    INSERT INTO acl_tabs(acl_id, tab_id)
+    INSERT INTO acl_tabs_staging(acl_id, tab_id)
     SELECT inc.*
     FROM (
         SELECT
             a.acl_id AS acl_id,
             t.tab_id AS tab_id
-        FROM acls a, tabs t
+        FROM acls_staging a, tabs_staging t
         WHERE BINARY a.name = BINARY :acl_name AND
               BINARY t.name = BINARY :tab_name
 
     ) inc
-    LEFT JOIN acl_tabs cur
+    LEFT JOIN acl_tabs_staging cur
         ON cur.acl_id = inc.acl_id AND
            cur.tab_id = inc.tab_id
     WHERE cur.acl_tab_id IS NULL;
@@ -1576,7 +1453,7 @@ FROM (
         s.statistic_id AS statistic_id,
         :visible       AS visible,
         :enabled       AS enabled
-    FROM acls a, group_bys gb, statistics s, modules m, realms r
+    FROM acls_staging a, group_bys_staging gb, statistics_staging s, modules_staging m, realms_staging r
     WHERE BINARY m.name       = BINARY :module_name    AND
           BINARY r.name       = BINARY :realm_name     AND
           BINARY a.name       = BINARY :acl_name       AND
@@ -1588,7 +1465,7 @@ FROM (
           s.module_id         = m.module_id            AND
           s.realm_id          = r.realm_id
 ) inc
-LEFT JOIN acl_group_bys cur
+LEFT JOIN acl_group_bys_staging cur
     ON cur.realm_id    = inc.realm_id      AND
        cur.acl_id      = inc.acl_id        AND
        cur.group_by_id = inc.group_by_id   AND
@@ -1621,43 +1498,40 @@ SQL;
             continue;
         }
 
-        $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
+        $groupByName = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
-        $hide = isset($queryDescriptor['hide']) ? $queryDescriptor['hide'] : null;
 
-        $realmData = $realms[$realm];
-        if (!isset($realmData['statistics'])) {
-            $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
+        if ( ! array_key_exists($groupByName, $realms[$realm]['group_bys']) ) {
+            $log->warning(sprintf("Group by '%s' not defined for realm '%s', skipping.", $groupByName, $realm));
             continue;
         }
 
+        $realmData = $realms[$realm];
+        if (!isset($realmData['statistics'])) {
+            $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupByName ]");
+            continue;
+        }
+
+        $groupBy = isset($realmData['group_bys'][$groupByName]) ? $realmData['group_bys'][$groupByName] : null;
+        if (!isset($groupBy)) {
+            $log->warning("No group by $groupByName found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupByName ]");
+            continue;
+        }
         $statistics = $realmData['statistics'];
-        foreach ($statistics as $statistic) {
+        foreach ($statistics as $statisticId  => $statisticData) {
 
-            $statisticName = isset($statistic['name']) ? $statistic['name'] : null;
-            $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
-
-            // By default, an entry will be shown.
-            // If the statistic defines a $visible value, then prefer that.
-            // Else, if the query descriptor has a hide value, use that.
-            $shown = true;
-            if (isset($visible)) {
-                $shown = $visible;
-            } elseif (!isset($visible) && isset($hide)) {
-                $shown = !$hide;
+            $id = "[ $module, $realm, $acl, $groupByName, $statisticId ]";
+            $visible = 1;
+            if (!$realmData['show_in_catalog'] || !$statisticData->showInMetricCatalog()) {
+                $visible = 0;
             }
-
-            $realmName = strtolower($realm);
-
-            $id = "[ $module, $realmName, $acl, $groupBy, $statisticName ]";
-
             $params = array(
                 ':module_name' => $module,
-                ':realm_name' => $realmName,
+                ':realm_name' => $realm,
                 ':acl_name' => $acl,
-                ':group_by_name' => $groupBy,
-                ':statistic_name' => $statisticName,
-                ':visible' => ( $shown ? 1 : 0 ),
+                ':group_by_name' => $groupByName,
+                ':visible' => $visible,
+                ':statistic_name' => $statisticId,
                 ':enabled' => ( !$disable ? 1 : 0 )
             );
 
@@ -1680,9 +1554,9 @@ SQL;
 
             $totalInserted += $inserted;
             if ($inserted === 0) {
-                $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupBy, $statisticName ]");
+                $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupByName, $statisticId ]");
             } elseif ($inserted === 1) {
-                $log->info("[SUCCESS] Created Query Descriptor [ $module, $realm, $acl, $groupBy, $statisticName ]");
+                $log->info("[SUCCESS] Created Query Descriptor [ $module, $realm, $acl, $groupByName, $statisticId ]");
             }
         }
         $processed = count($statistics);
@@ -1692,13 +1566,13 @@ SQL;
 
     fflush($bulkdatafile);
 
-    $bulkload = 'LOAD DATA LOCAL INFILE \'' . stream_get_meta_data($bulkdatafile)['uri'] . '\' INTO TABLE `acl_group_bys` FIELDS TERMINATED BY \',\' (realm_id, acl_id, group_by_id, statistic_id, visible, enabled)';
+    $bulkload = 'LOAD DATA LOCAL INFILE \'' . stream_get_meta_data($bulkdatafile)['uri'] . '\' INTO TABLE `acl_group_bys_staging` FIELDS TERMINATED BY \',\' (realm_id, acl_id, group_by_id, statistic_id, visible, enabled)';
     $databaseHelper = CCR\DB\MySQLHelper::factory($db);
     $output = $databaseHelper->executeStatement($bulkload);
 
     if (count($output) > 0) {
         $this->logger->warning($bulkload);
-        foreach($output as $line) {
+        foreach ($output as $line) {
             $this->logger->warning($line);
         }
     }
@@ -1722,17 +1596,16 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
 {
     global $dryRun, $log;
 
-    foreach ($realms as $realm => $realmData) {
-        $log->notice("Processing Realm: $realm for Module: $moduleName");
+    foreach ($realms as $realmId => $realmData) {
+        $log->notice(sprintf("Processing Realm: %s (%s) for Module: %s", $realmId, $realmData['display_name'], $moduleName));
 
-        createRealm($db, $moduleName, $realm);
+        createRealm($db, $moduleName, $realmId, $realmData['display_name']);
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
 
-        createGroupBys($db, $moduleName, strtolower($realm), $groupBys);
-        createStatistics($db, $moduleName, strtolower($realm), $statistics);
-        updateResourceTypeRealms($db, $realm);
+        createGroupBys($db, $moduleName, $realmId, $groupBys);
+        createStatistics($db, $moduleName, $realmId, $statistics);
     }
 }
 
@@ -1743,38 +1616,37 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
  * @param iDatabase $db            the database to be used when creating the realm
  * @param string    $moduleName    the name of the module to associate this realm
  *                                 with.
- * @param string    $realmDisplay  the name that this realm should be created with.
+ * @param string    $realmId       the id that this realm should be created with.
+ * @param string    $realmDisplay  the display name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm(iDatabase $db, $moduleName, $realmDisplay)
+function createRealm(iDatabase $db, $moduleName, $realmId, $realmDisplay)
 {
     global $dryRun, $log;
 
-    $realmName = strtolower($realmDisplay);
+    $log->notice(sprintf("*** Creating Realm %s (%s)...", $realmId, $realmDisplay));
 
-    $log->notice("*** Creating Realm ($realmDisplay)...");
-
-    $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
+    $successMsg = sprintf("[SUCCESS] Created Realm: %s (%s) for Module: %s", $realmId, $realmDisplay, $moduleName);
 
     $query = <<<SQL
-    INSERT INTO realms(module_id, name, display)
+    INSERT INTO realms_staging(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
             :realm_name AS name,
             :realm_display AS display
-        FROM modules m
+        FROM modules_staging m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
-    LEFT JOIN realms cur
+    LEFT JOIN realms_staging cur
         ON BINARY cur.name = BINARY inc.name
     WHERE cur.realm_id IS NULL;
 SQL;
 
     $params = array(
-        ':realm_name' => $realmName,
+        ':realm_name' => $realmId,
         ':realm_display' => $realmDisplay,
         ':module_name' => $moduleName
     );
@@ -1794,7 +1666,7 @@ SQL;
 
     if ($inserted === 0) {
         $updateQuery = <<<SQL
-    UPDATE realms
+    UPDATE realms_staging
     SET display = :realm_display
     WHERE name = :realm_name;
 SQL;
@@ -1802,11 +1674,11 @@ SQL;
             $updateQuery,
             array(
                 ':realm_display' => $realmDisplay,
-                ':realm_name'    => $realmName
+                ':realm_name'    => $realmId
             )
         );
         if ($updated === 1) {
-            $log->info("Updated Realm [$realmName] with display [$realmDisplay]");
+            $log->info("Updated Realm [$realmId] with display [$realmDisplay]");
         } else {
             $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
         }
@@ -1837,19 +1709,19 @@ function createGroupBys(iDatabase $db, $moduleName, $realmName, array $groupBys)
     $successMsg = "[SUCCESS] Created Group By: %s for Module: $moduleName and Realm: $realmName";
 
     $query = <<<SQL
-INSERT INTO group_bys(module_id, realm_id, name)
+INSERT INTO group_bys_staging(module_id, realm_id, name)
 SELECT inc.*
 FROM (
     SELECT
         m.module_id    AS module_id,
         r.realm_id     AS realm_id,
         :group_by_name AS name
-    FROM modules m, realms r
+    FROM modules_staging m, realms_staging r
     WHERE BINARY m.name      = BINARY :module_name AND
           r.module_id        =  m.module_id        AND
           BINARY r.name      = BINARY :realm_name
 ) inc
-LEFT JOIN group_bys cur
+LEFT JOIN group_bys_staging cur
     ON cur.module_id        = inc.module_id   AND
        cur.realm_id         = inc.realm_id    AND
        BINARY cur.name      = BINARY inc.name
@@ -1861,11 +1733,10 @@ SQL;
     }
     $totalInserted = 0;
 
-    foreach ($groupBys as $groupBy) {
-        $groupByName = $groupBy['name'];
+    foreach ($groupBys as $groupById => $groupByData) {
 
         $parameters = array(
-            ':group_by_name' => $groupByName,
+            ':group_by_name' => $groupById,
             ':module_name' => $moduleName,
             ':realm_name' => $realmName
         );
@@ -1873,7 +1744,7 @@ SQL;
         $log->debug(json_encode($parameters));
 
         if ($dryRun) {
-            $log->info(sprintf($successMsg, $groupByName));
+            $log->info(sprintf($successMsg, $groupById));
             continue;
         }
 
@@ -1884,9 +1755,9 @@ SQL;
         $inserted = $statement->rowCount();
         $totalInserted += $inserted;
         if ($inserted === 0) {
-            $log->info("[ALREADY EXISTS] Group By $groupByName for Module $moduleName and Realm $realmName");
+            $log->info("[ALREADY EXISTS] Group By $groupById for Module $moduleName and Realm $realmName");
         } elseif ($inserted === 1) {
-            $log->info(sprintf($successMsg, $groupByName));
+            $log->info(sprintf($successMsg, $groupById));
         }
     }
     $processed = count($groupBys);
@@ -1914,19 +1785,19 @@ function createStatistics(iDatabase $db, $moduleName, $realmName, array $statist
     $successMsg = "[SUCCESS] Created Statistic: %s for Module: $moduleName and Realm: $realmName";
 
     $query = <<<SQL
-INSERT INTO statistics(module_id, realm_id, name)
+INSERT INTO statistics_staging(module_id, realm_id, name)
 SELECT inc.*
 FROM (
     SELECT
         m.module_id     AS module_id,
         r.realm_id      AS realm_id,
         :statistic_name AS name
-    FROM modules m, realms r
+    FROM modules_staging m, realms_staging r
     WHERE BINARY m.name = BINARY :module_name  AND
           BINARY r.name = BINARY :realm_name   AND
           r.module_id   = m.module_id
 ) inc
-LEFT JOIN statistics cur
+LEFT JOIN statistics_staging cur
     ON cur.module_id        = inc.module_id   AND
        cur.realm_id         = inc.realm_id    AND
        BINARY cur.name      = BINARY inc.name
@@ -1939,12 +1810,10 @@ SQL;
         $log->debug($query);
     }
     $totalInserted = 0;
-    foreach ($statistics as $statistic) {
-
-        $statisticName = $statistic['name'];
+    foreach ($statistics as $statisticId => $statisticData) {
 
         $parameters = array(
-            ':statistic_name' => $statisticName,
+            ':statistic_name' => $statisticId,
             ':module_name' => $moduleName,
             ':realm_name' => $realmName
         );
@@ -1952,7 +1821,7 @@ SQL;
         $log->debug(json_encode($parameters));
 
         if ($dryRun) {
-            $log->info(sprintf($successMsg, $statisticName));
+            $log->info(sprintf($successMsg, $statisticId));
             continue;
         }
 
@@ -1961,9 +1830,9 @@ SQL;
         $inserted = $statement->rowCount();
         $totalInserted += $inserted;
         if ($inserted === 0) {
-            $log->info("[ALREADY EXISTS] Statistic: $statisticName for Module: $moduleName and Realm: $realmName");
+            $log->info("[ALREADY EXISTS] Statistic: $statisticId for Module: $moduleName and Realm: $realmName");
         } elseif ($inserted === 1) {
-            $log->info(sprintf($successMsg, $statisticName));
+            $log->info(sprintf($successMsg, $statisticId));
         }
     }
 
@@ -2076,6 +1945,57 @@ function verifyJsonSyntax()
     }
 }
 
+/**
+ * This function attempts to, for each table supplied in $tables:
+ *   - Remove all of the current records in the production table.
+ *   - Populate the production table from the corresponding `_staging` table.
+ *
+ * NOTE: All of the actions taken by this function are protected by a db transaction. This is to ensure we either get
+ * all of the new data, or none of it.
+ *
+ * @param iDatabase $db     the database connection that will be used when executing sql statements.
+ * @param array     $tables the array of tables that data will ultimately end up in.
+ *
+ * @throws Exception if there is a problem executing a sql statement or if there are problems rolling back any uncommitted
+ * changes.
+ */
+function syncTableData(iDatabase $db, array $tables)
+{
+    global $log;
+
+    $log->info("Refreshing production acl tables from staging tables.");
+
+    $db->beginTransaction();
+    foreach ($tables as $table) {
+        $log->debug("Refreshing $table");
+
+        $deleteStatement = "DELETE FROM $table";
+        $populationStatement = "INSERT INTO $table SELECT * FROM {$table}_staging";
+
+
+        if ($table === 'modules') {
+            $db->execute($deleteStatement);
+            $log->debug("Deletion of $table complete");
+        }
+
+        $db->execute($populationStatement);
+
+        $log->debug("Population of $table complete");
+    }
+
+    $committed = $db->commit();
+    if ($committed === false) {
+        $log->crit("[FAIL] Attempt to commit staging data to production tables has failed. Rollback has been initiated");
+        $rolledBack = $db->rollBack();
+
+        // We throw an Exception so that we do not leave the db in an inconsistent state.
+        if ($rolledBack === false) {
+            throw new Exception("Rollback failed. Database may be left in an inconsistent state. Please investigate and / or contact support before running acl-config again.");
+        }
+    }
+
+    $log->info("All acl tables have been re-populated");
+}
 
 /**
  * Attempt to load an instance of Configuration\XdmodConfiguration and retrieve
@@ -2100,7 +2020,7 @@ function verifyConfigData()
             \Configuration\XdmodConfiguration::assocArrayFactory("$section.json", CONFIG_DIR);
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
-            $log->err("[FAIL] Unable to load section $section");
+            $log->err(sprintf('[FAIL] Unable to load section %s: %s', $section, $e->getMessage()));
             $invalid[] = $section;
         }
     }
@@ -2133,55 +2053,6 @@ function verifyDatabase()
 }
 
 /**
- * Determines whether all of the provided tables currently exist.
- *
- * @param iDatabase $db to execute the required sql statement
- * @param array $tables an array of table names ( as strings )
- * @param string $schema the db schema that $tables belong to
- * @param bool $all only return true if all of the provided tables exist. Defaults to `true`.
- *
- * @return bool true if they do, false if they do not.
- */
-function tablesExist(iDatabase $db, array $tables, $schema, $all = true)
-{
-    $handle = $db->handle();
-
-    $tables = array_reduce(
-        $tables,
-        function($carry, $item) use ($handle)
-        {
-            $carry[] = $handle->quote($item);
-            return $carry;
-        },
-        array()
-    );
-
-    $tableList = implode(',', $tables);
-
-    $query = <<<SQL
-SELECT *
-FROM information_schema.tables
-WHERE table_schema = :table_schema
-AND table_name in ($tableList);
-SQL;
-
-    $params = array(
-        ':table_schema' => $schema
-    );
-
-    $results = $db->query(
-        $query,
-        $params
-    );
-
-    if ($all) {
-        return count($tables) === count($results);
-    }
-
-    return count($results) > 0;
-}
-
-/**
  * Attempt to issue a DROP TABLE statement for each of the provided $tables.
  *
  * @param iDatabase $db     the database to issue the sql statements to.
@@ -2208,38 +2079,6 @@ function dropTables(iDatabase $db, array $tables)
     $db->execute("DROP TABLE $tableList");
 
     $log->info("*** Tables Dropped!");
-}
-
-function updateResourceTypeRealms(iDatabase $db, $realm)
-{
-    global $dryRun, $log, $isXSEDE;
-
-    $log->info("*** Updating Resource Types -> Realm Associations");
-
-    $stagingSchema = 'mod_shredder';
-    if ($isXSEDE === true) {
-        $stagingSchema = 'modw';
-    }
-
-    $query = <<<SQL
-INSERT INTO moddb.resource_type_realms(resource_type_id, realm_id)
-SELECT
-    rt.id as resource_type_id,
-    r.realm_id as realm_id
-FROM $stagingSchema.staging_resource_type_realms srtr
-JOIN modw.resourcetype rt ON rt.abbrev = srtr.abbrev
-JOIN moddb.realms r ON r.display = srtr.realm
-WHERE r.display = :realm_display;
-SQL;
-
-    if ($dryRun === true) {
-        $log->info(sprintf("Would have Executed: \n%s\n", $query));
-    } else {
-        $db->execute($query, array(':realm_display' => $realm));
-    }
-
-
-    $log->info("*** Resource Types -> Realm Associated!");
 }
 
 /**

@@ -1,0 +1,21 @@
+{
+  "table_definition": {
+    "$ref-with-overwrite": "etl_tables.d/acls/hierarchies.json#/table_definition",
+    "$overwrite": {
+      "name": "hierarchies_staging",
+      "foreign_key_constraints": [
+        {
+          "name": "fk_h_module_staging_id",
+          "columns": [
+            "module_id"
+          ],
+          "referenced_table": "modules_staging",
+          "referenced_columns": [
+            "module_id"
+          ],
+          "on_delete": "CASCADE"
+        }
+      ]
+    }
+  }
+}

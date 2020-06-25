@@ -1,11 +1,11 @@
 title
-"Number of Active Sessions: by System Username"
+"Number of Sessions Active: by System Username"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[yerwa] Number of Active Sessions (Number of Sessions)","[setusca] Number of Active Sessions (Number of Sessions)","[ylwwa] Number of Active Sessions (Number of Sessions)"
+Day,"[yerwa] Number of Sessions Active","[setusca] Number of Sessions Active","[ylwwa] Number of Sessions Active"
 2018-04-18,20,0,2
 2018-04-19,12,11,2
 2018-04-20,10,0,1

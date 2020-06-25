@@ -1,6 +1,6 @@
 <?php
 /** =========================================================================================
- * Process the "$include" directive to include the contents of a file as a JSON encoded string.
+ * Process the "$include" directive to include the contents of a file.
  * ==========================================================================================
  */
 
@@ -23,7 +23,7 @@ class IncludeTransformer extends aUrlTransformer implements iConfigFileKeyTransf
     }  // keyMatches()
 
     /** -----------------------------------------------------------------------------------------
-     * Include the JSON-endoced contents of the file as the value of the specified key.
+     * Include the contents of the file as the value of the specified key.
      *
      * @see iConfigFileKeyTransformer::transform()
      * ------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class IncludeTransformer extends aUrlTransformer implements iConfigFileKeyTransf
         $parsedUrl = null;
         $contents = $this->getContentsFromUrl($value, $config);
         $key = null;
-        $value = json_encode($contents);
+        $value = $contents;
 
         return false;
 

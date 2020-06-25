@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] GPU Hours: Total","[2] GPU Hours: Total"
+"2016 Q4",0.0000,465.4928
+"2017 Q1",0.0000,41.4200
+---------

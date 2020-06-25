@@ -1346,6 +1346,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         listeners: {
             render: function (p) {
                 p.getKeyMap();
+            },
+            expand: function () {
+                txtLoginUsername.focus();
             }
         }
     });
@@ -1381,6 +1384,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         listeners: {
             close: function () {
                 XDMoD.TrackEvent('Login Window', 'Closed Window');
+            },
+            activate: function () {
+                txtLoginUsername.focus(false);
             }
         }
     });

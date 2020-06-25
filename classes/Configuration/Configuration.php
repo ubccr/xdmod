@@ -131,6 +131,12 @@ class Configuration extends Loggable implements iConfiguration
 
     protected $localConfigDir = null;
 
+
+    /**
+     * @var array of filenames of local configuration files
+     */
+    protected $localConfigFiles = array();
+
     /**
      * @var boolean Flag indicating that the directory for local configuration files has been
      * scanned and the list of filenames has been stored for use.
@@ -168,14 +174,6 @@ class Configuration extends Loggable implements iConfiguration
      */
 
     protected $initialized = false;
-
-    /**
-     * Will force the results of `parse` to be an array.
-     *
-     * @var boolean
-     */
-
-    protected $forceArrayReturn = false;
 
     /**
      * @var string The late static binding name of this class (e.g., the class that was
@@ -512,10 +510,6 @@ class Configuration extends Loggable implements iConfiguration
             }
         }
 
-        if ( isset($options['force_array_return']) ) {
-            $this->forceArrayReturn = $options['force_array_return'];
-        }
-
         // Set the last modified time of the global config file. Note that PHP caches stat
         // information on a per-filename basis and we want the most recent data so the cache is
         // cleared.
@@ -689,30 +683,15 @@ class Configuration extends Loggable implements iConfiguration
         $options = new DataEndpointOptions(array(
             'name' => "Configuration",
             'path' => $this->filename,
-            'type' => "jsonfile"
+            'type' => "jsonconfigfile"
         ));
 
         $jsonFile = DataEndpoint::factory($options, $this->logger);
 
         $parsed = $jsonFile->parse();
 
-        /* We currently support json files that have an object or an array as the root element.
-         * If the root element is an object then $parsed will contain the first element in the
-         * object ( missing both of these if cases ). If it's an array, then the `elseif` will hit
-         * and we use the `getRecordList` to retrieve all of the data parsed from the file as
-         * opposed to just the first record in the element.
-         *
-         * If there is a problem parsing the file then `false` will be returned. To allow for the
-         * the rest of this class to work we supply an empty object.
-         */
         if ($parsed === false) {
             $parsed = new stdClass();
-        } elseif(count($jsonFile) > 1) {
-            $parsed = $jsonFile->getRecordList();
-        }
-
-        if ($this->forceArrayReturn && !is_array($parsed)) {
-            $parsed = array($parsed);
         }
 
         $this->parsedConfig = $parsed;
@@ -732,6 +711,7 @@ class Configuration extends Loggable implements iConfiguration
     {
         $this->addKeyTransformer(new CommentTransformer($this->logger));
         $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
+        $this->addKeyTransformer(new JsonReferenceWithOverwriteTransformer($this->logger));
         $this->addKeyTransformer(new StripMergePrefixTransformer($this->logger));
         $this->addKeyTransformer(new IncludeTransformer($this->logger));
         return $this;

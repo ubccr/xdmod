@@ -43,13 +43,18 @@
                 "num_sessions_ended": "SUM(IF(sr.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
                 "num_sessions_running": "SUM(1)",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
-                "submission_venue_id": "sr.submission_venue_id"
+                "submission_venue_id": "sr.submission_venue_id",
+                "domain_id": "sr.domain_id",
+                "service_provider": "sr.service_provider",
+                "principalinvestigator_person_id": "a.principalinvestigator_person_id",
+                "fos_id": "a.fos_id"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
               "year",
               "${AGGREGATION_UNIT}",
               "host_resource_id",
+              "service_provider",
               "processorbucket_id",
               "memorybucket_id",
               "instance_type_id",
@@ -71,6 +76,13 @@
                   "schema": "${UTILITY_SCHEMA}",
                   "alias": "task_resource",
                   "on": "task_resource.id = sr.resource_id"
+              },
+              {
+                  "name": "account",
+                  "schema": "${SOURCE_SCHEMA}",
+                  "alias": "a",
+                  "type": "LEFT",
+                  "on": "instance.account_id = a.account_id"
               }
             ],
             "where": [

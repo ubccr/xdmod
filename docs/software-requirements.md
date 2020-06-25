@@ -12,7 +12,6 @@ Open XDMoD requires the following software:
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
     - [GMP][php-gmp]
-    - [Mcrypt][php-mcrypt]
     - [cURL][php-curl]
     - [DOM][php-dom]
     - [XMLWriter][php-xmlwriter]
@@ -38,7 +37,6 @@ Open XDMoD requires the following software:
 [pdo-mysql]:       https://secure.php.net/manual/en/ref.pdo-mysql.php
 [php-gd]:          https://secure.php.net/manual/en/book.image.php
 [php-gmp]:         https://secure.php.net/manual/en/book.gmp.php
-[php-mcrypt]:      https://secure.php.net/manual/en/book.mcrypt.php
 [php-curl]:        https://secure.php.net/manual/en/book.curl.php
 [php-dom]:         https://secure.php.net/manual/en/book.dom.php
 [php-xmlwriter]:   https://secure.php.net/manual/en/book.xmlwriter.php
@@ -75,7 +73,7 @@ added with this command for CentOS 7:
 
     # yum install epel-release
 
-    # yum install httpd php php-cli php-mysql php-gd php-mcrypt \
+    # yum install httpd php php-cli php-mysql php-gd \
                   gmp-devel php-gmp php-pdo php-xml \
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.8.0-openjdk java-1.8.0-openjdk-devel \
@@ -140,8 +138,9 @@ setting must be set to at least 16MB. The recommended setting in the mysql serve
 
 ```ini
 [mysqld]
-max_allowed_packet   = 16M
+max_allowed_packet = 1G
 group_concat_max_len = 16M
+innodb_stats_on_metadata = off
 ```
 
 [sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html

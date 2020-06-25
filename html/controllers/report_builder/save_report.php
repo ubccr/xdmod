@@ -1,11 +1,46 @@
 <?php
 
+use \DataWarehouse\Access\ReportGenerator;
+
+$filters = array(
+    'phase' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => '/^create|update$/')
+    ),
+    'report_id' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_ID_REGEX)
+    ),
+    'report_font' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_FONT_REGEX)
+    ),
+    'report_format' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_FORMATS_REGEX . 'i')
+    ),
+    'charts_per_page' => array(
+        'filter' => FILTER_VALIDATE_INT,
+        'options' => array('min_range' => 1)
+    ),
+    'report_schedule' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_SCHEDULE_REGEX)
+    ),
+    'report_delivery' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array('regexp' => ReportGenerator::REPORT_DELIVERY_REGEX)
+    )
+);
+
    try {
          
       $user = \xd_security\getLoggedInUser();
       $rm = new XDReportManager($user);
    
       $base_path = \xd_utilities\getConfiguration('reporting', 'base_path');
+
+      $post = filter_input_array(INPUT_POST, $filters);
       
       $map = array();
       
@@ -13,7 +48,7 @@
    
       \xd_security\assertParameterSet('phase');
    
-      switch($_POST['phase']) {
+      switch($post['phase']) {
       
          case 'create':
          
@@ -25,7 +60,7 @@
          
             \xd_security\assertParameterSet('report_id');
          
-            $report_id = $_POST['report_id'];
+            $report_id = $post['report_id'];
             
             // Cache the blobs so they can be re-introduced as necessary during the report update process
             $rm->buildBlobMap($report_id, $map);
@@ -34,14 +69,14 @@
             
             break;
       
-      }//switch($_POST['phase'])
+      }
    	
       // -----------------------------------
-      
-      $report_name = $_POST['report_name'];
-      $report_title = $_POST['report_title'];
-      $report_header = $_POST['report_header'];
-      $report_footer = $_POST['report_footer'];
+
+      $report_name = mb_convert_encoding($_POST['report_name'], ReportGenerator::REPORT_CHAR_ENCODING, 'UTF-8');
+      $report_title = mb_convert_encoding($_POST['report_title'], ReportGenerator::REPORT_CHAR_ENCODING, 'UTF-8');
+      $report_header = mb_convert_encoding($_POST['report_header'], ReportGenerator::REPORT_CHAR_ENCODING, 'UTF-8');
+      $report_footer = mb_convert_encoding($_POST['report_footer'], ReportGenerator::REPORT_CHAR_ENCODING, 'UTF-8');
    
       $rm->configureSelectedReport(
       
@@ -50,11 +85,11 @@
          $report_title,
          $report_header,
          $report_footer,
-         $_POST['report_font'],
-         $_POST['report_format'],
-         $_POST['charts_per_page'],
-         $_POST['report_schedule'],
-         $_POST['report_delivery']
+         $post['report_font'],
+         $post['report_format'],
+         $post['charts_per_page'],
+         $post['report_schedule'],
+         $post['report_delivery']
          
       );
    
@@ -68,7 +103,7 @@
    
       // -----------------------------------
          
-      switch($_POST['phase']) {
+      switch($post['phase']) {
       
          case 'create':
          
@@ -80,7 +115,7 @@
             $rm->saveThisReport();         
             break;
       
-      }//switch($_POST['phase'])   
+      }
    
       // -----------------------------------
       
@@ -101,7 +136,13 @@
 
             if (isset($_POST[$cache_ref_variable])) {
             
-               list($start_date, $end_date, $ref, $rank) = explode(';', $_POST[$cache_ref_variable]);
+                $cache_ref = filter_var(
+                    $_POST[$cache_ref_variable],
+                    FILTER_VALIDATE_REGEXP,
+                    array('options' => array('regexp' => ReportGenerator::CHART_CACHEREF_REGEX))
+                );
+
+               list($start_date, $end_date, $ref, $rank) = explode(';', $cache_ref);
    
                $location = sys_get_temp_dir() . "/{$ref}_{$rank}_{$start_date}_{$end_date}.png";
 
@@ -162,7 +203,7 @@
       // -----------------------------------
          
       $returnData['action'] = 'save_report';
-      $returnData['phase'] = $_POST['phase'];
+      $returnData['phase'] = $post['phase'];
       $returnData['report_id'] = $report_id;
       $returnData['success'] = true;
       $returnData['status'] = 'success';

@@ -173,7 +173,7 @@ function global_uncaught_exception_handler($exception)
     $exceptionOutput = handle_uncaught_exception($exception);
 
    // If running in a server context...
-    if ($exceptionOutput['isServerContext']) {
+    if ($exceptionOutput['isServerContext'] && !headers_sent()) {
         // Set the exception's headers (if any).
         foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
             header("$headerKey: $headerValue");

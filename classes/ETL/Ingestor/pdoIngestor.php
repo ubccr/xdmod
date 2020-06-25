@@ -881,6 +881,7 @@ class pdoIngestor extends aIngestor
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
                     fclose($outFdList[$etlTableKey]);
+                    unset($outFdList[$etlTableKey]);
                     $output = $this->_dest_helper->executeStatement($loadStatement);
 
                     $this->logger->debug(
@@ -902,9 +903,6 @@ class pdoIngestor extends aIngestor
                     );
                 }
 
-                // Cleanup
-
-                @unlink($infileList[$etlTableKey]);
                 $numFilesLoaded++;
 
             }  // foreach ( $loadStatementList as $etlTableKey => $loadStatement )
@@ -912,6 +910,15 @@ class pdoIngestor extends aIngestor
             $this->logger->debug(sprintf('Loaded %d files in %ds', $numFilesLoaded, microtime(true) - $loadFileStart));
 
         }  // if ( $numRecordsInFile)
+
+        // Cleanup
+
+        foreach ($outFdList as $outFd) {
+            fclose($outFd);
+        }
+        foreach ($infileList as $fileName) {
+            unlink($fileName);
+        }
 
         $this->logger->info(
             sprintf(

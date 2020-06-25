@@ -7,6 +7,8 @@ toc:
         url: /notices.html
       - page: Architecture
         url: /architecture.html
+      - page: Roadmap
+        url: https://trello.com/b/mdFESh6j
       - page: Documentation Conventions
         url: /docs-conventions.html
   - title: Support
@@ -65,7 +67,7 @@ toc:
         url: /troubleshooting.html
       - page: Cloud Metrics (Beta)
         url: /cloud.html
-      - page: Storage Metrics (Beta)
+      - page: Storage Metrics
         url: /storage.html
       - page: Data Warehouse Export (Beta)
         url: /dw-export.html

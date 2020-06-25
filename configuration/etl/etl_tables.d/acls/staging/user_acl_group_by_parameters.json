@@ -1,0 +1,43 @@
+{
+  "table_definition": {
+    "$ref-with-overwrite": "etl_tables.d/acls/user_acl_group_by_parameters.json#/table_definition",
+    "$overwrite": {
+      "name": "user_acl_group_by_parameters_staging",
+      "foreign_key_constraints": [
+        {
+          "name": "fk_uagbp_staging_user_id",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_table": "Users",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "CASCADE"
+        },
+        {
+          "name": "fk_uagbp_staging_acl_id",
+          "columns": [
+            "acl_id"
+          ],
+          "referenced_table": "acls_staging",
+          "referenced_columns": [
+            "acl_id"
+          ],
+          "on_delete": "CASCADE"
+        },
+        {
+          "name": "fk_uagbp_staging_group_by_id",
+          "columns": [
+            "group_by_id"
+          ],
+          "referenced_table": "group_bys_staging",
+          "referenced_columns": [
+            "group_by_id"
+          ],
+          "on_delete": "CASCADE"
+        }
+      ]
+    }
+  }
+}

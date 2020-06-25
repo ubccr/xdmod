@@ -4,6 +4,7 @@ namespace DataWarehouse\Export;
 
 use CCR\Loggable;
 use DataWarehouse\Data\BatchDataset;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
 use Log;
@@ -15,6 +16,9 @@ use xd_utilities;
  */
 class FileManager extends Loggable
 {
+    // Constants used in log messages.
+    const LOG_MODULE = 'data-warehouse-export';
+
     /**
      * Data warehouse batch export directory path.
      *
@@ -32,6 +36,12 @@ class FileManager extends Loggable
     private $fileWriterFactory;
 
     /**
+     * Raw statistics configuration.
+     * @var \DataWarehouse\Data\RawStatisticsConfiguration;
+     */
+    private $rawStatsConfig;
+
+    /**
      * Construct a new file manager.
      *
      * @throws \Exception If the data warehouse export directory is not set.
@@ -43,6 +53,8 @@ class FileManager extends Loggable
         $this->fileWriterFactory = new FileWriterFactory($logger);
         parent::__construct($logger);
 
+        $this->rawStatsConfig = RawStatisticsConfiguration::factory();
+
         try {
             $this->exportDir = xd_utilities\getConfiguration(
                 'data_warehouse_export',
@@ -50,6 +62,7 @@ class FileManager extends Loggable
             );
         } catch (Exception $e) {
             $this->logger->err([
+                'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
@@ -149,6 +162,7 @@ class FileManager extends Loggable
     public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
         $this->logger->info([
+            'module' => self::LOG_MODULE,
             'message' => 'Writing data to file',
             'format' => $format
         ]);
@@ -170,6 +184,7 @@ class FileManager extends Loggable
             );
 
             $this->logger->debug([
+                'module' => self::LOG_MODULE,
                 'message' => 'Created file writer',
                 'file_writer' => $fileWriter
             ]);
@@ -185,6 +200,7 @@ class FileManager extends Loggable
             return $dataFile;
         } catch (Exception $e) {
             $this->logger->err([
+                'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
@@ -205,6 +221,7 @@ class FileManager extends Loggable
         $zipFile = $this->getExportDataFilePath($request['id']);
 
         $this->logger->info([
+            'module' => self::LOG_MODULE,
             'message' => 'Creating zip file',
             'batch_export_request.id' => $request['id'],
             'data_file' => $dataFile,
@@ -235,6 +252,15 @@ class FileManager extends Loggable
                 ));
             }
 
+            $readmeText = $this->getReadmeText($request['realm']);
+            if (!$zip->addFromString('README.txt', $readmeText)) {
+                throw new Exception(sprintf(
+                    'Failed to add "README.txt" to zip file "%s"',
+                    $dataFile,
+                    $zipFile
+                ));
+            }
+
             if (!$zip->close()) {
                 throw new Exception(sprintf(
                     'Failed to close zip file "%s"',
@@ -245,6 +271,7 @@ class FileManager extends Loggable
             return $zipFile;
         } catch (Exception $e) {
             $this->logger->err([
+                'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
@@ -263,6 +290,7 @@ class FileManager extends Loggable
         $zipFile = $this->getExportDataFilePath($id);
 
         $this->logger->info([
+            'module' => self::LOG_MODULE,
             'message' => 'Removing export file',
             'batch_export_request.id' => $id,
             'zip_file' => $zipFile
@@ -276,20 +304,18 @@ class FileManager extends Loggable
     /**
      * Remove all data files corresponding to deleted requests.
      *
-     * @param array $availableRequestIds Request IDs for "Available" export
-     *   files.  These correspond to data files that should not be deleted.
+     * @param array $deletedRequestIds Request IDs for "Deleted" export
+     *   files.
      */
-    public function removeDeletedRequests(array $availableRequestIds)
+    public function removeDeletedRequests(array $deletedRequestIds)
     {
-        $availableFiles = array_map(
-            [$this, 'getExportDataFilePath'],
-            $availableRequestIds
-        );
-
-        foreach (glob($this->exportDir . '/*.zip') as $exportFile) {
-            if (!in_array($exportFile, $availableFiles)) {
+        foreach ($deletedRequestIds as $id) {
+            $exportFile = $this->getExportDataFilePath($id);
+            if (is_file($exportFile)) {
                 $this->logger->info([
+                    'module' => self::LOG_MODULE,
                     'message' => 'Removing export file',
+                    'batch_export_request.id' => $id,
                     'zip_file' => $exportFile
                 ]);
                 if (!unlink($exportFile)) {
@@ -300,5 +326,28 @@ class FileManager extends Loggable
                 }
             }
         }
+    }
+
+    /**
+     * Get the contents for README.txt for a realm.
+     *
+     * @param string $realm The name of a realm.
+     * @return string
+     */
+    private function getReadmeText($realm)
+    {
+        $fields = $this->rawStatsConfig->getBatchExportFieldDefinitions($realm);
+
+        $text = "{$realm} Realm Fields\n\n";
+
+        foreach ($fields as $field) {
+            $text .= sprintf(
+                "%s: %s\n",
+                $field['name'],
+                $field['documentation']
+            );
+        }
+
+        return $text;
     }
 }

@@ -222,7 +222,15 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
 
         // Only check data for successful requests.
         if ($httpCode == 200) {
-            $this->assertEquals($realms, $content['data'], 'Data contains realms');
+            // Testing each realm individually to avoid putting field
+            // definitions in test artifacts.
+            $this->assertTrue(is_array($content), 'Content is an array');
+            $this->assertArrayHasKey('data', $content, 'Content has a "data" key');
+            $this->assertTrue(is_array($content['data']), 'Data is an array');
+            $this->assertCount(count($realms), $content['data'], 'Data contains correct number of realms');
+            foreach ($content['data'] as $i => $realm) {
+                $this->assertArraySubset($realms[$i], $realm, sprintf('Realm %d contains the expected subset', $i + 1));
+            }
         }
     }
 

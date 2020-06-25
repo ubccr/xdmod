@@ -3,6 +3,7 @@
 namespace OpenXdmod;
 
 use CCR\DB;
+use Configuration\XdmodConfiguration;
 use Exception;
 use CCR\DB\iDatabase;
 use ETL\Configuration\EtlConfiguration;
@@ -78,6 +79,13 @@ class DataWarehouseInitializer
     protected $append;
 
     /**
+     * A String[] of the realms currently considered `enabled`.
+     *
+     * @var array
+     */
+    protected $enabledRealms = null;
+
+    /**
      * @param iDatabase $hpcdbDb The HPcDB database.
      * @param iDatabase $warehouseDb The MoD warehouse database.
      */
@@ -148,7 +156,7 @@ class DataWarehouseInitializer
         }
 
         $this->logger->debug('Ingesting shredded data to staging tables');
-        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs', 'ingest-resource-types'), $this->logger);
+        Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
     }
 
     /**
@@ -227,7 +235,15 @@ class DataWarehouseInitializer
         try {
             $this->logger->notice('Ingesting OpenStack event log data');
             Utilities::runEtlPipeline(
-                array('jobs-cloud-common', 'jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                array(
+                  'staging-ingest-common',
+                  'jobs-cloud-common',
+                  'jobs-cloud-import-users-openstack',
+                  'hpcdb-ingest-common',
+                  'hpcdb-xdw-ingest-common',
+                  'jobs-cloud-extract-openstack',
+                  'jobs-cloud-ingest-pi',
+                ),
                 $this->logger
             );
         }
@@ -303,7 +319,7 @@ class DataWarehouseInitializer
     public function aggregateCloudData($lastModifiedStartDate)
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            $this->logger->notice('Cloud realm not enabled, not aggregating');
             return;
         }
 
@@ -444,6 +460,40 @@ class DataWarehouseInitializer
      */
     public function isRealmEnabled($realm)
     {
-        return in_array($realm, Realms::getEnabledRealms());
+        return in_array($realm, $this->getEnabledRealms());
+    }
+
+    /**
+     * Retrieve an array of the realms that are `enabled` for this XDMoD installation. `enabled` is defined as there
+     * being a resource present of a type that supports ( i.e. has a record in its `realms` property ) said realm.
+     * .
+     * @return array
+     */
+    public function getEnabledRealms()
+    {
+        if ($this->enabledRealms !== null) {
+            return $this->enabledRealms;
+        }
+
+        $resources = XdmodConfiguration::assocArrayFactory('resources.json', CONFIG_DIR, null, array('force_array_return' => true));
+        $resourceTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+
+        $currentResourceTypes = array();
+        foreach($resources as $resource) {
+            if (isset($resource['resource_type'])) {
+                $currentResourceTypes[] = $resource['resource_type'];
+            }
+        }
+        $currentResourceTypes = array_unique($currentResourceTypes);
+
+        $realms = array();
+        foreach($currentResourceTypes as $currentResourceType) {
+            if (isset($resourceTypes[$currentResourceType])) {
+                $realms = array_merge($realms, $resourceTypes[$currentResourceType]['realms']);
+            }
+        }
+        $this->enabledRealms = array_unique($realms);
+
+        return $this->enabledRealms;
     }
 }

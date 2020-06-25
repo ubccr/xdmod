@@ -1,0 +1,16 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Job Size: Weighted By GPU Hours (GPU Count)"
+litst,0.0000
+ovenb,0.0000
+sante,0.0000
+savsp,0.0000
+swath,0.0000
+ybsbu,0.0000
+---------

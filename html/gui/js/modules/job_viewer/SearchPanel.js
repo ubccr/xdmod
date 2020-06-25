@@ -474,7 +474,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             this._retrieveSelected(node);
 
             this.ownerCt.setTitle("Editing Search: " + this.title);
-            Ext.getCmp('job-viewer-search-name').setValue(this.title);
+            Ext.getCmp('job-viewer-search-name').setValue(Ext.util.Format.htmlDecode(params.text));
 
             if (!this.ownerCt.isVisible()) {
                 this.ownerCt.show();
@@ -1456,15 +1456,14 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
         var selected = self._resultsToJSON(self._getSelectedRecords());
 
         var params = {
-            text: Ext.util.Format.htmlEncode(title),
+            text: title,
             searchterms: {
                 params: self.resultsStore.searchParams
             },
             results: selected
         };
 
-        var realmField = Ext.getCmp('realm-field');
-        var realm = realmField ? realmField.getValue() : null;
+        var realm = params.searchterms.params.realm;
         var idFragment = id !== undefined ? '/' + id : '';
         var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
 

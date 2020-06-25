@@ -20,4 +20,35 @@ do
     fi
 done
 
+# Check that the unknown resource is in the database with key 0
+unkrescount=$(echo 'SELECT COUNT(*) from resourcetype WHERE id = 0 and abbrev = '"'"'UNK'"'" | mysql -N modw)
+if [ $unkrescount -ne 1 ];
+then
+    echo "Missing / inconsistent 'UNK' row in modw.resourcetype"
+    exitcode=1
+fi
+
+# Check that the various scripts have not left any files around in the tmp
+# directory
+FIND_CRITERIA='-type f -newer /usr/share/xdmod/html/index.php ( -user xdmod -o -user apache )'
+if find /tmp $FIND_CRITERIA | grep -q  .
+then
+    echo "Unexpected files found in temporary directory"
+    find /tmp $FIND_CRITERIA -print0 | xargs -0 ls -la
+    exitcode=1
+fi
+
+# ensure tables absent
+tblcount=$(echo 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '"'"'moddb '"'"' AND table_name = '"'"'ReportTemplateACL'"'" | mysql -N information_schema)
+if [ $tblcount -ne 0 ];
+then
+    echo "Extraneous tables found in database"
+fi
+
+if ! mysqldump -d moddb report_template_acls | grep -q "ON DELETE CASCADE"
+then
+    echo "Missing/incorrect foreign key constraint on report_template_acls table"
+    exitcode=1
+fi
+
 exit $exitcode

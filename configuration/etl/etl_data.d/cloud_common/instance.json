@@ -1,0 +1,4 @@
+[
+    ["resource_id", "instance_id", "account_id", "provider_identifier", "person_id"],
+    [-1,            1,              1,           "unknown",             -1]
+]

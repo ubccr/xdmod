@@ -1,0 +1,142 @@
+{
+    "Cloud": {
+        "name": "Cloud",
+        "datasource": "OpenStack",
+        "aggregate_schema": "modw_cloud",
+        "aggregate_table_prefix": "cloudfact_by_",
+        "aggregate_table_alias": "agg",
+        "min_aggregation_unit": "quarter",
+        "order": 2,
+        "group_bys": {
+            "none": {
+                "name": "None",
+                "description_html": "Summarizes ${REALM_NAME} data reported to the ${ORGANIZATION_NAME} database (excludes non-${ORGANIZATION_NAME} usage).",
+                "attribute_table_schema": "modw",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [],
+                "order": 1,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "-9999",
+                        "short_name": "'${ORGANIZATION_NAME}'",
+                        "name": "'${ORGANIZATION_NAME}'",
+                        "order_id": "'${ORGANIZATION_NAME}'"
+                    },
+                    "joins": [
+                        {
+                            "name": "dual"
+                        }
+                    ]
+                }
+            },
+            "day": {
+                "name": "Day",
+                "description_html": "Day",
+                "attribute_table_schema": "modw",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [
+                    {
+                        "id": "day_id"
+                    }
+                ],
+                "order": 2,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "id",
+                        "#": "Note that we must alias the column when using SQL functions so that",
+                        "#": "we can properly add the attribute table when constructing queries",
+                        "short_name": "DATE(days.day_start)",
+                        "name": "DATE(days.day_start)",
+                        "start_ts": "day_start_ts"
+                    },
+                    "joins": [
+                        {
+                            "name": "days"
+                        }
+                    ],
+                    "orderby": [
+                        "id"
+                    ]
+                }
+            },
+            "month": {
+                "name": "Month",
+                "description_html": "Month",
+                "attribute_table_schema": "modw",
+                "is_aggregation_unit": true,
+                "attribute_to_aggregate_table_key_map": [
+                    {
+                        "id": "month_id"
+                    }
+                ],
+                "order": 3,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "id",
+                        "#": "Note that we must alias the column when using SQL functions so that",
+                        "#": "we can properly add the attribute table when constructing queries",
+                        "short_name": "DATE_FORMAT(months.month_start, '%Y-%m')",
+                        "name": "DATE_FORMAT(months.month_start, '%Y-%m')",
+                        "start_ts": "month_start_ts"
+                    },
+                    "joins": [
+                        {
+                            "name": "months"
+                        }
+                    ],
+                    "orderby": [
+                        "id"
+                    ]
+                }
+            },
+            "configuration": {
+                "name": "Instance Type",
+                "description_html": "The instance type of a virtual machine.",
+                "attribute_table_schema": "modw_cloud",
+                "attribute_to_aggregate_table_key_map": [
+                    {
+                        "instance_type_id": "instance_type_id"
+                    }
+                ],
+                "chart_options": {
+                    "dataset_display_type": {
+                        "aggregate": "bar",
+                        "timeseries": "area"
+                    },
+                    "dataset_type": "custom_dataset_type",
+                    "offset": 5,
+                    "show_legend": false
+                },
+                "order": 4,
+                "attribute_values_query": {
+                    "records": {
+                        "id": "instance_type_id",
+                        "short_name": "instance_type",
+                        "name": "display",
+                        "order_id": "instance_type_id"
+                    },
+                    "joins": [
+                        {
+                            "name": "instance_type"
+                        }
+                    ],
+                    "orderby": [
+                        "instance_type_id"
+                    ]
+                }
+            }
+        },
+        "statistics": {
+            "cloud_num_sessions_running": {
+                "#": "Complex statistic with aggregate and timeseries formulas plus embedded macros",
+                "aggregate_formula": "COALESCE(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0)",
+                "timeseries_formula": "COALESCE(SUM(agg.num_sessions_running), 0)",
+                "name": "${ORGANIZATION_NAME} Number of Active Sessions",
+                "description_html": "The total number of sessions on a cloud resource.<br/><b>Session:</b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br/><b>Start:</b> A session start event is defined as the initial creation, resume from pause/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (e.g. a state report) is treated as the start of a new session.<br/><b>Stop:</b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.",
+                "unit": "Number of Sessions",
+                "precision": 2,
+                "order": 1
+            }
+        }
+    }
+}

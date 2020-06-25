@@ -322,7 +322,7 @@ ON DUPLICATE KEY UPDATE
             $stmt->bindParam(':object_upd', $serialized, PDO::PARAM_LOB);
             $stmt->execute();
         } catch ( PDOException $e ) {
-            $msg = "Error saving state object for action '$actionName' with key '{$this->key}'";
+            $msg = "Error saving state object for action '$actionName' with key '$key'";
             self::logAndThrowException($msg, $logger);
         }
 
