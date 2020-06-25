@@ -146,57 +146,57 @@ The template configuration file also configures the webserver to send the `Stric
 to indicate to  web browsers that the Open XDMoD instance should only be accessed using HTTPS.
 
 ```apache
-    <VirtualHost *:443>
-        # The ServerName and ServerAdmin parameters should be updated.
-        ServerName localhost
-        ServerAdmin postmaster@localhost
+<VirtualHost *:443>
+    # The ServerName and ServerAdmin parameters should be updated.
+    ServerName localhost
+    ServerAdmin postmaster@localhost
 
-        # Production Open XDMoD instances should use HTTPS
-        SSLEngine on
+    # Production Open XDMoD instances should use HTTPS
+    SSLEngine on
 
-        # Update the SSLCertificateFile and SSLCertificateKeyFile parameters
-        # to the correct paths to your SSL certificate.
-        SSLCertificateFile /etc/pki/tls/certs/localhost.crt
-        SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+    # Update the SSLCertificateFile and SSLCertificateKeyFile parameters
+    # to the correct paths to your SSL certificate.
+    SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
 
-        <FilesMatch "\.(cgi|shtml|phtml|php)$">
-            SSLOptions +StdEnvVars
-        </FilesMatch>
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
 
-        # Use HTTP Strict Transport Security to force client to use secure connections only
-        Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    # Use HTTP Strict Transport Security to force client to use secure connections only
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 
-        DocumentRoot /usr/share/xdmod/html
+    DocumentRoot /usr/share/xdmod/html
 
-        <Directory /usr/share/xdmod/html>
-            Options FollowSymLinks
-            AllowOverride All
-            DirectoryIndex index.php
+    <Directory /usr/share/xdmod/html>
+        Options FollowSymLinks
+        AllowOverride All
+        DirectoryIndex index.php
 
-            <IfModule mod_authz_core.c>
-                Require all granted
-            </IfModule>
-        </Directory>
+        <IfModule mod_authz_core.c>
+            Require all granted
+        </IfModule>
+    </Directory>
 
-        <Directory /usr/share/xdmod/html/rest>
-            RewriteEngine On
-            RewriteRule (.*) index.php [L]
-        </Directory>
+    <Directory /usr/share/xdmod/html/rest>
+        RewriteEngine On
+        RewriteRule (.*) index.php [L]
+    </Directory>
 
-        ## SimpleSAML Single Sign On authentication.
-        #SetEnv SIMPLESAMLPHP_CONFIG_DIR /etc/xdmod/simplesamlphp/config
-        #Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www
-        #<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
-        #    Options FollowSymLinks
-        #    AllowOverride All
-        #    <IfModule mod_authz_core.c>
-        #        Require all granted
-        #    </IfModule>
-        #</Directory>
+    ## SimpleSAML Single Sign On authentication.
+    #SetEnv SIMPLESAMLPHP_CONFIG_DIR /etc/xdmod/simplesamlphp/config
+    #Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www
+    #<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
+    #    Options FollowSymLinks
+    #    AllowOverride All
+    #    <IfModule mod_authz_core.c>
+    #        Require all granted
+    #    </IfModule>
+    #</Directory>
 
-        ErrorLog /var/log/xdmod/apache-error.log
-        CustomLog /var/log/xdmod/apache-access.log combined
-    </VirtualHost>
+    ErrorLog /var/log/xdmod/apache-error.log
+    CustomLog /var/log/xdmod/apache-access.log combined
+</VirtualHost>
 ```
 
 Logrotate Configuration

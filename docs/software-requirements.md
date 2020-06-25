@@ -115,7 +115,7 @@ it is also recommended to set the php `session.cookie_secure` configuration.
 This ensures that php cookies are only sent over secure connections.
 
 ```ini
-    session.cookie_secure = 1
+session.cookie_secure = 1
 ```
 
 [timezones]: https://secure.php.net/manual/en/timezones.php
