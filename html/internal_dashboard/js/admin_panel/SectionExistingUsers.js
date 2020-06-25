@@ -982,7 +982,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         self.resetDirtyState();
-                        self.revertUserSettings();
 
                         updateSaveIndicator();
 
