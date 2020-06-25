@@ -121,6 +121,18 @@
                 "type": "int(11)",
                 "nullable": true,
                 "comment": "DIMENSION: A service provider is an institution that hosts resources."
+            },{
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "DIMENSION: The PI that owns the allocations that these VM's ran under. References principalinvestigator.person_id"
+            },{
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "DIMENSION: The field of science of the project to which the jobs belong"
             }
         ],
 

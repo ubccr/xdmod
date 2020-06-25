@@ -1777,13 +1777,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $results = array();
 
         foreach(\DataWarehouse\Access\RawData::getRawDataRealms($user) as $realmconfig) {
-            $history = $this->getUserStore($user, $realmconfig->name);
+            $history = $this->getUserStore($user, $realmconfig['name']);
             $records = $history->get();
             if (!empty($records)) {
                 $results[] = array(
                     'dtype' => 'realm',
-                    'realm' => $realmconfig->name,
-                    'text' => $realmconfig->display
+                    'realm' => $realmconfig['name'],
+                    'text' => $realmconfig['display']
                 );
             }
         }

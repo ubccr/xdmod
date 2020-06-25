@@ -235,7 +235,15 @@ class DataWarehouseInitializer
         try {
             $this->logger->notice('Ingesting OpenStack event log data');
             Utilities::runEtlPipeline(
-                array('jobs-cloud-common', 'jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                array(
+                  'staging-ingest-common',
+                  'jobs-cloud-common',
+                  'jobs-cloud-import-users-openstack',
+                  'hpcdb-ingest-common',
+                  'hpcdb-xdw-ingest-common',
+                  'jobs-cloud-extract-openstack',
+                  'jobs-cloud-ingest-pi',
+                ),
                 $this->logger
             );
         }
@@ -311,7 +319,7 @@ class DataWarehouseInitializer
     public function aggregateCloudData($lastModifiedStartDate)
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            $this->logger->notice('Cloud realm not enabled, not aggregating');
             return;
         }
 

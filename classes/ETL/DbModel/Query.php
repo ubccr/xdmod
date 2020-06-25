@@ -109,7 +109,7 @@ class Query extends Entity implements iEntity
             case 'overseer_restrictions':
                 if ( ! is_object($value) ) {
                     $this->logAndThrowException(
-                        sprintf("%s name must be an object, '%s' given", $property, gettype($value))
+                        sprintf("%s must be an object, '%s' given", $property, gettype($value))
                     );
                 }
                 break;
@@ -120,11 +120,17 @@ class Query extends Entity implements iEntity
             case 'macros':
             case 'joins':
                 // Note that we are only checking that the value is an array here and not
-                // the array elements. That must come later.
+                // the array elements. The elements can be mixed content that must be checked later.
 
                 if ( ! is_array($value) ) {
                     $this->logAndThrowException(
-                        sprintf("%s name must be an array, '%s' given", $property, gettype($value))
+                        sprintf("%s must be an array, '%s' given", $property, gettype($value))
+                    );
+                }
+                // If this is a join property it must contain elements
+                if ( $property === 'joins' && count($value) === 0 ) {
+                    $this->logAndThrowException(
+                        sprintf("%s must have at least one item in it", $property)
                     );
                 }
 
@@ -142,7 +148,7 @@ class Query extends Entity implements iEntity
             case 'query_hint':
                 if ( ! is_string($value) ) {
                     $this->logAndThrowException(
-                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                        sprintf("%s must be a string, '%s' given", $property, gettype($value))
                     );
                 }
                 break;

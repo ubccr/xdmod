@@ -1,0 +1,35 @@
+{
+    "#": "Lists mapping of cloud project name to Principal Investigator on a cloud resource",
+
+    "table_definition": {
+        "name": "staging_pi_to_project",
+        "engine": "MyISAM",
+        "comment": "Record type: accounting, administrative, derived, etc.",
+        "columns": [
+            {
+                "name": "project_name",
+                "type": "varchar(225)",
+                "nullable": false
+            },
+            {
+                "name": "pi_name",
+                "type": "varchar(225)",
+                "nullable": false
+            },
+            {
+                "name": "resource_name",
+                "type": "varchar(225)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "project_name"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

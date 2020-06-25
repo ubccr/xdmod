@@ -260,7 +260,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
         $messages = array();
         $configTypes = array(
-            'attribute_table' => 'string',
             'attribute_to_aggregate_table_key_map' => 'array',
             'attribute_values_query' => 'object',
             'description_html' => 'string',
@@ -309,9 +308,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                         }
                         $this->additionalJoinConstraints[] = $constraint;
                     }
-                    break;
-                case 'attribute_table':
-                    $this->attributeTableName = trim($value);
                     break;
                 case 'attribute_values_query':
                     $this->attributeValuesQuery = new DbQuery($value, '`', $logger);
@@ -473,6 +469,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         }
         $this->attributeValuesQuery->joins = $joins;
         $this->attributeValuesQueryAsStdClass = $this->attributeValuesQuery->toStdClass();
+        $this->attributeTableName = trim($this->attributeValuesQuery->joins[0]->name);
 
         if ( $this->attributeDescriptionSql && count($this->attributeToAggregateKeyMap) > 1 ){
             $this->logAndThrowException('The attribute_description_query does not work with more than one ');
@@ -924,7 +921,13 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // added by Query::setDuration()
 
         if ( ! $this->isAggregationUnit ) {
-            $query->addTable($this->attributeTableObj);
+            foreach ($this->attributeValuesQuery->joins as $join) {
+                $query->addTable(new Table(
+                    new Schema($join->schema),
+                    $join->name,
+                    $join->name
+                ));
+            }
         }
 
         if ( $this->isAggregationUnit && 'none' == $this->id ) {
@@ -970,8 +973,16 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 // The aggregation unit where condition is already added by Query::setDuration()
 
                 if ( ! $this->isAggregationUnit ) {
+                    $pieces = explode('.', $attributeKey);
+                    if ( count($pieces) === 2 ) {
+                        $alternateAttributeTableObj = new Table($this->attributeTableObj->getSchema(), $pieces[0], $pieces[0]);
+                        $attributeKey = $pieces[1];
+                    } else {
+                        $alternateAttributeTableObj = null;
+                    }
+
                     $where = new WhereCondition(
-                        new TableField($tableObj, $attributeKey),
+                        new TableField(!empty($alternateAttributeTableObj) ? $alternateAttributeTableObj : $tableObj, $attributeKey),
                         '=',
                         new TableField($query->getDataTable(), $aggregateKey)
                     );
@@ -986,9 +997,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         if ( null !== $this->additionalJoinConstraints ) {
             foreach ( $this->additionalJoinConstraints as $constraint ) {
                 $where = new WhereCondition(
-                    new TableField($this->attributeTableObj, $constraint->attribute_expr),
+                    new TableField(!empty($constraint->attribute_table) ? new Table($this->attributeTableObj->getSchema(), $constraint->attribute_table, $constraint->attribute_table) : $this->attributeTableObj, $constraint->attribute_expr),
                     $constraint->operation,
-                    new TableField($query->getDataTable(), $constraint->aggregate_expr)
+                    new TableField(!empty($constraint->aggregate_table) ? new Table($query->getDataTable()->getSchema(), $constraint->aggregate_table, $constraint->aggregate_table) : $query->getDataTable(), $constraint->aggregate_expr)
                 );
                 $this->logger->trace(sprintf("%s Add additional JOIN condition '%s'", $this, $where));
                 $query->addWhereCondition($where);
@@ -1159,27 +1170,17 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // aggregate column in the key map.
 
         foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-            $attributeTableField = new TableField($this->attributeTableObj, $attributeKey);
+            $pieces = explode('.', $attributeKey);
+            if ( count($pieces) === 2 ) {
+                $attributeTableField = new TableField(new Table($this->attributeTableObj->getSchema(), $pieces[0], $pieces[0]), $pieces[1]);
+            } else {
+                $attributeTableField = new TableField($this->attributeTableObj, $attributeKey);
+            }
             $aggregateTableField = new TableField($aggregateTableName, $aggregateKey);
             $where = new WhereCondition($attributeTableField, '=', $aggregateTableField);
             $this->logger->debug(sprintf('%s Add join condition: %s', $this, $where));
             $query->addWhereCondition($where);
         }
-
-        // If additional join constraints were specified add those here.
-
-        if ( null !== $this->additionalJoinConstraints ) {
-            foreach ( $this->additionalJoinConstraints as $constraint ) {
-                $where = new WhereCondition(
-                    new TableField($this->attributeTableObj, $constraint->attribute_expr),
-                    $constraint->operation,
-                    new TableField($query->getDataTable(), $constraint->aggregate_expr)
-                );
-                $this->logger->trace(sprintf("%s Add additional JOIN condition '%s'", $this, $where));
-                $query->addWhereCondition($where);
-            }
-        }
-
 
         // Normalize the WHERE constraint. We may be able to set this as an array in the parameter
         // list.

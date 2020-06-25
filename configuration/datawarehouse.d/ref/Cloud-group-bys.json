@@ -3,7 +3,9 @@
         "name": "Instance Type",
         "description_html": "The instance type of a virtual machine.",
         "attribute_table_schema": "modw_cloud",
-        "attribute_table": "instance_type",
+        "alternate_group_by_columns": [
+            "display"
+        ],
         "attribute_to_aggregate_table_key_map": [
             {
                 "instance_type_id": "instance_type_id"
@@ -50,7 +52,6 @@
             }
         ],
         "attribute_table_schema": "modw_cloud",
-        "attribute_table": "domains",
         "attribute_to_aggregate_table_key_map": [
             {
                 "id": "domain_id"
@@ -84,7 +85,6 @@
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
     },
     "person": {
-        "attribute_table": "person",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -112,8 +112,10 @@
         "name": "User"
     },
     "project": {
-        "attribute_table": "account",
         "attribute_table_schema": "modw_cloud",
+        "alternate_group_by_columns": [
+            "display"
+        ],
         "attribute_filter_map_query": {
             "account_id": "SELECT account_id FROM modw_cloud.account WHERE display in (__filter_values__)"
         },
@@ -147,44 +149,17 @@
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
     },
     "resource": {
-        "attribute_table": "resourcefact",
-        "attribute_table_schema": "modw",
-        "attribute_to_aggregate_table_key_map": [
-            {
-                "id": "host_resource_id"
-            }
-        ],
-        "attribute_values_query": {
-            "joins": [
+        "$overwrite": {
+            "attribute_to_aggregate_table_key_map": [
                 {
-                    "alias": "rf",
-                    "name": "resourcefact"
-                },
-                {
-                    "alias": "rs",
-                    "name": "resourcespecs",
-                    "on": "rf.id = rs.resource_id"
+                    "id": "host_resource_id"
                 }
             ],
-            "orderby": [
-                "rf.code",
-                "rf.name"
-            ],
-            "records": {
-                "id": "rf.id",
-                "name": "rf.code",
-                "order_id": "id",
-                "short_name": "rf.code"
-            },
-            "where": [
-                "rs.processors IS NOT NULL"
-            ]
+            "description_html": "A resource is defined as any infrastructure that hosts virtual machines."
         },
-        "description_html": "A resource is defined as any infrastructure that hosts virtual machines.",
-        "name": "Resource"
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/resource"
     },
     "provider": {
-        "attribute_table": "serviceprovider",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -212,7 +187,6 @@
         "show_in_catalog": false
     },
     "submission_venue": {
-        "attribute_table": "submission_venue",
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -243,7 +217,6 @@
         "$ref": "datawarehouse.d/ref/group-by-common.json#/username"
     },
     "vm_size": {
-        "attribute_table": "processor_buckets",
         "attribute_table_schema": "modw_cloud",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -278,7 +251,6 @@
         "name": "VM Size: Cores"
     },
     "vm_size_memory": {
-        "attribute_table": "memory_buckets",
         "attribute_table_schema": "modw_cloud",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -307,5 +279,17 @@
     },
     "year": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+    },
+    "pi": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/pi"
+    },
+    "fieldofscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
+    },
+    "nsfdirectorate": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
+    },
+    "parentscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     }
 }

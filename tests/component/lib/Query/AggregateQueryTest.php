@@ -343,12 +343,14 @@ SELECT
 FROM
   modw_aggregates.jobfact_by_day agg,
   modw.days duration,
-  modw.resourcefact resourcefact
+  modw.resourcefact resourcefact,
+  modw.resourcespecs resourcespecs
 WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND resourcefact.id = agg.record_resource_id
   AND resourcefact.code = agg.resource_code
+  AND resourcefact.id = resourcespecs.resource_id
 GROUP BY resourcefact.id,
   resourcefact.code
 ORDER BY resourcefact.code ASC,
