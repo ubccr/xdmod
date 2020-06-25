@@ -592,10 +592,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php xd_web_message\displayMessage('XDMoD requires JavaScript, which is currently disabled in your browser.'); ?>
 </noscript>
 
-<?php if (!$userLoggedIn): ?>
-    <br/><br/><br/><br/><br/>
-    <input type="hidden" id="direct_to"/>
-<?php endif; ?>
 </body>
 
 </html>
