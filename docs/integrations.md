@@ -11,14 +11,14 @@ The Open XDMoD application settings to enabled this are described below.
 To allow CORS  a list of domains that are allowed to communicate with Open XDMoD is configured in
 the `domains` setting in the `cors` section of `portal_settings.ini`.
 
-This setting is a comma separated list where each item contains the scheme, host, and optional port.
+This setting is a comma separated list where each item matches *exactly* what is in the `Origin` header sent by the browser.
+This includes the schema, host, and non standard ports.
 ```
 [cors]
 domains=https://integratedapp.example.tld,https://dev-integratedapp.example.tld:8080
 ```
 
-**NOTE: This setting can open up Open XDMoD to security risks if used improperly.
-Only enable it if you know what you are doing**
+**NOTE: This setting can open up Open XDMoD to security risks if used improperly.**
 
 ## Integration Guide
 
@@ -30,23 +30,63 @@ iframe at the login endpoint and iusers will be automatically logged in.
 
 When Open XDMoD detects a login within an iframe it will send a `postMessage` to `window.top`
 
-The following is an example of how to handle this
+The application that is integrating with Open XDMoD should contain a page *like* the following:
 
-```javascript
-window.addEventListener("message", receiveMessage, false);
+```html
+<html>
+<head>
+    <title>Open XDMoD Integration</title>
+    <script>
+        /**
+         * This will happen after a user has been confirmed to be logged in to Open XDMoD.
+         * Modify this to do what you need.
+         */
+        function xdmodLoggedIn(){
+            var loginStatus = document.createElement('p');
+            loginStatus.innerText = 'Open XDMoD user is logged in';
+            document.body.appendChild(loginStatus);
+        }
+        /**
+         * Automatically fetch the default Open XDMoD SSO url and initialize the login
+         * if the user is not already logged in.
+         */
+        var xdmodUrl = 'https://{FQDN OF XDMOD INSTANCE}';
+        fetch(xdmodUrl + '/rest/v1/users/current', { credentials: 'include' })
+            .then((response) => {
+                if(!response.ok){
+                    fetch(xdmodUrl + '/rest/auth/idpredirect?returnTo=%2Fgui%2Fgeneral%2Flogin.php')
+                        .then(response => response.json())
+                        .then((data) => {
+                            var xdmodLogin = document.createElement('iframe');
+                            xdmodLogin.style = 'display:none;';
+                            xdmodLogin.src = data;
+                            document.body.appendChild(xdmodLogin);
+                    });
+                }
+                else {
+                    xdmodLoggedIn();
+                }
+            });
 
-function receiveMessage(event) {
-    if (event.origin !== "{FQDN OF XDMOD INSTANCE WITH PROTOCOL AND PORT IF NEEDED}"){
-        console.log('Received message from untrusted origin, discarding');
-        return;
-    }
-    if(event.data.application == 'xdmod'){
-        if(event.data.message == 'loginComplete'){
-            console.log('XDMoD has logged in successfully');
+        window.addEventListener("message", receiveMessage, false);
+
+        function receiveMessage(event) {
+            if (event.origin !== xdmodUrl){
+                console.log('Received message from untrusted origin, discarding');
+                return;
+            }
+            if(event.data.application == 'xdmod'){
+                if(event.data.action == 'loginComplete'){
+                    xdmodLoggedIn();
+                }
+                if(event.data.action == 'error'){
+                    console.log('ERROR: ' + event.data.info);
+                }
+            }
         }
-        if(event.data.message == 'error'){
-            console.log('ERROR: ' + event.data.info);
-        }
-    }
-}
+    </script>
+</head>
+<body>
+</body>
+</html>
 ```
