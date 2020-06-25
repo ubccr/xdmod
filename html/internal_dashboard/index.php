@@ -3,11 +3,6 @@
 require_once __DIR__ . '/../../configuration/linker.php';
 require_once 'user_check.php';
 
-if (isset($_POST['direct_to'])) {
-  header('Location: ' . $_POST['direct_to']);
-  exit;
-}
-
 // Set REST cookies.
 \xd_rest\setCookies();
 

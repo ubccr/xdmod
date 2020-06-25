@@ -56,10 +56,6 @@ if ($user->isManager() == false) {
  */
 function denyWithMessage($message)
 {
-    $referer
-        = isset($_POST['direct_to'])
-        ? $_POST['direct_to']
-        : $_SERVER['SCRIPT_NAME'];
     $reject_response = $message;
 
     include 'splash.php';
