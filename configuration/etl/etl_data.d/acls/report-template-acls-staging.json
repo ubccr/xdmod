@@ -1,4 +1,6 @@
 [
   ["template_id", "acl_name"],
-  [1, "cd"]
+  [1, "cd"],
+  [2, "cd"],
+  [3, "cs"]
 ]

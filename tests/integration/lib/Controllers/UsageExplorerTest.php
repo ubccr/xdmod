@@ -3,8 +3,9 @@
 namespace IntegrationTests\Controllers;
 
 use TestHarness\XdmodTestHelper;
+use IntegrationTests\BaseTest;
 
-class UsageExplorerTest extends \PHPUnit_Framework_TestCase
+class UsageExplorerTest extends BaseTest
 {
     private static $publicView;
 
@@ -37,11 +38,16 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCorruptRequestData($input, $expectedMessage)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 400);
-        $this->assertEquals($response[0]['message'], $expectedMessage);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(400, $response[1]['http_code']);
+        $this->assertEquals($expectedMessage, $response[0]['message']);
     }
 
     public function corruptDataProvider()
@@ -65,7 +71,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         $tests[] = array($view, 'start_date param is not in the correct format of Y-m-d.');
 
         $view['group_by'] = "elephants";
-        $tests[] = array($view, 'Query: Unknown Group By "elephants" Specified');
+        $tests[] = array($view, "No GroupBy found with id 'elephants' in Realm: Jobs");
 
         return $tests;
     }
@@ -76,6 +82,11 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTabs()
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $response = $this->helper->post('/controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
@@ -104,6 +115,10 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSystemUsernameAccess()
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
         self::$publicView['group_by'] = "username";
         $response = $this->helper->post('/controllers/user_interface.php', null, self::$publicView);
 
@@ -150,13 +165,12 @@ EOF;
             "height" => "590",
             "legend_type" => "bottom_center",
             "font_size" => "3",
-            "interactive_elements" => "y",
             "controller_module" => "user_interface"
         );
 
         $view['start_date'] = "2016-01-01";
         $view['end_date'] = "2016-12-31";
-        $validRange = array($view, 2.03112893);
+        $validRange = array($view, 1.97829913);
 
         $view['start_date'] = "2017-01-01";
         $view['end_date'] = "2017-12-31";
@@ -183,6 +197,11 @@ EOF;
      */
     public function testAggregateViewValidData($view, $expected)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $response = $this->helper->post('/controllers/user_interface.php', null, $view);
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
@@ -204,6 +223,10 @@ EOF;
      */
     public function testErrorBars($input, $expected)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
@@ -252,7 +275,6 @@ EOF;
     "height": "590",
     "legend_type": "bottom_center",
     "font_size": "3",
-    "interactive_elements": "y",
     "controller_module": "user_interface"
 }
 EOF;
@@ -279,6 +301,11 @@ EOF;
      */
     public function testExport($chartConfig, $expectedMimeType, $expectedFinfo)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
 
         $this->assertEquals($response[1]['http_code'], 200);
@@ -375,8 +402,7 @@ EOF;
 
         $this->assertTrue(count($menus) > 0, "Public User: get_menus has returned no results.");
 
-        $realms = array('Jobs');
-        $this->assertNotEmpty($realms, "Unable to retrieve realms from datawarehouse.json");
+        $this->assertNotEmpty(self::$XDMOD_REALMS, "Unable to retrieve realms from datawarehouse.json");
 
         $categories = array_reduce(
             $menus,
@@ -393,7 +419,7 @@ EOF;
 
         $this->assertTrue(count($categories) >= 1, "There were no 'menus' that had a category propery, this is unexpected.");
 
-        $realmCategoryDiff = array_diff($realms, $categories);
+        $realmCategoryDiff = array_udiff(self::$XDMOD_REALMS, $categories, 'strcasecmp');
 
         $this->assertEmpty($realmCategoryDiff, "There were realms in datawarehouse.json that were not returned by get_menus.");
     }
@@ -404,6 +430,11 @@ EOF;
      */
     public function testDataFiltering($user, $chartSettings, $expectedNames)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $this->helper->authenticate($user);
 
         $response = $this->helper->post('/controllers/user_interface.php', null, $chartSettings);
@@ -456,7 +487,6 @@ EOF;
             'height' => '706',
             'legend_type' => 'bottom_center',
             'font_size' => '3',
-            'interactive_elements' => 'y',
             'operation' => 'get_charts',
             'controller_module' => 'user_interface'
         );
@@ -495,6 +525,11 @@ EOF;
      */
     public function testFilterIdLookup($options)
     {
+        //TODO: Needs further integration for storage realm
+        if (self::$XDMOD_REALMS == array("storage"))  {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $user = $options['user'];
         $data = $options['data'];
         $helper = $options['helper'];
@@ -502,22 +537,26 @@ EOF;
         $expectedValue = $options['expected']['value'];
         $expectedXpath = isset($options['expected']['xpath']) ? $options['expected']['xpath'] : null;
 
-        $results = $helper->post('controllers/user_interface.php', null, $data);
+        $originalResults = $helper->post('controllers/user_interface.php', null, $data);
 
         if ($expectedXpath !== null) {
-            $xml = simplexml_load_string($results[0]);
+            $xml = simplexml_load_string($originalResults[0]);
 
-            $results = $xml->xpath($expectedXpath);
+            $xmlValues = $xml->xpath($expectedXpath);
 
-            $actualValue = is_array($expectedValue) ? $results : array_pop($results);
+            $actualValue = is_array($expectedValue) ? $xmlValues : array_pop($xmlValues);
+
+            $expectedCount = count($expectedValue);
+            $actualCount = count($actualValue);
+            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . print_r($data, true));
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];
-                $actual = $actualValue[$i];
-                $this->assertEquals($expected, (string)$actual);
+                $actual = (string)$actualValue[$i];
+                $this->assertEquals($expected, $actual);
             }
         } else {
-            $actual = $results[0];
+            $actual = $originalResults[0];
 
             foreach($expectedValue as $key => $value) {
                 $this->assertArrayHasKey($key, $actual);
@@ -576,158 +615,170 @@ EOF;
         );
 
         // Per realm test scenario data.
-        $realmData = array(
-            // Jobs, single value filter tests
-            array(
-                'realm' => 'Jobs',
-                'filters' => array(
-                    array(
-                        array('resource' => '1'),
-                        array('resource_filter'=> '1'),
-                        array('resource_filter' => '"frearson"')
+        //TODO: Needs further integration for storage realm
+        $realmData = array();
+
+        if (in_array("cloud", self::getRealms())) {
+            array_push(
+                $realmData,
+                // Cloud, single value filter tests
+                array(
+                    'realm' => 'Cloud',
+                    'filters' => array(
+                        array(
+                            array('project' => 'zealous'),
+                            array('project_filter' => 'zealous'),
+                            array('project_filter'=> 'zealous')
+                        )
                     ),
-                    array(
-                        array('pi' => '40'),
-                        array('pi_filter' => '40'),
-                        array('pi_filter' => '"taifl"')
-                    )
-                ),
-                'expected' => array(
-                    'value' => array('frearson', '78142.2133'),
-                    'xpath' => '//rows//row//cell/value'
-                ),
-                'additional_data' => array(
-                    'group_by' => 'resource',
-                    'statistic' => 'total_cpu_hours',
-                    'start_date' => '2016-12-22',
-                    'end_date' => '2017-01-01'
-                )
-            ),
-            // Cloud, single value filter tests
-            array(
-                'realm' => 'Cloud',
-                'filters' => array(
-                    array(
-                        array('project' => '3'),
-                        array('project_filter' => '3'),
-                        array('project_filter'=> '"zealous"')
-                    )
-                ),
-                'expected' => array(
-                    'value' => array('zealous', '1754.1644'),
-                    'xpath' => '//rows//row//cell/value'
-                ),
-                'additional_data' => array(
-                    'group_by' => 'project',
-                    'statistic' => 'cloud_core_time',
-                    'start_date' => '2018-04-01',
-                    'end_date' => '2018-05-01'
-                )
-            ),
-            // Jobs, multi-value filter tests
-            array(
-                'realm' => 'Jobs',
-                'filters' => array(
-                    array(
-                        array('resource' => '4,1'),
-                        array('resource_filter'=> '1,4'),
-                        array('resource_filter' => '\'frearson\',"pozidriv"')
+                    'expected' => array(
+                        'value' => array('zealous', '1754.1644'),
+                        'xpath' => '//rows//row//cell/value'
                     ),
-                    array(
-                        array('pi' => '40,22'),
-                        array('pi_filter' => '22,40'),
-                        array('pi_filter' => '"taifl",\'henha\'')
+                    'additional_data' => array(
+                        'group_by' => 'project',
+                        'statistic' => 'cloud_core_time',
+                        'start_date' => '2018-04-01',
+                        'end_date' => '2018-05-01'
                     )
                 ),
-                'expected' => array(
-                    'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
-                    'xpath' => '//rows//row//cell//value'
-                ),
-                'additional_data' => array(
-                    'group_by' => 'resource',
-                    'statistic' => 'total_cpu_hours',
-                    'start_date' => '2016-12-22',
-                    'end_date' => '2017-01-01'
-                )
-            ),
-            // Cloud, multi-value filter tests. ( Note: at time of writing, only one project has any
-            // core_time in the docker image. )
-            array(
-                'realm' => 'Cloud',
-                'filters' => array(
-                    array(
-                        array('project_filter' => '2,3,4'),
-                        array('project_filter'=> '\'zealous\',\'youthful\',\'zen\'')
-                    )
-                ),
-                'expected' => array(
-                    'value' => array('zealous', '1754.1644'),
-                    'xpath' => '//rows//row//cell/value'
-                ),
-                'additional_data' => array(
-                    'group_by' => 'project',
-                    'statistic' => 'cloud_core_time',
-                    'start_date' => '2018-04-01',
-                    'end_date' => '2018-05-01'
-                )
-            ),
-            // Jobs, multi-value ( inc. invalid numeric values ) filter tests
-            array(
-                'realm' => 'Jobs',
-                'filters' => array(
-                    array(
-                        array('resource' => '4,1,99999'),
-                        array('resource_filter'=> '1,4,99999'),
-                        array('resource_filter' => '"frearson","pozidriv"')
+                // Cloud, multi-value filter tests. ( Note: at time of writing, only one project has any
+                // core_time in the docker image. )
+                array(
+                    'realm' => 'Cloud',
+                    'filters' => array(
+                        array(
+                            array('project_filter' => "zealous, youthful, zen"),
+                            array('project_filter'=> 'zealous, youthful, zen')
+                        )
                     ),
-                    array(
-                        array('pi' => '40,22,99999'),
-                        array('pi_filter' => '22,40,99999'),
-                        array('pi_filter' => '"taifl","henha"')
-                    )
-                ),
-                'expected' => array(
-                    'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
-                    'xpath' => '//rows//row//cell//value'
-                ),
-                'additional_data' => array(
-                    'group_by' => 'resource',
-                    'statistic' => 'total_cpu_hours',
-                    'start_date' => '2016-12-22',
-                    'end_date' => '2017-01-01'
-                )
-            ),
-            // Jobs, multi-value ( inc. unknown string values ) filter tests
-            array(
-                'realm' => 'Jobs',
-                'filters' => array(
-                    array(
-                        array('resource_filter' => '"frearson","pozidriv","unknownresource"')
+                    'expected' => array(
+                        'value' => array('zealous', '1754.1644'),
+                        'xpath' => '//rows//row//cell/value'
                     ),
-                    array(
-                        array('pi_filter' => '"taifl",\'henha\',"unknownperson"')
+                    'additional_data' => array(
+                        'group_by' => 'project',
+                        'statistic' => 'cloud_core_time',
+                        'start_date' => '2018-04-01',
+                        'end_date' => '2018-05-01'
                     )
-                ),
-                'expected' => array(
-                    'value' => array(
-                        'success' => false,
-                        'count' => 0,
-                        'total' => 0,
-                        'totalCount'=> 0,
-                        'results' => array(),
-                        'data' => array(),
-                        'message' => 'Invalid filter value detected: %s',
-                        'code' => 0
-                    )
-                ),
-                'additional_data' => array(
-                    'group_by' => 'resource',
-                    'statistic' => 'total_cpu_hours',
-                    'start_date' => '2016-12-22',
-                    'end_date' => '2017-01-01'
                 )
-            )
-        );
+            );
+        };
+
+        if (in_array("jobs", self::getRealms())) {
+            array_push(
+                $realmData,
+                // Jobs, single value filter tests
+                array(
+                    'realm' => 'Jobs',
+                    'filters' => array(
+                        array(
+                            array('resource' => '1'),
+                            array('resource_filter'=> '1'),
+                            array('resource_filter' => '"frearson"')
+                        ),
+                        array(
+                            array('pi' => '40'),
+                            array('pi_filter' => '40'),
+                            array('pi_filter' => '"taifl"')
+                        )
+                    ),
+                    'expected' => array(
+                        'value' => array('frearson', '78142.2133'),
+                        'xpath' => '//rows//row//cell/value'
+                    ),
+                    'additional_data' => array(
+                        'group_by' => 'resource',
+                        'statistic' => 'total_cpu_hours',
+                        'start_date' => '2016-12-22',
+                        'end_date' => '2017-01-01'
+                    )
+                ),
+                // Jobs, multi-value filter tests
+                array(
+                    'realm' => 'Jobs',
+                    'filters' => array(
+                        array(
+                            array('resource' => '4,1'),
+                            array('resource_filter'=> '1,4'),
+                            array('resource_filter' => '\'frearson\',"pozidriv"')
+                        ),
+                        array(
+                            array('pi' => '40,22'),
+                            array('pi_filter' => '22,40'),
+                            array('pi_filter' => '"taifl",\'henha\'')
+                        )
+                    ),
+                    'expected' => array(
+                        'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
+                        'xpath' => '//rows//row//cell//value'
+                    ),
+                    'additional_data' => array(
+                        'group_by' => 'resource',
+                        'statistic' => 'total_cpu_hours',
+                        'start_date' => '2016-12-22',
+                        'end_date' => '2017-01-01'
+                    )
+                ),
+                // Jobs, multi-value ( inc. invalid numeric values ) filter tests
+                array(
+                    'realm' => 'Jobs',
+                    'filters' => array(
+                        array(
+                            array('resource' => '4,1,99999'),
+                            array('resource_filter'=> '1,4,99999'),
+                            array('resource_filter' => '"frearson","pozidriv"')
+                        ),
+                        array(
+                            array('pi' => '40,22,99999'),
+                            array('pi_filter' => '22,40,99999'),
+                            array('pi_filter' => '"taifl","henha"')
+                        )
+                    ),
+                    'expected' => array(
+                        'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
+                        'xpath' => '//rows//row//cell//value'
+                    ),
+                    'additional_data' => array(
+                        'group_by' => 'resource',
+                        'statistic' => 'total_cpu_hours',
+                        'start_date' => '2016-12-22',
+                        'end_date' => '2017-01-01'
+                    )
+                ),
+                // Jobs, multi-value ( inc. unknown string values ) filter tests
+                array(
+                    'realm' => 'Jobs',
+                    'filters' => array(
+                        array(
+                            array('resource_filter' => '"frearson","pozidriv","unknownresource"')
+                        ),
+                        array(
+                            array('pi_filter' => '"taifl",\'henha\',"unknownperson"')
+                        )
+                    ),
+                    'expected' => array(
+                        'value' => array(
+                            'success' => false,
+                            'count' => 0,
+                            'total' => 0,
+                            'totalCount'=> 0,
+                            'results' => array(),
+                            'data' => array(),
+                            'message' => 'Invalid filter value detected: %s',
+                            'code' => 0
+                        )
+                    ),
+                    'additional_data' => array(
+                        'group_by' => 'resource',
+                        'statistic' => 'total_cpu_hours',
+                        'start_date' => '2016-12-22',
+                        'end_date' => '2017-01-01'
+                    )
+                )
+            );
+        }
 
         /**
          * Generates all combinations of the elements contained within $data.

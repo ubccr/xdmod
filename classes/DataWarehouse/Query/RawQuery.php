@@ -8,8 +8,12 @@ namespace DataWarehouse\Query;
  */
 abstract class RawQuery extends \DataWarehouse\Query\Query
 {
-    public function __construct($realm, $schema, $facttable, $parameters)
+    public function __construct($realmId, $schema, $factTable, $parameters)
     {
+        $aggregateUnitName = "day";
+        $startDate = "2010-01-01";
+        $endDate = "2010-01-01";
+
         /* We are being a bit cheeky here by inheriting from the Query class.
          * This provides the implementations for most of the stuff we want and
          * we disable the stuff we don't want by overloading the duration functions
@@ -17,23 +21,24 @@ abstract class RawQuery extends \DataWarehouse\Query\Query
          */
 
         parent::__construct(
-            $realm,
-            $schema,
-            $facttable,
-            array(),
-            "day",
-            "2010-01-01",
-            "2010-01-01",
-            null,
-            null,
-            array(),
-            'query_groupname',
-            array(),
-            false
+            $realmId,
+            $aggregateUnitName,
+            $startDate,
+            $endDate
         );
 
-        $this->setDataTable($schema, $facttable);
         $this->setParameters($parameters);
+
+        // Override values set in Query::__construct() to use the fact table rather than the
+        // aggregation table prefix from the Realm configuration.
+
+        $this->setDataTable($schema, $factTable);
+        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
+            $aggregateUnitName,
+            $startDate,
+            $endDate,
+            sprintf("%s.%s", $schema, $factTable)
+        );
     }
 
     protected function setDuration($ignore1, $ignore2)

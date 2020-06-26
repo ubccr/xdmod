@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Generic error response",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "message": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "success",
+        "message"
+    ],
+    "additionalProperties": true
+}

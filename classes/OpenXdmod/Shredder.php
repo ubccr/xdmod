@@ -393,6 +393,17 @@ class Shredder
 
             while (($line = fgets($fh)) !== false) {
                 $lineNumber++;
+
+                // skip empty lines
+                if ($line === '') {
+                    $this->logger->debug([
+                        'message'     => 'Skipping blank line',
+                        'file'        => $file,
+                        'line_number' => $lineNumber
+                    ]);
+                    continue;
+                }
+
                 $recordCount++;
 
                 // Remove trailing whitespace.
@@ -1019,10 +1030,7 @@ class Shredder
         $resources = XdmodConfiguration::assocArrayFactory(
             'resources.json',
             CONFIG_DIR,
-            $this->logger,
-            array(
-                'force_array_return' => true
-            )
+            $this->logger
         );
 
         foreach ($resources as $resource) {

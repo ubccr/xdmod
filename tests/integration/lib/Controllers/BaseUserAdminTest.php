@@ -7,8 +7,9 @@ use Exception;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 use TestHarness\PeopleHelper;
+use IntegrationTests\BaseTest;
 
-abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
+abstract class BaseUserAdminTest extends BaseTest
 {
 
     const MIN_USERS = 1;

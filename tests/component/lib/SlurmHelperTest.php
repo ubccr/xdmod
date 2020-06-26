@@ -7,12 +7,13 @@
 namespace ComponentTests;
 
 use CCR\DB;
+use Models\Services\Realms;
 
 /**
  * @group XDMoD-shredder
  * Test the xdmod-slurm-helper executable.
  */
-class SlurmHelperTest extends \PHPUnit_Framework_TestCase
+class SlurmHelperTest extends BaseTest
 {
     /**
      * Database handle for `mod_shredder`.
@@ -48,6 +49,11 @@ class SlurmHelperTest extends \PHPUnit_Framework_TestCase
         $outputRegex,
         $exitStatus
     ) {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $result = $this->executeSlurmHelper($sacctOutputType, $sacctExitStatus);
         $this->assertEquals($exitStatus, $result['exit_status']);
         $this->assertEquals('', $result['stderr']);

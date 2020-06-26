@@ -1,0 +1,22 @@
+{
+    "HiddenRealm": {
+        "name": "Do not show hidden realms in the metric catalog.",
+        "datasource": "Test Dataset",
+        "aggregate_schema": "sample_schema",
+        "aggregate_table_prefix": "sample_prefix",
+        "order": 3,
+        "show_in_catalog": false,
+        "group_bys": {
+        },
+        "statistics": {
+            "hidden_statistic": {
+                "#": "This statistic is not shown in the metric catalog",
+                "show_in_catalog": false,
+                "formula": "1",
+                "name": "1",
+                "description_html": "Hidden Statistic",
+                "unit": "Hidden"
+            }
+        }
+    }
+}

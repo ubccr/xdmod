@@ -5,7 +5,23 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Chemical, Thermal Systems] Job Size: Per Job (Core Count)","[Atmospheric Sciences] Job Size: Per Job (Core Count)","[Environmental Biology] Job Size: Per Job (Core Count)","[Electrical and Communication Systems] Job Size: Per Job (Core Count)","[Materials Research] Job Size: Per Job (Core Count)","[Physics] Job Size: Per Job (Core Count)","[Arts] Job Size: Per Job (Core Count)","[Mathematical Sciences] Job Size: Per Job (Core Count)","[Mechanical and Structural Systems] Job Size: Per Job (Core Count)","[Polar Programs] Job Size: Per Job (Core Count)","[Social and Economic Science] Job Size: Per Job (Core Count)","[Chemistry] Job Size: Per Job (Core Count)","[Astronomical Sciences] Job Size: Per Job (Core Count)","[Molecular Biosciences] Job Size: Per Job (Core Count)","[Design and Manufacturing Systems] Job Size: Per Job (Core Count)","[Earth Sciences] Job Size: Per Job (Core Count)","[Microelectronic Information Processing Systems] Job Size: Per Job (Core Count)","[Computer and Computation Research] Job Size: Per Job (Core Count)"
-2016,224.0000,160.0000,48.8800,24.9310,21.3595,12.0000,11.0909,10.9231,14.8750,3.0909,9.0258,8.5125,5.1703,4.6022,1.6678,1.4181,1.1442,1.0000
-2017,0,160.0000,37.8993,61.9286,0,0,10.4000,10.5833,1.0000,11.1622,9.1618,10.8293,41.9091,8.1471,2.9320,9.6667,1.0994,0
+Department,"Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"Chemical, Thermal Systems",224.0000,72.73696905059123
+"Atmospheric Sciences",160.0000,0
+"Environmental Biology",42.4937,2.1967513051929584
+"Electrical and Communication Systems",27.1988,3.1435913496865413
+"Materials Research",21.3595,1.3362333699331472
+Physics,12.0000,0
+Arts,11.0909,0.35773447517085943
+"Mathematical Sciences",10.9231,0.4861673281296653
+"Mechanical and Structural Systems",10.6522,3.260812853950742
+"Polar Programs",10.1776,0.14044175247135635
+"Social and Economic Science",9.0492,0.011053223283303862
+Chemistry,8.6411,0.08556196791296852
+"Astronomical Sciences",5.4048,0.2982687070544937
+"Molecular Biosciences",4.8559,0.7632084470021516
+"Design and Manufacturing Systems",1.6278,0.20762935594169663
+"Earth Sciences",1.4422,0.0960861939074583
+"Microelectronic Information Processing Systems",1.1537,0.04435074331087466
+"Computer and Computation Research",1.0000,0
 ---------

@@ -70,6 +70,20 @@
                 "default": -1
             },
             {
+                "name": "domain_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "domain that the event is related to. Unknown = -1"
+            },
+            {
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Service provider that the event is related to. Unknown = -1"
+            },
+            {
                 "name": "last_modified",
                 "type": "timestamp",
                 "nullable": false,

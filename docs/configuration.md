@@ -120,56 +120,84 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 Apache Configuration
 --------------------
 
-Uses port 8080 by default, if changed, must also be changed in
-`portal_settings.ini`.
+A template Apache configuration file is provided. The path is `/usr/share/xdmod/templates/apache.conf`
+in the RPM install and `share/templates/apache.conf` in the source code install.
+This template file must be copied to the Apache configuration directory and
+edited to update site specific configuration settings.
 
-    Listen 8080
-    <VirtualHost *:8080>
-        DocumentRoot /usr/share/xdmod/html
-        <Directory /usr/share/xdmod/html>
-            Options FollowSymLinks
-            AllowOverride All
-            DirectoryIndex index.php
-            # Apache 2.4 access controls.
-            <IfModule mod_authz_core.c>
-                Require all granted
-            </IfModule>
-        </Directory>
-        <Directory /usr/share/xdmod/html/rest>
-            RewriteEngine On
-            RewriteRule (.*) index.php [L]
-        </Directory>
-    </VirtualHost>
+For CentOS 7 and RHEL 7 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`
+For other Linux distributions consult the distribution documentation
+to determine the path to the webserver configuration files.
 
-We recommend that you use HTTPS in production.  This will require
-additional configuration.
+This template file must be modified to update site specific settings:
 
-    Listen 443
-    <VirtualHost *:443>
+Valid SSL certificates will need to be installed and configured.  The template
+configuration file must be edited to specify the path to the SSL certificate
+file and SSL certificate key file. Refer to the [Apache SSL documentation](https://httpd.apache.org/docs/2.4/ssl/)
+for SSL configuration information.
 
-        # Customize this section using your SSL certificate.
-        SSLEngine on
-        SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
-        SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
-        <FilesMatch "\.(cgi|shtml|phtml|php)$">
-            SSLOptions +StdEnvVars
-        </FilesMatch>
+The `ServerName` setting should be updated to match the server name in the SSL
+certificate.
 
-        DocumentRoot /usr/share/xdmod/html
-        <Directory /usr/share/xdmod/html>
-            Options FollowSymLinks
-            AllowOverride All
-            DirectoryIndex index.php
-            # Apache 2.4 access controls.
-            <IfModule mod_authz_core.c>
-                Require all granted
-            </IfModule>
-        </Directory>
-        <Directory /usr/share/xdmod/html/rest>
-            RewriteEngine On
-            RewriteRule (.*) index.php [L]
-        </Directory>
-    </VirtualHost>
+The name and port of the server must match with the `site_address` and `user_manual`
+configuration settings in `portal_settings.ini`.
+
+The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header
+to indicate to  web browsers that the Open XDMoD instance should only be accessed using HTTPS.
+
+```apache
+<VirtualHost *:443>
+    # The ServerName and ServerAdmin parameters should be updated.
+    ServerName localhost
+    ServerAdmin postmaster@localhost
+
+    # Production Open XDMoD instances should use HTTPS
+    SSLEngine on
+
+    # Update the SSLCertificateFile and SSLCertificateKeyFile parameters
+    # to the correct paths to your SSL certificate.
+    SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+
+    # Use HTTP Strict Transport Security to force client to use secure connections only
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    DocumentRoot /usr/share/xdmod/html
+
+    <Directory /usr/share/xdmod/html>
+        Options FollowSymLinks
+        AllowOverride All
+        DirectoryIndex index.php
+
+        <IfModule mod_authz_core.c>
+            Require all granted
+        </IfModule>
+    </Directory>
+
+    <Directory /usr/share/xdmod/html/rest>
+        RewriteEngine On
+        RewriteRule (.*) index.php [L]
+    </Directory>
+
+    ## SimpleSAML Single Sign On authentication.
+    #SetEnv SIMPLESAMLPHP_CONFIG_DIR /etc/xdmod/simplesamlphp/config
+    #Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www
+    #<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
+    #    Options FollowSymLinks
+    #    AllowOverride All
+    #    <IfModule mod_authz_core.c>
+    #        Require all granted
+    #    </IfModule>
+    #</Directory>
+
+    ErrorLog /var/log/xdmod/apache-error.log
+    CustomLog /var/log/xdmod/apache-access.log combined
+</VirtualHost>
+```
 
 Logrotate Configuration
 -----------------------
@@ -207,6 +235,7 @@ Primary configuration file. Contains:
 - PhantomJS path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
 - Database configuration
+- Integration settings (see [Integrations](integrations.html) for details)
 
 ### datawarehouse.json
 
@@ -234,6 +263,15 @@ cores per node on their resources.
         [13,   2049,       4096, "2k - 4k"],
         [14,   4097, 2147483647, "> 4k"]
     ]
+
+After changing this file it must be re-ingested and all job data must be
+re-aggregated.  If the job data are not re-aggregated the new labels will be
+displayed, but will not be accurate if the corresponding bucket has changed.
+
+```sh
+/usr/share/xdmod/tools/etl/etl_overseer.php -a xdmod.jobs-xdw-bootstrap.processorbuckets
+xdmod-ingestor --aggregate=job --last-modified-start-date 1970-01-01
+```
 
 ### roles.json
 
@@ -343,20 +381,25 @@ this should be set to `true`.
             "resource": "resource1",
             "name": "Resource 1",
             "description": "Our first HPC resource",
-            "resource_type_id": 1
+            "resource_type": "HPC"
         },
         {
             "resource": "resource2",
             "name": "Resource 2",
-            "resource_type_id": 2,
+            "resource_type": "HPC"
             "pi_column": "account_name"
         },
         {
             "resource": "resource3",
             "name": "Resource 3",
-            "resource_type_id": 1,
+            "resource_type": "HPC"
             "timezone": "US/Eastern",
             "shared_jobs": true
+        },
+        {
+            "resource": "resource4",
+            "name": "Resource 4",
+            "resource_type": "Cloud"
         }
     ]
 
@@ -418,22 +461,9 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 
 ### resource_types.json
 
-Defines resource types.  Each resource in `resources.json` should reference a
-resource type from this file.
-
-    [
-        {
-            "id": 0,
-            "abbrev": "UNK",
-            "description": "Unknown"
-        },
-        {
-            "id": 1,
-            "abbrev": "HPC",
-            "description": "High-performance computing"
-        },
-        ...
-    ]
+Defines resource types and associates resource types with realms.  Each
+resource in `resources.json` should reference a resource type from this file.
+This file typically should not be changed.
 
 ### update_check.json
 

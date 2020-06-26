@@ -242,4 +242,13 @@ class XdmodConfiguration extends Configuration
         }
         return null;
     }
+
+    /**
+     * @see iConfiguration::__sleep()
+     */
+
+    public function __sleep()
+    {
+        return array_keys(get_object_vars($this));
+    }
 }

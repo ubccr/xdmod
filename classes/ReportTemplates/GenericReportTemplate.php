@@ -22,11 +22,15 @@ class GenericReportTemplate extends aReportTemplate
      *
      * @param array $params Additional parameters.
      */
-    public function buildReportFromTemplate(array &$params = array())
+    public function buildReportFromTemplate(array &$params = array(), $report_id_suffix = null)
     {
         $rm = new XDReportManager($this->_user);
 
-        $id = $this->_user->getUserID() . '-' . microtime(true);
+        if (!(is_null($report_id_suffix))){
+            $id = $this->_user->getUserID() . '-' . $report_id_suffix;
+        } else {
+            $id = $this->_user->getUserID() . '-' . microtime(true);
+        }
 
         $rm->configureSelectedReport(
             $id,

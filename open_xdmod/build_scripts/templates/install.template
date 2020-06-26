@@ -307,7 +307,7 @@ function installCrond($src, $dest)
 function installLog($src, $dest)
 {
     _info('Creating log directory');
-    createDir($dest, 0777);
+    createDir($dest, 0770);
 }
 
 function installFromMap($src, $dest, $mapSrc, $mapDest, array $options = array())
@@ -550,7 +550,7 @@ function substitutePaths($dirs)
         '#/usr/lib/xdmod#'  => $dirs['lib'],
     ));
 
-    substituteInFile($destDir . $dirs['httpd'] . '/xdmod.conf', array(
+    substituteInFile($destDir . $dirs['data'] . '/templates/apache.conf', array(
         '#/usr/share/xdmod#' => $dirs['data'],
         '#/var/log/xdmod#'   => $dirs['log'],
         '#/etc/xdmod#'       => $dirs['conf'],

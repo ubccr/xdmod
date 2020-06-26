@@ -19,7 +19,9 @@ class ColumnLayout
      */
     public function __construct($columns, $defaults = null)
     {
-        $this->nextRow = array_fill(0, $columns, 0);
+        // rows below 1024 are reserved for the default values
+        // specified by the $itemDefault parameter of the getLocation() function
+        $this->nextRow = array_fill(0, $columns, 1024);
 
         if ($defaults !== null) {
             $this->settings = $defaults;
@@ -52,17 +54,26 @@ class ColumnLayout
      * are layed out left to right top to bottom.
      *
      * @param mixed $itemId the identifier for the item
+     * @param mixed $itemDefault (optional) an array containing two elements: the row
+     *       and column index where the item should be placed if it was not already
+     *       placed in the default layout.
+     *
      * @return array(string, int) an array containing a string encoded index
      *       that uniqely identifies the item and its relative position and the
      *       column index.
      */
-    public function getLocation($itemId)
+    public function getLocation($itemId, $itemDefault = null)
     {
         if (!isset($this->settings[$itemId])) {
-            $this->settings[$itemId] = array($this->nextRow[$this->nextColumn], $this->nextColumn);
 
-            $this->nextRow[$this->nextColumn] += 1;
-            $this->nextColumn = ($this->nextColumn + 1) % $this->getColumnCount();
+            if ($itemDefault !== null) {
+                $this->settings[$itemId] = $itemDefault;
+            } else {
+                $this->settings[$itemId] = array($this->nextRow[$this->nextColumn], $this->nextColumn);
+
+                $this->nextRow[$this->nextColumn] += 1;
+                $this->nextColumn = ($this->nextColumn + 1) % $this->getColumnCount();
+            }
         }
 
         return array(

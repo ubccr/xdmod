@@ -1,0 +1,12 @@
+title
+"GPU Count: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[litst] GPU Count: Per Job","[ovenb] GPU Count: Per Job","[sante] GPU Count: Per Job","[savsp] GPU Count: Per Job","[swath] GPU Count: Per Job","[ybsbu] GPU Count: Per Job"
+2016,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017,0,0.0000,0,0.0000,0,0
+---------

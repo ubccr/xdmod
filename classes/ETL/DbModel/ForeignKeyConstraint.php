@@ -12,7 +12,7 @@ namespace ETL\DbModel;
 use Log;
 use stdClass;
 
-class ForeignKeyConstraint extends NamedEntity implements iEntity
+class ForeignKeyConstraint extends SchemaEntity implements iEntity
 {
     /**
      * Properties required by this class. These will be merged with other
@@ -34,6 +34,7 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
      */
     private $localProperties = array(
         'columns' => array(),
+        'referenced_schema' => null,
         'referenced_table' => null,
         'referenced_columns' => array(),
         'on_delete' => null,
@@ -57,6 +58,9 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
     public function initialize(stdClass $config)
     {
         if (!isset($config->name)) {
+            if (!isset($config->columns) || !is_array($config->columns)) {
+                $this->logAndThrowException('"columns" must be an array');
+            }
             $config->name = $this->generateForeignKeyConstraintName($config->columns);
         }
 
@@ -87,6 +91,7 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
                     );
                 }
                 break;
+            case 'referenced_schema':
             case 'referenced_table':
                 if (!is_string($value)) {
                     $this->logAndThrowException(
@@ -179,6 +184,13 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
             return 1;
         }
 
+        // If the referenced schema is not set then use the schema.
+        if (($this->referenced_schema === null ? $this->schema : $this->referenced_schema)
+            != ($cmp->referenced_schema === null ? $cmp->schema : $cmp->referenced_schema)
+        ) {
+            return -4;
+        }
+
         if ($this->name != $cmp->name
             || $this->columns != $cmp->columns
             || $this->referenced_table != $cmp->referenced_table
@@ -188,15 +200,15 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
         }
 
         if ($this->on_delete != $cmp->on_delete
-            && !in_array($this->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
-            && !in_array($cmp->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
+            && !(in_array($this->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
+                 && in_array($cmp->on_delete, array(null, 'RESTRICT', 'NO ACTION')))
         ) {
             return -2;
         }
 
         if ($this->on_update != $cmp->on_update
-            && !in_array($this->on_update, array(null, 'RESTRICT', 'NO ACTION'))
-            && !in_array($cmp->on_update, array(null, 'RESTRICT', 'NO ACTION'))
+            && !(in_array($this->on_update, array(null, 'RESTRICT', 'NO ACTION'))
+                 && in_array($cmp->on_update, array(null, 'RESTRICT', 'NO ACTION')))
         ) {
             return -3;
         }
@@ -215,7 +227,12 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
             . implode(', ', array_map(array($this, 'quote'), $this->columns))
             . ')';
         $parts[] = 'REFERENCES';
-        $parts[] = $this->quote($this->referenced_table);
+        if ($this->referenced_schema !== null) {
+            $parts[] = $this->quote($this->referenced_schema) . '.'
+                . $this->quote($this->referenced_table);
+        } else {
+            $parts[] = $this->quote($this->referenced_table);
+        }
         $parts[] = '('
             . implode(
                 ', ',

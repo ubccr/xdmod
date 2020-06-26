@@ -94,10 +94,13 @@ class RawDataset
                 if (isset($this->query_results[0]['timezone'])) {
                     $value = $this->formattime($value, $this->query_results[0]['timezone']);
                     $units = '';
+                } elseif (isset($this->query_results[0]['Timezone'])) {
+                    $value = $this->formattime($value, $this->query_results[0]['Timezone']);
+                    $units = '';
                 }
             }
 
-            if ($this->userType == DEMO_USER_TYPE && $docs[$key]['visibility'] == 'non-public') {
+            if ($this->userType == DEMO_USER_TYPE && isset($docs[$key]['visibility']) && $docs[$key]['visibility'] == 'non-public') {
                 $redactlist[] = $value;
                 $value = "&lt;REDACTED&gt;";
             }

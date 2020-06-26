@@ -5,10 +5,10 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD only supports upgrading to a new version from the version
-  that directly precedes it.  If you need to upgrade from an older
-  version you must upgrade through all the intermediate versions or
-  perform a clean installation.
+- Open XDMoD only supports upgrading to a new version from the version that
+  directly precedes it unless otherwise noted below.  If you need to upgrade
+  from an older version you must upgrade through all the intermediate versions
+  or perform a clean installation.
 - Make a backup of your Open XDMoD configuration files before running
   the upgrade script.  The upgrade script may overwrite your current
   configuration files.
@@ -24,10 +24,15 @@ General Upgrade Notes
 RPM Upgrade Process
 -------------------
 
-After upgrading the RPM, you may need to manually update your Apache
-config file (`/etc/httpd/conf.d/xdmod.conf`).  Check to see if a file
-named `/etc/httpd/conf.d/xdmod.conf.rpmnew` exists.  If so, you'll need
-to merge the changes into `/etc/httpd/conf.d/xdmod.conf`.
+The Open XDMoD 9.0 RPM no longer puts the example Apache configuration
+into the Apache configuration directory. Instead an example configuration
+is provided in the `/usr/share/xdmod/templates` directory.
+After upgrading the RPM, you will need to manually update your Apache
+config file following the [Apache configuration](configuration.html#apache-configuration) instructions.
+
+If you have edited the previous Apache config file (`/etc/httpd/conf.d/xdmod.conf`) then
+it will be saved in `/etc/httpd/conf.d/xdmod.conf.rpmsave`. If the Open XDMoD instance was
+using the original configuration unmodified then the old file will be removed.
 
 ### Download Latest Open XDMoD RPM package
 
@@ -102,48 +107,59 @@ the recommended values listed on the [software requirements page][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-8.1.1 to 8.1.2 Upgrade Notes
-----------------------------
+9.0.0 Upgrade Notes
+-------------------
 
-Open XDMoD 8.1.2 is a bug fix release that fixes an issue with detecting enabled
-realms and the ingestion / aggregation of data.
+Open XDMoD 9.0.0 is a major release that includes new features along with many
+enhancements and bug fixes.
 
-You may upgrade directly from 8.0.0 to 8.1.2.
+You may upgrade directly from 8.5.0 or 8.5.1.
 
-8.1.0 to 8.1.1 Upgrade Notes
-----------------------------
+This is the first version of Open XDMoD that supports GPU data in the jobs
+realm.  Since Open XDMoD 6.5 data from slurm (`ReqGRES`) has been ingested into
+the database, but not displayed in the portal.  These jobs may now be
+re-ingested and any GPU data will be used.
 
-Open XDMoD 8.1.1 is a bug fix release that fixes an issue with upgrading from
-8.0.0 where the `modw_cloud` schema does not exist.
+### Input File Format Changes
 
-You may upgrade directly from 8.0.0 to 8.1.1.
-
-8.0.0 to 8.1.0 Upgrade Notes
-----------------------------
+The input file format for Slurm data has changed to include the `AllocTRES`
+field.  If you are generating Slurm input for the `xdmod-shredder` command then
+you will need to make the appropriate changes.  Refer to the [Slurm
+Notes](resource-manager-slurm.html#input-format) for the example `sacct`
+command.  If you are using the `xdmod-slurm-helper` command then no changes are
+necessary.
 
 ### Configuration File Changes
 
-- Changes `datawarehouse.json`:
-    - Adds Cloud realm `group_bys`.
-- Changes `portal_settings.ini`:
-    - Removes `singlejobviewer` option.
-    - Adds an option to show or hide the local login modal dialog for single
-      sign on configurations.
-    - Added subject prefix option for outbound emails.
-- Removes `processor_buckets.json`:
-    - Use `etl/etl_data.d/cloud_common/processor_buckets.json` to change
-      processor bucket ranges.
-- Changes `roles.d/cloud.json`:
-    - If the cloud realm is enabled this file will be updated with permissions
-      for the new `group_by`s.
-- Changes files in `etl/`:
-    - Various additions, improvements and bug fixes.
+The `xdmod-upgrade` script will migrate user editable configuration files to
+the new version.
 
 ### Database Changes
 
-- Drops existing tables in `modw_cloud` if cloud realm is enabled.
-- Updates user profile data in `moddb` to normalize Metric Explorer
-  configuration of saved charts.
+The `xdmod-upgrade` script will migrate the database schemas to the new
+version.  Tables may be altered the first time they are used during ingestion.
+
+- The `moddb`.`ReportTemplateACL` database table is no longer used and is
+removed by the upgrade script.
+- The following tables are altered to store GPU data:
+  `mod_shredder`.`shredded_job_slurm`, `mod_shredder`.`shredded_job`,
+  `mod_shredder`.`staging_job`, `mod_hpcdb`.`hpcdb_jobs`, `modw`.`job_tasks`,
+  and tables in `modw_aggregates` prefixed with `jobfact_by_`.
+- New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
+  Count".
+- Added another index to `mod_logger`.`log_table` to improve performance of
+  queries used by the administrative dashboard's "Log Data" tab.  If this table
+  contains tens of millions of rows it may take over an hour to add the index.
+  It may be desirable to delete old log data from this table before performing
+  the migration if the data is no longer needed.
+
+- The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
+tables have had their Primary Keys changed to better support the local and global filters
+in the Metric Explorer.
+
+- Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
+tables any saved charts or reports using the Account or Configuration group by in the
+Cloud realm should be recreated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql

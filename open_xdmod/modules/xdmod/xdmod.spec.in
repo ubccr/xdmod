@@ -11,12 +11,12 @@ Source:        %{name}-%{version}__PRERELEASE__.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{release}-XXXXXX)
 BuildArch:     noarch
 BuildRequires: php-cli
-Requires:      httpd
+Requires:      httpd mod_ssl
 Requires:      mariadb >= 5.5.3
-Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-mcrypt php-xml php-mbstring
-Requires:      php-pear-MDB2 php-pear-MDB2-Driver-mysql
+Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring
+Requires:      php-pear-MDB2 php-pear-MDB2-Driver-mysql php-pecl-apcu
 Requires:      java-1.8.0-openjdk java-1.8.0-openjdk-devel
-Requires:      cronie
+Requires:      crontabs
 Requires:      logrotate
 Requires:      ghostscript
 Requires:      jq
@@ -26,6 +26,8 @@ XDMoD is a data warehouse and web portal for mining statistical data
 from resource managers in high-performance computing environments.
 XDMoD presents resource utilization over set time periods and provides
 detailed interactive charts, graphs, and tables.
+
+%define xdmod_export_dir %{_var}/spool/%{name}/export
 
 %prep
 %setup -q -n %{name}-%{version}__PRERELEASE__
@@ -49,13 +51,14 @@ DESTDIR=$RPM_BUILD_ROOT ./install \
     --httpdconfdir=%{_sysconfdir}/httpd/conf.d \
     --logrotatedconfdir=%{_sysconfdir}/logrotate.d \
     --crondconfdir=%{_sysconfdir}/cron.d
+mkdir -p $RPM_BUILD_ROOT%{xdmod_export_dir}
 
 %post
 # Create log files that need to be writable by both Apache and Open XDMoD scripts.
 for file in exceptions.log query.log; do
     touch %{_localstatedir}/log/%{name}/$file
     chown apache:xdmod %{_localstatedir}/log/%{name}/$file
-    chmod 0664 %{_localstatedir}/log/%{name}/$file
+    chmod 0660 %{_localstatedir}/log/%{name}/$file
 done
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
@@ -74,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
-%dir %attr(0775,apache,xdmod) %{_localstatedir}/log/%{name}
+%dir %attr(0770,apache,xdmod) %{_localstatedir}/log/%{name}
 
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %attr(0440,apache,xdmod) %{_sysconfdir}/%{name}/portal_settings.ini
@@ -82,14 +85,20 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/%{name}/*.json
 %config(noreplace) %{_sysconfdir}/%{name}/email_templates/
 %config(noreplace) %{_sysconfdir}/%{name}/etl/
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
+%dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
+
 %changelog
-* Sun Jul 28 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu>
+* Tue Oct 29 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.5.1-1.0
+    - Release 8.5.1
+* Mon Oct 21 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.5.0-1.0
+    - Release 8.5.0
     - Remove `node_modules` management from `%pre`
+    - Add data warehouse batch export directory `/var/spool/xdmod/export`
+    - Add php-pecl-apcu` to required dependencies
 * Mon May 06 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.2-1.0
     - Update `%pre` with steps for `node_modules` on 8.1.2 release
 * Thu May 02 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.1-1.0

@@ -1,0 +1,35 @@
+{
+    "Normal user": [
+        "usr",
+        {
+            "realm": "Jobs",
+            "start_date": "2018-02-01",
+            "end_date": "2018-02-28",
+            "format": "CSV"
+        },
+        200,
+        "DELETE-request"
+    ],
+    "PI": [
+        "pi",
+        {
+            "realm": "Jobs",
+            "start_date": "2018-02-01",
+            "end_date": "2018-02-28",
+            "format": "CSV"
+        },
+        200,
+        "DELETE-request"
+    ],
+    "Center director": [
+        "cd",
+        {
+            "realm": "Jobs",
+            "start_date": "2018-02-01",
+            "end_date": "2018-02-28",
+            "format": "CSV"
+        },
+        200,
+        "DELETE-request"
+    ]
+}

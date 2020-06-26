@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use JsonSchema\Validator;
 
 class UserInterfaceTest extends BaseUserAdminTest
 {
@@ -54,17 +55,57 @@ class UserInterfaceTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, 'output');
+        # Check spec file
+        $schemaObject = JSON::loadFile(
+            $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
+            false
+        );
+        $validator = new Validator();
+        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
+        }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
 
-        if (!is_file($expectedOutputFile)) {
-            file_put_contents($expectedOutputFile, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
-            echo "Generated Expected Output for testGetMenus: $expectedOutputFile\n";
-            $this->assertTrue(true);
+        # Check expected file
+        $expected = array();
+        foreach(self::$XDMOD_REALMS as $realm) {
+            $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, "output/$realm");
+
+            # Create missing files/directories
+            if (!is_file($expectedOutputFile)) {
+                $newFile = array();
+                foreach ($actual as $arr) {
+                    if (isset($arr['realm'])) {
+                        if (strtolower($arr['realm']) == $realm) {
+                            array_push($newFile, $arr);
+                        }
+                    }
+                }
+                $separator = array(
+                    "text" => "",
+                    "id" => "-111",
+                    "node_type" => "separator",
+                    "iconCls" => "blank",
+                    "leaf" => true,
+                    "disabled" => true
+                );
+                array_push($newFile, $separator);
+                $filePath = dirname($expectedOutputFile);
+                if (!is_dir($filePath)){
+                    mkdir($filePath);
+                }
+                file_put_contents($expectedOutputFile, json_encode($newFile, JSON_PRETTY_PRINT) . "\n");
+                $this->markTestSkipped("Generated Expected Output for UserInterfaceTest testGetMenus: $expectedOutputFile\n");
+            }
+
+            $expected = array_merge($expected, json_decode(file_get_contents($expectedOutputFile), true));
+
         }
 
-        $expected = json_decode(file_get_contents($expectedOutputFile), true);
-
         $this->assertEquals($expected, $actual);
+
     } // public function testGetMenus(array $options)
 
     /**

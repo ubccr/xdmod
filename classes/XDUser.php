@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/../configuration/linker.php';
-
 use CCR\DB;
 use CCR\Log;
 use CCR\MailWrapper;
@@ -89,16 +87,16 @@ New Acls:         %s
 EML;
 
     const USER_NOTIFICATION_EMAIL = <<<EML
-
 Dear %s,
 
-This email is to notify you that XDMoD has detected a change in your organization affiliation. We
-have taken steps to ensure that this is accurately reflected in our systems. If you have any questions
-or concerns please contact us @ %s.
+The organization associated with your XDMoD user account has been automatically
+updated from %s to %s. You will no longer be able to view non-public data
+from %s.
 
-Thank You,
+If you were not expecting this change or the new organization affiliation is
+incorrect then please contact support at %s.
 
-XDMoD
+%s
 EML;
 
     /**
@@ -503,7 +501,7 @@ EML;
         $pdo = DB::factory('database');
 
         $userCheck = $pdo->query("
-         SELECT username, password, email_address, first_name, middle_name, last_name,
+         SELECT id, username, password, email_address, first_name, middle_name, last_name,
          time_created, time_last_updated, password_last_updated, account_is_active, organization_id, person_id, field_of_science, token, user_type, sticky
          FROM Users
          WHERE id=:id
@@ -523,7 +521,7 @@ EML;
             $user->_update_token = false;
         }
 
-        $user->_id = $uid;
+        $user->_id = $userCheck[0]['id'];
 
         $user->_account_is_active = ($userCheck[0]['account_is_active'] == '1');
 
@@ -2515,6 +2513,8 @@ SQL;
                     )
                 );
 
+                $contactAddress = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
+
                 // Notify the user that there was an organization change detected.
                 MailWrapper::sendMail(
                     array(
@@ -2522,9 +2522,14 @@ SQL;
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
                             $this->getFormalName(),
-                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                            $userOrganizationName,
+                            $currentOrganizationName,
+                            $userOrganizationName,
+                            $contactAddress,
+                            MailWrapper::getMaintainerSignature()
                         ),
-                        'toAddress' => $this->getEmailAddress()
+                        'toAddress' => $this->getEmailAddress(),
+                        'replyAddress' => $contactAddress
                     )
                 );
             }
@@ -2606,4 +2611,53 @@ SQL;
     {
         return $this->sticky;
     }
+
+    /**
+     * Retrieves the resources that this user has access to. Specifically, it retrieves the resources
+     * that are associated with this User's `organization_id`.
+     *
+     * **NOTE:** This function does not utilize the standard method of retrieving / filtering data,
+     * i.e. via a code path that ends up utilizing `Query.php` because we do not currently restrict
+     * access to resources. Also, the methods of filtering used in conjunction with `Query.php` are
+     * either hard coded in the `GroupBy` classes, or are indirectly setup via the `modw_filters`
+     * tables && the roles.json::acl::dimensions property ( via the `FilterListBuilder` class ).
+     *
+     * @param array $resourceNames [optional|default array()] an array of resourcefact.code values
+     *                             that should optionally further constrain the resources returned.
+     * @return integer[] an array of the resourcefact.id values
+     *
+     * @throws Exception if there is a problem connecting to / querying the database.
+     */
+    public function getResources($resourceNames = array())
+    {
+        $db = DB::factory('database');
+
+        $query = <<<SQL
+        SELECT rf.id,
+              replace(rf.code, '-', ' ') as name,
+              replace(rf.code, '-', ' ') as short_name
+        FROM modw.resourcefact rf
+        WHERE   rf.organization_id =  :organization_id
+SQL;
+        $params = array(':organization_id' => $this->getOrganizationID());
+
+        // If we have resource names then update the query / params accordingly
+        if (count($resourceNames) > 0) {
+            $query .= "AND rf.code IN (:resource_codes)";
+
+            $handle = $db->handle();
+            $resourceNames = array_map(
+                function ($value) use ($handle) {
+                    return $handle->quote($value);
+                },
+                $resourceNames
+            );
+            $params[':resource_codes'] = implode(
+                ',',
+                $resourceNames
+            );
+        } // if (count($resourceNames) > 0) {
+
+        return $db->query($query, $params);
+    } // public function getResources($resourceNames = array())
 }//XDUser

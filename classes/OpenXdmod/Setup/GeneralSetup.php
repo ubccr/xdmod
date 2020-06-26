@@ -21,9 +21,9 @@ class GeneralSetup extends SetupItem
         $this->console->displaySectionHeader('General Setup');
 
         $this->console->displayMessage(<<<"EOT"
-The default Open XDMoD configuration creates an Apache virtual host on
-port 8080.  If you change or remove the port number (and use port 80 or
-443) you will need to change the Apache configuration as well.
+The template Apache configuration file uses a virtual host
+listening on HTTPS port 443. The Site Address specified
+here should match the settings in the Apache configuration.
 EOT
         );
         $this->console->displayBlankLine();
@@ -137,15 +137,14 @@ EOT
         $this->console->displayBlankLine();
         $this->console->displayMessage(<<<"EOT"
 This release of XDMoD features an optional replacement for the summary
-tab that is intended to provide easier access to XDMoD's many features
-for new or inexperienced (novice) users. Detailed information is available
-as https://open.xdmod.org/novice_user.html
+tab that is intended to provide easier access to XDMoD's many features.
+Detailed information is available at https://open.xdmod.org/dashboard.html
 EOT
         );
         $this->console->displayBlankLine();
-        $settings['features_novice_user'] = $this->console->prompt(
-            'Novice User Tab',
-            $settings['features_novice_user'],
+        $settings['features_user_dashboard'] = $this->console->prompt(
+            'Enable Dashboard Tab?',
+            $settings['features_user_dashboard'],
             array('on', 'off')
         );
 

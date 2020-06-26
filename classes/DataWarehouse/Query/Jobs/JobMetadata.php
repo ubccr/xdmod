@@ -82,7 +82,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     {
         $query = new \DataWarehouse\Query\Jobs\JobDataset(array('primary_key' => $jobid));
         $query->setMultipleRoleParameters($user->getAllRoles(), $user);
-        $stmt = $query->getRawStatement();
+        $stmt = $query->getRawStatement(1, 0);
 
         $job = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         if (count($job) != 1) {

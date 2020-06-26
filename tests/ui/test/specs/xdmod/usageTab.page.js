@@ -33,6 +33,12 @@ class Usage {
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';
         this.durationMenuItem = name => `${this.durationMenu}//li/a[./span[text()="${name}"]]`;
+        this.toolbarButtonByText = function (text) {
+            return `//div[contains(@class, "x-toolbar")]//button[contains(text(), "${text}")]`;
+        };
+        this.displayMenuItemByText = function (text) {
+            return `//div[@id='chart_config_menu_chart_toolbar_tg_usage']//span[contains(text(), '${text}')]//ancestor::li[contains(@class, 'x-menu-list-item')]`;
+        };
     }
 
     checkLegendText(text) {
@@ -186,6 +192,18 @@ class Usage {
         }
         browser.waitUntilAnimEndAndClick(this.treeNodeByPath(topName, childName));
         browser.waitForAllInvisible(this.mask);
+    }
+
+    /**
+     * Check if the menu item element that contains the text in `display` is enabled.
+     *
+     * @param display
+     * @returns {boolean}
+     */
+    toolbarMenuItemIsEnabled(display) {
+        var item = this.displayMenuItemByText(display);
+        browser.waitForVisible(item);
+        return !($(item).getAttribute('class').includes('x-item-disabled'));
     }
 }
 module.exports = new Usage();

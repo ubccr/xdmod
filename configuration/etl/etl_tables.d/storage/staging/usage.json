@@ -24,13 +24,13 @@
             },
             {
                 "name": "user_name",
-                "type": "varchar(30)",
+                "type": "varchar(255)",
                 "nullable": false,
                 "comment": "User's system username"
             },
             {
                 "name": "pi_name",
-                "type": "varchar(30)",
+                "type": "varchar(255)",
                 "nullable": false,
                 "comment": "PI's system username"
             },

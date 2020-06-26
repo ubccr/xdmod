@@ -1,0 +1,72 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Response from GET rest/warehouse/export/realms",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/realm"
+            }
+        },
+        "total": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "success",
+        "data"
+    ],
+    "additionalProperties": false,
+    "definitions": {
+        "realm": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/field"
+                    }
+                }
+            },
+            "required": [
+                "id",
+                "name",
+                "fields"
+            ],
+            "additionalProperties": false
+        },
+        "field": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "display": {
+                    "type": "string"
+                },
+                "documentation": {
+                    "type": "string"
+                },
+                "anonymize": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "name",
+                "display",
+                "documentation"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

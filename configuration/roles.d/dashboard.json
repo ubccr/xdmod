@@ -1,0 +1,472 @@
+{
+    "+roles": {
+        "+cd": {
+            "dashboard_components": [
+                {
+                    "config": {
+                        "timeframe": "1 year"
+                    },
+                    "name": "Chart Thumbnails",
+                    "region": "top",
+                    "type": "xdmod-dash-reportthumb-cmp"
+                },
+                {
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    },
+                    "name": "Saved Charts and Reports",
+                    "type": "xdmod-dash-savedchart-cmp"
+                }
+            ]
+        },
+        "+cs": {
+            "dashboard_components": [
+                {
+                    "name": "Chart Thumbnails",
+                    "type": "xdmod-dash-reportthumb-cmp",
+                    "config": {
+                        "timeframe": "30 day"
+                    },
+                    "region": "top"
+                },
+                {
+                    "name": "Saved Charts and Reports",
+                    "type": "xdmod-dash-savedchart-cmp",
+                    "location": {
+                        "column": 0,
+                        "row": 1
+                    }
+                },
+                {
+                    "name": "Job Component",
+                    "type": "xdmod-dash-job-cmp",
+                    "config": {
+                        "multiuser": true,
+                        "timeframe": "7 day"
+                    },
+                    "location": {
+                        "column": 1,
+                        "row": 1
+                    }
+                }
+            ]
+        },
+        "+pi": {
+            "dashboard_components": [
+                {
+                    "name": "Job Component",
+                    "type": "xdmod-dash-job-cmp",
+                    "config": {
+                        "multiuser": true,
+                        "timeframe": "30 day"
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    }
+                },
+                {
+                    "name": "DashBoardChart_PiWallHoursByPerson",
+                    "type": "xdmod-dash-chart-cmp",
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "color": "33ABAB",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "person",
+                                        "has_std_err": false,
+                                        "id": 0.5505562939216301,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "total_cpu_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "value_desc",
+                                        "std_err": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    },
+                                    {
+                                        "color": "993333",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "person",
+                                        "has_std_err": false,
+                                        "id": 0.9958683615013885,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "job_count",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "value_desc",
+                                        "std_err": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 1
+                                    }
+                                ],
+                                "total": 2
+                            },
+                            "font_size": 1,
+                            "global_filters": {
+                                "data": [
+                                    {
+                                        "categories": "",
+                                        "checked": true,
+                                        "dimension_id": "pi",
+                                        "id": "pi=${PERSON_ID}",
+                                        "realms": [
+                                            "Jobs"
+                                        ],
+                                        "value_id": "${PERSON_ID}",
+                                        "value_name": "${PERSON_NAME}"
+                                    }
+                                ],
+                                "total": 1
+                            },
+                            "hide_tooltip": false,
+                            "legend_type": "off",
+                            "limit": 10,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "show_warnings": true,
+                            "start": 0,
+                            "swap_xy": false,
+                            "timeframe_label": "90 day",
+                            "timeseries": false,
+                            "title": "Usage for my projects",
+                            "trend_line": false
+                        }
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 1
+                    }
+                },
+                {
+                    "name": "DashBoardChart_PiWaitHoursByJobSize",
+                    "type": "xdmod-dash-chart-cmp",
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "category": "",
+                                        "color": "auto",
+                                        "combine_type": "side",
+                                        "display_type": "scatter",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [
+                                                {
+                                                    "checked": true,
+                                                    "dimension_id": "pi",
+                                                    "id": "pi=${PERSON_ID}",
+                                                    "realms": [
+                                                        "Jobs"
+                                                    ],
+                                                    "value_id": "${PERSON_ID}",
+                                                    "value_name": "${PERSON_NAME}"
+                                                }
+                                            ],
+                                            "total": 1
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 2e-14,
+                                        "ignore_global": false,
+                                        "line_type": "",
+                                        "line_width": "",
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": "",
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": "",
+                                        "value_labels": false,
+                                        "visibility": "",
+                                        "x_axis": false,
+                                        "z_index": 1
+                                    },
+                                    {
+                                        "category": "Jobs",
+                                        "color": "8BBC21",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 0.946262496142683,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    }
+                                ],
+                                "total": 2
+                            },
+                            "font_size": 2,
+                            "hide_tooltip": false,
+                            "legend_type": "top_center",
+                            "limit": 20,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "start": 0,
+                            "swap_xy": true,
+                            "timeframe_label": "30 day",
+                            "timeseries": false,
+                            "title": "Wait Hours",
+                            "trend_line": false
+                        }
+                    },
+                    "location": {
+                        "column": 1,
+                        "row": 0
+                    }
+                }
+            ]
+        },
+        "+pub": {
+            "dashboard_components": [
+                {
+                    "config": {
+                        "timeframe": "Last month"
+                    },
+                    "name": "Summary Statistics",
+                    "region": "top",
+                    "type": "xdmod-dash-summarystat-cmp"
+                }
+            ]
+        },
+        "+usr": {
+            "dashboard_components": [
+                {
+                    "config": {
+                        "timeframe": "30 day"
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 0
+                    },
+                    "name": "Job Component",
+                    "type": "xdmod-dash-job-cmp"
+                },
+                {
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "category": "",
+                                        "color": "auto",
+                                        "combine_type": "side",
+                                        "display_type": "scatter",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [
+                                                {
+                                                    "checked": true,
+                                                    "dimension_id": "person",
+                                                    "id": "person=${PERSON_ID}",
+                                                    "realms": [
+                                                        "Jobs"
+                                                    ],
+                                                    "value_id": "${PERSON_ID}",
+                                                    "value_name": "${PERSON_NAME}"
+                                                }
+                                            ],
+                                            "total": 1
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 2e-14,
+                                        "ignore_global": false,
+                                        "line_type": "",
+                                        "line_width": "",
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": "",
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": "",
+                                        "value_labels": false,
+                                        "visibility": "",
+                                        "x_axis": false,
+                                        "z_index": 1
+                                    },
+                                    {
+                                        "category": "Jobs",
+                                        "color": "8BBC21",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "jobsize",
+                                        "has_std_err": false,
+                                        "id": 0.946262496142683,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "none",
+                                        "std_err": true,
+                                        "std_err_labels": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    }
+                                ],
+                                "total": 2
+                            },
+                            "font_size": 2,
+                            "hide_tooltip": false,
+                            "legend_type": "top_center",
+                            "limit": 20,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "start": 0,
+                            "swap_xy": true,
+                            "timeframe_label": "30 day",
+                            "timeseries": false,
+                            "title": "Wait Hours",
+                            "trend_line": false
+                        }
+                    },
+                    "location": {
+                        "column": 1,
+                        "row": 0
+                    },
+                    "name": "DashBoardChart_WaitHoursByJobSize",
+                    "type": "xdmod-dash-chart-cmp"
+                },
+                {
+                    "config": {
+                        "chart": {
+                            "aggregation_unit": "Auto",
+                            "data_series": {
+                                "data": [
+                                    {
+                                        "color": "auto",
+                                        "combine_type": "side",
+                                        "display_type": "column",
+                                        "enabled": true,
+                                        "filters": {
+                                            "data": [],
+                                            "total": 0
+                                        },
+                                        "group_by": "queue",
+                                        "has_std_err": false,
+                                        "id": 0.44525853735566,
+                                        "ignore_global": false,
+                                        "line_type": "Solid",
+                                        "line_width": 2,
+                                        "log_scale": false,
+                                        "long_legend": true,
+                                        "metric": "avg_waitduration_hours",
+                                        "realm": "Jobs",
+                                        "shadow": false,
+                                        "sort_type": "none",
+                                        "std_err": false,
+                                        "trend_line": false,
+                                        "value_labels": false,
+                                        "visibility": null,
+                                        "x_axis": false,
+                                        "z_index": 0
+                                    }
+                                ],
+                                "total": 1
+                            },
+                            "font_size": 3,
+                            "hide_tooltip": false,
+                            "legend_type": "off",
+                            "limit": 10,
+                            "share_y_axis": false,
+                            "show_filters": false,
+                            "show_remainder": false,
+                            "show_warnings": true,
+                            "start": 0,
+                            "swap_xy": true,
+                            "timeframe_label": "30 day",
+                            "timeseries": false,
+                            "title": "Wait times by queue",
+                            "trend_line": false,
+                            "y_axis": {
+                                "original0": {
+                                    "title": "Wait Time Per Job (hours)"
+                                }
+                            }
+                        }
+                    },
+                    "location": {
+                        "column": 0,
+                        "row": 1
+                    },
+                    "name": "DashBoardChart_WaitHoursByQueue",
+                    "type": "xdmod-dash-chart-cmp"
+                }
+            ]
+        }
+    }
+}

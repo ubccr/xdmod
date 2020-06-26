@@ -1,0 +1,22 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/cloud_common/domains.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "-1",
+            "name": "'Unknown'"
+        },
+        "joins": [
+            {
+                "name": "event_type",
+                "schema": "modw_cloud",
+                "alias": "raw"
+            }
+        ],
+        "where": [
+            "1 LIMIT 1"
+        ]
+
+    }
+}

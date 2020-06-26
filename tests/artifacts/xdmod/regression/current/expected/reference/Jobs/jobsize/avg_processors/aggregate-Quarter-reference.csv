@@ -5,7 +5,15 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[1] Job Size: Per Job (Core Count)","[2] Job Size: Per Job (Core Count)","[3 - 4] Job Size: Per Job (Core Count)","[5 - 8] Job Size: Per Job (Core Count)","[9 - 16] Job Size: Per Job (Core Count)","[17 - 32] Job Size: Per Job (Core Count)","[33 - 64] Job Size: Per Job (Core Count)","[65 - 128] Job Size: Per Job (Core Count)","[129 - 256] Job Size: Per Job (Core Count)","[257 - 512] Job Size: Per Job (Core Count)"
-"2016 Q4",1.0000,2.0000,4.0000,7.9997,12.0355,24.8315,53.3793,94.5500,185.3333,312.0000
-"2017 Q1",1.0000,2.0000,4.0000,7.9997,12.0979,25.8495,51.5833,95.5294,176.0000,0
+"Job Size","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+1,1.0000,0
+2,2.0000,0
+"3 - 4",4.0000,0
+"5 - 8",7.9997,0.0001415366272206137
+"9 - 16",12.0469,0.002994474507764085
+"17 - 32",25.2000,0.29214570410333923
+"33 - 64",52.5149,0.890276181683717
+"65 - 128",94.9515,1.0691413291600116
+"129 - 256",184.0000,4.1991252733426085
+"257 - 512",312.0000,16.97056274847714
 ---------

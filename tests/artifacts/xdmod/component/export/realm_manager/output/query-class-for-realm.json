@@ -1,0 +1,6 @@
+{
+    "Jobs realm": [
+        "Jobs",
+        "\\DataWarehouse\\Query\\Jobs\\JobDataset"
+    ]
+}

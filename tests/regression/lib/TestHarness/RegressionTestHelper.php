@@ -490,43 +490,55 @@ class RegressionTestHelper extends XdmodTestHelper
             foreach ($expectedHeader as $key => $value) {
                 $index = $useAssoc ? $value : $key;
                 $columnName = $useAssoc ? $index : $expectedHeader[$index];
-                $expectedRowValue = $expectedRow[$index];
-                $providedRowValue = $providedRow[$index];
-                $rowMessage = sprintf(
-                    'Values do not match for column %s, row $d',
-                    $columnName,
-                    $i
-                );
 
-                if ($providedRowValue !== $expectedRowValue && is_numeric($expectedRowValue)) {
-                    $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
+                if (!array_key_exists($index, $providedRow)) {
+                    $failures[] = sprintf(
+                        "Expected key not found in provided row %d. \n\t\tExpected Key:  [%s]\n\t\tProvided Keys: [%s]",
+                        $i,
+                        $index,
+                        implode(', ', array_keys($providedRow))
+                    );
+                } else {
+                    $expectedRowValue = $expectedRow[$index];
+                    $providedRowValue = $providedRow[$index];
+                    $rowMessage = sprintf(
+                        "Values do not match for column %s, row %d. \nExpected: [%s] \nActual:   [%s]",
+                        $columnName,
+                        $i,
+                        $expectedRowValue,
+                        $providedRowValue
+                    );
 
-                    if (abs($expectedRowValue) > self::$almostZero) {
-                        $relativeError = abs($expectedRowValue - $providedRowValue) / $expectedRowValue;
-                        $errorFormula .= " / $expectedRowValue";
-                    } else {
-                        $relativeError = abs($expectedRowValue - $providedRowValue);
+                    if ($providedRowValue !== $expectedRowValue && is_numeric($expectedRowValue)) {
+                        $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
+
+                        if (abs($expectedRowValue) > self::$almostZero) {
+                            $relativeError = abs($expectedRowValue - $providedRowValue) / $expectedRowValue;
+                            $errorFormula .= " / $expectedRowValue";
+                        } else {
+                            $relativeError = abs($expectedRowValue - $providedRowValue);
+                        }
+
+                        if ($relativeError > self::$delta) {
+                            $failures[] = sprintf(
+                                '( %s ) => %f > %f',
+                                $errorFormula,
+                                $relativeError,
+                                self::$delta
+                            );
+                        } else {
+                            $this->messages[] = sprintf(
+                                'column: %s, row: %d ( %s ) => %f < %f',
+                                $columnName,
+                                $i,
+                                $errorFormula,
+                                $relativeError,
+                                self::$delta
+                            );
+                        }
+                    } elseif ($expectedRowValue !== $providedRowValue) {
+                        $failures[] = $rowMessage;
                     }
-
-                    if ($relativeError > self::$delta) {
-                        $failures[] = sprintf(
-                            '( %s ) => %f > %f',
-                            $errorFormula,
-                            $relativeError,
-                            self::$delta
-                        );
-                    } else {
-                        $this->messages[] = sprintf(
-                            'column: %s, row: %d ( %s ) => %f < %f',
-                            $columnName,
-                            $i,
-                            $errorFormula,
-                            $relativeError,
-                            self::$delta
-                        );
-                    }
-                } elseif ($expectedRowValue !== $providedRowValue) {
-                    $failures[] = $rowMessage;
                 }
             }
         }

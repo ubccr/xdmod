@@ -2,6 +2,8 @@
 
 namespace TestHarness;
 
+use CCR\Json;
+
 class TestFiles
 {
     const TEST_ARTIFACT_OUTPUT_PATH = './artifacts';
@@ -62,5 +64,17 @@ class TestFiles
                 $fileName . $extension,
             )
         ));
+    }
+
+    public function loadJsonFile(
+        $testGroup,
+        $fileName,
+        $type = '',
+        $assoc = true
+    ) {
+        return Json::loadfile(
+            $this->getFile($testGroup, $fileName, $type),
+            $assoc
+        );
     }
 }

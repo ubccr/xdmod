@@ -449,7 +449,7 @@ class EtlConfiguration extends Configuration
     protected function merge(Configuration $localConfigObj, $overwrite = false)
     {
         if ( ! $localConfigObj instanceof EtlConfiguration ) {
-            $this-logAndThrowException("Local config object is not of type EtlConfiguration");
+            $this->logAndThrowException("Local config object is not of type EtlConfiguration");
         }
 
         parent::merge($localConfigObj, $overwrite);
@@ -525,9 +525,9 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    public function cleanup()
+    public function cleanup($deepCleanup = false)
     {
-        parent::cleanup();
+        parent::cleanup($deepCleanup);
         $this->parentDefaults = null;
     }  // cleanup()
 
@@ -761,7 +761,7 @@ class EtlConfiguration extends Configuration
         // the action configuration.
 
         if ( ! isset($config->options_class) ) {
-            $this->logAndThrowException("Options class not defined for $actionName");
+            $this->logAndThrowException("Key 'options_class' not defined for $actionName");
         }
 
         $optionsClassName = $config->options_class;
@@ -1144,4 +1144,13 @@ class EtlConfiguration extends Configuration
     {
         return $this->paths;
     }  // getPaths()
+
+    /**
+     * @see iConfiguration::__sleep()
+     */
+
+    public function __sleep()
+    {
+        return array_keys(get_object_vars($this));
+    }
 }  // class EtlConfiguration

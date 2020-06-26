@@ -5,7 +5,45 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Fluid, Particulate, and Hydraulic Systems] Job Size: Per Job (Core Count)","[Global Atmospheric Research] Job Size: Per Job (Core Count)","[Structures and Building Systems] Job Size: Per Job (Core Count)","[Design, Tools, and Test] Job Size: Per Job (Core Count)","[Emerging Technologies Initiation] Job Size: Per Job (Core Count)","[Organic and Macromolecular Chemistry] Job Size: Per Job (Core Count)","[Metals, Ceramics, and Electronic Materials] Job Size: Per Job (Core Count)","[Quantum Electronics, Waves, and Beams] Job Size: Per Job (Core Count)","[Stellar Astronomy and Astrophysics] Job Size: Per Job (Core Count)","[Systematic and Population Biology] Job Size: Per Job (Core Count)","[Polar Aeronomy and Astrophysics] Job Size: Per Job (Core Count)","[Economics] Job Size: Per Job (Core Count)","[Design and Computer-Integrated Engineering] Job Size: Per Job (Core Count)","[Geophysics] Job Size: Per Job (Core Count)","[Volcanology and Mantle Geochemistry] Job Size: Per Job (Core Count)","[Solid State Chemistry and Polymers] Job Size: Per Job (Core Count)","[Geology and Paleontology] Job Size: Per Job (Core Count)","[Law and Social Sciences] Job Size: Per Job (Core Count)","[Biophysics] Job Size: Per Job (Core Count)","[Algebra and Number Theory] Job Size: Per Job (Core Count)","[Polar Ocean and Climate Systems] Job Size: Per Job (Core Count)","[Theoretical Physics] Job Size: Per Job (Core Count)","[Arts] Job Size: Per Job (Core Count)","[Seismology] Job Size: Per Job (Core Count)","[Statistics and Probability] Job Size: Per Job (Core Count)","[Sociology] Job Size: Per Job (Core Count)","[Experimental Systems] Job Size: Per Job (Core Count)","[Physical Chemistry] Job Size: Per Job (Core Count)","[Galactic Astronomy] Job Size: Per Job (Core Count)","[Cell Biology] Job Size: Per Job (Core Count)","[Solid-State and Microstructures] Job Size: Per Job (Core Count)","[Biochemistry and Molecular Structure and Function] Job Size: Per Job (Core Count)","[Decision, Risk, and Management Science] Job Size: Per Job (Core Count)","[Computer and Computation Theory] Job Size: Per Job (Core Count)","[Extragalactic Astronomy and Cosmology] Job Size: Per Job (Core Count)","[Mechanics and Materials] Job Size: Per Job (Core Count)","[Operations Research and Production Systems] Job Size: Per Job (Core Count)","[Polar Meteorology] Job Size: Per Job (Core Count)","[Systems Prototyping and Fabrication] Job Size: Per Job (Core Count)","[Tectonics] Job Size: Per Job (Core Count)"
-"2016 Q4",224.0000,160.0000,112.0000,108.0000,96.0000,123.2941,72.0000,69.7188,55.2000,48.8800,28.0000,24.5435,23.1111,20.0000,20.0000,18.9315,23.3333,16.0000,30.0000,12.0000,12.0000,12.0000,11.0909,10.6250,10.7037,9.5143,9.5172,8.2151,4.2402,3.0833,2.2970,1.7333,1.0418,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000
-"2017 Q1",0,160.0000,0,0,96.0000,32.0000,0,53.0000,49.3333,37.8993,0,24.0000,23.1111,0,0,0,5.0000,0,8.1852,12.0000,12.0000,0,10.4000,12.0000,10.5532,9.1352,8.0000,10.4080,8.5000,8.0000,2.0000,0,0,0,0,1.0000,1.0000,1.0000,1.0000,0
+"PI Group","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"Fluid, Particulate, and Hydraulic Systems",224.0000,72.73696905059123
+"Global Atmospheric Research",160.0000,0
+"Structures and Building Systems",112.0000,0
+"Design, Tools, and Test",108.0000,0
+"Emerging Technologies Initiation",96.0000,0
+"Organic and Macromolecular Chemistry",94.0800,13.913782519502021
+"Metals, Ceramics, and Electronic Materials",72.0000,0
+"Quantum Electronics, Waves, and Beams",59.3409,6.100056156105137
+"Stellar Astronomy and Astrophysics",52.2000,3.5267548823245414
+"Systematic and Population Biology",42.4937,2.1967513051929584
+"Polar Aeronomy and Astrophysics",28.0000,8.48528137423857
+Economics,24.0145,1.2257293401539964
+"Design and Computer-Integrated Engineering",23.1111,0.8380524817467393
+Geophysics,20.0000,0
+"Volcanology and Mantle Geochemistry",20.0000,0
+"Solid State Chemistry and Polymers",18.9315,1.0384183998010423
+"Geology and Paleontology",18.7500,11.90784930203603
+"Law and Social Sciences",16.0000,0
+"Algebra and Number Theory",12.0000,0
+"Polar Ocean and Climate Systems",12.0000,0
+"Theoretical Physics",12.0000,0
+Arts,11.0909,0.35773447517085943
+Seismology,10.9000,0.7273238618387268
+"Statistics and Probability",10.7037,0.5806845388269148
+Biophysics,10.4839,2.317589156067726
+Sociology,9.4136,0.00817111972673608
+"Experimental Systems",9.1892,0.3005663947224767
+"Physical Chemistry",8.3335,0.03265027676775671
+"Galactic Astronomy",4.2359,0.10099005099930815
+"Cell Biology",3.0833,0.5345869237466392
+"Solid-State and Microstructures",2.2970,0.1689240965440023
+"Biochemistry and Molecular Structure and Function",1.7333,0.7084673076458524
+"Decision, Risk, and Management Science",1.0418,0.029529889560875294
+"Computer and Computation Theory",1.0000,0
+"Extragalactic Astronomy and Cosmology",1.0000,0
+"Mechanics and Materials",1.0000,0
+"Operations Research and Production Systems",1.0000,0
+"Polar Meteorology",1.0000,0
+"Systems Prototyping and Fabrication",1.0000,0
+Tectonics,1.0000,0
 ---------

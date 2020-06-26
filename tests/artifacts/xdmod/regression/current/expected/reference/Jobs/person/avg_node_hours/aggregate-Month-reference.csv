@@ -5,7 +5,71 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[Scaup, Lesser] Node Hours: Per Job","[Chaffinch] Node Hours: Per Job","[Scoter, Velvet] Node Hours: Per Job","[Siskin] Node Hours: Per Job","[Pipit, Meadow] Node Hours: Per Job","[Warbler, Dusky] Node Hours: Per Job","[Smew] Node Hours: Per Job","[Duck, Ferruginous] Node Hours: Per Job","[Grosbeak, Evening] Node Hours: Per Job","[Goose, Egyptian] Node Hours: Per Job","[Peregrine] Node Hours: Per Job","[Warbler, Yellow-browed] Node Hours: Per Job","[Tern, Sandwich] Node Hours: Per Job","[Crane] Node Hours: Per Job","[Warbler, Moltoni's] Node Hours: Per Job","[Ovenbird] Node Hours: Per Job","[Bunting, Yellow-browed] Node Hours: Per Job","[Ibis, Glossy] Node Hours: Per Job","[Plover, White-tailed] Node Hours: Per Job","[Warbler, Sardinian] Node Hours: Per Job","[Lapwing] Node Hours: Per Job","[Bunting, Yellow-breasted] Node Hours: Per Job","[Thrush, Mistle] Node Hours: Per Job","[Treecreeper, Short-toed] Node Hours: Per Job","[Gull, Ring-billed] Node Hours: Per Job","[Sapsucker, Yellow-bellied] Node Hours: Per Job","[Warbler, Garden] Node Hours: Per Job","[Whimbrel] Node Hours: Per Job","[Sparrow, White-throated] Node Hours: Per Job","[Jackdaw] Node Hours: Per Job","[Warbler, Hooded] Node Hours: Per Job","[Shearwater, Cory's] Node Hours: Per Job","[Moorhen] Node Hours: Per Job","[Shag] Node Hours: Per Job","[Warbler, Booted] Node Hours: Per Job","[Sandpiper, Spotted] Node Hours: Per Job","[Roller] Node Hours: Per Job","[Redpoll, Lesser] Node Hours: Per Job","[Fieldfare] Node Hours: Per Job","[Crane, Sandhill] Node Hours: Per Job","[Grebe, Pied-billed] Node Hours: Per Job","[Oriole, Baltimore] Node Hours: Per Job","[Grey, Lesser] Node Hours: Per Job","[Thrush, Grey-cheeked] Node Hours: Per Job","[Auk, Little] Node Hours: Per Job","[Bunting, Black-headed] Node Hours: Per Job","[Harrier, Hen] Node Hours: Per Job","[Swift, Alpine] Node Hours: Per Job","[Shrike, Long-tailed] Node Hours: Per Job","[Gallinule, Allen's] Node Hours: Per Job","[Plover, Caspian] Node Hours: Per Job","[Warbler, Golden-winged] Node Hours: Per Job","[Dove, Turtle] Node Hours: Per Job","[Coot] Node Hours: Per Job","[Martin, Purple] Node Hours: Per Job","[Egret, Cattle] Node Hours: Per Job","[Grey, Southern] Node Hours: Per Job","[Thrush, Swainson's] Node Hours: Per Job","[Dunlin] Node Hours: Per Job","[Stint, Little] Node Hours: Per Job","[Bunting, Reed] Node Hours: Per Job","[Honey-buzzard] Node Hours: Per Job","[Martin, Crag] Node Hours: Per Job","[Partridge, Red-legged] Node Hours: Per Job","[Sparrow, Savannah] Node Hours: Per Job","[Grey, Great] Node Hours: Per Job"
-2016-12,824.05108025,798.39777778,436.75888889,420.21000000,545.85272727,364.05481481,218.94047619,255.00972222,141.13166667,110.47750000,119.84351852,180.12777778,87.43875000,102.77777778,72.00694444,78.12005556,50.34944444,48.00666667,44.13648148,52.03015015,48.78758939,38.73828704,38.92045455,41.05402778,31.90972222,41.90614198,42.39165094,28.08361111,33.22259259,21.84694444,21.83599206,39.70576389,23.01874399,20.26606061,16.76537037,16.56139352,16.77370370,13.15263889,13.89625000,10.37586034,10.00406111,46.63944444,8.59051583,7.77245050,8.66552083,5.98691667,5.04208333,8.65347222,5.99888889,2.34500000,0.19661458,2.24853865,1.52875081,0.97288194,0.97296296,0.97234375,1.45671498,0.77236014,0.61704722,0.33320707,0.26789938,0.35657536,0.08049603,0.06500000,0.02434444,0.02076714
-2017-01,0,161.66000000,0,0,21.95481481,0,0,95.02916667,0,0,13.18611111,0.43333333,0,55.64063492,0,23.22416667,0,0,0,8.78987654,13.34534574,0,5.04583333,17.62535714,0,12.85083333,11.20848700,22.44571429,17.76722222,0,0,8.59888889,11.50582962,4.95388889,0,5.29138889,4.28111111,11.49055556,7.66472222,0,0,1.56342949,0,17.62916667,0.47638889,0,0,0.88986111,2.25132716,0,2.11436355,0.68703333,1.19577652,0.96979167,0.96958333,0.96975694,0.02809588,0,0.63905875,0,2.34518519,0.05680123,0,0,0.02555556,0
+User,"Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+Chaffinch,960.05777778,
+"Scaup, Lesser",824.05108025,37.71723662041152
+"Pipit, Meadow",508.59805556,25.10592065754552
+"Scoter, Velvet",436.75888889,302.1734405238565
+Siskin,420.21000000,0.0011785113019775792
+"Warbler, Dusky",364.05481481,283.2360258681995
+"Duck, Ferruginous",350.03888889,
+Smew,218.94047619,14.44749841316656
+"Grosbeak, Evening",141.13166667,99.43217705915033
+Peregrine,124.23888889,6.896263009875131
+"Goose, Egyptian",110.47750000,9.927622069273584
+Crane,101.42611111,3.4465883980609213
+"Warbler, Yellow-browed",90.28055556,63.531580104107995
+"Tern, Sandwich",87.43875000,49.35183032798893
+Ovenbird,82.76488889,11.31277811706417
+"Warbler, Moltoni's",72.00694444,0
+"Warbler, Garden",52.33125262,
+"Sparrow, White-throated",50.98981481,
+"Bunting, Yellow-browed",50.34944444,35.60204075854135
+Lapwing,49.85089556,1.1100595034642202
+"Sapsucker, Yellow-bellied",49.75942901,
+"Ibis, Glossy",48.00666667,0
+"Treecreeper, Short-toed",46.66209596,5.0547371681082
+"Warbler, Sardinian",44.53832099,12.165202586158358
+"Plover, White-tailed",44.13648148,3.8863777173028686
+"Thrush, Mistle",39.37916667,3.5074678840012607
+"Bunting, Yellow-breasted",38.73828704,7.964502386031587
+"Gull, Ring-billed",31.90972222,0
+Whimbrel,29.27660714,5.657228492407654
+"Shearwater, Cory's",27.37690972,4.572758943516918
+Moorhen,25.48654262,0.09521527865289223
+Jackdaw,21.84694444,1.3829746334642423
+"Warbler, Hooded",21.83599206,4.004901663765415
+Shag,20.71641414,8.04452860733951
+"Redpoll, Lesser",18.89791667,
+"Sandpiper, Spotted",16.91415278,1.4100321676305074
+"Warbler, Booted",16.76537037,3.911305555603074
+Fieldfare,14.37398148,
+Roller,13.65055556,9.195084663741797
+"Crane, Sandhill",10.37586034,2.058444426306591
+"Grebe, Pied-billed",10.00406111,0.00040214624761869517
+"Oriole, Baltimore",9.12821296,7.610909224373501
+"Grey, Lesser",8.59051583,0.027937647321332644
+"Thrush, Grey-cheeked",7.94699670,0.4591933087881705
+"Auk, Little",7.02769444,2.431694700689441
+"Bunting, Black-headed",5.98691667,0.9781127830854605
+"Harrier, Hen",5.04208333,1.9381499596292342
+"Swift, Alpine",4.77166667,1.9283134887459636
+"Shrike, Long-tailed",3.89088542,2.2654968346862243
+"Gallinule, Allen's",2.34500000,0
+"Plover, Caspian",2.10733760,0.04730850999433886
+"Warbler, Golden-winged",1.74795089,0.6996960905360882
+"Dove, Turtle",1.44922324,0.22433250121213186
+Coot,0.97185185,0.0004785195136278676
+"Martin, Purple",0.97183642,0.0003786808428516845
+"Egret, Cattle",0.97148148,0.0005075905675059155
+"Grey, Southern",0.88155664,0.09909785167735996
+"Thrush, Swainson's",0.77236014,0.27089844037935495
+Dunlin,0.62984891,0.07224051664061484
+"Stint, Little",0.33320707,0.09324722160395126
+"Bunting, Reed",0.29758033,0.0457046053323436
+Honey-buzzard,0.28378820,0.0027004215312930553
+"Martin, Crag",0.08049603,0.022331879009996006
+"Partridge, Red-legged",0.06500000,0
+"Sparrow, Savannah",0.02439103,0.001692897033294295
+"Grey, Great",0.02076714,0.0006447632527319155
 ---------

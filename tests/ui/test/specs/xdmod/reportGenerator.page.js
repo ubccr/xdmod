@@ -400,7 +400,7 @@ class ReportGenerator {
                 },
                 generalInformation: {
                     panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="General Information"]]`,
-                    fileNameInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_name"]',
+                    reportNameInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_name"]',
                     reportTitleInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_title"]',
                     headerTextInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_header"]',
                     footerTextInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_footer"]'
@@ -477,10 +477,10 @@ class ReportGenerator {
             },
             saveReportAs: {
                 window: () => `//div[${classContains('x-window')} and .//span[text()="Save Report As"]]`,
-                fileNameInput: () => this.selectors.saveReportAs.window() + '//input[@name="report_name"]',
+                reportNameInput: () => this.selectors.saveReportAs.window() + '//input[@name="report_name"]',
                 saveButton: () => this.selectors.saveReportAs.window() + '//button[text()="Save"]',
                 closeButton: () => this.selectors.saveReportAs.window() + '//button[text()="Close"]',
-                fileNameInputInvalid: () => this.selectors.saveReportAs.window() + `//input[@name="report_name" and ${classContains('x-form-invalid')}]`
+                reportNameInputInvalid: () => this.selectors.saveReportAs.window() + `//input[@name="report_name" and ${classContains('x-form-invalid')}]`
             },
             reportBuilt: {
                 window: () => `//div[${classContains('x-window')} and .//span[text()="Report Built"]]`,
@@ -1101,11 +1101,11 @@ class ReportGenerator {
     }
 
     /**
-     * Save a report with a different file name.
+     * Save a report with a different name.
      *
      * Does not confirm saving the report.
      *
-     * @param {String} reportName The new file name to give the report (optional).
+     * @param {String} reportName The new name to give the report (optional).
      */
     saveReportAs(reportName = undefined) {
         this.waitForReportEditorPanelVisible();
@@ -1117,8 +1117,8 @@ class ReportGenerator {
              * and then clicking on save to quickly, this forces it to wait for
              * the invalid input to not be present
              */
-            browser.setValue(this.selectors.saveReportAs.fileNameInput(), reportName);
-            browser.waitUntilNotExist(this.selectors.saveReportAs.fileNameInputInvalid());
+            browser.setValue(this.selectors.saveReportAs.reportNameInput(), reportName);
+            browser.waitUntilNotExist(this.selectors.saveReportAs.reportNameInputInvalid());
         }
     }
 
@@ -1226,23 +1226,23 @@ class ReportGenerator {
     }
 
     /**
-     * Get the file name of the report currently being edited.
+     * Get the name of the report currently being edited.
      *
      * @return {String}
      */
-    getFileName() {
+    getReportName() {
         this.waitForReportEditorPanelVisible();
-        return browser.getValue(this.selectors.reportEditor.generalInformation.fileNameInput());
+        return browser.getValue(this.selectors.reportEditor.generalInformation.reportNameInput());
     }
 
     /**
-     * Set the file name of the report currently being edited.
+     * Set the name of the report currently being edited.
      *
-     * @param {String} fileName
+     * @param {String} name
      */
-    setFileName(fileName) {
+    setReportName(name) {
         this.waitForReportEditorPanelVisible();
-        return browser.setValue(this.selectors.reportEditor.generalInformation.fileNameInput(), fileName);
+        return browser.setValue(this.selectors.reportEditor.generalInformation.reportNameInput(), name);
     }
 
     /**
@@ -1643,8 +1643,8 @@ class ReportGenerator {
         browser.waitForExist(this.selectors.reportEditor.includedCharts.chartList.rows() + `[${includedChartCountBefore + 1}]`);
     }
 
-    getCharts(user, options) {
-        var charts = expected[user].report_templates.charts;
+    getCharts(user, report_template_index, options) {
+        var charts = expected[user].report_templates[report_template_index].charts;
         charts.forEach(function (chart, i) {
             if (chart.startDate in options) {
                 charts[i].startDate = options[chart.startDate];

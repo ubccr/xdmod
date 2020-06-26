@@ -369,6 +369,22 @@
         {
           "name": "username",
           "class": "GroupByUsername"
+        },
+        {
+          "name": "pi",
+          "class": "GroupByPI"
+        },
+        {
+          "name": "fieldofscience",
+          "class": "GroupByScience"
+        },
+        {
+          "name": "nsfdirectorate",
+          "class": "GroupByNSFDirectorate"
+        },
+        {
+          "name": "parentscience",
+          "class": "GroupByParentScience"
         }
       ],
       "statistics": [

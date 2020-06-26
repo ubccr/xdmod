@@ -25,6 +25,13 @@
             "options_class": "IngestorOptions",
             "truncate_destination": false,
             "enabled": true
+        },
+        "jobs-cloud-ingest-pi": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
+            "truncate_destination": false,
+            "enabled": true
         }
     },
 
@@ -40,6 +47,7 @@
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
+                "cloud_common/account.json",
                 "cloud_common/event.json",
                 "cloud_common/asset.json",
                 "cloud_common/instance_data.json",
@@ -49,7 +57,11 @@
                 "cloud_openstack/raw_volume.json",
                 "cloud_generic/raw_event.json",
                 "cloud_generic/raw_instance_type.json",
-                "cloud_generic/raw_volume.json"
+                "cloud_generic/raw_volume.json",
+                "cloud_common/domains.json",
+                "cloud_openstack/domain_submission_venue_staging.json",
+                "cloud_openstack/domain_submission_venue.json",
+                "cloud_common/staging_cloud_project_to_pi.json"
             ]
         },
         {
@@ -94,6 +106,49 @@
         {
             "#": "Note that any actions run after this cannot truncate the tables set here",
 
+            "name": "CloudAccountUnknownInitializer",
+            "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/account.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/account.json"
+                }
+            }
+        },
+        {
+            "#": "Note that any actions run after this cannot truncate the tables set here",
+
+            "name": "CloudInstanceUnknownInitializer",
+            "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/instance.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/instance.json"
+                }
+            }
+        },
+        {
+            "name": "CloudInstanceTypeUnknownInitializer",
+            "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/instance_type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/instance_type.json"
+                }
+            }
+        },
+        {
+            "#": "Note that any actions run after this cannot truncate the tables set here",
+
             "name": "CloudUnknownDimensionInitializer",
             "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
             "class": "DatabaseIngestor",
@@ -132,6 +187,83 @@
                     "path": "cloud_common/processor_buckets.json"
                 }
             }
+        }
+    ],
+    "jobs-cloud-ingest-pi": [
+        {
+            "name": "pi-resource",
+            "description": "Ingest storage PI/Resource permutations",
+            "definition_file": "cloud_common/pi-resource.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "pi",
+            "description": "Ingest storage PIs",
+            "definition_file": "cloud_common/pi.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "union-user-pi--pi",
+            "description": "Ingest storage PIs (combined with users)",
+            "definition_file": "cloud_common/union-user-pi--pi.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "union-user-pi-resource--pi",
+            "description": "Ingest storage PI/Resource permutations (combined with User/Resource permutations)",
+            "definition_file": "cloud_common/union-user-pi-resource--pi.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "user-pi-resource",
+            "description": "Ingest storage User/PI/Resource permutations",
+            "definition_file": "cloud_common/user-pi-resource.json",
+            "endpoints": {
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "UpdateCloudProjectToPI",
+            "description": "Update project in account table to have a PI",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_common/pi_to_account.sql"
+            ]
         }
     ]
 }

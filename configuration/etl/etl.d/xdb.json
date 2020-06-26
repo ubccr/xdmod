@@ -33,7 +33,7 @@
             "class": "ManageTables",
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
-            "# order-matters": "Because foreign key constraints exist between user-roles and users the order matters",
+            "# order-matters": "Because of foreign key constraints",
             "definition_file_list": [
                 "xdb/account-requests.json",
                 "xdb/api-keys.json",
@@ -41,7 +41,6 @@
                 "xdb/colors.json",
                 "xdb/exception-email-addresses.json",
                 "xdb/report-charts.json",
-                "xdb/report-template-acl.json",
                 "xdb/report-template-charts.json",
                 "xdb/report-templates.json",
                 "xdb/reports.json",
@@ -52,7 +51,8 @@
                 "xdb/users.json",
                 "xdb/user-profiles.json",
                 "xdb/user-types.json",
-                "xdb/version-check.json"
+                "xdb/version-check.json",
+                "xdb/batch-export-requests.json"
             ]
         },
         {
@@ -64,18 +64,6 @@
                     "type": "jsonfile",
                     "name": "colors",
                     "path": "xdb/colors.json"
-                }
-            }
-        },
-        {
-            "name": "report-templates-acl",
-            "definition_file": "xdb/report-template-acl.json",
-            "description": "report-template-acl + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "report-template-acl",
-                    "path": "xdb/report-template-acl.json"
                 }
             }
         },

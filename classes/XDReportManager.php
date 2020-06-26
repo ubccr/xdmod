@@ -475,7 +475,8 @@ class XDReportManager
                 r.format,
                 r.schedule,
                 r.delivery,
-                COUNT(rc.chart_id) AS chart_count
+                COUNT(rc.chart_id) AS chart_count,
+                UNIX_TIMESTAMP(r.last_modified) as last_modified
             FROM Reports r
             LEFT JOIN ReportCharts rc ON rc.report_id = r.report_id
             WHERE r.user_id = :user_id
@@ -487,7 +488,8 @@ class XDReportManager
                 r.charts_per_page,
                 r.format,
                 r.schedule,
-                r.delivery
+                r.delivery,
+                r.last_modified
         ";
 
         $Entries = array();
@@ -507,7 +509,8 @@ class XDReportManager
                 'report_format'   => $entry['format'],
                 'report_schedule' => $entry['schedule'],
                 'report_delivery' => $entry['delivery'],
-                'chart_count'     => $entry['chart_count']
+                'chart_count'     => $entry['chart_count'],
+                'last_modified'   => $entry['last_modified']
             );
         }
 
@@ -2090,8 +2093,14 @@ class XDReportManager
         return true;
     }
 
+    /** retrieve information about the available report templates
+     * for a given set of ACLs.
+     * @param acls array() of acl names
+     * @param templateName string an optional filter to only return templates that match the name
+     */
     public static function enumerateReportTemplates(
-        $acls = array()
+        $acls = array(),
+        $templateName = null
     ) {
         $pdo = DB::factory('database');
         $aclNames = implode(
@@ -2113,10 +2122,16 @@ class XDReportManager
         FROM ReportTemplates rt
             JOIN report_template_acls rta ON rt.id = rta.report_template_id
             JOIN acls a                   ON rta.acl_id = a.acl_id
-        WHERE a.name IN ($aclNames);
+        WHERE a.name IN ($aclNames)
 SQL;
+        $queryparams = array();
+        if ($templateName !== null) {
+            $query .= " AND rt.`name` = ?";
+            $queryparams[] = $templateName;
+        }
+        $query .= " ORDER BY 1, 2, 3";
 
-        return $pdo->query($query);
+        return $pdo->query($query, $queryparams);
     }
 
     /**

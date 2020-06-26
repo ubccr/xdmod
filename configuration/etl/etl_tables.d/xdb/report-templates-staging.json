@@ -1,0 +1,85 @@
+{
+    "table_definition": {
+        "name": "ReportTemplatesStaging",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "name",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "template",
+                "type": "varchar(30)",
+                "nullable": true
+            },
+            {
+                "name": "title",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "header",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "footer",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "format",
+                "type": "enum('Pdf','Pptx','Doc','Xls','Html')",
+                "nullable": true
+            },
+            {
+                "name": "font",
+                "type": "enum('Times','Arial')",
+                "nullable": true
+            },
+            {
+                "name": "schedule",
+                "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
+                "nullable": true
+            },
+            {
+                "name": "delivery",
+                "type": "enum('Download','E-mail')",
+                "nullable": true
+            },
+            {
+                "name": "charts_per_page",
+                "type": "int(1)",
+                "nullable": true
+            },
+            {
+                "name": "use_submenu",
+                "type": "tinyint(1)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

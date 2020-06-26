@@ -1,0 +1,128 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Response from GET rest/warehouse/export/requests",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/request"
+            }
+        },
+        "total": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "success",
+        "data"
+    ],
+    "additionalProperties": false,
+    "definitions": {
+        "request": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "realm": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "end_date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "export_succeeded": {
+                    "anyOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 1
+                        }
+                    ]
+                },
+                "export_expired": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "export_expires_datetime": {
+                    "anyOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                        }
+                    ]
+                },
+                "export_created_datetime": {
+                    "anyOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                        }
+                    ]
+                },
+                "export_file_format": {
+                    "enum": [
+                        "CSV",
+                        "JSON"
+                    ]
+                },
+                "requested_datetime": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                },
+                "downloaded_datetime": {
+                    "anyOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                        }
+                    ]
+                },
+                "state": {
+                    "type": "string",
+                    "enum": [
+                        "Submitted",
+                        "Available",
+                        "Failed",
+                        "Expired"
+                    ]
+                }
+            },
+            "required": [
+                "id",
+                "realm",
+                "start_date",
+                "end_date",
+                "export_succeeded",
+                "export_expired",
+                "export_expires_datetime",
+                "export_created_datetime",
+                "export_file_format",
+                "requested_datetime",
+                "state"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

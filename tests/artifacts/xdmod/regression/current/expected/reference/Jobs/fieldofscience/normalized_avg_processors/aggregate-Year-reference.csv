@@ -5,7 +5,45 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Fluid, Particulate, and Hydraulic Systems] Job Size: Normalized (% of Total Cores)","[Global Atmospheric Research] Job Size: Normalized (% of Total Cores)","[Structures and Building Systems] Job Size: Normalized (% of Total Cores)","[Design, Tools, and Test] Job Size: Normalized (% of Total Cores)","[Emerging Technologies Initiation] Job Size: Normalized (% of Total Cores)","[Metals, Ceramics, and Electronic Materials] Job Size: Normalized (% of Total Cores)","[Stellar Astronomy and Astrophysics] Job Size: Normalized (% of Total Cores)","[Organic and Macromolecular Chemistry] Job Size: Normalized (% of Total Cores)","[Systematic and Population Biology] Job Size: Normalized (% of Total Cores)","[Quantum Electronics, Waves, and Beams] Job Size: Normalized (% of Total Cores)","[Economics] Job Size: Normalized (% of Total Cores)","[Design and Computer-Integrated Engineering] Job Size: Normalized (% of Total Cores)","[Geophysics] Job Size: Normalized (% of Total Cores)","[Volcanology and Mantle Geochemistry] Job Size: Normalized (% of Total Cores)","[Geology and Paleontology] Job Size: Normalized (% of Total Cores)","[Law and Social Sciences] Job Size: Normalized (% of Total Cores)","[Polar Aeronomy and Astrophysics] Job Size: Normalized (% of Total Cores)","[Biophysics] Job Size: Normalized (% of Total Cores)","[Algebra and Number Theory] Job Size: Normalized (% of Total Cores)","[Theoretical Physics] Job Size: Normalized (% of Total Cores)","[Seismology] Job Size: Normalized (% of Total Cores)","[Experimental Systems] Job Size: Normalized (% of Total Cores)","[Solid State Chemistry and Polymers] Job Size: Normalized (% of Total Cores)","[Polar Ocean and Climate Systems] Job Size: Normalized (% of Total Cores)","[Arts] Job Size: Normalized (% of Total Cores)","[Statistics and Probability] Job Size: Normalized (% of Total Cores)","[Cell Biology] Job Size: Normalized (% of Total Cores)","[Physical Chemistry] Job Size: Normalized (% of Total Cores)","[Sociology] Job Size: Normalized (% of Total Cores)","[Biochemistry and Molecular Structure and Function] Job Size: Normalized (% of Total Cores)","[Galactic Astronomy] Job Size: Normalized (% of Total Cores)","[Solid-State and Microstructures] Job Size: Normalized (% of Total Cores)","[Decision, Risk, and Management Science] Job Size: Normalized (% of Total Cores)","[Computer and Computation Theory] Job Size: Normalized (% of Total Cores)","[Extragalactic Astronomy and Cosmology] Job Size: Normalized (% of Total Cores)","[Mechanics and Materials] Job Size: Normalized (% of Total Cores)","[Operations Research and Production Systems] Job Size: Normalized (% of Total Cores)","[Polar Meteorology] Job Size: Normalized (% of Total Cores)","[Systems Prototyping and Fabrication] Job Size: Normalized (% of Total Cores)","[Tectonics] Job Size: Normalized (% of Total Cores)"
-2016,5.600000000,4.000000000,2.800000000,2.700000000,2.400000000,1.800000000,1.380000000,1.541176471,1.222000000,0.871484375,0.613586957,0.577777778,0.500000000,0.500000000,0.583333333,0.400000000,0.350000000,0.750000000,0.300000000,0.300000000,0.265625000,0.237931034,0.157762557,0.300000000,0.138636364,0.133796296,0.077083333,0.068459546,0.047571583,0.043333333,0.035334646,0.028712871,0.026044436,0.025000000,0.025000000,0.025000000,0.025000000,0.025000000,0.025000000,0.025000000
-2017,0,4.000000000,0,0,2.400000000,0,1.233333333,0.800000000,0.947482014,0.662500000,0.600000000,0.577777778,0,0,0.125000000,0,0,0.204629630,0.300000000,0,0.300000000,0.200000000,0,0.150000000,0.130000000,0.263829787,0.200000000,0.086733002,0.045675831,0,0.212500000,0.050000000,0,0,0,0.025000000,0.025000000,0.025000000,0.025000000,0
+"PI Group","Job Size: Normalized (% of Total Cores)"
+"Fluid, Particulate, and Hydraulic Systems",5.600000000
+"Global Atmospheric Research",4.000000000
+"Structures and Building Systems",2.800000000
+"Design, Tools, and Test",2.700000000
+"Emerging Technologies Initiation",2.400000000
+"Metals, Ceramics, and Electronic Materials",1.800000000
+"Stellar Astronomy and Astrophysics",1.305000000
+"Organic and Macromolecular Chemistry",1.176000000
+"Systematic and Population Biology",1.062343096
+"Quantum Electronics, Waves, and Beams",0.741761364
+Economics,0.600362319
+"Design and Computer-Integrated Engineering",0.577777778
+Geophysics,0.500000000
+"Volcanology and Mantle Geochemistry",0.500000000
+"Geology and Paleontology",0.468750000
+"Law and Social Sciences",0.400000000
+"Polar Aeronomy and Astrophysics",0.350000000
+"Algebra and Number Theory",0.300000000
+"Theoretical Physics",0.300000000
+Seismology,0.272500000
+Biophysics,0.262096774
+"Experimental Systems",0.229729730
+"Solid State Chemistry and Polymers",0.157762557
+"Polar Ocean and Climate Systems",0.150000000
+Arts,0.138636364
+"Statistics and Probability",0.133796296
+"Cell Biology",0.077083333
+"Physical Chemistry",0.069446045
+Sociology,0.047068235
+"Biochemistry and Molecular Structure and Function",0.043333333
+"Galactic Astronomy",0.035299257
+"Solid-State and Microstructures",0.028712871
+"Decision, Risk, and Management Science",0.026044436
+"Computer and Computation Theory",0.025000000
+"Extragalactic Astronomy and Cosmology",0.025000000
+"Mechanics and Materials",0.025000000
+"Operations Research and Production Systems",0.025000000
+"Polar Meteorology",0.025000000
+"Systems Prototyping and Fabrication",0.025000000
+Tectonics,0.025000000
 ---------

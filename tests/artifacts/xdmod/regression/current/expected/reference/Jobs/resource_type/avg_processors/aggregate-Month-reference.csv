@@ -5,7 +5,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[High-performance computing] Job Size: Per Job (Core Count)"
-2016-12,8.5390
-2017-01,9.1326
+"Resource Type","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"High-performance computing",8.7346,0.02156312501879985
 ---------

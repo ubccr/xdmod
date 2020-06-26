@@ -1,0 +1,45 @@
+{
+    "table_definition": {
+        "name": "ReportTemplateChartsStaging",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "template_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "chart_id",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "ordering",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "chart_date_description",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "chart_title",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "chart_drill_details",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "timeframe_type",
+                "type": "text",
+                "nullable": true
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
+}

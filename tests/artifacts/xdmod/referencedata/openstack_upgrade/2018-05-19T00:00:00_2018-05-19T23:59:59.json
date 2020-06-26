@@ -22,7 +22,8 @@
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
     "user_name": "setusca",
-    "vcpus": "1"
+    "vcpus": "1",
+    "domain": "Default"
   },
   {
     "disk_gb": "20",
@@ -47,7 +48,8 @@
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
     "user_name": "setusca",
-    "vcpus": "1"
+    "vcpus": "1",
+    "domain": "Default"
   },
   {
     "disk_gb": "20",
@@ -72,7 +74,8 @@
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
     "user_name": "setusca",
-    "vcpus": "1"
+    "vcpus": "1",
+    "domain": "Default"
   },
   {
     "disk_gb": "20",
@@ -97,7 +100,8 @@
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "0ce3dbe7d215b55feb049c557f52dc84",
     "user_name": "setusca",
-    "vcpus": "1"
+    "vcpus": "1",
+    "domain": "Default"
   },
   {
     "disk_gb": "20",
@@ -122,7 +126,8 @@
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
     "user_name": "yerwa",
-    "vcpus": "4"
+    "vcpus": "4",
+    "domain": "Default"
   },
   {
     "disk_gb": "20",
@@ -147,6 +152,7 @@
     "tenant_id": "4aeb007a4f9020333a1a1be224bef276",
     "user_id": "3abcb51ff942a45b52ac90915ef4c7fb",
     "user_name": "yerwa",
-    "vcpus": "4"
+    "vcpus": "4",
+    "domain": "Default"
   }
 ]

@@ -1,6 +1,6 @@
 #!/bin/bash
-# This file is generally used in the docker build to speed things up.
-# Set it to something different if you want to use your own.
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $BASEDIR/../ci/runtest-include.sh
 
 SHMSIZEK=`df -k /dev/shm | grep shm | awk '{print $2}'`
 if (( $SHMSIZEK < 2000000 )); then
@@ -10,11 +10,13 @@ if (( $SHMSIZEK < 2000000 )); then
     echo "***************************************************************"
 fi
 
+# This file is generally used in the docker build to speed things up.
+# Set it to something different if you want to use your own.
 CACHEFILE='/tmp/browser-tests-node-modules.tar.gz'
 set -e
 set -o pipefail
 
-echo "UI tests beginging:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
+echo "UI tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 
 if [ "$1" = "--headless" ];
 then

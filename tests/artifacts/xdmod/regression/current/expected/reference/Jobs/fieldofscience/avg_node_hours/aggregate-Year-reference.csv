@@ -5,7 +5,45 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Fluid, Particulate, and Hydraulic Systems] Node Hours: Per Job","[Organic and Macromolecular Chemistry] Node Hours: Per Job","[Quantum Electronics, Waves, and Beams] Node Hours: Per Job","[Metals, Ceramics, and Electronic Materials] Node Hours: Per Job","[Structures and Building Systems] Node Hours: Per Job","[Global Atmospheric Research] Node Hours: Per Job","[Emerging Technologies Initiation] Node Hours: Per Job","[Stellar Astronomy and Astrophysics] Node Hours: Per Job","[Polar Aeronomy and Astrophysics] Node Hours: Per Job","[Volcanology and Mantle Geochemistry] Node Hours: Per Job","[Theoretical Physics] Node Hours: Per Job","[Operations Research and Production Systems] Node Hours: Per Job","[Biophysics] Node Hours: Per Job","[Algebra and Number Theory] Node Hours: Per Job","[Statistics and Probability] Node Hours: Per Job","[Design and Computer-Integrated Engineering] Node Hours: Per Job","[Experimental Systems] Node Hours: Per Job","[Systems Prototyping and Fabrication] Node Hours: Per Job","[Cell Biology] Node Hours: Per Job","[Biochemistry and Molecular Structure and Function] Node Hours: Per Job","[Solid State Chemistry and Polymers] Node Hours: Per Job","[Arts] Node Hours: Per Job","[Geology and Paleontology] Node Hours: Per Job","[Tectonics] Node Hours: Per Job","[Solid-State and Microstructures] Node Hours: Per Job","[Seismology] Node Hours: Per Job","[Extragalactic Astronomy and Cosmology] Node Hours: Per Job","[Computer and Computation Theory] Node Hours: Per Job","[Design, Tools, and Test] Node Hours: Per Job","[Polar Ocean and Climate Systems] Node Hours: Per Job","[Galactic Astronomy] Node Hours: Per Job","[Economics] Node Hours: Per Job","[Mechanics and Materials] Node Hours: Per Job","[Polar Meteorology] Node Hours: Per Job","[Physical Chemistry] Node Hours: Per Job","[Systematic and Population Biology] Node Hours: Per Job","[Sociology] Node Hours: Per Job","[Decision, Risk, and Management Science] Node Hours: Per Job","[Geophysics] Node Hours: Per Job","[Law and Social Sciences] Node Hours: Per Job"
-2016,364.05481481,440.33455882,378.45170139,218.94047619,110.47750000,180.12777778,102.77777778,113.84751852,50.34944444,48.00666667,44.13648148,48.78758939,171.93250000,38.92045455,42.94008230,33.22259259,26.76558429,23.01874399,19.49155093,16.76537037,16.21672374,16.77843434,16.77370370,8.59051583,7.77245050,8.66552083,5.98691667,5.04208333,2.34500000,0.19661458,1.77542542,2.24853865,0.97276290,1.45671498,0.72579524,0.61704722,0.37457084,0.12795354,0.08049603,0.06500000
-2017,0,0.88986111,11.65923611,0,0,0.43333333,55.64063492,29.48169753,0,0,0,13.34534574,7.49293210,5.04583333,11.20848700,17.76722222,8.59888889,11.50582962,17.62535714,0,0,6.53122222,4.28111111,0,17.62916667,0.47638889,0,0,0,2.11436355,11.62486111,0.68703333,0.96969246,0.02809588,1.61531716,0.63905875,0.06690347,0,0,0
+"PI Group","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"Fluid, Particulate, and Hydraulic Systems",364.05481481,283.2360258681995
+"Organic and Macromolecular Chemistry",299.71225556,79.82382338004409
+"Quantum Electronics, Waves, and Beams",280.53725379,40.08967968847617
+"Metals, Ceramics, and Electronic Materials",218.94047619,14.44749841316656
+"Structures and Building Systems",110.47750000,9.927622069273584
+"Emerging Technologies Initiation",101.42611111,3.4465883980609213
+"Stellar Astronomy and Astrophysics",98.65240278,27.275167014617164
+"Global Atmospheric Research",90.28055556,63.531580104107995
+"Statistics and Probability",52.69561728,
+"Design and Computer-Integrated Engineering",50.98981481,
+"Polar Aeronomy and Astrophysics",50.34944444,35.60204075854135
+"Operations Research and Production Systems",49.85089556,1.1100595034642202
+"Volcanology and Mantle Geochemistry",48.00666667,0
+"Theoretical Physics",44.13648148,3.8863777173028686
+Biophysics,39.80336022,26.386475830697922
+"Algebra and Number Theory",39.37916667,3.5074678840012607
+"Systems Prototyping and Fabrication",25.48654262,0.09521527865289223
+"Experimental Systems",24.23206456,3.046402847031802
+"Cell Biology",21.20512731,2.519094985257857
+Arts,17.27322391,1.2812633375632778
+"Biochemistry and Molecular Structure and Function",16.76537037,3.911305555603074
+"Solid State Chemistry and Polymers",16.21672374,6.170931378438703
+"Geology and Paleontology",13.65055556,9.195084663741797
+Tectonics,8.59051583,0.027937647321332644
+"Solid-State and Microstructures",7.94699670,0.4591933087881705
+Seismology,7.02769444,2.431694700689441
+"Extragalactic Astronomy and Cosmology",5.98691667,0.9781127830854605
+"Computer and Computation Theory",5.04208333,1.9381499596292342
+"Design, Tools, and Test",2.34500000,0
+"Polar Ocean and Climate Systems",2.10733760,0.04730850999433886
+"Galactic Astronomy",1.80356997,0.4327483645961316
+Economics,1.74795089,0.6996960905360882
+"Mechanics and Materials",0.97173942,0.00025764463006399947
+"Polar Meteorology",0.88155664,0.09909785167735996
+"Physical Chemistry",0.77948613,0.10397217424885151
+"Systematic and Population Biology",0.62984891,0.07224051664061484
+Sociology,0.29997993,0.00460726351698731
+"Decision, Risk, and Management Science",0.12795354,0.10698104049029705
+Geophysics,0.08049603,0.022331879009996006
+"Law and Social Sciences",0.06500000,0
 ---------

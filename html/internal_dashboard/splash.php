@@ -11,8 +11,6 @@
          function init() {
 
              document.getElementById('field_username').focus();
-             var directTo = document.getElementById('direct_to');
-             directTo.value = window.location.href;
          }
 
          function keyListener(e) {
@@ -68,8 +66,6 @@
                   </tr>
 
                </table>
-               <input id='direct_to' type="hidden" name="direct_to" value="<?php print $referer; ?>" />
-
 
          </form>
 

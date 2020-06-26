@@ -40,13 +40,13 @@ out of your system and log back in for this change to take effect.
 
 Update log directory and file ownership and permissions:
 
-    # chmod 775 /opt/xdmod/logs
+    # chmod 770 /opt/xdmod/logs
     # chown apache:xdmod /opt/xdmod/logs
     # touch /opt/xdmod/logs/exceptions.log
-    # chmod 664 /opt/xdmod/logs/exceptions.log
+    # chmod 660 /opt/xdmod/logs/exceptions.log
     # chown apache:xdmod /opt/xdmod/logs/exceptions.log
     # touch /opt/xdmod/logs/query.log
-    # chmod 664 /opt/xdmod/logs/query.log
+    # chmod 660 /opt/xdmod/logs/query.log
     # chown apache:xdmod /opt/xdmod/logs/query.log
 
 The `exceptions.log` and `query.log` may be written to by both Apache and Open
@@ -64,15 +64,19 @@ See the [Configuration Guide](configuration.html) for more details.
 Copy Configuration Files
 ------------------------
 
-    # cp /opt/xdmod/etc/apache.d/xdmod.conf /etc/apache2/conf.d/xdmod.conf
+    # cp /opt/xdmod/share/templates/apache.conf /etc/apache2/conf.d/xdmod.conf
 
     # cp /opt/xdmod/etc/cron.d/xdmod /etc/cron.d/xdmod
 
     # cp /opt/xdmod/etc/logrotate.d/xdmod /etc/logrotate.d/xdmod
 
 The directories where these files are needed may differ depending on
-your operating system.  By default, the Apache configuration creates a
-virtual host on port 8080.
+your operating system.
+
+The Apache configuration file is an example template. This template will need
+to be edited to specify site-specific parameters such as the SSL certificate
+paths and server name.  See the [Apache Configuration
+Guide](configuration.html#apache-configuration) for details.
 
 Shred Data
 ----------
@@ -129,4 +133,4 @@ This command may be different depending on your operating system.
 Check Portal
 ------------
 
-    http://localhost:8080/
+    https://localhost/

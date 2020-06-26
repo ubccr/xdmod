@@ -1,0 +1,49 @@
+title
+"GPU Hours: Per Job: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","GPU Hours: Per Job"
+Biophysics,16.35202509
+"Algebra and Number Theory",0.00000000
+Arts,0.00000000
+"Biochemistry and Molecular Structure and Function",0.00000000
+"Cell Biology",0.00000000
+"Computer and Computation Theory",0.00000000
+"Decision, Risk, and Management Science",0.00000000
+"Design and Computer-Integrated Engineering",0.00000000
+"Design, Tools, and Test",0.00000000
+Economics,0.00000000
+"Emerging Technologies Initiation",0.00000000
+"Experimental Systems",0.00000000
+"Extragalactic Astronomy and Cosmology",0.00000000
+"Fluid, Particulate, and Hydraulic Systems",0.00000000
+"Galactic Astronomy",0.00000000
+"Geology and Paleontology",0.00000000
+Geophysics,0.00000000
+"Global Atmospheric Research",0.00000000
+"Law and Social Sciences",0.00000000
+"Mechanics and Materials",0.00000000
+"Metals, Ceramics, and Electronic Materials",0.00000000
+"Operations Research and Production Systems",0.00000000
+"Organic and Macromolecular Chemistry",0.00000000
+"Physical Chemistry",0.00000000
+"Polar Aeronomy and Astrophysics",0.00000000
+"Polar Meteorology",0.00000000
+"Polar Ocean and Climate Systems",0.00000000
+"Quantum Electronics, Waves, and Beams",0.00000000
+Seismology,0.00000000
+Sociology,0.00000000
+"Solid State Chemistry and Polymers",0.00000000
+"Solid-State and Microstructures",0.00000000
+"Statistics and Probability",0.00000000
+"Stellar Astronomy and Astrophysics",0.00000000
+"Structures and Building Systems",0.00000000
+"Systematic and Population Biology",0.00000000
+"Systems Prototyping and Fabrication",0.00000000
+Tectonics,0.00000000
+"Theoretical Physics",0.00000000
+"Volcanology and Mantle Geochemistry",0.00000000
+---------

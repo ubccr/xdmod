@@ -3,10 +3,13 @@
 namespace ComponentTests;
 
 use TestHarness\TestFiles;
+use Models\Services\Realms;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
+
+    protected static $XDMOD_REALMS;
 
     const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
 
@@ -55,6 +58,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     {
         self::setupEnvironment();
         self::setupPaths();
+        $xdmod_realms = array();
+        $rawRealms = Realms::getRealms();
+        foreach($rawRealms as $item) {
+            array_push($xdmod_realms, strtolower($item->name));
+        }
+        self::$XDMOD_REALMS = $xdmod_realms;
     }
     private static function setupEnvironment()
     {

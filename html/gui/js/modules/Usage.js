@@ -431,7 +431,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         var self = this;
 
+        var chartToolbar;
         var handleDataException;
+        var view;
 
         var public_user = this.public_user || CCR.xdmod.publicUser;
 
@@ -656,6 +658,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 Ext.MessageBox.alert("Error", resp.message);
                                 CCR.xdmod.ui.actionLogout.defer(1000);
 
+                            }
+                            if (resp.success === false) {
+                                Ext.MessageBox.alert('Error', resp.message);
                             }
 
                         } //if (resp.message)
@@ -975,7 +980,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             //
                             // Open XDMoD Default: CPU Hours: Total
                             // XDMoD Default: XD SUs Charged: Total
-                            var defaultStatistic = CCR.xdmod.features.xsede ? "total_su" : "total_cpu_hours";
+                            var defaultStatistic = CCR.xdmod.features.xsede ? 'total_su' : 'total_cpu_hours';
                             var jobCountNode = child.findChild("statistic", defaultStatistic);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);
@@ -1025,6 +1030,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             var nSettings = Ext.decode(n.attributes.chartSettings);
                             if (Ext.isObject(nodeSettings) && Ext.isObject(nSettings)) {
                                 nodeSettings.limit = nSettings.limit;
+                                if (!n.attributes.supportsAggregate) {
+                                    nodeSettings.dataset_type = nSettings.dataset_type;
+                                    nodeSettings.display_type = nSettings.display_type;
+                                    nodeSettings.swap_xy = nSettings.swap_xy;
+                                }
                                 newNodeSettings = Ext.encode(nodeSettings);
                             }
                         }
@@ -1211,6 +1221,42 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             chartToolbar.disable();
 
             if (n.attributes.chartSettings) {
+                if (n.attributes.supportsAggregate === false) {
+                    // Default tooltip that will be attached to the `Timeseries`
+                    // menu item.
+                    var tooltip = {
+                        title: 'Restricted by Statistic',
+                        text: 'The selected statistic does not support aggregate view'
+                    };
+
+                    // We need the `timeseries` menu item's element to setup the quicktip.
+                    // If the `timeseries` menu item has not been rendered yet,
+                    // the element won't exist yet. In this case, add an `afterrender` listener
+                    // that takes care of registering the quicktip.
+                    if (undefined !== chartToolbar.chartConfigButton.menu.datasetItem.el) {
+                        tooltip.target = chartToolbar.chartConfigButton.menu.datasetItem.el;
+                        Ext.QuickTips.register(tooltip);
+                    } else {
+                        chartToolbar.chartConfigButton.menu.datasetItem.on(
+                            'afterrender',
+                            function () {
+                                tooltip.target = chartToolbar.chartConfigButton.menu.datasetItem.el;
+                                Ext.QuickTips.register(tooltip);
+                            },
+                            {
+                                single: true
+                            }
+                        );
+                    }
+                } else {
+                    // Now that we're not restricted, make sure to unregister the
+                    // quicktip.
+                    Ext.QuickTips.unregister(chartToolbar.chartConfigButton.menu.datasetItem.el);
+                }
+
+                // Now that all the shenanigans are over, go ahead and update the
+                // toolbar w/ the possibly updated decoded chart settings.
+                chartToolbar.chartConfigButton.menu.datasetItem.setDisabled(n.attributes.supportsAggregate === false);
                 chartToolbar.fromJSON(n.attributes.chartSettings);
             } else {
                 chartToolbar.resetValues();
@@ -1332,7 +1378,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     this.legendTypeComboBox.enable();
                     this.chartTitleField.enable();
 
-                    parameters.interactive_elements = 'y';
                     chartStore.removeAll(true);
 
                     //var restoreTool = images.getTool('restore');
@@ -1385,24 +1430,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                         legend += '</ul>';
                         updateDescription(legend, chartStore.getAt(0).get('subnotes'));
-
-                        var chartSettings = Ext.util.JSON.decode(chartStore.getAt(0).get('chart_settings').replace(/`/g, '"'));
-
-                        n.attributes.chartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
-
-                        for (var setting in chartSettings ) {
-                            if (chartSettings.hasOwnProperty(setting)
-                                && typeof chartSettings[setting]
-                                === 'boolean' ) {
-                                chartSettings[setting] =
-                                    chartSettings[setting]
-                                        ? 'y'
-                                        : 'n';
-                            }
-                        }
-
-                        if (!n.attributes.defaultChartSettings) n.attributes.defaultChartSettings = chartSettings;
-                        chartToolbar.fromJSON(n.attributes.chartSettings);
 
                         XDMoD.TrackEvent('Usage', 'Selected Chart Category Via Tree', n.getPath('text'));
 
@@ -1589,16 +1616,29 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         handleDataException = function (response, exceptionType) {
             var viewer = CCR.xdmod.ui.Viewer.getViewer();
+            if (viewer && viewer.el) {
+                viewer.el.unmask();
+            }
+
+            var options = {};
+
+            view.tpl = new Ext.XTemplate(['<tpl for=".">', '<div>An error has occurred.</div>', '</tpl>']);
+            view.store.loadData({
+                totalCount: 1,
+                success: true,
+                message: 'Error',
+                data: [
+                    {
+                    }
+                ]
+            });
+            view.refresh();
 
             if (exceptionType === 'response') {
                 var data = CCR.safelyDecodeJSONResponse(response) || {};
                 var errorCode = data.code;
 
                 if (errorCode === XDMoD.Error.QueryUnavailableTimeAggregationUnit) {
-                    if (viewer && viewer.el) {
-                        viewer.el.unmask();
-                    }
-
                     var durationToolbar = self.getDurationSelector();
                     durationToolbar.setAggregationUnit('Auto');
                     durationToolbar.onHandle();
@@ -1619,21 +1659,12 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             errorMessage += '<br />' + errorMessageExtraData;
                         }
                     }
-
-                    Ext.MessageBox.alert(
-                        'Usage',
-                        errorMessage
-                    );
-
-                    return;
+                    options.title = 'Usage';
+                    options.wrapperMessage = errorMessage;
                 }
             }
 
-            CCR.xdmod.ui.presentFailureResponse(response);
-
-            if (viewer && viewer.el) {
-                viewer.el.unmask();
-            }
+            CCR.xdmod.ui.presentFailureResponse(response, options);
         };
 
         // ---------------------------------------------------------
@@ -1733,7 +1764,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var view = new Ext.DataView({
+        view = new Ext.DataView({
 
             id: 'view_chart_' + this.id,
             title: 'Chart',
@@ -1744,7 +1775,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             store: chartStore,
             autoScroll: true,
             tpl: largeChartTemplate
-
         }); //view
 
         // ---------------------------------------------------------
@@ -1836,7 +1866,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var chartToolbar = new CCR.xdmod.ui.ChartToolbar({
+        chartToolbar = new CCR.xdmod.ui.ChartToolbar({
 
             id: 'chart_toolbar_' + layoutId,
             handler: reloadChartFunc,
@@ -1882,44 +1912,38 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         } //maximizeScale
 
-        // ---------------------------------------------------------
-
         function reloadChartFunc(chartSettingsObject) {
-
             var model = tree.getSelectionModel();
             var node = model.getSelectedNode();
 
             if (node != null) {
-
-                if (chartSettingsObject) node.attributes.chartSettings = chartSettingsObject;
+                if (chartSettingsObject) {
+                    node.attributes.chartSettings = chartSettingsObject;
+                }
 
                 if (node.attributes.node_type == 'group_by') {
-
                     node.eachChild(function (n) {
-
-                        n.attributes.chartSettings = node.attributes.chartSettings || undefined;
+                        var statisticNode = n;
+                        if (n.attributes.supportsAggregate === false) {
+                            // do not overide chart settings for nodes that correspond to statistics that must be
+                            // shown in timeseries mode (note for future: there should be no statistics like this in XDMoD).
+                            var decoded = JSON.parse(n.attributes.chartSettings);
+                            decoded.dataset_type = 'timeseries';
+                            decoded.display_type = 'line';
+                            decoded.swap_xy = false;
+                            statisticNode.attributes.chartSettings = JSON.stringify(decoded);
+                        } else {
+                            statisticNode.attributes.chartSettings = node.attributes.chartSettings || undefined;
+                        }
+                        statisticNode.attributes.filter = node.attributes.filter || undefined;
+                        statisticNode.attributes.filterText = node.attributes.filterText || undefined;
                         return true;
-
                     }, this);
-
-                    node.eachChild(function (n) {
-
-                        n.attributes.filter = node.attributes.filter || undefined;
-                        n.attributes.filterText = node.attributes.filterText || undefined;
-                        return true;
-
-                    }, this);
-
-                } //if(node.attributes.node_type == 'group_by')
-
+                }
                 tree.getSelectionModel().unselect(node, true);
                 tree.getSelectionModel().select(node);
-
-            } //if (node != null)
-
-        } //reloadChartFunc
-
-        // ---------------------------------------------------------
+            }
+        }
 
         var reloadChartTask = new Ext.util.DelayedTask(reloadChartFunc, this);
 
@@ -2152,7 +2176,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         group_by: n.attributes.group_by,
                                         x_axis: false,
                                         log_scale: chartToolbar.getLogScale() == 'y',
-                                        has_std_err: 'y',
+                                        has_std_err: chartToolbar.getEnableErrors(),
                                         std_err: chartToolbar.getShowErrorBars() == 'y',
                                         std_err_labels: chartToolbar.getShowErrorLabels() == 'y',
                                         value_labels: chartToolbar.getShowAggregateLabels() == 'y' || dt == 'pie',
@@ -2637,10 +2661,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         'Chart: ' + chartStore.getAt(0).get('title') + ', Params: ' + chartStore.getAt(0).get('params_title')
                     );
 
-                    var chartSettings = Ext.util.JSON.decode(chartStore.getAt(0).get('chart_settings').replace(/`/g, '"'));
-
-                    n.attributes.chartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
-                    if (!n.attributes.defaultChartSettings) n.attributes.defaultChartSettings = chartSettings;
+                    var serverChartSettings = chartStore.getAt(0).get('chart_settings').replace(/`/g, '"');
+                    if (serverChartSettings === '') {
+                        serverChartSettings = n.attributes.defaultChartSettings;
+                    }
+                    n.attributes.chartSettings = serverChartSettings;
                     chartToolbar.fromJSON(n.attributes.chartSettings);
 
                     self.setImageExport(true);

@@ -68,10 +68,16 @@ class UsageExplorerCloudTest extends \PHPUnit_Framework_TestCase
             'configuration',
             'resource',
             'person',
+            'pi',
             'username',
             'vm_size_memory',
             'vm_size',
-            'submission_venue'
+            'submission_venue',
+            'domain',
+            'provider',
+            'fieldofscience',
+            'nsfdirectorate',
+            'parentscience',
         );
 
         $varSettings = array(

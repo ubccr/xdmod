@@ -349,16 +349,6 @@ Ext.extend(CCR.xdmod.ui.ChartConfigMenu, Ext.menu.Menu, {
             checkHandler: this.onDatasetItemCheck
         });
 
-        this.autoDisplayType = new CCR.xdmod.ui.CustomCheckItem({
-            id: 'auto_display_type_' + this.id,
-            scope: this,
-            text: 'Auto',
-            param: 'auto',
-            checked: this.displayParam == 'auto',
-            group: 'display_type',
-            handler: this.onDisplayItemChange
-        });
-
         this.datasheetDisplayType = new CCR.xdmod.ui.CustomCheckItem({
             id: 'datasheet_display_type_' + this.id,
             scope: this,

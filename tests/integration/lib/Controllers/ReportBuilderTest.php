@@ -5,6 +5,7 @@ namespace IntegrationTests\Controllers;
 use CCR\Json;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
+use IntegrationTests\BaseTest;
 
 /**
  * Class ReportBuilderTest
@@ -35,7 +36,7 @@ use TestHarness\XdmodTestHelper;
  *
  * @package IntegrationTests\Controllers
  */
-class ReportBuilderTest extends \PHPUnit_Framework_TestCase
+class ReportBuilderTest extends BaseTest
 {
     /**
      * @var XdmodTestHelper
@@ -86,6 +87,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumAvailableCharts(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $operation = 'enum_available_charts';
 
         $user = $options['user'];
@@ -142,6 +148,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumReports(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $operation = 'enum_reports';
 
         $user = $options['user'];
@@ -199,6 +210,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateReport(array $options)
     {
+        //TODO: Needs further integration for other realms
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $data = $options['data'];
         $user = $options['user'];
         $charts = $options['charts'];

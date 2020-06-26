@@ -117,6 +117,36 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test index initialization error.
+     *
+     * @expectedException Exception
+     * @expectedExceptionMessage "columns" must be an array
+     */
+    public function testIndexInitializationError()
+    {
+        $config = (object) [
+            'name' => 'initialize_error',
+            'columns' => [
+                (object) [
+                    'name' => 'column1',
+                    'type' => 'int(11)',
+                    'nullable' => false,
+                    'default' => 0,
+                    'comment' => 'This is my comment'
+                ]
+            ],
+            'indexes' => [
+                (object) [
+                    'type' => 'PRIMARY'
+                ]
+            ]
+        ];
+
+        $table = new Table($config);
+        $table->verify();
+    }
+
+    /**
      * Test table verification error
      *
      * @expectedException Exception
@@ -136,37 +166,6 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             'indexes' => array( (object) array(
                 'columns' => array('column1', 'missing_column')
             ))
-        );
-
-        $table = new Table($config);  // No logger here
-        $table->verify();
-    }
-
-    /**
-     * Test foreign key constraint verification error
-     *
-     * @expectedException Exception
-     * @expectedExceptionMessage Columns in foreign key constraint 'invalid_fk' must be contained at the beginning of an index
-     */
-
-    public function testForeignKeyConstraintVerificationError()
-    {
-        // Foreign key constraint with no corresponding index.
-        $config = (object) array(
-            'name' => "fk_verification_error",
-            'columns' => array( (object) array(
-                'name' => 'column1',
-                'type' => 'int(11)',
-                'nullable' => true,
-            )),
-            'foreign_key_constraints' => array( (object) array(
-                'name' => 'invalid_fk',
-                'columns' => array('column1'),
-                'referenced_table' => 'other_table',
-                'referenced_columns' => array(
-                    'other_column',
-                ),
-            )),
         );
 
         $table = new Table($config);  // No logger here

@@ -157,8 +157,20 @@
             {
                 "name": "processorbucket_id",
                 "type": "int(4)",
-                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id",
-                "nullable": true
+                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processor_buckets.id",
+                "nullable": false
+            },
+            {
+                "name": "gpu_count",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Number of GPUs each of the jobs used."
+            },
+            {
+                "name": "gpubucket_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined GPU bucket sizes. References gpu_buckets.id"
             },
             {
                 "name": "submitted_job_count",
@@ -297,6 +309,18 @@
                 "type": "double",
                 "comment": "FACT: (seconds) The sum of the square of the amount of the cpu_time of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used.",
                 "nullable": true
+            },
+            {
+                "name": "gpu_time",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The amount of the gpu time (gpu_count * wallduration) of the jobs pertaining to this day. If a job took more than one day, its gpu_time is distributed linearly across the days it used."
+            },
+            {
+                "name": "sum_gpu_time_squared",
+                "type": "double",
+                "nullable": true,
+                "comment": "FACT: (seconds^2) The sum of the square of the amount of the gpu_time of the jobs pertaining to this day. If a job took more than one day, its gpu_time is distributed linearly across the days it used."
             },
             {
                 "name": "node_time",

@@ -375,14 +375,26 @@ class Column extends NamedEntity implements iEntity
         // - Note that in MySQL a nullable column with no default is considered a default of NULL.
         // - Note that MySQL assigns TIMESTAMP columns a default of CURRENT_TIMESTAMP with an extra field of "on update CURRENT_TIMESTAMP"
 
+        $currentTimestampAliases = array(
+            'current_timestamp',
+            'current_timestamp()',
+            'now()',
+            'localtime',
+            'localtime()',
+            'localtimestamp',
+            'localtimestamp()'
+        );
+
         if ( null !== $this->default ) {
 
-            if ( ($this->nullable && "NULL" == $this->default)  ||
-                 ( "timestamp" == $this->type && (is_numeric($this->default) || 'current_timestamp' == strtolower($this->default)) ) ||
+            if (
+                 ( $this->nullable && "NULL" == $this->default ) ||
+                 ( "timestamp" == $this->type && is_numeric($this->default) ) ||
+                 ( "timestamp" == $this->type && in_array(strtolower($this->default), $currentTimestampAliases) ) ||
                  is_numeric($this->default) ||
                  "b'" == substr($this->default, 0, 2) ||
-                 "x'" == substr($this->default, 0, 2) ||
-                 "X'" == substr($this->default, 0, 2) ) {
+                 "x'" == substr(strtolower($this->default), 0, 2)
+            ) {
                 $parts[] = "DEFAULT " . $this->default;
             } elseif ( ($this->nullable && null === $this->default) ) {
                 $parts[] = "DEFAULT NULL";

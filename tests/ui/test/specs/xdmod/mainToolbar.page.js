@@ -1,8 +1,7 @@
 class MainToolbar {
     constructor() {
         this.helpTypes = {
-            Manual: '#global-toolbar-help-user-manual',
-            'You Tube': '#global-toolbar-help-youtube'
+            Manual: '#global-toolbar-help-user-manual'
         };
         this.contactTypes = {
             'Submit Support Request': '#global-toolbar-contact-us-submit-support-request',

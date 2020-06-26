@@ -393,6 +393,60 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 ]
 
             }); //menu
+
+            if (CCR.xdmod.ui.isDeveloper) {
+                var filterConfigForExport = function (config) {
+                    var result = JSON.parse(JSON.stringify(config));
+
+                    delete result.featured;
+                    delete result.defaultDatasetConfig;
+
+                    var i;
+                    var keys = ['x_axis', 'y_axis', 'legend'];
+                    for (i = 0; i < keys.length; i++) {
+                        if (Object.keys(result[keys[i]]).length === 0) {
+                            delete result[keys[i]];
+                        }
+                    }
+
+                    if (result.timeframe_label !== 'User Defined') {
+                        delete result.start_date;
+                        delete result.end_date;
+                    }
+
+                    if (result.global_filters.total === 0) {
+                        delete result.global_filters;
+                    }
+
+                    for (i = 0; i < result.data_series.data.length; i++) {
+                        delete result.data_series.data[i].category;
+                        if (!result.data_series.data[i].std_err) {
+                            delete result.data_series.data[i].std_err_labels;
+                        }
+                    }
+
+                    return result;
+                };
+                menu.add({
+                    text: 'View chart json',
+                    iconCls: 'json_file',
+                    handler: function () {
+                        var win = new Ext.Window({
+                            title: 'Chart Json',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4)) + '</pre>'
+                            }]
+                        });
+                        win.show();
+                    }
+                });
+            }
         }
 
         if(newchart){
@@ -2007,7 +2061,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         durationSelector: true,
         exportMenu: true,
         printButton: true,
-        reportCheckbox: true
+        reportCheckbox: true,
+        chartLinkButton: true
 
     },
 
@@ -2687,7 +2742,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             baseParams: {
                 'operation': 'get_dw_descripter'
-            }
+            },
+            listeners: {
+                exception: function (proxy, type, action, exception, response) {
+                    CCR.xdmod.ui.presentFailureResponse(response);
+                }
+           }
 
         }); //dwDescriptionStore
 
@@ -2769,6 +2829,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     singleClickExpand: true,
                                     type: 'metric',
                                     text: realm_metrics[rm].text,
+                                    has_std_err: realm_metrics[rm].std_err,
                                     iconCls: 'chart',
                                     category: category,
                                     realm: realm,
@@ -2801,6 +2862,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                                             group_by: d,
                                                             metric: n.attributes.metric,
                                                             realm: n.attributes.realm,
+                                                            has_std_err: n.attributes.has_std_err,
                                                             category: n.attributes.category
                                                         };
                                                         Ext.apply(config, this.defaultDatasetConfig);
@@ -5494,6 +5556,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             self.getReportCheckbox().setDisabled(noData);
 
+            self.getChartLinkButton().setDisabled(noData);
+
             var reportGeneratorMeta = chartStore.getAt(0).get('reportGeneratorMeta');
 
             self.getReportCheckbox().storeChartArguments(reportGeneratorMeta.chart_args,
@@ -6236,6 +6300,20 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
+        self.on('chart_link_clicked', function () {
+            var encodedData = window.btoa(JSON.stringify(this.getConfig()));
+            var link = window.location.protocol + '//' + window.location.host + '/#main_tab_panel:metric_explorer?config=' + encodedData;
+            var msg = 'Use the following link to share the current chart. Note that the link does not override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br> We recommend using Chrome or Firefox if the link does not work in Internet Explorer.<br><b>' + link + '</b>';
+            Ext.Msg.show({
+                title: 'Link to Chart',
+                minWidth: 700,
+                msg: msg,
+                buttons: Ext.Msg.OK
+            });
+        }); // self.on('chart_link_clicked', ...
+
+        // ---------------------------------------------------------
+
         this.loadAll = function() {
             this.queries_store_loaded_handler = function() {
                 this.createQueryFunc.call(this, null, null, null, null, null, null, false);
@@ -6286,6 +6364,10 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
     listeners: {
         activate: function( /*panel*/ ) {
             this.updateRawDataWindowVisibility();
+            if (location.hash.split('config=')[1]) {
+                var config = JSON.parse(window.atob(location.hash.split('config=')[1]));
+                XDMoD.Module.MetricExplorer.setConfig(config, config.title, true);
+            }
         }, // activate
 
         deactivate: function( /*panel*/ ) {

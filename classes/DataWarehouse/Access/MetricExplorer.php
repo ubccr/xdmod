@@ -19,11 +19,11 @@ use XDUser;
 
 class MetricExplorer extends Common
 {
-    public function get_data($user) 
+    public function get_data($user)
     {
         if(isset($this->request['config'])) {
-            $config = json_decode($this->request['config'],true);
-            $this->request = array_merge($config,$this->request);
+            $config = json_decode($this->request['config'], true);
+            $this->request = array_merge($config, $this->request);
         }
 
         $format = \DataWarehouse\ExportBuilder::getFormat(
@@ -84,7 +84,7 @@ class MetricExplorer extends Common
 
         $dataset_classname
             = $timeseries
-            ? '\DataWarehouse\Data\SimpleTimeseriesDataset'
+            ? '\DataWarehouse\Data\TimeseriesDataset'
             : '\DataWarehouse\Data\SimpleDataset';
 
         $highchart_classname
@@ -126,7 +126,6 @@ class MetricExplorer extends Common
         foreach ($data_series as $data_description) {
             $data_description->authorizedRoles = self::checkDataAccess(
                 $user,
-                'tg_usage',
                 $data_description->realm,
                 $data_description->group_by,
                 $data_description->metric
@@ -233,33 +232,29 @@ class MetricExplorer extends Common
             );
 
             foreach ($data_series as $data_description_index => $data_description) {
-                $query_classname
-                    = $timeseries
-                    ? '\\DataWarehouse\\Query\\' . $data_description->realm
-                    . '\\Timeseries'
-                    : '\\DataWarehouse\\Query\\' . $data_description->realm
-                    . '\\Aggregate';
+                $query_classname = sprintf(
+                    '\\DataWarehouse\\Query\\%sQuery',
+                    ( $timeseries ? 'Timeseries' : 'Aggregate' )
+                );
 
                 $query = new $query_classname(
+                    $data_description->realm,
                     $aggregation_unit,
                     $start_date,
-                    $end_date,
-                    null,
-                    null,
-                    array(),
-                    'tg_usage',
-                    array(),
-                    false
+                    $end_date
                 );
 
                 $query->addGroupBy($data_description->group_by);
                 $query->addStat($data_description->metric);
 
                 if ($data_description->std_err == 1) {
-                    try {
-                        $query->addStat('sem_'.$data_description->metric);
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $data_description->metric
+                    );
+                    if ($query->getRealm()->statisticExists($semStatId)) {
+                        $query->addStat($semStatId);
                     }
-                    catch (Exception $ex) {
+                    else {
                         $data_description->std_err = 0;
                     }
                 }
@@ -300,7 +295,7 @@ class MetricExplorer extends Common
                 } else {
                     $datasetsRestrictedMessages[] = '';
                 }
-            } // foreach ($data_series as $data_description_index => $data_description) 
+            } // foreach ($data_series as $data_description_index => $data_description)
 
             if ($format === 'csv' || $format === 'xml' || $format === 'json') {
                 $exportedDatas = array();
@@ -318,7 +313,7 @@ class MetricExplorer extends Common
 
                 return \DataWarehouse\ExportBuilder::export($exportedDatas, $format, $inline, $filename);
 
-            } // if ($format === 'csv' || $format === 'xml') 
+            } // if ($format === 'csv' || $format === 'xml')
 
             elseif($format === 'jsonstore') {
                 $exportedDatas = array();
@@ -337,12 +332,12 @@ class MetricExplorer extends Common
                 );
 
                 return $result;
-            } // elseif($format === 'jsonstore') 
+            } // elseif($format === 'jsonstore')
 
-        } //  elseif ($format === 'jsonstore' || $format === 'csv' || $format === 'xml') 
+        } //  elseif ($format === 'jsonstore' || $format === 'csv' || $format === 'xml')
 
         throw new Exception("Internal Error");
-    } // function get_data($user) 
+    } // function get_data($user)
 
     private function getAggregationUnit()
     {
@@ -558,7 +553,6 @@ class MetricExplorer extends Common
      * Check that a user has access to the specified metric data.
      *
      * @param  XDUser $user            The user to check the authorization of.
-     * @param  string $query_groupname The query group name.
      * @param  string $realm_name      (Optional) The realm name.
      * @param  string $group_by_name   (Optional) The group by name.
      * @param  string $statistic_name  (Optional) The statistic name.
@@ -571,12 +565,12 @@ class MetricExplorer extends Common
      */
     public static function checkDataAccess(
         XDUser $user,
-        $query_groupname,
         $realm_name = null,
         $group_by_name = null,
-        $statistic_name = null
+        $statistic_name = null,
+        $includePub = true
     ) {
-        $userRoles = $user->getAllRoles(true);
+        $userRoles = $user->getAllRoles($includePub);
 
         $authorizedRoles = array();
         foreach ($userRoles as $userRole) {
@@ -701,12 +695,13 @@ class MetricExplorer extends Common
         $offset = 0,
         $limit = null,
         $searchText = null,
-        array $selectedFilterIds = null
+        array $selectedFilterIds = null,
+        $includePub = true
     ) {
         // Check if the realms were specified, and if not, use all realms.
         $realmsSpecified = !empty($realms);
         if (!$realmsSpecified) {
-            $realms = self::getRealmsFromUser($user);
+            $realms = Realms::getRealmIdsForUser($user);
         }
 
         // Determine which aggregation unit to use for dimension values queries.
@@ -715,33 +710,33 @@ class MetricExplorer extends Common
         // Get a dimension values query for each valid realm.
         $dimensionValuesQueries = array();
         foreach ($realms as $realm) {
-            $query_classname =  '\\DataWarehouse\\Query\\'.$realm.'\\Aggregate';
 
             // Attempt to get the group by object for this realm to check that
             // the dimension exists for this realm.
-            try {
-                $query_classname::getGroupBy($dimension_id);
-            } catch (UnknownGroupByException $e) {
-                // If the group by does not exist and realms were explicitly
-                // specified, throw an exception. Otherwise, just continue to
-                // the next realm.
-                if ($realmsSpecified) {
+
+            $realmObj = \Realm\Realm::factory($realm);
+
+            if ( ! $realmObj->groupByExists($dimension_id) ) {
+                if ( $realmsSpecified ) {
+                    // If the group by does not exist and realms were explicitly
+                    // specified, throw an exception. Otherwise, just continue to
+                    // the next realm.
                     throw new UnknownGroupByException(
-                        "Dimension \"$dimension_id\" does not exist for realm \"$realm\".",
-                        UnknownGroupByException::defaultCode,
-                        $e
+                        sprintf("Dimension '%s' does not exist for realm '%s'.", $dimension_id, $realm)
                     );
+                } else {
+                    continue;
                 }
-                continue;
             }
 
             // Get the user's roles that are authorized to view this data.
             try {
                 $realmAuthorizedRoles = MetricExplorer::checkDataAccess(
                     $user,
-                    'tg_usage',
                     $realm,
-                    $dimension_id
+                    $dimension_id,
+                    null,
+                    $includePub
                 );
             } catch (AccessDeniedException $e) {
                 // Only throw an exception that the user is not authorized if
@@ -754,7 +749,8 @@ class MetricExplorer extends Common
             }
 
             // Generate the dimension values query for this realm.
-            $query = new $query_classname(
+            $query = new \DataWarehouse\Query\AggregateQuery(
+                $realm,
                 $queryAggregationUnit,
                 null,
                 null,
@@ -835,7 +831,8 @@ class MetricExplorer extends Common
                 try {
                     $schemaCheckResults = $db->query("SHOW SCHEMAS LIKE 'modw_filters'");
                     $missingSchema = empty($schemaCheckResults);
-                } catch (Exception $schemaCheckException) {}
+                } catch (Exception $schemaCheckException) {
+                }
 
                 if ($missingSchema) {
                     throw new MissingFilterListTableException();
@@ -850,10 +847,13 @@ class MetricExplorer extends Common
         if ($searchText !== null) {
             $searchComponents = preg_split('/\s+/', $searchText, null, PREG_SPLIT_NO_EMPTY);
             foreach ($searchComponents as $searchComponent) {
-                $dimensionValues = array_filter($dimensionValues, function($dimensionValue) use ($searchComponent) {
-                    return stripos($dimensionValue['short_name'], $searchComponent) !== false
-                        || stripos($dimensionValue['name'], $searchComponent) !== false;
-                });
+                $dimensionValues = array_filter(
+                    $dimensionValues,
+                    function($dimensionValue) use ($searchComponent) {
+                        return stripos($dimensionValue['short_name'], $searchComponent) !== false
+                            || stripos($dimensionValue['name'], $searchComponent) !== false;
+                    }
+                );
             }
         }
 
@@ -904,7 +904,7 @@ class MetricExplorer extends Common
         XDUser $user,
         $dimension_id
     ) {
-        $realms = self::getRealmsFromUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         foreach ($realms as $realm) {
             try {
@@ -915,7 +915,7 @@ class MetricExplorer extends Common
                 continue;
             }
 
-            return $groupBy->getLabel();
+            return $groupBy->getName();
         }
 
         return null;
@@ -935,7 +935,7 @@ class MetricExplorer extends Common
         XDUser $user,
         $dimension_id
     ) {
-        $realms = self::getRealmsFromUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         $dimensionRealms = array();
         foreach ($realms as $realm) {
@@ -977,7 +977,7 @@ class MetricExplorer extends Common
         $value_id,
         $getLongName = false
     ) {
-        $realms = self::getRealmsFromUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         $dimensionValueName = null;
         foreach ($realms as $realm) {
@@ -990,7 +990,7 @@ class MetricExplorer extends Common
             }
 
             // Attempt to look up the value.
-            $possibleValues = $groupBy->getPossibleValues(array(
+            $possibleValues = $groupBy->getAttributeValues(array(
                 'id' => $value_id,
             ));
             foreach ($possibleValues as $possibleValue) {
@@ -1000,18 +1000,6 @@ class MetricExplorer extends Common
         }
 
         return $dimensionValueName;
-    }
-
-    /**
-     * Get a list of realms available to a user.
-     *
-     * @param  XDUser $user       The user whose realms are being retrieved.
-     * @param  string $queryGroup (Optional) The query group of the realms.
-     *                            (Defaults to 'tg_usage'.)
-     * @return array              The realms available to the user.
-     */
-    public static function getRealmsFromUser(XDUser $user, $queryGroup = 'tg_usage') {
-        return Realms::getRealmsForUser($user);
     }
 
     /**
@@ -1035,17 +1023,16 @@ class MetricExplorer extends Common
         $realm,
         $dimension_id
     ) {
-        $queryClassname =  '\\DataWarehouse\\Query\\'.$realm.'\\Aggregate';
-
         // Get the group by object for this dimension in this realm.
         // This will throw an exception if the object cannot be found.
-        $groupBy = $queryClassname::getGroupBy($dimension_id);
+        $realmObj = \Realm\Realm::factory($realm);
+
+        $groupBy = $realmObj->getGroupByObject($dimension_id);
 
         // Check that the user is allowed to view this dimension in this
         // realm. If not, an exception will be thrown.
         self::checkDataAccess(
             $user,
-            'tg_usage',
             $realm,
             $dimension_id
         );
@@ -1053,7 +1040,4 @@ class MetricExplorer extends Common
         // Return the group by object.
         return $groupBy;
     }
-
 } // class MetricExplorer extends Common
-
-?>

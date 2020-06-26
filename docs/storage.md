@@ -1,5 +1,5 @@
 ---
-title: Storage Metrics (Beta)
+title: Storage Metrics
 ---
 
 The Storage Realm provides metrics relating to storage subsystems including
@@ -18,14 +18,13 @@ individual files is not currently supported as the collection of this
 information is meta-data intensive and can adversely affect the performance of
 the filesystem.
 
-**NOTE: Storage metrics are currently considered beta quality.**
-
 These instructions use the file paths from the RPM installation.  If you've
 installed from source they will need to be adjusted accordingly.
 
 ## Input Format
 
-Storage data must be formatted in JSON files.  These files will be validated
+Storage data must be formatted in JSON files and these files must use the
+`.json` file extension (e.g. `2019-01-01.json`).  These files will be validated
 against the JSON Schema
 `/etc/xdmod/etl/etl_schemas.d/storage/usage.schema.json`.
 

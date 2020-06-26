@@ -3,6 +3,7 @@ namespace DataWarehouse\Query\Jobs;
 
 use \DataWarehouse\Query\Model\Table;
 use \DataWarehouse\Query\Model\TableField;
+use \DataWarehouse\Query\Model\FormulaField;
 use \DataWarehouse\Query\Model\WhereCondition;
 use \DataWarehouse\Query\Model\Schema;
 
@@ -11,35 +12,46 @@ use \DataWarehouse\Query\Model\Schema;
  * the set of fact table rows given the where conditions on the aggregate
  * table.
  */
-class RawData extends \DataWarehouse\Query\Query
+class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query\iQuery
 {
     public function __construct(
-        $aggregation_unit_name,
-        $start_date,
-        $end_date,
-        $group_by,
-        $stat = 'jl.jobid',
+        $realmId,
+        $aggregationUnitName,
+        $startDate,
+        $endDate,
+        $groupById = null,
+        $statisticId = null,
         array $parameters = array(),
-        $query_groupname = 'query_groupname',
-        array $parameterDescriptions = array(),
-        $single_stat = false
+        Log $logger = null
     ) {
+        $realmId = 'Jobs';
+        $schema = 'modw_aggregates';
+        $dataTablePrefix = 'jobfact_by_';
+
         parent::__construct(
-            'Jobs',
-            'modw_aggregates',
-            'jobfact',
-            array(),
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
+            $realmId,
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            $groupById,
             null,
-            null,
-            $parameters,
-            $query_groupname,
-            $parameterDescriptions,
-            $single_stat
+            $parameters
         );
 
+        // The same fact table row may correspond to multiple rows in the
+        // aggregate table (e.g. a job that runs over two days).
+        $this->setDistinct(true);
+
+        // Override values set in Query::__construct() to use the fact table rather than the
+        // aggregation table prefix from the Realm configuration.
+
+        $this->setDataTable($schema, sprintf("%s%s", $dataTablePrefix, $aggregationUnitName));
+        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            sprintf("%s.%s", $schema, $dataTablePrefix)
+        );
 
         $dataTable = $this->getDataTable();
         $joblistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_joblist", "jl");
@@ -68,6 +80,12 @@ class RawData extends \DataWarehouse\Query\Query
 
         $this->addField(new TableField($factTable, "job_id", "jobid"));
         $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
+        $this->addField(new TableField($factTable, 'start_time_ts'));
+        $this->addField(new TableField($factTable, 'end_time_ts'));
+        $this->addField(new FormulaField('-1', 'cpu_user'));
+
+        // This is used by Integrations and not currently shown on the XDMoD interface
+        $this->addField(new TableField($factTable, 'name', 'job_name'));
 
         $this->addTable($joblistTable);
         $this->addTable($factTable);
@@ -83,74 +101,28 @@ class RawData extends \DataWarehouse\Query\Query
             new TableField($factTable, "job_id")
         ));
 
-        switch ($stat) {
+        switch ($statisticId) {
             case "job_count":
-                $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
+                $this->addWhereCondition(new WhereCondition("jt.end_time_ts", "BETWEEN", "duration.day_start_ts AND duration.day_end_ts"));
                 break;
             case "started_job_count":
-                $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "between", "d.day_start_ts and d.day_end_ts"));
+                $this->addWhereCondition(new WhereCondition("jt.start_time_ts", "BETWEEN", "duration.day_start_ts AND duration.day_end_ts"));
                 break;
             default:
                 // All other metrics show running job count
                 break;
         }
+
+        $this->prependOrder(
+            new \DataWarehouse\Query\Model\OrderBy(
+                new TableField($factTable, 'end_time_ts'),
+                'DESC',
+                'end_time_ts'
+            )
+        );
     }
 
-    /**
-     * The query differs from the base class query because the same fact table row
-     * may correspond to multiple rows in the aggregate table (e.g. a job that runs over
-     * two days). Therefore the DISTINCT keyword is added to dedupliate.
-     */
-    public function getQueryString($limit = null, $offset = null, $extraHavingClause = null)
-    {
-        $wheres = $this->getWhereConditions();
-        $groups = $this->getGroups();
-
-        $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
-
-        $select_order_by = $this->getSelectOrderBy();
-
-        $data_query = "SELECT DISTINCT ".implode(", ", $select_fields).
-            " FROM ".implode(", ", $select_tables).
-            " WHERE ".implode(" AND ", $wheres);
-
-        if (count($groups) > 0) {
-            $data_query .= " GROUP BY \n".implode(",\n", $groups);
-        }
-        if ($extraHavingClause != null) {
-            $data_query .= " HAVING " . $extraHavingClause . "\n";
-        }
-        if (count($select_order_by) > 0) {
-            $data_query .= " ORDER BY \n".implode(",\n", $select_order_by);
-        }
-
-        if ($limit !== null && $offset !== null) {
-            $data_query .= " LIMIT $limit OFFSET $offset";
-        }
-        return $data_query;
-    }
-
-    /**
-     * The query differs from the base class query because the same fact table row
-     * may correspond to multiple rows in the aggregate table (e.g. a job that runs over
-     * two days). Therefore the DISTINCT keyword is added to dedupliate.
-     */
-    public function getCountQueryString()
-    {
-        $wheres = $this->getWhereConditions();
-        $groups = $this->getGroups();
-
-        $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
-
-        $data_query = "SELECT COUNT(*) AS row_count FROM (SELECT DISTINCT ".implode(", ", $select_fields).
-            " FROM ".implode(", ", $select_tables).
-            " WHERE ".implode(" AND ", $wheres);
-
-        if (count($groups) > 0) {
-            $data_query .= " GROUP BY \n".implode(",\n", $groups);
-        }
-        return $data_query . ') as a';
+    public function getQueryType(){
+        return 'timeseries';
     }
 }

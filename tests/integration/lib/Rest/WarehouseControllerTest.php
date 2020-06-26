@@ -2,7 +2,9 @@
 
 namespace IntegrationTests\Rest;
 
-class WarehouseControllerTest extends \PHPUnit_Framework_TestCase
+use IntegrationTests\BaseTest;
+
+class WarehouseControllerTest extends BaseTest
 {
     protected static $helpers = array();
 
@@ -102,6 +104,11 @@ class WarehouseControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAggregateData()
     {
+        //TODO: Needs further integration for other realms.
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+
         $params = $this->getAggDataParameterGenerator();
 
         $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);

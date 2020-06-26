@@ -43,7 +43,7 @@
                     "resource",
                     "name",
                     "description",
-                    "resource_type_id",
+                    "resource_type",
                     "pi_column",
                     "shared_jobs",
                     "timezone"
@@ -98,6 +98,83 @@
                 "schema": "mod_hpcdb"
             }
         }
+
+    },
+    {
+        "name": "IngestResourceTypeRealmRelationsStaging",
+        "description": "",
+        "definition_file": "common/staging/resource-type-realms.json",
+        "class": "StructuredFileIngestor",
+        "endpoints": {
+            "source": {
+                "type": "configurationfile",
+                "namespace": "ETL\\DataEndpoint",
+                "options_class": "IngestorOptions",
+                "name": "Resource Types configuration",
+                "path": "${base_dir}/../resource_types.json",
+                "field_names": [
+                    "abbrev",
+                    "realm"
+                ],
+                "filters": [
+                    {
+                        "#": "Reformat config file for ETLs purposes.",
+                        "type": "external",
+                        "name": "jq",
+                        "path": "jq",
+                        "arguments": "'[(.resource_types | keys) as $a | .resource_types as $rt |  $a[] | {abbrev: . , realm: $rt[.].realms[]}]'"
+                    }
+                ]
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Shredder/Staging Database",
+                "config": "database",
+                "schema": "mod_shredder",
+                "definition_file": "common/staging/resource-type-realms.json"
+            }
+        }
+    },
+        {
+            "class": "DatabaseIngestor",
+            "name": "IngestInitialRealms",
+            "definition_file": "acls/realms.json",
+            "disable_keys": true,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "shredder",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "realm",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+    {
+        "class": "DatabaseIngestor",
+        "name": "IngestResourcefactRealmRelations",
+        "definition_file": "common/hpcdb/resource-type-realms.json",
+        "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest-common.resource",
+        "endpoints": {
+            "source": {
+                "type": "mysql",
+                "name": "HPCDB",
+                "config": "database",
+                "schema": "mod_shredder"
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "MODDB",
+                "config": "database",
+                "schema": "moddb"
+            }
+        }
     }
-  ]
+
+    ]
 }

@@ -21,6 +21,12 @@ XDMoD.Module.ReportGenerator = Ext.extend(XDMoD.PortalModule, {
     listeners: {
         beforerender: function(panel) {
             panel.initialize(panel);
+        },
+        load_report: function (reportId) {
+            var tabPanel = Ext.getCmp('main_tab_panel');
+            tabPanel.setActiveTab('report_generator');
+            var reportGrid = this.find('itemId', 'reportQueueGrid');
+            reportGrid[0].fireEvent('load_report', reportId);
         }
     }, 
 

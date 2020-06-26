@@ -45,7 +45,7 @@ try {
         $categories = DataWarehouse::getCategories();
 
         // Retrieve the realms that the user has access to
-        $realms = Realms::getRealmsForUser($user);
+        $realms = Realms::getRealmIdsForUser($user);
 
         // Filter the categories by those that the user has access to.
         $categories = array_map(function ($category) use ($realms) {
@@ -191,29 +191,42 @@ try {
 
                     foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
                         $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
-                        if ($statistic_object->isVisible()) {
-                            $returnData[] = array(
-                                'text'                 => $statistic_object->getLabel(false),
-                                'id'                   => 'statistic_'
-                                                        . $realm_name
-                                                        . '_'
-                                                        . $group_by_name
-                                                        . '_'
-                                                        . $statistic_object->getAlias()->getName(),
-                                'statistic'            => $statistic_object->getAlias()->getName(),
-                                'group_by'             => $group_by_name,
-                                'group_by_label'       => $group_by->getLabel(),
-                                'query_group'          => $query_group_name,
-                                'category'             => $categoryName,
-                                'realm'                => $realm_name,
-                                'defaultChartSettings' => $query_descripter->getChartSettings(),
-                                'chartSettings'        => $query_descripter->getChartSettings(),
-                                'node_type'            => 'statistic',
-                                'iconCls'              => 'chart',
-                                'description'          => $statistic_object->getAlias()->getName(),
-                                'leaf'                 => true,
-                            );
+
+                        if ( ! $statistic_object->showInMetricCatalog() ) {
+                            continue;
                         }
+
+                        $statName = $statistic_object->getId();
+                        $chartSettings = $query_descripter->getChartSettings();
+                        if(!$statistic_object->usesTimePeriodTablesForAggregate()){
+                            $chartSettingsArray = json_decode($chartSettings, true);
+                            $chartSettingsArray['dataset_type'] = 'timeseries';
+                            $chartSettingsArray['display_type'] = 'line';
+                            $chartSettingsArray['swap_xy'] = false;
+                            $chartSettings = json_encode($chartSettingsArray);
+                        }
+                        $returnData[] = array(
+                            'text'                 => $statistic_object->getName(false),
+                            'id'                   => 'statistic_'
+                            . $realm_name
+                            . '_'
+                            . $group_by_name
+                            . '_'
+                            . $statName,
+                            'statistic'            => $statName,
+                            'group_by'             => $group_by_name,
+                            'group_by_label'       => $group_by->getName(),
+                            'query_group'          => $query_group_name,
+                            'category'             => $categoryName,
+                            'realm'                => $realm_name,
+                            'defaultChartSettings' => $chartSettings,
+                            'chartSettings'        => $chartSettings,
+                            'node_type'            => 'statistic',
+                            'iconCls'              => 'chart',
+                            'description'          => $statName,
+                            'leaf'                 => true,
+                            'supportsAggregate'    => $statistic_object->usesTimePeriodTablesForAggregate()
+                        );
                     }
                 }
 

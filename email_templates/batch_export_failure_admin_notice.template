@@ -1,0 +1,14 @@
+Dear Tech Support,
+
+There was an error while processing a data warehouse batch export on [:current_date:].
+
+Person Details -----------------------------------
+Name:              [:user_formal_name:]
+Username:          [:user_username:]
+E-Mail:            [:user_email:]
+
+Exception Details --------------------------------
+Message: [:exception_message:]
+
+Stack Trace:
+[:exception_stack_trace:]

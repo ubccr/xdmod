@@ -1,5 +1,87 @@
-Open XDMoD Change Log
-=====================
+# Open XDMoD Change Log
+
+## 2019-10-29 v8.5.1
+
+- Bug Fixes
+    - General
+        - Fix bug parsing the `resources.json` configuration file when a single resource is defined in the file. ([\#1130](https://github.com/ubccr/xdmod/pull/1130))
+
+## 2019-10-21 v8.5.0
+
+- Bug Fixes
+    - General
+        - Ensure resourcetypes table is correctly populated. ([PR \#1108](https://github.com/ubccr/xdmod/pull/1108))
+        - Ensure summary controller only displays preset charts for realm… ([PR \#1096](https://github.com/ubccr/xdmod/pull/1096))
+        - `xdmod-update-resource-specs`: fix resources file name ([PR \#1085](https://github.com/ubccr/xdmod/pull/1085))
+        - Enable APCu cache for Configuration objects ([PR \#952](https://github.com/ubccr/xdmod/pull/952))
+        - Fix Query Descriptor Visibility ([PR \#911](https://github.com/ubccr/xdmod/pull/911))
+    - Job Viewer
+        - Fix bug in job viewer save search when multiple realms available ([PR \#1092](https://github.com/ubccr/xdmod/pull/1092))
+        - Fix display bugs in the error message for the job viewer analytics. ([PR \#1003](https://github.com/ubccr/xdmod/pull/1003))
+    - Internal Dashboard
+        - Fixing an infinite loop when discarding user changes ([PR \#1068](https://github.com/ubccr/xdmod/pull/1068))
+    - Metric Explorer
+        - Fix metric explorer metric and dimension display bug. ([PR \#1046](https://github.com/ubccr/xdmod/pull/1046))
+        - Enable aggregate view for all "Per Job" statistics in the Jobs realm. ([PR \#961](https://github.com/ubccr/xdmod/pull/961))
+    - User Dashboard
+        - Bug fixes: Add mask and make chart name unique ([PR \#1028](https://github.com/ubccr/xdmod/pull/1028))
+        - adding check to make sure Help Tips exist before making a help tour for a portlet ([PR \#1011](https://github.com/ubccr/xdmod/pull/1011))
+        - Bug Fixes and Changes ([PR \#979](https://github.com/ubccr/xdmod/pull/979))
+    - ETL
+        - Improve DirectorySanner to properly handle first file being empty ([PR \#931](https://github.com/ubccr/xdmod/pull/931))
+    - ACL
+        - Fix backup table detection bug in `acl-config`.  ([PR \#920](https://github.com/ubccr/xdmod/pull/920))
+- Enhancements
+    - Infrastructure
+        - Update DWI's `isRealmEnabled` to be config file based ([PR \#1102](https://github.com/ubccr/xdmod/pull/1102))
+        - Filter Realms processed by `acl-config` ([PR \#1000](https://github.com/ubccr/xdmod/pull/1000))
+    - ACL
+        - Updated to add resource_types and resource_type_realms ([PR \#1006](https://github.com/ubccr/xdmod/pull/1006))
+    - Job Viewer
+        - Add tooltips to jobviewer Summary value column ([PR \#984](https://github.com/ubccr/xdmod/pull/984))
+        - Convert Joules to kWh for display in job viewer. ([PR \#983](https://github.com/ubccr/xdmod/pull/983))
+        - Add Show raw data support for the Jobs Realm ([PR \#900](https://github.com/ubccr/xdmod/pull/900))
+    - General
+        - Performance improvements by providing caching for Configuration objects built from JSON configuration files ([PR \#950](https://github.com/ubccr/xdmod/pull/950))
+    - ETL
+        - Allow re-use of StructuredFile data endpoints with external filters ([PR \#944](https://github.com/ubccr/xdmod/pull/944))
+- Qa / Testing
+    - General
+        - Add Usage Explorer Tests ([PR \#1062](https://github.com/ubccr/xdmod/pull/1062))
+        - Multi realm installs - Allow for modification of enabled realms… ([PR \#1004](https://github.com/ubccr/xdmod/pull/1004))
+        - Improve robustness of UI tests ([PR \#994](https://github.com/ubccr/xdmod/pull/994))
+        - Update Travis YML to explicitly use Ubuntu 14.04 ([PR \#959](https://github.com/ubccr/xdmod/pull/959))
+        - Fixing timing issues in Metric Explorer UI Tests ([PR \#953](https://github.com/ubccr/xdmod/pull/953))
+        - Add Dockerfiles used for test builds ([PR \#935](https://github.com/ubccr/xdmod/pull/935))
+        - Less stringent DataWarehouse Descripter tests ([PR \#926](https://github.com/ubccr/xdmod/pull/926))
+        - enable all component tests and make sure they work ([PR \#902](https://github.com/ubccr/xdmod/pull/902))
+    - Infrastructure
+        - Wait for loading mask to disappear on SSO logout ([PR \#927](https://github.com/ubccr/xdmod/pull/927))
+- Documentation
+    - General
+        - Improve xdmod-ingestor documentation ([PR \#1016](https://github.com/ubccr/xdmod/pull/1016))
+        - Improve processor buckets documentation ([PR \#972](https://github.com/ubccr/xdmod/pull/972))
+- New Features
+    - Data Warehouse Export
+        - Add data warehouse batch export ([PR \#1010](https://github.com/ubccr/xdmod/pull/1010))
+    - Metric Explorer
+        - Add a view chart json button for developers ([PR \#988](https://github.com/ubccr/xdmod/pull/988))
+        - Add chart link button to metric explorer ([PR \#974](https://github.com/ubccr/xdmod/pull/974))
+    - User Dashboard
+        - Added reset summary page layout UI ([PR \#982](https://github.com/ubccr/xdmod/pull/982))
+        - Add JobPortlet ([PR \#976](https://github.com/ubccr/xdmod/pull/976))
+        - Adding New User Help Tour and functionality to reset if a user has seen a tour or not ([PR \#971](https://github.com/ubccr/xdmod/pull/971))
+        - Add recent charts and reports portlet ([PR \#968](https://github.com/ubccr/xdmod/pull/968))
+        - Add report thumbnails portlet ([PR \#967](https://github.com/ubccr/xdmod/pull/967))
+        - Add guided user tours ([PR \#962](https://github.com/ubccr/xdmod/pull/962))
+        - User Dashboard - Center Report Card: Support ([PR \#943](https://github.com/ubccr/xdmod/pull/943))
+        - User Dashboard - Summary Statistics Portlet ([PR \#930](https://github.com/ubccr/xdmod/pull/930))
+        - Initial Prototype of Novice User Portal ([PR \#909](https://github.com/ubccr/xdmod/pull/909))
+- Data Quality
+    - General
+        - Increase size of system username column ([PR \#1007](https://github.com/ubccr/xdmod/pull/1007))
+        - Update Average Wall Hours statistic to be exact rather than approximate in aggregate mode ([PR \#964](https://github.com/ubccr/xdmod/pull/964))
+        - Fix datatype of job_id column ([PR \#932](https://github.com/ubccr/xdmod/pull/932))
 
 ## 2019-05-06 v8.1.2
 
@@ -19,87 +101,87 @@ Open XDMoD Change Log
 
 - Documentation
     - ETL
-        - Improve storage aggregation (PR #882)
-        - Processor Buckets documentation update (PR #881)
+        - Improve storage aggregation ([\#882](https://github.com/ubccr/xdmod/pull/882))
+        - Processor Buckets documentation update ([\#881](https://github.com/ubccr/xdmod/pull/881))
     - General
-        - Update broken url and change wording of supported software (PR #876)
-        - Add Federated XDMoD to About page (PR #873)
-        - Update with some of the options that are avalbile (PR #804)
-        - Improve storage documentation (PR #771)
+        - Update broken url and change wording of supported software ([\#876](https://github.com/ubccr/xdmod/pull/876))
+        - Add Federated XDMoD to About page ([\#873](https://github.com/ubccr/xdmod/pull/873))
+        - Update with some of the options that are avalbile ([\#804](https://github.com/ubccr/xdmod/pull/804))
+        - Improve storage documentation ([\#771](https://github.com/ubccr/xdmod/pull/771))
     - Cloud
-        - Updated Cloud Documentation for 8.1 Release (PR #875)
+        - Updated Cloud Documentation for 8.1 Release ([\#875](https://github.com/ubccr/xdmod/pull/875))
 - New Features
     - Cloud
-        - Add cloud user and system account group by (PR #797)
-        - Add support for cloud data to xdmod-shredder and xdmod-ingestor (PR #739)
+        - Add cloud user and system account group by ([\#797](https://github.com/ubccr/xdmod/pull/797))
+        - Add support for cloud data to xdmod-shredder and xdmod-ingestor ([\#739](https://github.com/ubccr/xdmod/pull/739))
 - Enhancements
     - General
-        - Add support for configurable email subject prefix (PR #872)
-        - Add node_modules to the RPM. (PR #835)
-        - Update config read order (PR #818)
-        - Add initial summary charts for the cloud realm (PR #803)
-        - Support simplesaml's internal session naming (PR #757)
-        - Support asynchronous loading of Usage tab thumbnail charts (PR #750)
-        - Update Job Viewer API to support multiple realms (PR #733)
-        - Support non-numeric values for Usage chart filter parameters (PR #716)
-        - Make "Show raw data" for multiple realms configurable (PR #706)
-        - Update Sign On Panel to collapse local login if SSO is enabled (PR #701)
+        - Add support for configurable email subject prefix ([\#872](https://github.com/ubccr/xdmod/pull/872))
+        - Add node_modules to the RPM. ([\#835](https://github.com/ubccr/xdmod/pull/835))
+        - Update config read order ([\#818](https://github.com/ubccr/xdmod/pull/818))
+        - Add initial summary charts for the cloud realm ([\#803](https://github.com/ubccr/xdmod/pull/803))
+        - Support simplesaml's internal session naming ([\#757](https://github.com/ubccr/xdmod/pull/757))
+        - Support asynchronous loading of Usage tab thumbnail charts ([\#750](https://github.com/ubccr/xdmod/pull/750))
+        - Update Job Viewer API to support multiple realms ([\#733](https://github.com/ubccr/xdmod/pull/733))
+        - Support non-numeric values for Usage chart filter parameters ([\#716](https://github.com/ubccr/xdmod/pull/716))
+        - Make "Show raw data" for multiple realms configurable ([\#706](https://github.com/ubccr/xdmod/pull/706))
+        - Update Sign On Panel to collapse local login if SSO is enabled ([\#701](https://github.com/ubccr/xdmod/pull/701))
     - Cloud
-        - Do not truncate aggregate tables on each ingest (PR #841)
-        - Truncate staging tables after ingestion (PR #778)
-        - Update events that are used to determine VM session starts and stops (PR #732)
+        - Do not truncate aggregate tables on each ingest ([\#841](https://github.com/ubccr/xdmod/pull/841))
+        - Truncate staging tables after ingestion ([\#778](https://github.com/ubccr/xdmod/pull/778))
+        - Update events that are used to determine VM session starts and stops ([\#732](https://github.com/ubccr/xdmod/pull/732))
     - ETL
-        - Improve resiliency of ETLv2 manage tables (PR #807)
-        - Add storage shredder/ingestor support (PR #786)
-        - Support ETL '$include' directive (PR #785)
-        - Update Configuration class to support merging objects in local config files (PR #782)
-        - DirectoryScanner support for last modified time based on filename and/or directory (PR #780)
-        - Move the job performance postprocessing SQL to the aggregation pipeline (PR #770)
-        - Implement dynamic fact tables via ETLv2 for job performance ETL (PR #742)
-        - Add exception code to logAndThrowException (PR #719)
-        - Skip only records that fail verificaiton instead of rest of file (PR #714)
+        - Improve resiliency of ETLv2 manage tables ([\#807](https://github.com/ubccr/xdmod/pull/807))
+        - Add storage shredder/ingestor support ([\#786](https://github.com/ubccr/xdmod/pull/786))
+        - Support ETL '$include' directive ([\#785](https://github.com/ubccr/xdmod/pull/785))
+        - Update Configuration class to support merging objects in local config files ([\#782](https://github.com/ubccr/xdmod/pull/782))
+        - DirectoryScanner support for last modified time based on filename and/or directory ([\#780](https://github.com/ubccr/xdmod/pull/780))
+        - Move the job performance postprocessing SQL to the aggregation pipeline ([\#770](https://github.com/ubccr/xdmod/pull/770))
+        - Implement dynamic fact tables via ETLv2 for job performance ETL ([\#742](https://github.com/ubccr/xdmod/pull/742))
+        - Add exception code to logAndThrowException ([\#719](https://github.com/ubccr/xdmod/pull/719))
+        - Skip only records that fail verificaiton instead of rest of file ([\#714](https://github.com/ubccr/xdmod/pull/714))
 - Bug Fixes
     - Cloud
-        - Fix roles file comparison to use object and not string (PR #878)
-        - Update session_records timestamps to non-nullable for MySQL 5.7 support (PR #877)
-        - Add cloud raw tables to cloud manage tables action (PR #874)
-        - Change staging table to use 1 as unknown id instead of -1 (PR #866)
-        - Update GroupBys In Cloud Aggregate Table (PR #863)
-        - Change cloud person username fields to be not null (PR #860)
-        - Change where staging action gets user id from for cloud data (PR #845)
-        - Remove event_id from the event table primary key (PR #844)
-        - Prevent null usernames being added when ingesting cloud data (PR #838)
-        - Remove duplicate join statement that was causing 1066 Not unique table/alias error (PR #837)
-        - Fix for generic cloud datetime, and openstack instance type datetime (PR #820)
-        - Update cloud realm to not throw away event precision (PR #811)
-        - Guarantees a deterministic order for events received by the event reconstructor (PR #805)
+        - Fix roles file comparison to use object and not string ([\#878](https://github.com/ubccr/xdmod/pull/878))
+        - Update session_records timestamps to non-nullable for MySQL 5.7 support ([\#877](https://github.com/ubccr/xdmod/pull/877))
+        - Add cloud raw tables to cloud manage tables action ([\#874](https://github.com/ubccr/xdmod/pull/874))
+        - Change staging table to use 1 as unknown id instead of -1 ([\#866](https://github.com/ubccr/xdmod/pull/866))
+        - Update GroupBys In Cloud Aggregate Table ([\#863](https://github.com/ubccr/xdmod/pull/863))
+        - Change cloud person username fields to be not null ([\#860](https://github.com/ubccr/xdmod/pull/860))
+        - Change where staging action gets user id from for cloud data ([\#845](https://github.com/ubccr/xdmod/pull/845))
+        - Remove event_id from the event table primary key ([\#844](https://github.com/ubccr/xdmod/pull/844))
+        - Prevent null usernames being added when ingesting cloud data ([\#838](https://github.com/ubccr/xdmod/pull/838))
+        - Remove duplicate join statement that was causing 1066 Not unique table/alias error ([\#837](https://github.com/ubccr/xdmod/pull/837))
+        - Fix for generic cloud datetime, and openstack instance type datetime ([\#820](https://github.com/ubccr/xdmod/pull/820))
+        - Update cloud realm to not throw away event precision ([\#811](https://github.com/ubccr/xdmod/pull/811))
+        - Guarantees a deterministic order for events received by the event reconstructor ([\#805](https://github.com/ubccr/xdmod/pull/805))
     - General
-        - Add proper namespace in VerifyDatabase (PR #819)
-        - Fix path to Exception in TimeAggregationUnit::factory (PR #810)
-        - Explictly check for stdClass in VariableStore initializer (PR #802)
-        - Make lastLogin time be floored to the second instead of microtime (PR #755)
-        - Make logrotate.d file not override global settings (PR #749)
-        - Fix security vulnerabities in job performance (PR #738)
-        - Allow search panel scroll bars on small displays (PR #702)
+        - Add proper namespace in VerifyDatabase ([\#819](https://github.com/ubccr/xdmod/pull/819))
+        - Fix path to Exception in TimeAggregationUnit::factory ([\#810](https://github.com/ubccr/xdmod/pull/810))
+        - Explictly check for stdClass in VariableStore initializer ([\#802](https://github.com/ubccr/xdmod/pull/802))
+        - Make lastLogin time be floored to the second instead of microtime ([\#755](https://github.com/ubccr/xdmod/pull/755))
+        - Make logrotate.d file not override global settings ([\#749](https://github.com/ubccr/xdmod/pull/749))
+        - Fix security vulnerabities in job performance ([\#738](https://github.com/ubccr/xdmod/pull/738))
+        - Allow search panel scroll bars on small displays ([\#702](https://github.com/ubccr/xdmod/pull/702))
     - ETL
-        - Update primary key on resourcefact table to improve cloud ingestion (PR #795)
-        - Throw Exception if lockfile could not be obtained (PR #793)
-        - Improve debugging messages when executing SQL (PR #783)
-        - Don't automatically rewind DirectoryScanner file handle (PR #768)
-        - Explicitly cast potentiall nulls to array for array_merge() (PR #756)
-        - Improve verification of resource codes (PR #720)
-        - Fix uncaught ETL exception in PdoIngestor (PR #718)
+        - Update primary key on resourcefact table to improve cloud ingestion ([\#795](https://github.com/ubccr/xdmod/pull/795))
+        - Throw Exception if lockfile could not be obtained ([\#793](https://github.com/ubccr/xdmod/pull/793))
+        - Improve debugging messages when executing SQL ([\#783](https://github.com/ubccr/xdmod/pull/783))
+        - Don't automatically rewind DirectoryScanner file handle ([\#768](https://github.com/ubccr/xdmod/pull/768))
+        - Explicitly cast potentiall nulls to array for array_merge() ([\#756](https://github.com/ubccr/xdmod/pull/756))
+        - Improve verification of resource codes ([\#720](https://github.com/ubccr/xdmod/pull/720))
+        - Fix uncaught ETL exception in PdoIngestor ([\#718](https://github.com/ubccr/xdmod/pull/718))
     - Metric Explorer
-        - Fix refesh button for Metric Explorer (PR #740)
+        - Fix refesh button for Metric Explorer ([\#740](https://github.com/ubccr/xdmod/pull/740))
 - QA / Testing
     - General
-        - Speedup integration tests (PR #850)
-        - Clean up linker.php (PR #847)
-        - Add environment variable to force regression test harness to generate expected results (PR #848)
-        - Enforce javascript unit tests (PR #766)
-        - Robustness improvements for integration tests (PR #726)
+        - Speedup integration tests ([\#850](https://github.com/ubccr/xdmod/pull/850))
+        - Clean up linker.php ([\#847](https://github.com/ubccr/xdmod/pull/847))
+        - Add environment variable to force regression test harness to generate expected results ([\#848](https://github.com/ubccr/xdmod/pull/848))
+        - Enforce javascript unit tests ([\#766](https://github.com/ubccr/xdmod/pull/766))
+        - Robustness improvements for integration tests ([\#726](https://github.com/ubccr/xdmod/pull/726))
     - Cloud
-        - Update cloud reference data (PR #827)
+        - Update cloud reference data ([\#827](https://github.com/ubccr/xdmod/pull/827))
 
 ## 2018-10-30 v8.0.0
 

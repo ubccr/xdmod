@@ -110,17 +110,23 @@ class MetricExplorer {
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
                 titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
                 contextMenu: {
+                    menuByTitle: function (title) {
+                        return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul';
+                    },
+                    menuItemByText: function (menuTitle, itemText) {
+                        return module.exports.selectors.chart.contextMenu.menuByTitle(menuTitle) + '//li/a//span[text()="' + itemText + '"]';
+                    },
                     container: '#metric-explorer-chartoptions-context-menu',
                     legend: '#metric-explorer-chartoptions-legend',
                     addData: '#metric-explorer-chartoptions-add-data',
                     addFilter: '#metric-explorer-chartoptions-add-filter'
-
                 },
                 axis: '#metric_explorer .highcharts-yaxis-labels'
             },
             catalog: {
                 panel: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]',
                 collapseButton: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]//div[contains(@class,"x-tool-collapse-west")]',
+                expandButton: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//div[contains(@class,"x-tool-expand-west")]',
                 container: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder)',
                 tree: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder) .x-tree-root-ct',
                 rootNodeByName: function (name) {
@@ -158,7 +164,7 @@ class MetricExplorer {
         browser.click(this.selectors.toolbar.buttonByName('New Chart'));
         browser.waitAndClick(this.selectors.newChart.topMenuByText(datasetType));
         browser.waitAndClick(this.selectors.newChart.subMenuByText(datasetType, plotType));
-        browser.waitForVisible(this.selectors.newChart.modalDialog.box);
+        browser.waitAndClick(this.selectors.newChart.modalDialog.textBox());
         browser.setValue(this.selectors.newChart.modalDialog.textBox(), chartName);
         browser.click(this.selectors.newChart.modalDialog.ok());
         browser.waitForInvisible(this.selectors.newChart.modalDialog.box);
@@ -171,8 +177,7 @@ class MetricExplorer {
         browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton);
     }
     setDateRange(start, end) {
-        browser.waitForAllInvisible('.ext-el-mask');
-        browser.waitAndClick(this.selectors.startDate);
+        this.clickSelectorAndWaitForMask(this.selectors.startDate);
         browser.setValue(this.selectors.startDate, start);
         browser.waitAndClick(this.selectors.endDate);
         browser.setValue(this.selectors.endDate, end);
@@ -241,7 +246,7 @@ class MetricExplorer {
     openDataSeriesDefinitionFromDataPoint() {
         this.clickLogoAndWaitForMask();
         this.clickFirstDataPoint();
-        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="Edit Dataset"]');
+        browser.waitUntilAnimEndAndClick(this.selectors.chart.contextMenu.menuItemByText('Data Series:', 'Edit Dataset'));
     }
     addFiltersFromDataSeriesDefinition(filter, name) {
         this.clickLogoAndWaitForMask();
@@ -343,8 +348,11 @@ class MetricExplorer {
         browser.waitForVisible(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.click(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.waitForVisible(this.selectors.load.dialog);
-        browser.waitAndClick(this.selectors.load.chartByName(name));
-        browser.waitForInvisible(this.selectors.load.dialog);
+        this.waitForChartToChange(function () {
+            browser.waitAndClick(this.selectors.load.chartByName(name));
+            browser.waitForInvisible(this.selectors.load.dialog);
+        });
+        browser.waitUntilAnimEnd(this.selectors.catalog.expandButton, 5000, 50);
     }
     checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         browser.waitForVisible(this.selectors.chart.titleByText(chartTitle));

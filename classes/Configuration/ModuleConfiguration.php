@@ -307,14 +307,8 @@ class ModuleConfiguration extends XdmodConfiguration
      */
     public function filterByModule($module)
     {
-        $modules = array(DEFAULT_MODULE_NAME);
-
-        if ($module !== DEFAULT_MODULE_NAME) {
-            $modules[] = $module;
-        }
-
         $metadata = array(
-            'modules' => $modules
+            'modules' => array($module)
         );
 
         return $this->filterByMetaData($metadata);
@@ -337,7 +331,7 @@ class ModuleConfiguration extends XdmodConfiguration
 
         $result = $this->performRecursiveFilter($metadata, $source);
 
-        if ($stripMetadata === true) {
+        if (is_object($result) && $stripMetadata === true) {
             $properties = array_keys($metadata);
 
             // Make sure that 'module' is included in the properties that are removed from $source
@@ -383,6 +377,8 @@ class ModuleConfiguration extends XdmodConfiguration
                     $newValue = $this->performRecursiveFilter($metadata, $value);
                     if ($newValue !== null) {
                         $source->$property = $newValue;
+                    } else {
+                        unset($source->$property);
                     }
                 } elseif (is_array($value)) {
                     foreach($value as $k => $v) {
@@ -460,4 +456,13 @@ class ModuleConfiguration extends XdmodConfiguration
     {
         return $this->annotatedConfig;
     } // getAnnotatedConfig
+
+    /**
+     * @see iConfiguration::__sleep()
+     */
+
+    public function __sleep()
+    {
+        return array_keys(get_object_vars($this));
+    }
 }

@@ -108,9 +108,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
-    <script type="text/javascript" src="gui/lib/ie-object-values-polyfill.js"></script>
+    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -142,6 +140,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     </script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
+    <link rel="stylesheet" type="text/css" href="gui/css/helptour.css">
 
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
@@ -199,6 +198,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
     <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTip.js"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTipTour.js"></script>
 
     <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
     <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
@@ -217,6 +218,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
+    <script type="text/javascript" src="gui/lib/ClearableComboBox.js"></script>
 
     <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
     <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
@@ -268,13 +270,13 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.isCenterDirector = " . json_encode($user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) . ";\n";
         }
 
-        $config = \Configuration\XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
+        $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
 
         $rawDataRealms = array_map(
             function ($item) {
                 return $item['name'];
             },
-            $config['realms']
+            $rawRealmConfig
         );
 
         print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
@@ -336,6 +338,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         });
 
         print "CCR.xdmod.features = " . json_encode($features) . ";\n";
+        print "CCR.xdmod.timezone = " . json_encode(date_default_timezone_get()) . ";\n";
         ?>
 
     </script>
@@ -379,10 +382,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
     <?php endif; ?>
 
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
-        <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
-    <?php endif; ?>
+    <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
+    <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
@@ -403,7 +404,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/lib/Portal.js"></script>
     <script type="text/javascript" src="gui/lib/PortalColumn.js"></script>
     <script type="text/javascript" src="gui/lib/Portlet.js"></script>
-
+    <script type="text/javascript" src="gui/js/Portlet.js"></script>
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
         <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
@@ -433,7 +434,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
     <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
     <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
-
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/Spotlight.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
         <script type="text/javascript" src="gui/js/AddDataPanel.js"></script>
@@ -454,8 +455,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <?php if (isset($features['novice_user']) && filter_var($features['novice_user'], FILTER_VALIDATE_BOOLEAN)): ?>
-        <script type="text/javascript" src="gui/js/modules/NoviceUser.js"></script>
+    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN)): ?>
+        <script type="text/javascript" src="gui/js/modules/Dashboard.js"></script>
     <?php else: ?>
         <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
     <?php endif; ?>
@@ -463,6 +464,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/modules/Usage.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/modules/ReportGenerator.js"></script>
+        <script type="text/javascript" src="gui/js/modules/DataExport.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="gui/js/modules/About.js"></script>
 
@@ -590,10 +592,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php xd_web_message\displayMessage('XDMoD requires JavaScript, which is currently disabled in your browser.'); ?>
 </noscript>
 
-<?php if (!$userLoggedIn): ?>
-    <br/><br/><br/><br/><br/>
-    <input type="hidden" id="direct_to"/>
-<?php endif; ?>
 </body>
 
 </html>

@@ -29,7 +29,8 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "type_id"
+                    "type_id",
+                    "type_abbr"
                 ]
             },
             {
