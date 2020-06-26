@@ -279,5 +279,17 @@
     },
     "year": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+    },
+    "pi": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/pi"
+    },
+    "fieldofscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
+    },
+    "nsfdirectorate": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
+    },
+    "parentscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     }
 }

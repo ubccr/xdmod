@@ -14,6 +14,34 @@
         "leaf": false
     },
     {
+        "text": "Cloud by Decanal Unit",
+        "id": "group_by_Cloud_nsfdirectorate",
+        "group_by": "nsfdirectorate",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"pie\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"n\",\"show_aggregate_labels\":\"y\",\"show_error_labels\":\"n\",\"enable_errors\":\"n\",\"enable_trend_line\":\"n\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"pie\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"n\",\"show_aggregate_labels\":\"y\",\"show_error_labels\":\"n\",\"enable_errors\":\"n\",\"enable_trend_line\":\"n\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "Decanal Unit",
+        "leaf": false
+    },
+    {
+        "text": "Cloud by Department",
+        "id": "group_by_Cloud_parentscience",
+        "group_by": "parentscience",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "Department",
+        "leaf": false
+    },
+    {
         "text": "Cloud by Domain",
         "id": "group_by_Cloud_domain",
         "group_by": "domain",
@@ -39,6 +67,34 @@
         "node_type": "group_by",
         "iconCls": "menu",
         "description": "Instance Type",
+        "leaf": false
+    },
+    {
+        "text": "Cloud by PI",
+        "id": "group_by_Cloud_pi",
+        "group_by": "pi",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "PI",
+        "leaf": false
+    },
+    {
+        "text": "Cloud by PI Group",
+        "id": "group_by_Cloud_fieldofscience",
+        "group_by": "fieldofscience",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "PI Group",
         "leaf": false
     },
     {

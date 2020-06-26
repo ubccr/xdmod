@@ -220,7 +220,15 @@
             "name": "OpenStackCloudAccountIngestor",
             "description": "OpenStack cloud account data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/account.json"
+            "definition_file": "cloud_openstack/account.json",
+            "endpoints": {
+                "utility": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         },
         {
             "name": "OpenStackCloudHostIngestor",

@@ -22,10 +22,14 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     ) {
         parent::__construct('Jobs', 'modw_aggregates', 'jobfact_by_day', array());
 
+        // The same fact table row may correspond to multiple rows in the
+        // aggregate table (e.g. a job that runs over two days).
+        $this->setDistinct(true);
+
         $config = RawStatisticsConfiguration::factory();
 
-        // The data table is always aliased to "jf".
-        $tables = ['jf' => $this->getDataTable()];
+        // The data table is always aliased to "agg".
+        $tables = ['agg' => $this->getDataTable()];
 
         foreach ($config->getQueryTableDefinitions('Jobs') as $tableDef) {
             $alias = $tableDef['alias'];

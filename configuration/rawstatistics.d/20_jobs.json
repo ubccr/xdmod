@@ -13,7 +13,7 @@
                 "alias": "jl",
                 "join": {
                     "primaryKey": "agg_id",
-                    "foreignTableAlias": "jf",
+                    "foreignTableAlias": "agg",
                     "foreignKey": "id"
                 }
             },

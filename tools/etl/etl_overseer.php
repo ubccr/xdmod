@@ -395,7 +395,7 @@ if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 }
 
-$logger = Log::factory('DWI', $conf);
+$logger = Log::factory('etl_overseer', $conf);
 
 $cmd = implode(' ', array_map('escapeshellarg', $argv));
 $logger->info("Command: $cmd");

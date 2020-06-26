@@ -29,6 +29,19 @@
                 "nullable": true,
                 "default": null,
                 "comment": "What to show the user"
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "The field of science of the project to which the instance belongs to"
             }
         ],
 

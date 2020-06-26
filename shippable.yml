@@ -47,7 +47,7 @@ integrations:
   notifications:
     - integrationName: slack-notification-xdmod
       type: slack
-      recipients: "#shippable"
+      recipients: "#xms-shippable"
       on_success: change
       on_failure: always
       on_cancel: never
@@ -63,7 +63,7 @@ resources:
     integration: slack-notification-xdmod
     versionTemplate:
       recipients:
-        - "#shippable"
+        - "#xms-shippable"
 jobs:
     - name: xdmod_runCI
       type: runCI

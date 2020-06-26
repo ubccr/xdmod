@@ -537,10 +537,6 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
                         scope: this,
                         success: function () {
                             this.store.reload();
-                            Ext.Msg.alert(
-                                'Request Submitted',
-                                XDMoD.Module.DataExport.requestSubmittedText
-                            );
                         },
                         failure: function (response) {
                             Ext.Msg.alert(
@@ -598,6 +594,10 @@ XDMoD.Module.DataExport.RequestsGrid = Ext.extend(Ext.grid.GridPanel, {
             scope: this,
             success: function () {
                 this.store.reload();
+                Ext.Msg.alert(
+                    'Request Submitted',
+                    XDMoD.Module.DataExport.requestSubmittedText
+                );
             },
             failure: function (response) {
                 Ext.Msg.alert(

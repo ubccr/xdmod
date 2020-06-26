@@ -122,13 +122,6 @@ try {
         'PHP GMP extension installed'
     );
 
-    _debug('Checking for mcrypt_cbc function');
-    $result = function_exists('mcrypt_cbc');
-    displayResult(
-        $result,
-        'PHP Mcrypt extension installed'
-    );
-
     _debug('Checking for curl_close function');
     $result = function_exists('curl_close');
     displayResult(
@@ -196,6 +189,20 @@ try {
     displayResult(
         $result,
         'PHP PCRE extension installed'
+    );
+
+    _debug('Checking for mb_convert_encoding function');
+    $result = function_exists('mb_convert_encoding');
+    displayResult(
+        $result,
+        'PHP Multibyte String extension installed'
+    );
+
+    _debug('Checking for apcu_exists function');
+    $result = function_exists('apcu_exists');
+    displayResult(
+        $result,
+        'PHP APC User Cache extension installed'
     );
 
     _debug('Checking timezone');

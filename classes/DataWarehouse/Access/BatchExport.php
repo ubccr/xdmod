@@ -20,7 +20,7 @@ class BatchExport
     public static function getBatchExportRealms(XDUser $user)
     {
         $config = RawStatisticsConfiguration::factory();
-        $allowedRealms = Realms::getRealmsForUser($user);
+        $allowedRealms = Realms::getRealmIdsForUser($user);
 
         return array_filter(
             $config->getBatchExportRealms(),

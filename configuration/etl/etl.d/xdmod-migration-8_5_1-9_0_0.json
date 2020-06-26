@@ -74,6 +74,24 @@
             }
         },
         {
+            "name": "update-mod_logger-log_table-table",
+            "description": "Update mod_logger.log_table table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/logger/alter-log-table.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logger Database",
+                    "config": "logger",
+                    "schema": "mod_logger"
+                }
+            }
+        },
+        {
             "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",
             "description": "Load schema version history",
             "namespace": "ETL\\Ingestor",

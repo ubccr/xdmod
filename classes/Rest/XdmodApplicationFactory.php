@@ -118,6 +118,25 @@ class XdmodApplicationFactory
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
         $app->after(function (Request $request, Response $response, Application $app) {
+            $origin = $request->headers->get('Origin');
+            if ($origin !== null) {
+                try {
+                    $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
+                    if (!empty($corsDomains)){
+                        $allowedCorsDomains = explode(',', $corsDomains);
+                        if (in_array($origin, $allowedCorsDomains)) {
+                            // If these headers change similar updates will need to be made to the `error` section below
+                            $response->headers->set('Access-Control-Allow-Origin', $origin);
+                            $response->headers->set('Access-Control-Allow-Headers', 'x-requested-with, content-type');
+                            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+                            $response->headers->set('Vary', 'Origin');
+                        }
+                    }
+                } catch (Exception $e) {
+                    // this catches if the section or config item does not exist
+                    // in that case we just carry on
+                }
+            }
             if (PDODB::debugging()) {
                 $debugInfo = PDODB::debugInfo();
 
@@ -170,12 +189,37 @@ class XdmodApplicationFactory
 
         // SETUP: error handler
         $app->error(function (\Exception $e, $code) use ($app) {
-                $exceptionOutput = \handle_uncaught_exception($e);
-                return new Response(
-                    $exceptionOutput['content'],
-                    $exceptionOutput['httpCode'],
-                    $exceptionOutput['headers']
-                );
+            if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS' && array_key_exists('HTTP_ORIGIN', $_SERVER)){
+                try {
+                    $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
+                } catch (\Exception $cors) {
+                    $corsDomains = null;
+                }
+                if (!empty($corsDomains)){
+                    $allowedCorsDomains = explode(',', $corsDomains);
+                    $origin = $_SERVER['HTTP_ORIGIN'];
+                    if (in_array($origin, $allowedCorsDomains)) {
+                        // if these headers change we will need to update the `after` above
+                        return new Response(
+                            '',
+                            204, /* in `$app->error` this value is ignored use header `X-Status-Code` to force a different status code */
+                            [
+                                'X-Status-Code' => 204,
+                                'Vary' => 'Origin',
+                                'Access-Control-Allow-Origin' => $origin,
+                                'Access-Control-Allow-Headers' => 'x-requested-with, content-type',
+                                'Access-Control-Allow-Credentials' => 'true'
+                            ]
+                        );
+                    }
+                }
+            }
+            $exceptionOutput = \handle_uncaught_exception($e);
+            return new Response(
+                $exceptionOutput['content'],
+                $exceptionOutput['httpCode'],
+                $exceptionOutput['headers']
+            );
         });
 
         // Set the application instance as the global instance and return it.

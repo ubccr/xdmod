@@ -97,15 +97,8 @@ note that this is **not** currently supported for cloud and storage files:
 
     $ xdmod-shredder -i file ...
 
-An entire directory of files can be shredded, but the names of the files
-must be formatted as `YYYYMMDD` (e.g. 20120101).
-
-The log file for the current day will be ignored (along with any files
-that correspond to future dates). This is intended to prevent the
-shredding of partial log files.
-
-If the database is empty all files that meet the above constraints will
-be shredded. If there is data in the database, only files dated after
-the date of the most recent job will be shredded.
+An entire directory of files may be shredded.  For all job formats other than
+`pbs` (see [PBS Notes](resource-manager-pbs.html) for details) this will shred
+every file in the directory.  Cloud and storage files must end in `.json`.
 
     $ xdmod-shredder -d directory ...
