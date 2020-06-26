@@ -3,10 +3,10 @@
 use Models\Services\Acls;
 use User\Roles;
 
-@session_start();
 @set_time_limit(0);
 
 @require_once dirname(__FILE__).'/../../../configuration/linker.php';
+\xd_security\start_session();
 
 try {
     $logged_in_user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));

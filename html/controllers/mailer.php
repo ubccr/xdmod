@@ -1,9 +1,10 @@
 <?php
        
-   @session_start();
+   require_once dirname(__FILE__).'/../../configuration/linker.php';
+
+   \xd_security\start_session();
    session_write_close();
    	 
-   require_once dirname(__FILE__).'/../../configuration/linker.php';
 
 	$returnData = array();
 	

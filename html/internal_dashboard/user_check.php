@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../configuration/linker.php';
 
-@session_start();
+\xd_security\start_session();
 
 if (isset($_POST['xdmod_username']) && isset($_POST['xdmod_password'])) {
     $user = XDUser::authenticate(

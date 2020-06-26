@@ -55,6 +55,10 @@ class XdmodTestHelper
         # Enable header information in the response data
         curl_setopt($this->curl, CURLOPT_HEADERFUNCTION, array($this, 'processResponseHeader'));
 
+        # Disable ssl certificate checks (needed when using self-signed certificates).
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false); //NOSONAR
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false); //NOSONAR
+
         curl_setopt($this->curl, CURLOPT_COOKIEFILE, $this->cookiefile);
         curl_setopt($this->curl, CURLOPT_COOKIEJAR, $this->cookiefile);
 

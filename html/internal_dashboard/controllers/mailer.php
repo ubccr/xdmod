@@ -6,7 +6,7 @@ use CCR\MailWrapper;
 use CCR\DB;
 use Xdmod\EmailTemplate;
 
-@session_start();
+\xd_security\start_session();
 
 xd_security\enforceUserRequirements(
     array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE),

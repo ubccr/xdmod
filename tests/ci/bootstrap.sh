@@ -10,10 +10,7 @@ REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
 
 function copy_template_httpd_conf {
-    sed -e 's/SSLEngine on/SSLEngine off/' \
-        -e 's/\(^\s*\)\(Header always set Strict-Transport-Security\)/\1#\2/' \
-        -e 's/\*:443/\*:8080/' \
-        -e 's/^#Listen 443/Listen 8080/' /usr/share/xdmod/templates/apache.conf > /etc/httpd/conf.d/xdmod.conf
+    cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf
 }
 
 if [ -z $XDMOD_REALMS ]; then
@@ -113,6 +110,7 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
 
     copy_template_httpd_conf
+    sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
 
     # Remove php-mcrypt until new Docker image is built without it.
     yum -y remove php-mcrypt || true

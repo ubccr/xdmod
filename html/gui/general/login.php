@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../configuration/linker.php';
-@session_start();
+\xd_security\start_session();
 $formal_name = isset($_REQUEST['xd_user_formal_name']) ? $_REQUEST['xd_user_formal_name'] :  "";
 $samlError = false;
 $auth = null;
