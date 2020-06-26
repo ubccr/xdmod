@@ -82,8 +82,8 @@ To get a better idea of how these properties translate into expected behavior du
 
 Here is an example `authsources.php` file **note: keys 60 and 61 must be present** These check that the _mandatory_ username and organization properties are present.
 The values in section `40` should be left the same.  You should change the `keys` in this section to match what your IdP returns.
-To find what the IdP returns you can use the simple saml administration pages located at: `https://YOUR_XDMOD_DOMAIN/simplesaml`.
-More specifically if you have used this guide and named things the same you can use `https://YOUR_XDMOD_DOMAIN/simplesaml/module.php/core/authenticate.php?as=xdmod-sp`.
+To find what the IdP returns you can use the simple saml administration pages located at: `https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml`.
+More specifically if you have used this guide and named things the same you can use `https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml/module.php/core/authenticate.php?as=xdmod-sp`.
 
 ```php
 <?php
@@ -133,14 +133,14 @@ Use the above example to match the response from the IdP, the indexes (left side
 These indexes need to be what SAML receives from the IdP not the ones known from LDAP or other sources.
 
 These indexes can be viewed using the `Test authentication sources` page built into simplesamlphp located at
-`https://<hostname>/simplesaml/module.php/core/authenticate.php` then clicking on `xdmod-sp` after which you will be redirect to the configured IdP login page.
+`https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml/module.php/core/authenticate.php` then clicking on `xdmod-sp` after which you will be redirect to the configured IdP login page.
 After you have successfully logged in to the IdP you should be redirected back to a `SAML 2.0 SP Demo Example` page.  This page will show you the attributes passed back by the IdP.
 
 **NOTE**: If a login prompt is displayed when going to the `Test authentication sources` you will need to use the user name  `admin` and the password in `/etc/xdmod/simplesamlphp/config/config.php` under the `auth.adminpassword` index.
 
 ## Setting up IdP metadata
 
-Get the metadata from the IdP (if you are using [SAML IdP][saml-idp] to test `https://<host>:<port>/metadata`) and use the SimpleSAMLphp built in converter located at `https://<hostname>/simplesaml/admin/metadata-converter.php` to create the `saml20-idp-remote.php` config file more information can be found on the [Simple Saml PHP website][ssp-idp-remote].
+Get the metadata from the IdP (if you are using [SAML IdP][saml-idp] to test `https://{% raw %}{{HOSTNAME}}{% endraw %}/metadata`) and use the SimpleSAMLphp built in converter located at `https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml/admin/metadata-converter.php` to create the `saml20-idp-remote.php` config file more information can be found on the [Simple Saml PHP website][ssp-idp-remote].
 
 **NOTE**: You will not be able to use this configuration directly, as the cert is not real and the domains are fake as well.
 
