@@ -146,6 +146,12 @@
                 "nullable": true
             },
             {
+                "name": "resources_used_gpus",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
                 "name": "resource_list_nodes",
                 "type": "text",
                 "nullable": true

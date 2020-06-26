@@ -25,7 +25,8 @@
         "resource_list_pcput": 518400,
         "resource_list_walltime": 14400,
         "resource_list_nodect": "4",
-        "node_list": "i02n33,i02n32,i02n31,i02n30"
+        "node_list": "i02n33,i02n32,i02n31,i02n30",
+        "resources_used_gpus": 0
     },
     "PBS/TORQUE format without host in ID string": {
         "job_id": "6",
@@ -53,7 +54,8 @@
         "resource_list_pcput": 518400,
         "resource_list_walltime": 14400,
         "resource_list_nodect": "4",
-        "node_list": "i02n33,i02n32,i02n31,i02n30"
+        "node_list": "i02n33,i02n32,i02n31,i02n30",
+        "resources_used_gpus": 0
     },
     "TORQUE 5.0.1 format": {
         "job_id": "6464684",
@@ -83,7 +85,8 @@
         "resource_list_ncpus": "1",
         "resource_list_nodect": "1",
         "resource_list_mem": 2089811968,
-        "node_list": "n404"
+        "node_list": "n404",
+        "resources_used_gpus": 0
     },
     "PBS Pro format": {
         "job_id": "2994",
@@ -108,7 +111,8 @@
         "resource_list_walltime": 163,
         "resource_list_ncpus": "65",
         "resource_list_nodect": "5",
-        "node_list": "c1,c2,c3,c4,c5"
+        "node_list": "c1,c2,c3,c4,c5",
+        "resources_used_gpus": 0
     },
     "Host list with CPU range": {
         "job_id": "2995",
@@ -133,6 +137,73 @@
         "resource_list_walltime": 163,
         "resource_list_ncpus": "12",
         "resource_list_nodect": "2",
-        "node_list": "c1,c2"
+        "node_list": "c1,c2",
+        "resources_used_gpus": 0
+    },
+    "Job with \"gpus\" in Resource_List.nodes": {
+        "job_id": "7904",
+        "user": "ybsbu",
+        "groupname": "caste",
+        "account": "caste",
+        "jobname": "test-gpu-job-1",
+        "exit_status": "1",
+        "queue": "gpu",
+        "ctime": "1485451423",
+        "start": "1485451424",
+        "end": "1485459831",
+        "resource_list_nodes": "1:ppn=28:gpus=1:default",
+        "resource_list_walltime": 345600,
+        "resource_list_nodect": "1",
+        "resource_list_neednodes": "1:ppn=28:gpus=1:default",
+        "resources_used_gpus": 1,
+        "host": "testresource",
+        "resources_used_walltime": 8407
+    },
+    "Job with \"gpu\" in Resource_List.nodect": {
+        "job_id": "10711",
+        "user": "ybsbu",
+        "groupname": "caste",
+        "account": "caste",
+        "jobname": "test-gpu-job-2",
+        "exit_status": "0",
+        "queue": "black",
+        "ctime": "1587912647",
+        "qtime": "1587912647",
+        "etime": "1587912647",
+        "start": "1588046353",
+        "end": "1588146353",
+        "node_list": "node0703",
+        "resources_used_nodes": 1,
+        "resources_used_cpus": 28,
+        "resource_list_nodect": "1:ppn=24:gpu=4:reqmem=128849018880:gpu",
+        "resources_used_walltime": 8407,
+        "resources_used_mem": null,
+        "resources_used_vmem": null,
+        "resources_used_gpus": 4,
+        "host": "testresource"
+    },
+    "Job with Resource_List.gpu": {
+        "job_id": "10712",
+        "user": "ybsbu",
+        "groupname": "caste",
+        "account": "caste",
+        "jobname": "test-gpu-job-3",
+        "exit_status": "0",
+        "queue": "black",
+        "ctime": "1587912657",
+        "qtime": "1587912657",
+        "etime": "1587912657",
+        "start": "1588046363",
+        "end": "1588146363",
+        "node_list": "node0703",
+        "resources_used_nodes": 1,
+        "resources_used_cpus": 28,
+        "resource_list_nodes": "1:ppn=28:default",
+        "resource_list_walltime": 345600,
+        "resource_list_nodect": "1",
+        "resource_list_neednodes": "1:ppn=28:gpus=1:default",
+        "resources_used_gpus": 0,
+        "host": "testresource",
+        "resources_used_walltime": 100000
     }
 }
