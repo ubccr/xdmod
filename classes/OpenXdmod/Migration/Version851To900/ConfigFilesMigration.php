@@ -22,7 +22,8 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         }
         $this->writePortalSettingsFile(
             array(
-               'roadmap_url' => $roadmapUrl
+                'roadmap_url' => $roadmapUrl,
+                'cors_domains' => ''
             )
         );
 
