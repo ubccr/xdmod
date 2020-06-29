@@ -131,6 +131,51 @@ to generate charts that aggregate cloud metrics into groups based on users assig
 
 See the [Hierarchy Guide](hierarchy.html) for more details.
 
+## Utilization
+
+To use the Utilization statistic you must shred and ingest a JSON file that lists the specifications of each node in your cloud resource. The name of this file should follow the format `hypervisor_facts_YYYY-MM-DDTHH:SS:MM.json`. When the details of at least one node changes a new file listing the details of all of the nodes should be created and ingested. Below is the format for the JSON file. For resources that use OpenStack we have a python script that will create a file with appropriate information in the [xdmod-openstack-scripts repository](https://github.com/ubccr/xdmod-openstack-scripts). This script should be run once a day and will create a file only on days where the details of at least one node has changed from the previous day. The files should be ingested using `xdmod-shredder` and setting the `-f` option to `cloudresourcespecs` and then running `xdmod-ingestor`. An example of the `xdmod-shredder` command is as follows.
+
+`xdmod-shredder -r RESOURCE_NAME -d PATH/TO/DIRECTORY -f cloudresourcespecs`
+
+### Cloud Resource Specification JSON file example
+```json
+{
+    "hypervisors": [
+        {
+            "hypervisor_hostname": "node1.example.com",
+            "id": 1,
+            "memory_mb": 205583,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "node2.example.com",
+            "id": 2,
+            "memory_mb": 209314,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "node3.example.com",
+            "id": 3,
+            "memory_mb": 147512,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "node4.example.com",
+            "id": 5,
+            "memory_mb": 196714,
+            "vcpus": 56
+        },
+        {
+            "hypervisor_hostname": "node5.example.com",
+            "id": 6,
+            "memory_mb": 146597,
+            "vcpus": 56
+        }
+    ],
+    "ts": "2018-04-17T22:30:02Z"
+}
+```
+
 ## Adding and enabling cloud resources
 
 ### Add a cloud resource
