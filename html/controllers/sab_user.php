@@ -8,9 +8,9 @@
  *     get_mapping: use_default
  */
 
-@session_start();
-
 require_once __DIR__ . '/../../configuration/linker.php';
+
+\xd_security\start_session();
 
 $controller = new XDController(array(STATUS_LOGGED_IN));
 

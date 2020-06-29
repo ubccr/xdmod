@@ -28,14 +28,8 @@ function getToken()
  */
 function setCookies()
 {
-    // Determine if this request was made over HTTPS.
-    //
-    // As a security precaution, if this request was made over HTTPS, cookies
-    // with sensitive content will mandate that they only be sent over HTTPS.
-    $isHttpsRequest = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
-
     // Obtain and set a cookie for the user's REST token.
-    setcookie('xdmod_token', getToken(), 0, '/', '', $isHttpsRequest, true);
+    setcookie('xdmod_token', getToken(), 0, '/', '', true, true);
 }
 
 /**
