@@ -1,0 +1,61 @@
+{
+    "#": "Aggregation of Cloud resource specification data",
+        "table_definition": {
+            "$ref": "${table_definition_dir}/cloud_common/resourcespecsfact_by_.json#/table_definition"
+        },
+        "aggregation_period_query": {
+            "overseer_restrictions": {
+                "last_modified_start_date": "last_modified >= ${VALUE}",
+                "last_modified_end_date": "last_modified <= ${VALUE}",
+                "include_only_resource_codes": "resource_id IN ${VALUE}",
+                "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
+            }
+        },
+        "destination_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "resource_id IN ${VALUE}",
+                "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
+            }
+        },
+        "source_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "crs.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "crs.resource_id NOT IN ${VALUE}"
+            },
+            "records": {
+                "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+                "year": "${:YEAR_VALUE}",
+                "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+                "resource_id": "crs.resource_id",
+                "core_time_available": "COALESCE(SUM(${wallduration}) * crs.vcpus, 0)"
+            },
+            "groupby": [
+              "${AGGREGATION_UNIT}_id",
+              "year",
+              "${AGGREGATION_UNIT}",
+              "resource_id"
+            ],
+            "joins":[
+              {
+                  "name": "cloud_resource_specs",
+                  "alias": "crs",
+                  "schema": "${SOURCE_SCHEMA}"
+              }
+            ],
+            "where": [
+              "crs.start_day_id <= ${:PERIOD_END_DAY_ID} AND crs.end_day_id >= ${:PERIOD_START_DAY_ID}"
+          ],
+          "macros": [{
+              "name": "wallduration",
+              "file": "statistic_ratio_case.sql",
+              "args": {
+                  "statistic": "(crs.end_date_ts - crs.start_date_ts)",
+                  "max": "${:PERIOD_SECONDS}",
+                  "src_start_ts": "crs.start_date_ts",
+                  "src_end_ts": "crs.end_date_ts",
+                  "dest_start_ts": "${:PERIOD_START_TS}",
+                  "dest_end_ts": "${:PERIOD_END_TS}"
+              }
+          }]
+     }
+}

@@ -16,7 +16,7 @@
             "resource_id": "${RESOURCE_ID}",
             "memory_mb": "memory_mb",
             "vcpus": "vcpus",
-            "spec_date": "date"
+            "fact_date": "date"
         }
     }
 }

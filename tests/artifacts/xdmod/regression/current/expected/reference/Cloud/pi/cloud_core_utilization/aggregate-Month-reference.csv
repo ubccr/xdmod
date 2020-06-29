@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (Hours): by PI"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+PI,"Core Hour Utilization (Hours)"
+"Tern, Sandwich",1.4502
+---------

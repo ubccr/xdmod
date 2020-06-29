@@ -69,6 +69,8 @@ toc:
         url: /cloud.html
       - page: Storage Metrics
         url: /storage.html
+      - page: GPU Metrics
+        url: /gpu-metrics.html
       - page: Data Warehouse Export (Beta)
         url: /dw-export.html
   - title: Resource Manager Notes
