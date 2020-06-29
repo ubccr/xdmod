@@ -15,7 +15,7 @@ set timeout 240
 spawn "xdmod-setup"
 
 selectMenuOption 1
-answerQuestion {Site Address} http://localhost:8080/
+answerQuestion {Site Address} https://localhost/
 provideInput {Email Address:} xdmod@example.com
 answerQuestion {Java Path} /usr/bin/java
 answerQuestion {Javac Path} /usr/bin/javac
