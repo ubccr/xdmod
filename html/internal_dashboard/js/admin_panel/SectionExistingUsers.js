@@ -292,7 +292,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         if (resp === 'no') {
-                            self.resetDirtyState();
+                            self.revertUserSettings();
 
                             updateSaveIndicator();
                             self.reloadUserList(menuItem.type_id);
@@ -1383,7 +1383,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                                 }
 
                                 if (resp === 'no') {
-                                    self.resetDirtyState();
+                                    self.revertUserSettings();
                                     // eslint-disable-next-line no-use-before-define
                                     updateSaveIndicator();
 
