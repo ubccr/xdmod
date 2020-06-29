@@ -247,22 +247,25 @@ Defines the ranges used for number of processors/cores in "Job Size"
 charts.  Sites may want to align the bucket sizes with the number of
 cores per node on their resources.
 
-    [
-        [1,       1,          1, "1"],
-        [2,       2,          2, "2"],
-        [3,       3,          4, "3 - 4"],
-        [4,       5,          8, "5 - 8"],
-        [5,       9,         16, "9 - 16"],
-        [6,      17,         32, "17 - 32"],
-        [7,      33,         64, "33 - 64"],
-        [8,      65,        128, "65 - 128"],
-        [9,     129,        256, "129 - 256"],
-        [10,    257,        512, "257 - 512"],
-        [11,    513,       1024, "513 - 1024"],
-        [12,   1025,       2048, "1k - 2k"],
-        [13,   2049,       4096, "2k - 4k"],
-        [14,   4097, 2147483647, "> 4k"]
-    ]
+```json
+[
+    ["id", "min_processors", "max_processors", "description"],
+    [1,       1,          1, "1"],
+    [2,       2,          2, "2"],
+    [3,       3,          4, "3 - 4"],
+    [4,       5,          8, "5 - 8"],
+    [5,       9,         16, "9 - 16"],
+    [6,      17,         32, "17 - 32"],
+    [7,      33,         64, "33 - 64"],
+    [8,      65,        128, "65 - 128"],
+    [9,     129,        256, "129 - 256"],
+    [10,    257,        512, "257 - 512"],
+    [11,    513,       1024, "513 - 1024"],
+    [12,   1025,       2048, "1k - 2k"],
+    [13,   2049,       4096, "2k - 4k"],
+    [14,   4097, 2147483647, "> 4k"]
+]
+```
 
 After changing this file it must be re-ingested and all job data must be
 re-aggregated.  If the job data are not re-aggregated the new labels will be
