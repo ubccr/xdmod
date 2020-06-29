@@ -24,10 +24,15 @@ General Upgrade Notes
 RPM Upgrade Process
 -------------------
 
-After upgrading the RPM, you may need to manually update your Apache
-config file (`/etc/httpd/conf.d/xdmod.conf`).  Check to see if a file
-named `/etc/httpd/conf.d/xdmod.conf.rpmnew` exists.  If so, you'll need
-to merge the changes into `/etc/httpd/conf.d/xdmod.conf`.
+The Open XDMoD 9.0 RPM no longer puts the example Apache configuration
+into the Apache configuration directory. Instead an example configuration
+is provided in the `/usr/share/xdmod/templates` directory.
+After upgrading the RPM, you will need to manually update your Apache
+config file following the [Apache configuration](configuration.html#apache-configuration) instructions.
+
+If you have edited the previous Apache config file (`/etc/httpd/conf.d/xdmod.conf`) then
+it will be saved in `/etc/httpd/conf.d/xdmod.conf.rpmsave`. If the Open XDMoD instance was
+using the original configuration unmodified then the old file will be removed.
 
 ### Download Latest Open XDMoD RPM package
 

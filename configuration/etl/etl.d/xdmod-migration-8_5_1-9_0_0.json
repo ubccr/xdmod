@@ -282,6 +282,7 @@
             "class": "ManageTables",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
+                "jobs/shredder/job-pbs.json",
                 "jobs/shredder/job.json",
                 "jobs/staging/job.json"
             ],
@@ -338,6 +339,27 @@
             "description": "",
             "sql_file_list": [
                 "migrations/8.5.1-9.0.0/jobs-gpu/shredded_job_slurm-to-shredded_job.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "shredded_job_pbs-to-shredded_job",
+            "description": "",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/jobs-gpu/shredded_job_pbs-to-shredded_job.sql"
             ],
             "endpoints": {
                 "source": {
