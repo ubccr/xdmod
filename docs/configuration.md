@@ -273,6 +273,44 @@ displayed, but will not be accurate if the corresponding bucket has changed.
 xdmod-ingestor --aggregate=job --last-modified-start-date 1970-01-01
 ```
 
+### etl/etl_data.d/jobs/xdw/gpu-buckets.json
+
+Defines the ranges used for the number of GPUs in "GPU Count" charts.  Sites
+may want to align the bucket sizes with the number of GPUs per node on their
+resources.
+
+```json
+[
+    ["id", "min_gpus", "max_gpus", "description"],
+    [1,       0,           0, "0"],
+    [2,       1,           1, "1"],
+    [3,       2,           2, "2"],
+    [4,       3,           3, "3"],
+    [5,       4,           4, "4"],
+    [6,       5,           5, "5"],
+    [7,       6,           6, "6"],
+    [8,       7,           7, "7"],
+    [9,       8,           8, "8"],
+    [10,      9,          16, "9 - 16"],
+    [11,      17,         32, "17 - 32"],
+    [12,      33,         64, "33 - 64"],
+    [13,      65,        128, "65 - 128"],
+    [14,     129,        256, "129 - 256"],
+    [15,     257,        512, "257 - 512"],
+    [16,     513,       1024, "513 - 1024"],
+    [17,    1025,       2048, "1k - 2k"],
+    [18,    2049,       4096, "2k - 4k"],
+    [19,    4097, 2147483647, "> 4k"]
+]
+```
+
+After changing this file it must be re-ingested and all job data must be
+re-aggregated.  If the job data are not re-aggregated the new labels will be
+displayed, but will not be accurate if the corresponding bucket has changed.
+
+See the section above for commands that can be used to re-ingest and
+re-aggregate the data.
+
 ### roles.json
 
 Defines roles and the modules and statistics that each role grants
