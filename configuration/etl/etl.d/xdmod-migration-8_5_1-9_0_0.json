@@ -459,6 +459,24 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "remove-role-tables",
+            "description": "Remove the Role related tables as they are no longer used.",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/role-table-cleanup.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logger Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ]
 }
