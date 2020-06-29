@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (Hours)"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Summary,"Core Hour Utilization (Hours)"
+Screwdriver,0.2525
+---------

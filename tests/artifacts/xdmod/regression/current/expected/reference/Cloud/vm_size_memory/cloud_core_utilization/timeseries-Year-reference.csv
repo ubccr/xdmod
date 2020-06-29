@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (Hours): by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[2 - 4 GB] Core Hour Utilization (Hours)","[8 - 16 GB] Core Hour Utilization (Hours)","[< 2 GB] Core Hour Utilization (Hours)","[4 - 8 GB] Core Hour Utilization (Hours)"
+2018,0.0546,0.0174,0.0003,0.0000
+---------
