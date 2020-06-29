@@ -819,9 +819,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     if (field.originalValue !== field.getValue()) {
                         field.originalValue = field.getValue();
                     }
-                    if (field.startValue !== field.getValue()) {
-                        field.startValue = field.getValue();
-                    }
                 }
             }
         };
