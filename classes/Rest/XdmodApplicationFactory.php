@@ -132,7 +132,7 @@ class XdmodApplicationFactory
                             $response->headers->set('Vary', 'Origin');
                         }
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // this catches if the section or config item does not exist
                     // in that case we just carry on
                 }
