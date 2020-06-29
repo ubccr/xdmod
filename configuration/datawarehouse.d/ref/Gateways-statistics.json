@@ -1,8 +1,8 @@
 {
     "active_person_count": {
         "$overwrite": {
-            "description_html": "The total number of  ${REALM_NAME} users that used ${ORGANIZATION_NAME} resources.",
-            "name": "Number of ${REALM_NAME} Users: Active"
+            "description_html": "The total number of ${REALM_NAME} that used ${ORGANIZATION_NAME} resources.",
+            "name": "Number of ${REALM_NAME}: Active"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/active_person_count"
     },
@@ -15,7 +15,7 @@
     },
     "active_resource_count": {
         "$overwrite": {
-            "description_html": "The total number of active ${ORGANIZATION_NAME} resources using ${REALM_NAME}.",
+            "description_html": "The total number of active ${ORGANIZATION_NAME} resources supporting ${REALM_NAME}.",
             "name": "Number of ${REALM_NAME} Resources: Active"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/active_resource_count"
@@ -43,7 +43,7 @@
     },
     "avg_processors": {
         "$overwrite": {
-            "description_html": "The average job size per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job.",
+            "description_html": "The average job size per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a job.",
             "name": "Job Size: Per ${REALM_NAME} Job"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_processors"
@@ -64,7 +64,7 @@
     },
     "expansion_factor": {
         "$overwrite": {
-            "description_html": "The average job size per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a (parallel) job."
+            "description_html": "The average job size per ${ORGANIZATION_NAME} ${REALM_NAME} job.<br><i>Job Size: </i>The number of processor cores used by a job."
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/expansion_factor"
     },
