@@ -100,6 +100,89 @@ class SlurmShredderTest extends JobShredderBaseTestCase
         $shredder->shredLine($line);
     }
 
+    /**
+     * Test how job records with non-ended job states are handled.
+     *
+     * @dataProvider nonEndedJobStateLogProvider
+     */
+    public function testNonEndedJobStateHandling($line, $messages)
+    {
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->never())
+            ->method('insertRow');
+
+        $logger = $this
+            ->getMockBuilder('\Log')
+            ->setMethods(['debug', 'warning'])
+            ->getMock();
+        $logger
+            ->expects($this->never())
+            ->method('warning');
+
+        // "withConsecutive" requires argument unpacking.
+        call_user_func_array(
+            [
+                $logger->expects($this->exactly(count($messages['debug'])))
+                    ->method('debug'),
+                'withConsecutive'
+            ],
+            $this->convertLoggerArgumentsToAssertions($messages['debug'])
+        );
+
+        $shredder->setLogger($logger);
+        $shredder->shredLine($line);
+    }
+
+    /**
+     * Test how job records with unknown job states are handled.
+     *
+     * @dataProvider unknownJobStateLogProvider
+     */
+    public function testUnknownJobStateHandling($line, $messages)
+    {
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->never())
+            ->method('insertRow');
+
+        $logger = $this
+            ->getMockBuilder('\Log')
+            ->setMethods(['debug', 'warning'])
+            ->getMock();
+
+        // "withConsecutive" requires argument unpacking.
+        call_user_func_array(
+            [
+                $logger->expects($this->exactly(count($messages['debug'])))
+                    ->method('debug'),
+                'withConsecutive'
+            ],
+            $this->convertLoggerArgumentsToAssertions($messages['debug'])
+        );
+
+        // "withConsecutive" requires argument unpacking.
+        call_user_func_array(
+            [
+                $logger->expects($this->exactly(count($messages['warning'])))
+                    ->method('warning'),
+                'withConsecutive'
+            ],
+            $this->convertLoggerArgumentsToAssertions($messages['warning'])
+        );
+
+        $shredder->setLogger($logger);
+        $shredder->shredLine($line);
+    }
+
     public function accountingLogProvider()
     {
         return $this->getLogFileTestCases('accounting-logs');
@@ -113,5 +196,33 @@ class SlurmShredderTest extends JobShredderBaseTestCase
     public function accountingLogWithGpuGresProvider()
     {
         return $this->getLogFileTestCases('accounting-logs-with-gpu-gres');
+    }
+
+    public function nonEndedJobStateLogProvider()
+    {
+        return $this->getLogFileTestCases('non-ended-job-state');
+    }
+
+    public function unknownJobStateLogProvider()
+    {
+        return $this->getLogFileTestCases('unknown-job-state');
+    }
+
+    /**
+     * Convert test data to PHPUnit asserts.
+     *
+     * Transforms the test used to test log messages.  Input is an array of
+     * strings that are regular expression.
+     *
+     * @param string[] $loggerPatterns
+     * @return array[]
+     */
+    private function convertLoggerArgumentsToAssertions(array $logPatterns)
+    {
+        $assertions = [];
+        foreach ($logPatterns as $pattern) {
+            $assertions[] = [$this->matchesRegularExpression($pattern)];
+        }
+        return $assertions;
     }
 }
