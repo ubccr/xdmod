@@ -32,7 +32,8 @@
             {
                 "name": "vcpus",
                 "type": "int(5)",
-                "nullable": false
+                "nullable": false,
+                "default": null
             },
             {
                 "name": "start_date_ts",
