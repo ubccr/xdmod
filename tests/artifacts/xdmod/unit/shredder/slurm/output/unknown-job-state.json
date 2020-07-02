@@ -1,0 +1,20 @@
+[
+    {
+        "warning": [
+            "/^Found job with unknown state/"
+        ],
+        "debug": [
+            "/^Shredding line/",
+            "/^Skipping job with unknown state/"
+        ]
+    },
+    {
+        "warning": [
+            "/^Found job with unknown state/"
+        ],
+        "debug": [
+            "/^Shredding line/",
+            "/^Skipping job with unknown state/"
+        ]
+    }
+]

@@ -178,3 +178,10 @@ sites should use the https:// prefix in the web address.
 The template Apache configuration file must be edited to specify the path to
 valid SSL certificates. See the [webserver configuration section](configuration.html#apache-configuration)
 for details on how to configure the server.
+
+### Why do I see the warning message "Skipping job with unknown state ..." while shredding Slurm data?
+
+The Open XDMoD Slurm shredder will accept data for jobs in all states, but
+ignore jobs that have not ended.  If an unknown job state is encountered this
+warning message will be generated.  Please notify the Open XDMoD developers
+about the unknown state using the [support](support.html) contact information.
