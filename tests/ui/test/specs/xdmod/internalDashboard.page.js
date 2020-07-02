@@ -109,21 +109,7 @@ class InternalDashboard {
                     }
                 },
                 current_users: {
-                    container: '//div[@id="admin_panel_user_editor"]',
-                    toolbar: {
-                        container: function () {
-                            return `${self.selectors.create_manage_users.current_users.container}//div[contains(@class, "x-toolbar")]`;
-                        },
-                        actions: {
-                            button: function () {
-                                return `${self.selectors.create_manage_users.current_users.toolbar.container()}//button[.="Actions"]`;
-                            },
-                            container: '//div[contains(@class, "existing_users_action_menu")]',
-                            itemWithText: function (text) {
-                                return `${self.selectors.create_manage_users.current_users.toolbar.actions.container}//span[.="${text}"]`;
-                            }
-                        }
-                    },
+                    container: '//div[@id="admin_tab_existing_user"]',
                     dialogs: {
                         deleteUser: {
                             container: '//div[contains(@class, "delete_user") and contains(@class, "x-window")]',
@@ -134,11 +120,55 @@ class InternalDashboard {
                     },
                     settings: {
                         container: '//div[@id="admin_panel_user_editor"]',
-                        inputByLabelText: function (labelText, inputType) {
+                        toolbar: {
+                            container: function () {
+                                return `${self.selectors.create_manage_users.current_users.settings.container}//div[contains(@class, "x-toolbar")]`;
+                            },
+                            actions: {
+                                button: function () {
+                                    return `${self.selectors.create_manage_users.current_users.settings.toolbar.container()}//button[.="Actions"]`;
+                                },
+                                container: '//div[contains(@class, "existing_users_action_menu")]',
+                                itemWithText: function (text) {
+                                    return `${self.selectors.create_manage_users.current_users.settings.toolbar.actions.container}//span[.="${text}"]`;
+                                }
+                            }
+                        },
+                        inputByLabel: function (labelText, inputType) {
                             return `${self.selectors.create_manage_users.current_users.settings.container}//label[contains(text(), "${labelText}")]/parent::*//input[@type="${inputType}"]`;
                         },
-                        inputTriggerByLabelText: function (labelText) {
+                        dropDownTriggerByLabel: function (labelText) {
                             return `${self.selectors.create_manage_users.current_users.settings.container}//label[contains(text(), "${labelText}")]/parent::*//img[contains(@class, "x-form-trigger")]`;
+                        },
+                        noUserSelectedModal: function () {
+                            return `${self.selectors.create_manage_users.current_users.settings.container}//div[contains(@class, 'ext-el-mask-msg')]//div[contains(text(), 'Select A User From The List To The Left')]`;
+                        }
+                    },
+                    user_list: {
+                        container: function () {
+                            return `${self.selectors.create_manage_users.current_users.container}//div[contains(@class, 'admin_panel_existing_user_list')]`;
+                        },
+                        toolbar: {
+                            container: function () {
+                                return `${self.selectors.create_manage_users.current_users.user_list.container()}//div[contains(@class, 'x-panel-tbar')]`;
+                            },
+                            buttonByLabel: function (labelText, buttonText) {
+                                return `${self.selectors.create_manage_users.current_users.user_list.toolbar.container()}//div[contains(text(), "${labelText}")]/following::*//button[contains(text(), "${buttonText}")]`;
+                            }
+                        },
+                        dropDownItemByText: function (text) {
+                            return `//div[contains(@class, 'x-menu')]//ul[contains(@class, 'x-menu-list')]//span[contains(text(), '${text}')]/parent::*[contains(@class, 'x-menu-item')]`;
+                        },
+                        /**
+                         * Retrieve a column via `column_name`, for a user via
+                         * `username` which corresponds to a value located in the
+                         * `Username` column.
+                         *
+                         * @param username    {string}
+                         * @returns {string}
+                         */
+                        col_for_user: function (username) {
+                            return `${self.selectors.create_manage_users.current_users.user_list.container()}//div[contains(@class, "x-grid3-body")]//table//td[.="${username}"]`;
                         }
                     },
                     button: function (text) {
@@ -209,6 +239,11 @@ class InternalDashboard {
             deleteSuccessNotification: function (username) {
                 return self.selectors.modal.containerByTitle('User Management') +
                     '//b[text()[1][contains(., "User")] and text()[2][contains(., "deleted from the portal")]]/b[text() = "' +
+                    username + '"]/ancestor::node()[1]';
+            },
+            updateSuccessNotification: function (username) {
+                return self.selectors.modal.containerByTitle('User Management') +
+                    '//b[text()[1][contains(., "User")] and text()[2][contains(., "updated successfully")]]/b[text() = "' +
                     username + '"]/ancestor::node()[1]';
             },
             modal: {

@@ -292,7 +292,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         if (resp === 'no') {
-                            self.resetDirtyState();
+                            self.revertUserSettings();
 
                             updateSaveIndicator();
                             self.reloadUserList(menuItem.type_id);
@@ -787,7 +787,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         /**
          * Reverts the User Settings ( E-Mail Address, User Type, Map To, Institution ) to their original values.
          */
-        var revertUserSettings = function () {
+        self.revertUserSettings = function () {
             // eslint-disable-next-line no-use-before-define
             var fieldValues = userSettings.getForm().getFieldValues();
             for (var id in fieldValues) {
@@ -818,9 +818,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     var field = Ext.getCmp(id);
                     if (field.originalValue !== field.getValue()) {
                         field.originalValue = field.getValue();
-                    }
-                    if (field.startValue !== field.getValue()) {
-                        field.startValue = field.getValue();
                     }
                 }
             }
@@ -982,7 +979,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         self.resetDirtyState();
-                        revertUserSettings();
 
                         updateSaveIndicator();
 
@@ -1324,6 +1320,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             clicksToEdit: 1,
             border: true,
             margins: '2 0 2 2',
+            cls: 'admin_panel_existing_user_list',
 
             viewConfig: {
                 emptyText: 'No users in this category currently exist'
@@ -1383,7 +1380,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                                 }
 
                                 if (resp === 'no') {
-                                    self.resetDirtyState();
+                                    self.revertUserSettings();
                                     // eslint-disable-next-line no-use-before-define
                                     updateSaveIndicator();
 
