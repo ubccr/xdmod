@@ -24,6 +24,7 @@ confirmUpgrade
 
 # Begin 9.0 migration
 provideInput {Re-ingest*} {yes}
+provideInput {Re-ingest*} {yes}
 # End 9.0 migration
 
 expect {

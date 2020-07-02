@@ -1,0 +1,55 @@
+{
+    "#": "Record types are global to all cloud resources",
+
+    "table_definition": {
+        "name": "resourcespecsfact_by_",
+        "table_prefix": "resourcespecsfact_by_",
+        "engine": "MyISAM",
+        "comment": "Record type: accounting, administrative, derived, etc.",
+        "columns": [
+            {
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },{
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },{
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },{
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
+            },{
+                "name": "core_time_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of core time in seconds available for a time period"
+            }
+        ],
+
+        "#": "Note that the primary key is (resource, type, identifier, create_time) rather than",
+        "#": "asset_id so we can take advantage of ON DUPLICATE KEY UPDATE to update existing entries",
+        "#": "and still use auto_increment for new entries.",
+
+        "indexes": [
+            {
+                "name": "index_resource",
+                "columns": [ "resource_id" ]
+            },{
+                "name": "index_period_value",
+                "columns": [ "${AGGREGATION_UNIT}" ]
+            },{
+                "name": "index_period",
+                "columns": [ "${AGGREGATION_UNIT}_id" ]
+            }
+        ]
+    }
+}

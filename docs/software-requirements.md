@@ -110,13 +110,7 @@ by adding the following, but substituting your timezone:
 The PHP website contains the full list of supported [timezones][].
 
 Production Open XDMoD instances should use HTTPS, which is enabled via the webserver
-configuration (see below). Following a defense in depth approach to security,
-it is also recommended to set the php `session.cookie_secure` configuration.
-This ensures that php cookies are only sent over secure connections.
-
-```ini
-session.cookie_secure = 1
-```
+configuration (see below).
 
 [timezones]: https://secure.php.net/manual/en/timezones.php
 

@@ -10,10 +10,7 @@ REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
 
 function copy_template_httpd_conf {
-    sed -e 's/SSLEngine on/SSLEngine off/' \
-        -e 's/\(^\s*\)\(Header always set Strict-Transport-Security\)/\1#\2/' \
-        -e 's/\*:443/\*:8080/' \
-        -e 's/^#Listen 443/Listen 8080/' /usr/share/xdmod/templates/apache.conf > /etc/httpd/conf.d/xdmod.conf
+    cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf
 }
 
 if [ -z $XDMOD_REALMS ]; then
@@ -85,6 +82,7 @@ then
         last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
         sudo -u xdmod xdmod-ingestor
 
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
@@ -113,6 +111,7 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
 
     copy_template_httpd_conf
+    sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
 
     # Remove php-mcrypt until new Docker image is built without it.
     yum -y remove php-mcrypt || true
@@ -147,6 +146,7 @@ then
 
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
         sudo -u xdmod xdmod-ingestor
 

@@ -1,0 +1,14 @@
+[
+    {
+        "debug": [
+            "/^Shredding line/",
+            "/^Skipping job with non-ended state/"
+        ]
+    },
+    {
+        "debug": [
+            "/^Shredding line/",
+            "/^Skipping job with non-ended state/"
+        ]
+    }
+]

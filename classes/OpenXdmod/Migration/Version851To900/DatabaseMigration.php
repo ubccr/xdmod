@@ -7,6 +7,7 @@ use FilterListBuilder;
 use CCR\DB;
 use ETL\Utilities;
 use Xdmod\SlurmResourceParser;
+use Xdmod\PbsResourceParser;
 
 /**
 * Migrate databases from version 8.5.1 to 9.0.0.
@@ -15,7 +16,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 {
     /**
      * Update batch export request realm names, rebuild storage filters lists.
-     * Prompt user and re-ingest slurm GPU data if desired.
+     * Prompt user and re-ingest slurm and PBS GPU data if desired.
      */
     public function execute()
     {
@@ -38,10 +39,14 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 
         $console = Console::factory();
         $console->displayMessage(<<<"EOT"
-This version of Open XDMoD has support for GPU metrics in the jobs realm.  If
-you have shredded Slurm job records in the past it is possible to extract the
-GPU count from the ReqGRES data that was collected.  This will require
-re-ingest and re-aggregating your job data.
+This version of Open XDMoD has support for GPU metrics in the jobs realm.
+
+If you have shredded Slurm job records in the past it is possible to extract
+the GPU count from the ReqGRES data that was collected.  If you have shredded
+PBS job records in the past it is possible to extract the GPU count from the
+Resource_List.nodes data that was collected.
+
+This will require re-ingesting and re-aggregating your job data.
 EOT
         );
         $console->displayBlankLine();
@@ -50,10 +55,25 @@ EOT
             'yes',
             ['yes', 'no']
         );
+        $reingestPbsData = $console->prompt(
+            'Re-ingest and re-aggregate PBS job data?',
+            'yes',
+            ['yes', 'no']
+        );
+
+        if ($reingestSlurmData === 'yes' || $reingestPbsData === 'yes') {
+            Utilities::runEtlPipeline(['jobs-gpu-migration-8_5_1-9_0_0'], $this->logger);
+        }
 
         if ($reingestSlurmData === 'yes') {
-            Utilities::runEtlPipeline(['jobs-gpu-migration-8_5_1-9_0_0'], $this->logger);
             $this->updateSlurmGpuCount();
+        }
+
+        if ($reingestPbsData === 'yes') {
+            $this->updatePbsGpuCount();
+        }
+
+        if ($reingestSlurmData === 'yes' || $reingestPbsData === 'yes') {
             // Use current time from the database in case clocks are not
             // synchronized.
             $lastModifiedStartDate = DB::factory('hpcdb')->query('SELECT NOW() AS now FROM dual')[0]['now'];
@@ -71,6 +91,7 @@ EOT
             $builder->setLogger($this->logger);
             $builder->buildRealmLists('Jobs');
         }
+
         if (\CCR\DB\MySQLHelper::DatabaseExists($dbh->_db_host, $dbh->_db_port, $dbh->_db_username, $dbh->_db_password, 'modw_cloud')) {
             $sql = "SELECT
                       r.name,
@@ -151,6 +172,38 @@ SQL
         } catch (Exception $e) {
             $dbh->rollBack();
             $this->logger->err('Failed to update slurm job records: '  . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update the GPU count for all PBS records in
+     * `mod_shredder`.`shredded_job_pbs` that have Resource_List.nodes data.
+     */
+    private function updatePbsGpuCount()
+    {
+        $dbh = DB::factory('shredder');
+        $dbh->beginTransaction();
+        try {
+            $this->logger->notice('Querying PBS job records');
+            $rows = $dbh->query(<<<'SQL'
+SELECT shredded_job_pbs_id AS id, resource_list_nodes
+FROM shredded_job_pbs
+WHERE resource_list_nodes LIKE '%gpu%'
+SQL
+            );
+            $this->logger->notice('Updating PBS job records');
+            $sth = $dbh->prepare('UPDATE shredded_job_pbs SET resources_used_gpus = :gpuCount WHERE shredded_job_pbs_id = :id');
+            $resourceParser = new PbsResourceParser();
+            foreach ($rows as $row) {
+                $resources = $resourceParser->parseResourceListNodes($row['resource_list_nodes']);
+                $gpuCount = $resourceParser->getGpuCountResourceListNodes($resources);
+                $sth->execute(['gpuCount' => $gpuCount, 'id' => $row['id']]);
+            }
+            $dbh->commit();
+            $this->logger->notice('Done updating PBS job records');
+        } catch (Exception $e) {
+            $dbh->rollBack();
+            $this->logger->err('Failed to update PBS job records: '  . $e->getMessage());
         }
     }
 

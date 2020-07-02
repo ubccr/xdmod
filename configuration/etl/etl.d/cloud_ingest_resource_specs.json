@@ -18,12 +18,20 @@
                 }
             }
         },
+        "shred-cloud-resource-specs": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        },
         "ingest-cloud-resource-specs": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        },
+        "aggregate-cloud-resource-specs": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions"
         }
     },
-    "ingest-cloud-resource-specs": [
+    "shred-cloud-resource-specs": [
         {
             "name": "RawCloudResourceSpecsIngestor",
             "description": "Loading cloud resource specs",
@@ -60,10 +68,46 @@
             }
         },
         {
+            "name": "CloudResourceSpecsAddEndDay",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_common/resource_specification_end_day.sql"
+            ]
+        }
+    ],
+    "ingest-cloud-resource-specs": [
+        {
             "name": "CloudResourceSpecsReconstructor",
-            "class": "StateReconstructorTransformIngestor",
-            "definition_file": "cloud_common/ingest_resource_specs.json",
-            "description": "Reconstructs discrete runs from cloud events"
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_common/resource_specifications.json",
+            "description": "Sets a start and end time for memory and vcpu paring for a compute node on a cloud resource"
+        }
+    ],
+    "aggregate-cloud-resource-specs": [
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ],
+            "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Aggregate DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_aggregates",
+                  "create_schema_if_not_exists": true,
+                  "truncate_destination": false
+              }
+           }
         }
     ]
 }
