@@ -1,0 +1,12 @@
+title
+"Core Hour Utilization (Hours): by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"System Username","Core Hour Utilization (Hours)"
+yerwa,1.0817
+ylwwa,0.3647
+setusca,0.0037
+---------

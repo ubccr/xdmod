@@ -5,7 +5,7 @@ require_once dirname(__FILE__) . '/../../../configuration/linker.php';
 use CCR\DB;
 use Models\Services\Users;
 
-@session_start();
+\xd_security\start_session();
 
 $response = array();
 

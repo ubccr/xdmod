@@ -9,8 +9,6 @@ use Models\Realm;
 use Models\Services\Acls;
 use Models\Services\Realms;
 
-@session_start();
-
 // Fix to the 'trailing slash' issue -------------------------------
 
 // Get URL ------------
@@ -30,6 +28,8 @@ if (preg_match('/index.php(\/+)/i', $url)) {
 }
 
 require_once dirname(__FILE__) . '/../configuration/linker.php';
+
+\xd_security\start_session();
 
 $userLoggedIn = isset($_SESSION['xdUser']);
 if ($userLoggedIn) {

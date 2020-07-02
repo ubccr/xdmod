@@ -9,6 +9,10 @@ REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
 REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
 
+function copy_template_httpd_conf {
+    cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf
+}
+
 if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=jobs,storage,cloud
 fi
@@ -28,6 +32,7 @@ then
 
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    copy_template_httpd_conf
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
@@ -77,6 +82,7 @@ then
         last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
         sudo -u xdmod xdmod-ingestor
 
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
@@ -103,6 +109,9 @@ fi
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+
+    copy_template_httpd_conf
+    sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
 
     # Remove php-mcrypt until new Docker image is built without it.
     yum -y remove php-mcrypt || true
@@ -137,6 +146,7 @@ then
 
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
         sudo -u xdmod xdmod-ingestor
 

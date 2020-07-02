@@ -10,7 +10,9 @@ namespace OpenXdmod\Shredder;
 use Exception;
 use DateTime;
 use DateInterval;
+use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
+use Xdmod\PbsResourceParser;
 
 class Pbs extends Shredder
 {
@@ -75,6 +77,7 @@ class Pbs extends Shredder
         'resources_used_walltime',
         'resources_used_nodes',
         'resources_used_cpus',
+        'resources_used_gpus',
         'resources_used_cput',
         'resource_list_nodes',
         'resource_list_procs',
@@ -137,6 +140,7 @@ class Pbs extends Shredder
         'wait_time'       => 'GREATEST(CAST(start AS SIGNED) - CAST(ctime AS SIGNED), 0)',
         'node_count'      => 'resources_used_nodes',
         'cpu_count'       => 'resources_used_cpus',
+        'gpu_count'       => 'resources_used_gpus',
         'cpu_req'         => 'resource_list_ncpus',
         'mem_req'         => 'CAST(resource_list_mem AS CHAR)',
         'timelimit'       => 'resource_list_walltime',
@@ -155,6 +159,20 @@ class Pbs extends Shredder
         'nodes'           => 'resources_used_nodes',
         'cpus'            => 'resources_used_cpus',
     );
+
+    /**
+     * @var \Xdmod\PbsResourceParser
+     */
+    private $resourceParser;
+
+    /**
+     * Initialize resource parser.
+     */
+    public function __construct(iDatabase $db)
+    {
+        parent::__construct($db);
+        $this->resourceParser = new PbsResourceParser();
+    }
 
     /**
      * @inheritdoc
@@ -243,6 +261,21 @@ class Pbs extends Shredder
                 $job['groupname'] = $value;
             } else {
                 $job[$key] = $value;
+            }
+        }
+
+        if (array_key_exists('resource_list_nodes', $job)) {
+            $nodesData = $this->resourceParser->parseResourceListNodes($job['resource_list_nodes']);
+            $job['resources_used_gpus'] = $this->resourceParser->getGpuCountFromResourceListNodes($nodesData);
+        }
+
+        // Special cases for SDSC Comet.
+        if (!array_key_exists('resources_used_gpus', $job) || $job['resources_used_gpus'] === 0) {
+            if (array_key_exists('resource_list_gpus', $job)) {
+                $job['resources_used_gpus'] = $job['resource_list_gpus'];
+            } elseif (array_key_exists('resource_list_nodect', $job)) {
+                $nodesData = $this->resourceParser->parseResourceListNodes($job['resource_list_nodect']);
+                $job['resources_used_gpus'] = $this->resourceParser->getGpuCountFromResourceListNodes($nodesData);
             }
         }
 
