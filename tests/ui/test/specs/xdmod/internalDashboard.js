@@ -1,4 +1,30 @@
 const page = require('./internalDashboard.page.js');
+const settings = [
+    {
+        label: 'E-Mail Address',
+        type: 'text',
+        updated: 'btest@test.example.com',
+        original: 'btest@example.com'
+    },
+    {
+        label: 'User Type',
+        type: 'dropdown',
+        updated: 'Testing',
+        original: 'External'
+    },
+    {
+        label: 'Map To',
+        type: 'dropdown',
+        updated: 'Auk, Great',
+        original: 'Unknown, Unknown'
+    },
+    {
+        label: 'Institution',
+        type: 'dropdown',
+        updated: 'Unknown Organization',
+        original: 'Screwdriver'
+    }
+];
 
 describe('Internal Dashboard', function () {
     page.login('mgr');
@@ -127,28 +153,8 @@ describe('Internal Dashboard', function () {
         });
     });
     describe('Make sure that updates to the newly created users Settings can be discarded', function () {
-        const settings = [
-            {
-                label: 'User Type',
-                type: 'text',
-                updated: 'Testing',
-                expected: 'External'
-            },
-            {
-                label: 'Map To',
-                type: 'text',
-                updated: 'Auk, Great',
-                expected: 'Unknown, Unknown'
-            },
-            {
-                label: 'Institution',
-                type: 'text',
-                updated: 'Unknown Organization',
-                expected: 'Screwdriver'
-            }
-        ];
-        settings.forEach(function (value) {
-            describe(`Checking: ${value.label}`, function () {
+        settings.forEach(function (setting) {
+            describe(`Checking: ${setting.label}`, function () {
                 it('Select the "Existing Users" tab', function () {
                     browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
                     browser.waitAndClick(page.selectors.user_management.tabs.existing_users());
@@ -164,23 +170,31 @@ describe('Internal Dashboard', function () {
                     browser.waitForVisible(page.selectors.create_manage_users.window);
                     browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
                 });
-                it(`Change the "${value.label}" to "${value.updated}"`, function () {
-                    const inputTrigger = page.selectors.create_manage_users.current_users.settings.inputTriggerByLabelText(value.label);
-                    browser.waitForVisible(inputTrigger);
-                    browser.click(inputTrigger);
+                it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
+                    if ('dropdown' === setting.type) {
+                        const inputTrigger = page.selectors.create_manage_users.current_users.settings.dropDownTriggerByLabel(setting.label);
+                        browser.waitForVisible(inputTrigger);
+                        browser.click(inputTrigger);
 
-                    const inputDropDown = page.selectors.combo.container;
-                    browser.waitForVisible(inputDropDown);
+                        const inputDropDown = page.selectors.combo.container;
+                        browser.waitForVisible(inputDropDown);
 
-                    const dropDownValue = page.selectors.combo.itemByText(value.updated);
-                    browser.waitForVisible(dropDownValue);
-                    browser.waitAndClick(dropDownValue);
+                        const dropDownValue = page.selectors.combo.itemByText(setting.updated);
+                        browser.waitForVisible(dropDownValue);
+                        browser.waitAndClick(dropDownValue);
 
-                    browser.waitForInvisible(inputDropDown);
+                        browser.waitForInvisible(inputDropDown);
 
-                    const input = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
-                    const updatedValue = browser.getValue(input);
-                    expect(updatedValue).to.equal(value.updated);
+                        const input = page.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, 'text');
+                        const updatedValue = browser.getValue(input);
+                        expect(updatedValue).to.equal(setting.updated);
+                    } else if ('text' === setting.type) {
+                        const input = page.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, setting.type);
+                        browser.waitForVisible(input);
+                        browser.setValue(input, setting.updated);
+                        const updatedValue = browser.getValue(input);
+                        expect(updatedValue).to.equal(setting.updated);
+                    }
                 });
                 it('Ensure that the user dirty message is shown', function () {
                     const dirtyMessage = page.selectors.create_manage_users.bottom_bar.messageByText('unsaved changes');
@@ -209,17 +223,107 @@ describe('Internal Dashboard', function () {
                     browser.waitForVisible(page.selectors.create_manage_users.window);
                     browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
                 });
-                it(`Check that the ${value.label} is back to ${value.expected}`, function () {
-                    const userTypeInput = page.selectors.create_manage_users.current_users.settings.inputByLabelText(value.label, value.type);
+                it(`Check that the ${setting.label} is back to ${setting.original}`, function () {
+                    const inputType = 'dropdown' === setting.type ? 'text' : setting.type;
+                    const inputElem = page.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, inputType);
 
-                    browser.waitForVisible(userTypeInput);
-                    const userType = browser.getValue(userTypeInput);
-                    expect(userType).to.equal(value.expected);
+                    browser.waitForVisible(inputElem);
+                    const inputValue = browser.getValue(inputElem);
+                    expect(inputValue).to.equal(setting.original);
                 });
                 it('Close the Edit Existing User Modal', function () {
                     const closeButton = page.selectors.create_manage_users.current_users.button('Close');
                     browser.waitForVisible(closeButton);
                     browser.click(closeButton);
+                });
+            });
+        });
+    });
+    describe('Make sure that the newly created user can have its settings updated successfully', function () {
+        settings.forEach(function (setting) {
+            describe(`Checking: ${setting.label}`, function () {
+                it('Select the "Existing Users" tab', function () {
+                    browser.waitForVisible(page.selectors.user_management.tabs.existing_users());
+                    browser.waitAndClick(page.selectors.user_management.tabs.existing_users());
+                });
+                it('Ensure that the "Existing Users" table is displayed', function () {
+                    browser.waitForVisible(page.selectors.existing_users.table.container);
+                });
+                it('Double click the users row in the `Existing Users` table', function () {
+                    const usernameCol = page.selectors.existing_users.table.col_for_user('btest', 'Username');
+                    browser.waitForValue(usernameCol);
+                    browser.doubleClick(usernameCol);
+
+                    browser.waitForVisible(page.selectors.create_manage_users.window);
+                    browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                });
+                it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
+                    if ('dropdown' === setting.type) {
+                        const inputTrigger = page.selectors.create_manage_users.current_users.settings.dropDownTriggerByLabel(setting.label);
+                        browser.waitForVisible(inputTrigger);
+                        browser.click(inputTrigger);
+
+                        const inputDropDown = page.selectors.combo.container;
+                        browser.waitForVisible(inputDropDown);
+
+                        const dropDownValue = page.selectors.combo.itemByText(setting.updated);
+                        browser.waitForVisible(dropDownValue);
+                        browser.waitAndClick(dropDownValue);
+
+                        browser.waitForInvisible(inputDropDown);
+                    } else if ('text' === setting.type) {
+                        const input = page.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, setting.type);
+                        browser.waitForVisible(input);
+                        browser.setValue(input, setting.updated);
+                    }
+                });
+                it('Ensure that the user dirty message is shown', function () {
+                    const dirtyMessage = page.selectors.create_manage_users.bottom_bar.messageByText('unsaved changes');
+                    browser.waitForVisible(dirtyMessage);
+                });
+                it('Click the save button', function () {
+                    const saveButton = page.selectors.create_manage_users.current_users.button('Save Changes');
+                    browser.waitAndClick(saveButton);
+
+                    const updateModal = page.selectors.updateSuccessNotification('btest');
+                    browser.waitForVisible(updateModal);
+                    browser.waitForInvisible(updateModal);
+                });
+                if ('User Type' === setting.label) {
+                    it('Check that the user is not still selected.', function () {
+                        const noUserSelectedModal = page.selectors.create_manage_users.current_users.settings.noUserSelectedModal();
+                        browser.waitForVisible(noUserSelectedModal);
+                    });
+                    it('Check that the user is not listed in the Existing Users table', function () {
+                        const updatedUser = page.selectors.create_manage_users.current_users.user_list.col_for_user('btest', 'Username');
+                        browser.waitForInvisible(updatedUser);
+                    });
+                    it(`Change the Displayed User Type to: "${setting.updated}"`, function () {
+                        const displayedUserType = page.selectors.create_manage_users.current_users.user_list.toolbar.buttonByLabel('Displaying', setting.original);
+                        browser.waitForVisible(displayedUserType);
+                        browser.waitAndClick(displayedUserType);
+
+                        const newUserTypeItem = page.selectors.create_manage_users.current_users.user_list.dropDownItemByText(setting.updated);
+                        browser.waitForVisible(newUserTypeItem);
+                        browser.waitAndClick(newUserTypeItem);
+                    });
+                    it('Check that the user is listed in the Existing Users table.', function () {
+                        const updatedUser = page.selectors.create_manage_users.current_users.user_list.col_for_user('btest', 'Username');
+                        browser.waitForVisible(updatedUser);
+                    });
+                } else {
+                    it(`Check that "${setting.label}" has been updated successfully to "${setting.updated}"`, function () {
+                        const inputType = 'dropdown' === setting.type ? 'text' : setting.type;
+                        const input = page.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, inputType);
+                        browser.waitForVisible(input);
+                        const updatedValue = browser.getValue(input);
+                        expect(updatedValue).to.equal(setting.updated);
+                    });
+                }
+
+                it('Close the edit user modal', function () {
+                    const closeButton = page.selectors.create_manage_users.current_users.button('Close');
+                    browser.waitAndClick(closeButton);
                 });
             });
         });
@@ -239,14 +343,14 @@ describe('Internal Dashboard', function () {
             browser.waitForVisible(page.selectors.create_manage_users.window);
         });
         it('Ensure that the "Actions" button is visible and click it', function () {
-            browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.button());
-            browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.toolbar.actions.button());
+            browser.waitForVisible(page.selectors.create_manage_users.current_users.settings.toolbar.actions.button());
+            browser.waitForLoadedThenClick(page.selectors.create_manage_users.current_users.settings.toolbar.actions.button());
         });
         it('Ensure that the Actions menu has been displayed', function () {
-            browser.waitForVisible(page.selectors.create_manage_users.current_users.toolbar.actions.container);
+            browser.waitForVisible(page.selectors.create_manage_users.current_users.settings.toolbar.actions.container);
         });
         it('Click the "Delete This User" menu item', function () {
-            const deleteUserItem = page.selectors.create_manage_users.current_users.toolbar.actions.itemWithText('Delete This Account');
+            const deleteUserItem = page.selectors.create_manage_users.current_users.settings.toolbar.actions.itemWithText('Delete This Account');
             browser.waitForVisible(deleteUserItem);
             browser.click(deleteUserItem);
         });
