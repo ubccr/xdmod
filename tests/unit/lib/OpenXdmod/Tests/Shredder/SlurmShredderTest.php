@@ -183,6 +183,28 @@ class SlurmShredderTest extends JobShredderBaseTestCase
         $shredder->shredLine($line);
     }
 
+    /**
+     * Test parsing job names that contain multibyte UTF-8 characters.
+     *
+     * @dataProvider utf8MultibyteCharsLogProvider()
+     */
+    public function testUtf8MultibyteCharsParsing($line, $job)
+    {
+        $jobName = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
+
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->once())
+            ->method('insertRow')
+            ->with(new \PHPUnit_Framework_Constraint_ArraySubset(['job_name' => $jobName]));
+        $shredder->setLogger($this->logger);
+        $shredder->shredLine($line);
+    }
+
     public function accountingLogProvider()
     {
         return $this->getLogFileTestCases('accounting-logs');
@@ -206,6 +228,11 @@ class SlurmShredderTest extends JobShredderBaseTestCase
     public function unknownJobStateLogProvider()
     {
         return $this->getLogFileTestCases('unknown-job-state');
+    }
+
+    public function utf8MultibyteCharsLogProvider()
+    {
+        return $this->getLogFileTestCases('utf8-multibyte-chars');
     }
 
     /**
