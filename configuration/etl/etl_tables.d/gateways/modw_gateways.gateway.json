@@ -1,0 +1,58 @@
+{
+  "table_definition": {
+    "name": "gateway",
+    "comment": "Listing of Science Gateways",
+    "engine": "myisam",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "hints": "Foreign key to the person table",
+        "comment": "person_id for the gateway's proxy, or Community, user",
+        "name": "proxy_person_id"
+      },
+      {
+        "type": "varchar(100)",
+        "nullable": false,
+        "hints": "Derived from gateway's Community User name in the person table",
+        "comment": "Short name of the science gateway",
+        "name": "short_name"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": false,
+        "hints": "Derived from gateway's Community User name in the person table",
+        "comment": "Long name of the science gateway",
+        "name": "long_name"
+      },
+      {
+        "type": "varchar(100)",
+        "nullable": true,
+        "default": null,
+        "comment": "Acronym, if known, for the science gateway",
+        "name": "acronym"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "name": "order_id"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "proxy_person_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "foreign_key_constraints": [],
+    "triggers": [],
+    "name": "gateway"
+  }
+}

@@ -1,0 +1,120 @@
+{
+    "acronym": {
+        "attribute_table": "gateway",
+        "attribute_table_schema": "modw_gateways",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "proxy_person_id": "person_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "gateway"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "proxy_person_id",
+                "name": "acronym",
+                "order_id": "order_id",
+                "short_name": "acronym"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "Acronym for the gateway from which the job was submitted.",
+        "name": "Gateway Acronym"
+    },
+    "day": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
+    },
+    "fieldofscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
+    },
+    "gateway": {
+        "attribute_table": "gateway",
+        "attribute_table_schema": "modw_gateways",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "proxy_person_id": "person_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "gateway"
+                }
+            ],
+            "orderby": [
+                "order_id"
+            ],
+            "records": {
+                "id": "proxy_person_id",
+                "name": "long_name",
+                "order_id": "order_id",
+                "short_name": "short_name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The gateway from which the job was submitted.",
+        "name": "Gateway"
+    },
+    "gateway_pi": {
+        "$overwrite": {
+            "description_html": "The principal investigator of a Gateway is the manager of the Gateway.",
+            "name": "Gateway PI"
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi"
+    },
+    "jobsize": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/jobsize"
+    },
+    "jobwaittime": {
+        "$ref": "datawarehouse.d/ref/Jobs-group-bys.json#/jobwaittime"
+    },
+    "jobwalltime": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/jobwalltime"
+    },
+    "month": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
+    },
+    "nodecount": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/nodecount"
+    },
+    "none": {
+        "$ref": "datawarehouse.d/ref/group-by-none.json"
+    },
+    "nsfdirectorate": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/nsfdirectorate"
+    },
+    "parentscience": {
+        "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
+    },
+    "provider": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
+    },
+    "proxy_person": {
+        "$overwrite": {
+            "description_html": "A user who runs jobs on resources on behalf of a Gateway.",
+            "name": "Gateway Community User"
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person"
+    },
+    "quarter": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
+    },
+    "queue": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/queue"
+    },
+    "resource": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/resource"
+    },
+    "resource_type": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/resource_type"
+    },
+    "year": {
+        "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+    }
+}
