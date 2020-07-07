@@ -1,0 +1,79 @@
+{
+    "module": "gateways",
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "modw_gateways",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+        "ingest": {
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions"
+        }
+    },
+
+    "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
+    "bootstrap": [
+        {
+            "name": "table-create",
+            "description": "Setup tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "# order-matters": "Because of foreign key constraints",
+            "definition_file_list": [
+                "gateways/modw_gateways.gateway.json",
+                "gateways/modw_gateways.enduser.json",
+                "gateways/modw_gateways.job_metadata.json"
+            ]
+        }
+    ],
+    "ingest": [
+	{
+	    "name": "gateway",
+	    "description": "Gateway information",
+            "definition_file": "gateways/gateway.json"
+	}
+    ],
+    "aggregate": [
+         {
+            "name": "aggregate",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Job Record/Task database",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
+                    "schema": "modw_gateways",
+                    "create_schema_if_not_exists": true
+                }
+            },
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate Gateway job records",
+            "definition_file": "gateways/hpc-aggregation.json",
+            "table_prefix": "gatewayfact_by_",
+            "aggregation_units": ["day", "month", "quarter", "year"]
+        }
+    ]
+}

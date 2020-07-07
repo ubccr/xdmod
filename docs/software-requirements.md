@@ -100,6 +100,10 @@ Additional Notes
 
 ### PHP
 
+Open XDMoD is tested to work with PHP 5.4.16 and may be compatible with more
+recent releases of PHP 5.  Open XDMoD is not compatible with PHP 7 at this
+time.
+
 Some Linux distributions (including CentOS) do not set the timezone used
 by PHP in their default configuration.  This will result in many warning
 messages from PHP.  You should set the timezone in your `php.ini` file
@@ -130,6 +134,10 @@ network access.
 
 MySQL 5.5.3+ is currently required for use with Open XDMoD.
 
+Open XDMoD is tested to work with MariaDB 5.5.60 and may be compatible with
+more recent releases of MySQL and MariaDB.  Open XDMoD is currently not
+compatible with MySQL 8.0 at this time.
+
 Some versions of MySQL have binary logging enabled by default.  This can
 be an issue during the setup process if the user specified to create the
 databases does not have the `SUPER` privilege.  If binary logging is not
@@ -150,6 +158,7 @@ setting must be set to at least 16MB. The recommended setting in the mysql serve
 
 ```ini
 [mysqld]
+sql_mode = ''
 max_allowed_packet = 1G
 group_concat_max_len = 16M
 innodb_stats_on_metadata = off
