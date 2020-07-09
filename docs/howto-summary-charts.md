@@ -27,40 +27,46 @@ JSON serialized by PHP. If you are unsure of your `user_id`, check the
 Next you'll need to deserialize the data then examine the JSON.  Copy
 this code into a file and run it with the data from your user profile:
 
-    <?php
-    $data = 'a:1:{....'; // Copy your data into this variable.
-    $profile = unserialize($data);
-    $queries = json_decode($profile['queries'], true);
-    foreach ($queries as $name => $query) {
-        echo $name, ":\n";
-        echo $query['config'], "\n\n";
-    }
+```php
+<?php
+$data = 'a:1:{....'; // Copy your data into this variable.
+$profile = unserialize($data);
+$queries = json_decode($profile['queries'], true);
+foreach ($queries as $name => $query) {
+    echo $name, ":\n";
+    echo $query['config'], "\n\n";
+}
+```
 
 This will output the JSON for each chart saved for the user the data was
 copied from.  Find the chart that you want to add to the default summary
 page and copy it into `summary_charts` section of `roles.json`.  Add the
 JSON object list after the name of the chart.
 
-    "summary_charts": [
-        {
-            ...
-        },
-        {
-            ...
-        },
+```json
+"summary_charts": [
+    {
         ...
-    ]
+    },
+    {
+        ...
+    },
+    ...
+]
+```
 
 You should also add a title to JSON for the chart that will be displayed
 on the summary page.
 
-    "summary_charts": [
-        {
-            "title": "Chart Title",
-            ...
-        },
+```json
+"summary_charts": [
+    {
+        "title": "Chart Title",
         ...
-    ]
+    },
+    ...
+]
+```
 
 Note that it is possible to have a different set of charts for different
 roles, but the default configuration uses a single set of charts for all

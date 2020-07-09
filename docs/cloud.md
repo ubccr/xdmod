@@ -114,8 +114,10 @@ After importing this data you must ingest it for the date range of any data you 
 ### Format
 The format of the csv file into set a project to PI association is shown below
 
-    pi,project_name,resource_name
-    pi2,project_name2,resource_name
+```csv
+pi,project_name,resource_name
+pi2,project_name2,resource_name
+```
 
 The first column should be the username of the PI as seen in your resources event log files. The second column is the name of the project
 as seen in your resources event log files. The third column is the name of the resource in XDMoD.

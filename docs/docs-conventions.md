@@ -78,10 +78,12 @@ represented by three dots (`...`).  The fragments may also be a single
 key value pair from an object (e.g. the example below) or a single
 element of an array.
 
-    "summary_charts": [
-        {
-            "title": "Chart Title",
-            ...
-        },
+```json
+"summary_charts": [
+    {
+        "title": "Chart Title",
         ...
-    ]
+    },
+    ...
+]
+```

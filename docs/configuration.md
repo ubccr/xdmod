@@ -326,74 +326,78 @@ There is also a `default` role that is used as a basis of all the other
 roles.  The other roles are user (`usr`), center director (`cd`),
 principal investigator (`pi`), center staff (`cs`) and manager (`mgr`).
 
-    {
-        "roles": {
-            "default": {
-                "permitted_modules": [
-                    {
-                        "name": "tg_summary",
-                        "default": true,
-                        "title": "Summary",
-                        "position": 100,
-                        "javascriptClass": "XDMoD.Module.Summary",
-                        "javascriptReference": "CCR.xdmod.ui.tgSummaryViewer",
-                        "tooltip": "Displays Summary Information",
-                        "userManualSectionName": "Summary Tab"
-                    },
-                    ...
-                ],
-                "query_descripters": [
-                    {
-                        "realm": "Jobs",
-                        "group_by": "none"
-                    },
-                    ...
-                ],
-                "summary_charts": [
-                    ...
-                ],
-            }
-            "usr": {
-                "extends": "default",
-                "dimensions": [
-                    "person"
-                ]
-            },
-            "cd": {
-                "extends": "default",
-                "dimensions": [
-                    "provider"
-                ]
-            },
-            "pi": {
-                "extends": "default",
-                "dimensions": [
-                    "pi"
-                ]
-            },
-            "cs": {
-                "extends": "default",
-                "dimensions": [
-                    "provider"
-                ]
-            },
-            "mgr": {
-                "extends": "default",
-                "dimensions": [
-                    "person"
-                ]
-            }
+```json
+{
+    "roles": {
+        "default": {
+            "permitted_modules": [
+                {
+                    "name": "tg_summary",
+                    "default": true,
+                    "title": "Summary",
+                    "position": 100,
+                    "javascriptClass": "XDMoD.Module.Summary",
+                    "javascriptReference": "CCR.xdmod.ui.tgSummaryViewer",
+                    "tooltip": "Displays Summary Information",
+                    "userManualSectionName": "Summary Tab"
+                },
+                ...
+            ],
+            "query_descripters": [
+                {
+                    "realm": "Jobs",
+                    "group_by": "none"
+                },
+                ...
+            ],
+            "summary_charts": [
+                ...
+            ],
+        },
+        "usr": {
+            "extends": "default",
+            "dimensions": [
+                "person"
+            ]
+        },
+        "cd": {
+            "extends": "default",
+            "dimensions": [
+                "provider"
+            ]
+        },
+        "pi": {
+            "extends": "default",
+            "dimensions": [
+                "pi"
+            ]
+        },
+        "cs": {
+            "extends": "default",
+            "dimensions": [
+                "provider"
+            ]
+        },
+        "mgr": {
+            "extends": "default",
+            "dimensions": [
+                "person"
+            ]
         }
     }
+}
+```
 
 ### organization.json
 
 Defines the organization name and abbreviation.
 
-    {
-        "name": "Example Organization",
-        "abbrev": "EO"
-    }
+```json
+{
+    "name": "Example Organization",
+    "abbrev": "EO"
+}
+```
 
 ### resources.json
 
@@ -417,32 +421,34 @@ The default is that resources are assumed to not allow node sharing.  If
 the SUPReMM module is in use and a resource does allow node sharing then
 this should be set to `true`.
 
-    [
-        {
-            "resource": "resource1",
-            "name": "Resource 1",
-            "description": "Our first HPC resource",
-            "resource_type": "HPC"
-        },
-        {
-            "resource": "resource2",
-            "name": "Resource 2",
-            "resource_type": "HPC"
-            "pi_column": "account_name"
-        },
-        {
-            "resource": "resource3",
-            "name": "Resource 3",
-            "resource_type": "HPC"
-            "timezone": "US/Eastern",
-            "shared_jobs": true
-        },
-        {
-            "resource": "resource4",
-            "name": "Resource 4",
-            "resource_type": "Cloud"
-        }
-    ]
+```json
+[
+    {
+        "resource": "resource1",
+        "name": "Resource 1",
+        "description": "Our first HPC resource",
+        "resource_type": "HPC"
+    },
+    {
+        "resource": "resource2",
+        "name": "Resource 2",
+        "resource_type": "HPC",
+        "pi_column": "account_name"
+    },
+    {
+        "resource": "resource3",
+        "name": "Resource 3",
+        "resource_type": "HPC",
+        "timezone": "US/Eastern",
+        "shared_jobs": true
+    },
+    {
+        "resource": "resource4",
+        "name": "Resource 4",
+        "resource_type": "Cloud"
+    }
+]
+```
 
 ### resource_specs.json
 
@@ -466,38 +472,40 @@ processors are allocated to the jobs stored in the Open XDMoD data
 warehouse.  If this data is omitted, it is assumed that the resource is
 100% allocated.
 
-    [
-        {
-            "resource": "resource1",
-            "nodes": 64,
-            "processors": 1024,
-            "ppn": 16
-        },
-        {
-            "resource": "resource2",
-            "end_date": "2013-12-31",
-            "nodes": 32,
-            "processors": 256,
-            "ppn": 8
-        },
-        {
-            "resource": "resource2",
-            "start_date": "2014-01-01",
-            "end_date": "2014-01-15",
-            "nodes": 64,
-            "processors": 512,
-            "ppn": 8,
-            "percent_allocated": 100
-        }
-        {
-            "resource": "resource2",
-            "start_date": "2014-01-16",
-            "nodes": 65,
-            "processors": 520,
-            "ppn": 8,
-            "percent_allocated": 90
-        }
-    ]
+```json
+[
+    {
+        "resource": "resource1",
+        "nodes": 64,
+        "processors": 1024,
+        "ppn": 16
+    },
+    {
+        "resource": "resource2",
+        "end_date": "2013-12-31",
+        "nodes": 32,
+        "processors": 256,
+        "ppn": 8
+    },
+    {
+        "resource": "resource2",
+        "start_date": "2014-01-01",
+        "end_date": "2014-01-15",
+        "nodes": 64,
+        "processors": 512,
+        "ppn": 8,
+        "percent_allocated": 100
+    }
+    {
+        "resource": "resource2",
+        "start_date": "2014-01-16",
+        "nodes": 65,
+        "processors": 520,
+        "ppn": 8,
+        "percent_allocated": 90
+    }
+]
+```
 
 
 ### resource_types.json
@@ -511,9 +519,11 @@ This file typically should not be changed.
 Determines if Open XDMoD will automatically check for updates.  Set
 `"enabled": false` to disable.
 
-    {
-        "enabled": true,
-        "name": "John Doe",
-        "organization": "Acme Widgets",
-        "email": "j.doe@example.com"
-    }
+```json
+{
+    "enabled": true,
+    "name": "John Doe",
+    "organization": "Acme Widgets",
+    "email": "j.doe@example.com"
+}
+```

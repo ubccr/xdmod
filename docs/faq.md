@@ -89,7 +89,9 @@ and you can then re-shred and re-ingest your resource manager data.
 You need to set your timezone in your `php.ini` file.  Add the
 following, but substitute your timezone:
 
-    date.timezone = America/New_York
+```ini
+date.timezone = America/New_York
+```
 
 The PHP website contains the full list of supported [timezones][].
 

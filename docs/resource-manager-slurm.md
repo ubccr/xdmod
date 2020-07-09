@@ -22,8 +22,10 @@ If your `sacct` executable isn't in the `PATH` of the user that will be
 running the `xdmod-slurm-helper` command, you can specify the path by
 modifying the following section in your `portal_settings.ini` file.
 
-    [slurm]
-    sacct = "/path/to/sacct"
+```ini
+[slurm]
+sacct = "/path/to/sacct"
+```
 
 Use this command to display the help text for the Slurm helper script:
 

@@ -91,7 +91,7 @@ The examples below assume the setting below, modify these for your specific conf
 
 No setup is required. Test the connection.
 
-```
+```php
 <?php
 $ora = @oci_connect('scott', 'tiger, 'db.mycompany.com/mydb');
 
@@ -137,7 +137,7 @@ export TNS_ADMIN=~/oracle/tns
 
 Test the connection
 
-```
+```php
 <?php
 $ora = @oci_connect('scott', 'tiger, 'datawarehouse');
 
@@ -180,7 +180,7 @@ composer require taq/pdooci
 
 PDOOCI
 
-```
+```php
 // Local Naming: Uses tnsnames.ora file in $TNS_ADMIN directory
 $dsn = 'oci:dbname=DataWarehouse';
 
@@ -197,7 +197,7 @@ print_r($result);
 
 Oracle DataEndpoint
 
-```
+```php
 $options = new DataEndpointOptions();
 $options->type = "oracle";
 $options->name = "My Infosource";

@@ -109,7 +109,9 @@ by PHP in their default configuration.  This will result in many warning
 messages from PHP.  You should set the timezone in your `php.ini` file
 by adding the following, but substituting your timezone:
 
-    date.timezone = America/New_York
+```ini
+date.timezone = America/New_York
+```
 
 The PHP website contains the full list of supported [timezones][].
 
