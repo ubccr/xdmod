@@ -133,6 +133,14 @@ class UserControllerProvider extends BaseControllerProvider
             $organization = Organizations::getAbbrevById($user->getOrganizationID());
             $mostPrivilegedFormalName = "$mostPrivilegedFormalName - $organization";
         }
+        $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
+        $rawDataRealms = array_map(
+            function ($item) {
+                return $item['name'];
+            },
+            $rawRealmConfig
+        );
+
         return array(
             'first_name' => $user->getFirstName(),
             'last_name' => $user->getLastName(),
@@ -143,7 +151,8 @@ class UserControllerProvider extends BaseControllerProvider
             'field_of_science' => $user->getFieldOfScience(),
             'active_role' => $mostPrivilegedFormalName,
             'most_privileged_role' => $mostPrivilegedFormalName,
-            'person_id' => $user->getPersonID(true)
+            'person_id' => $user->getPersonID(true),
+            'raw_data_allowed_realms' => $rawDataRealms
         );
     }
 
