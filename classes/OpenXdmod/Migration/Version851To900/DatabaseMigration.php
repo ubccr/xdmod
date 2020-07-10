@@ -150,7 +150,7 @@ EOT
             $rows = $dbh->query(<<<'SQL'
 SELECT shredded_job_slurm_id AS id, req_gres, req_tres
 FROM shredded_job_slurm
-WHERE req_gres != '' OR req_tres != ''
+WHERE req_gres LIKE '%gpu%' OR req_tres LIKE '%gres/gpu%'
 SQL
             );
             $this->logger->notice('Updating slurm job records');
