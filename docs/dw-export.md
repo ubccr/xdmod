@@ -66,7 +66,7 @@ expected to change in the future.
 This is an example of the general structure of this file and the location of
 the `batchExport` option:
 
-```
+```json
 {
     ...
     "Jobs": {

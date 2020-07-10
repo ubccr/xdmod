@@ -17,7 +17,7 @@ Documentation only covers using [SimpleSAMLphp][ssp] for Single Sign On.
 
 First you will need to create the folders for the SimpleSAMLphp files to live:
 
-```bash
+```
 # mkdir -p /etc/xdmod/simplesamlphp/config
 # mkdir -p /etc/xdmod/simplesamlphp/metadata
 # mkdir -p /etc/xdmod/simplesamlphp/cert
@@ -195,7 +195,7 @@ Make sure to include the updated configuration locations.  This will need to be 
 
 Uncomment the SimpleSAML configuration in your Apache VirtualHost:
 
-```conf
+```apache
   SetEnv SIMPLESAMLPHP_CONFIG_DIR /etc/xdmod/simplesamlphp/config
   <Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
     Options FollowSymLinks
@@ -223,7 +223,7 @@ The following locations will need to be added to your Open XDMoD server configur
 
 You will need to specify the full path to `simplesamlphp` for the aliases.
 
-```conf
+```nginx
 location ^~ /simplesaml {
   alias /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www;
   location ~ ^(?<prefix>/simplesaml)(?<phpfile>.+?\.php)(?<pathinfo>/.*)?$ {
@@ -242,7 +242,7 @@ location ^~ /simplesaml {
 
 Run the following command line substitute where appropriate:
 
-```bash
+```
 $ node app.js \
   --aud <http|https>://<XDMODHOST>/simplesaml/module.php/saml/sp/metadata.php/default-sp \
   --acs <http|https>://<XDMODHOST>/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp \

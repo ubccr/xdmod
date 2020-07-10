@@ -13,7 +13,8 @@ the `domains` setting in the `cors` section of `portal_settings.ini`.
 
 This setting is a comma separated list where each item matches *exactly* what is in the `Origin` header sent by the browser.
 This includes the schema, host, and non standard ports.
-```
+
+```ini
 [cors]
 domains=https://integratedapp.example.tld,https://dev-integratedapp.example.tld:8080
 ```

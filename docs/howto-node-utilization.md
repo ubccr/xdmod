@@ -11,19 +11,21 @@ All nodes are assumed to be exclusive when this statistic is calculated.
 To enable the statistic add an object to the `statistics` array for the
 `Jobs` realm in `datawarehouse.json`:
 
-    [
-        {
-            "realm": "Jobs",
+```json
+[
+    {
+        "realm": "Jobs",
+        ...
+        "statistics": [
             ...
-            "statistics": [
-                ...
-                {
-                    "name": "node_utilization",
-                    "class": "NodeUtilizationStatistic"
-                }
-            ]
-        }
-    ]
+            {
+                "name": "node_utilization",
+                "class": "NodeUtilizationStatistic"
+            }
+        ]
+    }
+]
+```
 
 After that just reload the portal and the Node Utilization statistic
 will appear in the list of Job statistics.
