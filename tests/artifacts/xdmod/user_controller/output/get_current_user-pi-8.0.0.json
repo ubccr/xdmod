@@ -9,6 +9,10 @@
     "autoload_suppression": false,
     "field_of_science": "0",
     "active_role": "Principal Investigator",
-    "most_privileged_role": "Principal Investigator"
+    "most_privileged_role": "Principal Investigator",
+    "person_id": "9",
+    "raw_data_allowed_realms": [
+        "Jobs"
+    ]
   }
 }
