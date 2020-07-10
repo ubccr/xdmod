@@ -196,7 +196,7 @@ SQL
             $resourceParser = new PbsResourceParser();
             foreach ($rows as $row) {
                 $resources = $resourceParser->parseResourceListNodes($row['resource_list_nodes']);
-                $gpuCount = $resourceParser->getGpuCountResourceListNodes($resources);
+                $gpuCount = $resourceParser->getGpuCountFromResourceListNodes($resources);
                 $sth->execute(['gpuCount' => $gpuCount, 'id' => $row['id']]);
             }
             $dbh->commit();
