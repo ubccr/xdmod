@@ -921,12 +921,15 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // added by Query::setDuration()
 
         if ( ! $this->isAggregationUnit ) {
+            // Only the first table is added to the join. If you need another table
+            // to be joined then use the additional_join_constraints
             foreach ($this->attributeValuesQuery->joins as $join) {
                 $query->addTable(new Table(
                     new Schema($join->schema),
                     $join->name,
                     $join->name
                 ));
+                break;
             }
         }
 

@@ -245,15 +245,6 @@
         "name": "Queue"
     },
     "resource": {
-        "additional_join_constraints": [
-            {
-                 "attribute_table": "resourcefact",
-                 "attribute_expr": "id",
-                 "operation": "=",
-                 "aggregate_table": "resourcespecs",
-                 "aggregate_expr": "resource_id"
-            }
-        ],
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
             {
