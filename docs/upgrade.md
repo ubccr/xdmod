@@ -139,7 +139,19 @@ necessary.
 ### Configuration File Changes
 
 The `xdmod-upgrade` script will migrate user editable configuration files to
-the new version.
+the new version, excluding the Apache and `logrotate` configuration files,
+which may need to be manually updated.
+
+The Apache access log and error log now use the [piped logging
+feature][apache-logs-piped] combined with the [Apache `rotatelogs`
+program][apache-rotatelogs] to rotate logs based on the size of the log files
+to limit the total amount of storage used by these log files.  Since these
+files are no longer rotated by `logrotate`, any preexisting rotated log files
+will need to be manually deleted.
+
+If the `logrotate` configuration file was modified you will need to manually
+remove the section for the Apache log files if you use the piped logging
+feature with `rotatelogs`.
 
 ### Database Changes
 
@@ -170,3 +182,5 @@ Cloud realm should be recreated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
+[apache-logs-piped]: https://httpd.apache.org/docs/2.4/logs.html#piped
+[apache-rotatelogs]: https://httpd.apache.org/docs/2.4/programs/rotatelogs.html

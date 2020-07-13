@@ -194,8 +194,9 @@ to indicate to  web browsers that the Open XDMoD instance should only be accesse
     #    </IfModule>
     #</Directory>
 
-    ErrorLog /var/log/xdmod/apache-error.log
-    CustomLog /var/log/xdmod/apache-access.log combined
+    # Update the path to rotatelogs if it is different on your system.
+    ErrorLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-error.log 1M"
+    CustomLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-access.log 1M" combined
 </VirtualHost>
 ```
 
