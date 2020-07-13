@@ -1,11 +1,11 @@
 title
-"Core Hour Utilization (Hours): by User"
+"Core Hour Utilization (%): by User"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Warbler, Yellow-rumped] Core Hour Utilization (Hours)","[Warbler, Yellow] Core Hour Utilization (Hours)","[Warbler, Blackburnian] Core Hour Utilization (Hours)"
+Day,"[Warbler, Yellow-rumped] Core Hour Utilization (%)","[Warbler, Yellow] Core Hour Utilization (%)","[Warbler, Blackburnian] Core Hour Utilization (%)"
 2018-04-18,0.4268,0.2196,0
 2018-04-19,1.2653,0.3917,0.0558
 2018-04-20,0.6085,0.5952,0
