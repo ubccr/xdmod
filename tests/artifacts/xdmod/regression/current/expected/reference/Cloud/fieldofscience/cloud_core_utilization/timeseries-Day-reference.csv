@@ -1,11 +1,11 @@
 title
-"Core Hour Utilization (Hours): by PI Group"
+"Core Hour Utilization (%): by PI Group"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Mechanics and Materials] Core Hour Utilization (Hours)"
+Day,"[Mechanics and Materials] Core Hour Utilization (%)"
 2018-04-18,0.6464
 2018-04-19,1.7128
 2018-04-20,1.2037

@@ -1,11 +1,11 @@
 title
-"Core Hour Utilization (Hours): by User"
+"Core Hour Utilization (%): by User"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-User,"Core Hour Utilization (Hours)"
+User,"Core Hour Utilization (%)"
 "Warbler, Yellow-rumped",1.1454
 "Warbler, Yellow",0.3862
 "Warbler, Blackburnian",0.0039
