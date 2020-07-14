@@ -115,10 +115,23 @@ enhancements and bug fixes.
 
 You may upgrade directly from 8.5.0 or 8.5.1.
 
-This is the first version of Open XDMoD that supports GPU data in the jobs
-realm.  Since Open XDMoD 6.5 data from slurm (`ReqGRES`) has been ingested into
-the database, but not displayed in the portal.  These jobs may now be
-re-ingested and any GPU data will be used.
+### GPU Metrics
+
+This is the first version of Open XDMoD that supports GPU metrics in the jobs
+realm.  During the upgrade process there is a prompt where the option is given
+to re-ingest and re-aggregate job records in the database that may contain GPU
+data for the Slurm and PBS resource managers.
+
+Since Open XDMoD 6.5 data from the Slurm `ReqGRES` field has been stored and
+will be used as the source of GPU data during the upgrade process.  Note that
+newly ingested data will use the `AllocTRES` field as the primary source of GPU
+data for Slurm job records, but that field is not available for previously
+ingested data.
+
+Since Open XDMoD 3.5 data from the PBS `Resource_List.nodes` field has been
+stored and will be used as the source of GPU data during the upgrade process.
+
+See the [GPU Metrics](gpu-metrics.html) documentation for more details.
 
 ### Slurm Input File Format Changes
 
