@@ -774,6 +774,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $query->addStat($stat);
         }
 
+        if (property_exists($config, 'filters')) {
+            $query->setRoleParameters($config->filters);
+        }
+
         if (!property_exists($config->order_by, 'field') || !property_exists($config->order_by, 'dirn')) {
             throw new BadRequestException('Malformed config property order_by');
         }
