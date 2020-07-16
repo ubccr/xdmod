@@ -7,6 +7,10 @@ populated with site specific data.  Importing this data is a two step
 process.  First, you must import the hierarchy items and then you must
 import a mapping from groups (PIs) to hierarchy items.
 
+For job records the source of PI data depends on the resource manager used and
+is configurable.  Refer to the [`resources.json` configuration
+section](configuration.html#resourcesjson) for more details.
+
 Configuring the Hierarchy
 -------------------------
 
@@ -69,7 +73,9 @@ The input CSV would look like this:
 
 And imported with a command like this:
 
-    $ xdmod-import-csv -t hierarchy -i hierarchy.csv
+```
+$ xdmod-import-csv -t hierarchy -i hierarchy.csv
+```
 
 After importing the hierarchy it is necessary to provide a mapping from
 your user groups to the hierarchy items.  The input format of this
@@ -91,12 +97,38 @@ specified:
 
 And imported with a command like this:
 
-    $ xdmod-import-csv -t group-to-hierarchy -i group-to-hierarchy.csv
+```
+$ xdmod-import-csv -t group-to-hierarchy -i group-to-hierarchy.csv
+```
 
-After importing this data you must ingest it for the date range of any
-job data you have already shredded.
+After importing the hierarchy data you must re-ingest and re-aggregate any job,
+storage, or cloud data for the date range you have already shredded.  If you
+have tens of millions of records you should run the `xdmod-ingestor` command
+multiple times with smaller date ranges to prevent database time-outs.
 
-    $ xdmod-ingestor --start-date 2012-01-01 --end-date 2012-12-31
+This example would re-shred and re-aggregate all data for the year 2012:
+
+```
+$ xdmod-ingestor --start-date 2012-01-01 --end-date 2012-12-31
+```
+
+Reset Hierarchy Data
+--------------------
+
+If you decided to remove the hierarchy data, or if you would like to replace
+your current hierarchy with a different one, a manual process is currently
+required.
+
+Run the following queries in your MySQL database:
+
+```
+mysql> UPDATE mod_hpcdb.hpcdb_requests SET primary_fos_id = 1;
+mysql> DELETE FROM mod_hpcdb.hpcdb_fields_of_science WHERE field_of_science_id != 1;
+```
+
+After that you can import a new hierarchy and mapping if desired.  Then
+re-ingest and re-aggregate as done in the above section to update the data
+warehouse.
 
 Disabling Hierarchy Dimensions
 ------------------------------
