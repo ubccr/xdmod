@@ -12,7 +12,7 @@
             {
                 "name": "username",
                 "type": "varchar(200)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "password",
@@ -121,6 +121,14 @@
                 ],
                 "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "idx_uniq_username",
+                "columns": [
+                    "username"
+                ],
+                "type": "BTREE",
+                "is_unique":  true
             }
         ],
         "triggers": [
