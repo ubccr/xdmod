@@ -1,11 +1,11 @@
 title
-"Core Hour Utilization (Hours): by Instance Type"
+"Core Hour Utilization (%): by Instance Type"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-"Instance Type","Core Hour Utilization (Hours)"
+"Instance Type","Core Hour Utilization (%)"
 c1.m4,0.7919
 c4.m16,0.3704
 c2.m4,0.3670

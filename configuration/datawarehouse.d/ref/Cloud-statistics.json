@@ -69,7 +69,7 @@
       "aggregate_formula": "COALESCE((SUM(agg.core_time) / (SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} as rsa WHERE rsa.${AGGREGATION_UNIT}_id BETWEEN ${MIN_DATE_ID} AND ${MAX_DATE_ID} AND FIND_IN_SET(rsa.resource_id, GROUP_CONCAT(DISTINCT agg.host_resource_id)) <> 0)) * 100, 0)",
       "timeseries_formula": "COALESCE((SUM(agg.core_time) / (SELECT SUM(rf.core_time_available) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} rf WHERE rf.${AGGREGATION_UNIT}_id = agg.${AGGREGATION_UNIT}_id AND FIND_IN_SET(rf.resource_id, GROUP_CONCAT(DISTINCT agg.host_resource_id)) <> 0)) * 100, 0)",
       "name": "Core Hour Utilization",
-      "unit": "Hours",
+      "unit": "%",
       "precision": 2
     }
 }
