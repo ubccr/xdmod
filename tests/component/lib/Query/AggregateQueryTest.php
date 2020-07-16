@@ -318,48 +318,6 @@ SQL;
     }
 
     /**
-     * Create an aggregate query and then add a statistic and a group by that has a multi-column key.
-     */
-
-    public function testAggregateQueryAddStatisticAddMultiKeyGroupBy()
-    {
-        $query = new \DataWarehouse\Query\AggregateQuery(
-            'Jobs',
-            'day',
-            '2016-12-01',
-            '2017-01-31'
-        );
-        $query->addGroupBy('resource');
-        $query->addStat('job_count');
-
-        $generated = $query->getQueryString();
-        $expected  =<<<SQL
-SELECT
-  CONCAT(resourcefact.id, '^', resourcefact.code) as 'resource_id',
-  resourcefact.code as 'resource_short_name',
-  CONCAT(resourcefact.name, '-', resourcefact.code) as 'resource_name',
-  resourcefact.id as 'resource_order_id',
-  COALESCE(SUM(agg.ended_job_count), 0) AS job_count
-FROM
-  modw_aggregates.jobfact_by_day agg,
-  modw.days duration,
-  modw.resourcefact resourcefact,
-  modw.resourcespecs resourcespecs
-WHERE
-  duration.id = agg.day_id
-  AND agg.day_id between 201600357 and 201700001
-  AND resourcefact.id = agg.record_resource_id
-  AND resourcefact.code = agg.resource_code
-  AND resourcefact.id = resourcespecs.resource_id
-GROUP BY resourcefact.id,
-  resourcefact.code
-ORDER BY resourcefact.code ASC,
-  resourcefact.name ASC
-SQL;
-        $this->assertEquals($expected, $generated, 'Aggregate query add multi-column key group by and statistic');
-    }
-
-    /**
      * Test adding an additional JOIN constraint to the query, as is used in GroupByQueue.
      */
 
