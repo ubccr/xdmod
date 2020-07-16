@@ -924,7 +924,7 @@ SQL;
             throw new Exception('A user must have at least one acl.');
         }
 
-        if (is_empty($this->_username)) {
+        if (empty($this->_username)) {
             throw new Exception('A user must have a username.');
         }
 
