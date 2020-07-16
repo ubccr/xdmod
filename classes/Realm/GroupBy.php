@@ -929,7 +929,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     $join->name,
                     $join->name
                 ));
-                break;
+                if ($this->additionalJoinConstraints === null) {
+                    break;
+                }
             }
         }
 
