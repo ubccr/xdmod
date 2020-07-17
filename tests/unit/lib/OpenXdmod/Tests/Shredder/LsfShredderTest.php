@@ -47,8 +47,41 @@ class LsfShredderTest extends JobShredderBaseTestCase
         $shredder->shredLine($line);
     }
 
+
+    /**
+     * Test parsing job commands that contain multibyte UTF-8 characters.
+     *
+     * @dataProvider utf8MultibyteCharsLogProvider()
+     * @param string $line Line from an LSF accounting log file.
+     * @param array $job Subset of the corresponding parsed job record
+     *     containing UTF-8 encoded characters.
+     */
+    public function testUtf8MultibyteCharsParsing($line, $job)
+    {
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->getMock();
+        $shredder
+            ->expects($this->once())
+            ->method('insertRow')
+            ->with(new \PHPUnit_Framework_Constraint_ArraySubset($job));
+        $shredder
+            ->method('getResourceConfig')
+            ->willReturn(array());
+        $shredder->setLogger($this->logger);
+        $shredder->setResource('testresource');
+        $shredder->shredLine($line);
+    }
+
     public function accountingLogProvider()
     {
         return $this->getLogFileTestCases('accounting-logs');
+    }
+
+    public function utf8MultibyteCharsLogProvider()
+    {
+        return $this->getLogFileTestCases('utf8-multibyte-chars');
     }
 }
