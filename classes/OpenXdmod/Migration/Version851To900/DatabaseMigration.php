@@ -102,9 +102,9 @@ EOT
                     FROM
                       modw_cloud.session_records as sr
                     LEFT JOIN
-                      modw_cloud.instance as i on sr.instance_id = i.instance_id
+                      modw_cloud.instance as i on sr.instance_id = i.instance_id and sr.resource_id = i.resource_id
                     LEFT JOIN
-                      modw.systemaccount as sa on sr.person_id = sa.person_id
+                      modw.systemaccount as sa on sr.person_id = sa.person_id and sr.resource_id = sa.resource_id
                     LEFT JOIN
                       modw.resourcefact as r on sr.resource_id = r.id
                     WHERE
