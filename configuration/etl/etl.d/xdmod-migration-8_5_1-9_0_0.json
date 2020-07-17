@@ -14,9 +14,10 @@
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "class": "ExecuteSql",
-            "sql_file_list": [
-                "migrations/cloud-migration-8-5-1_9-0-0.sql"
-            ],
+            "sql_file_list": [{
+                "sql_file": "migrations/cloud-migration-8-5-1_9-0-0.sql",
+                "delimiter": ";"
+            }],
             "endpoints": {
                 "destination": {
                     "type": "mysql",
