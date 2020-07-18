@@ -40,17 +40,3 @@ LEFT JOIN user_acls cur
      ON cur.user_id = inc.user_id AND
         cur.acl_id  = inc.acl_id
 WHERE cur.user_acl_id IS NULL;
-
--- Create the Role
-INSERT INTO Roles(role_id, abbrev, description)
-SELECT inc.*
-FROM (
-  SELECT MAX(r.role_id) + 1 AS role_id,
-    'pub' AS abbrev,
-    'Public' AS description
-  FROM Roles r
-) inc
-LEFT JOIN Roles cur
-  ON cur.abbrev = inc.abbrev           AND
-     cur.description = inc.description
-WHERE cur.role_id IS NULL;
