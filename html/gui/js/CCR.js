@@ -128,11 +128,11 @@ XDMoD.GlobalToolbar.Profile = {
 // -------------------------------------------------
 
 XDMoD.GlobalToolbar.Dashboard = {
-    text: 'Dashboard',
+    text: 'Admin Dashboard',
     scale: 'small',
     iconCls: 'btn_dashboard',
     id: 'global-toolbar-dashboard',
-    tooltip: 'Internal Dashboard',
+    tooltip: 'Load the admin dashboard in a new window.',
     handler: function () {
         XDMoD.TrackEvent("Portal", "Dashboard Button Clicked");
         CCR.xdmod.initDashboard();
