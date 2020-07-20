@@ -498,7 +498,10 @@
             "class": "ExecuteSql",
             "options_class": "MaintenanceOptions",
             "sql_file_list": [
-                "migrations/8.5.1-9.0.0/role-table-cleanup.sql"
+                {
+                    "sql_file": "migrations/8.5.1-9.0.0/role-table-cleanup.sql",
+                    "delimiter": ";"
+                }
             ],
             "endpoints": {
                 "destination": {
