@@ -9,6 +9,45 @@
     },
     "migration-8_5_1-9_0_0": [
         {
+            "name": "update-moddb-tables",
+            "description": "Update moddb tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "xdb/batch-export-requests.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+        {
+            "name": "update-mod_logger-log_table-table",
+            "description": "Update mod_logger.log_table table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/logger/alter-log-table.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logger Database",
+                    "config": "logger",
+                    "schema": "mod_logger"
+                }
+            }
+        }
+    ],
+    "#": "Cloud realm pipeline intentionally named to not match the automatically run migration pipelines",
+    "cloud-migration-8-5-1_9-0-0": [
+        {
             "name": "DeleteCloudAutoincrementColumns",
             "description": "Post-ingest updates for massaging Open Stack data",
             "namespace": "ETL\\Maintenance",
@@ -53,42 +92,6 @@
                     "name": "Cloud Realm Tables",
                     "config": "database",
                     "schema": "modw_cloud"
-                }
-            }
-        },
-        {
-            "name": "update-moddb-tables",
-            "description": "Update moddb tables",
-            "namespace": "ETL\\Maintenance",
-            "class": "ManageTables",
-            "options_class": "MaintenanceOptions",
-            "definition_file_list": [
-                "xdb/batch-export-requests.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
-                    "schema": "moddb"
-                }
-            }
-        },
-        {
-            "name": "update-mod_logger-log_table-table",
-            "description": "Update mod_logger.log_table table",
-            "namespace": "ETL\\Maintenance",
-            "class": "ExecuteSql",
-            "options_class": "MaintenanceOptions",
-            "sql_file_list": [
-                "migrations/8.5.1-9.0.0/logger/alter-log-table.sql"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "Logger Database",
-                    "config": "logger",
-                    "schema": "mod_logger"
                 }
             }
         },
