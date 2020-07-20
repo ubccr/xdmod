@@ -27,7 +27,10 @@
             "name": "xdmod-public-user",
             "description": "Imports the Public User if it does not already exist.",
             "sql_file_list": [
-                "acls/xdmod/create_public_user.sql"
+                {
+                    "sql_file": "acls/xdmod/create_public_user.sql",
+                    "delimiter": ";"
+                }
             ],
             "enabled": true
         },
