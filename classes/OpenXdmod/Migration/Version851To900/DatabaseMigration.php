@@ -102,9 +102,9 @@ EOT
                     FROM
                       modw_cloud.session_records as sr
                     LEFT JOIN
-                      modw_cloud.instance as i on sr.instance_id = i.instance_id
+                      modw_cloud.instance as i on sr.instance_id = i.instance_id and sr.resource_id = i.resource_id
                     LEFT JOIN
-                      modw.systemaccount as sa on sr.person_id = sa.person_id
+                      modw.systemaccount as sa on sr.person_id = sa.person_id and sr.resource_id = sa.resource_id
                     LEFT JOIN
                       modw.resourcefact as r on sr.resource_id = r.id
                     WHERE
@@ -134,6 +134,18 @@ EOT
                     $dbh->execute("DELETE FROM modw_cloud.event_reconstructed where start_event_id IN (4,6,17,19,45,55)");
                 }
             }
+
+            Utilities::runEtlPipeline(
+                ['cloud-migration-8-5-1_9-0-0'],
+                $this->logger,
+                [
+                    'last-modified-start-date' => '2017-01-01 00:00:00'
+                ]
+            );
+
+            $builder = new FilterListBuilder();
+            $builder->setLogger($this->logger);
+            $builder->buildRealmLists('Cloud');
         }
     }
 

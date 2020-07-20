@@ -1,5 +1,5 @@
 ---
-title: Data Warehouse Export (Beta)
+title: Data Warehouse Export
 ---
 
 The Data Warehouse Export feature of Open XDMoD is designed to give users
