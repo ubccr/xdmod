@@ -248,7 +248,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
                 Ext.onReady(function() {
                     Ext.MessageBox.alert(
                         'Invalid State Detected',
-                        'This XDMoD installation has had an invalid state detected. <br/><br/>' +
+                        'This Open XDMoD installation is in an invalid state.<br/><br/>' +
                         'Before XDMoD can be utilized you must run ingestion at least once.<br/><br/>' +
                         'If ingestion has already been run then make sure that you have run the acl-config cli application and that it has completed successfully.<br/><br/>' +
                         '<b>NOTE: XDMoD will not function correctly until this problem has been resolved.</b>'
