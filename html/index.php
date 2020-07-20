@@ -251,7 +251,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
                         'This Open XDMoD installation is in an invalid state.<br/><br/>' +
                         'Before Open XDMoD can be utilized you must run ingestion at least once.<br/><br/>' +
                         'If ingestion has already been run then make sure that you have run the acl-config cli application and that it has completed successfully.<br/><br/>' +
-                        '<b>NOTE: XDMoD will not function correctly until this problem has been resolved.</b>'
+                        '<b>NOTE: Open XDMoD will not function correctly until this problem has been resolved.</b>'
                     );
                 });
 JS;
