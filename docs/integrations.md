@@ -59,7 +59,10 @@ The application that is integrating with Open XDMoD should contain a page *like*
                         .then(response => response.json())
                         .then((data) => {
                             var xdmodLogin = document.createElement('iframe');
-                            xdmodLogin.style = 'display:none;';
+                            /**
+                             * Do not use display:none or it wont work in Firefox
+                             */
+                            xdmodLogin.style = 'visibility: hidden; position: absolute;left: -1000px';
                             xdmodLogin.src = data;
                             document.body.appendChild(xdmodLogin);
                     });
