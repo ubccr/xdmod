@@ -2444,16 +2444,16 @@
         },
         {
             "name": "ubccr/simplesamlphp-module-authoidcoauth2",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/simplesamlphp-module-authoidcoauth2.git",
-                "reference": "2b61de49a7ed984e25097269b68f473cace2ea5d"
+                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/2b61de49a7ed984e25097269b68f473cace2ea5d",
-                "reference": "2b61de49a7ed984e25097269b68f473cace2ea5d",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
+                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
                 "shasum": ""
             },
             "require": {
@@ -2486,7 +2486,7 @@
                 }
             ],
             "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
-            "time": "2020-07-16T19:53:52+00:00"
+            "time": "2020-07-20T13:31:47+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
