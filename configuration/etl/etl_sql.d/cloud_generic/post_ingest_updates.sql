@@ -10,7 +10,7 @@
 -- the ingestion for both formats are done on the same connection a error is thrown saying that the temporary
 -- tale already exists when ingestion for the second format is run. To prevent this we drop the table and
 -- recreate it.
-DROP TEMPORARY TABLE IF EXISTS ${DESTINATION_SCHEMA}.tmp_end_times;
+DROP TEMPORARY TABLE IF EXISTS ${DESTINATION_SCHEMA}.tmp_end_times//
 CREATE TEMPORARY TABLE ${DESTINATION_SCHEMA}.tmp_end_times
 AS
 SELECT
