@@ -9,53 +9,6 @@
     },
     "migration-8_5_1-9_0_0": [
         {
-            "name": "DeleteCloudAutoincrementColumns",
-            "description": "Post-ingest updates for massaging Open Stack data",
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
-            "class": "ExecuteSql",
-            "sql_file_list": [
-                "migrations/cloud-migration-8-5-1_9-0-0.sql"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud Realm Tables",
-                    "config": "database",
-                    "schema": "modw_cloud"
-                }
-            }
-        },
-        {
-            "name": "update-modw_cloud-tables",
-            "description": "Update modw_cloud tables",
-            "namespace": "ETL\\Maintenance",
-            "class": "ManageTables",
-            "options_class": "MaintenanceOptions",
-            "definition_file_list": [
-                "cloud_common/domains.json",
-                "cloud_openstack/domain_submission_venue.json",
-                "cloud_openstack/domain_submission_venue_staging.json",
-                "cloud_openstack/staging_event.json",
-                "cloud_openstack/raw_event.json",
-                "cloud_common/session_records.json",
-                "cloud_common/event.json",
-                "cloud_common/raw_resource_specs.json",
-                "cloud_common/cloud_resource_specs.json",
-                "cloud_common/account.json",
-                "cloud_common/instance_type.json",
-                "cloud_common/instance.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud Realm Tables",
-                    "config": "database",
-                    "schema": "modw_cloud"
-                }
-            }
-        },
-        {
             "name": "update-moddb-tables",
             "description": "Update moddb tables",
             "namespace": "ETL\\Maintenance",
@@ -90,73 +43,179 @@
                     "schema": "mod_logger"
                 }
             }
-        },
-        {
-            "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",
-            "description": "Load schema version history",
-            "namespace": "ETL\\Ingestor",
-            "class": "StructuredFileIngestor",
-            "options_class": "IngestorOptions",
-            "definition_file": "cloud_openstack/domain_submission_venue_staging.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "openstack-domain-submission-venue-mapping",
-                    "path": "cloud_openstack/domain_submission_venue_staging_map.json"
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
+        }
+    ],
+    "cloud-migration-8-5-1_9-0-0": [
+      {
+          "name": "DeleteCloudAutoincrementColumns",
+          "description": "Post-ingest updates for massaging Open Stack data",
+          "namespace": "ETL\\Maintenance",
+          "options_class": "MaintenanceOptions",
+          "class": "ExecuteSql",
+          "sql_file_list": [
+              "migrations/cloud-migration-8-5-1_9-0-0.sql"
+          ],
+          "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud Realm Tables",
+                  "config": "database",
+                  "schema": "modw_cloud"
+              }
+          }
+      },
+      {
+          "name": "update-modw_cloud-tables",
+          "description": "Update modw_cloud tables",
+          "namespace": "ETL\\Maintenance",
+          "class": "ManageTables",
+          "options_class": "MaintenanceOptions",
+          "definition_file_list": [
+              "cloud_common/domains.json",
+              "cloud_openstack/domain_submission_venue.json",
+              "cloud_openstack/domain_submission_venue_staging.json",
+              "cloud_openstack/staging_event.json",
+              "cloud_openstack/raw_event.json",
+              "cloud_common/session_records.json",
+              "cloud_common/event.json",
+              "cloud_common/raw_resource_specs.json",
+              "cloud_common/cloud_resource_specs.json",
+              "cloud_common/account.json",
+              "cloud_common/instance_type.json",
+              "cloud_common/instance.json"
+          ],
+          "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud Realm Tables",
+                  "config": "database",
+                  "schema": "modw_cloud"
+              }
+          }
+      },
+      {
+          "name": "OpenStackDomainToSubmissionVenueMappingStagingIngestor",
+          "description": "Load schema version history",
+          "namespace": "ETL\\Ingestor",
+          "class": "StructuredFileIngestor",
+          "options_class": "IngestorOptions",
+          "definition_file": "cloud_openstack/domain_submission_venue_staging.json",
+          "endpoints": {
+              "source": {
+                  "type": "jsonfile",
+                  "name": "openstack-domain-submission-venue-mapping",
+                  "path": "cloud_openstack/domain_submission_venue_staging_map.json"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      },
+      {
+          "name": "OpenStackDomainToSubmissionVenueMappingIngestor",
+          "description": "",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/domain_submission_venue.json",
+          "namespace": "ETL\\Ingestor",
+          "options_class": "IngestorOptions",
+          "truncate_destination": false,
+          "endpoints": {
+              "utility": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw"
+              },
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      },
+      {
+          "#": "IngestCloudResourceSpecification",
+          "name": "CloudResourceSpecsAggregator",
+          "class": "SimpleAggregator",
+          "namespace": "ETL\\Aggregator",
+          "options_class": "AggregatorOptions",
+          "description": "Aggregate cloud records.",
+          "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+          "table_prefix": "resourcespecsfact_by_",
+          "aggregation_units": [
+              "day", "month", "quarter", "year"
+          ],
+          "endpoints": {
+            "source": {
+                "type": "mysql",
+                "name": "Cloud DB",
+                "config": "datawarehouse",
+                "schema": "modw_cloud"
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Aggregate DB",
+                "config": "datawarehouse",
+                "schema": "modw_aggregates",
+                "create_schema_if_not_exists": true,
+                "truncate_destination": false
             }
-        },
-        {
-            "name": "OpenStackDomainToSubmissionVenueMappingIngestor",
-            "description": "",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/domain_submission_venue.json",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "truncate_destination": false,
-            "endpoints": {
-                "utility": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw"
-                },
-                "source": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
-            }
-        },
-        {
-            "#": "IngestCloudResourceSpecification",
-            "name": "CloudResourceSpecsAggregator",
-            "class": "SimpleAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
-            "description": "Aggregate cloud records.",
-            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
-            "table_prefix": "resourcespecsfact_by_",
-            "aggregation_units": [
-                "day", "month", "quarter", "year"
-            ],
-            "endpoints": {
+         }
+      },
+      {
+          "#": "Events must be ingested after all other dimensions",
+          "name": "OpenStackCloudStagingEventIngestor",
+          "description": "OpenStack staging data for cloud events",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/staging_event.json",
+          "namespace": "ETL\\Ingestor",
+          "options_class": "IngestorOptions",
+          "truncate_destination": false,
+          "endpoints": {
+              "utility": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw"
+              },
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      },
+      {
+          "name": "cloud-state-action",
+          "namespace": "ETL\\Ingestor",
+          "options_class": "IngestorOptions",
+          "class": "CloudStateReconstructorTransformIngestor",
+          "definition_file": "cloud_common/cloud_state.json",
+          "description": "Reconstructs discrete runs from cloud events",
+          "truncate_destination": false,
+          "endpoints": {
               "source": {
                   "type": "mysql",
                   "name": "Cloud DB",
@@ -165,123 +224,66 @@
               },
               "destination": {
                   "type": "mysql",
-                  "name": "Aggregate DB",
+                  "name": "Cloud DB",
                   "config": "datawarehouse",
-                  "schema": "modw_aggregates",
-                  "create_schema_if_not_exists": true,
-                  "truncate_destination": false
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
               }
-           }
-        },
-        {
-            "#": "Events must be ingested after all other dimensions",
-            "name": "OpenStackCloudStagingEventIngestor",
-            "description": "OpenStack staging data for cloud events",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/staging_event.json",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "truncate_destination": false,
-            "endpoints": {
-                "utility": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw"
-                },
-                "source": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
-            }
-        },
-        {
-            "name": "cloud-state-action",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "class": "CloudStateReconstructorTransformIngestor",
-            "definition_file": "cloud_common/cloud_state.json",
-            "description": "Reconstructs discrete runs from cloud events",
-            "truncate_destination": false,
-            "endpoints": {
-                "source": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud"
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
-            }
-        },
-        {
-            "name": "cloud-session-records",
-            "class": "DatabaseIngestor",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "definition_file": "cloud_common/session_records.json",
-            "description": "Builds intermediate cloud event table",
-            "truncate_destination": false,
-            "endpoints": {
-                "source": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud"
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
-            }
-        },
-        {
-            "#": "Asset data must be aggregated post ingestion",
-            "name": "CloudEventAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
-            "class": "SimpleAggregator",
-            "description": "Aggregate cloud records.",
-            "definition_file": "cloud_common/cloud_metrics_aggregation.json",
-            "table_prefix": "cloudfact_by_",
-            "aggregation_units": [
-                "day", "month", "quarter", "year"
-            ],
-            "truncate_destination": false,
-            "endpoints": {
-                "source": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud"
-                },
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud DB",
-                    "config": "datawarehouse",
-                    "schema": "modw_cloud",
-                    "create_schema_if_not_exists": true
-                }
-            }
-        }
+          }
+      },
+      {
+          "name": "cloud-session-records",
+          "class": "DatabaseIngestor",
+          "namespace": "ETL\\Ingestor",
+          "options_class": "IngestorOptions",
+          "definition_file": "cloud_common/session_records.json",
+          "description": "Builds intermediate cloud event table",
+          "truncate_destination": false,
+          "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      },
+      {
+          "#": "Asset data must be aggregated post ingestion",
+          "name": "CloudEventAggregator",
+          "namespace": "ETL\\Aggregator",
+          "options_class": "AggregatorOptions",
+          "class": "SimpleAggregator",
+          "description": "Aggregate cloud records.",
+          "definition_file": "cloud_common/cloud_metrics_aggregation.json",
+          "table_prefix": "cloudfact_by_",
+          "aggregation_units": [
+              "day", "month", "quarter", "year"
+          ],
+          "truncate_destination": false,
+          "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      }
     ],
     "#": "Jobs realm GPU migrations separated so they can optionally be run from the interactive setup script",
     "jobs-gpu-migration-8_5_1-9_0_0": [
@@ -496,10 +498,7 @@
             "class": "ExecuteSql",
             "options_class": "MaintenanceOptions",
             "sql_file_list": [
-                {
-                    "sql_file": "migrations/8.5.1-9.0.0/role-table-cleanup.sql",
-                    "delimiter": ";"
-                }
+                "migrations/8.5.1-9.0.0/role-table-cleanup.sql"
             ],
             "endpoints": {
                 "destination": {
