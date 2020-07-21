@@ -1,0 +1,19 @@
+{
+      "table_definition": {
+          "$ref": "${table_definition_dir}/cloud_common/staging_resource_specifications.json#/table_definition"
+      },
+      "source_query": {
+          "records": {
+              "resource_id": "raw.resource_id",
+              "hostname": "raw.hostname",
+              "vcpus": "raw.vcpus",
+              "memory_mb": "raw.memory_mb",
+              "fact_date": "DATE(CONVERT_TZ(raw.fact_date, '+00:00', @@session.time_zone))"
+          },
+          "joins": [{
+              "name": "raw_resource_specs",
+              "schema": "${SOURCE_SCHEMA}",
+              "alias": "raw"
+          }]
+      }
+}
