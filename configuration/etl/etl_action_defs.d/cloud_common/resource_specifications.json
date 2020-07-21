@@ -8,18 +8,18 @@
               "hostname": "r1.hostname",
               "vcpus": "IF(r1.memory_mb = -1 AND r1.vcpus = -1, r2.vcpus, r1.vcpus)",
               "memory_mb": "IF(r1.memory_mb = -1 AND r1.vcpus = -1, r2.memory_mb, r1.memory_mb)",
-              "start_date_ts": "UNIX_TIMESTAMP(IF(r1.memory_mb = -1 AND r1.vcpus = -1, r2.fact_date, r1.fact_date))",
-              "end_date_ts": "UNIX_TIMESTAMP(CASE WHEN MIN(r2.fact_date) IS NOT NULL AND (r1.memory_mb != -1 AND r1.vcpus != -1) THEN MIN(r2.fact_date) - INTERVAL 1 DAY WHEN r1.memory_mb = -1 AND r1.vcpus = -1 AND (SELECT MAX(fact_date) FROM modw_cloud.raw_resource_specs) != MAX(r2.fact_date) THEN MAX(r1.fact_date) - INTERVAL 1 DAY ELSE CURDATE() END)",
-              "start_day_id": "IF(r1.memory_mb = -1 AND r1.vcpus = -1, YEAR(r2.fact_date) * 100000 + DAYOFYEAR(r2.fact_date), YEAR(r1.fact_date) * 100000 + DAYOFYEAR(r1.fact_date))",
-              "end_day_id": "CASE WHEN MIN(r2.fact_date) IS NOT NULL AND (r1.memory_mb != -1 AND r1.vcpus != -1) THEN YEAR(MIN(r2.fact_date) - INTERVAL 1 DAY) * 100000 + DAYOFYEAR(MIN(r2.fact_date) - INTERVAL 1 DAY) WHEN r1.memory_mb = -1 AND r1.vcpus = -1 AND (SELECT MAX(fact_date) FROM modw_cloud.raw_resource_specs) != MAX(r2.fact_date) THEN YEAR(MAX(r1.fact_date) - INTERVAL 1 DAY) * 100000 + DAYOFYEAR(MAX(r1.fact_date) - INTERVAL 1 DAY) ELSE YEAR(CURDATE()) * 100000 + DAYOFYEAR(CURDATE()) END"
+              "start_date_ts": "UNIX_TIMESTAMP(IF(r1.memory_mb = -1 AND r1.vcpus = -1, MIN(r2.fact_date), MIN(r1.fact_date)))",
+              "end_date_ts": "UNIX_TIMESTAMP(CASE WHEN MIN(r2.fact_date) IS NOT NULL AND (r1.memory_mb != -1 AND r1.vcpus != -1) THEN MIN(r2.fact_date) - INTERVAL 1 DAY WHEN r1.memory_mb = -1 AND r1.vcpus = -1 AND (SELECT MAX(fact_date) FROM modw_cloud.staging_resource_specifications) != MAX(r2.fact_date) THEN MAX(r1.fact_date) - INTERVAL 1 DAY ELSE CURDATE() END)",
+              "start_day_id": "IF(r1.memory_mb = -1 AND r1.vcpus = -1, YEAR(MIN(r2.fact_date)) * 100000 + DAYOFYEAR(MIN(r2.fact_date)), YEAR(MIN(r1.fact_date)) * 100000 + DAYOFYEAR(MIN(r1.fact_date)))",
+              "end_day_id": "CASE WHEN MIN(r2.fact_date) IS NOT NULL AND (r1.memory_mb != -1 AND r1.vcpus != -1) THEN YEAR(MIN(r2.fact_date) - INTERVAL 1 DAY) * 100000 + DAYOFYEAR(MIN(r2.fact_date) - INTERVAL 1 DAY) WHEN r1.memory_mb = -1 AND r1.vcpus = -1 AND (SELECT MAX(fact_date) FROM modw_cloud.staging_resource_specifications) != MAX(r2.fact_date) THEN YEAR(MAX(r1.fact_date) - INTERVAL 1 DAY) * 100000 + DAYOFYEAR(MAX(r1.fact_date) - INTERVAL 1 DAY) ELSE YEAR(CURDATE()) * 100000 + DAYOFYEAR(CURDATE()) END"
           },
           "joins": [{
-              "name": "raw_resource_specs",
+              "name": "staging_resource_specifications",
               "schema": "${SOURCE_SCHEMA}",
               "alias": "r1"
           },
           {
-              "name": "raw_resource_specs",
+              "name": "staging_resource_specifications",
               "schema": "${SOURCE_SCHEMA}",
               "alias": "r2",
               "type": "LEFT",

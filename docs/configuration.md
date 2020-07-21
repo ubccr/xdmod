@@ -422,6 +422,9 @@ The default is that resources are assumed to not allow node sharing.  If
 the SUPReMM module is in use and a resource does allow node sharing then
 this should be set to `true`.
 
+For cloud resources the timezone is not used and times are converted to
+the local timezone that the server is in.
+
 ```json
 [
     {
