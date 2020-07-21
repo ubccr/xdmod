@@ -1,4 +1,6 @@
 {
+      "#": "@@session.time_zone is used instead of using the time zone listed in the resourcefact table to keep consistency",
+      "#": "with how time zone conversion works for other places in the cloud realm",
       "table_definition": {
           "$ref": "${table_definition_dir}/cloud_common/staging_resource_specifications.json#/table_definition"
       },
