@@ -1,5 +1,5 @@
 ---
-title: User Dashboard (Beta)
+title: User Dashboard
 ---
 
 Known Issues

@@ -241,7 +241,10 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                 }
             }
 
-            var emailAddress = val.split(';')[0];
+            var emailAddress = '';
+            if (val) {
+                emailAddress = val.split(';')[0];
+            }
 
             if (emailAddress === 'no_email_address_set') {
                 return '<span style="color:#f00; font-weight: bold">No email address set</span>';
