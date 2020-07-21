@@ -68,6 +68,11 @@
             }
         },
         {
+            "name": "CloudResourceSpecsStaging",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_common/staging_resource_specifications.json"
+        },
+        {
             "name": "CloudResourceSpecsAddEndDay",
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",

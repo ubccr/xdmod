@@ -2,7 +2,7 @@
     "#": "Record types are global to all cloud resources",
 
     "table_definition": {
-        "name": "raw_resource_specs",
+        "name": "staging_resource_specifications",
         "engine": "MyISAM",
         "comment": "Record type: accounting, administrative, derived, etc.",
         "columns": [
@@ -32,7 +32,7 @@
             },
             {
                 "name": "fact_date",
-                "type": "datetime",
+                "type": "date",
                 "nullable": false
             }
         ],
