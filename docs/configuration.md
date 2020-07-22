@@ -24,6 +24,7 @@ The general settings include:
 - Javac path
 - PhantomJS path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
+- Whether to enable the Dashboard tab (see the [Dashboard Guide](dashboard.html) for details)
 
 These settings are stored in `portal_settings.ini`.
 
