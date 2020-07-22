@@ -53,6 +53,7 @@
                 "cloud_common/instance_data.json",
                 "cloud_common/event_asset.json",
                 "cloud_common/raw_resource_specs.json",
+                "cloud_common/staging_resource_specifications.json",
                 "cloud_common/cloud_resource_specs.json",
                 "cloud_openstack/raw_event.json",
                 "cloud_openstack/raw_instance_type.json",
