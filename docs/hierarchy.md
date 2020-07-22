@@ -137,8 +137,11 @@ If you do not use the hierarchy feature and do not want those dimensions
 to be listed in the Usage and Metric Explorer tabs, you can change your
 configuration files to do so.
 
-The easiest way to do this is to disable the dimensions in `roles.json`.
-Remove these entries from the file:
+To disable the dimensions, remove their definitions from `roles.json`,
+`roles.d/jobs.json`, `roles.d/cloud.json`, `roles.d/storage.json` and any other
+roles configuration files you may be using.
+
+Remove these entries from the files:
 
 ```json
 {
@@ -154,6 +157,10 @@ Remove these entries from the file:
     "group_by": "fieldofscience"
 },
 ```
+
+(These may appear multiple times and will reference the corresponding realm.)
+
+Then run `acl-config`.
 
 These correspond to the three levels of the hierarchy.  The names refer
 to those used by XSEDE, but the text displayed to overridden by the
