@@ -613,7 +613,7 @@ class Configuration extends Loggable implements iConfiguration
     {
         // Do not re-scan the directory if we don't need to.
 
-        if ( null === $this->localConfigDir | ($this->localDirectoryScanned && ! $force) ) {
+        if ( null === $this->localConfigDir || ($this->localDirectoryScanned && ! $force) ) {
             return count($this->localConfigFiles);
         }
 
