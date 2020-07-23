@@ -70,7 +70,7 @@ First, add the SQL queries used by the statistic.
                 ) <> 0
         ),
         0
-    ) /3600.0
+    ) / 3600.0
 )
 ```
 
