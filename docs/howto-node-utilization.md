@@ -96,7 +96,7 @@ Then add the statistic to the Jobs realm statistics configuration.
 }
 ```
 
-Last, run `acl-config`.
+Last, run `acl-config` and restart your web server.
 
 Reload the portal and the "Node Utilization" statistic will appear in the list
 of Job statistics.
