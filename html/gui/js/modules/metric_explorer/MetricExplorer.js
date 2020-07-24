@@ -3336,8 +3336,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        const summaryTab = Ext.getCmp('tg_summary');
-        const summaryTabName = summaryTab ? summaryTab.title : 'Summary';
+        var summaryTab = Ext.getCmp('tg_summary');
+        var summaryTabName = summaryTab ? summaryTab.title : 'Summary';
 
         this.featuredCheckbox = new Ext.form.Checkbox({
             id: 'me_featured',
