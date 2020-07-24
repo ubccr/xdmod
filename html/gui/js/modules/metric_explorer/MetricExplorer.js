@@ -3336,16 +3336,19 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
+        const summaryTab = Ext.getCmp('tg_summary');
+        const summaryTabName = summaryTab ? summaryTab.title : 'Summary';
+
         this.featuredCheckbox = new Ext.form.Checkbox({
             id: 'me_featured',
             fieldLabel: 'Featured',
             name: 'featured',
-            boxLabel: 'Show in Summary tab',
+            boxLabel: 'Show in ' + summaryTabName + ' tab',
             checked: this.featured,
             listeners: {
                 scope: this,
                 'check': function(checkbox, check) {
-                        XDMoD.TrackEvent('Metric Explorer', 'Toggled Show in Summary tab checkbox', Ext.encode({
+                        XDMoD.TrackEvent('Metric Explorer', 'Toggled Show in ' + summaryTabName + ' tab checkbox', Ext.encode({
                             checked: check
                         }));
 
