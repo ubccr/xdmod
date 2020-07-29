@@ -2,7 +2,7 @@ language: none
 env:
     global:
         - COMPOSER_ALLOW_SUPERUSER=1
-        - XDMOD_REALMS='jobs,storage,cloud'
+        - XDMOD_REALMS='jobs,storage,cloud,gateways'
     matrix:
         - XDMOD_TEST_MODE=fresh_install
         - XDMOD_TEST_MODE=upgrade
