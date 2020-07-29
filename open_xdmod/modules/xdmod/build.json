@@ -99,9 +99,6 @@
             {"configuration/modules.d/xdmod.json": "modules.d/xdmod.json"},
             "email_templates"
         ],
-        "etc/httpd": {
-            "configuration/apache.conf": "xdmod.conf"
-        },
         "etc/logrotated": {
             "configuration/logrotate.conf": "xdmod"
         },

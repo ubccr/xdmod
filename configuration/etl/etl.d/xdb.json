@@ -45,7 +45,6 @@
                 "xdb/report-templates.json",
                 "xdb/reports.json",
                 "xdb/restx509.json",
-                "xdb/roles.json",
                 "xdb/schema-version-history.json",
                 "xdb/session-manager.json",
                 "xdb/users.json",
@@ -88,18 +87,6 @@
                     "type": "jsonfile",
                     "name": "report-templates",
                     "path": "xdb/report-templates.json"
-                }
-            }
-        },
-        {
-            "name": "roles",
-            "definition_file": "xdb/roles.json",
-            "description": "roles + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "roles",
-                    "path": "xdb/roles.json"
                 }
             }
         },

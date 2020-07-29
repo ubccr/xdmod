@@ -153,9 +153,10 @@ class Slurm extends Shredder
      * The Slurm job states corresponding to jobs that are no longer
      * running.
      *
-     * @var array
+     * @var string[]
      */
-    protected static $states = array(
+    private static $endedJobStates = [
+        'BOOT_FAIL',
         'CANCELLED',
         'COMPLETED',
         'FAILED',
@@ -165,7 +166,28 @@ class Slurm extends Shredder
         'OUT_OF_MEMORY',
         'DEADLINE',
         'REVOKED'
-    );
+    ];
+
+    /**
+     * The Slurm job states corresponding to jobs that have not started or not
+     * ended.
+     *
+     * @var string[]
+     */
+    private static $nonEndedJobStates = [
+        'PENDING',
+        'RUNNING',
+        'REQUEUED',
+        'RESIZING',
+        'SUSPENDED'
+    ];
+
+    /**
+     * Any job states that are not currently known to the shredder.
+     *
+     * @var string[]
+     */
+    private static $unknownJobStates = [];
 
     /**
      * Time zone used when parsing datetimes.
@@ -230,6 +252,39 @@ class Slurm extends Shredder
             return;
         }
 
+        // Split the job state because canceled jobs are reported as "CANCELLED
+        // by ...".
+        list($jobState) = explode(' ', strtoupper($job['state']), 2);
+
+        if (!in_array($jobState, self::$endedJobStates)) {
+            if (in_array($jobState, self::$nonEndedJobStates)) {
+                $this->logger->debug(
+                    sprintf(
+                        'Skipping job with non-ended state "%s"',
+                        $jobState
+                    )
+                );
+                return;
+            }
+
+            // Warn about an unknown job state the first time it is
+            // encountered.
+            if (!in_array($jobState, self::$unknownJobStates)) {
+                $this->logger->warning(
+                    sprintf(
+                        'Found job with unknown state "%s", '
+                        . 'all jobs with this state will be ignored',
+                        $jobState
+                    )
+                );
+                self::$unknownJobStates[] = $jobState;
+            }
+            $this->logger->debug(
+                sprintf('Skipping job with unknown state "%s"', $jobState)
+            );
+            return;
+        }
+
         $this->logger->debug('Parsed data: ' . json_encode($job));
 
         $node = $this->getFirstNode($job['node_list']);
@@ -238,6 +293,9 @@ class Slurm extends Shredder
             $this->logger->debug('Skipping line due to host filter');
             return;
         }
+
+        // Convert job name encoding.
+        $job['job_name'] = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
 
         // Convert datetime strings into unix timestamps.
         $dateKeys = array(
@@ -311,16 +369,6 @@ class Slurm extends Shredder
     public function getFieldNames()
     {
         return self::$fieldNames;
-    }
-
-    /**
-     * Returns the states for completed jobs as named by sacct.
-     *
-     * @return array
-     */
-    public function getStates()
-    {
-        return self::$states;
     }
 
     /**

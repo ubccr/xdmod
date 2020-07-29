@@ -89,7 +89,9 @@ and you can then re-shred and re-ingest your resource manager data.
 You need to set your timezone in your `php.ini` file.  Add the
 following, but substitute your timezone:
 
-    date.timezone = America/New_York
+```ini
+date.timezone = America/New_York
+```
 
 The PHP website contains the full list of supported [timezones][].
 
@@ -166,3 +168,22 @@ to recover the User to Acl relations.
 This indicates that the `-r` or `--recover` flag was present when calling `acl-config`
 but there were no backup tables found to recover from. Remove the `-r` or `--recover` flag
 and run `acl-config` again.
+
+### Why do I see the error message "Bad Request Your browser sent a request that this server could not understand." in the browser instead of the portal?
+
+This message is displayed if an HTTPS site is accessed via the HTTP protocol. The template
+Apache configuration file in Open XDMoD 9.0 and later enables HTTPS. HTTPS
+sites should use the https:// prefix in the web address.
+
+### Error "SSLCertificateFile: file '/etc/pki/tls/certs/localhost.crt' does not exist or is empty" when trying to start the webserver
+
+The template Apache configuration file must be edited to specify the path to
+valid SSL certificates. See the [webserver configuration section](configuration.html#apache-configuration)
+for details on how to configure the server.
+
+### Why do I see the warning message "Skipping job with unknown state ..." while shredding Slurm data?
+
+The Open XDMoD Slurm shredder will accept data for jobs in all states, but
+ignore jobs that have not ended.  If an unknown job state is encountered this
+warning message will be generated.  Please notify the Open XDMoD developers
+about the unknown state using the [support](support.html) contact information.

@@ -2,13 +2,13 @@
 title: nginx
 ---
 
-***This web server is not currently supported***
-***While we have some instances running nginx it has not been fully vetted at this time***
-***If you have updates please share, but there will be limited help if you use nginx at this time***
+***This web server is not currently supported.***
+***While we have some instances running nginx it has not been fully vetted at this time.***
+***If you have updates please share, but there will be limited help if you use nginx at this time.***
 
-The following assumes you have a JSON format setup for logging.  To do that add the following to your /etc/nginx.conf
+The following assumes you have a JSON format setup for logging.  To do that add the following to your `/etc/nginx.conf`:
 
-```conf
+```nginx
 log_format  json  '{'
   '"time": "$time_iso8601", '
   '"request_method": "$request_method", '
@@ -24,11 +24,11 @@ log_format  json  '{'
  '}';
 ```
 
-You will need to change the locations of the html roots in the configuration to match your Open XDMoD installation as well as the server_name to match your host.
+You will need to change the locations of the html roots in the configuration to match your Open XDMoD installation as well as the `server_name` to match your host.
 
-sites-available/openxdmod:
+`sites-available/openxdmod`:
 
-```conf
+```nginx
 server {
   listen [::]:80 ipv6only=off default_server;
   server_name  oxdm.example.com;
@@ -73,9 +73,9 @@ server {
 }
 ```
 
-/etc/nginx/conf.d/php-fpm.conf
+`/etc/nginx/conf.d/php-fpm.conf`
 
-```conf
+```nginx
 location ~ \.php$ {
     try_files      $uri = 404;
     fastcgi_pass   127.0.0.1:9000;
@@ -85,9 +85,9 @@ location ~ \.php$ {
 }
 ```
 
-/etc/nginx/conf.d/restrictions.conf
+`/etc/nginx/conf.d/restrictions.conf`
 
-```conf
+```nginx
 # Global restrictions configuration file.
 # Designed to be included in any server {} block.</p>
 location = /favicon.ico {

@@ -235,10 +235,6 @@ function getSacctCmdArgs(
     $args[] = '--format';
     $args[] = $format;
 
-    $states = implode(',', $shredder->getStates());
-    $args[] = '--state';
-    $args[] = $states;
-
     if ($startTime !== null) {
         $args[] = '--starttime';
         $args[] = $startTime;

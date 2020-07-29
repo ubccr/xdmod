@@ -1,0 +1,94 @@
+{
+  "table_definition": {
+    "name": "job_metadata",
+    "comment": "Metadata associated with gateways-submitted jobs",
+    "engine": "myisam",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "name": "id",
+        "extra": "auto_increment",
+        "comment": "Generated primary key for job_metadata table"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": "-1",
+        "comment": "Foreign key to resource table; identifies computing resource on which the job was run",
+        "name": "resource_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": "-1",
+        "comment": "Foreign key to gateway table; identifies gateway that submitted the job",
+        "name": "gateway_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": "-1",
+        "comment": "Foreign key to enduser table; identifies gateway enduser that submitted the job on the gateway",
+        "name": "username_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": "-1",
+        "comment": "Foreign key to jobs table; identifies job id on the computing resource",
+        "name": "job_id"
+      },
+      {
+        "type": "datetime",
+        "nullable": false,
+        "comment": "Date when job was submitted or run",
+        "name": "job_datetime"
+      },
+      {
+        "type": "varchar(200)",
+        "nullable": true,
+        "comment": "Name of script run on resource at behest of gateway",
+        "name": "script_name"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": true,
+        "comment": "Path to script run on resource at behest of gateway",
+        "name": "script_path"
+      },
+      {
+        "type": "datetime",
+        "nullable": false,
+        "comment": "Datetime when record was modified last",
+        "name": "last_modified"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      },
+      {
+        "columns": [
+          "resource_id",
+          "gateway_id",
+          "username_id",
+          "job_id",
+          "job_datetime"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "index_job_metadata_unique"
+      }
+    ],
+    "foreign_key_constraints": [],
+    "triggers": []
+  }
+}

@@ -13,7 +13,8 @@ the `domains` setting in the `cors` section of `portal_settings.ini`.
 
 This setting is a comma separated list where each item matches *exactly* what is in the `Origin` header sent by the browser.
 This includes the schema, host, and non standard ports.
-```
+
+```ini
 [cors]
 domains=https://integratedapp.example.tld,https://dev-integratedapp.example.tld:8080
 ```
@@ -58,7 +59,10 @@ The application that is integrating with Open XDMoD should contain a page *like*
                         .then(response => response.json())
                         .then((data) => {
                             var xdmodLogin = document.createElement('iframe');
-                            xdmodLogin.style = 'display:none;';
+                            /**
+                             * Do not use display:none or it wont work in Firefox
+                             */
+                            xdmodLogin.style = 'visibility: hidden; position: absolute;left: -1000px';
                             xdmodLogin.src = data;
                             document.body.appendChild(xdmodLogin);
                     });

@@ -6,6 +6,8 @@ Open XDMoD requires the following software:
 
 - [Apache][] 2.4
     - [mod_rewrite][]
+    - [mod_ssl][]
+    - [mod_headers][]
 - [MariaDB][]/[MySQL][] 5.5.3+
 - [PHP][] 5.4+
     - [PDO][]
@@ -30,6 +32,8 @@ Open XDMoD requires the following software:
 
 [apache]:          https://httpd.apache.org/
 [mod_rewrite]:     https://httpd.apache.org/docs/current/mod/mod_rewrite.html
+[mod_ssl]:         https://httpd.apache.org/docs/current/mod/mod_ssl.html
+[mod_headers]:     https://httpd.apache.org/docs/current/mod/mod_headers.html
 [mariadb]:         https://mariadb.org/
 [mysql]:           https://mysql.com/
 [php]:             https://secure.php.net/
@@ -96,18 +100,32 @@ Additional Notes
 
 ### PHP
 
+Open XDMoD is tested to work with PHP 5.4.16 and may be compatible with more
+recent releases of PHP 5.  Open XDMoD is not compatible with PHP 7 at this
+time.
+
 Some Linux distributions (including CentOS) do not set the timezone used
 by PHP in their default configuration.  This will result in many warning
 messages from PHP.  You should set the timezone in your `php.ini` file
 by adding the following, but substituting your timezone:
 
-    date.timezone = America/New_York
+```ini
+date.timezone = America/New_York
+```
 
 The PHP website contains the full list of supported [timezones][].
+
+Production Open XDMoD instances should use HTTPS, which is enabled via the webserver
+configuration (see below).
 
 [timezones]: https://secure.php.net/manual/en/timezones.php
 
 ### Apache
+
+Production instances of Open XDMoD should use HTTPS. This requires
+the `mod_ssl` module be installed and enabled. The `mod_headers` module
+is also recommended so that the [HTTP Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
+header can be set on the webserver.
 
 Open XDMoD requires that mod_rewrite be installed and enabled.  Since
 the Open XDMoD portal is a web application you will also need to make
@@ -117,6 +135,10 @@ network access.
 ### MySQL
 
 MySQL 5.5.3+ is currently required for use with Open XDMoD.
+
+Open XDMoD is tested to work with MariaDB 5.5.60 and may be compatible with
+more recent releases of MySQL and MariaDB.  Open XDMoD is currently not
+compatible with MySQL 8.0 at this time.
 
 Some versions of MySQL have binary logging enabled by default.  This can
 be an issue during the setup process if the user specified to create the
@@ -138,6 +160,7 @@ setting must be set to at least 16MB. The recommended setting in the mysql serve
 
 ```ini
 [mysqld]
+sql_mode = ''
 max_allowed_packet = 1G
 group_concat_max_len = 16M
 innodb_stats_on_metadata = off

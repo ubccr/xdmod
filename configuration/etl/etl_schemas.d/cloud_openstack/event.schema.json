@@ -6,7 +6,7 @@
       "disk_gb": {
         "type": "string"
       },
-      "ephermeral_gb": {
+      "ephemeral_gb": {
         "type": "string"
       },
       "event_type": {
@@ -66,9 +66,6 @@
       },
       "user_name": {
         "type": ["string", "null"]
-      },
-      "root_gb": {
-        "type": "integer"
       },
       "vcpus": {
         "type": "integer"

@@ -6,7 +6,7 @@
    
    require_once dirname(__FILE__).'/../../configuration/linker.php';
 
-   @session_start();
+   \xd_security\start_session();
    xd_security\enforceUserRequirements(array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE));
    
    $response = array('action' => 'dashboard_launch');

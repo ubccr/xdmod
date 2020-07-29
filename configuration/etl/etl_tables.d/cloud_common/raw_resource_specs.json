@@ -21,17 +21,18 @@
                 "name": "memory_mb",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "What to show the user"
+                "comment": "Amount of memory available on the associated node."
             },
             {
                 "name": "vcpus",
                 "type": "int(5)",
                 "nullable": false,
-                "default": null
+                "default": null,
+                "comment": "Number of vcpus available on the associated node."
             },
             {
-                "name": "spec_date",
-                "type": "date",
+                "name": "fact_date",
+                "type": "datetime",
                 "nullable": false
             }
         ],
@@ -43,7 +44,7 @@
                     "hostname",
                     "memory_mb",
                     "vcpus",
-                    "spec_date"
+                    "fact_date"
                 ],
                 "is_unique": true
             }

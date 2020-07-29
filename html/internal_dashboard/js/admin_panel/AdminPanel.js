@@ -179,6 +179,7 @@ XDMoD.AdminPanel = Ext.extend(Ext.Window,  {
                         return;
 
                      if (resp == 'no') {
+                        sectionExistingUsers.revertUserSettings();
                         sectionExistingUsers.resetDirtyState();
                         self.hide();
                      }

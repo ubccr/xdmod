@@ -43,13 +43,13 @@
             },{
                 "name": "processorbucket_id",
                 "type": "int(4)",
-                "nullable": true,
-                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processorbucket.id"
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processor_buckets.id"
             },{
                 "name": "memorybucket_id",
                 "type": "int(4)",
-                "nullable": true,
-                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memorybucket.id"
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memory_buckets.id"
             },{
                 "name": "instance_type_id",
                 "type": "int(11)",

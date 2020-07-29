@@ -9,8 +9,6 @@ use Models\Realm;
 use Models\Services\Acls;
 use Models\Services\Realms;
 
-@session_start();
-
 // Fix to the 'trailing slash' issue -------------------------------
 
 // Get URL ------------
@@ -30,6 +28,8 @@ if (preg_match('/index.php(\/+)/i', $url)) {
 }
 
 require_once dirname(__FILE__) . '/../configuration/linker.php';
+
+\xd_security\start_session();
 
 $userLoggedIn = isset($_SESSION['xdUser']);
 if ($userLoggedIn) {
@@ -235,16 +235,29 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <link rel="stylesheet" type="text/css" href="gui/css/LoginPrompt.css"/>
     <?php endif; ?>
 
-    <?php
-    $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
-        $carry [] = $item->getName();
-        return $carry;
-    }, array());
-    ?>
-
     <script type='text/javascript'>
 
         <?php
+        $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
+            $carry [] = $item->getName();
+            return $carry;
+        }, array());
+
+        if (count($realms) === 0) {
+            $code = <<<JS
+                Ext.onReady(function() {
+                    Ext.MessageBox.alert(
+                        'Invalid State Detected',
+                        'This Open XDMoD installation is in an invalid state.<br/><br/>' +
+                        'Before Open XDMoD can be utilized you must run ingestion at least once.<br/><br/>' +
+                        'If ingestion has already been run then make sure that you have run the acl-config CLI application and that it has completed successfully.<br/><br/>' +
+                        '<b>NOTE: Open XDMoD will not function correctly until this problem has been resolved.</b>'
+                    );
+                });
+JS;
+            print $code;
+        }
+
         print "CCR.xdmod.publicUser = " . json_encode(!$userLoggedIn) . ";\n";
 
         $tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
@@ -281,7 +294,11 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
         print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
 
-        print "CCR.xdmod.ui.disabledMenus = " . json_encode(Acls::getDisabledMenus($user, $realms)) . ";\n";
+        try {
+            print "CCR.xdmod.ui.disabledMenus = " . json_encode(Acls::getDisabledMenus($user, $realms)) . ";\n";
+        } catch (Exception $e) {
+            print "CCR.xdmod.ui.disabledMenus = [];\n";
+        }
 
         if ($userLoggedIn) {
             print "CCR.xdmod.ui.allRoles = " . json_encode($user->enumAllAvailableRoles()) . "\n";

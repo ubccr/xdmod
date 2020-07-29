@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7fb93eca649c895abfdc343c651728fe",
+    "content-hash": "e726680133e3604a59d3faffbad9d678",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -2443,6 +2443,52 @@
             "time": "2018-09-10T15:22:34+00:00"
         },
         {
+            "name": "ubccr/simplesamlphp-module-authoidcoauth2",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ubccr/simplesamlphp-module-authoidcoauth2.git",
+                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
+                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
+                "shasum": ""
+            },
+            "require": {
+                "simplesamlphp/composer-module-installer": "~1.0"
+            },
+            "require-dev": {
+                "simplesamlphp/simplesamlphp": "^1.14",
+                "squizlabs/php_codesniffer": "2.8.0"
+            },
+            "type": "simplesamlphp-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Open XDMoD",
+                    "email": "ccr-xdmod-help@buffalo.edu",
+                    "role": "Open XDMoD Project Team, University at Buffalo"
+                },
+                {
+                    "name": "Ben Plessinger",
+                    "email": "bpless@buffalo.edu",
+                    "role": "Senior Scientific Programmer, University at Buffalo"
+                },
+                {
+                    "name": "Ryan Rathsam",
+                    "email": "ryanrath@buffalo.edu",
+                    "role": "Scientific Programmer, University at Buffalo"
+                }
+            ],
+            "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
+            "time": "2020-07-20T13:31:47+00:00"
+        },
+        {
             "name": "whitehat101/apr1-md5",
             "version": "v1.0.0",
             "source": {
@@ -3506,5 +3552,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.4"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }

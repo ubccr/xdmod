@@ -118,4 +118,23 @@ class WarehouseControllerTest extends BaseTest
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(66, $response[0]['total']);
     }
+
+    /**
+     * Confirm that a filter can be applied to the aggregatedata endpoint
+     */
+    public function testGetAggregateWithFilters()
+    {
+        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('This test requires the Jobs realm');
+        }
+
+        $params = $this->getAggDataParameterGenerator(array('filters' => array('jobsize' => 1)));
+
+        $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);
+
+        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertTrue($response[0]['success']);
+        $this->assertCount($params['limit'], $response[0]['results']);
+        $this->assertEquals(23, $response[0]['total']);
+    }
 }

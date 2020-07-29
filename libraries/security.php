@@ -6,6 +6,22 @@
 namespace xd_security;
 
 /**
+ * Wrapper for the session_start that ensures that the secure
+ * cookie flag is set for the session cookie.
+ */
+function start_session()
+{
+    $cParams = session_get_cookie_params();
+    session_set_cookie_params(
+        $cParams["lifetime"],
+        $cParams["path"],
+        $cParams['domain'],
+        true
+    );
+    @session_start();
+}
+
+/**
  * @param array $failover_methods
  *
  * @return \XDUser

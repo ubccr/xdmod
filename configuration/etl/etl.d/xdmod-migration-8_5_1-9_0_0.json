@@ -9,51 +9,6 @@
     },
     "migration-8_5_1-9_0_0": [
         {
-            "name": "DeleteCloudAutoincrementColumns",
-            "description": "Post-ingest updates for massaging Open Stack data",
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
-            "class": "ExecuteSql",
-            "sql_file_list": [
-                "migrations/cloud-migration-8-5-1_9-0-0.sql"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud Realm Tables",
-                    "config": "database",
-                    "schema": "modw_cloud"
-                }
-            }
-        },
-        {
-            "name": "update-modw_cloud-tables",
-            "description": "Update modw_cloud tables",
-            "namespace": "ETL\\Maintenance",
-            "class": "ManageTables",
-            "options_class": "MaintenanceOptions",
-            "definition_file_list": [
-                "cloud_common/domains.json",
-                "cloud_openstack/domain_submission_venue.json",
-                "cloud_openstack/domain_submission_venue_staging.json",
-                "cloud_openstack/staging_event.json",
-                "cloud_openstack/raw_event.json",
-                "cloud_common/session_records.json",
-                "cloud_common/event.json",
-                "cloud_common/account.json",
-                "cloud_common/instance_type.json",
-                "cloud_common/instance.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "Cloud Realm Tables",
-                    "config": "database",
-                    "schema": "modw_cloud"
-                }
-            }
-        },
-        {
             "name": "update-moddb-tables",
             "description": "Update moddb tables",
             "namespace": "ETL\\Maintenance",
@@ -86,6 +41,58 @@
                     "name": "Logger Database",
                     "config": "logger",
                     "schema": "mod_logger"
+                }
+            }
+        }
+    ],
+    "#": "Cloud realm pipeline intentionally named to not match the automatically run migration pipelines",
+    "cloud-migration-8-5-1_9-0-0": [
+        {
+            "name": "DeleteCloudAutoincrementColumns",
+            "description": "Post-ingest updates for massaging Open Stack data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [{
+                "sql_file": "migrations/cloud-migration-8-5-1_9-0-0.sql",
+                "delimiter": ";"
+            }],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud Realm Tables",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                }
+            }
+        },
+        {
+            "name": "update-modw_cloud-tables",
+            "description": "Update modw_cloud tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "cloud_common/domains.json",
+                "cloud_openstack/domain_submission_venue.json",
+                "cloud_openstack/domain_submission_venue_staging.json",
+                "cloud_openstack/staging_event.json",
+                "cloud_openstack/raw_event.json",
+                "cloud_common/session_records.json",
+                "cloud_common/event.json",
+                "cloud_common/raw_resource_specs.json",
+                "cloud_common/staging_resource_specifications.json",
+                "cloud_common/cloud_resource_specs.json",
+                "cloud_common/account.json",
+                "cloud_common/instance_type.json",
+                "cloud_common/instance.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud Realm Tables",
+                    "config": "database",
+                    "schema": "modw_cloud"
                 }
             }
         },
@@ -142,8 +149,35 @@
                 }
             }
         },
-
-
+        {
+            "#": "IngestCloudResourceSpecification",
+            "name": "CloudResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ],
+            "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Aggregate DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_aggregates",
+                  "create_schema_if_not_exists": true,
+                  "truncate_destination": false
+              }
+           }
+        },
         {
             "#": "Events must be ingested after all other dimensions",
             "name": "OpenStackCloudStagingEventIngestor",
@@ -282,6 +316,7 @@
             "class": "ManageTables",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
+                "jobs/shredder/job-pbs.json",
                 "jobs/shredder/job.json",
                 "jobs/staging/job.json"
             ],
@@ -338,6 +373,27 @@
             "description": "",
             "sql_file_list": [
                 "migrations/8.5.1-9.0.0/jobs-gpu/shredded_job_slurm-to-shredded_job.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "shredded_job_pbs-to-shredded_job",
+            "description": "",
+            "sql_file_list": [
+                "migrations/8.5.1-9.0.0/jobs-gpu/shredded_job_pbs-to-shredded_job.sql"
             ],
             "endpoints": {
                 "source": {
@@ -435,6 +491,27 @@
                     "name": "XDMoD Data Warehouse",
                     "config": "datawarehouse",
                     "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "remove-role-tables",
+            "description": "Remove the Role related tables as they are no longer used.",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                {
+                    "sql_file": "migrations/8.5.1-9.0.0/role-table-cleanup.sql",
+                    "delimiter": ";"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logger Database",
+                    "config": "database",
+                    "schema": "moddb"
                 }
             }
         }
