@@ -46,15 +46,15 @@ XDMoD is installed you must create the databases manually.  Likewise, if you
 don't want to use this process and would prefer to manually create the
 databases, see the [Database Guide](databases.html).
 
-#### Acl Database Setup / Population
+#### ACL Database Setup / Population
 
-This step will run immediately after you have setup the database that XDMoD will
+This step will run immediately after you have set up the database that Open XDMoD will
 be using and does not require any additional input. It is responsible for creating
-and populating the tables required by the Acl framework.
+and populating the tables required by the ACL framework.
 
-If your XDMoD Installation requires modifications to the acl tables
-(etc/etl/etl_tables.d/acls/xdmod/<table>.json) then running this step again or
-the `acl-config` bin script is required.
+If your Open XDMoD Installation requires modifications to the ACL tables
+(`/etc/xdmod/etl/etl_tables.d/acls/<table>.json`) then running this step
+again or the `acl-config` bin script is required.
 
 ### Organization Settings
 

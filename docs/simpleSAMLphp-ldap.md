@@ -4,7 +4,7 @@ title: Setting up XDMoD for LDAP Authentication
 
 For XDMoD to authenticate against LDAP XDMoD has to be set up as an IDP.
 
-*Note: For this example we are going to use the [ForumSystems Online LDAP Test Server][forumsys-ldap] You will need to change settings to your ldap as appropriate*
+*Note: For this example we are going to use the [ForumSystems Online LDAP Test Server][forumsys-ldap] You will need to change settings to your LDAP as appropriate*
 
 Make sure you have read and setup [OpenXDMoD for SimpleSAML](simpleSAMLphp.html).
 More information on [SimpleSAMLphp LDAP][ssp-ldap].
@@ -30,7 +30,7 @@ $config = array(
       40 => array(
         'class' => 'core:AttributeMap',
         /*
-         *  These will need to map to the fields you have in your ldap
+         *  These will need to map to the fields you have in your LDAP
          */
         'mail' => 'email_address',
         'givenName' => 'first_name',
