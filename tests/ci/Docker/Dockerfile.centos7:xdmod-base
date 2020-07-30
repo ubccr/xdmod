@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM centos:7.8.2003
 ENV BRANCH=xdmod8.5
 LABEL description="Base image containing XDMoD required software."
 
