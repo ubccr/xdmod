@@ -5,7 +5,8 @@ LABEL description="Base image containing XDMoD required software."
 COPY assets/google-chrome.repo /etc/yum.repos.d
 
 # Dependencies needed by XDMoD
-RUN yum -y install epel-release && \
+RUN yum makecache && \
+    yum -y install epel-release && \
     yum -y install \
     expect \
     gcc-c++ \
