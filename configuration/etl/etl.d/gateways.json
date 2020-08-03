@@ -39,6 +39,8 @@
                 "gateways/modw_gateways.gateway.json",
                 "gateways/modw_gateways.enduser.json",
                 "gateways/modw_gateways.job_metadata.json"
+                "gateways/modw_gateways.jobfact_by_day_joblist.json",
+                "gateways/modw_gateways.jobfact_by_day.json"
             ]
         }
     ],
