@@ -126,7 +126,7 @@ See the [Ingestor Guide](ingestor.html) for more details.
 Restart Apache
 --------------
 
-    # /etc/init.d/apache2 restart
+    # systemctl restart httpd.service
 
 This command may be different depending on your operating system.
 
