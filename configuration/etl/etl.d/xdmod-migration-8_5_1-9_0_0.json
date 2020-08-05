@@ -86,7 +86,10 @@
                 "cloud_common/account.json",
                 "cloud_common/instance_type.json",
                 "cloud_common/instance.json",
-                "cloud_common/staging_cloud_project_to_pi.json"
+                "cloud_common/staging_cloud_project_to_pi.json",
+                "cloud_common/asset.json",
+                "cloud_generic/raw_event.json",
+                "cloud_generic/staging_event.json"
             ],
             "endpoints": {
                 "destination": {
