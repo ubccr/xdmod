@@ -108,7 +108,9 @@ the -t flag should be set to cloud-project-to-pi. An example of the command is b
 
 After importing this data you must ingest it for the date range of any data you have already shredded.
 
-    xdmod-ingestor --last-modified-start-date 2012-01-01
+    xdmod-ingestor --datatype=genericcloud
+    xdmod-ingestor --datatype=openstack
+    xdmod-ingestor --aggregate=cloud --last-modified-start-date 2012-01-01
 
 ### Format
 The format of the csv file into set a project to PI association is shown below
