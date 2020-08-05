@@ -52,7 +52,45 @@
 	}
     ],
     "aggregate": [
-         {
+        {
+    	    "#": "Method from etl_pipelines.d/jobs-xdw.json",
+            "name": "table-create",
+            "description": "Setup tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                 "gateways/gatewayfact_by_day_joblist.json"
+            ]
+        },
+        {
+    	    "#": "Method from etl_pipelines.d/jobs-xdw.json: day",
+            "name": "aggregate-days",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Job Record/Task database",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
+                    "schema": "modw_gateways",
+                    "create_schema_if_not_exists": true
+                }
+            },
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "JobListAggregator",
+            "description": "Aggregate HPC job records for gateways",
+            "definition_file": "gateways/hpc-aggregation-day.json",
+            "table_prefix": "gatewayfact_by_",
+            "aggregation_units": ["day"]
+        },
+        {
+    	    "#": "Method from etl_pipelines.d/jobs-xdw.json: other timeframes",
             "name": "aggregate",
             "endpoints": {
                 "source": {
@@ -75,7 +113,28 @@
             "description": "Aggregate Gateway job records",
             "definition_file": "gateways/hpc-aggregation.json",
             "table_prefix": "gatewayfact_by_",
-            "aggregation_units": ["day", "month", "quarter", "year"]
+            "aggregation_units": ["month", "quarter", "year"]
+        },
+        {
+            "#": "Method from etl_pipelines.d/jobs-xdw.json: joblist",
+            "name": "aggregation-joblist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "gateways/gatewayfact_by_day_joblist.json",
+            "description": "Populate the job list table, which contains the back references from the aggregates table to the fact table",
+            "explode_column": {
+                "job_id_list": "job_id"
+            },
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "modw_gateways",
+                    "config": "datawarehouse",
+                    "schema": "modw_gateways"
+                }
+            }
         }
+
     ]
 }
