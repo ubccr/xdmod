@@ -101,10 +101,10 @@ If you choose to use the generic file format for ingesting event data each event
 - The block_devices attribute is a JSON object that lists information about block storage devices attached to this VM when the event occurred. If multiple storage devices are attached the should each be listed here as a separate JSON object.
 
 ## Adding PI information
-PI information for the the cloud realm is ingested from a csv file using the `xdmod-ingest-csv` command. When ingesting the data
+PI information for the the cloud realm is ingested from a csv file using the `xdmod-import-csv` command. When ingesting the data
 the -t flag should be set to cloud-project-to-pi. An example of the command is below:
 
-    xdmod-ingest-csv -t cloud-project-to-pi -i /path/to/file.csv
+    xdmod-import-csv -t cloud-project-to-pi -i /path/to/file.csv
 
 After importing this data you must ingest it for the date range of any data you have already shredded.
 
