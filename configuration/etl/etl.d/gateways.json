@@ -36,10 +36,10 @@
             "options_class": "MaintenanceOptions",
             "# order-matters": "Because of foreign key constraints",
             "definition_file_list": [
-                "gateways/modw_gateways.gateway.json",
-                "gateways/modw_gateways.enduser.json",
-                "gateways/modw_gateways.job_metadata.json",
-                "gateways/modw_gateways.gatewayfact_by_day_joblist.json"
+                "gateways/gateway.json",
+                "gateways/enduser.json",
+                "gateways/job_metadata.json",
+                "gateways/gatewayfact_by_day_joblist.json"
             ]
         }
     ],
