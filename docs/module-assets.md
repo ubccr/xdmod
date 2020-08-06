@@ -48,4 +48,3 @@ And the following files in the internal dashboard:
 - `html/gui/js/modules/example/ExamplePanel.js`
 - `html/internal_dashboard/css/example.css`
 - `html/gui/css/example.css`
-
