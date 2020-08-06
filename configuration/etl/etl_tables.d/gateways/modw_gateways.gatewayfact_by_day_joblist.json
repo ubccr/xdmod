@@ -1,8 +1,39 @@
 {
     "table_definition": {
-        "$ref-with-overwrite": "etl_tables.d/jobs/xdw/jobfact_by_day_joblist.json#/table_definition",
-        "$overwrite": {
-            "name": "gatewayfact_by_day_joblist"
-        }
+        "name": "gatewayfact_by_day_joblist",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "agg_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "jobid",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "agg_id",
+                    "jobid"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "job_lookup_key",
+                "columns": [
+                    "jobid",
+                    "agg_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
     }
 }

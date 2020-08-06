@@ -52,7 +52,8 @@
     ],
     "aggregate": [
          {
-            "name": "aggregate",
+            "#": "Aggregate gateways job data over days",
+            "name": "aggregate-days",
             "endpoints": {
                 "source": {
                     "type": "mysql",
@@ -71,10 +72,56 @@
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
             "class": "JobListAggregator",
-            "description": "Aggregate Gateway job records",
+            "description": "Aggregate Gateway job records for days",
             "definition_file": "gateways/hpc-aggregation-day.json",
             "table_prefix": "gatewayfact_by_",
             "aggregation_units": ["day"]
+        },
+        {
+            "#": "Aggregate gateways job data over months, quarters, years",
+            "name": "aggregate",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Job Record/Task database",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
+                    "schema": "modw_gateways",
+                    "create_schema_if_not_exists": true
+                }
+            },
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate Gateway job records for month, qtr, yr",
+            "definition_file": "gateways/hpc-aggregation.json",
+            "table_prefix": "gatewayfact_by_",
+            "aggregation_units": ["month", "quarter", "year"]
+        },
+        {
+            "#": "Aggregate gateways joblist data",
+            "name": "aggregate-joblist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "gateways/gatewayfact_by_day_joblist.json",
+            "description": "Populate the job list table, which contains the back references from the aggregates table to the fact table",
+            "explode_column": {
+                "job_id_list": "job_id"
+            },
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "modw_gateways",
+                    "config": "datawarehouse",
+                    "schema": "modw_gateways"
+                }
+            }
         }
     ]
 }
