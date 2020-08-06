@@ -38,7 +38,8 @@
             "definition_file_list": [
                 "gateways/modw_gateways.gateway.json",
                 "gateways/modw_gateways.enduser.json",
-                "gateways/modw_gateways.job_metadata.json"
+                "gateways/modw_gateways.job_metadata.json",
+                "gateways/modw_gateways.gatewayfact_by_day_joblist.json"
             ]
         }
     ],
@@ -69,11 +70,11 @@
             },
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
-            "class": "SimpleAggregator",
+            "class": "JobListAggregator",
             "description": "Aggregate Gateway job records",
-            "definition_file": "gateways/hpc-aggregation.json",
+            "definition_file": "gateways/hpc-aggregation-day.json",
             "table_prefix": "gatewayfact_by_",
-            "aggregation_units": ["day", "month", "quarter", "year"]
+            "aggregation_units": ["day"]
         }
     ]
 }

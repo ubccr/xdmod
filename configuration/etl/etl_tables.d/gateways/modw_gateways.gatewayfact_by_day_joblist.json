@@ -1,0 +1,8 @@
+{
+    "table_definition": {
+        "$ref-with-overwrite": "etl_tables.d/jobs/xdw/jobfact_by_day_joblist.json#/table_definition",
+        "$overwrite": {
+            "name": "gatewayfact_by_day_joblist"
+        }
+    }
+}
