@@ -2,9 +2,9 @@
 title: nginx
 ---
 
-***This web server is not currently supported***
-***While we have some instances running nginx it has not been fully vetted at this time***
-***If you have updates please share, but there will be limited help if you use nginx at this time***
+***This web server is not currently supported.***
+***While we have some instances running nginx it has not been fully vetted at this time.***
+***If you have updates please share, but there will be limited help if you use nginx at this time.***
 
 The following assumes you have a JSON format setup for logging.  To do that add the following to your `/etc/nginx.conf`:
 

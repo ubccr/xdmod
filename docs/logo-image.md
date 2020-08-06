@@ -3,7 +3,7 @@ title: Logo Image
 ---
 
 You can add an image to the Open XDMoD header.  The image will appear to
-the left of the "Sign Up" button.  The image can be specified during the
+the left of the "About" button.  The image can be specified during the
 setup process using the `xdmod-setup` command or manually added to the
 `portal_settings.ini` configuration file.  The image should have a
 maximum height of 32 pixels.

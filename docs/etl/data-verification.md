@@ -109,11 +109,17 @@ Usage: verify_table_data.php
     --ignore-column-type
     Ignore the column types between tables, useful for comparing the effect of data type changes.
 
+    -m <src>=<dest>, --map-column <src>=<dest>
+    Map a column in the source table to a different column in the destination table. This is useful for testing columns that have been renamed.
+
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
 
     -p, --pct=error-column <column>[,error>]
-        Compute the percent error between the source and destination columns and ensure that it is less than <error> (default 0.01). This is useful when comparing doubles or values that have been computed and may differ in decimal precision. See --truncate-column.
+    Compute the percent error between the source and destination columns and ensure that it is less than <error> (default 0.01). This is useful when comparing doubles or values that have been computed and may differ in decimal precision. See --truncate-column.
+
+    --show-row-differences
+    Show the columns that are different between source and destination rows with the same key. Ignored columns are not displayed.
 
     -s, --source-schema <source_schema>
     The schema for the source tables.
