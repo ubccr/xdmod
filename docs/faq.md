@@ -18,7 +18,7 @@ configurations.
 
 ### Can I use Open XDMoD with MySQL 5.0?
 
-It may be possible but this is not supported please see
+No, versions of MySQL before 5.5.3 are not compatible with Open XDMoD. See
 [Software Requirements](software-requirements.html) for recommended and tested
 configurations.
 
