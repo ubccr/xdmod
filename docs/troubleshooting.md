@@ -3,7 +3,8 @@ title: Troubleshooting Guide
 ---
 
 Check that all the [Software Requirements](software-requirements.html) are
-installed.
+installed and refer to the [Configuration Guide](configuration.html) to be sure
+all the software requirements are configured correctly.
 
 Check the list of [Frequently Asked Questions](faq.html).
 

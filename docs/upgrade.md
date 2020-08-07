@@ -54,7 +54,7 @@ backup and merge any changes after running the upgrade script.
 ### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
-the recommended values listed on the [software requirements page][mysql-config].
+the recommended values listed in the [Configuration Guide][mysql-config].
 
 ### Upgrade Database Schema and Config Files
 
@@ -101,7 +101,7 @@ merge any changes after running the upgrade script.
 ### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
-the recommended values listed on the [software requirements page][mysql-config].
+the recommended values listed in the [Configuration Guide][mysql-config].
 
 ### Upgrade Database Schema and Config Files
 
@@ -194,6 +194,6 @@ tables any saved charts or reports using the Account or Configuration group by i
 Cloud realm should be recreated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
-[mysql-config]: software-requirements.md#mysql
+[mysql-config]: configuration.md#mysql-configuration
 [apache-logs-piped]: https://httpd.apache.org/docs/2.4/logs.html#piped
 [apache-rotatelogs]: https://httpd.apache.org/docs/2.4/programs/rotatelogs.html
