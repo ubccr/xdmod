@@ -41,11 +41,6 @@ These settings are stored in `portal_settings.ini`.
 You will be required to supply a username and password for a user that
 has privileges to create databases and users.
 
-**NOTE**: If your database is on a different server than the server where Open
-XDMoD is installed you must create the databases manually.  Likewise, if you
-don't want to use this process and would prefer to manually create the
-databases, see the [Database Guide](databases.html).
-
 #### ACL Database Setup / Population
 
 This step will run immediately after you have set up the database that Open XDMoD will
