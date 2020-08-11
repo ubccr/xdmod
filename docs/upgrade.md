@@ -115,6 +115,41 @@ enhancements and bug fixes.
 
 You may upgrade directly from 8.5.0 or 8.5.1.
 
+**NOTE: This upgrade contains significant changes to configuration files and
+database tables.  Configuration files will most likely require manual updates.
+The database upgrade may require hours to complete if your database contains
+tens of millions of records.**
+
+### Configuration File Changes
+
+The `xdmod-upgrade` script will migrate user editable configuration files to
+the new version, excluding the Apache `httpd` and `logrotate` configuration
+files, which may need to be manually updated.
+
+#### Apache HTTP Server Configuration
+
+Open XDMoD 9.0.0 no longer copies an Apache configuration file into the Apache
+configuration directory.  Instead an example configuration is provided in the
+`/usr/share/xdmod/templates` directory (or `PREFIX/share/templates` for source
+installations).
+
+After upgrading, you will need to manually update your Apache configuration
+file following the [Apache
+configuration](configuration.html#apache-configuration) instructions.
+
+The Apache access log and error log now use the [piped logging
+feature][apache-logs-piped] combined with the [Apache `rotatelogs`
+program][apache-rotatelogs] to rotate logs based on the size of the log files
+to limit the total amount of storage used by these log files.  Since these
+files are no longer rotated by `logrotate`, any preexisting rotated log files
+will need to be manually deleted.
+
+#### Log Rotation Configuration
+
+If the `logrotate` configuration file was modified and you are now using
+Apache's piped logging feature with `rotatelogs` then you will need to manually
+remove the section for the Apache log files
+
 ### GPU Metrics
 
 This is the first version of Open XDMoD that supports GPU metrics in the jobs
@@ -149,41 +184,58 @@ Notes](resource-manager-slurm.html#input-format) for the example `sacct`
 command.  If you are using the `xdmod-slurm-helper` command then no changes are
 necessary.
 
-### Configuration File Changes
-
-The `xdmod-upgrade` script will migrate user editable configuration files to
-the new version, excluding the Apache and `logrotate` configuration files,
-which may need to be manually updated.
-
-The Apache access log and error log now use the [piped logging
-feature][apache-logs-piped] combined with the [Apache `rotatelogs`
-program][apache-rotatelogs] to rotate logs based on the size of the log files
-to limit the total amount of storage used by these log files.  Since these
-files are no longer rotated by `logrotate`, any preexisting rotated log files
-will need to be manually deleted.
-
-If the `logrotate` configuration file was modified you will need to manually
-remove the section for the Apache log files if you use the piped logging
-feature with `rotatelogs`.
-
 ### Database Changes
 
 The `xdmod-upgrade` script will migrate the database schemas to the new
-version.  Tables may be altered the first time they are used during ingestion.
+version.  Tables may be altered the first time they are used during ingestion
+or aggregation.
 
-- The `moddb`.`ReportTemplateACL` database table is no longer used and is
-removed by the upgrade script.
-- The following tables are altered to store GPU data:
-  `mod_shredder`.`shredded_job_slurm`, `mod_shredder`.`shredded_job`,
+- The `moddb`.`ReportTemplateACL`, `moddb`.`Roles`, `moddb`.`UserRoles`, and
+  `moddb`.`UserRoleParameters` database tables are dropped.
+
+- Alters `moddb`.`batch_export_requests`.
+
+- Adds indexes to `moddb`.`group_bys` and `moddb`.`realms`.
+
+- Alters indexes on: `moddb`.`report_template_acls`, `moddb`.`statistics`, and
+  `moddb`.`user_acls`.
+
+- Adds tables for the ACL system:
+  `moddb`.`acl_group_bys_staging`, `moddb`.`acl_hierarchies_staging`,
+  `moddb`.`acl_tabs_staging`, `moddb`.`acl_types_staging`,
+  `moddb`.`acls_staging`, `moddb`.`group_bys_staging`,
+  `moddb`.`hierarchies_staging`, `moddb`.`modules_staging`,
+  `moddb`.`realms_staging`, `moddb`.`statistics_staging`,
+  `moddb`.`tabs_staging`, `moddb`.`user_acl_group_by_parameters_staging`, and
+  `moddb`.`user_acls_staging`.
+
+- Alters tables to store GPU data: `mod_shredder`.`shredded_job_slurm`,
+  `mod_shredder`.`shredded_job_pbs`, `mod_shredder`.`shredded_job`,
   `mod_shredder`.`staging_job`, `mod_hpcdb`.`hpcdb_jobs`, `modw`.`job_tasks`,
-  and tables in `modw_aggregates` prefixed with `jobfact_by_`.
+  and aggregate tables in `modw_aggregates` prefixed with `jobfact_by_`.
+
 - New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
   Count".
-- Added another index to `mod_logger`.`log_table` to improve performance of
-  queries used by the administrative dashboard's "Log Data" tab.  If this table
+
+- Adds an index to `mod_logger`.`log_table` to improve performance of queries
+  used by the administrative dashboard's "Log Data" tab.  If this table
   contains tens of millions of rows it may take over an hour to add the index.
   It may be desirable to delete old log data from this table before performing
   the migration if the data is no longer needed.
+
+Changes to the `modw_cloud` apply only if the Cloud realm is enabled:
+
+- Adds new tables: `modw_cloud`.`cloud_resource_specs`, `modw_cloud`.`domains`,
+  `modw_cloud`.`raw_resource_specs`, `modw_cloud`.`staging_pi_to_project`,
+  `modw_cloud`.`staging_resource_specifications`,
+  `modw_cloud`.`domain_submission_venues`,
+  `modw_cloud`.`domain_submission_venues_staging`, and
+  `modw_cloud`.`openstack_staging_event`.
+
+- Adds aggregate tables prefixed with `resourcespecsfact_by_` to `modw_cloud`.
+
+- Alters tables: `modw_cloud`.`session`, `modw_cloud`.`raw_event`, and
+  `modw_cloud`.`staging_event`.
 
 - The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
 tables have had their Primary Keys changed to better support the local and global filters
