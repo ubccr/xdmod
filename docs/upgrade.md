@@ -228,14 +228,13 @@ Changes to the `modw_cloud` apply only if the Cloud realm is enabled:
 - Adds new tables: `modw_cloud`.`cloud_resource_specs`, `modw_cloud`.`domains`,
   `modw_cloud`.`raw_resource_specs`, `modw_cloud`.`staging_pi_to_project`,
   `modw_cloud`.`staging_resource_specifications`,
-  `modw_cloud`.`domain_submission_venues`,
-  `modw_cloud`.`domain_submission_venues_staging`, and
-  `modw_cloud`.`openstack_staging_event`.
+  `modw_cloud`.`domain_submission_venues`, and
+  `modw_cloud`.`domain_submission_venues_staging`.
 
-- Adds aggregate tables prefixed with `resourcespecsfact_by_` to `modw_cloud`.
+- Adds aggregate tables prefixed with `resourcespecsfact_by_` to `modw_aggregates`.
 
-- Alters tables: `modw_cloud`.`session`, `modw_cloud`.`raw_event`, and
-  `modw_cloud`.`staging_event`.
+- Alters tables: `modw_cloud`.`session`, `modw_cloud`.`raw_event`,
+  `modw_cloud`.`staging_event`, and `modw_cloud`.`openstack_staging_event`.
 
 - The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
 tables have had their Primary Keys changed to better support the local and global filters
