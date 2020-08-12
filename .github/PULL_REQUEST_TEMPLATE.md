@@ -17,7 +17,7 @@
 <!--- see how your change affects other areas of the code, etc. -->
 
 ## Checklist:
-<!--- Go over all the following points and make sure they have all be completed -->
+<!--- Go over all the following points and make sure they have all been completed -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] The pull request description is suitable for a Changelog entry
 - [ ] The milestone is set correctly on the pull request
