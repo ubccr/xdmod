@@ -108,6 +108,7 @@
 - Enhancements
     - Metric Explorer
         - Update the utilization metric description ([\#1392](https://github.com/ubccr/xdmod/pull/1392))
+        - Improve performance of the timeseries queries ([\#1264](https://github.com/ubccr/xdmod/pull/1264))
     - General
         - Adding an alert to notify users when ingestion has not been run. ([\#1389](https://github.com/ubccr/xdmod/pull/1389))
         - Update PHP version check ([\#1366](https://github.com/ubccr/xdmod/pull/1366))
