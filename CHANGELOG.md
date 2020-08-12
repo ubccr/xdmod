@@ -164,6 +164,7 @@
         - Add GPU tracking to Jobs realm ([\#1270](https://github.com/ubccr/xdmod/pull/1270))
         - Add referenced schema to foreign key constraints ([\#1252](https://github.com/ubccr/xdmod/pull/1252))
     - General
+        - Re-implementation of the data warehouse Group By and Statistic code ([\#1192](https://github.com/ubccr/xdmod/pull/1192))
         - Allow JSON references to overwrite keys ([\#1142](https://github.com/ubccr/xdmod/pull/1142))
 - Qa / Testing
     - Infrastructure
