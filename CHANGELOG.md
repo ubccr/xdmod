@@ -35,7 +35,6 @@
         - Rename internal dashboard button from "Dashboard" to "Admin Dashboard" ([\#1390](https://github.com/ubccr/xdmod/pull/1390))
         - Allow the internal dashboard to load even if a user account has an empty name. ([\#1382](https://github.com/ubccr/xdmod/pull/1382))
         - Fix groupby resource ([\#1374](https://github.com/ubccr/xdmod/pull/1374))
-        - Add ability to apply filters to the aggregatedata request. ([\#1372](https://github.com/ubccr/xdmod/pull/1372))
         - Use piped logging to rotate Apache logs ([\#1371](https://github.com/ubccr/xdmod/pull/1371))
         - Fix bugs in definition of cloud fact tables. ([\#1352](https://github.com/ubccr/xdmod/pull/1352))
         - Fix bugs in definition of job fact tables. ([\#1349](https://github.com/ubccr/xdmod/pull/1349))
@@ -77,6 +76,8 @@
         - Fix typo in EtlConfiguration ([\#1222](https://github.com/ubccr/xdmod/pull/1222))
         - Fix the underlying JSON configuration parsing problems ([\#1131](https://github.com/ubccr/xdmod/pull/1131))
         - Make the Shredder ignore empty lines ([\#1088](https://github.com/ubccr/xdmod/pull/1088))
+    - Open OnDemand
+        - Add ability to apply filters to the aggregatedata request to suppport Open OnDemand integration. ([\#1372](https://github.com/ubccr/xdmod/pull/1372))
     - Job Viewer
         - Add DISTINCT to Jobs realm JobDataset query ([\#1332](https://github.com/ubccr/xdmod/pull/1332))
         - Update job viewer formatter to handle N/A case for byte data. ([\#1208](https://github.com/ubccr/xdmod/pull/1208))
@@ -122,7 +123,7 @@
         - Use absolute acl-config path in xdmod-ingestor ([\#1306](https://github.com/ubccr/xdmod/pull/1306))
         - Update some wording for groupbys ([\#1297](https://github.com/ubccr/xdmod/pull/1297))
         - Improve ingestor option error checking ([\#1227](https://github.com/ubccr/xdmod/pull/1227))
-    - OpenOnDemand
+    - Open OnDemand
         - Update `rest/v1/users/current` ([\#1370](https://github.com/ubccr/xdmod/pull/1370))
         - CORS changes needed for OpenOnDemand ([\#1351](https://github.com/ubccr/xdmod/pull/1351))
     - ETL
