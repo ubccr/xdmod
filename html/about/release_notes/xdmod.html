@@ -2,6 +2,317 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
+<h2>Version 9.0.0 (2020-08-12)</h2>
+
+<h3>Documentation</h3>
+<ul>
+    <li>ETL
+        <ul>
+            <li>Update ETL table data verification help text</li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Remove old documentation</li>
+            <li>Minor documentation changes</li>
+            <li>Update node utilization documentation</li>
+            <li>Update hierarchy dimensions removal process</li>
+            <li>Remove beta labels from documentation</li>
+            <li>Update Integration Documentation</li>
+            <li>Update hierarchy documentation</li>
+            <li>Update code block syntax highlighting identifiers</li>
+            <li>Update PHP and MySQL version requirements</li>
+            <li>Update processor buckets documentation</li>
+            <li>Fix typos</li>
+            <li>Add GPU metrics documentation</li>
+            <li>More detail for SSO setup</li>
+            <li>Update documentation and example config for HTTPS by default</li>
+            <li>Update shredder documentation</li>
+            <li>Add roadmap link to documentation</li>
+            <li>Fix typo</li>
+            <li>Update MySQL configuration suggestions</li>
+        </ul>
+    </li>
+    <li>Storage
+        <ul>
+            <li>Update storage documentation</li>
+        </ul>
+    </li>
+    <li>Cloud
+        <ul>
+            <li>Cloud documentation update for 9.0</li>
+        </ul>
+    </li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Improve CI validate script</li>
+            <li>Replace bitwise operator with logical operator</li>
+            <li>Rename internal dashboard button from "Dashboard" to "Admin Dashboard"</li>
+            <li>Allow the internal dashboard to load even if a user account has an empty name.</li>
+            <li>Fix groupby resource</li>
+            <li>Use piped logging to rotate Apache logs</li>
+            <li>Fix bugs in definition of cloud fact tables.</li>
+            <li>Fix bugs in definition of job fact tables.</li>
+            <li>Fix regression bug when paging datasets.</li>
+            <li>Fix bug in highchart wrapper code.</li>
+            <li>Fix bug viewing raw data as demo user.</li>
+            <li>Display error message instead of "Loading..."</li>
+            <li>Add updating of version in module portal settings ini files on upgrade</li>
+            <li>Remove unnecessary redirect in the job viewer rest stack.</li>
+            <li>Fix html decoding in Job Viewer -&gt; Edit Search</li>
+            <li>Fix bugs in Configuration classes</li>
+            <li>Don't bother trying to set headers if not possible.</li>
+            <li>Update organization affiliation change email</li>
+            <li>Do not json_encode included file</li>
+            <li>Focus on username field when login dialog is expanded</li>
+            <li>Fix chart time display when the system timezone has a positive offset from UTC</li>
+            <li>Fixed loading the organization abbrevation from organization.json</li>
+        </ul>
+    </li>
+    <li>Cloud
+        <ul>
+            <li>Minor Cleanup of the OpenStack event schema</li>
+            <li>Convert date for cloud resource specifications to correct timezone from UTC</li>
+            <li>Updates to cloud migration files to fix syntax issues</li>
+            <li>Change unit to percent for cloud core utilization statistic</li>
+            <li>Change table definition for vcpus field for the cloud_resource_specs table</li>
+            <li>Remove bug that causes stop events to create sessions</li>
+            <li>Move UpdateCloudProjectToPI action to jobs-cloud-ingest-pi pipeline</li>
+            <li>Improve performance of OpenStackCloudEventAssetRootVolumeIngestor and GenericCloudEventAssetRootVolumeIngestor actions</li>
+            <li>Add alternate_group_by_column field to Project and Instance Type group by</li>
+            <li>changing account, instance and instance_type tables to have global un…</li>
+            <li>Change account, instance and instance_type tables to have single unique auto increment column</li>
+            <li>Update openstack json event schema definition</li>
+            <li>Adding table name to remove ambiguity from group by statement</li>
+            <li>Update cloud event schema and coerce data</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Update SQL delimiters</li>
+            <li>Prevent LSF commands encoding warnings</li>
+            <li>Convert Slurm job names from UTF-8 to ISO-8859-1</li>
+            <li>Throw expected exception when JSON is invalid</li>
+            <li>Remove foreign key constraints from MyISAM table</li>
+            <li>Fix typo in EtlConfiguration</li>
+            <li>Fix the underlying JSON configuration parsing problems</li>
+            <li>Make the Shredder ignore empty lines</li>
+        </ul>
+    </li>
+    <li>Open OnDemand
+        <ul>
+            <li>Add ability to apply filters to the aggregatedata request to suppport Open OnDemand integration.</li>
+        </ul>
+    </li>
+    <li>Job Viewer
+        <ul>
+            <li>Add DISTINCT to Jobs realm JobDataset query</li>
+            <li>Update job viewer formatter to handle N/A case for byte data.</li>
+            <li>Improve search history panel UI.</li>
+        </ul>
+    </li>
+    <li>Data Warehouse Export
+        <ul>
+            <li>Fix data export submission confirmation message</li>
+            <li>Fix Data Warehouse Export UI download/cancel issues</li>
+        </ul>
+    </li>
+    <li>Report Generator
+        <ul>
+            <li>Switch to new report after "Save As"</li>
+            <li>Rename report file name input field</li>
+            <li>Add input validation to report generator controller endpoints.</li>
+            <li>Fix report generation for annual and biannual reports.</li>
+        </ul>
+    </li>
+    <li>Metric Explorer
+        <ul>
+            <li>Fix some bugs in FilterListBuilder</li>
+            <li>Fix multi-timeseries dataset-show-remainder bug</li>
+            <li>Fix show remainder calculation for Jobs by System Username</li>
+            <li>Fix stderr checkbox disablement in Metric Explorer.</li>
+        </ul>
+    </li>
+    <li>ACL
+        <ul>
+            <li>Enforce realm ACLs for "show raw data" endpoints</li>
+            <li>Fix foreign key constraint on moddb report_template_acls</li>
+            <li>Fix module filtering</li>
+        </ul>
+    </li>
+    <li>User Dashboard
+        <ul>
+            <li>Fix page size in JobComponent single user view.</li>
+        </ul>
+    </li>
+    <li>Internal Dashboard
+        <ul>
+            <li>Clear report cache operation will remove image files too.</li>
+            <li>Updating Internal Dashboard Existing Email</li>
+        </ul>
+    </li>
+    <li>Storage
+        <ul>
+            <li>Fix storage realm username GroupBy</li>
+        </ul>
+    </li>
+</ul>
+<h3>Enhancements</h3>
+<ul>
+    <li>Metric Explorer
+        <ul>
+            <li>Update the utilization metric description</li>
+            <li>Improve performance of the timeseries queries</li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Adding an alert to notify users when ingestion has not been run.</li>
+            <li>Update PHP version check</li>
+            <li>Update publication and presentation listing for Open XDMoD About page</li>
+            <li>Remove Roles and UserRole tables</li>
+            <li>Enforce secure cookie flag for all session cookies and the REST token</li>
+            <li>Change default log file permissions</li>
+            <li>Update source installation log directory notes</li>
+            <li>Change default log directory permissions</li>
+            <li>Update xdmod-check-config script</li>
+            <li>Use absolute acl-config path in xdmod-ingestor</li>
+            <li>Update some wording for groupbys</li>
+            <li>Improve ingestor option error checking</li>
+        </ul>
+    </li>
+    <li>Open OnDemand
+        <ul>
+            <li>Update <code>rest/v1/users/current</code></li>
+            <li>CORS changes needed for OpenOnDemand</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Update Slurm shredder to ignore non-ended job states</li>
+            <li>Add PBS jobs realm GPU data</li>
+            <li>Add <code>job_id_raw</code> to SGE shredder</li>
+            <li>Change ETL logging identification strings</li>
+            <li>Check engine during foreign key constraint verification</li>
+            <li>Add additional ETL DB Model error checking</li>
+        </ul>
+    </li>
+    <li>Data Warehouse Export
+        <ul>
+            <li>Raw stats SUPREMM refactoring</li>
+            <li>Add README to data warehouse export zip files</li>
+            <li>Update data warehouse export UI</li>
+            <li>Improve data warehouse export logging</li>
+            <li>Minor change to Data Warehouse Export controller</li>
+            <li>Prevent creation of duplicate export requests</li>
+            <li>Refactor export request deleted state</li>
+        </ul>
+    </li>
+    <li>Internal Dashboard
+        <ul>
+            <li>Add index to log table</li>
+        </ul>
+    </li>
+    <li>Infrastructure
+        <ul>
+            <li>Add support for multiple groupby definition files in js etl.</li>
+            <li>Reduce the roundoff error in the Avg of N others calculation.</li>
+        </ul>
+    </li>
+    <li>User Dashboard
+        <ul>
+            <li>Move the job grid into its own class</li>
+        </ul>
+    </li>
+    <li>Report Generator
+        <ul>
+            <li>Close report generator "Save As" dialog after saving</li>
+        </ul>
+    </li>
+    <li>ACL
+        <ul>
+            <li>Make acl-config more resilient</li>
+            <li>Change <code>acl-config</code> backup tables detected error message</li>
+        </ul>
+    </li>
+</ul>
+<h3>New Features</h3>
+<ul>
+    <li>Infrastructure
+        <ul>
+            <li>Adding the new ubccr/simplesamlphp-module-authoidcoauth2 module</li>
+        </ul>
+    </li>
+    <li>Cloud
+        <ul>
+            <li>Add hierarchy group by's to Cloud realm</li>
+            <li>Add PI information for the Cloud realm</li>
+            <li>Add cloud core hour utilization statistic</li>
+            <li>Ingest cloud resource specifications</li>
+        </ul>
+    </li>
+    <li>ETL
+        <ul>
+            <li>Add GPU tracking to Jobs realm</li>
+            <li>Add referenced schema to foreign key constraints</li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Re-implementation of the data warehouse Group By and Statistic code</li>
+            <li>Allow JSON references to overwrite keys</li>
+        </ul>
+    </li>
+</ul>
+<h3>Qa / Testing</h3>
+<ul>
+    <li>Infrastructure
+        <ul>
+            <li>Update PhantomJS unit tests</li>
+        </ul>
+    </li>
+    <li>General
+        <ul>
+            <li>Improve robustness of integration and regression tests.</li>
+            <li>Get rid of unneeded symbolic link</li>
+            <li>Fix race condition in test harness</li>
+        </ul>
+    </li>
+    <li>Metric Explorer
+        <ul>
+            <li>Added regression tests for chart filters.</li>
+        </ul>
+    </li>
+</ul>
+<h3>Experiment</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Gateways Realm dead simple start</li>
+        </ul>
+    </li>
+</ul>
+<h3>Dependencies</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Bump symfony/http-foundation from 2.8.50 to 2.8.52</li>
+            <li>Bump robrichards/xmlseclibs from 3.0.3 to 3.0.4</li>
+        </ul>
+    </li>
+</ul>
+<h3>Data Quality</h3>
+<ul>
+    <li>General
+        <ul>
+            <li>Update statistics and groupbys for consistency</li>
+        </ul>
+    </li>
+</ul>
+
 <h2>Version 8.5.1 (2019-10-29)</h2>
 
 <h3>Bug Fixes</h3>
