@@ -101,14 +101,16 @@ If you choose to use the generic file format for ingesting event data each event
 - The block_devices attribute is a JSON object that lists information about block storage devices attached to this VM when the event occurred. If multiple storage devices are attached the should each be listed here as a separate JSON object.
 
 ## Adding PI information
-PI information for the the cloud realm is ingested from a csv file using the `xdmod-ingest-csv` command. When ingesting the data
+PI information for the the cloud realm is ingested from a csv file using the `xdmod-import-csv` command. When ingesting the data
 the -t flag should be set to cloud-project-to-pi. An example of the command is below:
 
-    xdmod-ingest-csv -t cloud-project-to-pi -i /path/to/file.csv
+    xdmod-import-csv -t cloud-project-to-pi -i /path/to/file.csv
 
 After importing this data you must ingest it for the date range of any data you have already shredded.
 
-    xdmod-ingestor --last-modified-start-date 2012-01-01
+    xdmod-ingestor --datatype=genericcloud
+    xdmod-ingestor --datatype=openstack
+    xdmod-ingestor --aggregate=cloud --last-modified-start-date 2012-01-01
 
 ### Format
 The format of the csv file into set a project to PI association is shown below
@@ -134,9 +136,10 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 
 ## Utilization
 
-To use the Utilization statistic you must shred and ingest a JSON file that lists the specifications of each node in your cloud resource. The name of this file should follow the format `hypervisor_facts_YYYY-MM-DDTHH:SS:MM.json`. When the details of at least one node changes a new file listing the details of all of the nodes should be created and ingested. Below is the format for the JSON file. For resources that use OpenStack we have a python script that will create a file with appropriate information in the [xdmod-openstack-scripts repository](https://github.com/ubccr/xdmod-openstack-scripts). This script should be run once a day and will create a file only on days where the details of at least one node has changed from the previous day. The files should be ingested using `xdmod-shredder` and setting the `-f` option to `cloudresourcespecs` and then running `xdmod-ingestor`. An example of the `xdmod-shredder` command is as follows.
+To use the Utilization statistic you must shred and ingest a JSON file that lists the specifications of each node in your cloud resource. The name of this file should follow the format `hypervisor_facts_YYYY-MM-DDTHH:SS:MM.json`. When the details of at least one node changes a new file listing the details of all of the nodes should be created and ingested. Below is the format for the JSON file. For resources that use OpenStack we have a python script that will create a file with appropriate information in the [xdmod-openstack-scripts repository](https://github.com/ubccr/xdmod-openstack-scripts/blob/master/hypervisor_fact_reporting). This script should be run once a day and will create a file only on days where the details of at least one node has changed from the previous day. The files should be ingested using `xdmod-shredder` and setting the `-f` option to `cloudresourcespecs` and then running `xdmod-ingestor`. To ingest only this data set the `--datatype` option `cloudresourcespecs`. An example of the commands needed are below.
 
-`xdmod-shredder -r RESOURCE_NAME -d PATH/TO/DIRECTORY -f cloudresourcespecs`
+    xdmod-shredder -r RESOURCE_NAME -d PATH/TO/DIRECTORY -f cloudresourcespecs
+    xdmod-ingestor --datatype=cloudresourcespecs
 
 ### Cloud Resource Specification JSON file example
 ```json

@@ -41,11 +41,6 @@ These settings are stored in `portal_settings.ini`.
 You will be required to supply a username and password for a user that
 has privileges to create databases and users.
 
-**NOTE**: If your database is on a different server than the server where Open
-XDMoD is installed you must create the databases manually.  Likewise, if you
-don't want to use this process and would prefer to manually create the
-databases, see the [Database Guide](databases.html).
-
 #### ACL Database Setup / Population
 
 This step will run immediately after you have set up the database that Open XDMoD will
@@ -198,6 +193,36 @@ to indicate to  web browsers that the Open XDMoD instance should only be accesse
     ErrorLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-error.log 1M"
     CustomLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-access.log 1M" combined
 </VirtualHost>
+```
+
+MySQL Configuration
+-------------------
+
+Open XDMoD does not support any of the strict [Server SQL Modes][sql-mode].
+You must set `sql_mode = ''` in your MySQL server configuration.
+
+Open XDMoD uses the `GROUP_CONCAT()` SQL function. The `group_concat_max_len`
+server system variable must be changed to 16MB from its default value of 1024
+bytes.
+
+The `max_allowed_packet` setting must be set to at least 16MB.
+
+Some versions of MySQL have binary logging enabled by default.  This can be an
+issue during the setup process if the user specified to create the databases
+does not have the `SUPER` privilege.  If binary logging is not required you
+should disable it in your MySQL configuration.  If that is not an option you
+can use the less safe [log_bin_trust_function_creators][] variable.  You may
+also grant the `SUPER` privilege to the user that is used to create the Open
+XDMoD database.
+
+The recommended settings in the MySQL server configuration file are as follows:
+
+```ini
+[mysqld]
+sql_mode = ''
+max_allowed_packet = 1G
+group_concat_max_len = 16M
+innodb_stats_on_metadata = off
 ```
 
 Logrotate Configuration
@@ -531,3 +556,6 @@ Determines if Open XDMoD will automatically check for updates.  Set
     "email": "j.doe@example.com"
 }
 ```
+
+[log_bin_trust_function_creators]: https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html#option_mysqld_log-bin-trust-function-creators
+[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html

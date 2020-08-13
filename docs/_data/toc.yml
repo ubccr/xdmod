@@ -41,8 +41,6 @@ toc:
         subsubfolderitems:
           - page: LDAP Authentication
             url: /simpleSAMLphp-ldap.html
-      - page: Database Guide
-        url: /databases.html
       - page: Upgrade Guide
         url: /upgrade.html
   - title: Using
