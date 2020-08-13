@@ -17,6 +17,7 @@ RUN yum -y install epel-release && \
     rsync \
     sudo \
     vim && \
+    wget && \
     yum -y install https://repo.ius.io/ius-release-el7.rpm && \
     yum -y install git224 && \
     yum -y remove ius-release && \
