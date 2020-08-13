@@ -71,6 +71,8 @@ toc:
         url: /9.0/gpu-metrics.html
       - page: Data Warehouse Export
         url: /9.0/dw-export.html
+      - page: User Dashboard Guide
+        url: /9.0/dashboard.html
   - title: Resource Manager Notes
     subfolderitems:
       - page: Slurm
@@ -93,3 +95,5 @@ toc:
     subfolderitems:
       - page: Code Organization
         url: /9.0/dev-code-organization.html
+      - page: User Dashboard Components
+        url: /9.0/dashboard-devel.html
