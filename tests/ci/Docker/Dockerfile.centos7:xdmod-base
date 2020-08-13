@@ -8,6 +8,7 @@ COPY assets/google-chrome.repo /etc/yum.repos.d
 RUN yum -y install epel-release && \
     yum -y install \
     expect \
+    gcc-c++ \
     gnu-free-sans-fonts \
     google-chrome-stable \
     mariadb-server \
