@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.5/dw-export.html
+redirect_to: /9.0/dw-export.html
 ---

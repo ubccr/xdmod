@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.5/module-assets.html
+redirect_to: /9.0/module-assets.html
 ---

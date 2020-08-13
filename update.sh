@@ -3,13 +3,13 @@
 
 set -e
 
-branches="xdmod8.5 xdmod8.1"
-latest="xdmod8.5"
+branches="xdmod9.0 xdmod8.5"
+latest="xdmod9.0"
 
 for branch in $branches;
 do
     version=${branch:5}
-    filelist=$(git ls-tree --name-only -r upstream/$branch docs | egrep '*.md$')
+    filelist=$(git ls-tree --name-only -r upstream/$branch docs | egrep '.*\.md$')
     for file in $filelist;
     do
         outfile=$(echo $file | awk 'BEGIN{FS="/"} { for(i=2; i < NF; i++) { printf "%s/", $i } print "'$version'/" $NF}')

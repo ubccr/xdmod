@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.5/commands.html
+redirect_to: /9.0/commands.html
 ---

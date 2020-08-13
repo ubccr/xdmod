@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.5/resource-manager-pbs.html
+redirect_to: /9.0/resource-manager-pbs.html
 ---
