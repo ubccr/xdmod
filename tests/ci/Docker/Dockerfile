@@ -19,6 +19,6 @@ RUN mkdir -p /root/rpmbuild/RPMS/noarch \
     && /root/xdmod/tests/ci/bootstrap.sh \
     && ~/bin/services stop \
     && yum clean all \
-    && rm -rf /var/cache/yum /root/xdmod
+    && rm -rf /var/cache/yum /root/xdmod /root/rpmbuild
 
 WORKDIR /
