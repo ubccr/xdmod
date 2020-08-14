@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2020-08-12 v9.0.0
+## 2020-08-13 v9.0.0
 
 - Documentation
     - ETL
