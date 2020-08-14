@@ -38,9 +38,8 @@ then
     tar -moxf $CACHEFILE
 else
     echo "No cache file found."
+    exit 1
 fi
-npm set progress=false
-npm install --quiet
 
 if [ "$4" = "--sso" ];
 then
