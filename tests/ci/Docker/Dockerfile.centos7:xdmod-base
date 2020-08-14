@@ -1,17 +1,15 @@
 FROM centos:7.8.2003
-ENV BRANCH=xdmod8.5
+ENV BRANCH=xdmod9.0
 LABEL description="Base image containing XDMoD required software."
-
-COPY assets/google-chrome.repo /etc/yum.repos.d
 
 # Dependencies needed by XDMoD
 RUN yum makecache && \
     yum -y install epel-release && \
     yum -y install \
+    chromedriver \
+    chromium-headless \
     expect \
     gcc-c++ \
-    gnu-free-sans-fonts \
-    google-chrome-stable \
     mariadb-server \
     openssl \
     postfix \
@@ -25,7 +23,7 @@ RUN yum makecache && \
     yum -y remove ius-release && \
     curl -s https://raw.githubusercontent.com/ubccr/xdmod/$BRANCH/open_xdmod/modules/xdmod/xdmod.spec.in | grep '^Requires' | awk '{$1=""; print $0}' |  tr '\n' ' ' | sed -E 's/[ \t]+/\n/g' | sort -u | grep '^[[:alpha:]]' | tr '\n' ' ' | xargs -r yum -y install && \
     curl -s https://raw.githubusercontent.com/ubccr/xdmod-supremm/$BRANCH/xdmod-supremm.spec.in | grep '^Requires' | awk '{$1=""; print $0}' |  tr '\n' ' ' | sed -E 's/[ \t]+/\n/g' | sort -u | grep '^[[:alpha:]]' | grep -v xdmod | tr '\n' ' ' | xargs -r yum -y install && \
-    curl -s https://raw.githubusercontent.com/ubccr/xdmod-federated/$BRANCH/xdmod-federated.spec.in | grep '^Requires' | awk '{$1=""; print $0}' |  tr '\n' ' ' | sed -E 's/[ \t]+/\n/g' | sort -u | grep '^[[:alpha:]]' | grep -v xdmod | tr '\n' ' ' | xargs -r yum -y install && \
+    curl -s https://raw.githubusercontent.com/ubccr/xdmod-appkernels/$BRANCH/xdmod-appkernels.spec.in | grep '^Requires' | awk '{$1=""; print $0}' |  tr '\n' ' ' | sed -E 's/[ \t]+/\n/g' | sort -u | grep '^[[:alpha:]]' | grep -v xdmod | tr '\n' ' ' | xargs -r yum -y install && \
     yum clean all && \
     rm -rf /var/cache/yum
 

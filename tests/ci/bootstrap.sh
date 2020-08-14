@@ -113,9 +113,6 @@ then
     copy_template_httpd_conf
     sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
 
-    # Remove php-mcrypt until new Docker image is built without it.
-    yum -y remove php-mcrypt || true
-
     ~/bin/services start
 
     # TODO: Replace diff files with hard fixes
@@ -132,26 +129,6 @@ then
         fi
     fi
 
-    if [[ $XDMOD_REALMS == *"jobs"* ]];
-    then
-        expect $BASEDIR/scripts/xdmod-upgrade-jobs.tcl | col -b
-    else
-        expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
-    fi
+    expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
-    #
-    if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
-        expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
-        last_modified_start_date=$(date +'%F %T')
-
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
-        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
-        sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
-        sudo -u xdmod xdmod-ingestor
-
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_error_sessions -f openstack
-        sudo -u xdmod xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
-        sudo -u xdmod xdmod-ingestor --last-modified-start-date "$last_modified_start_date"
-    fi
 fi

@@ -1,7 +1,7 @@
-FROM tas-tools-ext-01.ccr.xdmod.org/xdmod-base:centos7.8-0.1
+FROM tas-tools-ext-01.ccr.xdmod.org/xdmod9.0-base:centos7.8-0.1
 
-ENV BRANCH=xdmod8.5
-ENV REL=8.5.1
+ENV BRANCH=xdmod9.0
+ENV REL=9.0.0
 ENV BUILD=1.0
 ENV TERM=xterm-256color
 ENV XDMOD_TEST_MODE=fresh_install

@@ -16,7 +16,8 @@ var HeadlessChrome = {
             'disable-extensions',
             'start-maximized',
             'window-size=2560,1600'
-        ]
+        ],
+        binary: '/usr/lib64/chromium-browser/headless_shell'
     }
 };
 var Chrome = {
