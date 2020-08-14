@@ -32,14 +32,17 @@ then
 fi
 
 pushd `dirname $0`
-if [[ ! -d 'node_modules' && -f $CACHEFILE ]];
-then
-    echo "using cache file"
-    tar -moxf $CACHEFILE
-    npm install fibers
-else
-    echo "No cache file found."
-    exit 1
+if [[ ! -d 'node_modules' ]]; then
+    if [[ -f "${CACHEFILE}" ]]; then
+        echo "using cache file"
+        tar -moxf "${CACHEFILE}"
+        # fibers needs to be installed because the cache file was built with a
+        # different version of node that is needed for chromedriver.
+        npm install fibers
+    else
+        echo "No cache file found."
+        exit 1
+    fi
 fi
 
 if [ "$4" = "--sso" ];
