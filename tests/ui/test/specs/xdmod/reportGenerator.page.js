@@ -912,7 +912,7 @@ class ReportGenerator {
         }
         // There is no visible indicator that the reports are being
         // updated, so wait for the number of rows to change.
-        browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 2000, 'Expect number of reports to change');
+        browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 10000, 'Expect number of reports to change');
     }
 
     /**
@@ -1031,8 +1031,8 @@ class ReportGenerator {
         browser.waitForVisible(this.selectors.myReports.toolbar.downloadAsPdfButton());
         browser.click(this.selectors.myReports.toolbar.downloadAsPdfButton());
         // Wait for check mark image to appear and disappear.
-        browser.waitForVisible(this.selectors.checkmarkMask());
-        browser.waitForInvisible(this.selectors.checkmarkMask(), 3500);
+        browser.waitForVisible(this.selectors.checkmarkMask(), 10000);
+        browser.waitForInvisible(this.selectors.checkmarkMask(), 10000);
     }
 
     /**

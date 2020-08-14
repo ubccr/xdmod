@@ -5,6 +5,7 @@
  * variable
  */
 var HeadlessChrome = {
+    acceptInsecureCerts: true,
     browserName: 'chrome',
     chromeOptions: {
         args: [
@@ -19,8 +20,9 @@ var HeadlessChrome = {
     }
 };
 var Chrome = {
+    acceptInsecureCerts: true,
     browserName: 'chrome',
-    version: '70.0',
+    version: '84.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
