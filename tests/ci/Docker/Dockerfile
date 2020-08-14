@@ -1,4 +1,4 @@
-FROM tas-tools-ext-01.ccr.xdmod.org/xdmod-base:8.5-centos7-0.1
+FROM tas-tools-ext-01.ccr.xdmod.org/xdmod-base:centos7.8-0.1
 ARG GIT_BRANCH=xdmod8.5
 ARG GIT_USER=ubccr
 # The ARG will get overwritten by --build-arg even though they are still "set" here
