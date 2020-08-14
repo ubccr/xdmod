@@ -36,6 +36,7 @@ if [[ ! -d 'node_modules' && -f $CACHEFILE ]];
 then
     echo "using cache file"
     tar -moxf $CACHEFILE
+    npm install fibers
 else
     echo "No cache file found."
     exit 1
