@@ -912,8 +912,7 @@ class ReportGenerator {
         }
         // There is no visible indicator that the reports are being
         // updated, so wait for the number of rows to change.
-        browser.pause(1000);
-        browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 10000, `Expect number of reports to not be: ${reportCount}`);
+        browser.waitUntil(() => 0 !==  this.selectors.myReports.reportList.rowByIndex(reportCount).length, 10000, `Expect number of reports to not be: ${reportCount}`);
     }
 
     /**
