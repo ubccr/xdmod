@@ -1,9 +1,9 @@
 <?php
 /**
- * Update config files from version 8.5.0 To 8.5.1.
+ * Update config files from version 9.0.0 To 9.5.0.
  */
 
-namespace OpenXdmod\Migration\Version850To851;
+namespace OpenXdmod\Migration\Version900To950;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
@@ -16,6 +16,9 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
     public function execute()
     {
         $this->assertPortalSettingsIsWritable();
+        $this->assertModulePortalSettingsAreWritable();
+
         $this->writePortalSettingsFile();
+        $this->writeModulePortalSettingsFiles();
     }
 }

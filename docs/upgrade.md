@@ -24,16 +24,6 @@ General Upgrade Notes
 RPM Upgrade Process
 -------------------
 
-The Open XDMoD 9.0 RPM no longer puts the example Apache configuration
-into the Apache configuration directory. Instead an example configuration
-is provided in the `/usr/share/xdmod/templates` directory.
-After upgrading the RPM, you will need to manually update your Apache
-config file following the [Apache configuration](configuration.html#apache-configuration) instructions.
-
-If you have edited the previous Apache config file (`/etc/httpd/conf.d/xdmod.conf`) then
-it will be saved in `/etc/httpd/conf.d/xdmod.conf.rpmsave`. If the Open XDMoD instance was
-using the original configuration unmodified then the old file will be removed.
-
 ### Download Latest Open XDMoD RPM package
 
 Download available at [GitHub][github-latest-release].
@@ -107,144 +97,17 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-9.0.0 Upgrade Notes
+9.5.0 Upgrade Notes
 -------------------
 
-Open XDMoD 9.0.0 is a major release that includes new features along with many
+Open XDMoD 9.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 8.5.0 or 8.5.1.
-
-**NOTE: This upgrade contains significant changes to configuration files and
-database tables.  Configuration files will most likely require manual updates.
-The database upgrade may require hours to complete if your database contains
-tens of millions of records.**
+You may upgrade directly from 9.0.0.
 
 ### Configuration File Changes
 
-The `xdmod-upgrade` script will migrate user editable configuration files to
-the new version, excluding the Apache `httpd` and `logrotate` configuration
-files, which may need to be manually updated.
-
-#### Apache HTTP Server Configuration
-
-Open XDMoD 9.0.0 no longer copies an Apache configuration file into the Apache
-configuration directory.  Instead an example configuration is provided in the
-`/usr/share/xdmod/templates` directory (or `PREFIX/share/templates` for source
-installations).
-
-After upgrading, you will need to manually update your Apache configuration
-file following the [Apache
-configuration](configuration.html#apache-configuration) instructions.
-
-The Apache access log and error log now use the [piped logging
-feature][apache-logs-piped] combined with the [Apache `rotatelogs`
-program][apache-rotatelogs] to rotate logs based on the size of the log files
-to limit the total amount of storage used by these log files.  Since these
-files are no longer rotated by `logrotate`, any preexisting rotated log files
-will need to be manually deleted.
-
-#### Log Rotation Configuration
-
-If the `logrotate` configuration file was modified and you are now using
-Apache's piped logging feature with `rotatelogs` then you will need to manually
-remove the section for the Apache log files
-
-### GPU Metrics
-
-This is the first version of Open XDMoD that supports GPU metrics in the jobs
-realm.  During the upgrade process there is a prompt where the option is given
-to re-ingest and re-aggregate job records in the database that may contain GPU
-data for the Slurm and PBS resource managers.
-
-Since Open XDMoD 6.5 data from the Slurm `ReqGRES` field has been stored and
-will be used as the source of GPU data during the upgrade process.  Note that
-newly ingested data will use the `AllocTRES` field as the primary source of GPU
-data for Slurm job records, but that field is not available for previously
-ingested data.
-
-Since Open XDMoD 3.5 data from the PBS `Resource_List.nodes` field has been
-stored and will be used as the source of GPU data during the upgrade process.
-
-See the [GPU Metrics](gpu-metrics.html) documentation for more details.
-
-### Slurm Input File Format Changes
-
-The input file format for Slurm data has changed to include the `AllocTRES`
-field.
-
-The slurm shredder has also been updated to accept jobs in all states and to
-ignore jobs that have not ended.  Due to this change the `--state` option of
-the `sacct` command is no longer recommended.  If an unrecognized state is
-encountered a warning will be generated.
-
-**If you are generating Slurm input for the `xdmod-shredder` command then you
-will need to make the appropriate changes.**  Refer to the [Slurm
-Notes](resource-manager-slurm.html#input-format) for the example `sacct`
-command.  If you are using the `xdmod-slurm-helper` command then no changes are
-necessary.
-
 ### Database Changes
-
-The `xdmod-upgrade` script will migrate the database schemas to the new
-version.  Tables may be altered the first time they are used during ingestion
-or aggregation.
-
-- The `moddb`.`ReportTemplateACL`, `moddb`.`Roles`, `moddb`.`UserRoles`, and
-  `moddb`.`UserRoleParameters` database tables are dropped.
-
-- Alters `moddb`.`batch_export_requests`.
-
-- Adds indexes to `moddb`.`group_bys` and `moddb`.`realms`.
-
-- Alters indexes on: `moddb`.`report_template_acls`, `moddb`.`statistics`, and
-  `moddb`.`user_acls`.
-
-- Adds tables for the ACL system:
-  `moddb`.`acl_group_bys_staging`, `moddb`.`acl_hierarchies_staging`,
-  `moddb`.`acl_tabs_staging`, `moddb`.`acl_types_staging`,
-  `moddb`.`acls_staging`, `moddb`.`group_bys_staging`,
-  `moddb`.`hierarchies_staging`, `moddb`.`modules_staging`,
-  `moddb`.`realms_staging`, `moddb`.`statistics_staging`,
-  `moddb`.`tabs_staging`, `moddb`.`user_acl_group_by_parameters_staging`, and
-  `moddb`.`user_acls_staging`.
-
-- Alters tables to store GPU data: `mod_shredder`.`shredded_job_slurm`,
-  `mod_shredder`.`shredded_job_pbs`, `mod_shredder`.`shredded_job`,
-  `mod_shredder`.`staging_job`, `mod_hpcdb`.`hpcdb_jobs`, `modw`.`job_tasks`,
-  and aggregate tables in `modw_aggregates` prefixed with `jobfact_by_`.
-
-- New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
-  Count".
-
-- Adds an index to `mod_logger`.`log_table` to improve performance of queries
-  used by the administrative dashboard's "Log Data" tab.  If this table
-  contains tens of millions of rows it may take over an hour to add the index.
-  It may be desirable to delete old log data from this table before performing
-  the migration if the data is no longer needed.
-
-Changes to the `modw_cloud` apply only if the Cloud realm is enabled:
-
-- Adds new tables: `modw_cloud`.`cloud_resource_specs`, `modw_cloud`.`domains`,
-  `modw_cloud`.`raw_resource_specs`, `modw_cloud`.`staging_pi_to_project`,
-  `modw_cloud`.`staging_resource_specifications`,
-  `modw_cloud`.`domain_submission_venues`, and
-  `modw_cloud`.`domain_submission_venues_staging`.
-
-- Adds aggregate tables prefixed with `resourcespecsfact_by_` to `modw_aggregates`.
-
-- Alters tables: `modw_cloud`.`session`, `modw_cloud`.`raw_event`,
-  `modw_cloud`.`staging_event`, and `modw_cloud`.`openstack_staging_event`.
-
-- The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
-tables have had their Primary Keys changed to better support the local and global filters
-in the Metric Explorer.
-
-- Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
-tables any saved charts or reports using the Account or Configuration group by in the
-Cloud realm should be recreated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
-[apache-logs-piped]: https://httpd.apache.org/docs/2.4/logs.html#piped
-[apache-rotatelogs]: https://httpd.apache.org/docs/2.4/programs/rotatelogs.html
