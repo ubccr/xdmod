@@ -19,9 +19,6 @@
             }
         };
 
-         var chart;   // Globally expose the reference to Highcharts.Chart such that the phantomjs script
-                      // can access it via page.evaluate()
-
          // _chartOptions_ is a macro that is substituted by \xd_charting\exportHighchart()
          // inputChartOptions is global so that the phantomjs script can access it.
          var inputChartOptions = _chartOptions_;

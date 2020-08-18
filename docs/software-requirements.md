@@ -22,7 +22,7 @@ Open XDMoD requires the following software:
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
 - [Java][] 1.8 including the [JDK][]
-- [PhantomJS][] 2.1+
+- [Chromium][]
 - [ghostscript][] 9+
 - [cron][]
 - [logrotate][]
@@ -50,7 +50,7 @@ Open XDMoD requires the following software:
 [php-pecl-apcu]:   https://www.php.net/manual/en/book.apcu.php
 [java]:            https://java.com/
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[phantomjs]:       http://phantomjs.org/
+[chromium]:        https://www.chromium.org/Home
 [ghostscript]:     https://www.ghostscript.com/
 [cron]:            https://en.wikipedia.org/wiki/Cron
 [logrotate]:       https://linux.die.net/man/8/logrotate
@@ -83,11 +83,6 @@ added with this command for CentOS 7:
                   java-1.8.0-openjdk java-1.8.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
                   ghostscript php-mbstring php-pecl-apcu jq
-
-**NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
-so that must be installed manually.  Packages are available for
-[download](http://phantomjs.org/download.html) from the PhantomJS
-website.
 
 **NOTE**: After installing Apache and MySQL you must make sure that they
 are running.  CentOS may not start these services and they will not
