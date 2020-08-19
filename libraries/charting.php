@@ -80,7 +80,6 @@ function exportHighchart(
  * Use Chromium to generate png or svg.
  *
  * For svg generation uses chromium repl
- * TODO: look into https://github.com/php-webdriver/php-webdriver
  *
  * @param string $file location of html template file to use
  * @param int $width desired width of output
@@ -109,7 +108,6 @@ function getScreenFromChromium($file, $width, $height, $format){
     $chromiumPath = \xd_utilities\getConfiguration('reporting', 'chromium_path');
     $chromiumOptions = array (
         '--headless',
-        /* TODO: look into https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#setting-up-chrome-linux-sandbox */
         '--no-sandbox',
         '--disable-gpu',
         '--disable-software-rasterizer',
