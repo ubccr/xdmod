@@ -276,7 +276,7 @@ class Common
         return \xd_utilities\array_get($this->request, 'filename');
     }
 
-    protected function exportImage($returnData, $width, $height, $scale, $format, $filename, $fileMeta = null)
+    protected function exportImage($returnData, $width, $height, $scale, $format, $filename)
     {
         if (isset($this->request['render_thumbnail']))
         {
@@ -306,12 +306,9 @@ class Common
 
         if ($format === 'png' || $format === 'svg' || $format === 'pdf')
         {
-            if (is_null($fileMeta))
-            {
-                $fileMeta = array(
-                    'title' => $filename
-                );
-            }
+            $fileMeta = array(
+                'title' => $filename
+            );
 
             $result = array(
                 "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),

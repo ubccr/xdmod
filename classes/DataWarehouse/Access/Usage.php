@@ -1011,12 +1011,7 @@ class Usage extends Common
             $usageHeight,
             \xd_utilities\array_get($this->request, 'scale', self::DEFAULT_SCALE),
             $usageFormat,
-            $usageFileName,
-            array(
-                'author' => $user->getFormalName(),
-                'subject' => ($usageIsTimeseries ? 'Timeseries' : 'Aggregate') . ' data for period ' . $this->request['start_date'] . ' -> ' . $this->request['end_date'],
-                'title' => $usageFileNameTitle
-            )
+            $usageFileName
         );
     }
 
