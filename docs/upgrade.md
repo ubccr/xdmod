@@ -105,7 +105,12 @@ enhancements and bug fixes.
 
 You may upgrade directly from 9.0.0.
 
+*NOTE: This upgrade changes the dependency on `PhantomJS` to `chromium-headless` and `librsvg2-tools`. These new dependencies will be automatically installed by the RPM.
+`PhantomJS` WILL NOT be removed automatically; it will need to be removed manually.*
+
 ### Configuration File Changes
+
+The `xdmod-upgrade` script will migrate user editable configuration files to the new version and ask for the location of `chromium`.
 
 ### Database Changes
 
