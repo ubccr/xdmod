@@ -22,18 +22,9 @@ set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
 
-# Begin 9.0 migration
-provideInput {Re-ingest*} {yes}
-provideInput {Re-ingest*} {yes}
-# End 9.0 migration
-
 expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1
-    }
-    "\nPress ENTER to continue." {
-        send \n
-        exp_continue
     }
     "Upgrade Complete" {
         lassign [wait] pid spawnid os_error_flag value
