@@ -22,7 +22,9 @@ Open XDMoD requires the following software:
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
 - [Java][] 1.8 including the [JDK][]
-- [PhantomJS][] 2.1+
+- [Chromium][]
+    - `chromium-headless` is assumed, but chromium has been known to work
+- [libRsvg][]
 - [ghostscript][] 9+
 - [cron][]
 - [logrotate][]
@@ -50,7 +52,8 @@ Open XDMoD requires the following software:
 [php-pecl-apcu]:   https://www.php.net/manual/en/book.apcu.php
 [java]:            https://java.com/
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[phantomjs]:       http://phantomjs.org/
+[chromium]:        https://www.chromium.org/Home
+[librsvg]:         https://wiki.gnome.org/Projects/LibRsvg
 [ghostscript]:     https://www.ghostscript.com/
 [cron]:            https://en.wikipedia.org/wiki/Cron
 [logrotate]:       https://linux.die.net/man/8/logrotate
@@ -82,12 +85,8 @@ added with this command for CentOS 7:
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.8.0-openjdk java-1.8.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
-                  ghostscript php-mbstring php-pecl-apcu jq
-
-**NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
-so that must be installed manually.  Packages are available for
-[download](http://phantomjs.org/download.html) from the PhantomJS
-website.
+                  ghostscript php-mbstring php-pecl-apcu jq \
+                  chromium-headless librsvg2-tools
 
 **NOTE**: After installing Apache and MySQL you must make sure that they
 are running.  CentOS may not start these services and they will not
@@ -143,53 +142,13 @@ compatible with MySQL 8.0 at this time.
 Refer to the [Configuration Guide](configuration.html#mysql-configuration)
 for configuration details.
 
-### PhantomJS
+### Chromium
 
-The recommended version is 2.1.1.
+Chromium is required for graph exporting.
 
-**NOTE**: PhantomJS does not work properly with the default CentOS
-SELinux security policy.  You will need to disable SELinux or create a
-custom policy.
+Open XDMoD has been tested with `chromium-headless` from EPEL, `chromium` from EPEL was shown to be usable, but is not actively tested.
 
-#### Creating a custom SELinux Policy for PhantomJS and ghostscript
+### SELinux
 
-If you have already tried to generate a report and got an error with phantom JS you can use the [audit2allow][centosselinux] command to generate a policy for you
-
-[centosselinux]: https://wiki.centos.org/HowTos/SELinux#head-faa96b3fdd922004cdb988c1989e56191c257c01
-
-```
-# grep phantomjs /var/log/audit/audit.log | audit2allow -M httpd_phantomjs
-# semodule -i httpd_phantomjs.pp
-```
-
-The other way is to compile the module
-
-```
-# yum install selinux-policy-devel
-# mkdir /tmp/httpd_phantomjs
-# cd /tmp/httpd_phantomjs
-# cat << EOF >> httpd_phantomjs
-module httpd_phantomjs 1.0;
-
-require {
-	type httpd_t;
-	type fonts_t;
-	type ld_so_cache_t;
-	type fonts_cache_t;
-	class process execmem;
-	class file execute;
-}
-
-#============= httpd_t ==============
-allow httpd_t fonts_cache_t:file execute;
-allow httpd_t fonts_t:file execute;
-allow httpd_t ld_so_cache_t:file execute;
-
-#!!!! This avc is allowed in the current policy
-allow httpd_t self:process execmem;
-EOF
-
-# make -f /usr/share/selinux/devel/Makefile
-# semodule -i httpd_phantomjs.pp
-# rm -rf /tmp/httpd_phantomjs
-```
+Open XDMoD does not work with the default CentOS
+SELinux security policy.  You will need to disable SELinux.

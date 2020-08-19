@@ -88,6 +88,9 @@ changed in the new version.  You do not need to merge
 If you have manually edited this file, you should create a backup and
 merge any changes after running the upgrade script.
 
+*NOTE: This upgrade changes the dependency on `PhantomJS` to `chromium` and `libRSVG`. These new dependencies will need to be manually installed. See the [Software Requirements](software-requirements.html) for more details.
+`PhantomJS` is no longer required by Open XDMoD and will need to be removed manually.*
+
 ### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
@@ -105,7 +108,12 @@ enhancements and bug fixes.
 
 You may upgrade directly from 9.0.0.
 
+*NOTE: This upgrade changes the dependency on `PhantomJS` to `chromium` and `libRSVG`. These new dependencies will be automatically installed by the RPM.
+`PhantomJS` WILL NOT be removed automatically; it will need to be removed manually.*
+
 ### Configuration File Changes
+
+The `xdmod-upgrade` script will migrate user editable configuration files to the new version and ask for the location of `chromium`.
 
 ### Database Changes
 

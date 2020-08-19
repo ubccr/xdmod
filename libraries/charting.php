@@ -48,8 +48,6 @@ function exportHighchart(
 
     $base_filename = sys_get_temp_dir() . '/' . md5(rand() . microtime());
 
-    // These files must have the proper extensions for PhantomJS.
-    $output_image_filename = $base_filename . '.' . $format;
     $tmp_html_filename     = $base_filename . '.html';
 
     $html_dir = __DIR__ . "/../html";
@@ -67,27 +65,133 @@ function exportHighchart(
     $template = str_replace('_height_',$effectiveHeight, $template);
     file_put_contents($tmp_html_filename,$template);
 
-    if ($format == 'png') {
-        \xd_phantomjs\phantomExecute(dirname(__FILE__)."/phantomjs/generate_highchart.js png $tmp_html_filename $output_image_filename $effectiveWidth $effectiveHeight");
-        $data = file_get_contents($output_image_filename);
-        @unlink($output_image_filename);
-        @unlink($tmp_html_filename);
-        return $data;
+    $data = getScreenFromChromium($tmp_html_filename, $effectiveWidth, $effectiveHeight, $format ===  'pdf' ? 'svg' : $format);
+    @unlink($tmp_html_filename);
+    if($format === 'pdf'){
+        $svgFile = $tmp_html_filename . '.svg';
+        file_put_contents($svgFile, $data);
+        $data = svg2pdf($svgFile, round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
+        @unlink($svgFile);
+    }
+    return $data;
+}
+
+/**
+ * Use Chromium to generate png or svg.
+ *
+ * For svg generation uses chromium repl
+ *
+ * @param string $file location of html template file to use
+ * @param int $width desired width of output
+ * @param int $height desired height of output
+ * @param string $format of output (png or svg)
+ * @param array $pdfExtras extras used for pdf output
+ *
+ * @returns string contents of desired output
+ *
+ * @throws \Exception on invalid format, command execution failure, or non zero exit status
+ */
+function getScreenFromChromium($file, $width, $height, $format){
+
+    $repl = '';
+    if ($format == 'svg'){
+        $repl = 'chart.getSVG(inputChartOptions);';
+        $outputType = '-repl';
+    }
+    elseif ($format == 'png'){
+        $outputFile = $file . '.png';
+        $outputType = '--screenshot=' . $outputFile;
+    }
+    else {
+        throw new \Exception('Invalid format "' . $format . '" specified, must be one of svg, pdf, or png.');
+    }
+    $chromiumPath = \xd_utilities\getConfiguration('reporting', 'chromium_path');
+    $chromiumOptions = array (
+        '--headless',
+        '--no-sandbox',
+        '--disable-gpu',
+        '--disable-software-rasterizer',
+        '--window-size=' . $width . ',' . $height,
+        '--disable-extensions',
+        '--incognito',
+        $outputType,
+        $file
+    );
+    $command = $chromiumPath . ' ' . implode(' ', $chromiumOptions);
+    $pipes = array();
+    $descriptor_spec = array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+        2 => array('pipe', 'w'),
+    );
+    $process = proc_open($command, $descriptor_spec, $pipes);
+    if (!is_resource($process)) {
+        throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
+    }
+    else {
+        fwrite($pipes[0], $repl);
+        fclose($pipes[0]);
+    }
+    $out = stream_get_contents($pipes[1]);
+    $err = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+
+    $return_value = proc_close($process);
+
+    if ($return_value != 0) {
+        throw new \Exception('Unable execute command: "'. $command . '". Details: ' . $err);
+    }
+    if (!empty($repl)){
+        $result = json_decode(substr($out, 4, -6), true);
+        $data = $result['result']['value'];
+    }
+    else{
+        $data = file_get_contents($outputFile);
+        @unlink($outputFile);
+    }
+    return $data;
+}
+
+/**
+ * Use rsvg-convert to convert svg to pdf
+ *
+ * @param string path to input file
+ * @param int $width the new paper size in postscript points (72 ppi).
+ * @param int $height the new paper size in postscript points (72 ppi).
+ * @param array $metaData array containing metadata fields
+ * @return string contents of pdf
+ * @throws Exception when unable to execute or non-zero return code
+ */
+
+function svg2pdf($inputFilename, $width, $height, $metaData){
+    $outputFilename = $inputFilename . '.pdf';
+    $command = 'rsvg-convert -f pdf -o ' . $outputFilename  . ' ' . $inputFilename;
+    $pipes = array();
+    $descriptor_spec = array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+        2 => array('pipe', 'w'),
+    );
+    $process = proc_open($command, $descriptor_spec, $pipes);
+    if (!is_resource($process)) {
+        throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
 
-    if ($format == 'svg') {
-        $svgContent = \xd_phantomjs\phantomExecute(dirname(__FILE__)."/phantomjs/generate_highchart.js svg $tmp_html_filename null ".$effectiveWidth." ".$effectiveHeight);
-        @unlink($tmp_html_filename);
-        return $svgContent;
-    }
+    $out = stream_get_contents($pipes[1]);
+    $err = stream_get_contents($pipes[2]);
 
-    if ($format == 'pdf') {
-        \xd_phantomjs\phantomExecute(dirname(__FILE__)."/phantomjs/generate_highchart.js png $tmp_html_filename $output_image_filename $effectiveWidth $effectiveHeight");
-        $data = getPdfWithMetadata($output_image_filename, round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
-        @unlink($output_image_filename);
-        @unlink($tmp_html_filename);
-        return $data;
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+
+    $return_value = proc_close($process);
+
+    if ($return_value != 0) {
+        throw new \Exception("$command returned $return_value, stdout: $out stderr: $err");
     }
+    $data = getPdfWithMetadata($outputFilename, $width, $height, $metaData);
+    @unlink($outputFilename);
+    return $data;
 }
 
 /**
