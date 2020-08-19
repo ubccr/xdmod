@@ -23,6 +23,7 @@ Open XDMoD requires the following software:
     - [APCu][php-pecl-apcu]
 - [Java][] 1.8 including the [JDK][]
 - [Chromium][]
+- [libRsvg][]
 - [ghostscript][] 9+
 - [cron][]
 - [logrotate][]
@@ -51,6 +52,7 @@ Open XDMoD requires the following software:
 [java]:            https://java.com/
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [chromium]:        https://www.chromium.org/Home
+[librsvg]:         https://wiki.gnome.org/Projects/LibRsvg
 [ghostscript]:     https://www.ghostscript.com/
 [cron]:            https://en.wikipedia.org/wiki/Cron
 [logrotate]:       https://linux.die.net/man/8/logrotate
