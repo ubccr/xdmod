@@ -1,0 +1,12 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "migration-9_0_0-9_5_0": {
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions"
+        }
+    },
+    "migration-9_0_0-9_5_0": [
+    ]
+}

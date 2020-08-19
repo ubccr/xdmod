@@ -140,33 +140,8 @@ Open XDMoD is tested to work with MariaDB 5.5.60 and may be compatible with
 more recent releases of MySQL and MariaDB.  Open XDMoD is currently not
 compatible with MySQL 8.0 at this time.
 
-Some versions of MySQL have binary logging enabled by default.  This can
-be an issue during the setup process if the user specified to create the
-databases does not have the `SUPER` privilege.  If binary logging is not
-required you should disable it in your MySQL configuration.  If that is
-not an option you can use the less safe
-[log_bin_trust_function_creators][] variable.  You may also grant the
-`SUPER` privilege to the user that is used to create the Open XDMoD
-database.
-
-[log_bin_trust_function_creators]: https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html#option_mysqld_log-bin-trust-function-creators
-
-**NOTE**: Open XDMoD does not support any of the strict
-[Server SQL Modes][sql-mode].  You must set `sql_mode = ''` in your MySQL
-server configuration.
-
-**NOTE**: Open XDMoD uses the `GROUP_CONCAT()` sql function. The `group_concat_max_len` server system variable must be changed to 16MB from its default value of 1024 bytes. The `max_allowed_packet`
-setting must be set to at least 16MB. The recommended setting in the mysql server configuration file is as follows:
-
-```ini
-[mysqld]
-sql_mode = ''
-max_allowed_packet = 1G
-group_concat_max_len = 16M
-innodb_stats_on_metadata = off
-```
-
-[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
+Refer to the [Configuration Guide](configuration.html#mysql-configuration)
+for configuration details.
 
 ### PhantomJS
 
