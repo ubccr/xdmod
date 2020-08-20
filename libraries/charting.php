@@ -82,18 +82,8 @@ function exportHighchart(
  * @throws \Exception on invalid format, command execution failure, or non zero exit status
  */
 function getScreenFromChromium($html, $width, $height, $format){
-
-    // Chromium requires the file to have a .html extension
-    // cant use datauri as it will not execute embdeeded javascript
-    $tmpFile = tempnam(sys_get_temp_dir(), 'xdmod-chromiumHtml-');
-    $tmpHtmlFile = $tmpFile . '.html';
-    if ($tmpFile === false || rename($tmpFile, $tmpHtmlFile) === false) {
-        @unlink($tmpFile);
-        throw \Exception('Error creating temporary html file for chromium');
-    }
-    file_put_contents($tmpHtmlFile, $html);
-
     $repl = '';
+    $outputFile = null;
     if ($format == 'svg'){
         $repl = 'chart.getSVG(inputChartOptions);';
         $outputType = '-repl';
@@ -108,6 +98,17 @@ function getScreenFromChromium($html, $width, $height, $format){
     else {
         throw new \Exception('Invalid format "' . $format . '" specified, must be one of svg, pdf, or png.');
     }
+
+    // Chromium requires the file to have a .html extension
+    // cant use datauri as it will not execute embdeeded javascript
+    $tmpFile = tempnam(sys_get_temp_dir(), 'xdmod-chromiumHtml-');
+    $tmpHtmlFile = $tmpFile . '.html';
+    if ($tmpFile === false || rename($tmpFile, $tmpHtmlFile) === false) {
+        @unlink($tmpFile);
+        throw \Exception('Error creating temporary html file for chromium');
+    }
+    file_put_contents($tmpHtmlFile, $html);
+
     $chromiumPath = \xd_utilities\getConfiguration('reporting', 'chromium_path');
     $chromiumOptions = array (
         '--headless',
@@ -129,6 +130,8 @@ function getScreenFromChromium($html, $width, $height, $format){
     );
     $process = proc_open($command, $descriptor_spec, $pipes);
     if (!is_resource($process)) {
+        @unlink($tmpHtmlFile);
+        @unlink($outputFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
     else {
@@ -144,6 +147,7 @@ function getScreenFromChromium($html, $width, $height, $format){
     @unlink($tmpHtmlFile);
 
     if ($return_value != 0) {
+        @unlink($outputFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . $err);
     }
     if (!empty($repl)){
