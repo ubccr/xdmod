@@ -88,8 +88,9 @@ changed in the new version.  You do not need to merge
 If you have manually edited this file, you should create a backup and
 merge any changes after running the upgrade script.
 
-*NOTE: This upgrade changes the dependency on `PhantomJS` to `chromium` and `libRSVG`. These new dependencies will need to be manually installed. See the [Software Requirements](software-requirements.html) for more details.
-`PhantomJS` is no longer required by Open XDMoD and will need to be removed manually.*
+*NOTE: This upgrade removes the `PhantomJS` and `ghostscript` dependencies; it adds dependencies of `chromium`, `libRSVG` and `exiftool`. These new dependencies will need to be manually installed. See the [Software Requirements](software-requirements.html) for more details.
+`PhantomJS` s no longer required, however, it WILL NOT be removed automatically; it will need to be removed manually.*
+
 
 ### Verify Server Configuration Settings
 
@@ -108,8 +109,8 @@ enhancements and bug fixes.
 
 You may upgrade directly from 9.0.0.
 
-*NOTE: This upgrade changes the dependency on `PhantomJS` to `chromium` and `libRSVG`. These new dependencies will be automatically installed by the RPM.
-`PhantomJS` WILL NOT be removed automatically; it will need to be removed manually.*
+*NOTE: This upgrade removes the `PhantomJS` and `ghostscript` dependencies; it adds dependencies of `chromium`, `libRSVG` and `exiftool`.. These new dependencies will be automatically installed by the RPM.
+`PhantomJS` s no longer required, however, it WILL NOT be removed automatically; it will need to be removed manually.*
 
 ### Configuration File Changes
 

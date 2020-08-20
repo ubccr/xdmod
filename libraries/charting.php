@@ -46,9 +46,9 @@ function exportHighchart(
     $effectiveWidth = (int)($width*$scale);
     $effectiveHeight = (int)($height*$scale);
 
-    $base_filename = sys_get_temp_dir() . '/' . md5(rand() . microtime());
+    $base_filename = tempnam(sys_get_temp_dir(), 'exportHighchart');
 
-    $tmp_html_filename     = $base_filename . '.html';
+    $tmp_html_filename  = $base_filename . '.html';
 
     $html_dir = __DIR__ . "/../html";
     $template = file_get_contents($html_dir . "/highchart_template.html");
@@ -68,10 +68,7 @@ function exportHighchart(
     $data = getScreenFromChromium($tmp_html_filename, $effectiveWidth, $effectiveHeight, $format ===  'pdf' ? 'svg' : $format);
     @unlink($tmp_html_filename);
     if($format === 'pdf'){
-        $svgFile = $tmp_html_filename . '.svg';
-        file_put_contents($svgFile, $data);
-        $data = svg2pdf($svgFile, round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
-        @unlink($svgFile);
+        $data = svg2pdf($data, round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
     }
     return $data;
 }
@@ -160,24 +157,26 @@ function getScreenFromChromium($file, $width, $height, $format){
  * @param int $width the new paper size in postscript points (72 ppi).
  * @param int $height the new paper size in postscript points (72 ppi).
  * @param array $metaData array containing metadata fields
+ *
  * @return string contents of pdf
  * @throws Exception when unable to execute or non-zero return code
  */
 
-function svg2pdf($inputFilename, $width, $height, $metaData){
-    $outputFilename = $inputFilename . '.pdf';
-    $command = 'rsvg-convert -f pdf -o ' . $outputFilename  . ' ' . $inputFilename;
+function svg2pdf($svgData, $width, $height, $metaData){
+    $command = 'rsvg-convert -w ' .$width. ' -h '.$height.' -f pdf';
     $pipes = array();
     $descriptor_spec = array(
         0 => array('pipe', 'r'),
         1 => array('pipe', 'w'),
         2 => array('pipe', 'w'),
     );
+
     $process = proc_open($command, $descriptor_spec, $pipes);
     if (!is_resource($process)) {
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-
+    fwrite($pipes[0], $svgData);
+    fclose($pipes[0]);
     $out = stream_get_contents($pipes[1]);
     $err = stream_get_contents($pipes[2]);
 
@@ -189,50 +188,25 @@ function svg2pdf($inputFilename, $width, $height, $metaData){
     if ($return_value != 0) {
         throw new \Exception("$command returned $return_value, stdout: $out stderr: $err");
     }
-    $data = getPdfWithMetadata($outputFilename, $width, $height, $metaData);
-    @unlink($outputFilename);
-    return $data;
+    return addMetaData2Pdf($out,$metaData);
 }
 
 /**
- * @param array $docmenta array with optional author, subject and title elements
- * @return string valid pdfmark postscript for use by ghostscript
+ * use exiftool to add metadata to pdf
+ *
+ * @param string $pdf pdf as a string
+ * @param array $docMeta array containg metadata fields
+ * @return string contents of pdf
+ * @throws Exception when unable to execute or non-zero return code
  */
-function getPdfMark($docmeta)
-{
+
+function addMetaData2Pdf($pdf, $docmeta){
     $author = isset($docmeta['author']) ? addcslashes($docmeta['author'], "()\n\\") : 'XDMoD';
     $subject = isset($docmeta['subject']) ? addcslashes($docmeta['subject'], "()\n\\") : 'XDMoD chart';
     $title = isset($docmeta['title']) ? addcslashes($docmeta['title'], "()\n\\") :'XDMoD PDF chart export';
     $creator = addcslashes('XDMoD ' . OPEN_XDMOD_VERSION, "()\n\\");
 
-    $pdfmark = <<<EOM
-[ /Title ($title)
-  /Author ($author)
-  /Subject ($subject)
-  /Creator ($creator)
-  /DOCINFO pdfmark
-EOM;
-    return $pdfmark;
-}
-
-/**
- * Use ghostscript to add metadata to the PDF file and set the paper size correctly.
- *
- * @param string $pdfFilename of PDF file
- * @param int $widthPsPoints the new paper size in postscript points (72 ppi).
- * @param int $heightPsPoints the new paper size in postscript points (72 ppi).
- * @param array $docmeta array containing metadata fields
- *
- * @return string PDF document
- */
-function getPdfWithMetadata($pdfFilename, $widthPsPoints, $heightPsPoints, $docmeta)
-{
-    $command = <<<EOC
-gs -o- -sstdout=/dev/stderr -sDEVICE=pdfwrite \
-    -dDEVICEWIDTHPOINTS=$widthPsPoints -dDEVICEHEIGHTPOINTS=$heightPsPoints \
-    -dPDFFitPage -dFIXEDMEDIA -dAutoRotatePages=/None -dCompatibilityLevel=1.4 \
-    $pdfFilename -
-EOC;
+    $command = "exiftool -Title='$title' -Author='$author' -Subject='$subject' -Creator='$creator' -o - -";
 
     $pipes = array();
     $descriptor_spec = array(
@@ -242,12 +216,10 @@ EOC;
     );
 
     $process = proc_open($command, $descriptor_spec, $pipes);
-
     if (!is_resource($process)) {
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-
-    fwrite($pipes[0], getPdfMark($docmeta));
+    fwrite($pipes[0], $pdf);
     fclose($pipes[0]);
 
     $out = stream_get_contents($pipes[1]);
@@ -261,6 +233,6 @@ EOC;
     if ($return_value != 0) {
         throw new \Exception("$command returned $return_value, stdout: $out stderr: $err");
     }
-
     return $out;
+
 }
