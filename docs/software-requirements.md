@@ -25,7 +25,7 @@ Open XDMoD requires the following software:
 - [Chromium][]
     - `chromium-headless` is assumed, but chromium has been known to work
 - [libRsvg][]
-- [ghostscript][] 9+
+- [exiftool][]
 - [cron][]
 - [logrotate][]
 - [MTA][] with `sendmail` compatibility (e.g. [postfix][], [exim][] or
@@ -54,7 +54,7 @@ Open XDMoD requires the following software:
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [chromium]:        https://www.chromium.org/Home
 [librsvg]:         https://wiki.gnome.org/Projects/LibRsvg
-[ghostscript]:     https://www.ghostscript.com/
+[exiftool]:        http://www.sno.phy.queensu.ca/%7Ephil/exiftool/
 [cron]:            https://en.wikipedia.org/wiki/Cron
 [logrotate]:       https://linux.die.net/man/8/logrotate
 [mta]:             https://en.wikipedia.org/wiki/Message_transfer_agent
