@@ -6,6 +6,7 @@
 namespace OpenXdmod\Migration\Version900To950;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
+use OpenXdmod\Setup\Console;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
@@ -18,7 +19,23 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         $this->assertPortalSettingsIsWritable();
         $this->assertModulePortalSettingsAreWritable();
 
-        $this->writePortalSettingsFile();
+        $console = Console::factory();
+
+        $console->displayMessage(<<<"EOT"
+This version of Open XDMoD switches from using PhantomJS to using Chromium for exporting and report generation
+EOT
+        );
+        $console->displayBlankLine();
+        $chromiumPath = $console->prompt(
+            'Chromium Path:',
+            is_executable('/usr/lib64/chromium-browser/headless_shell') ? '/usr/lib64/chromium-browser/headless_shell' : ''
+        );
+
+        $this->writePortalSettingsFile(
+            array(
+                'reporting_chromium_path' => $chromiumPath
+            )
+        );
         $this->writeModulePortalSettingsFiles();
     }
 }
