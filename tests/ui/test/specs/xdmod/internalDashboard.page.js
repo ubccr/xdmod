@@ -88,6 +88,7 @@ class InternalDashboard {
                 }
             },
             create_manage_users: {
+                loading_mask: '.admin_panel_editor_mask',
                 window: '//div[contains(@class, "xdmod_admin_panel")]',
                 tabs: {
                     new_user: function () {
