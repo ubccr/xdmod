@@ -216,7 +216,19 @@ class MetricExplorer extends Common
                 'included_in_report' => $includedInReport ? 'y' : 'n',
             );
 
-            return $this->exportImage($returnData, $width, $height, $scale, $format, $filename);
+            return $this->exportImage(
+                $returnData,
+                $width,
+                $height,
+                $scale,
+                $format,
+                $filename,
+                array(
+                    'author' => $user->getFormalName(),
+                    'subject' => ($timeseries ? 'Timeseries' : 'Aggregate') . ' data for period ' . $start_date. ' -> ' . $end_date,
+                    'title' => $title
+                )
+            );
         } // if $format === 'hc_jsonstore' || $format === 'png' || $format === 'svg'
           //  || $format === 'png_inline' || $format === 'svg_inline'
         elseif ($format === 'jsonstore' || $format === 'json' || $format === 'csv' || $format === 'xml') {

@@ -222,6 +222,7 @@ describe('Internal Dashboard', function () {
 
                     browser.waitForVisible(page.selectors.create_manage_users.window);
                     browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                    browser.waitForInvisible(page.selectors.create_manage_users.loading_mask);
                 });
                 it(`Check that the ${setting.label} is back to ${setting.original}`, function () {
                     const inputType = 'dropdown' === setting.type ? 'text' : setting.type;
