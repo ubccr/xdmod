@@ -85,7 +85,7 @@ added with this command for CentOS 7:
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.8.0-openjdk java-1.8.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
-                  ghostscript php-mbstring php-pecl-apcu jq \
+                  perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
                   chromium-headless librsvg2-tools
 
 **NOTE**: After installing Apache and MySQL you must make sure that they
