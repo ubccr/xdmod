@@ -10,6 +10,8 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
+syntax error
+
 use CCR\DB;
 use CCR\DB\NullDB;
 use CCR\Log;
