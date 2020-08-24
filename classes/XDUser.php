@@ -775,7 +775,8 @@ SQL;
                 'user_type' => SSO_USER_TYPE
             )
         );
-        if (count($userCheck) == 0) {
+
+        if (count($userCheck) !== 1) {
             return null;
         }
 
