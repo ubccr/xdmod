@@ -24,7 +24,7 @@ cache:
         - $XDMOD_TEST_ARTIFACTS_MIRROR
 
 # Obtain the shared QA assets before using them.
-before_install: git clone --depth=1 --branch="v1" https://github.com/ubccr/xdmod-qa.git .qa
+before_install: git clone --depth=1 --branch="php-file-check" https://github.com/jtpalmer/xdmod-qa.git .qa
 
 # Delegate the installation step to the shared Travis installation script
 install: .qa/travis/install.sh
