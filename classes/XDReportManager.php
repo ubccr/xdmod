@@ -1597,8 +1597,8 @@ class XDReportManager
     /*
      * writeXMLConfiguration()
      *
-     * This function generates the XML configuration file and image files for 
-     * processing by jasper-builder. The files are placed in the supplied 
+     * This function generates the XML configuration file and image files for
+     * processing by jasper-builder. The files are placed in the supplied
      * directory (which must exist)
      *
      * \param outputdir the name of an existing, writable directory in which to put the files.

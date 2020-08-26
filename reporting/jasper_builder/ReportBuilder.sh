@@ -53,9 +53,9 @@ displayUsage() {
    echo "          -B + base filename (without file type extension, .xml, .pdf, .docx, …) "
    echo "          -T + JasperReport template file name (without file type extension, .jrxml)"
    echo "          -F + Report Font (if not specified, defaults to 'Arial')"
-   
+
    exit
-   
+
 }
 
 # Set up java classpath string =====================================
@@ -71,7 +71,7 @@ displayUsage() {
    path="$path:$BASEPATH/lib/xalan/xalan.jar"
 
    CLASSPATH=${CLASSPATH}:${path}
-   
+
 # Must take parameters =============================================
 
 if [ $# = 0 ]; then
@@ -83,7 +83,7 @@ fi
 
 template="template"
 inputfile="NULL"
-outputfile="NULL" 
+outputfile="NULL"
 execute=0
 compile=0
 builder_path="."
@@ -95,23 +95,23 @@ while getopts "W:B:T:F:CE" OPTION
 do
 
    case $OPTION in
-	 
+
       E)
          execute=1
          ;;
-         
+
       W)
          builder_path=$OPTARG
          inputdir=$OPTARG
          outputdir=$OPTARG
          templatedir=$OPTARG
          ;;
-               
+
       B)
          inputfile=$OPTARG
          outputfile=$OPTARG
          ;;
-          
+
       T)
          template=$OPTARG
          ;;
@@ -119,7 +119,7 @@ do
       F)
          font=$OPTARG
          ;;
-                  
+
       C)
          compile=1
          ;;
@@ -130,7 +130,7 @@ do
          ;;
 
    esac
-   
+
 done
 
 # Compile (if -C passed in) ========================================
@@ -152,7 +152,7 @@ fi
 
 if [ $execute = 1 ]; then
 
-   
+
    if [ $inputfile = "NULL" ] || [ $outputfile = "NULL" ]; then
       displayUsage
       exit
