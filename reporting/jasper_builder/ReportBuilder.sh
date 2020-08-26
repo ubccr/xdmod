@@ -46,7 +46,6 @@ displayUsage() {
     echo "          -W + working directory (source and destination, including template files)"
     echo "          -B + base filename (without file type extension, .xml, .pdf, .docx, …) "
     echo "          -T + JasperReport template file name (without file type extension, .jrxml)"
-    echo "          -F + Report Font (if not specified, defaults to 'Arial')"
 
     exit
 }
@@ -80,7 +79,6 @@ outputfile="NULL"
 execute=0
 compile=0
 builder_path="."
-font="Arial"
 
 # ==================================================================
 
@@ -102,9 +100,6 @@ do
             ;;
         T)
             template=$OPTARG
-            ;;
-        F)
-            font=$OPTARG
             ;;
         C)
             compile=1
@@ -135,11 +130,10 @@ if [ $execute = 1 ]; then
         exit
     fi
 
-    templatefile="$template.$font"
     cd $builder_path
 
     echo "Start: `date` `date +%s`" > $outputdir/build_info
-    $JAVA -cp ${CLASSPATH} Builder $inputdir $inputfile $outputdir $outputfile $templatedir $templatefile
+    $JAVA -cp ${CLASSPATH} Builder $inputdir $inputfile $outputdir $outputfile $templatedir $template
     echo "End: `date` `date +%s`" >> $outputdir/build_info
     chmod 444 $outputdir/build_info
 fi

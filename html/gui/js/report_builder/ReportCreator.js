@@ -35,7 +35,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             txtReportHeader.setValue('');
             txtReportFooter.setValue('');
 
-            cmbFont.setValue('Arial');
             cmbFormat.setValue('Pdf');
             cmbSchedule.setValue('Once');
             cmbDelivery.setValue('E-mail');
@@ -63,10 +62,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
 
         self.setReportFooter = function (value) {
             txtReportFooter.setValue(value);
-        };
-
-        self.setReportFont = function (value) {
-            cmbFont.setValue(value);
         };
 
         self.setReportFormat = function (value) {
@@ -161,29 +156,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                 }).defer(100);
             }
         });
-
-        var font_store = new Ext.data.SimpleStore({
-            fields: ['name'],
-            data: [['Arial']]
-        });
-
-        var cmbFont = new Ext.form.ComboBox({
-            editable: false,
-            width: 140,
-            fieldLabel: 'Font',
-            mode: 'local',
-            store: font_store,
-            triggerAction: 'all',
-            displayField: 'name',
-            hidden: true,
-            valueField: 'name',
-            emptyText: 'No Font Selected',
-            listeners: {
-                change: self.dirtyConfig
-            }
-        });
-
-        cmbFont.setValue(1);
 
         var format_store = new Ext.data.SimpleStore({
             fields: ['name', 'format'],
@@ -414,7 +386,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             reportData.charts_per_page =
                 rdoChartLayout.getValue().charts_per_page;
 
-            reportData.report_font     = cmbFont.getRawValue();
             reportData.report_format   = cmbFormat.getValue();
             reportData.report_schedule = cmbSchedule.getRawValue();
             reportData.report_delivery = cmbDelivery.getRawValue();
@@ -639,13 +610,13 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
 
                     if (chart_page_position == 0) {
                         chartData = {};
-                        chartData.report_title = (chartCount == 0) ? '<span style="font-family: arial; font-size: 22px">' + Ext.util.Format.trim(txtReportTitle.getValue()) + '</span><br />' : '';
-                        chartData.header_text  = '<span style="font-family: arial; font-size: 12px">' + Ext.util.Format.trim(txtReportHeader.getValue()) + '</span>';
-                        chartData.footer_text  = '<span style="font-family: arial; font-size: 12px">' + Ext.util.Format.trim(txtReportFooter.getRawValue()) + '</span>';
+                        chartData.report_title = (chartCount == 0) ? '<span style="font-family: Arial; font-size: 22px">' + Ext.util.Format.trim(txtReportTitle.getValue()) + '</span><br />' : '';
+                        chartData.header_text  = '<span style="font-family: Arial; font-size: 12px">' + Ext.util.Format.trim(txtReportHeader.getValue()) + '</span>';
+                        chartData.footer_text  = '<span style="font-family: Arial; font-size: 12px">' + Ext.util.Format.trim(txtReportFooter.getRawValue()) + '</span>';
                     }
 
                     chartData['chart_title_'  + chart_page_position] =
-                        '<span style="font-family: arial; font-size: 16px">' +
+                        '<span style="font-family: Arial; font-size: 16px">' +
                         this.data.chart_title + '</span>';
 
                     if (this.data.chart_drill_details.length == 0) {
@@ -653,7 +624,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                     }
 
                     chartData['chart_drill_details_' + chart_page_position] =
-                        '<span style="font-family: arial; font-size: 12px">' +
+                        '<span style="font-family: Arial; font-size: 12px">' +
                         this.data.chart_drill_details + '</span>';
 
                     var s_date, e_date;
@@ -679,7 +650,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                     this.data.chart_date_description = s_date + ' to ' + e_date;
 
                     chartData['chart_timeframe_' + chart_page_position] =
-                        '<span style="font-family: arial; font-size: 14px">' +
+                        '<span style="font-family: Arial; font-size: 14px">' +
                         this.data.chart_date_description + '</span>';
 
                     chartData['chart_id_' + chart_page_position] =
@@ -924,7 +895,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             defaultType: 'textfield',
 
             items: [
-                cmbFont,
                 cmbFormat,
                 cmbSchedule,
                 cmbDelivery,
@@ -1135,4 +1105,3 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
         XDMoD.ReportCreator.superclass.initComponent.call(this);
     }
 });
-

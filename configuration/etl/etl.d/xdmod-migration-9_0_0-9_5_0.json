@@ -28,6 +28,23 @@
                     "schema": "moddb"
                 }
             }
+        },
+        {
+            "name": "update-moddb-tables",
+            "description": "Update moddb tables",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "xdb/report-templates.json",
+                "xdb/reports.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ]
 }

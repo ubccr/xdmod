@@ -11,10 +11,6 @@ $filters = array(
         'filter' => FILTER_VALIDATE_REGEXP,
         'options' => array('regexp' => ReportGenerator::REPORT_ID_REGEX)
     ),
-    'report_font' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_FONT_REGEX)
-    ),
     'report_format' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
         'options' => array('regexp' => ReportGenerator::REPORT_FORMATS_REGEX . 'i')
@@ -67,7 +63,6 @@ try {
         $report_title,
         $report_header,
         $report_footer,
-        $post['report_font'],
         $post['report_format'],
         $post['charts_per_page'],
         $post['report_schedule'],
