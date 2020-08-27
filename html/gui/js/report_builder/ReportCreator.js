@@ -610,13 +610,13 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
 
                     if (chart_page_position == 0) {
                         chartData = {};
-                        chartData.report_title = (chartCount == 0) ? '<span style="font-family: Arial; font-size: 22px">' + Ext.util.Format.trim(txtReportTitle.getValue()) + '</span><br />' : '';
-                        chartData.header_text  = '<span style="font-family: Arial; font-size: 12px">' + Ext.util.Format.trim(txtReportHeader.getValue()) + '</span>';
-                        chartData.footer_text  = '<span style="font-family: Arial; font-size: 12px">' + Ext.util.Format.trim(txtReportFooter.getRawValue()) + '</span>';
+                        chartData.report_title = (chartCount == 0) ? '<span style="font-family: arial; font-size: 22px">' + Ext.util.Format.trim(txtReportTitle.getValue()) + '</span><br />' : '';
+                        chartData.header_text  = '<span style="font-family: arial; font-size: 12px">' + Ext.util.Format.trim(txtReportHeader.getValue()) + '</span>';
+                        chartData.footer_text  = '<span style="font-family: arial; font-size: 12px">' + Ext.util.Format.trim(txtReportFooter.getRawValue()) + '</span>';
                     }
 
                     chartData['chart_title_'  + chart_page_position] =
-                        '<span style="font-family: Arial; font-size: 16px">' +
+                        '<span style="font-family: arial; font-size: 16px">' +
                         this.data.chart_title + '</span>';
 
                     if (this.data.chart_drill_details.length == 0) {
@@ -624,7 +624,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                     }
 
                     chartData['chart_drill_details_' + chart_page_position] =
-                        '<span style="font-family: Arial; font-size: 12px">' +
+                        '<span style="font-family: arial; font-size: 12px">' +
                         this.data.chart_drill_details + '</span>';
 
                     var s_date, e_date;
@@ -650,7 +650,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                     this.data.chart_date_description = s_date + ' to ' + e_date;
 
                     chartData['chart_timeframe_' + chart_page_position] =
-                        '<span style="font-family: Arial; font-size: 14px">' +
+                        '<span style="font-family: arial; font-size: 14px">' +
                         this.data.chart_date_description + '</span>';
 
                     chartData['chart_id_' + chart_page_position] =

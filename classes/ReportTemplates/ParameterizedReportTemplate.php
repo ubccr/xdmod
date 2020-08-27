@@ -58,7 +58,6 @@ class ParameterizedReportTemplate extends \ReportTemplates\aReportTemplate
             $report_title,
             $report_header,
             $report_footer,
-            $this->_report_skeleton['general']['font'],
             $this->_report_skeleton['general']['format'],
             $this->_report_skeleton['general']['charts_per_page'],
             $this->_report_skeleton['general']['schedule'],
