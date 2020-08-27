@@ -154,8 +154,11 @@ class XDReportManager
 
     private function fontWrapper($text, $font_size = 12)
     {
-        return '<span style="font-family: arial; font-size: ' . $font_size
-            .  'px">' . $text . '</span>';
+        return sprintf(
+            '<span style="font-family: arial, sans-serif; font-size: %dpx">%s</span>',
+            $font_size,
+            $text
+        );
     }
 
     public static function sanitizeFilename($filename)

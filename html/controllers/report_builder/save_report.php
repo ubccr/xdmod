@@ -123,8 +123,6 @@ try {
                     $cached_blob = $start_date.','.$end_date.';'.file_get_contents($location);
                 }
 
-                // TODO: consider refactoring !!!
-
                 $chart_id_found = false;
 
                 foreach ($map as &$e) {
