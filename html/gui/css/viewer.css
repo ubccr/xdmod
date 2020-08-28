@@ -67,7 +67,7 @@ x-form-check-wrap {
  */
 .custom_search_mode_group .x-form-item {
    margin-top: 0px !important;
-   padding-top: 0px !important;
+   padding-top: 1px !important;
    overflow: hidden !important;
    height: 15px;
 }
