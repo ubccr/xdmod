@@ -407,7 +407,7 @@ Usage: xdmod-slurm-helper [-v] [-r resource] [-c cluster]
 
     -r, --resource *resource*
         Shred accounting data for the specified cluster.
-       Value is used for --clusters if that argument is not specified.
+        Value is used for --clusters if that argument is not specified.
 
     -c, --cluster *cluster*
         SLURM cluster to shred. This value is passed to sacct --clusters option.
@@ -429,4 +429,3 @@ Usage: xdmod-slurm-helper [-v] [-r resource] [-c cluster]
 
 EOF;
 }
-
