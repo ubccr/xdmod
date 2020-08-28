@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS `${DESTINATION_SCHEMA}`.`ReportTemplateChartsStaging`;
+DROP TABLE IF EXISTS `${DESTINATION_SCHEMA}`.`ReportTemplatesStaging`;

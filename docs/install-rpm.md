@@ -67,7 +67,7 @@ See the [Ingestor Guide](ingestor.html) for more details.
 Reload Apache
 -------------
 
-    # service httpd reload
+    # systemctl reload httpd.service
 
 Now you should be able to view the Open XDMoD portal at the URL used
 during the configuration process.

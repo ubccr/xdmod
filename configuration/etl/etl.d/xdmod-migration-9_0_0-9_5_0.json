@@ -1,0 +1,33 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "migration-9_0_0-9_5_0": {
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions"
+        }
+    },
+    "migration-9_0_0-9_5_0": [
+        {
+            "name": "moddb-report-and-chart-staging-tables",
+            "description": "Drop tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.0.0-9.5.0/moddb/drop-report-and-chart-staging-tables.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        }
+    ]
+}

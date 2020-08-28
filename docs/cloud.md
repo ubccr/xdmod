@@ -46,7 +46,6 @@ The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure s
 - Submission Venue
   - The venue that a job or cloud instance was initiated from.
 
-
 ## Getting cloud metrics data
 XDMoD provides the ability to read data from a predefined infrastructure-agnostic file format containing cloud system events. The schema for this file can be found in `configuration/etl/etl_schemas.d/cloud/event.schema.json`. For OpenStack based systems we also support data ingest using the OpenStack API and a [patch](https://github.com/ubccr/openstack-api-reporting-patch) to create cloud event logs for direct ingestion into XDMoD.
 
@@ -68,32 +67,32 @@ If you choose to use the generic file format for ingesting event data each event
 
 ```json
 {
-	"node_controller": "IP address of node controller",
-	"public_ip": "Publically available IP address",
-	"account": "Account that user is logged into",
-	"event_type": "Type of event",
-	"event_time": "Time that event happened",
-	"instance_type": {
-		"name": "Name of VM",
-		"cpu": "Number of CPU's the instance has",
-		"memory": "Amount of memory the instance has",
-		"disk": "Amount of storage space in GB this instance has",
-		"networkInterfaces": "Number of network interfaces"
-	},
-	"image_type": "Name of the type of image this instance uses",
-	"instance_id": "ID for the VM instance",
-	"record_type": "Type of record from list in modw_cloud.record_type table",
-	"block_devices": [{
-		"account": "Account that the storage device belongs to",
-		"attach_time": "Time that the storage device was attached to this instance",
-		"backing": "type of storage used for this block device, either ebs or instance-store",
-		"create_time": "Time the storage device was created",
-		"user": "User that the storage device was created by",
-		"id": "ID of the storage volume",
-		"size": "Size in GB of the storage volume"
-	}],
-	"private_ip": "Private IP address used by the instance",
-	"root_type": "Type of storage initial storage volume is, either ebs or instance-store"
+    "node_controller": "IP address of node controller",
+    "public_ip": "Publically available IP address",
+    "account": "Account that user is logged into",
+    "event_type": "Type of event",
+    "event_time": "Time that event happened",
+    "instance_type": {
+        "name": "Name of VM",
+        "cpu": "Number of CPU's the instance has",
+        "memory": "Amount of memory the instance has",
+        "disk": "Amount of storage space in GB this instance has",
+        "networkInterfaces": "Number of network interfaces"
+    },
+    "image_type": "Name of the type of image this instance uses",
+    "instance_id": "ID for the VM instance",
+    "record_type": "Type of record from list in modw_cloud.record_type table",
+    "block_devices": [{
+        "account": "Account that the storage device belongs to",
+        "attach_time": "Time that the storage device was attached to this instance",
+        "backing": "type of storage used for this block device, either ebs or instance-store",
+        "create_time": "Time the storage device was created",
+        "user": "User that the storage device was created by",
+        "id": "ID of the storage volume",
+        "size": "Size in GB of the storage volume"
+    }],
+    "private_ip": "Private IP address used by the instance",
+    "root_type": "Type of storage initial storage volume is, either ebs or instance-store"
 }
 ```
 
@@ -102,14 +101,16 @@ If you choose to use the generic file format for ingesting event data each event
 - The block_devices attribute is a JSON object that lists information about block storage devices attached to this VM when the event occurred. If multiple storage devices are attached the should each be listed here as a separate JSON object.
 
 ## Adding PI information
-PI information for the the cloud realm is ingested from a csv file using the `xdmod-ingest-csv` command. When ingesting the data
+PI information for the the cloud realm is ingested from a csv file using the `xdmod-import-csv` command. When ingesting the data
 the -t flag should be set to cloud-project-to-pi. An example of the command is below:
 
-    xdmod-ingest-csv -t cloud-project-to-pi -i /path/to/file.csv
+    xdmod-import-csv -t cloud-project-to-pi -i /path/to/file.csv
 
 After importing this data you must ingest it for the date range of any data you have already shredded.
 
-    xdmod-ingestor --last-modified-start-date 2012-01-01
+    xdmod-ingestor --datatype=genericcloud
+    xdmod-ingestor --datatype=openstack
+    xdmod-ingestor --aggregate=cloud --last-modified-start-date 2012-01-01
 
 ### Format
 The format of the csv file into set a project to PI association is shown below
@@ -135,9 +136,10 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 
 ## Utilization
 
-To use the Utilization statistic you must shred and ingest a JSON file that lists the specifications of each node in your cloud resource. The name of this file should follow the format `hypervisor_facts_YYYY-MM-DDTHH:SS:MM.json`. When the details of at least one node changes a new file listing the details of all of the nodes should be created and ingested. Below is the format for the JSON file. For resources that use OpenStack we have a python script that will create a file with appropriate information in the [xdmod-openstack-scripts repository](https://github.com/ubccr/xdmod-openstack-scripts). This script should be run once a day and will create a file only on days where the details of at least one node has changed from the previous day. The files should be ingested using `xdmod-shredder` and setting the `-f` option to `cloudresourcespecs` and then running `xdmod-ingestor`. An example of the `xdmod-shredder` command is as follows.
+To use the Utilization statistic you must shred and ingest a JSON file that lists the specifications of each node in your cloud resource. The name of this file should follow the format `hypervisor_facts_YYYY-MM-DDTHH:SS:MM.json`. When the details of at least one node changes a new file listing the details of all of the nodes should be created and ingested. Below is the format for the JSON file. For resources that use OpenStack we have a python script that will create a file with appropriate information in the [xdmod-openstack-scripts repository](https://github.com/ubccr/xdmod-openstack-scripts/blob/master/hypervisor_fact_reporting). This script should be run once a day and will create a file only on days where the details of at least one node has changed from the previous day. The files should be ingested using `xdmod-shredder` and setting the `-f` option to `cloudresourcespecs` and then running `xdmod-ingestor`. To ingest only this data set the `--datatype` option `cloudresourcespecs`. An example of the commands needed are below.
 
-`xdmod-shredder -r RESOURCE_NAME -d PATH/TO/DIRECTORY -f cloudresourcespecs`
+    xdmod-shredder -r RESOURCE_NAME -d PATH/TO/DIRECTORY -f cloudresourcespecs
+    xdmod-ingestor --datatype=cloudresourcespecs
 
 ### Cloud Resource Specification JSON file example
 ```json
@@ -190,7 +192,6 @@ Cloud resources are added by using the xdmod-setup command.
 5.  Once you finish with all the prompts you will be redirected to the `Resource Setup` screen. At this screen choose the `s` option to save the information you just entered to the resources.json configuration file.
 6.  Run the following command from the command line to load data from resources.json file into the database:
 `php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources`
-
 
 ### Ingesting cloud event data
 Cloud data is shredded and ingested using the [`xdmod-shredder`](shredder.md) and [`xdmod-ingestor`](ingestor.md) commands. Please see their respective guides for further information.

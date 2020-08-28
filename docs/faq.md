@@ -18,7 +18,7 @@ configurations.
 
 ### Can I use Open XDMoD with MySQL 5.0?
 
-It may be possible but this is not supported please see
+No, versions of MySQL before 5.5.3 are not compatible with Open XDMoD. See
 [Software Requirements](software-requirements.html) for recommended and tested
 configurations.
 
@@ -155,19 +155,6 @@ Server SQL Modes.  You must set `sql_mode = ''` in your MySQL server
 configuration.
 
 [sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
-
-### Why do I see "Backup tables detected!" when running the `acl-config` script?
-
-This indicates that the script was run previously but most likely exited before
-completion. One way to resolve this error is to provide the `-r` or `--recover`
-flag to `acl-config`. This will direct `acl-config` to utilize these backup tables
-to recover the User to Acl relations.
-
-### Why do I see "Recover mode specified but no backup tables exist!" when running the `acl-config` script?
-
-This indicates that the `-r` or `--recover` flag was present when calling `acl-config`
-but there were no backup tables found to recover from. Remove the `-r` or `--recover` flag
-and run `acl-config` again.
 
 ### Why do I see the error message "Bad Request Your browser sent a request that this server could not understand." in the browser instead of the portal?
 
