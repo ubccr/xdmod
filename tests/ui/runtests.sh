@@ -31,7 +31,7 @@ then
     export JUNIT_OUTDIR
 fi
 
-pushd `dirname $0`
+pushd ${BASEDIR}
 if [[ ! -d 'node_modules' ]]; then
     if [[ -f "${CACHEFILE}" ]]; then
         echo "using cache file"
