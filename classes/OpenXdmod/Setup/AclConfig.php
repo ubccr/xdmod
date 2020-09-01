@@ -31,7 +31,7 @@ MSG;
         $this->console->displayMessage($this->sectionMessage);
         $this->console->displayBlankLine();
 
-        $cmd = $this->scriptName;
+        $cmd = BIN_DIR . '/' . $this->scriptName;
         $this->console->displayMessage("This may take a minute or two...");
 
         $output = shell_exec($cmd);
