@@ -899,7 +899,12 @@ class ReportGenerator {
         browser.waitForVisible(this.selectors.myReports.toolbar.newBasedOnMenu());
         const reportCount = this.getMyReportsRows().length;
         if (!center) {
-            browser.click(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
+            browser.waitUntilAnimEnd(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
+            /**
+             * It seems extJS does not attach the events right away, pause to allow events to exist before clicking on the element
+             */
+            browser.pause(250);
+            browser.waitAndClick(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
         } else {
             // move the mouse to the middle of the menu so that the center selection menu appears
             browser.moveToObject(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
@@ -911,8 +916,8 @@ class ReportGenerator {
             browser.click(this.selectors.myReports.toolbar.newBasedOnTemplateWithCenter(center));
         }
         // There is no visible indicator that the reports are being
-        // updated, so wait for the number of rows to change.
-        browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 10000, 'Expect number of reports to change');
+        // updated, so wait for the number of rows to increase
+        browser.waitForVisible(this.selectors.myReports.reportList.rowByIndex(reportCount + 1));
     }
 
     /**
