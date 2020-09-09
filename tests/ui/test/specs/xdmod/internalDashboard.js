@@ -169,6 +169,7 @@ describe('Internal Dashboard', function () {
 
                     browser.waitForVisible(page.selectors.create_manage_users.window);
                     browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                    browser.waitForInvisible(page.selectors.create_manage_users.loading_mask);
                 });
                 it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
                     if ('dropdown' === setting.type) {
@@ -257,6 +258,7 @@ describe('Internal Dashboard', function () {
 
                     browser.waitForVisible(page.selectors.create_manage_users.window);
                     browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                    browser.waitForInvisible(page.selectors.create_manage_users.loading_mask);
                 });
                 it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
                     if ('dropdown' === setting.type) {

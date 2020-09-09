@@ -872,7 +872,8 @@ class ReportGenerator {
         visibleButtons[0].click();
         // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
         // in case the menu is used multiple times in a row.
-        browser.pause(500);
+        // Ext seems to also be "slow" to add events to the button, wait to make sure events get added
+        browser.pause(750);
     }
 
     /**
@@ -899,7 +900,7 @@ class ReportGenerator {
         browser.waitForVisible(this.selectors.myReports.toolbar.newBasedOnMenu());
         const reportCount = this.getMyReportsRows().length;
         if (!center) {
-            browser.click(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
+            browser.waitAndClick(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
         } else {
             // move the mouse to the middle of the menu so that the center selection menu appears
             browser.moveToObject(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
@@ -911,8 +912,10 @@ class ReportGenerator {
             browser.click(this.selectors.myReports.toolbar.newBasedOnTemplateWithCenter(center));
         }
         // There is no visible indicator that the reports are being
-        // updated, so wait for the number of rows to change.
-        browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 10000, 'Expect number of reports to change');
+        // updated, so wait for the number of rows to increase
+        // specifically look for there to be at least one more item
+        // this seems to be do the the fact that elements and selectors get cached
+        browser.waitForVisible(this.selectors.myReports.reportList.rowByIndex(reportCount + 1));
     }
 
     /**
