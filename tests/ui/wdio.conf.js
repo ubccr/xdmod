@@ -1,24 +1,10 @@
+var fs = require('fs');
 /**
  * If you want to add other platforms use the following:
  * https://wiki.saucelabs.com/display/DOCS/Platform+Configurator
  * put them into variable and then add them to the proper `capabilities`
  * variable
  */
-var HeadlessChrome = {
-    acceptInsecureCerts: true,
-    browserName: 'chrome',
-    chromeOptions: {
-        args: [
-            '--no-sandbox',
-            '--headless',
-            '--no-gpu',
-            'incognito',
-            'disable-extensions',
-            'start-maximized',
-            'window-size=2560,1600'
-        ]
-    }
-};
 var Chrome = {
     acceptInsecureCerts: true,
     browserName: 'chrome',
@@ -28,8 +14,7 @@ var Chrome = {
         args: [
             'incognito',
             'disable-extensions',
-            'start-maximized',
-            'window-size=2560,1600'
+            'start-maximized'
         ]
     }
 };
@@ -42,10 +27,9 @@ var excludes = [
 if (!process.env.SSO) {
     excludes.push('./test/specs/xdmod/SSOLogin.js');
 }
-var capabilities = [Chrome];
-var services = ['selenium-standalone'];
-var port = 4444;
-var path = '/wd/hub';
+var services = ['chromedriver'];
+var port = 9515;
+var path = '/';
 var reporters = ['spec'];
 var reporterOptions = {};
 
@@ -53,15 +37,25 @@ var user = '';
 var key = '';
 
 if (process.env.WDIO_MODE === 'headless') {
-    capabilities = [HeadlessChrome];
-    services = ['chromedriver'];
-    port = 9515;
-    path = '/';
+    Chrome.chromeOptions.args.push('--headless');
+    Chrome.chromeOptions.args.push('--no-sandbox');
+    Chrome.chromeOptions.args.push('--no-gpu');
+    Chrome.chromeOptions.args.push('window-size=2560,1600');
+    /**
+     * In shippable we use headless_shell, this will automatically detect it and use it as the binary,
+     * otherwise it will use chrome on the path
+     */
+    try {
+        var headless_shell = '/usr/lib64/chromium-browser/headless_shell';
+        fs.accessSync(headless_shell, fs.constants.X_OK);
+        Chrome.chromeOptions.binary = headless_shell;
+    } catch (err) {
+        /* nothing to do here, we assume chrome is on the path */
+    }
 } else if (process.env.SAUCE_USER && process.env.SAUCE_KEY) {
     user = process.env.SAUCE_USER;
     key = process.env.SAUCE_KEY;
     services = ['sauce'];
-    capabilities = [Chrome];
 }
 if (process.env.JUNIT_OUTDIR) {
     reporters.push('junit');
@@ -77,6 +71,7 @@ if (process.env.JUNIT_OUTDIR) {
         }
     };
 }
+var capabilities = [Chrome];
 
 exports.config = {
     deprecationWarnings: false,

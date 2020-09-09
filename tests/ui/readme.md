@@ -103,6 +103,16 @@ SAUCE_USER=sauce-user SAUCE_KEY=X-X-X npm run test
 
 and see the fun that is automated ui testing.
 
+## Troubleshooting
+
+With the updates to chrome and chromedriver, it is easy and reliable to run this locally without using selenium-standalone.
+Sometimes screenshots are useful, one way to do this is to just log them to the xonsole and download the logs from shippable.
+
+```javascript
+console.log("<img alt='3' src='data:image/png;base64," + browser.saveScreenshot().toString('base64') + "'/>");
+```
+Then just remove everything before and after and open as an html file to view the screenshot.
+
 [sl]: https://saucelabs.com/
 [sl-conf]: https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
 [wd]: http://webdriver.io/
