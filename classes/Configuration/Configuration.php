@@ -335,7 +335,7 @@ class Configuration extends Loggable implements iConfiguration
                     'Updating stale cached object %s (%s) (time differences: %s)',
                     $calledClass,
                     $filename,
-                    implode(',', array_diff($cachedInstance->getMaxLastModifiedTime(), $instance->getMaxLastModifiedTime()))
+                    implode(',', array_diff($cachedInstance->getLastModifiedTimes(), $instance->getLastModifiedTimes()))
                 )
             );
         }
