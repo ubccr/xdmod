@@ -1034,8 +1034,8 @@ class ReportGenerator {
         browser.waitForVisible(this.selectors.myReports.toolbar.downloadAsPdfButton());
         browser.click(this.selectors.myReports.toolbar.downloadAsPdfButton());
         // Wait for check mark image to appear and disappear.
-        browser.waitForVisible(this.selectors.checkmarkMask(), 10000);
-        browser.waitForInvisible(this.selectors.checkmarkMask(), 10000);
+        browser.waitForVisible(this.selectors.checkmarkMask(), 60000);
+        browser.waitForInvisible(this.selectors.checkmarkMask(), 60000);
     }
 
     /**
