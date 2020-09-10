@@ -228,7 +228,7 @@ class Authentication
             $resolver_query_params
         );
 
-        if (count($user_check) > 0) {
+        if (count($user_check) === 1) {
             $last_active_time = self::getMicrotime();
 
             $last_active_query = "

@@ -47,6 +47,9 @@ define('STATUS_CENTER_DIRECTOR_ROLE', 3);
 define('CONFIG_DIR', $currentDir);
 define('BASE_DIR', dirname($currentDir));
 
+// Open XDMoD bin directory
+define('BIN_DIR', '__XDMOD_BIN_PATH__');
+
 // Open XDMoD data directory, e.g. /usr/share/xdmod or PREFIX/share
 define('DATA_DIR', BASE_DIR);
 define('LOG_DIR', BASE_DIR.'/logs');

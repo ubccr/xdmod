@@ -68,9 +68,9 @@ EOT
 
         $this->console->displayBlankLine();
         $this->console->displayMessage(<<<"EOT"
-Java and PhantomJS are required by the report generator for constructing
+Java and Chromium  are required by the report generator for constructing
 reports.  Setup will attempt to detect the presence of java, and
-phantomjs on your system.
+chromium on your system.
 EOT
         );
         $this->console->displayBlankLine();
@@ -95,14 +95,14 @@ EOT
             $settings['reporting_javac_path']
         );
 
-        if ($settings['reporting_phantomjs_path'] == '') {
-            $settings['reporting_phantomjs_path']
-                = exec('which phantomjs 2>/dev/null');
+        if ($settings['reporting_chromium_path'] == '') {
+            $chromiumPath = '/usr/lib64/chromium-browser/headless_shell';
+            $settings['reporting_chromium_path'] = is_executable($chromiumPath) ? $chromiumPath : '';
         }
 
-        $settings['reporting_phantomjs_path'] = $this->console->prompt(
-            'PhantomJS Path:',
-            $settings['reporting_phantomjs_path']
+        $settings['reporting_chromium_path'] = $this->console->prompt(
+            'Chromium Path:',
+            $settings['reporting_chromium_path']
         );
 
         $this->console->displayBlankLine();

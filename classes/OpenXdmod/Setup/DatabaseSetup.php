@@ -165,6 +165,9 @@ EOT
             $tpg->generateMainTable(DB::factory('datawarehouse'), new \DateTime('2000-01-01'), new \DateTime('2038-01-18'));
         }
 
-        passthru('acl-config');
+        passthru(BIN_DIR . '/acl-config', $aclstatus);
+        if ($aclstatus !== 0) {
+            $logger->err('Error while running acl-config');
+        }
     }
 }
