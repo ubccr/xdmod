@@ -356,7 +356,7 @@ class Configuration extends Loggable implements iConfiguration
             ( null === $cachedInstance || $staleCachedObject )
         ) {
             if ( $apcuEnabled ) {
-                apc_store($cacheKey, $instance);
+                apcu_store($cacheKey, $instance);
             } else {
                 self::$objectCache[$cacheKey] = $instance;
             }
