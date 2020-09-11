@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d36870ba5ff8cf1c197973b6f0d876e",
+    "content-hash": "ea6637e0bf229226261351609c44f43a",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -2459,16 +2459,16 @@
         },
         {
             "name": "ubccr/simplesamlphp-module-authoidcoauth2",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/simplesamlphp-module-authoidcoauth2.git",
-                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb"
+                "reference": "bad54f7b08bbadfee2444c8a469289a8f0ca51ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
-                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/bad54f7b08bbadfee2444c8a469289a8f0ca51ad",
+                "reference": "bad54f7b08bbadfee2444c8a469289a8f0ca51ad",
                 "shasum": ""
             },
             "require": {
@@ -2501,7 +2501,7 @@
                 }
             ],
             "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
-            "time": "2020-07-20T13:31:47+00:00"
+            "time": "2020-09-11T18:18:04+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
