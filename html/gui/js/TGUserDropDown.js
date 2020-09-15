@@ -43,18 +43,24 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
     /**
      * Set the value and raw value.
      *
-     * @param {integer} v - The person ID.
-     * @param {string} l - The person display value.
-     * @param {boolean} c - Execute cascade function if true (defaults to true).
+     * @param {number} personId - A person ID.
+     * @param {string} personName - A person name.
+     * @param {boolean} updateCascadeComponent - Execute cascade function if
+     * true (defaults to true).
      */
-    initializeWithValue: function (v, l, c) {
-        var cascade = (typeof c !== 'undefined') ? c : true;
+    initializeWithValue: function (
+        personId,
+        personName,
+        updateCascadeComponent
+    ) {
+        var cascade = (typeof updateCascadeComponent !== 'undefined') ?
+            updateCascadeComponent : true;
 
-        this.setValue(v);
-        this.setRawValue(l);
+        this.setValue(personId);
+        this.setRawValue(personName);
 
         if (cascade) {
-            this.cascadeSelect(v);
+            this.cascadeSelect(personId);
         }
     },
 
@@ -104,6 +110,11 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
         CCR.xdmod.ui.TGUserDropDown.superclass.initComponent.apply(this, arguments);
     }, // initComponent
 
+    /**
+     * Update the cascade component if cascade options are defined.
+     *
+     * @param {number} personId - The person ID that was selected.
+     */
     cascadeSelect: function (personId) {
         var cascadeOptions = this.cascadeOptions;
         var comp;
