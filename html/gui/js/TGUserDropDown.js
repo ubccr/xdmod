@@ -40,10 +40,22 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
         return this;
     },
 
-    initializeWithValue: function (v, l) {
-        this.setValue(v, l);
+    /**
+     * Set the value and raw value.
+     *
+     * @param {integer} v - The person ID.
+     * @param {string} l - The person display value.
+     * @param {boolean} c - Execute cascade function if true (defaults to true).
+     */
+    initializeWithValue: function (v, l, c) {
+        var cascade = (typeof c !== 'undefined') ? c : true;
+
+        this.setValue(v);
         this.setRawValue(l);
-        this.cascadeSelect(v);
+
+        if (cascade) {
+            this.cascadeSelect(v);
+        }
     },
 
     initComponent: function () {
