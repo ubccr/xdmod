@@ -3,6 +3,7 @@
 namespace DataWarehouse\Data;
 
 use Configuration\XdmodConfiguration;
+use ETL\VariableStore;
 use Exception;
 
 /**
@@ -21,6 +22,12 @@ class RawStatisticsConfiguration
      * @var array[]
      */
     private $config;
+
+    /**
+     * Variable store for substitutions in raw statistics configuration files.
+     * @var \ETL\VariableStore
+     */
+    private $variableStore;
 
     /**
      * Factory method.
@@ -44,6 +51,22 @@ class RawStatisticsConfiguration
             'rawstatistics.json',
             CONFIG_DIR
         );
+
+        $constantNames = [
+            'HIERARCHY_BOTTOM_LEVEL_INFO',
+            'HIERARCHY_BOTTOM_LEVEL_LABEL',
+            'HIERARCHY_MIDDLE_LEVEL_INFO',
+            'HIERARCHY_MIDDLE_LEVEL_LABEL',
+            'HIERARCHY_TOP_LEVEL_INFO',
+            'HIERARCHY_TOP_LEVEL_LABEL',
+            'ORGANIZATION_NAME',
+            'ORGANIZATION_NAME_ABBREV'
+        ];
+        $variableMap = [];
+        foreach ($constantNames as $constantName) {
+            $variableMap[$constantName] = constant($constantName);
+        }
+        $this->variableStore = new VariableStore($variableMap);
     }
 
     /**
@@ -136,14 +159,11 @@ class RawStatisticsConfiguration
             ));
         }
 
+        $vs = $this->variableStore;
         return array_map(
-            function ($field) {
-                // Replace hierarchy constants.
+            function ($field) use ($vs) {
                 foreach (['name', 'documentation'] as $key) {
-                    $value = $field[$key];
-                    if (strpos($value, 'HIERARCHY_') === 0 && defined($value)) {
-                        $field[$key] = constant($value);
-                    }
+                    $field[$key] = $vs->substitute($field[$key]);
                 }
                 return $field;
             },
