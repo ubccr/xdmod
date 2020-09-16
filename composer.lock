@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e726680133e3604a59d3faffbad9d678",
+    "content-hash": "ea6637e0bf229226261351609c44f43a",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -12,6 +12,7 @@
             "dist": {
                 "type": "tar",
                 "url": "https://archive.apache.org/dist/commons/beanutils/binaries/commons-beanutils-1.8.0-bin.tar.gz",
+                "reference": null,
                 "shasum": "f21decfd6f01a42cae665db8e1a4401b154a2fe9"
             },
             "require": {
@@ -32,6 +33,7 @@
             "dist": {
                 "type": "tar",
                 "url": "https://archive.apache.org/dist/commons/collections/binaries/commons-collections-2.1.1.tar.gz",
+                "reference": null,
                 "shasum": "26baa7ff12af5b2484b64c0011f32e48a10b0df9"
             },
             "require": {
@@ -52,6 +54,7 @@
             "dist": {
                 "type": "tar",
                 "url": "https://archive.apache.org/dist/commons/digester/binaries/commons-digester-1.7.tar.gz",
+                "reference": null,
                 "shasum": "43842197ddfe6930bd9a20b526e4e8c96bee1137"
             },
             "require": {
@@ -72,6 +75,7 @@
             "dist": {
                 "type": "tar",
                 "url": "https://archive.apache.org/dist/commons/logging/binaries/commons-logging-1.0.4.tar.gz",
+                "reference": null,
                 "shasum": "633cad7b22536388da2c0b3ddb0661f25a07e849"
             },
             "require": {
@@ -92,6 +96,7 @@
             "dist": {
                 "type": "tar",
                 "url": "https://archive.apache.org/dist/poi/release/bin/poi-bin-3.6-20091214.tar.gz",
+                "reference": null,
                 "shasum": "e65a6fc5acd1c4e09c654cf72e9f70707235d309"
             },
             "require": {
@@ -112,6 +117,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://archive.apache.org/dist/xalan/xalan-j/binaries/xalan-j_2_7_1-bin-2jars.zip",
+                "reference": null,
                 "shasum": "e14810b4c586fb40e80c049b9096215ab22d816d"
             },
             "require": {
@@ -132,6 +138,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
+                "reference": null,
                 "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
             },
             "require": {
@@ -606,6 +613,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
+                "reference": null,
                 "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
             },
             "require": {
@@ -669,6 +677,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://repo1.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
+                "reference": null,
                 "shasum": "892bfb3e97074a61123b3b2d7caa2db112750864"
             },
             "type": "vanilla-plugin",
@@ -728,6 +737,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://downloads.sourceforge.net/project/jasperreports/archive/jasperreports/JasperReports%203.7.6/jasperreports-3.7.6.jar",
+                "reference": null,
                 "shasum": "6d32314023c5e33a649b6f40fab51eb0922a6da9"
             },
             "require": {
@@ -748,6 +758,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://code.jquery.com/jquery-1.12.4.min.js",
+                "reference": null,
                 "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
             },
             "require": {
@@ -834,6 +845,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://raw.githubusercontent.com/moment/moment/2.13.0/min/moment.min.js",
+                "reference": null,
                 "shasum": "a8ca7eea2616fa92e2e85ba6291af6ea012fd190"
             },
             "require": {
@@ -854,6 +866,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://raw.githubusercontent.com/moment/moment-timezone/0.5.4/builds/moment-timezone-with-data.min.js",
+                "reference": null,
                 "shasum": "39b9fccc20863c23f19524a756d75cfef2ff9cbe"
             },
             "require": {
@@ -1186,6 +1199,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://cdn.sencha.com/ext/gpl/ext-3.4.1.1-gpl.zip",
+                "reference": null,
                 "shasum": "26734b47eae909ff7f8cd7de4cadfb3531bd3cdc"
             },
             "require": {
@@ -2212,6 +2226,7 @@
             "dist": {
                 "type": "file",
                 "url": "https://rsvpjs-builds.s3.amazonaws.com/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js",
+                "reference": null,
                 "shasum": "24522232c6252718638ad3475e236da7692fa4ae"
             },
             "require": {
@@ -2444,16 +2459,16 @@
         },
         {
             "name": "ubccr/simplesamlphp-module-authoidcoauth2",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/simplesamlphp-module-authoidcoauth2.git",
-                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb"
+                "reference": "bad54f7b08bbadfee2444c8a469289a8f0ca51ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
-                "reference": "a6d18d6de7e4e434975a818cc0fbba0f3ac5e5bb",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/bad54f7b08bbadfee2444c8a469289a8f0ca51ad",
+                "reference": "bad54f7b08bbadfee2444c8a469289a8f0ca51ad",
                 "shasum": ""
             },
             "require": {
@@ -2486,7 +2501,7 @@
                 }
             ],
             "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
-            "time": "2020-07-20T13:31:47+00:00"
+            "time": "2020-09-11T18:18:04+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
@@ -2989,6 +3004,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2017-12-04T08:55:13+00:00"
         },
         {
@@ -3552,6 +3568,5 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.4"
-    },
-    "plugin-api-version": "1.1.0"
+    }
 }
