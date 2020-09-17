@@ -335,27 +335,27 @@
                 "batchExport": true
             },
             {
-                "name": "HIERARCHY_TOP_LEVEL_LABEL",
+                "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
                 "tableAlias": "fos",
                 "column": "directorate_description",
                 "group": "Requested Resource",
-                "documentation": "HIERARCHY_TOP_LEVEL_INFO",
+                "documentation": "${HIERARCHY_TOP_LEVEL_INFO}",
                 "batchExport": true
             },
             {
-                "name": "HIERARCHY_MIDDLE_LEVEL_LABEL",
+                "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}",
                 "tableAlias": "fos",
                 "column": "parent_description",
                 "group": "Requested Resource",
-                "documentation": "HIERARCHY_MIDDLE_LEVEL_INFO",
+                "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
                 "batchExport": true
             },
             {
-                "name": "HIERARCHY_BOTTOM_LEVEL_LABEL",
+                "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}",
                 "tableAlias": "fos",
                 "column": "description",
                 "group": "Requested Resource",
-                "documentation": "HIERARCHY_BOTTOM_LEVEL_INFO",
+                "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
                 "batchExport": true
             }
         ]
