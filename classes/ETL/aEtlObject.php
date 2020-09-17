@@ -18,7 +18,7 @@ use PDOException;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
-abstract class aEtlObject extends \CCR\Loggable
+abstract class aEtlObject extends \CCR\Loggable implements \JsonSerializable
 {
     // All ELT objects can be named
     protected $name = null;
@@ -137,4 +137,12 @@ abstract class aEtlObject extends \CCR\Loggable
     {
         return $this->name . " (" . get_class($this) . ")";
     }  // __toString()
+
+    public function jsonSerialize()
+    {
+        return array(
+            'name' => $this->name,
+            'initialized' => $this->initialized
+        );
+    }
 }  // abstract class aEtlObject

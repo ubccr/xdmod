@@ -13,7 +13,7 @@ namespace ETL\DataEndpoint;
 
 use Psr\Log\LoggerInterface;
 
-abstract class aStructuredFile extends File
+abstract class aStructuredFile extends File implements \JsonSerializable
 {
     /**
      * @const integer The default number of bytes for file read operations.
@@ -613,4 +613,22 @@ abstract class aStructuredFile extends File
      */
 
     abstract protected function discoverRecordFieldNames();
+
+    public function jsonSerialize()
+    {
+        return array_merge(
+            parent::jsonSerialize(),
+            array(
+                'record_schema_path' => $this->recordSchemaPath,
+                'filter_list' => $this->filterList,
+                'filter_definitions' => $this->filterDefinitions,
+                'record_separator' => $this->recordSeparator,
+                'field_separator' => $this->fieldSeparator,
+                'has_header' => $this->hasHeaderRecord,
+                'requested_record_field_names' => $this->requestedRecordFieldNames,
+                'discovered_record_field_names' => $this->discoveredRecordFieldNames ,
+                'record_pass_through' => $this->recordPassthrough
+            )
+        );
+    }
 }

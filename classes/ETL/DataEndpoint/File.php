@@ -8,7 +8,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Psr\Log\LoggerInterface;
 
-class File extends aDataEndpoint implements iDataEndpoint
+class File extends aDataEndpoint implements iDataEndpoint, \JsonSerializable
 {
 
     /**
@@ -175,5 +175,16 @@ class File extends aDataEndpoint implements iDataEndpoint
     public function __toString()
     {
         return sprintf('%s (name=%s, path=%s)', get_class($this), $this->name, $this->path);
+    }
+
+    public function jsonSerialize()
+    {
+        return array_merge(
+            parent::jsonSerialize(),
+            array(
+                'path' => $this->path,
+                'mode' => $this->mode
+            )
+        );
     }
 }

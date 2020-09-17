@@ -52,7 +52,7 @@ use CCR\Loggable;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 
-class Entity extends Loggable
+class Entity extends Loggable implements \JsonSerializable
 {
     // The list of required properties for this model. If extending classes define their
     // own required properties they should merge them in the constructor by calling
@@ -499,4 +499,14 @@ class Entity extends Loggable
     {
         return get_class($this);
     }  // __toString()
+
+    public function jsonSerialize()
+    {
+        return array(
+            'properties' => $this->properties,
+            'required_properties' => $this->requiredProperties,
+            'default_property_values'=> $this->defaultPropertyValues,
+            'system_quote_char' => $this->systemQuoteChar
+        );
+    }
 }  // class Entity

@@ -15,7 +15,7 @@ use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DbModel\Query;
 use Psr\Log\LoggerInterface;
 
-class EtlOverseerOptions extends \CCR\Loggable
+class EtlOverseerOptions extends \CCR\Loggable implements \JsonSerializable
 {
     // Start of the ETL period
     private $startDate = null;
@@ -953,4 +953,29 @@ class EtlOverseerOptions extends \CCR\Loggable
 
         $this->etlPeriodChunkList = $chunkList;
     }  // generateEtlChunkList()
+
+    public function jsonSerialize()
+    {
+        return array(
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
+            'number_of_days'=> $this->numberOfDays,
+            'last_modified_start_date' => $this->lastModifiedStartDate,
+            'last_modified_end_date' => $this->lastModifiedEndDate,
+            'etl_interval_chunk_size_days' => $this->etlIntervalChunkSizeDays,
+            'etl_period_chunk_list' => $this->etlPeriodChunkList,
+            'force_operation' => $this->forceOperation,
+            'include_only_resource_codes' => $this->includeOnlyResourceCodes,
+            'exclude_resource_codes'=> $this->excludeResourceCodes,
+            'lock_dir' => $this->lockDir,
+            'lock_file_prefix' => $this->lockFilePrefix,
+            'default_module_name' => $this->defaultModuleName,
+            'resource_code_to_id_map_sql'=> $this->resourcecodeToIdMapSql,
+            'section_names'=> $this->sectionNames,
+            'action_names' => $this->actionNames,
+            'dry_run' => $this->dryrun,
+            'verbose' => $this->verbose,
+            'supported_overseer_restrictions' => $this->supportedOverseerRestrictions
+        );
+    }
 }  // class EtlOverseerOptions

@@ -18,7 +18,7 @@ use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\Configuration\EtlConfiguration;
 use Psr\Log\LoggerInterface;
 
-abstract class aAction extends aEtlObject
+abstract class aAction extends aEtlObject implements \JsonSerializable
 {
     /**
      * @var aOptions object with configuration information for this action
@@ -526,4 +526,25 @@ abstract class aAction extends aEtlObject
      */
 
     abstract protected function performPostExecuteTasks($numRecordsProcessed = null);
+
+    public function jsonSerialize()
+    {
+        return array_merge(
+            $parent = parent::jsonSerialize(),
+            array(
+                'options' => $this->options,
+                'etl_config' => $this->etlConfig,
+                'etl_overseer_options' => $this->etlOverseerOptions,
+                'overseer_restriction_overrides' => $this->overseerRestrictionOverrides,
+                'variable_store'=> $this->variableStore,
+                'definition_file' => $this->definitionFile,
+                'support_date_range_chunking' => $this->supportDateRangeChunking,
+                'current_start_date' => $this->currentStartDate,
+                'current_end_date' => $this->currentEndDate,
+                'source_end_point'=> $this->sourceEndpoint,
+                'destination_end_point' => $this->destinationEndpoint,
+                'utility_end_point' => $this->utilityEndpoint
+            )
+        );
+    }
 }  // abstract class aAction

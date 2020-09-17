@@ -24,7 +24,7 @@ use Exception;
 // Extending stdClass allows us to use aOptions with when a general class is used, such as verifying
 // required keys in an aOptions class or a standard parsed JSON object.
 
-abstract class aOptions extends \stdClass implements \Iterator
+abstract class aOptions extends \stdClass implements \Iterator, \JsonSerializable
 {
     // The list of required options. These options cannot be set to NULL or an empty string.
     protected $requiredOptions = array(
@@ -317,4 +317,12 @@ abstract class aOptions extends \stdClass implements \Iterator
         // data value.
         return null !== key($this->options);
     }  // valid()
+
+    public function jsonSerialize()
+    {
+        return array(
+            'options' => $this->options,
+            'required_options' => $this->requiredOptions
+        );
+    }
 }  // class aOptions
