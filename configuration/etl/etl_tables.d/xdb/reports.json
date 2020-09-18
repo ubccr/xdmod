@@ -47,12 +47,6 @@
                 "default": "Pdf"
             },
             {
-                "name": "font",
-                "type": "enum('Times','Arial')",
-                "nullable": false,
-                "default": "Arial"
-            },
-            {
                 "name": "schedule",
                 "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
                 "nullable": false,

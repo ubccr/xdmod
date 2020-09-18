@@ -443,7 +443,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
                   self.parent.reportCreator.setChartsPerPage(reportGeneralData.charts_per_page);
 
                   self.parent.reportCreator.setReportFormat(reportGeneralData.format);
-                  self.parent.reportCreator.setReportFont(reportGeneralData.font);
                   self.parent.reportCreator.setReportSchedule(reportGeneralData.schedule);
                   self.parent.reportCreator.setReportDelivery(reportGeneralData.delivery);
 
@@ -616,7 +615,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
                   self.parent.reportCreator.setReportFooter(reportGeneralData.footer);
 
                   self.parent.reportCreator.setReportFormat(reportGeneralData.format);
-                  self.parent.reportCreator.setReportFont(reportGeneralData.font);
                   self.parent.reportCreator.setReportSchedule(reportGeneralData.schedule);
                   self.parent.reportCreator.setReportDelivery(reportGeneralData.delivery);
 
