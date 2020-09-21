@@ -35,7 +35,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             txtReportHeader.setValue('');
             txtReportFooter.setValue('');
 
-            cmbFont.setValue('Arial');
             cmbFormat.setValue('Pdf');
             cmbSchedule.setValue('Once');
             cmbDelivery.setValue('E-mail');
@@ -63,10 +62,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
 
         self.setReportFooter = function (value) {
             txtReportFooter.setValue(value);
-        };
-
-        self.setReportFont = function (value) {
-            cmbFont.setValue(value);
         };
 
         self.setReportFormat = function (value) {
@@ -161,29 +156,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                 }).defer(100);
             }
         });
-
-        var font_store = new Ext.data.SimpleStore({
-            fields: ['name'],
-            data: [['Arial']]
-        });
-
-        var cmbFont = new Ext.form.ComboBox({
-            editable: false,
-            width: 140,
-            fieldLabel: 'Font',
-            mode: 'local',
-            store: font_store,
-            triggerAction: 'all',
-            displayField: 'name',
-            hidden: true,
-            valueField: 'name',
-            emptyText: 'No Font Selected',
-            listeners: {
-                change: self.dirtyConfig
-            }
-        });
-
-        cmbFont.setValue(1);
 
         var format_store = new Ext.data.SimpleStore({
             fields: ['name', 'format'],
@@ -414,7 +386,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             reportData.charts_per_page =
                 rdoChartLayout.getValue().charts_per_page;
 
-            reportData.report_font     = cmbFont.getRawValue();
             reportData.report_format   = cmbFormat.getValue();
             reportData.report_schedule = cmbSchedule.getRawValue();
             reportData.report_delivery = cmbDelivery.getRawValue();
@@ -924,7 +895,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             defaultType: 'textfield',
 
             items: [
-                cmbFont,
                 cmbFormat,
                 cmbSchedule,
                 cmbDelivery,
@@ -1135,4 +1105,3 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
         XDMoD.ReportCreator.superclass.initComponent.call(this);
     }
 });
-
