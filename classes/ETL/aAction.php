@@ -533,11 +533,11 @@ abstract class aAction extends aEtlObject implements \JsonSerializable
             $parent = parent::jsonSerialize(),
             array(
                 'options' => $this->options,
-                'etl_config' => $this->etlConfig,
                 'etl_overseer_options' => $this->etlOverseerOptions,
                 'overseer_restriction_overrides' => $this->overseerRestrictionOverrides,
                 'variable_store'=> $this->variableStore,
                 'definition_file' => $this->definitionFile,
+                'parsed_definition_file' => $this->parsedDefinitionFile,
                 'support_date_range_chunking' => $this->supportDateRangeChunking,
                 'current_start_date' => $this->currentStartDate,
                 'current_end_date' => $this->currentEndDate,

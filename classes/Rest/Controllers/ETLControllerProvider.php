@@ -3,9 +3,12 @@
 namespace Rest\Controllers;
 
 use CCR\Json;
+use Configuration\Configuration;
 use ETL\Configuration\EtlConfiguration;
 use ETL\DataEndpoint\File;
 use ETL\DataEndpoint\iRdbmsEndpoint;
+use ETL\EtlOverseer;
+use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 use Exception;
 use RecursiveRegexIterator;
@@ -13,9 +16,15 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ETLControllerProvider extends BaseControllerProvider
 {
+
+    private $etlDir;
+
+    private $configFiles;
 
     /**
      * This function is responsible for the setting up of any routes that this
@@ -30,11 +39,15 @@ class ETLControllerProvider extends BaseControllerProvider
         $root = $this->prefix;
         $class = get_class($this);
 
+        $controller->get("$root/pipelines/actions", "$class::getActionsForPipelines");
+        $controller->get("$root/pipelines/{pipeline}/actions", "$class::getActionsForPipeline");
+
         $controller->get("$root/pipelines", "$class::getPipelines");
         $controller->post("$root/pipelines", "$class::getPipelines");
 
         $controller->get("$root/files", "$class::getFileNames");
         $controller->post("$root/files", "$class::getFileNames");
+
     }
 
     /**
@@ -59,9 +72,7 @@ class ETLControllerProvider extends BaseControllerProvider
             );
 
             $actions = $etlConfig->getConfiguredActionNames($pipelineName);
-            if (!empty($actions)) {
-                $pipeline['children'] = array();
-            }
+            $pipeline['children'] = array();
 
             foreach ($actions as $actionName) {
                 $action = array(
@@ -69,9 +80,7 @@ class ETLControllerProvider extends BaseControllerProvider
                 );
 
                 $options = $etlConfig->getActionOptions($actionName, $pipelineName);
-                if (!empty($options)) {
-                    $action['children'] = array();
-                }
+                $action['children'] = array();
 
                 foreach ($options as $key => $value) {
                     $translated = $value;
@@ -86,6 +95,7 @@ class ETLControllerProvider extends BaseControllerProvider
                         }
                     } elseif ($key === 'definition_file' && isset($value)) {
                         $definitionPath = $options->paths->action_definition_dir . "/$value";
+                        $definition = Configuration::factory($definitionPath);
                         $translated = $this->convertForTreeGrid(Json::loadFile($definitionPath));
                     } elseif (is_object($value) || is_array($value)) {
                         $translated = $this->convertForTreeGrid($value);
@@ -116,6 +126,8 @@ class ETLControllerProvider extends BaseControllerProvider
 
     public function getFileNames(Request $request, Application $app)
     {
+        $this->authorize($request, array(ROLE_ID_MANAGER));
+
         $query = $request->get('query');
 
         // Make sure that if they send an empty string then we still set query to null.
@@ -123,25 +135,20 @@ class ETLControllerProvider extends BaseControllerProvider
 
         $etlDir = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'etl'));
 
-        $jsonFiles = new \RegexIterator(
-            new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($etlDir)
-            ),
-            '/^.+\.json$/',
-            RecursiveRegexIterator::GET_MATCH
-        );
+        $results = $this->retrieveFilenames($etlDir, $query);
 
+        return $app->json(
+            array(
+                'results' => $results
+            )
+        );
+    }
+
+    public function getDataEndpoints(Request $request, Application $app)
+    {
         $results = array();
-        foreach ($jsonFiles as $jsonFile) {
-            $rawName = $jsonFile[0];
-            $startPos = strpos($rawName, $etlDir) !== false ? strlen($etlDir) + 1 : 0;
-            $fileName = substr($rawName, $startPos);
-            if ($query === null ||
-                ($query !== null && preg_match(".*$query.*", $fileName) !== false)
-            ) {
-                $results[] = array('name' => $fileName);
-            }
-        }
+
+        $etlConfig = $this->retrieveETLConfig();
 
         return $app->json(
             array(
@@ -210,5 +217,245 @@ class ETLControllerProvider extends BaseControllerProvider
         }
 
         return $results;
+    }
+
+    private function retrieveFilenames($baseDir, $query)
+    {
+        return $this->retrieveFiles($baseDir, function ($filePath, &$carry) use ($query, $baseDir) {
+            $startPos = strpos($filePath, $baseDir) !== false ? strlen($baseDir) + 1 : 0;
+            $fileName = substr($filePath, $startPos);
+
+            if ($query === null || preg_match(".*$query.*", $fileName) !== false) {
+                $carry[] = array('name' => $fileName);
+            }
+        });
+    }
+
+
+    private function retrieveFiles($baseDir, callable $handler)
+    {
+        $results = array();
+
+        $jsonFiles = new \RegexIterator(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($baseDir)
+            ),
+            '/^.+\.json$/',
+            RecursiveRegexIterator::GET_MATCH
+        );
+
+        foreach ($jsonFiles as $jsonFile) {
+            $rawName = $jsonFile[0];
+            $handler($rawName, $results);
+        }
+        return $results;
+    }
+
+    public function getActionsForPipelines(Request $request, Application $app)
+    {
+        $configOptions = array('default_module_name' => 'xdmod');
+        $configOptions['config_variables'] = array(
+            'CLOUD_EVENT_LOG_DIRECTORY' => 'cloud_openstack/events',
+            'CLOUD_RESOURCE_SPECS_DIRECTORY' => 'cloud_openstack/resource_specs'
+        );
+
+        $etlConfig = EtlConfiguration::factory(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            null,
+            $configOptions
+        );
+        $pipelineNames = $etlConfig->getSectionNames();
+        sort($pipelineNames);
+
+        $results = array();
+        foreach ($pipelineNames as $pipelineName) {
+            #echo "Getting Actions For: $pipelineName\n";
+            try {
+                $results[$pipelineName] = $this->getPipelineActions($pipelineName);
+            } catch(NotFoundHttpException $e) {
+                #echo "\tSkipping $pipelineName\n";
+            } catch (Exception $e) {
+                #echo "\t Skipping $pipelineName\n";
+            }
+        }
+        return $app->json($results);
+    }
+
+    public function getActionsForPipeline(Request $request, Application $app, $pipeline)
+    {
+        $results = $this->getPipelineActions($pipeline);
+
+        return $app->json(
+            $results
+        );
+    }
+
+    private function getPipelineActions($pipeline)
+    {
+        $configOptions = array('default_module_name' => 'xdmod');
+        $configOptions['config_variables'] = array(
+            'CLOUD_EVENT_LOG_DIRECTORY' => 'cloud_openstack/events',
+            'community-user' => 'community_user'
+        );
+
+        $etlConfig = EtlConfiguration::factory(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            null,
+            $configOptions
+        );
+
+        if (!$etlConfig->getSectionData($pipeline)) {
+            throw new NotFoundHttpException("Requested pipeline [$pipeline] does not exist.");
+        }
+
+        Utilities::setEtlConfig($etlConfig);
+
+        $scriptOptions = array_merge(
+            array(
+                'default-module-name' => 'xdmod',
+                'process-sections' => array($pipeline)
+            )
+        );
+        $overseerOptions = new EtlOverseerOptions($scriptOptions);
+
+        $utilitySchema = $etlConfig->getGlobalEndpoint('utility')->getSchema();
+        $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.resourcefact", $utilitySchema));
+
+        $overseer = new EtlOverseer($overseerOptions);
+
+        $actions = $overseer->verifySections($etlConfig, array($pipeline));
+
+        list($results, $endpoints) = $this->parseActions(json_decode(json_encode($actions)), $etlConfig);
+
+        return $results;
+    }
+
+    /**
+     * @param array $pipelineActions
+     * @param EtlConfiguration $etlConfig
+     * @return array
+     */
+    private function parseActions($pipelineActions, $etlConfig)
+    {
+        $endpoints = array();
+        $results = array();
+        foreach ($pipelineActions as $pipelineName => $actions) {
+            $pipelineConfigs = array_reduce(
+                $etlConfig->$pipelineName,
+                function ($carry, $item) {
+                    $carry[$item->name] = $item;
+                    return $carry;
+                },
+                array()
+            );
+
+            foreach ($actions as $actionName => $action) {
+                $actionConfig = $pipelineConfigs[$actionName];
+                $configClass = $actionConfig->class;
+
+                $sourceEndpoint = $this->getEndpointData($actionConfig->endpoints->source);
+                $destinationEndpoint = $this->getEndPointData($actionConfig->endpoints->destination);
+
+                $source = json_decode(json_encode($sourceEndpoint), true);
+                $destination = json_decode(json_encode($destinationEndpoint), true);
+
+                if (!array_key_exists($source->key, $endpoints)) {
+                    $endpoints[$source->key] = $source;
+                }
+                if (!array_key_exists($destination->key, $endpoints)) {
+                    $endpoints[$destination->key] = $destination;
+                }
+
+                switch ($configClass) {
+                    case "DatabaseIngestor":
+                    case "JobListAggregator":
+                    case "SimpleAggregator":
+                    case "ExplodeTransformIngestor":
+                        $parsed = $action->parsed_definition_file;
+
+                        $sourceTables = array_reduce(
+                            $parsed->source_query->joins,
+                            function ($carry, $item) {
+                                $carry[$item->alias] = $item->name;
+                                return $carry;
+                            },
+                            array()
+                        );
+
+                        $source['tables'] = $sourceTables;
+                        $source['records'] = $parsed->source_query->records;
+
+                        $destination['tables'] = array_keys(get_object_vars($action->etl_destination_table_list));
+                        $destination['field_mappings'] = json_decode(json_encode($action->destination_field_mappings), true);
+                        break;
+                    case "ManageTables":
+                        $actionOptions = $etlConfig->getActionOptions($actionName, $pipelineName);
+                        $source['definition_file_list'] = $actionOptions->definition_file_list;
+
+                        $destinationTables = array_keys(get_object_vars($action->etl_destination_table_list));
+                        $destination['tables'] = $destinationTables;
+                        break;
+                    default:
+                        break;
+                }
+
+
+                $results[$pipelineName][] = array(
+                    'name' => $actionName,
+                    'class' => $configClass,
+                    'source' => $source,
+                    'destination' => $destination
+                );
+            }
+        }
+
+        return array($results, $endpoints);
+    }
+
+    private function getEndpointData($endpoint)
+    {
+        $result = new \stdClass();
+
+        $result->name = $endpoint->name;
+        $result->type = $endpoint->type;
+        $result->key = $endpoint->key;
+
+        switch ($endpoint->type) {
+            case "directoryscanner":
+                if (strpos($endpoint->path, DIRECTORY_SEPARATOR) != 0 && !empty($endpoint->paths->data_dir)) {
+                    $path = implode(DIRECTORY_SEPARATOR, array($endpoint->paths->data_dir, $endpoint->path));
+                } else {
+                    $path = $endpoint->path;
+                }
+
+                $result->path = $path;
+                $result->handlerType = $endpoint->handler->type;
+                break;
+            case "configurationfile":
+            case "file":
+            case "jsonconfigfile":
+            case "jsonfile":
+                if (strpos($endpoint->path, DIRECTORY_SEPARATOR) != 0 && !empty($endpoint->paths->data_dir)) {
+                    $path = implode(DIRECTORY_SEPARATOR, array($endpoint->paths->data_dir, $endpoint->path));
+                } else {
+                    $path = $endpoint->path;
+                }
+                $result->path = realpath($path);
+                break;
+            case "mysql":
+            case "oracle":
+            case "postgres":
+                $result->schema = $endpoint->schema;
+                break;
+            case "rest":
+                $result->baseUrl = $endpoint->baseUrl;
+                break;
+            default:
+                break;
+        }
+
+        return $result;
     }
 }
