@@ -226,6 +226,9 @@ ETLProfile.prototype.getRawStatisticsConfiguration = function () {
     var rawStatsConfig = this.schema.rawStatistics;
     var tables = this.getTables();
 
+    rawStatsConfig.tables = rawStatsConfig.tables || {};
+    rawStatsConfig.fields = rawStatsConfig.fields || {};
+
     for (var t in tables) {
         if ({}.hasOwnProperty.call(tables, t)) {
             var tableName = tables[t].meta.schema + '.' + tables[t].name;
@@ -812,8 +815,15 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
         var rawStatsConfig = this.getRawStatisticsConfiguration();
         var rawStatsInteg = new RawStatsIntegrator(rawStatsConfig.realmName, rawStatsConfig.realmDisplay, rawStatsConfig.realmOrder);
         var tableIndex = 1;
+        var key;
 
-        for (var key in rawStatsConfig.fields) {
+        for (key in rawStatsConfig.tables) {
+            if ({}.hasOwnProperty.call(rawStatsConfig.tables, key)) {
+                rawStatsInteg.addTable(rawStatsConfig.tables[key]);
+            }
+        }
+
+        for (key in rawStatsConfig.fields) {
             if ({}.hasOwnProperty.call(rawStatsConfig.fields, key)) {
                 var col = rawStatsConfig.fields[key];
                 var columnName = key;
@@ -868,12 +878,10 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     }
                 }
 
-                rawStatsInteg.addField({
+                var fieldDef = {
                     key: key,
                     alias: alias,
                     name: name,
-                    tableAlias: tableAlias,
-                    column: columnName,
                     dtype: dtype,
                     units: col.unit,
                     per: col.per,
@@ -881,7 +889,20 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     visibility: visibility,
                     batchExport: batchExport,
                     group: group
-                });
+                };
+
+                if (col.formula) {
+                    fieldDef.formula = col.formula;
+                } else {
+                    fieldDef.column = columnName;
+                    fieldDef.tableAlias = tableAlias;
+                }
+
+                if (col.withError) {
+                    fieldDef.withError = col.withError;
+                }
+
+                rawStatsInteg.addField(fieldDef);
             }
         }
 
