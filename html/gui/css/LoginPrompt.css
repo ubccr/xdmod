@@ -78,6 +78,10 @@
     margin: 2.5px 0px 2.5px 0px;
 }
 
+#btn_sign_in {
+    z-index: 1;
+}
+
 #assistancePrompt {
     width: 100% !important;
     text-align: right !important;
