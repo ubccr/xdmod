@@ -2,12 +2,16 @@ FROM centos:7.8.2003
 ENV BRANCH=xdmod9.0
 LABEL description="Base image containing XDMoD required software."
 
+COPY assets/google-chrome.repo /etc/yum.repos.d
+
 # Dependencies needed by XDMoD
 RUN yum makecache && \
     yum -y install epel-release && \
     yum -y install \
     expect \
     gcc-c++ \
+    gnu-free-sans-fonts \
+    google-chrome-stable \
     mariadb-server \
     openssl \
     postfix \
