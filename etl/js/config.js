@@ -13,7 +13,6 @@
 
 var fs = require('fs');
 var ini = require('ini');
-var path = require('path');
 var extend = require('util')._extend;
 
 var xdmodRoot = fs.realpathSync(__dirname + '/../..');
@@ -121,7 +120,5 @@ module.exports = {
                 throw err;
             }
         }
-
     }
-
 };
