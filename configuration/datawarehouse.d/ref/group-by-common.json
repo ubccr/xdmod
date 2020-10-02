@@ -22,7 +22,7 @@
                 "short_name": "description"
             }
         },
-        "category": "Administrative",
+        "category": "Usage",
         "chart_options": {
             "dataset_display_type": {
                 "aggregate": "bar",
@@ -56,7 +56,7 @@
                 "short_name": "description"
             }
         },
-        "category": "Administrative",
+        "category": "Usage",
         "chart_options": {
             "dataset_display_type": {
                 "aggregate": "bar",
@@ -90,7 +90,7 @@
                 "short_name": "description"
             }
         },
-        "category": "Administrative",
+        "category": "Usage",
         "chart_options": {
             "dataset_display_type": {
                 "aggregate": "bar",
@@ -124,7 +124,7 @@
                 "short_name": "nodes"
             }
         },
-        "category": "Administrative",
+        "category": "Usage",
         "description_html": "A categorization of jobs into discrete groups based on node count.",
         "name": "Node Count"
     },
@@ -241,6 +241,7 @@
                 "short_name": "id"
             }
         },
+        "category": "Usage",
         "description_html": "Queue pertains to the low level job queues on each resource.",
         "name": "Queue"
     },
@@ -276,6 +277,7 @@
                 "resourcespecs.processors IS NOT NULL"
             ]
         },
+        "category": "Administrative",
         "description_html": "A resource is a remote computer that can run jobs.",
         "name": "Resource"
     },

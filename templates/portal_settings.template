@@ -101,7 +101,7 @@ captcha_private_key = "[:mailer_captcha_private_key:]"
 base_path = "/usr/share/xdmod/reporting/jasper_builder"
 java_path = "[:reporting_java_path:]"
 javac_path = "[:reporting_javac_path:]"
-phantomjs_path = "[:reporting_phantomjs_path:]"
+chromium_path = "[:reporting_chromium_path:]"
 
 [logger]
 db_engine = "MySQLDB"
