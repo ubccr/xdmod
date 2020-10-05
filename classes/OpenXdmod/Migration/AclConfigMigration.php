@@ -15,8 +15,7 @@ class AclConfigMigration extends Migration
      */
     public function execute()
     {
-        // NOTE: we assume that acl-config is in PATH as that's how we have it setup.
-        $cmd = 'acl-config';
+        $cmd = BIN_DIR . '/acl-config';
 
         $output = shell_exec($cmd);
         $hadError = strpos($output, 'error') !== false;

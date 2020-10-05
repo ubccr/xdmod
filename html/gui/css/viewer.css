@@ -7,23 +7,21 @@
 }
 
 .assist_panel_section {
-	border: 1px solid #bbb; 
-	padding: 5px; 
-	background-color: #fef8ee;
-	width: 263px;
+    border: 1px solid #bbb;
+    padding: 5px;
+    background-color: #fef8ee;
+    width: 263px;
 }
 
 .x-grid3-cell
 {
     box-sizing: border-box;
 }
-.
-x-form-check-wrap {
+
+.x-form-check-wrap {
    padding-left: 1px;
    padding-bottom: 1px;
 }
-
-/* img { -ms-interpolation-mode: bicubic; } */
 
 #help_button td.x-btn-mc {
    background-image: none !important;
@@ -45,37 +43,10 @@ x-form-check-wrap {
 }
 
 .userMapMessageText {
-	font-weight: bold;
-	color: #00f;
-	width: 70px;
+    font-weight: bold;
+    color: #00f;
+    width: 70px;
 }
-/*
-h1 {
-	font-family: arial;
-	font-size:22px;
-	font-weight:bold;
-
-	padding:2px 2px;
-}
-h2 {
-	font-family: arial,"Times New Roman",Times,serif;
-	font-size:18px;
-	color:#083772;
-	letter-spacing:-1px;
-	font-weight:normal;
-	
-	padding:2px 2px;
-	
-}
-h3 {
-		font-family: arial;
-	font-size:14px;
-
-	font-weight:bold;
-
-	padding: 2px 2px 2px 2px;
-}
-*/
 .popup_message_general {
     background-image: url(../images/about_16.png) !important;
 }
@@ -84,11 +55,11 @@ h3 {
 
 /* CustomSearch.js (Search Usage module */
 
-/* Addresses issues regarding the 'Search By' section 
+/* Addresses issues regarding the 'Search By' section
    when in IE8 Quirks Mode */
-   
-/* CustomSearch tab no longer exists and its source has been removed. 
- * However, the custom_search_mode class is referenced by 
+
+/* CustomSearch tab no longer exists and its source has been removed.
+ * However, the custom_search_mode class is referenced by
  * report_builder/ReportCreator.js and
  * report_builder/ChartDateEditor.js
  *
@@ -96,7 +67,7 @@ h3 {
  */
 .custom_search_mode_group .x-form-item {
    margin-top: 0px !important;
-   padding-top: 0px !important;
+   padding-top: 1px !important;
    overflow: hidden !important;
    height: 15px;
 }
@@ -110,7 +81,6 @@ h3 {
 }
 
 .custom_search_mode_group .x-form-check-wrap input{
-   /* border: 1px solid #f00; */
    position: relative;
    top: -3px !important;
 }
@@ -126,12 +96,12 @@ h3 {
 .highlighted_tab .x-tab-right,
 .highlighted_tab .x-tab-left,
 .highlighted_tab .x-tab-strip-inner {
-         
+
    background-color: #93fc7b !important;
    background-image: none !important;
-            
+
 }
-         
+
 .checkbox_available_for_report {
    padding-bottom: 4px !important;
 }
@@ -151,7 +121,7 @@ h3 {
 }
 
 .red {
-	color: red;
+    color: red;
 }
 .logout {
     background-image: url(../images/logout.png) !important;
@@ -192,7 +162,7 @@ h3 {
     background-image: url(../images/contact_16.png) !important;
 }
 .bulb_16 {
-	background-image: url(../images/bulb_16.png) !important;
+    background-image: url(../images/bulb_16.png) !important;
 }
 .tour_16 {
     background-image: url(../images/edit_path_16.png) !important;
@@ -359,228 +329,221 @@ h3 {
     background-image: url(../images/chart_bar_link.png) !important;
 }
 .xd-toolbar {
-	background-color:#ffffff !important;
-	background-image: none !important;
+    background-color:#ffffff !important;
+    background-image: none !important;
 }
 
 .chart_thumb{
-	background: #dddddd;
-	padding:1px;
+    background: #dddddd;
+    padding:1px;
 }
 .chart_thumb img{
-	border:1px solid white;
-	/*height: 140px;
-	width: 225px;*/
+    border:1px solid white;
 }
 .chart_thumb-wrap{
-	float: left;
-	margin: 4px;
-	margin-right: 0;
-	padding: 5px;
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
 }
 .chart_thumb-wrap span{
-	display: block;
-	overflow: hidden;
-	text-align: center;
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:10px;
-	letter-spacing:0px;
-	font-weight:normal;
+    display: block;
+    overflow: hidden;
+    text-align: center;
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:10px;
+    letter-spacing:0px;
+    font-weight:normal;
 }
 .chart_thumb-wrap2{
-	float: left;
-	margin: 4px;
-	margin-right: 0;
-	padding: 5px;
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
 }
 .chart_thumb-wrap2 span{
-	display: block;
-	overflow: hidden;
-	text-align: center;
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:10px;
-	letter-spacing:0px;
-	font-weight:bold;
+    display: block;
+    overflow: hidden;
+    text-align: center;
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:10px;
+    letter-spacing:0px;
+    font-weight:bold;
 }
 .x-view-selected .chart_thumb{
-	background:#8db2e3;
+    background:#8db2e3;
 }
 
 .x-dd-drag-proxy .multi-proxy .chart_thumb-img{
-	height: 20px;
-	width: 30px;
-	margin:1px;
+    height: 20px;
+    width: 30px;
+    margin:1px;
 }
 .x-dd-drag-proxy .chart_thumb-img{
-	height: 60px;
-	width: 80px;
+    height: 60px;
+    width: 80px;
 }
 
 .kernel_description_label {
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:14px;
-	color:#083772;
-	font-weight: bold;
-	background:#fff;
-	font-style:italic;
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:14px;
+    color:#083772;
+    font-weight: bold;
+    background:#fff;
+    font-style:italic;
 }
 
 .kernel_description {
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:14px;
-	color:#000000;
-	font-weight: normal;
-	background:#fff;
-	/*line-height: 14px;*/
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:14px;
+    color:#000000;
+    font-weight: normal;
+    background:#fff;
 }
 
 .kernel_description ul {
-	list-style: square !important;
-	margin-left: 10px;
-	padding-left: 10px;
+    list-style: square !important;
+    margin-left: 10px;
+    padding-left: 10px;
 }
 
 .comments_label {
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:14px;
-	color:#083772;
-	letter-spacing:-1px;
-	font-weight: bold;
-	background:#fff;
-	font-style:italic;
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:14px;
+    color:#083772;
+    letter-spacing:-1px;
+    font-weight: bold;
+    background:#fff;
+    font-style:italic;
 }
 
 .comments_description {
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:14px;
-	color:#000000;
-	letter-spacing:0px;
-	font-weight: normal;
-	background:#fff;
-	/*line-height: 14px;*/
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:14px;
+    color:#000000;
+    letter-spacing:0px;
+    font-weight: normal;
+    background:#fff;
 }
 .comments_subnotes {
-	font-family: arial, "Times New Roman",Times,serif;
-	font-size:14px;
-	color:#000000;
-	letter-spacing:0px;
-	font-weight: normal;
-	background:#fff;
-	font-style: italic;
-		text-decoration: underline;
-	/*line-height: 14px;*/
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size:14px;
+    color:#000000;
+    letter-spacing:0px;
+    font-weight: normal;
+    background:#fff;
+    font-style: italic;
+    text-decoration: underline;
 }
 .legend_label {
-	font-family: arial,"Times New Roman",Times,serif;
-	font-size:12px;
-	color:#083772;
-	letter-spacing:-1px;
-	font-weight: bold;
-	background:#fff;
-	font-style:italic;
+    font-family: arial,"Times New Roman",Times,serif;
+    font-size:12px;
+    color:#083772;
+    letter-spacing:-1px;
+    font-weight: bold;
+    background:#fff;
+    font-style:italic;
 }
 
 .legend_description {
-	font-family: arial,"Times New Roman",Times,serif;
-	font-size:12px;
-	color:#000000;
-	letter-spacing:0px;
-	font-weight: normal;
-	background:#fff;
-	/*line-height: 14px;*/
+    font-family: arial,"Times New Roman",Times,serif;
+    font-size:12px;
+    color:#000000;
+    letter-spacing:0px;
+    font-weight: normal;
+    background:#fff;
 }
 .legend_description ul {
-	list-style: square !important;
-	margin-left: 10px;
-	padding-left: 10px;
+    list-style: square !important;
+    margin-left: 10px;
+    padding-left: 10px;
 }
 .legend_description ol {
-	list-style: none !important;
-	margin-left: 10px;
-	padding-left: 10px;
+    list-style: none !important;
+    margin-left: 10px;
+    padding-left: 10px;
 }
 .comments_description ul {
-	list-style: square !important;
-	margin-left: 10px;
-	padding-left: 10px;
+    list-style: square !important;
+    margin-left: 10px;
+    padding-left: 10px;
 }
 .xd-table
 {
-	width: 100% !important;
+    width: 100% !important;
 }
 .xd-table td {
-	vertical-align: top;
-	padding-right: 10px;
-	padding-left: 10px;
-	
+    vertical-align: top;
+    padding-right: 10px;
+    padding-left: 10px;
+
 }
 
 .xd-img {
-	border: 0px;
+    border: 0px;
 }
 
 .x-grid3-dirty-cell {
-	background-image: none;
+    background-image: none;
 }
 
 .tab-strip span.x-tab-strip-text{
-	font:12px verdana,arial,helvetica !important;
-	/*color: #1111ff!important;*/
-	font-weight: normal;
+    font:12px verdana,arial,helvetica !important;
+    font-weight: normal;
 }
 .x-tab-strip-active span.x-tab-strip-text
 {
-	font:14px verdana,arial,helvetica !important;
-	font-weight: bold !important;
-	color: #1111ff !important;
+    font:14px verdana,arial,helvetica !important;
+    font-weight: bold !important;
+    color: #1111ff !important;
 }
 
-.ext-el-mask-msg div 
+.ext-el-mask-msg div
 {
-	cursor:default !important;
+    cursor:default !important;
 }
 
 .details_key
 {
-	font: 12px arial, Geneva, sans-serif;
-	color: #083772;
+    font: 12px arial, Geneva, sans-serif;
+    color: #083772;
 
 }
 .details_key_expired
 {
-	font: 12px arial, Geneva, sans-serif;
-	font-style: oblique;
+    font: 12px arial, Geneva, sans-serif;
+    font-style: oblique;
 }
 .details_value
 {
-	font: 12px arial, "Times New Roman", Times, serif;
-	font-weight: bold;
+    font: 12px arial, "Times New Roman", Times, serif;
+    font-weight: bold;
 }
-        
+
 .x-tree-multiline-node-collapsed .x-tree-elbow-line-multiline-expanded {
-	background-image: none;
+    background-image: none;
 }
 
 .x-tree-node .x-tree-multiline-node-details {
-	font-style:italic;
-	font-family: arial, "Times New Roman", Times, serif;
+    font-style:italic;
+    font-family: arial, "Times New Roman", Times, serif;
 }
 .x-tree-node-disabled .x-tree-multiline-node-details {
-	font-style:italic;
-	font-family: arial, "Times New Roman", Times, serif;
-	color: gray !important;
+    font-style:italic;
+    font-family: arial, "Times New Roman", Times, serif;
+    color: gray !important;
 }
 .xd-menu
 {
-	border: none !important;
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
+    border: none !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 .xd-menu ul
 {
-	padding: 0 !important;
+    padding: 0 !important;
 }
 .xd-chartconfig-btn-split {
     background-image: url("../images/custom.png") !important;
@@ -590,36 +553,36 @@ h3 {
 }
 .ak_thumb_title
 {
-	font-size: 10px;
-	background:#eee;
-	color:#36F;
+    font-size: 10px;
+    background:#eee;
+    color:#36F;
     font-family: tahoma,arial,verdana,sans-serif;
 }
 .ak_thumb_subtitle
 {
-	font-size: 8px;
+    font-size: 8px;
 background:#eee;
     font-family: tahoma,arial,verdana,sans-serif;
 }
 .chart_thumb_subtitle
 {
-	font-size: 8px;
+    font-size: 8px;
 background:#fafafa;
     font-family: tahoma,arial,verdana,sans-serif;
 }
 
 .menu-title
 {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .x-tree-node .x-tree-selected {
-	font-weight:bold;
-	background-color: #ebf3fd;
+    font-weight:bold;
+    background-color: #ebf3fd;
 }
 
 .x-tree-node .x-tree-node-over {
-	background-color: #eee;
+    background-color: #eee;
 }
 
 .general_btn_close {
@@ -631,13 +594,13 @@ background:#fafafa;
 }
 
 .parameter_description ul {
-	font-family: arial;
-	list-style: square !important;
-	margin-left: 10px;
-	padding-left: 10px;
+    font-family: arial;
+    list-style: square !important;
+    margin-left: 10px;
+    padding-left: 10px;
 }
 .x-panel-print img {
-	width: 100% !important;
+    width: 100% !important;
 }
 
 .active_role_selector {
@@ -670,15 +633,10 @@ background:#fafafa;
     background-image: url(../images/realm.png) !important;
 }
 
-/*.highcharts-container span { 
- background-color: #ffffff;
- padding-bottom: 5px; //so the Qs dont get cut off
-}*/
-
 .exclamation {
     background-image: url(../images/exclamation_ak.png) !important;
 }
- 	
+
 .delete {
     background-image: url(../images/delete.png) !important;
 }
@@ -744,7 +702,7 @@ background:#fafafa;
     background-image: url(../images/chartoptions.png) !important;
 }
 div.chart_thumb a {
-	text-decoration: none;
+    text-decoration: none;
 }
 .date_edit {
     background-image: url(../images/date_edit.png) !important;

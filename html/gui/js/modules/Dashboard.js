@@ -120,7 +120,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     portalwindow.add(portal);
                     portalwindow.doLayout();
 
-                    if (CCR.xdmod.publicUser !== true) {
+                    if (CCR.xdmod.publicUser !== true && !XDMoD.tourPromptShown) {
                         var conn = new Ext.data.Connection();
                         conn.request({
                             url: XDMoD.REST.url + '/dashboard/viewedUserTour',
@@ -129,7 +129,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                 token: XDMoD.REST.token
                             },
                             method: 'GET',
-                            callback: function (options, success, response) {
+                            success: function (response) {
                                 var serverResp = Ext.decode(response.responseText);
                                 if (serverResp.data.length === 0 || !serverResp.data[0].viewedTour) {
                                     Ext.Msg.show({
@@ -163,6 +163,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                         }
                                     });
                                 }
+                                XDMoD.tourPromptShown = true;
                             } // callback
                         }); // conn.request
                     }
