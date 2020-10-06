@@ -970,7 +970,7 @@ SQL;
      * @param string $realmName
      * @param string $groupByName
      * @param string $statisticName
-     * @return array
+     * @return \User\Elements\QueryDescripter|array
      * @throws Exception if there is a problem executing sql
      */
     public static function getQueryDescripters(XDUser $user, $realmName = null, $groupByName = null, $statisticName = null)

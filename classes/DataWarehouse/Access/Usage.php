@@ -818,9 +818,12 @@ class Usage extends Common
                     $meRequestMetric->getId()
                 );
                 $drillTargets = [];
-                foreach ($queryDescripters as $descripter) {
-                    $realm = Realm::factory($descripter['realm']);
-                    $drillTargets = array_merge($drillTargets, $realm->getDrillTargets($descripter['group_by']));
+                if (is_array($queryDescripters)) {
+                    foreach ($queryDescripters as $descripter) {
+                        $drillTargets = array_merge($drillTargets, $queryDescripters->getDrillTargets());
+                    }
+                } else {
+                    $drillTargets = $queryDescripters->getDrillTargets();
                 }
                 $drillDowns = array_map(
                     function ($drillTarget) {
