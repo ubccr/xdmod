@@ -819,8 +819,16 @@ class Usage extends Common
                 );
                 $drillTargets = [];
                 if (is_array($queryDescripters)) {
-                    foreach ($queryDescripters as $descripter) {
-                        $drillTargets = array_merge($drillTargets, $queryDescripters->getDrillTargets());
+                    if (isset($usageRealm)) {
+                        foreach ($queryDescripters as $descripters) {
+                            $drillTargets = array_merge($drillTargets, $descripters['all']->getDrillTargets());
+                        }
+                    } else {
+                        foreach ($queryDescripters as $realmDescriptors) {
+                            foreach ($realmDescriptors as $descripters) {
+                                $drillTargets = array_merge($drillTargets, $descripters['all']->getDrillTargets());
+                            }
+                        }
                     }
                 } else {
                     $drillTargets = $queryDescripters->getDrillTargets();
