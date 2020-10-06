@@ -811,18 +811,22 @@ class Usage extends Common
 
                 // Check if the user's chart pool contains this chart.
                 $usageChartInPool = $chartPool->chartExistsInQueue($usageChartArgsStr);
-                $queryDescripter = Acls::getQueryDescripters(
+                $queryDescripters = Acls::getQueryDescripters(
                     $user,
                     $usageRealm,
                     $usageGroupBy,
                     $meRequestMetric->getId()
                 );
-                $drillTargets = $queryDescripter->getDrillTargets();
+                $drillTargets = [];
+                foreach ($queryDescripters as $descripter) {
+                    $realm = Realm::factory($descripter['realm']);
+                    $drillTargets = array_merge($drillTargets, $realm->getDrillTargets($descripter['group_by']));
+                }
                 $drillDowns = array_map(
                     function ($drillTarget) {
                         return explode('-', $drillTarget, 2);
                     },
-                    $drillTargets
+                    array_unique($drillTargets)
                 );
 
                 // For each data series...
