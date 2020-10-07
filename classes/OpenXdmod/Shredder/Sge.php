@@ -521,6 +521,12 @@ class Sge extends Shredder
             case 'G':
                 $bytes = $quantity * 1024 * 1024 * 1024;
                 break;
+            case 't':
+                $bytes = $quantity * 1000 * 1000 * 1000 * 1000;
+                break;
+            case 'T':
+                $bytes = $quantity * 1024 * 1024 * 1024 * 1024;
+                break;
             default:
                 throw new Exception("Unknown memory unit: '$unit'");
                 break;
