@@ -23,7 +23,8 @@ class DatabaseSetup extends DatabaseSetupItem
      */
     public function handle()
     {
-        $logger = Logging::factory('xdmod-setup',
+        $logger = Logging::factory(
+            'xdmod-setup',
             array(
                 'console' => array(
                     'level' => Logger::WARNING

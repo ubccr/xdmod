@@ -57,7 +57,6 @@ EML;
     public function __construct()
     {
         $this->logger = Logging::factory('XDSamlAuthentication', array('mysql' => array()));
-        
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         if ($this->isSamlConfigured()) {
             try {

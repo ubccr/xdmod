@@ -37,7 +37,7 @@ class ActionState extends Loggable implements iActionState
 
     // List of properties supported by this state object.
     private $properties = array();
-    
+
     // Guard against E_NOTICE for returning null by reference from __get()
     private $nullGuard = null;
 
@@ -80,7 +80,7 @@ class ActionState extends Loggable implements iActionState
     public function getKey() {
         return $this->key;
     }  // getKey()
-            
+
     /* ------------------------------------------------------------------------------------------
      * @see iActionState::setKey()
      * ------------------------------------------------------------------------------------------

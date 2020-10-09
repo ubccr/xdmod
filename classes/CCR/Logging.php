@@ -11,7 +11,6 @@ use Psr\Log\LoggerInterface;
 
 use \Psr\Log\InvalidArgumentException;
 
-
 class Logging
 {
 

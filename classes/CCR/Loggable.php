@@ -8,7 +8,6 @@
 
 namespace CCR;
 
-
 use Exception;
 use Monolog\Logger;
 use PDOException;

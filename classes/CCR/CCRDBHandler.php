@@ -8,8 +8,6 @@ use Monolog\Logger;
 
 class CCRDBHandler extends AbstractProcessingHandler
 {
-    const sql = "INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)";
-
     /**
      * @var iDatabase
      */
@@ -49,7 +47,7 @@ class CCRDBHandler extends AbstractProcessingHandler
 
     protected function write(array $record)
     {
-        $sql = sprintf(self::sql, $this->schema, $this->table, $this->schema);
+        $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table, $this->schema);
 
         $this->db->execute($sql, array(
             ':id' => $this->getNextId(),
