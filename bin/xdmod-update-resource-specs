@@ -10,8 +10,8 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
-use CCR\Log;
 use CCR\Json;
+use Monolog\Logger;
 
 // Catch any unexpected exceptions.
 try {
@@ -80,14 +80,14 @@ function main()
                 break;
             case 'q':
             case 'quiet':
-                $logLevel = max($logLevel, Log::WARNING);
+                $logLevel = max($logLevel, Logger::WARNING);
                 break;
             case 'v':
             case 'verbose':
-                $logLevel = max($logLevel, Log::INFO);
+                $logLevel = max($logLevel, Logger::INFO);
                 break;
             case 'debug':
-                $logLevel = max($logLevel, Log::DEBUG);
+                $logLevel = max($logLevel, Logger::DEBUG);
                 break;
             case 'force':
                 $force = true;
@@ -123,15 +123,12 @@ function main()
         exit;
     }
 
-    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+    if ($logLevel === -1) { $logLevel = Logger::NOTICE; }
 
-    $conf = array(
-        'file'            => false,
-        'mail'            => false,
-        'consoleLogLevel' => $logLevel,
-    );
-
-    $logger = Log::factory('xdmod-urs', $conf);
+    $logger = \CCR\Logging::factory('xdmod-urs', array(
+        'console' => array('level' => $logLevel),
+        'mysql' => array()
+    ));
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
     $logger->info("Command: $cmd");

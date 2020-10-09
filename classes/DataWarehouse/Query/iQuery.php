@@ -7,7 +7,9 @@
 
 namespace DataWarehouse\Query;
 
-use Log as Logger;  // CCR implementation of PEAR logger
+use Psr\Log\LoggerInterface;
+
+// CCR implementation of PEAR logger
 
 interface iQuery
 {
@@ -18,7 +20,7 @@ interface iQuery
      * @param string $startDate The start date for this query (e.g., '2019-01-01').
      * @param string $endDate The end date for this query (e.g., '2019-01-31').
      * @param string $groupById The short identifier for the GroupBy that this query will use.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      * @param string $statisticId A short identifier for an initial Statistic that will be returned
      *   by this query. Note that 'all' can be used to include all available statistics in the
      *   specified Realm.
@@ -68,7 +70,7 @@ interface iQuery
         $groupById = null,
         $statisticId = null,
         array $parameters = array(),
-        Logger $logger = null
+        LoggerInterface $logger = null
     );
 
     /**

@@ -11,10 +11,10 @@ require __DIR__ . '/../../configuration/linker.php';
 restore_exception_handler();
 
 use \Exception;
-use CCR\Log;
 use ETL\Configuration\EtlConfiguration;
 use ETL\DbModel\Table;
 use ETL\DbModel\AggregationTable;
+use Monolog\Logger;
 
 $supportedFormats = array("json", "sql");
 
@@ -40,7 +40,7 @@ $scriptOptions = array(
     'table-config'      => null,
     // Key name that the table definition will be included under
     'table-key'         => null,
-    'verbosity'         => Log::NOTICE
+    'verbosity'         => Logger::NOTICE
 );
 
 // ==========================================================================================
@@ -109,19 +109,19 @@ foreach ($args as $arg => $value) {
         case 'verbosity':
             switch ( $value ) {
                 case 'debug':
-                    $scriptOptions['verbosity'] = Log::DEBUG;
+                    $scriptOptions['verbosity'] = Logger::DEBUG;
                     break;
                 case 'info':
-                    $scriptOptions['verbosity'] = Log::INFO;
+                    $scriptOptions['verbosity'] = Logger::INFO;
                     break;
                 case 'notice':
-                    $scriptOptions['verbosity'] = Log::NOTICE;
+                    $scriptOptions['verbosity'] = Logger::NOTICE;
                     break;
                 case 'warning':
-                    $scriptOptions['verbosity'] = Log::WARNING;
+                    $scriptOptions['verbosity'] = Logger::WARNING;
                     break;
                 case 'quiet':
-                    $scriptOptions['verbosity'] = Log::EMERG;
+                    $scriptOptions['verbosity'] = Logger::EMERG;
                     break;
                 default:
                     break;
@@ -159,7 +159,11 @@ if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 }
 
-$logger = Log::factory('etl_table_manager', $conf);
+$logger = \CCR\Logging::factory('etl_action_state_mgr', array(
+    'console' => array('level' => $conf['consoleLogLevel']),
+    'mysql' => array(),
+    'file' => array()
+));
 
 if ( null === $scriptOptions['config-file'] ||
      null === $scriptOptions['operation'] ) {
@@ -308,7 +312,7 @@ function usage_and_exit($msg = null)
         fwrite(STDERR, "\n$msg\n\n");
     }
 
-    $verbosityDefault = Log::NOTICE;
+    $verbosityDefault = Logger::NOTICE;
     $availablelFormats = implode(",", $supportedFormats);
 
     fwrite(

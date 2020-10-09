@@ -10,7 +10,7 @@
 
 namespace Configuration;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 use CCR\Loggable;
 
@@ -23,7 +23,7 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         parent::__construct($logger);
     }  // construct()
@@ -48,7 +48,7 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 
     public function transform(&$key, &$value, stdClass $obj, Configuration $config)
     {
-        $this->logger->trace(sprintf("Remove comment '%s'", $key));
+        $this->logger->debug(sprintf("Remove comment '%s'", $key));
         $key = null;
         $value = null;
 

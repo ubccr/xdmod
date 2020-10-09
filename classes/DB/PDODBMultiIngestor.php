@@ -4,6 +4,8 @@
  */
 
 use CCR\DB\MySQLHelper;
+use CCR\Logging;
+use Psr\Log\LoggerInterface;
 
 class PDODBMultiIngestor implements Ingestor
 {
@@ -48,7 +50,7 @@ class PDODBMultiIngestor implements Ingestor
         $this->_post_ingest_update_statements = $post_ingest_update_statements;
         $this->_delete_statement = $delete_statement;
         $this->_count_statement = $count_statement;
-        $this->_logger = Log::singleton('null');
+        $this->_logger = Logging::singleton('null');
 
         if ($this->_destination_db->_db_engine == 'mysql') {
             $this->_dest_helper = MySQLHelper::factory($this->_destination_db);
@@ -79,11 +81,11 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->info(array(
+                $this->_logger->info(json_encode(array(
                     'message'    => $e->getMessage(),
                     'sql'        => $updateStatement,
                     'stacktrace' => $e->getTraceAsString()
-                ));
+                )));
             }
         }
 
@@ -269,11 +271,11 @@ class PDODBMultiIngestor implements Ingestor
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {
-                    $this->_logger->err(array(
+                    $this->_logger->err(json_encode(array(
                         'message'    => $e->getMessage(),
                         'stacktrace' => $e->getTraceAsString(),
                         'statement'  => $load_statement,
-                    ));
+                    )));
                     return;
                 }
             }
@@ -292,11 +294,11 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->err(array(
+                $this->_logger->err(json_encode(array(
                     'message'    => $e->getMessage(),
                     'sql'        => $updateStatement,
                     'stacktrace' => $e->getTraceAsString(),
-                ));
+                )));
                 return;
             }
         }
@@ -325,18 +327,18 @@ class PDODBMultiIngestor implements Ingestor
         $this->_logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->_logger->notice(array(
+        $this->_logger->notice(json_encode(array(
             'message'          => 'Finished ingestion',
             'class'            => get_class($this),
             'start_time'       => $time_start,
             'end_time'         => $time_end,
             'records_examined' => $rowsTotal,
             'records_loaded'   => $sourceRows,
-        ));
+        )));
 
     }
 
-    public function setLogger(Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->_logger = $logger;
 
@@ -386,11 +388,11 @@ class PDODBMultiIngestor implements Ingestor
         $sadness = false;
         while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
         {
-            $this->_logger->crit(array(
+            $this->_logger->crit(json_encode(array(
                 'message'          => 'Missing row',
                 'rowdata'          => print_r($row, true),
                 'class'            => get_class($this)
-            ));
+            )));
             $sadness = true;
         }
 

@@ -13,12 +13,14 @@ require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\DB;
 use CCR\DB\iDatabase;
-use CCR\Log;
 use CCR\Json;
 
+use CCR\Logging;
 use Configuration\Configuration;
 use ETL\Utilities;
 use Models\Services\Realms;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use User\Roles;
 
 const SCHEMA = 'moddb';
@@ -31,7 +33,7 @@ $opts = array(
 );
 
 $dryRun = false;
-$logLevel = Log::ERR;
+$logLevel = Logger::ERROR;
 
 $lockFile = null;
 $lockFileHandle = null;
@@ -67,11 +69,11 @@ try {
                 break;
             case 'v':
             case 'verbose':
-                $logLevel = Log::INFO;
+                $logLevel = Logger::INFO;
                 break;
             case 'd':
             case 'debug':
-                $logLevel = Log::DEBUG;
+                $logLevel = Logger::DEBUG;
                 break;
             case 'h':
             case 'help':
@@ -84,18 +86,9 @@ try {
     /**
      * The Log instance for this script. It defaults to writing to 'console'
      *
-     * @var Log
+     * @var LoggerInterface
      **/
-    $log = Log::factory(
-        'acl-import',
-        array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'console' => true,
-            'consoleLogLevel' => $logLevel
-        )
-    );
+    $log = Logging::factory('acl-import', array('console' => array('level' => $logLevel)));
 
     main();
 
@@ -1993,20 +1986,20 @@ function dropTables(iDatabase $db, array $tables)
 /**
  * Takes in one of the PEAR Log Levels and returns a string representation of
  * this scripts verbosity level.
- *     - LOG::NOTICE -> 'none'
- *     - LOG::INFO   -> 'verbose'
- *     - LOG::DEBUG  -> 'debug'
+ *     - Logger::NOTICE -> 'none'
+ *     - Logger::INFO   -> 'verbose'
+ *     - Logger::DEBUG  -> 'debug'
  *
  * @return string
  **/
 function logLevelToVerbosity($logLevel)
 {
     switch ($logLevel) {
-        case Log::INFO:
+        case Logger::INFO:
             return 'verbose';
-        case Log::DEBUG:
+        case Logger::DEBUG:
             return 'debug';
-        case Log::NOTICE:
+        case Logger::NOTICE:
         default:
             return 'none';
     }

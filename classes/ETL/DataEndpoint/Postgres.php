@@ -6,7 +6,7 @@
 namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Postgres extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
@@ -21,7 +21,7 @@ class Postgres extends aRdbmsEndpoint implements iRdbmsEndpoint
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
         $this->systemQuoteChar = '"';

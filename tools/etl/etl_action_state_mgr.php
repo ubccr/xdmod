@@ -18,11 +18,11 @@ restore_exception_handler();
 const LIST_SEPARATOR = "\t";
 
 use \Exception;
-use CCR\Log;
 use CCR\DB;
 use ETL\Configuration\EtlConfiguration;
 use ETL\Utilities;
-use ETL\State\StateManager;
+use ETL\State\ StateManager;
+use Monolog\Logger;
 
 // ==========================================================================================
 // Script options with defaults
@@ -42,7 +42,7 @@ $scriptOptions = array(
     'list'              => false,
     // List of action state objects to dump
     'info-objects'      => array(),
-    'verbosity'         => Log::NOTICE
+    'verbosity'         => Logger::NOTICE
     );
 
 $showList = false;
@@ -109,19 +109,19 @@ foreach ($args as $arg => $value) {
     case 'verbosity':
         switch ( $value ) {
         case 'debug':
-            $scriptOptions['verbosity'] = Log::DEBUG;
+            $scriptOptions['verbosity'] = Logger::DEBUG;
             break;
         case 'info':
-            $scriptOptions['verbosity'] = Log::INFO;
+            $scriptOptions['verbosity'] = Logger::INFO;
             break;
         case 'notice':
-            $scriptOptions['verbosity'] = Log::NOTICE;
+            $scriptOptions['verbosity'] = Logger::NOTICE;
             break;
         case 'warning':
-            $scriptOptions['verbosity'] = Log::WARNING;
+            $scriptOptions['verbosity'] = Logger::WARNING;
             break;
         case 'quiet':
-            $scriptOptions['verbosity'] = Log::EMERG;
+            $scriptOptions['verbosity'] = Logger::EMERG;
             break;
         default:
             usage_and_exit("Invalid verbosity level: $value");
@@ -170,7 +170,11 @@ $conf = array(
 
 if ( null !== $scriptOptions['verbosity'] ) $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 
-$logger = Log::factory('etl_action_state_mgr', $conf);
+$logger = \CCR\Logging::factory('etl_action_state_mgr', array(
+    'console' => array('level' => $conf['consoleLogLevel']),
+    'mysql' => array(),
+    'file' => array()
+));
 
 $cmd = implode(' ', array_map('escapeshellarg', $argv));
 $logger->info("Command: $cmd");
@@ -275,7 +279,7 @@ function usage_and_exit($msg = null)
         fwrite(STDERR, "\n$msg\n\n");
     }
 
-    $verbosityDefault = Log::NOTICE;
+    $verbosityDefault = Logger::NOTICE;
 
     fwrite(
         STDERR,

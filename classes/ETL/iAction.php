@@ -14,7 +14,7 @@
 namespace ETL;
 
 use ETL\Configuration\EtlConfiguration;
-use Log;
+use Psr\Log\LoggerInterface;
 
 interface iAction
 {
@@ -22,14 +22,14 @@ interface iAction
      * Set up the action. This typically entails verifying that the data endpoints are of the
      * correct type and setting up configuration and option information.
      *
-     * @param IngestorOptions $options Options specific to this action, typically parsed from the
+     * @param aOptions $options Options specific to this action, typically parsed from the
      *   ETL configuration file.
      * @param EtlConfiguration $etlConfig The complete ETL configuration as parsed from the
      *   configuration file.
-     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null);
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null);
 
     /**
      * Execute the action.

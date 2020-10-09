@@ -2,14 +2,16 @@
 
 namespace CCR\DB;
 
+use CCR\Logging;
 use Exception;
 use CCR\DB\MySQLDB;
+use Psr\Log\LoggerInterface;
 
 class MySQLHelper
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -38,15 +40,15 @@ class MySQLHelper
     protected function __construct(MySQLDB $db)
     {
         $this->db     = $db;
-        $this->logger = \Log::singleton('null');
+        $this->logger = Logging::singleton('null');
     }
 
     /**
      * Set the logger.
      *
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
@@ -217,14 +219,14 @@ class MySQLHelper
      */
     public function executeStatement($stmt)
     {
-        $this->logger->info(array(
+        $this->logger->info(json_encode(array(
             'message'   => 'Executing SQL statement',
             'host'      => $this->db->_db_host,
             'port'      => $this->db->_db_port,
             'username'  => $this->db->_db_username,
             'database'  => $this->db->_db_name,
             'statement' => $stmt,
-        ));
+        )));
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 
@@ -256,14 +258,14 @@ class MySQLHelper
      */
     public function executeFile($file)
     {
-        $this->logger->info(array(
+        $this->logger->info(json_encode(array(
             'message'  => 'Executing SQL file',
             'host'     => $this->db->_db_host,
             'port'     => $this->db->_db_port,
             'username' => $this->db->_db_username,
             'database' => $this->db->_db_name,
             'file'     => $file,
-        ));
+        )));
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 

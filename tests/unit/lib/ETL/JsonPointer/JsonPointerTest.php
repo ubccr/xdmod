@@ -9,7 +9,7 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-use CCR\Log;
+use CCR\Logging;
 use ETL\JsonPointer;
 use CCR\Loggable;
 
@@ -18,19 +18,18 @@ class JsonPointerTest extends \PHPUnit_Framework_TestCase
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
 
+    /**
+     * @var \Monolog\Logger|\Psr\Log\LoggerInterface|null
+     */
     private $logger = null;
 
     public function __construct()
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
-        $this->logger = Log::factory('PHPUnit', $conf);
+        $this->logger = Logging::factory('PHPUnit', array(
+            'console' => array('level' => \Monolog\Logger::EMERGENCY)
+        ));
     }
 
     /**

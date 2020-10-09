@@ -16,8 +16,8 @@
 namespace ETL;
 
 use \Exception;  // Base exception
-use Log;
 use ETL\Configuration\EtlConfiguration;
+use Psr\Log\LoggerInterface;
 
 class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 {
@@ -41,7 +41,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(EtlOverseerOptions $options, Log $logger = null)
+    public function __construct(EtlOverseerOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->etlOverseerOptions = $options;
@@ -457,13 +457,13 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
      // @codingStandardsIgnoreLine
     private function _execute($actionName, iAction $actionObj)
     {
-        $this->logger->info(array(
+        $this->logger->info(json_encode(array(
                                 'message'     => 'start',
                                 'action_name' => $actionName,
                                 'action'      => $actionObj,
                                 'start_date'  => $this->etlOverseerOptions->getStartDate(),
                                 'end_date'    => $this->etlOverseerOptions->getEndDate(),
-                                ));
+                                )));
 
         // Execute the action using the overseer options including date, resource ids, etc.  If this
         // action should halt the ETL process on an exception re-throw the exception, otherwise log it
@@ -483,10 +483,10 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
             }
         }
 
-        $this->logger->info(array(
+        $this->logger->info(json_encode(array(
                                 'message'    => 'end',
                                 'action_name' => $actionName,
                                 'action'     => $actionObj
-                                ));
+                                )));
     }  // _execute()
 }  // class EtlOverseer

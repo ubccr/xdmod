@@ -6,7 +6,7 @@
 
 namespace ComponentTests\Query;
 
-use CCR\Log as Logger;
+use CCR\Logging;
 use DataWarehouse\Query\AggregateQuery;
 
 class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
@@ -16,15 +16,9 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
-        // Set up a logger so we can get warnings and error messages
-
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
-        self::$logger = Logger::factory('PHPUnit', $conf);
+        self::$logger = Logging::factory('PHPUnit', array(
+            'console' => array('level' => \Monolog\Logger::EMERGENCY)
+        ));
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.

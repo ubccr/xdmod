@@ -7,7 +7,7 @@ use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 use ZipArchive;
 use xd_utilities;
 
@@ -46,7 +46,7 @@ class FileManager extends Loggable
      *
      * @throws \Exception If the data warehouse export directory is not set.
      */
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         // Must set properties that are used in `setLogger` before calling the
         // parent constructor.
@@ -61,11 +61,11 @@ class FileManager extends Loggable
                 'export_directory'
             );
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->err(json_encode([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw new Exception('Export directory is not configured', 0, $e);
         }
 
@@ -88,10 +88,10 @@ class FileManager extends Loggable
      * Set the logger for this object.
      *
      * @see \CCR\Loggable::setLogger()
-     * @param \Log $logger A logger instance or null to use the null logger.
+     * @param LoggerInterface $logger A logger instance or null to use the null logger.
      * @return self This object for method chaining.
      */
-    public function setLogger(Log $logger = null)
+    public function setLogger(LoggerInterface $logger = null)
     {
         parent::setLogger($logger);
         $this->fileWriterFactory->setLogger($logger);
@@ -161,11 +161,11 @@ class FileManager extends Loggable
      */
     public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
-        $this->logger->info([
+        $this->logger->info(json_encode([
             'module' => self::LOG_MODULE,
             'message' => 'Writing data to file',
             'format' => $format
-        ]);
+        ]));
 
         try {
             $tmpDir = sys_get_temp_dir();
@@ -183,11 +183,11 @@ class FileManager extends Loggable
                 $dataFile
             );
 
-            $this->logger->debug([
+            $this->logger->debug(json_encode([
                 'module' => self::LOG_MODULE,
                 'message' => 'Created file writer',
                 'file_writer' => $fileWriter
-            ]);
+            ]));
 
             $fileWriter->writeRecord($dataSet->getHeader());
 
@@ -199,11 +199,11 @@ class FileManager extends Loggable
 
             return $dataFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->err(json_encode([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw new Exception('Failed to write data set to file', 0, $e);
         }
     }
@@ -220,13 +220,13 @@ class FileManager extends Loggable
     {
         $zipFile = $this->getExportDataFilePath($request['id']);
 
-        $this->logger->info([
+        $this->logger->info(json_encode([
             'module' => self::LOG_MODULE,
             'message' => 'Creating zip file',
             'batch_export_request.id' => $request['id'],
             'data_file' => $dataFile,
             'zip_file' => $zipFile
-        ]);
+        ]));
 
         try {
             $zip = new ZipArchive();
@@ -270,11 +270,11 @@ class FileManager extends Loggable
 
             return $zipFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->err(json_encode([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw new Exception('Failed to create zip file', 0, $e);
         }
     }
@@ -289,12 +289,12 @@ class FileManager extends Loggable
     {
         $zipFile = $this->getExportDataFilePath($id);
 
-        $this->logger->info([
+        $this->logger->info(json_encode([
             'module' => self::LOG_MODULE,
             'message' => 'Removing export file',
             'batch_export_request.id' => $id,
             'zip_file' => $zipFile
-        ]);
+        ]));
 
         if (!unlink($zipFile)) {
             throw new Exception(sprintf('Failed to delete "%s"', $zipFile));
@@ -312,12 +312,12 @@ class FileManager extends Loggable
         foreach ($deletedRequestIds as $id) {
             $exportFile = $this->getExportDataFilePath($id);
             if (is_file($exportFile)) {
-                $this->logger->info([
+                $this->logger->info(json_encode([
                     'module' => self::LOG_MODULE,
                     'message' => 'Removing export file',
                     'batch_export_request.id' => $id,
                     'zip_file' => $exportFile
-                ]);
+                ]));
                 if (!unlink($exportFile)) {
                     throw new Exception(sprintf(
                         'Failed to delete "%s"',

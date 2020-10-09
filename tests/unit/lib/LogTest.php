@@ -10,6 +10,8 @@
 namespace UnitTesting;
 
 use CCR\Log;
+use CCR\Logging;
+use Monolog\Logger;
 
 class LogTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,18 +25,12 @@ class LogTest extends \PHPUnit_Framework_TestCase
     {
         $tmpFile = tempnam(sys_get_temp_dir(), "xdmod_test_");
 
-        $conf = array(
-            'mail'         => false,
-            'db'           => false,
-            'console'      => false,
-            'file'         => $tmpFile,
-            'fileLogLevel' => $logLevel
-        );
-
         // Note that we can't use setMask() to change the log mask because it will not propogate
         // to child loggers.
 
-        $logger = Log::factory('', $conf);
+        $logger = Logging::factory('', array(
+            'file' => array('file_path' => $tmpFile, 'level' => $logLevel)
+        ));
 
         // Log messages at each level and compare the number of actual lines output to the number
         // expected based on the log level mask.
@@ -47,7 +43,7 @@ class LogTest extends \PHPUnit_Framework_TestCase
         $logger->notice('Notice');
         $logger->info('Info');
         $logger->debug('Debug');
-        $logger->trace('Trace');
+        $logger->debug('Trace');
 
         $logMessages = file($tmpFile);
         unlink($tmpFile);
@@ -68,9 +64,9 @@ class LogTest extends \PHPUnit_Framework_TestCase
     public function logLevelProvider()
     {
         return array(
-            array(Log::TRACE, 9),
-            array(Log::WARNING, 5),
-            array(Log::ALERT, 2)
+            array(Logger::DEBUG, 9),
+            array(Logger::WARNING, 5),
+            array(Logger::ALERT, 2)
         );
     }
 }

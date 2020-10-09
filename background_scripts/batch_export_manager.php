@@ -6,8 +6,9 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
-use CCR\Log;
+use CCR\Logging;
 use DataWarehouse\Export\BatchProcessor;
+use Monolog\Logger;
 
 // Disable memory limit.
 ini_set('memory_limit', -1);
@@ -48,15 +49,15 @@ try {
                 break;
             case 'q':
             case 'quiet':
-                $logLevel = max($logLevel, Log::WARNING);
+                $logLevel = max($logLevel, Logger::WARNING);
                 break;
             case 'v':
             case 'verbose':
-                $logLevel = max($logLevel, Log::INFO);
+                $logLevel = max($logLevel, Logger::INFO);
                 break;
             case 'd':
             case 'debug':
-                $logLevel = max($logLevel, Log::DEBUG);
+                $logLevel = max($logLevel, Logger::DEBUG);
                 break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
@@ -67,7 +68,7 @@ try {
 
     // Set default log level if none was specified.
     if ($logLevel === -1) {
-        $logLevel = Log::NOTICE;
+        $logLevel = Logger::NOTICE;
     }
 
     if ($help) {
@@ -80,15 +81,15 @@ try {
         'mail' => false,
         'consoleLogLevel' => $logLevel
     );
-    $logger = Log::factory('batch-export', $logConf);
+    $logger = Logging::singleton('batch-export', array('console' => array(), 'mysql' => array()));
     $logger->info('Command: ' . implode(' ', array_map('escapeshellarg', $argv)));
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(['message' => 'batch_export_manager start', 'process_start_time' => date('Y-m-d H:i:s')]);
+    $logger->notice(json_encode(['message' => 'batch_export_manager start', 'process_start_time' => date('Y-m-d H:i:s')]));
     $batchProcessor = new BatchProcessor($logger);
     $batchProcessor->setDryRun($dryRun);
     $batchProcessor->processRequests();
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(['message' => 'batch_export_manager end', 'process_end_time' => date('Y-m-d H:i:s')]);
+    $logger->notice(json_encode(['message' => 'batch_export_manager end', 'process_end_time' => date('Y-m-d H:i:s')]));
     @flock($lockFileHandle, LOCK_UN);
     @fclose($lockFileHandle);
     @unlink($lockFile);

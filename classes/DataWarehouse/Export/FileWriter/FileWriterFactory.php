@@ -21,12 +21,12 @@ class FileWriterFactory extends Loggable
      */
     public function createFileWriter($format, $file)
     {
-        $this->logger->debug([
+        $this->logger->debug(json_encode([
             'module' => self::LOG_MODULE,
             'message' => 'Creating new file writer',
             'format' => $format,
             'file' => $file
-        ]);
+        ]));
 
         switch (strtolower($format)) {
             case 'csv':

@@ -23,30 +23,29 @@
 
 namespace UnitTesting\ETL\DataEndpoint;
 
+use CCR\Logging;
 use Exception;
 use CCR\Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class DirectoryScanner extends \PHPUnit_Framework_TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger = null;
 
     public function __construct()
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
-
-        $this->logger = Log::factory('PHPUnit', $conf);
+        $this->logger = Logging::factory('PHPUnit', array('console' => array('level' => Logger::EMERGENCY)));
     }  // __construct()
 
     /**

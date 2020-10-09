@@ -5,6 +5,8 @@
 
 namespace OpenXdmod\Tests;
 
+use CCR\Logging;
+use Monolog\Logger;
 use Xdmod\HostListParser;
 
 /**
@@ -23,7 +25,7 @@ class HostListTest extends \PHPUnit_Framework_TestCase
         $this->parser = new HostListParser();
 
         if (isset($GLOBALS['LOG_DEBUG']) && $GLOBALS['LOG_DEBUG']) {
-            $logger = \Log::factory('console', '', 'test', \CCR\Log::DEBUG);
+            $logger = Logging::factory('test', array('console' => array( 'level' => Logger::DEBUG)));
             $this->parser->setLogger($logger);
         }
     }

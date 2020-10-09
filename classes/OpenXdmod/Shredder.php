@@ -7,11 +7,13 @@
 
 namespace OpenXdmod;
 
+use CCR\Logging;
 use Configuration\XdmodConfiguration;
 use Exception;
 use PDOException;
 use CCR\DB\iDatabase;
 use PDODBMultiIngestor;
+use Psr\Log\LoggerInterface;
 
 class Shredder
 {
@@ -65,7 +67,7 @@ class Shredder
     /**
      * Logger object.
      *
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -140,7 +142,7 @@ class Shredder
     protected function __construct(iDatabase $db)
     {
         $this->db     = $db;
-        $this->logger = \Log::singleton('null');
+        $this->logger = Logging::singleton('null');
 
         $classPath = explode('\\', strtolower(get_class($this)));
         $this->format = $classPath[count($classPath) - 1];
@@ -181,9 +183,9 @@ class Shredder
     /**
      * Set the logger.
      *
-     * @param Logger $logger The logger instance.
+     * @param LoggerInterface $logger a Monolog Logger instance.
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
@@ -396,11 +398,11 @@ class Shredder
 
                 // skip empty lines
                 if ($line === '') {
-                    $this->logger->debug([
+                    $this->logger->debug(json_encode([
                         'message'     => 'Skipping blank line',
                         'file'        => $file,
                         'line_number' => $lineNumber
-                    ]);
+                    ]));
                     continue;
                 }
 
@@ -419,12 +421,12 @@ class Shredder
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
-                        $this->logger->debug(array(
+                        $this->logger->debug(json_encode(array(
                             'message'     => $msg,
                             'file'        => $file,
                             'line_number' => $lineNumber,
                             'line'        => $line,
-                        ));
+                        )));
                         $duplicateCount++;
                         continue;
                     } else {
@@ -851,12 +853,12 @@ class Shredder
         if ($walltime === null) { $invalidCount++; }
 
         if ($invalidCount > 1) {
-            $this->logger->err(array(
+            $this->logger->err(json_encode(array(
                 'message'    => 'Failed to correct job times',
                 'start_time' => $startTime,
                 'end_time'   => $endTime,
                 'walltime'   => $walltime,
-            ));
+            )));
 
             return null;
         }

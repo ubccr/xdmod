@@ -9,7 +9,7 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-use CCR\Log;
+use CCR\Logging;
 use ETL\Utilities;
 use ETL\VariableStore;
 use ETL\DbModel\Table;
@@ -20,24 +20,25 @@ use ETL\DbModel\Index;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
+use Psr\Log\LoggerInterface;
 
 class DbModelTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
 
+    /**
+     * @var LoggerInterface|null
+     */
     private static $logger = null;
 
     public static function setUpBeforeClass()
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::WARNING
-        );
-        self::$logger = Log::factory('PHPUnit', $conf);
+        self::$logger = Logging::factory('PHPUnit', array(
+            'console' => array('level' => \Monolog\Logger::WARNING)
+        ));
     }
 
     /**

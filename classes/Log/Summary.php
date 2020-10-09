@@ -11,8 +11,7 @@
 namespace Log;
 
 use CCR\DB;
-
-require_once 'Log.php';
+use Monolog\Logger;
 
 class Summary
 {
@@ -163,20 +162,20 @@ class Summary
 
         $data = $this->_getPriorityCounts();
         if ($data !== null) {
-            if (isset($data[PEAR_LOG_WARNING])) {
-                $this->warningCount = $data[PEAR_LOG_WARNING];
+            if (isset($data[Logger::WARNING])) {
+                $this->warningCount = $data[Logger::WARNING];
             }
-            if (isset($data[PEAR_LOG_ERR])) {
-                $this->errorCount = $data[PEAR_LOG_ERR];
+            if (isset($data[Logger::ERROR])) {
+                $this->errorCount = $data[Logger::ERROR];
             }
-            if (isset($data[PEAR_LOG_CRIT])) {
-                $this->criticalCount = $data[PEAR_LOG_CRIT];
+            if (isset($data[Logger::CRITICAL])) {
+                $this->criticalCount = $data[Logger::CRITICAL];
             }
-            if (isset($data[PEAR_LOG_ALERT])) {
-                $this->alertCount = $data[PEAR_LOG_ALERT];
+            if (isset($data[Logger::ALERT])) {
+                $this->alertCount = $data[Logger::ALERT];
             }
-            if (isset($data[PEAR_LOG_EMERG])) {
-                $this->emergencyCount = $data[PEAR_LOG_EMERG];
+            if (isset($data[Logger::EMERGENCY])) {
+                $this->emergencyCount = $data[Logger::EMERGENCY];
             }
         }
 
@@ -246,7 +245,7 @@ class Summary
     private function _getProcessStartRow()
     {
         return $this->_getRow(array(
-            array('priority', '=',    PEAR_LOG_NOTICE),
+            array('priority', '=',   Logger::NOTICE),
             array('message',  'LIKE', '%"process_start_time":%'),
         ));
     }
@@ -258,7 +257,7 @@ class Summary
         }
 
         return $this->_getRow(array(
-            array('priority', '=',    PEAR_LOG_NOTICE),
+            array('priority', '=',    Logger::NOTICE),
             array('message',  'LIKE', '%"process_end_time":%'),
             array('id',       '>',    $this->processStartRowId),
         ));
@@ -267,7 +266,7 @@ class Summary
     private function _getDataTimes()
     {
         $constraints = array(
-            array('priority', '=',    PEAR_LOG_NOTICE),
+            array('priority', '=',    Logger::NOTICE),
             array('message',  'LIKE', '%"data_start_time":%'),
         );
 
@@ -336,7 +335,7 @@ class Summary
             $counts[$key . '_count'] = 0;
 
             $constraints = array(
-                 array('priority', '=',    PEAR_LOG_NOTICE),
+                 array('priority', '=',    Logger::NOTICE),
                  array('message',  'LIKE', '%"' . $key . '":%'),
             );
 

@@ -19,13 +19,13 @@ use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\DbModel\Query;
 use PDOException;
 use ETL\VariableStore;
-use Log;
 
 use PHPSQLParser\PHPSQLParser;
 
 // PHPSQLParser has "use Exception" instead of "use \Exception". In order to catch general
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
+use Psr\Log\LoggerInterface;
 
 class VerifyDatabase extends aAction implements iAction
 {
@@ -49,7 +49,7 @@ class VerifyDatabase extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
             $this->logAndThrowException(__CLASS__ . ": Options is not an instance of MaintenanceOptions");
@@ -289,10 +289,10 @@ class VerifyDatabase extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice(array('action'       => (string) $this,
+        $this->logger->notice(json_encode(array('action'       => (string) $this,
                                     'start_time'   => $time_start,
                                     'end_time'     => $time_end,
                                     'elapsed_time' => round($time, 5)
-                                  ));
+        )));
     }  // execute()
 }  // class ExecuteSql

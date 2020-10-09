@@ -5,6 +5,8 @@
 
 namespace OpenXdmod\Setup;
 
+use CCR\Logging;
+use Monolog\Logger;
 use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
 use CCR\DB;
@@ -22,12 +24,16 @@ class DatabaseSetup extends DatabaseSetupItem
      */
     public function handle()
     {
-        $conf = array(
-            'console' => true,
-            'consoleLogLevel' => Log::WARNING
+        $logger = Logging::factory('xdmod-setup',
+            array(
+                'console' => array(
+                    'level' => Logger::WARNING
+                ),
+                'mysql' => array(),
+                'file' => array(),
+                'email' => array()
+            )
         );
-
-        $logger = Log::factory('xdmod-setup', $conf);
 
         $settings = $this->loadIniConfig('portal_settings');
 

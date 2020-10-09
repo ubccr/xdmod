@@ -68,10 +68,10 @@ use ETL\DbModel\Table;
 use ETL\Utilities;
 use ETL\Configuration\EtlConfiguration;
 
-use Log;
 use PDOException;
 use PDOStatement;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class pdoAggregator extends aAggregator
 {
@@ -106,11 +106,11 @@ class pdoAggregator extends aAggregator
      *
      * @param IngestorOptions $options Options specific to this Ingestor
      * @param EtlConfiguration $etlConfig Parsed configuration options for this ETL
-     * @param Log $logger PEAR Log object for system logging
+     * @param Log $logger Monolog Logger object for system logging
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 
@@ -721,13 +721,13 @@ class pdoAggregator extends aAggregator
     {
         $time_start = microtime(true);
 
-        $this->logger->notice(array(
+        $this->logger->notice(json_encode(array(
             "message" => "aggregate start",
             "action" => (string) $this,
             "unit" => $aggregationUnit,
             "start_date" => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
             "end_date" => ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
-        ));
+        )));
 
         // Batching options
 
@@ -1051,7 +1051,7 @@ class pdoAggregator extends aAggregator
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array("message"      => "aggregate end",
+        $this->logger->notice(json_encode(array("message"      => "aggregate end",
                                     "action"       => (string) $this,
                                     "unit"         => $aggregationUnit,
                                     "periods"      => $numAggregationPeriods,
@@ -1060,7 +1060,7 @@ class pdoAggregator extends aAggregator
                                     "start_time"   => $time_start,
                                     "end_time"     => $time_end,
                                     "elapsed_time" => round($time, 5)
-        ));
+        )));
 
         return $numAggregationPeriods;
 
@@ -1196,7 +1196,7 @@ class pdoAggregator extends aAggregator
                     "unit"        => $aggregationUnit,
                     "num_records" => $numRecords
                 );
-                $this->logger->debug(array_merge($msg, $aggregationPeriodInfo));
+                $this->logger->debug(json_encode(array_merge($msg, $aggregationPeriodInfo)));
 
                 // Insert the new rows.
 

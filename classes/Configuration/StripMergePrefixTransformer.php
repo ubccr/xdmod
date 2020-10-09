@@ -3,7 +3,7 @@
 namespace Configuration;
 
 use CCR\Loggable;
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 /**
@@ -23,7 +23,7 @@ class StripMergePrefixTransformer extends Loggable implements iConfigFileKeyTran
     /**
      * @see iConfigFileKeyTransformer::__construct()
      */
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         parent::__construct($logger);
     }

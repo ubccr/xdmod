@@ -1,6 +1,6 @@
 <?php
 /**
- * Provide logging functionality using the PEAR Logger (http://pear.github.io/Log/).
+ * Provide logging functionality using the Monolog Logger (https://github.com/Seldaek/monolog).
  *
  * Extending classes can access the logger using $this->logger->logmethod() or using the __call()
  * functionality as $this->logmethod().
@@ -8,25 +8,28 @@
 
 namespace CCR;
 
-// PEAR logger
-use \Log as Logger;
+
 use Exception;
+use Monolog\Logger;
 use PDOException;
 use ETL\DataEndpoint\iDataEndpoint;
+use Psr\Log\LoggerInterface;
 
 class Loggable
 {
-    // PEAR log class
+    /**
+     * @var LoggerInterface
+     */
     protected $logger = null;
 
     /**
      * Set the provided logger or instantiate a null logger if one was not provided.  The null handler
      * consumes log events and does nothing with them.
      *
-     * @param $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      */
 
-    public function __construct(Logger $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         $this->setLogger($logger);
     }
@@ -34,23 +37,21 @@ class Loggable
     /**
      * Set the logger for this object.
      *
-     * @param Log $logger A logger class or NULL to use the null logger
+     * @param LoggerInterface $logger A Monolog Logger class or NULL to use the null logger
      *
-     * @return This object for method chaining.
+     * @return Loggable This object for method chaining.
      */
 
-    public function setLogger(Logger $logger = null)
+    public function setLogger(LoggerInterface $logger = null)
     {
-        $this->logger = ( null === $logger ? Logger::singleton('null') : $logger );
+        $this->logger = ( null === $logger ? Logging::singleton('null') : $logger );
         return $this;
     }
 
     /**
      * Set the logger for this object.
      *
-     * @param Log $logger A logger class
-     *
-     * @return This object for method chaining.
+     * @return LoggerInterface This object for method chaining.
      */
 
     public function getLogger()
@@ -95,7 +96,7 @@ class Loggable
     {
         $logMessage = array();
         $message = "{$this}: " . ( is_string($message) ? $message : "" );
-        $logLevel = PEAR_LOG_ERR;
+        $logLevel = Logger::DEBUG;
         $exceptionProvided = false;
         $code = 0;
 
@@ -141,7 +142,7 @@ class Loggable
 
         $logMessage['message'] = $message;
 
-        $this->logger->log($logMessage, $logLevel);
+        $this->logger->log($logLevel, json_encode($logMessage));
         throw new Exception($message, $code);
 
     }
@@ -176,7 +177,7 @@ class Loggable
 
     public function __wakeup()
     {
-        //  On unserialize() the logger is expected the be a PEAR Log object so be sure to
+        //  On unserialize() the logger is expected the be a Monolog Logger object so be sure to
         //  re-initialize it.
         $this->setLogger(null);
     }

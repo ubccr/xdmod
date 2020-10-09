@@ -5,6 +5,7 @@
 
 namespace UnitTesting\ETL\Configuration;
 
+use CCR\Logging;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
 use Log;
@@ -22,7 +23,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        self::$logger = Log::singleton('null');
+        self::$logger = Logging::singleton('null');
     }
 
     private function getTestFiles()

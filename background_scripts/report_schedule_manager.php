@@ -61,15 +61,21 @@ $conf = array(
 
 $conf['emailSubject'] .= APPLICATION_ENV == 'dev' ? ' [Dev]' : '';
 
-$logger = Log::factory('ReportScheduler', $conf);
+$logger = \CCR\Logging::factory('ReportScheduler', array(
+    'console' => array(),
+    'mysql' => array(),
+    'email' => array(
+        'subject' => 'Report Scheduler'. APPLICATION_ENV == 'dev' ? ' [Dev]' : ''
+    )
+));
 
 // =====================================================================
 
 // NOTE: "process_start_time" is needed for log summary.
-$logger->notice(array(
+$logger->notice(json_encode(array(
     'message'            => 'Report scheduler start',
     'process_start_time' => date('Y-m-d H:i:s'),
-));
+)));
 
 $active_frequencies = getActiveFrequencies(true);
 
@@ -90,10 +96,10 @@ foreach ($active_frequencies as $frequency) {
         } catch (Exception $e) {
             $msg = "Failed to get user for id = {$details['user_id']}: "
                 . $e->getMessage();
-            $logger->err(array(
+            $logger->err(json_encode(array(
                 'message'    => $msg,
                 'stacktrace' => $e->getTraceAsString(),
-            ));
+            )));
             continue;
         }
 
@@ -121,10 +127,10 @@ foreach ($active_frequencies as $frequency) {
             } catch(Exception $e) {
                 $msg = "Error Preparing report on " . gethostname() . " {$details['report_id']}: "
                     . $e->getMessage();
-                $logger->err(array(
+                $logger->err(json_encode(array(
                     'message'    => $msg,
                     'stacktrace' => $e->getTraceAsString(),
-                ));
+                )));
             }
 
             if (isset($working_dir) && $working_dir != '/' && $working_dir != getcwd()) {
@@ -135,10 +141,10 @@ foreach ($active_frequencies as $frequency) {
 }
 
 // NOTE: "process_end_time" is needed for log summary.
-$logger->notice(array(
+$logger->notice(json_encode(array(
     'message'          => 'Report scheduler end',
     'process_end_time' => date('Y-m-d H:i:s'),
-));
+)));
 
 exit;
 

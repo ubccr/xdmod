@@ -20,8 +20,8 @@ use ETL\DbModel\Table;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aRdbmsDestinationAction;
-use Log;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 class ManageTables extends aRdbmsDestinationAction implements iAction
 {
@@ -33,7 +33,7 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         // Set the logger manually since we are not calling the parent constructor chain until
         // later.
@@ -156,10 +156,10 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array('action'       => (string) $this,
+        $this->logger->notice(json_encode(array('action'       => (string) $this,
                                     'start_time'   => $time_start,
                                     'end_time'     => $time_end,
                                     'elapsed_time' => round($time, 5)
-                                  ));
+                                  )));
     }  // execute()
 }  // class ManageTables

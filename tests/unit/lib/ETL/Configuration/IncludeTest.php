@@ -9,7 +9,7 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-use CCR\Log;
+use CCR\Logging;
 use Configuration\Configuration;
 use Configuration\IncludeTransformer;
 
@@ -24,14 +24,10 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
-      // Set up a logger so we can get warnings and error messages from the ETL infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
-        $logger = Log::factory('PHPUnit', $conf);
+        // Set up a logger so we can get warnings and error messages from the ETL infrastructure
+        $logger = Logging::factory('PHPUnit', array(
+            'console' => array('level' => \Monolog\Logger::EMERGENCY)
+        ));
 
         // Configuration is used in the transformer to qualify relative paths
         self::$config = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');

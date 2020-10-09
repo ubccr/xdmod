@@ -10,6 +10,7 @@
 namespace UnitTesting\ETL\Configuration;
 
 use CCR\Log;
+use CCR\Logging;
 use Configuration\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -21,14 +22,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
-      // Set up a logger so we can get warnings and error messages from the ETL infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
-        self::$logger = Log::factory('PHPUnit', $conf);
+        self::$logger = Logging::factory('PHPUnit', array(
+            'console' => array('level' => \Monolog\Logger::EMERGENCY)
+        ));
     }
 
     /**

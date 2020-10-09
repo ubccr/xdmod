@@ -3,6 +3,7 @@
 namespace OpenXdmod;
 
 use CCR\DB;
+use CCR\Logging;
 use Configuration\XdmodConfiguration;
 use Exception;
 use CCR\DB\iDatabase;
@@ -13,12 +14,13 @@ use ETL\Utilities;
 use FilterListBuilder;
 use Models\Services\Realms;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class DataWarehouseInitializer
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -95,15 +97,15 @@ class DataWarehouseInitializer
     ) {
         $this->hpcdbDb     = $hpcdbDb;
         $this->warehouseDb = $warehouseDb;
-        $this->logger      = \Log::singleton('null');
+        $this->logger      = Logging::singleton('null');
     }
 
     /**
      * Set the logger.
      *
-     * @param \Log $logger A logger instance.
+     * @param LoggerInterface $logger A Monolog Logger instance.
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
@@ -463,7 +465,7 @@ class DataWarehouseInitializer
         $endDate,
         $append = true
     ) {
-        $this->logger->info(array(
+        $this->logger->info(json_encode(array(
             'message'    => 'start',
             'class'      => get_class($this),
             'function'   => __FUNCTION__,
@@ -471,7 +473,7 @@ class DataWarehouseInitializer
             'start_date' => $startDate,
             'end_date'   => $endDate,
             'append'     => $append,
-        ));
+        )));
 
         foreach ($this->aggregationUnits as $aggUnit) {
             $this->logger->info("Aggregating by $aggUnit");
@@ -489,11 +491,11 @@ class DataWarehouseInitializer
         $this->logger->info("Building filter lists");
         $agg->updateFilters();
 
-        $this->logger->info(array(
+        $this->logger->info(json_encode(array(
             'message'  => 'end',
             'class'    => get_class($this),
             'function' => __FUNCTION__,
-        ));
+        )));
     }
 
     /**

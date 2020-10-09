@@ -17,7 +17,6 @@ use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use PDOException;
 use ETL\Utilities;
-use Log;
 
 use PHPSQLParser\PHPSQLParser;
 use PHPSQLParser\PHPSQLCreator;
@@ -26,6 +25,8 @@ use PHPSQLParser\exceptions\UnsupportedFeatureException;
 // PHPSQLParser has "use Exception" instead of "use \Exception". In order to catch general
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
+
+use Psr\Log\LoggerInterface;
 
 class ExecuteSql extends aAction implements iAction
 {
@@ -39,7 +40,7 @@ class ExecuteSql extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
             $msg = __CLASS__ . ": Options is not an instance of MaintenanceOptions";
@@ -234,12 +235,12 @@ class ExecuteSql extends aAction implements iAction
                 $statementPosition = ($numStatementsProcessed + 1);
                 $statementPositionDisplay = "( $statementPosition / $numSqlStatements)";
                 try {
-                    $this->logger->info(array(
+                    $this->logger->info(json_encode(array(
                         "message" => "Executing statement " . $statementPositionDisplay,
                         "action" => (string) $this . '-sql-' . $statementPosition,
                         "endpoint" => $this->destinationEndpoint,
                         "sql" => $sql
-                    ));
+                    )));
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $numRowsAffected = $this->destinationHandle->execute($sql);
                     }
@@ -251,14 +252,14 @@ class ExecuteSql extends aAction implements iAction
                 }
 
                 $endTime = microtime(true);
-                $this->logger->info(array(
+                $this->logger->info(json_encode(array(
                     "message" => "Finished executing statement " . $statementPositionDisplay,
                     "action" => (string) $this . '-sql-' . $statementPosition,
                     "rows" =>  $numRowsAffected,
                     "start_time" => $sqlStartTime,
                     "end_time" => $endTime,
                     "elapsed_time" => $endTime - $sqlStartTime
-                ));
+                )));
 
                 $numStatementsProcessed++;
 
@@ -270,10 +271,10 @@ class ExecuteSql extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice(array('action'       => (string) $this,
+        $this->logger->notice(json_encode(array('action'       => (string) $this,
                                     'start_time'   => $time_start,
                                     'end_time'     => $time_end,
                                     'elapsed_time' => round($time, 5)
-                                  ));
+                                  )));
     }  // execute()
 }  // class ExecuteSql

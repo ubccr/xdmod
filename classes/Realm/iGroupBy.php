@@ -8,7 +8,7 @@
 
 namespace Realm;
 
-use Log as Logger;
+use Psr\Log\LoggerInterface;
 
 interface iGroupBy
 {
@@ -19,14 +19,14 @@ interface iGroupBy
      *   instantiated.
      * @param stdClass $config An object containing the configuration for this GroupBy
      * @param Realm $realm Realm object that this GroupBy will belong to.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      *
      * @return GroupBy A GroupBy class.
      *
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
+    public static function factory($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null);
 
     /**
      * @return Realm The realm that this GroupBy is associated with.

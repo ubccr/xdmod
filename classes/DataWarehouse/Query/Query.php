@@ -10,16 +10,18 @@
 
 namespace DataWarehouse\Query;
 
+use CCR\Logging;
 use Configuration\XdmodConfiguration;
 use Exception;
 
-use Log as Logger;
 use CCR\Loggable;
 use CCR\DB;
 use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
 use ETL\VariableStore;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Realm\Realm;
 use Realm\Statistic;
 
@@ -114,7 +116,7 @@ class Query extends Loggable
         $groupById = null,
         $statisticId = null,
         array $parameters = array(),
-        Logger $logger = null
+        LoggerInterface $logger = null
     ) {
         // If the logger was not passed in, create one specifically for the query logs
 
@@ -127,16 +129,12 @@ class Query extends Loggable
             } catch (Exception $e) {
                 $sqlDebug = false;
             }
-            $logger = \CCR\Log::factory(
-                'datawarehouse.query',
-                array(
-                    'console' => false,
-                    'db' => false,
-                    'mail' => false,
-                    'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => $sqlDebug ? PEAR_LOG_DEBUG : PEAR_LOG_NOTICE
+            $logger = Logging::factory('datawarehouse.query', array(
+                'file' => array(
+                    'file_path'=> LOG_DIR . '/query.log',
+                    'level'=>  $sqlDebug ? Logger::DEBUG : Logger::NOTICE
                 )
-            );
+            ));
         }
 
         parent::__construct($logger);

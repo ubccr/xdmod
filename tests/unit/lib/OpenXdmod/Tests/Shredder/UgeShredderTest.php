@@ -6,6 +6,7 @@
 namespace OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
+use CCR\Logging;
 use OpenXdmod\Shredder;
 
 /**
@@ -41,7 +42,7 @@ class UgeShredderTest extends JobShredderBaseTestCase
             ->method('getResourceConfig')
             ->willReturn(array());
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger(Logging::singleton('null'));
 
         $shredder->setResource('testresource');
 

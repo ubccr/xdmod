@@ -7,7 +7,9 @@
 
 namespace OpenXdmod\Migration;
 
+use CCR\Logging;
 use Configuration\Configuration;
+use Psr\Log\LoggerInterface;
 
 abstract class Migration
 {
@@ -36,7 +38,7 @@ abstract class Migration
     /**
      * Logger object.
      *
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -52,7 +54,7 @@ abstract class Migration
         $this->newVersion     = $newVersion;
 
 
-        $this->logger = \Log::singleton('null');
+        $this->logger = Logging::singleton('null');
 
         $this->config = Configuration::factory(
             ".",
@@ -65,9 +67,9 @@ abstract class Migration
     /**
      * Set the logger.
      *
-     * @param Logger $logger The logger instance.
+     * @param LoggerInterface $logger The Monolog Logger instance.
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

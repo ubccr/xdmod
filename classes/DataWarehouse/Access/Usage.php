@@ -3,7 +3,6 @@
 namespace DataWarehouse\Access;
 
 use CCR\DB;
-use CCR\Log;
 use Exception;
 
 use DataWarehouse;

@@ -1,7 +1,6 @@
 <?php
 
 use CCR\DB;
-use CCR\Log;
 use CCR\MailWrapper;
 use Models\Acl;
 use Models\Services\Acls;
@@ -233,15 +232,9 @@ EML;
         $this->sticky = $sticky;
 
         parent::__construct(
-            Log::factory(
-                'xduser.sql',
-                array(
-                    'db' => false,
-                    'mail' => false,
-                    'console' => false,
-                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
-                )
-            )
+            \CCR\Logging::factory('xduser.sql', array(
+                'file' => array('file_path' => LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile'))
+            ))
         );
 
         $this->setSSOAttrs($ssoAttrs);
@@ -2382,12 +2375,12 @@ SQL;
      */
     public static function validateRID($rid)
     {
-        $log = \CCR\Log::factory('xms.auth.rid', array(
-            'console' => false,
-            'db' => true,
-            'mail' => false,
-            'file' => LOG_DIR . '/xms-auth-rid.log',
-            'fileLogLevel' => PEAR_LOG_DEBUG
+        $log = \CCR\Logging::factory('xms.auth.rid', array(
+            'mysql' => array(),
+            'file' => array(
+                'file_path' => LOG_DIR . '/xms-auth-rid.log',
+                'level' => \Monolog\Logger::DEBUG
+            )
         ));
 
         $results = array(

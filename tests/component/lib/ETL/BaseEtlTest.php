@@ -7,9 +7,12 @@
 namespace ComponentTests\ETL;
 
 use CCR\Log;
+use CCR\Logging;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
 use ETL\aAction;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Base class for ETL tests providing common functionality.
@@ -17,6 +20,9 @@ use ETL\aAction;
 
 abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var LoggerInterface
+     */
     protected static $logger = null;
 
     /**
@@ -24,22 +30,11 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $ident Log identifier string
      * @param int $level Maximum log level to display
-     *
-     * @return Log A CCR\Log object
      */
 
-    protected static function createLogger($ident = 'PHPUnit', $level = Log::WARNING)
+    protected static function createLogger($ident = 'PHPUnit', $level = Logger::WARNING)
     {
-        // Set up a logger so we can get warnings and error messages from the ETL
-        // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => $level
-        );
-
-        self::$logger = Log::factory($ident, $conf);
+        self::$logger = Logging::factory($ident, array('console' => array('level' => $level)));
     }
 
     /**

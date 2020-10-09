@@ -16,13 +16,13 @@ ini_set('memory_limit', -1);
 // Character to use when separating list output
 const LIST_SEPARATOR = "\t";
 
-use CCR\Log;
 use CCR\DB;
 use ETL\EtlOverseer;
 use ETL\iEtlOverseer;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
+use Monolog\Logger;
 
 // ==========================================================================================
 // Script options with defaults
@@ -87,7 +87,7 @@ $scriptOptions = array(
     // Variables defined on the command line
     'variable-overrides' => array(),
     // Log verbosity
-    'verbosity'         => Log::NOTICE
+    'verbosity'         => Logger::NOTICE
 );
 
 // Override defaults with values from the configuration file, if there are any
@@ -303,23 +303,20 @@ foreach ($args as $arg => $value) {
         case 'v':
         case 'verbosity':
             switch ( $value ) {
-                case 'trace':
-                    $scriptOptions['verbosity'] = Log::TRACE;
-                    break;
                 case 'debug':
-                    $scriptOptions['verbosity'] = Log::DEBUG;
+                    $scriptOptions['verbosity'] = Logger::DEBUG;
                     break;
                 case 'info':
-                    $scriptOptions['verbosity'] = Log::INFO;
+                    $scriptOptions['verbosity'] = Logger::INFO;
                     break;
                 case 'notice':
-                    $scriptOptions['verbosity'] = Log::NOTICE;
+                    $scriptOptions['verbosity'] = Logger::NOTICE;
                     break;
                 case 'warning':
-                    $scriptOptions['verbosity'] = Log::WARNING;
+                    $scriptOptions['verbosity'] = Logger::WARNING;
                     break;
                 case 'quiet':
-                    $scriptOptions['verbosity'] = Log::EMERG;
+                    $scriptOptions['verbosity'] = Logger::EMERG;
                     break;
                 default:
                     usage_and_exit("Invalid verbosity level: $value");
@@ -394,8 +391,11 @@ $conf = array(
 if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 }
-
-$logger = Log::factory('etl_overseer', $conf);
+$logger = \CCR\Logging::factory('etl_action_state_mgr', array(
+    'console' => array('level' => $conf['consoleLogLevel']),
+    'mysql' => array(),
+    'file' => array()
+));
 
 $cmd = implode(' ', array_map('escapeshellarg', $argv));
 $logger->info("Command: $cmd");
@@ -413,10 +413,10 @@ if ( $scriptOptions['dryrun']) {
 }
 
 if ( ! $showList)  {
-    $logger->notice(array(
+    $logger->notice(json_encode(array(
         'message'            => 'dw_extract_transform_load start',
         'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    )));
 }
 
 try {
@@ -591,8 +591,8 @@ $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.res
 if ( count($scriptOptions['process-sections']) == 0 &&
      count($scriptOptions['actions']) == 0 ) {
     $logger->notice("No actions or sections requested, exiting.");
-    $logger->notice(array('message'          => 'dw_extract_transform_load end',
-                          'process_end_time' => date('Y-m-d H:i:s') ));
+    $logger->notice(json_encode(array('message'          => 'dw_extract_transform_load end',
+                          'process_end_time' => date('Y-m-d H:i:s') )));
     exit(0);
 }
 
@@ -617,8 +617,8 @@ try {
 
 // NOTE: "process_end_time" is needed for log summary."
 
-$logger->notice(array('message'          => 'dw_extract_transform_load end',
-                      'process_end_time' => date('Y-m-d H:i:s') ));
+$logger->notice(json_encode(array('message'          => 'dw_extract_transform_load end',
+                      'process_end_time' => date('Y-m-d H:i:s') )));
 
 exit(0);
 
@@ -649,7 +649,7 @@ function usage_and_exit($msg = null)
     }
 
     $chunkDefault     = $scriptOptions['chunk-size-days'];
-    $verbosityDefault = Log::NOTICE;
+    $verbosityDefault = Logger::NOTICE;
 
     fwrite(
         STDERR,

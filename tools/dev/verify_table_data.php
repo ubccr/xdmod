@@ -20,6 +20,7 @@ define("DEFAULT_ERROR_PERECENT", 0.01);
 
 use CCR\Log;
 use CCR\DB;
+use Monolog\Logger;
 
 // ==========================================================================================
 // Script options with defaults
@@ -58,7 +59,7 @@ $scriptOptions = array(
     'truncate-columns' => array(),
     // Apply where clauses to query
     'wheres'           => array(),
-    'verbosity'        => Log::NOTICE
+    'verbosity'        => Logger::NOTICE
 );
 
 // ==========================================================================================
@@ -205,22 +206,22 @@ foreach ($args as $arg => $value) {
         case 'verbosity':
             switch ( $value ) {
                 case 'trace':
-                    $scriptOptions['verbosity'] = Log::TRACE;
+                    $scriptOptions['verbosity'] = Logger::TRACE;
                     break;
                 case 'debug':
-                    $scriptOptions['verbosity'] = Log::DEBUG;
+                    $scriptOptions['verbosity'] = Logger::DEBUG;
                     break;
                 case 'info':
-                    $scriptOptions['verbosity'] = Log::INFO;
+                    $scriptOptions['verbosity'] = Logger::INFO;
                     break;
                 case 'notice':
-                    $scriptOptions['verbosity'] = Log::NOTICE;
+                    $scriptOptions['verbosity'] = Logger::NOTICE;
                     break;
                 case 'warning':
-                    $scriptOptions['verbosity'] = Log::WARNING;
+                    $scriptOptions['verbosity'] = Logger::WARNING;
                     break;
                 case 'quiet':
-                    $scriptOptions['verbosity'] = Log::EMERG;
+                    $scriptOptions['verbosity'] = Logger::EMERG;
                     break;
                 default:
                     usage_and_exit("Invalid verbosity level: $value");
@@ -262,7 +263,11 @@ if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 }
 
-$logger = Log::factory('ETLv2', $conf);
+$logger = \CCR\Logging::factory('ETLv2', array(
+    'console' => array('level' => $conf['consoleLogLevel']),
+    'mysql' => array(),
+    'file' => array()
+));
 
 try {
     $dbh = DB::factory($scriptOptions['database-config']);
@@ -867,7 +872,7 @@ function compareTableData(
                 }
             }
 
-            $logger->trace(sprintf("Missing row: %s", print_r($row, 1)));
+            $logger->debug(sprintf("Missing row: %s", print_r($row, 1)));
         }
 
     } else {

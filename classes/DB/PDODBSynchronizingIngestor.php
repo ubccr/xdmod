@@ -6,6 +6,8 @@
  */
 
 use CCR\DB\PDODB;
+use CCR\Logging;
+use Psr\Log\LoggerInterface;
 
 class PDODBSynchronizingIngestor implements Ingestor
 {
@@ -58,7 +60,7 @@ class PDODBSynchronizingIngestor implements Ingestor
     /**
      * Logger.
      *
-     * @var Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -101,7 +103,7 @@ class PDODBSynchronizingIngestor implements Ingestor
         $this->destTable     = $destTable;
         $this->insertColumns = $insertColumns;
 
-        $this->logger = Log::singleton('null');
+        $this->logger = Logging::singleton('null');
     }
 
     /**
@@ -157,22 +159,22 @@ class PDODBSynchronizingIngestor implements Ingestor
         $time = $timeEnd - $timeStart;
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice(array(
+        $this->logger->notice(json_encode(array(
             'message'           => 'Finished ingestion',
             'class'             => get_class($this),
             'start_time'        => $timeStart,
             'end_time'          => $timeEnd,
             'records_examined'  => $sourceRows,
             'records_loaded'    => $insertedRows,
-        ));
+        )));
     }
 
     /**
      * Set the logger.
      *
-     * @param Log $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

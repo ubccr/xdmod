@@ -10,8 +10,10 @@ require_once __DIR__ . '/../../configuration/linker.php';
 
 ini_set('memory_limit', -1);
 
-use CCR\Log;
+use CCR\Logging;
+use Monolog\Logger;
 use OpenXdmod\Build\Packager;
+use Psr\Log\LoggerInterface;
 
 // Catch unexpected exceptions.
 try {
@@ -86,14 +88,14 @@ function main()
                 break;
             case 'q':
             case 'quiet':
-                $logLevel = max($logLevel, Log::WARNING);
+                $logLevel = max($logLevel, Logger::WARNING);
                 break;
             case 'v':
             case 'verbose':
-                $logLevel = max($logLevel, Log::INFO);
+                $logLevel = max($logLevel, Logger::INFO);
                 break;
             case 'debug':
-                $logLevel = max($logLevel, Log::DEBUG);
+                $logLevel = max($logLevel, Logger::DEBUG);
                 break;
             case 'run-tests':
                 $runTests = true;
@@ -123,24 +125,19 @@ function main()
     }
 
     if ($logLevel === -1) {
-        $logLevel = Log::NOTICE;
+        $logLevel = Logger::NOTICE;
     }
 
-    $conf = array(
-        'file'            => false,
-        'mail'            => false,
-        'db'              => false,
-        'consoleLogLevel' => $logLevel,
-    );
-
-    $logger = Log::factory('xdmod-packager', $conf);
+    $logger = Logging::factory('xdmod-packager', array(
+        'console' => array('level' => $logLevel)
+    ));
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
     $logger->info("Command: $cmd");
-    $logger->debug(array_merge(
+    $logger->debug(json_encode(array_merge(
         array('message' => 'Parsed args'),
         $args
-    ));
+    )));
 
     if ($module === null) {
         $logger->err('No module specified');
@@ -168,14 +165,14 @@ function main()
  * logger.  This function should only be used in the global scope where
  * the logger may not have already been created.
  *
- * @return \Log
+ * @return LoggerInterface
  */
 function getLogger()
 {
     global $logger;
 
     if (!isset($logger)) {
-        $logger = \Log::singleton('console', '', 'xdmod-packager');
+        $logger = Logging::singleton('xdmod-packager', array('console' => array()));
     }
 
     return $logger;

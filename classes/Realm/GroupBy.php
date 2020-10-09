@@ -6,7 +6,6 @@
 
 namespace Realm;
 
-use Log as Logger;
 use CCR\DB;
 use ETL\DbModel\Query as DbQuery;
 use \DataWarehouse\Query\Model\OrderBy;
@@ -16,6 +15,7 @@ use \DataWarehouse\Query\Model\Field;
 use \DataWarehouse\Query\Model\Table;
 use \DataWarehouse\Query\Model\TableField;
 use \DataWarehouse\Query\Model\WhereCondition;
+use Psr\Log\LoggerInterface;
 
 class GroupBy extends \CCR\Loggable implements iGroupBy
 {
@@ -219,7 +219,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see iGroupBy::factory()
      */
 
-    public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null)
+    public static function factory($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
     {
         return new static($shortName, $config, $realm, $logger);
     }
@@ -231,10 +231,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @param string $shortName The short name for this statistic
      * @param stdClass $config An object contaning the configuration specificaiton.
      * @param Realm $realm Realm object that this GroupBy will belong to.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      */
 
-    public function __construct($shortName, \stdClass $config, Realm $realm, Logger $logger = null)
+    public function __construct($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 
@@ -955,7 +955,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $formula = $this->verifyAndReplaceTableAlias($this->attributeValuesQuery->getRecord('id'), $query);
             $field = new Field($formula, $alias);
             $query->addField($field);
-            $this->logger->trace(sprintf("%s Add ID field '%s AS %s'", $this, $field, $alias));
+            $this->logger->debug(sprintf("%s Add ID field '%s AS %s'", $this, $field, $alias));
 
             // Add a GroupBy and Where condition for each field that is part of the key that maps a
             // dimensional attribute to the aggregate table.
@@ -973,7 +973,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     $alias
                 );
                 $query->addGroup($groupByField);
-                $this->logger->trace(sprintf("%s Add GROUP BY '%s'", $this, $groupByField));
+                $this->logger->debug(sprintf("%s Add GROUP BY '%s'", $this, $groupByField));
 
                 // The aggregation unit where condition is already added by Query::setDuration()
 
@@ -991,7 +991,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                         '=',
                         new TableField($query->getDataTable(), $aggregateKey)
                     );
-                    $this->logger->trace(sprintf("%s Add JOIN condition '%s'", $this, $where));
+                    $this->logger->debug(sprintf("%s Add JOIN condition '%s'", $this, $where));
                     $query->addWhereCondition($where);
                 }
             }
@@ -1006,7 +1006,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     $constraint->operation,
                     new TableField(!empty($constraint->aggregate_table) ? new Table($query->getDataTable()->getSchema(), $constraint->aggregate_table, $constraint->aggregate_table) : $query->getDataTable(), $constraint->aggregate_expr)
                 );
-                $this->logger->trace(sprintf("%s Add additional JOIN condition '%s'", $this, $where));
+                $this->logger->debug(sprintf("%s Add additional JOIN condition '%s'", $this, $where));
                 $query->addWhereCondition($where);
             }
         }
@@ -1065,7 +1065,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             );
 
             $field = new Field($this->verifyAndReplaceTableAlias($formula, $query), $alias);
-            $this->logger->trace(sprintf("%s Add field: %s AS %s", $this, $field, $alias));
+            $this->logger->debug(sprintf("%s Add field: %s AS %s", $this, $field, $alias));
             $query->addField($field);
         }
 
@@ -1296,7 +1296,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $sql = $queryObj->getSql();
 
         $this->logger->debug(sprintf("%s: Fetch attribute values with query\n%s", $this, $sql));
-        $this->logger->trace(sprintf("Values: %s", print_r($queryParameters, true)));
+        $this->logger->debug(sprintf("Values: %s", print_r($queryParameters, true)));
 
         return \DataWarehouse::connect()->query($sql, $queryParameters);
     }

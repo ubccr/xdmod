@@ -6,9 +6,9 @@
 namespace OpenXdmod\Shredder;
 
 use CCR\DB\iDatabase;
+use CCR\Logging;
 use ETL\Utilities;
 use Exception;
-use Log;
 use OpenXdmod\Shredder;
 
 /**
@@ -22,7 +22,7 @@ class Storage extends Shredder
     protected function __construct(iDatabase $db)
     {
         $this->db = $db;
-        $this->logger = Log::singleton('null');
+        $this->logger = Logging::singleton('null');
         $this->format = 'storage';
     }
 

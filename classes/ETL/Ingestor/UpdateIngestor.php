@@ -8,8 +8,6 @@
 
 namespace ETL\Ingestor;
 
-// PEAR logger
-use Log;
 use PDOException;
 
 use ETL\iAction;
@@ -21,6 +19,7 @@ use ETL\aOptions;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint\iStructuredFile;
+use Psr\Log\LoggerInterface;
 
 class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 {
@@ -38,7 +37,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $requiredKeys = array("definition_file");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
@@ -246,13 +245,13 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array(
+        $this->logger->notice(json_encode(array(
                                   'action'         => (string) $this,
                                   'start_time'     => $time_start,
                                   'end_time'       => $time_end,
                                   'elapsed_time'   => round($time, 5),
                                   'records_loaded' => $numRecordsProcessed,
                                   'records_updated' => $numRecordsUpdated
-                                  ));
+                                  )));
     }  // execute()
 }  // class StructuredFileIngestor

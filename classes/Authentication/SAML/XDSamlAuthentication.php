@@ -2,10 +2,11 @@
 
 namespace Authentication\SAML;
 
+use CCR\Logging;
 use CCR\MailWrapper;
 use \Exception;
-use CCR\Log;
 use Models\Services\Organizations;
+use Psr\Log\LoggerInterface;
 use XDUser;
 
 class XDSamlAuthentication
@@ -48,20 +49,15 @@ Unable to Identify Users Organization.
 Additional Setup Required.
 EML;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger = null;
 
     public function __construct()
     {
-        $this->logger = Log::factory(
-            'XDSamlAuthentication',
-            array(
-                'file' => false,
-                'db' => true,
-                'mail' => false,
-                'console' => false
-            )
-        );
-
+        $this->logger = Logging::factory('XDSamlAuthentication', array('mysql' => array()));
+        
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         if ($this->isSamlConfigured()) {
             try {

@@ -3,7 +3,9 @@
 namespace Rest;
 
 use CCR\DB\PDODB;
+use CCR\Logging;
 use Configuration\XdmodConfiguration;
+use Monolog\Logger;
 use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\Provider\UrlGeneratorServiceProvider;
@@ -72,11 +74,10 @@ class XdmodApplicationFactory
         $app['controllers']->value(self::API_SYMBOL, 'latest');
 
         $app['logger.db'] = $app->share(function () {
-            return \CCR\Log::factory('rest.logger.db', array(
-                'console' => false,
-                'file' => false,
-                'mail' => false,
-                'dbLogLevel' => \CCR\Log::INFO
+            return Logging::factory('rest.logger.db', array(
+                'mysql' => array(
+                    'level' => Logger::INFO
+                )
             ));
         });
 

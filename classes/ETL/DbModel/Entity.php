@@ -46,7 +46,7 @@
 
 namespace ETL\DbModel;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 use CCR\Loggable;
 use ETL\DataEndpoint;
@@ -82,7 +82,7 @@ class Entity extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->setSystemQuoteChar($systemQuoteChar);
@@ -348,7 +348,7 @@ class Entity extends Loggable
                 return $value->toStdClass();
             } else {
                 // If Error, don't know how to convert the object
-                $this->logger->trace(
+                $this->logger->debug(
                     sprintf("Object '%s' does not implement iEntity, using get_object_vars() to convert to stdClass", get_class($value))
                 );
                 return (object) get_object_vars($value);

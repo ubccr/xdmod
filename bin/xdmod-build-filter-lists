@@ -3,7 +3,8 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
-use CCR\Log;
+use CCR\Logging;
+use Monolog\Logger;
 
 // Disable memory limit.
 ini_set('memory_limit', -1);
@@ -37,23 +38,23 @@ foreach ($args as $key => $value) {
             break;
         case 'd':
         case 'debug':
-            $logLevel = max($logLevel, Log::DEBUG);
+            $logLevel = max($logLevel, Logger::DEBUG);
             break;
         case 'q':
         case 'quiet':
-            $logLevel = max($logLevel, Log::WARNING);
+            $logLevel = max($logLevel, Logger::WARNING);
             break;
         case 'verbose':
-            $logLevel = max($logLevel, Log::INFO);
+            $logLevel = max($logLevel, Logger::INFO);
             break;
         case 'v':
             $value = is_array($value) ? $value : array($value);
             switch(count($value)){
                 case 1:
-                    $logLevel = max($logLevel, Log::INFO);
+                    $logLevel = max($logLevel, Logger::INFO);
                     break;
                 case 2:
-                    $logLevel = max($logLevel, Log::DEBUG);
+                    $logLevel = max($logLevel, Logger::DEBUG);
                     break;
             }
             break;
@@ -68,17 +69,16 @@ foreach ($args as $key => $value) {
 }
 
 if ($logLevel === -1) {
-    $logLevel = Log::NOTICE;
+    $logLevel = Logger::NOTICE;
 }
 
-$logger = Log::factory(
-    'xdmod-build-filter-lists',
-    array(
-        'file'            => false,
-        'mail'            => false,
-        'consoleLogLevel' => $logLevel,
-    )
-);
+$logger = Logging::factory('xdmod-build-filter-lists', array(
+    'console' => array(
+        'level' => $logLevel
+    ),
+    'mysql' => array()
+));
+
 build($realms, $logger);
 
 function build($realms, $logger){

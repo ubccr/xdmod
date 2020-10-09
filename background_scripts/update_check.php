@@ -8,22 +8,24 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
-use CCR\Log;
 use Xdmod\Version;
 
 $conf = array(
     'file' => false,
     'mail' => false,
 );
-$logger = Log::factory('update-check', $conf);
+$logger = \CCR\Logging::factory('update-check', array(
+    'console' => array(),
+    'mysql' => array()
+));
 
 try {
     main();
 } catch (Exception $e) {
-    $logger->err(array(
+    $logger->err(json_encode(array(
         'message'    => $e->getMessage(),
         'stacktrace' => $e->getTraceAsString(),
-    ));
+    )));
     exit(1);
 }
 

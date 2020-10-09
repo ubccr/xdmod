@@ -2,7 +2,6 @@
 
 use CCR\MailWrapper;
 use CCR\DB;
-use CCR\Log;
 use DataWarehouse\Access\Usage;
 
 /**
@@ -1871,12 +1870,12 @@ class XDReportManager
 
         $logPath = "$templatePath/$logFile";
 
-        $logger = Log::factory('report-builder', array(
-            'file'         => $logPath,
-            'fileLogLevel' => Log::INFO,
-            'console'      => false,
-            'db'           => true,
-            'mail'         => false,
+        $logger = \CCR\Logging::factory('report-builder', array(
+            'file' => array(
+                'file_path' => $logPath,
+                'level'=> \Monolog\Logger::INFO
+            ),
+            'mysql' => array()
         ));
 
         $logger->info("Using template $reportTemplate");
@@ -1942,10 +1941,10 @@ class XDReportManager
         // Assume everything will work just fine.
         $success = true;
 
-        $logger->info(array(
+        $logger->info(json_encode(array(
             'message' => 'Build start',
             'ts'      => time(),
-        ));
+        )));
 
         $output    = array();
         $returnVar = 0;
@@ -1967,10 +1966,10 @@ class XDReportManager
             $logger->err("Command returned non-zero value '$returnVar'");
         }
 
-        $logger->info(array(
+        $logger->info(json_encode(array(
             'message' => 'Build end',
             'ts'      => time(),
-        ));
+        )));
 
         chmod($logPath, 0444);
         chdir($currentDir);

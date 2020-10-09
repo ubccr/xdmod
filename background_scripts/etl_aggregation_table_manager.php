@@ -9,12 +9,13 @@
 require __DIR__ . '/../configuration/linker.php';
 restore_exception_handler();
 
+use CCR\Logging;
 use \Exception;
-use CCR\Log;
 use ETL\EtlConfiguration;
 use ETL\EtlConfigurationOptions;
 use ETL\Table\Table;
 use ETL\Table\AggregationTable;
+use Monolog\Logger;
 
 $supportedFormats = array("json", "sql");
 
@@ -40,7 +41,7 @@ $scriptOptions = array(
   'succinct-mode'     => FALSE,
   // Table definition file
   'table-config'      => NULL,
-  'verbosity'         => Log::NOTICE
+  'verbosity'         => Logger::NOTICE
   );
 
 // ==========================================================================================
@@ -109,19 +110,19 @@ foreach ($args as $arg => $value) {
   case 'verbosity':
     switch ( $value ) {
     case 'debug':
-      $scriptOptions['verbosity'] = Log::DEBUG;
+      $scriptOptions['verbosity'] = Logger::DEBUG;
       break;
     case 'info':
-      $scriptOptions['verbosity'] = Log::INFO;
+      $scriptOptions['verbosity'] = Logger::INFO;
       break;
     case 'notice':
-      $scriptOptions['verbosity'] = Log::NOTICE;
+      $scriptOptions['verbosity'] = Logger::NOTICE;
       break;
     case 'warning':
-      $scriptOptions['verbosity'] = Log::WARNING;
+      $scriptOptions['verbosity'] = Logger::WARNING;
       break;
     case 'quiet':
-      $scriptOptions['verbosity'] = Log::EMERG;
+      $scriptOptions['verbosity'] = Logger::EMERGENCY;
       break;
     default:
       break;
@@ -154,7 +155,11 @@ $conf = array(
 
 if ( NULL !== $scriptOptions['verbosity'] ) $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 
-$logger = Log::factory('etl_aggregation_table_manager', $conf);
+$logger = Logging::factory('etl_aggregation_table_manager', array(
+    'console'=> array('level' => $scriptOptions['verbosity']),
+    'mysql' => array('level' => $scriptOptions['verbosity']),
+    'file' => array('level' => $scriptOptions['verbosity'])
+));
 
 if ( NULL === $scriptOptions['config-file'] ||
      NULL === $scriptOptions['operation'] ) {
@@ -276,7 +281,7 @@ function usage_and_exit($msg = null)
     fwrite(STDERR, "\n$msg\n\n");
   }
 
-  $verbosityDefault = Log::NOTICE;
+  $verbosityDefault = Logger::NOTICE;
   $availablelFormats = implode(",", $supportedFormats);
 
   fwrite(

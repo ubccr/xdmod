@@ -3,13 +3,14 @@
 namespace Rest\Controllers;
 
 use CCR\DB;
-use CCR\Log;
+use CCR\Logging;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
 use DateTime;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,21 +34,16 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     private $realmManager;
 
     /**
-     * @var \CCR\Log
+     * @var LoggerInterface
      */
     private $logger;
 
     public function __construct(array $params = [])
     {
         parent::__construct($params);
-        $this->logger = Log::factory(
-            'data-warehouse-export-rest',
-            [
-                'console' => false,
-                'file' => false,
-                'mail' => false
-            ]
-        );
+
+        $this->logger = Logging::factory('data-warehouse-export-rest', array('mysql' => array()));
+
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);
     }
@@ -254,13 +250,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
-        $this->logger->info([
+        $this->logger->info(json_encode([
             'module' => self::LOG_MODULE,
             'message' => 'Sending data warehouse export file',
             'event' => 'DOWNLOAD',
             'id' => $id,
             'Users.id' => $user->getUserId()
-        ]);
+        ]));
 
         if ($request['downloaded_datetime'] === null) {
             $this->queryHandler->updateDownloadedDatetime($request['id']);
@@ -298,13 +294,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException('Export request not found');
         }
 
-        $this->logger->info([
+        $this->logger->info(json_encode([
             'module' => self::LOG_MODULE,
             'message' => 'Deleted data warehouse export request',
             'event' => 'DELETE_BY_USER',
             'id' => $id,
             'Users.id' => $user->getUserId()
-        ]);
+        ]));
 
         return $app->json([
             'success' => true,
@@ -362,13 +358,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
-                $this->logger->info([
+                $this->logger->info(json_encode([
                     'module' => self::LOG_MODULE,
                     'message' => 'Deleted data warehouse export request',
                     'event' => 'DELETE_BY_USER',
                     'id' => $id,
                     'Users.id' => $user->getUserId()
-                ]);
+                ]));
             }
 
             $dbh->commit();

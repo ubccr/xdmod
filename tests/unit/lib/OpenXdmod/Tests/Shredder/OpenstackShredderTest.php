@@ -6,6 +6,7 @@
 namespace OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
+use CCR\Logging;
 use OpenXdmod\Shredder;
 
 /**
@@ -42,7 +43,7 @@ class OpenstackShredderTest extends \PHPUnit_Framework_TestCase
             ->method('getResourceConfig')
             ->willReturn(array());
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger(Logging::singleton('null'));
 
         $shredder->setResource('testresource');
 
