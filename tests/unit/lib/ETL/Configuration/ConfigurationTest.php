@@ -9,7 +9,6 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-use CCR\Log;
 use CCR\Logging;
 use Configuration\Configuration;
 

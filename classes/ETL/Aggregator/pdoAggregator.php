@@ -106,7 +106,7 @@ class pdoAggregator extends aAggregator
      *
      * @param IngestorOptions $options Options specific to this Ingestor
      * @param EtlConfiguration $etlConfig Parsed configuration options for this ETL
-     * @param Log $logger Monolog Logger object for system logging
+     * @param LoggerInterface $logger Monolog Logger object for system logging
      * ------------------------------------------------------------------------------------------
      */
 

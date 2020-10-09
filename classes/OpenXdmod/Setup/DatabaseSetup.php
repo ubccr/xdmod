@@ -10,7 +10,6 @@ use Monolog\Logger;
 use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
 use CCR\DB;
-use CCR\Log;
 use ETL\Utilities;
 
 /**

@@ -34,7 +34,6 @@
 
 namespace UnitTesting\ETL\DataEndpoint;
 
-use CCR\Log;
 use CCR\Logging;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;

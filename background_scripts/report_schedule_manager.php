@@ -30,8 +30,6 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
-use CCR\Log;
-
 // Maintenance mode for testing.
 $maint_mode = false;
 

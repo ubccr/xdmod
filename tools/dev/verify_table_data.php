@@ -18,7 +18,6 @@ define("DEFAULT_COALESCE_VALUE", 0);
 // PE / 100 = ABS((Expected - Observed) / Expected)
 define("DEFAULT_ERROR_PERECENT", 0.01);
 
-use CCR\Log;
 use CCR\DB;
 use Monolog\Logger;
 

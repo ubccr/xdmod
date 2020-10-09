@@ -6,7 +6,6 @@
 
 namespace ComponentTests\ETL;
 
-use CCR\Log;
 use CCR\Logging;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;

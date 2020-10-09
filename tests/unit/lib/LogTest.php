@@ -1,6 +1,6 @@
 <?php
 /** -----------------------------------------------------------------------------------------
- * Tests for ubccr/Log class forked from pear/Log.
+ * Tests for Monolog Logger class usage.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2018-02-05
@@ -9,7 +9,6 @@
 
 namespace UnitTesting;
 
-use CCR\Log;
 use CCR\Logging;
 use Monolog\Logger;
 

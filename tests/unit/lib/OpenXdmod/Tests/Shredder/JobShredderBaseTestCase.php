@@ -8,7 +8,6 @@ namespace OpenXdmod\Tests\Shredder;
 use CCR\DB\NullDB;
 use CCR\Logging;
 use Exception;
-use Log;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use TestHarness\TestFiles;

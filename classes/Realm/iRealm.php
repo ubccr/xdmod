@@ -28,7 +28,7 @@ interface iRealm
      *
      * @param string $shortName The short internal identifier for the realm that will be
      *   instantiated.
-     * @param Log|null $logger A Monolog Logger that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      * @param stdclass|null $options An object containing additional configuration options.
      *   Currently supported options are:
      *     - config_file_name: The name of the configuration file to use, useful for testing.

@@ -5,7 +5,6 @@ namespace UnitTesting\DataWarehouse\Export;
 use CCR\Logging;
 use DataWarehouse\Export\FileWriter\NullFileWriter;
 use PHPUnit_Framework_TestCase;
-use Log;
 use Psr\Log\LoggerInterface;
 use TestHarness\TestFiles;
 
