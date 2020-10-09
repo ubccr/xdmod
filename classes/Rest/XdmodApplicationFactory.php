@@ -102,7 +102,7 @@ class XdmodApplicationFactory
               'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])
             );
 
-            $logger->info($retval);
+            $logger->info(json_encode($retval));
 
         }, Application::EARLY_EVENT);
 

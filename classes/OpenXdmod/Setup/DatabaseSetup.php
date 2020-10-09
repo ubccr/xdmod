@@ -28,7 +28,6 @@ class DatabaseSetup extends DatabaseSetupItem
                 'console' => array(
                     'level' => Logger::WARNING
                 ),
-                'mysql' => array(),
                 'file' => array(),
                 'email' => array()
             )

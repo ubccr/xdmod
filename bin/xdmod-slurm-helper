@@ -141,10 +141,10 @@ function main()
         $db = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(array(
+        $logger->crit(json_encode(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
-        ));
+        )));
         exit(1);
     }
 

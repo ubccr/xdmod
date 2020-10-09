@@ -11,7 +11,6 @@ namespace ComponentTests\ETL\DbModel;
 
 // Create a base ETL test class that allows us to run ETL actions and can be reused.
 
-use CCR\Log;
 use ETL\DbModel\Table;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;

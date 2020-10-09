@@ -83,7 +83,7 @@ class SummaryStatisticsControllerProvider extends BaseControllerProvider
             // We should have a rest exception that automatically includes ip and route information and
             // logs to the database.
 
-            $logger->info($this->formatLogMesssage($msg, $request));
+            $logger->info(json_encode($this->formatLogMesssage($msg, $request)));
             throw new \Exception($msg);
         }
 
@@ -99,7 +99,7 @@ class SummaryStatisticsControllerProvider extends BaseControllerProvider
 
             default:
                 $msg = "Unknown type requested: '" . $params->get("type") . "'";
-                $logger->info($this->formatLogMesssage($msg, $request));
+                $logger->info(json_encode($this->formatLogMesssage($msg, $request)));
                 throw new \Exception($msg);
             break;
 
@@ -160,7 +160,7 @@ class SummaryStatisticsControllerProvider extends BaseControllerProvider
                 case 'num_intervals':
                     if ( ! is_numeric($v) ) {
                         $msg = "Invalid number of intervals: '$v'";
-                        $logger->info($this->formatLogMesssage($msg, $request, true));
+                        $logger->info(json_encode($this->formatLogMesssage($msg, $request, true)));
                         throw new \Exception($msg);
                     }
                     // We only support positive numbers
@@ -171,7 +171,7 @@ class SummaryStatisticsControllerProvider extends BaseControllerProvider
                     $v = strtolower($v);
                     if ( ! in_array($v, self::$validIntervals) ) {
                         $msg = "Unsupported interval value: '$v'";
-                        $logger->err($this->formatLogMesssage($msg, $request, true));
+                        $logger->err(json_encode($this->formatLogMesssage($msg, $request, true)));
                         throw new \Exception($msg);
                     }
                     $options[$k] = $v;
@@ -181,7 +181,7 @@ class SummaryStatisticsControllerProvider extends BaseControllerProvider
                     $v = strtolower($v);
                     if ( ! in_array($v, self::$validGroupBys) ) {
                         $msg = "Unsupported group by value: '$v'";
-                        $logger->info($this->formatLogMesssage($msg, $request, true));
+                        $logger->info(json_encode($this->formatLogMesssage($msg, $request, true)));
                         throw new \Exception($msg);
                     }
                     $sqlParams[':' . $k] = $options[$k] = $v;
