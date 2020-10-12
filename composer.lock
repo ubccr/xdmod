@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "32c27ecffcf03f4736ef73b148c48aff",
+    "content-hash": "638bfce4d59599ae7af7c8951d234149",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -1006,61 +1006,6 @@
                 "random"
             ],
             "time": "2019-01-03T20:59:08+00:00"
-        },
-        {
-            "name": "pear/pear_exception",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pear/PEAR_Exception.git",
-                "reference": "8c18719fdae000b690e3912be401c76e406dd13b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pear/PEAR_Exception/zipball/8c18719fdae000b690e3912be401c76e406dd13b",
-                "reference": "8c18719fdae000b690e3912be401c76e406dd13b",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=4.4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "type": "class",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "PEAR": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "."
-            ],
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Helgi Thormar",
-                    "email": "dufuz@php.net"
-                },
-                {
-                    "name": "Greg Beaver",
-                    "email": "cellog@php.net"
-                }
-            ],
-            "description": "The PEAR Exception base class.",
-            "homepage": "https://github.com/pear/PEAR_Exception",
-            "keywords": [
-                "exception"
-            ],
-            "time": "2015-02-10T20:07:52+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -2441,65 +2386,6 @@
             "time": "2019-06-18T15:35:16+00:00"
         },
         {
-            "name": "ubccr/log",
-            "version": "1.13.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ubccr/Log.git",
-                "reference": "a5914dd5a4553f4edb810d0123a2d8d9b3d2297e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/Log/zipball/a5914dd5a4553f4edb810d0123a2d8d9b3d2297e",
-                "reference": "a5914dd5a4553f4edb810d0123a2d8d9b3d2297e",
-                "shasum": ""
-            },
-            "require": {
-                "pear/pear_exception": "1.0.0",
-                "php": ">5.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "suggest": {
-                "pear/db": "Install optionally via your project's composer.json"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "Log.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                ""
-            ],
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jon Parise",
-                    "email": "jon@php.net",
-                    "homepage": "http://www.indelible.org",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Steve Gallo",
-                    "email": "smgallo@buffalo.edu",
-                    "homepage": "http://open.xdmod.org/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PEAR Logging Framework",
-            "homepage": "http://pear.github.io/Log/",
-            "keywords": [
-                "log",
-                "logging"
-            ],
-            "time": "2018-02-05T19:40:59+00:00"
-        },
-        {
             "name": "ubccr/simplesamlphp-module-authglobus",
             "version": "1.3.0",
             "source": {
@@ -3642,7 +3528,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo": "*",
+        "ext-json": "*"
+    },
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.4"
