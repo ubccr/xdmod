@@ -2,6 +2,7 @@
 
 namespace CCR;
 
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\MongoDBHandler;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
@@ -13,6 +14,7 @@ use \Psr\Log\InvalidArgumentException;
 
 class Logging
 {
+    const LINE_FORMAT = "%datetime% %channel% [%level_name%] %message%\n";
 
     /**
      * Holds the
@@ -43,7 +45,10 @@ class Logging
                         ? $typeConfig['level']
                         : self::getLevel(\xd_utilities\getConfiguration('logger', 'default_level_console'), Logger::NOTICE);
 
-                    $logger->pushHandler(new StreamHandler('php://stdout', $level, $bubble));
+                    $handler = new StreamHandler('php://stdout', $level, $bubble);
+                    $handler->setFormatter(new LineFormatter(self::LINE_FORMAT));
+
+                    $logger->pushHandler($handler);
                     break;
                 case 'file':
                     $level = array_key_exists('level', $typeConfig)
@@ -54,7 +59,10 @@ class Logging
                     $filePermission = array_key_exists('file_permission', $typeConfig) ? $typeConfig['file_permission'] : null;
                     $useLocking = array_key_exists('use_locking', $typeConfig) ? $typeConfig['use_locking'] :  false;
 
-                    $logger->pushHandler(new StreamHandler($filePath, $level, $bubble, $filePermission, $useLocking));
+                    $handler = new StreamHandler($filePath, $level, $bubble, $filePermission, $useLocking);
+                    $handler->setFormatter(new LineFormatter(self::LINE_FORMAT));
+
+                    $logger->pushHandler($handler);
                     break;
                 case 'email':
                     $level = array_key_exists('level', $typeConfig)
