@@ -49,7 +49,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/WARNING:/', $line);
+                $this->assertRegExp('/[WARNING]/', $line);
                 $numWarnings++;
             }
         }
