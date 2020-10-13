@@ -283,20 +283,59 @@ class BatchProcessTest extends BaseTest
             count($submittedRequestsAfter),
             'One less submitted request'
         );
-        $this->assertEquals(
-            self::$submittedRequestId,
-            array_diff($submittedRequestsBefore, $submittedRequestsAfter)[0]['id'],
-            'Submitted request ID no longer listed'
+
+        $submittedRequestsIdsBefore = array_map(
+            function ($request) {
+                return $request['id'];
+            },
+            $submittedRequestsBefore
         );
+        $this->assertContains(
+            self::$submittedRequestId,
+            $submittedRequestsIdsBefore,
+            'Submitted request ID listed before processing'
+        );
+
+        $submittedRequestsIdsAfter = array_map(
+            function ($request) {
+                return $request['id'];
+            },
+            $submittedRequestsAfter
+        );
+        $this->assertNotContains(
+            self::$submittedRequestId,
+            $submittedRequestsIdsAfter,
+            'Submitted request ID not listed after processing'
+        );
+
         $this->assertEquals(
             count($expiringRequestsBefore) - 1,
             count($expiringRequestsAfter),
             'One less expiring request'
         );
-        $this->assertEquals(
+
+        $expiringRequestsIdsBefore = array_map(
+            function ($request) {
+                return $request['id'];
+            },
+            $expiringRequestsBefore
+        );
+        $this->assertContains(
             self::$expiringRequestId,
-            array_diff($expiringRequestsBefore, $expiringRequestsAfter)[0]['id'],
-            'Expiring request ID no longer listed'
+            $expiringRequestsIdsBefore,
+            'Expiring request ID listed before processing'
+        );
+
+        $expiringRequestsIdsAfter = array_map(
+            function ($request) {
+                return $request['id'];
+            },
+            $expiringRequestsAfter
+        );
+        $this->assertNotContains(
+            self::$expiringRequestId,
+            $expiringRequestsIdsAfter,
+            'Expiring request ID not listed after processing'
         );
     }
 }
