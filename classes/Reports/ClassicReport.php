@@ -90,7 +90,7 @@ class ClassicReport
         );
 
         $this->phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $this->phpWord->setDefaultFontName($this->settings['font']);
+        $this->phpWord->setDefaultFontName('Arial');
     }
 
     private function createSection($sectionStyle) {

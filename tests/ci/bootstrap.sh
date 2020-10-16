@@ -9,6 +9,10 @@ REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
 REPODIR=`realpath $BASEDIR/../../`
 REF_DIR=/var/tmp/referencedata
 
+function copy_template_httpd_conf {
+    cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf
+}
+
 if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=jobs,storage,cloud
 fi
@@ -23,11 +27,9 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
 
-    # Remove php-mcrypt until new Docker image is built without it.
-    yum -y remove php-mcrypt || true
-
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    copy_template_httpd_conf
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
@@ -74,11 +76,16 @@ then
 
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
     then
+        last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
+        sudo -u xdmod xdmod-ingestor
+
+        sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_error_sessions -f openstack
+        sudo -u xdmod xdmod-ingestor  --last-modified-start-date "$last_modified_start_date"
     fi
-    sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
-    sudo -u xdmod xdmod-ingestor
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
@@ -100,6 +107,9 @@ if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
 
+    copy_template_httpd_conf
+    sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
+
     # Remove php-mcrypt until new Docker image is built without it.
     yum -y remove php-mcrypt || true
 
@@ -119,24 +129,5 @@ then
         fi
     fi
 
-    if [[ $XDMOD_REALMS == *"jobs"* ]];
-    then
-        expect $BASEDIR/scripts/xdmod-upgrade-jobs.tcl | col -b
-    else
-        expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
-    fi
-
-    #
-    if [[ "$XDMOD_REALMS" = *"cloud"* ]]; then
-        expect $BASEDIR/scripts/xdmod-upgrade-cloud.tcl | col -b
-        last_modified_start_date=$(date +'%F %T')
-
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
-        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
-        sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
-        sudo -u xdmod xdmod-ingestor
-
-        sudo -u xdmod xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
-        sudo -u xdmod xdmod-ingestor --last-modified-start-date "$last_modified_start_date"
-    fi
+    expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 fi

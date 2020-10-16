@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bdaf57505bc903c38affdd2d9f25570e",
+    "content-hash": "cd159b11be6ece8f357301f4cde41149",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -270,6 +270,16 @@
                 "yawik",
                 "zend",
                 "zikula"
+            ],
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-04-07T06:57:05+00:00"
         },
@@ -1602,12 +1612,12 @@
             ],
             "authors": [
                 {
-                    "name": "Olav Morken",
-                    "email": "olav.morken@uninett.no"
-                },
-                {
                     "name": "Andreas Åkre Solberg",
                     "email": "andreas.solberg@uninett.no"
+                },
+                {
+                    "name": "Olav Morken",
+                    "email": "olav.morken@uninett.no"
                 },
                 {
                     "name": "Jaime Perez",
@@ -2463,6 +2473,7 @@
                 "i18n",
                 "text"
             ],
+            "abandoned": true,
             "time": "2018-12-05T18:34:18+00:00"
         },
         {
@@ -2625,6 +2636,52 @@
             ],
             "description": "Globus Auth module for SimpleSAMLphp.",
             "time": "2018-09-10T15:22:34+00:00"
+        },
+        {
+            "name": "ubccr/simplesamlphp-module-authoidcoauth2",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ubccr/simplesamlphp-module-authoidcoauth2.git",
+                "reference": "bad54f7b08bbadfee2444c8a469289a8f0ca51ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authoidcoauth2/zipball/bad54f7b08bbadfee2444c8a469289a8f0ca51ad",
+                "reference": "bad54f7b08bbadfee2444c8a469289a8f0ca51ad",
+                "shasum": ""
+            },
+            "require": {
+                "simplesamlphp/composer-module-installer": "~1.0"
+            },
+            "require-dev": {
+                "simplesamlphp/simplesamlphp": "^1.14",
+                "squizlabs/php_codesniffer": "2.8.0"
+            },
+            "type": "simplesamlphp-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Open XDMoD",
+                    "email": "ccr-xdmod-help@buffalo.edu",
+                    "role": "Open XDMoD Project Team, University at Buffalo"
+                },
+                {
+                    "name": "Ben Plessinger",
+                    "email": "bpless@buffalo.edu",
+                    "role": "Senior Scientific Programmer, University at Buffalo"
+                },
+                {
+                    "name": "Ryan Rathsam",
+                    "email": "ryanrath@buffalo.edu",
+                    "role": "Scientific Programmer, University at Buffalo"
+                }
+            ],
+            "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
+            "time": "2020-09-11T18:18:04+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
@@ -3172,6 +3229,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2017-12-04T08:55:13+00:00"
         },
         {
@@ -3735,5 +3793,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.4"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }

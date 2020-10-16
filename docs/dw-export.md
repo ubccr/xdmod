@@ -1,5 +1,5 @@
 ---
-title: Data Warehouse Export (Beta)
+title: Data Warehouse Export
 ---
 
 The Data Warehouse Export feature of Open XDMoD is designed to give users
@@ -66,7 +66,7 @@ expected to change in the future.
 This is an example of the general structure of this file and the location of
 the `batchExport` option:
 
-```
+```json
 {
     ...
     "Jobs": {

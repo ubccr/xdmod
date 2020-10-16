@@ -1,154 +1,143 @@
 ---
-title: User Dashboard (Beta)
+title: User Dashboard
 ---
 
-Known Issues
-------------
+The User Dashboard is a configurable tab that is displayed
+for logged Open XDMoD users. The dashboard tab displays multiple
+configurable dashboard components. The components that are shown
+are tailored to the role settings for a user. For example,
+a Center Director's dashboard shows data about the overall system
+over the long term, whereas an end-users' dashboard shows information
+about the jobs that they ran recently.
 
-* Edit In Metric Explorer for Dashboard Charts
+The dashboard tab is enabled globally. When the tab is enabled
+all logged in users have the dashboard as the first tab. If the
+dashboard is disabled then the summary tab is the first tab. The public
+(non-logged in) view always shows the summary tab.
 
-The "Edit In Metric Explorer" button on a dashboard chart will not load the
-dashboard chart if there already exists a chart with an identical name saved in
-the metric explorer.  The workaround for this is to change the name of
- the existing saved chart in the metric explorer so that it does not
-match the dashboard chart name.
+Configuration
+-------------
 
-Developer Guide
----------------
-
-New components can be added to the dashboard as follows:
-
-1. Create a javascript class that inherits from `Ext.ui.Portlet`. Conventionally this should be placed in `html/gui/js/modules/dashboard`
-1. Edit the `etc/assets.json` file to include the new javascript artifact (and any other artifacts such as css files).
-1. Edit the `etc/roles.d/summary.json` file to add the portlet information for the roles that should see it.
-
-
-An example component javascript class is shown below.
-
-```javascript
-
-/**
- * XDMoD.Module.Dashboard.DeveloperComponent
- *
- * This is an example panel that can be used as a template.
- */
-
-Ext.namespace('XDMoD.Module.Dashboard');
-
-XDMoD.Module.Dashboard.DeveloperComponent = Ext.extend(Ext.ux.Portlet, {
-
-    layout: 'fit',
-    autoScroll: true,
-    title: 'XDMoD software developer info',
-    bbar: {
-        items: [{
-            text: 'Reset Layout',
-            handler: function () {
-                Ext.Ajax.request({
-                    url: XDMoD.REST.url + '/summary/layout',
-                    method: 'DELETE'
-                });
-            }
-        }]
-    },
-
-    /**
-     *
-     */
-    initComponent: function () {
-        var aspectRatio = 0.8;
-        this.height = this.width * aspectRatio;
-
-        this.items = [{
-            itemId: 'console',
-            html: '<pre>' + JSON.stringify(this.config, null, 4) + '</pre>'
-        }];
-
-        XDMoD.Module.Dashboard.DeveloperComponent.superclass.initComponent.apply(this, arguments);
-    },
-
-    listeners: {
-        /**
-         * duration_change event gets fired when the duration settings
-         * in the top toolbar are changed by the user or when the refresh
-         * button is clicked.
-         *
-         * A typical portlet will reload its content with the updated
-         * duration parameters.
-         */
-        duration_change: function (timeframe) {
-            var console = this.getComponent('console');
-            console.body.insertHtml('beforeBegin', '<pre>' + JSON.stringify(timeframe, null, 4) + '</pre>');
-        },
-
-        /**
-         * the portlet should refresh itself if the refresh event fires
-         */
-        refresh: function () {
-            var console = this.getComponent('console');
-            console.body.insertHtml('beforeBegin', '<pre>refresh event fired</pre>');
-        }
-    }
-});
-
-/**
- * The Ext.reg call is used to register an xtype for this class so it
- * can be dynamically instantiated
- */
-Ext.reg('xdmod-dash-developer-cmp', XDMoD.Modules.Dashboard.DeveloperComponent);
+The global setting to enable the dashboard is in `portal_settings.ini`. The
+'General Settings' menu in the `xdmod-setup` script includes the option
+to enable the dashboard. Alternatively the dashboard can be enable by manually
+editing the `portal_setting.ini` file:
+```ini
+[features]
+; Enable the user dashboard interface. This replaces the existing
+; summary page with a tab that displays information specific
+; to each user's role
+user_dashboard = "on"
 ```
+The `user_dashboard` setting should be set to `on` to enable the dashboard
+and `off` to disable the dashboard.
 
-In this example the javascript class would be put in the file `html/gui/js/modules/dashboard/DeveloperComponent.js`
-The `etc/assets.json` would then be updated to add the path to the javascript file
-to the `xdmod.portal.js` array.
+The dashboard components are configured in the `/etc/roles.d/dashboard.json` file.
+This defines list of components under the `dashboard_components` property for each of the possible user roles. For each
+component it is possible to specify the default location within the dashboard tab and also
+the component's configuration. The same component may be specified for multiple user roles with
+different configuration settings.
 
+Many components also have user configurable overrides. This section details the configuration
+settings for an Open XDMoD system administrator. See the User Manual for details about user
+configurable settings.
+
+### Common Configuration
+
+An example configuration is shown below. This defines the saved charts component
+to be displayed by default in the second row on the left hand side (row and
+columns are indexed starting at zero).
 ```json
 {
-    "xdmod": {
-        "portal": {
-            "js": [
-                "gui/js/modules/dashboard/DeveloperComponent.js"
-                ...
-            ]
-        }
+    "name": "Job Component",
+    "type": "xdmod-dash-job-cmp",
+    "config": {
+        "multiuser": true,
+        "timeframe": "30 day"
+    },
+    "location": {
+        "column": 0,
+        "row": 0
     }
-}
+},
 ```
 
-Similarly the `roles.d/summary.json` file would be edited to add the portlet to the roles that
-will see it. In the example below the portlet is added to the summary page for
-the center director role (`cd`). The `type` setting should match the xtype string
-in the `Ext.reg` call in the javascript.  The `name` setting must be set to a
-unique value. It is recommended to set this to a human understandable
-description of the portlet. The `config` setting  may contain any valid json
-and is available to the portlet as the `this.config` property.
+The common configuration settings are described below:
 
-```json
-{
-    "roles": {
-        "cd": {
-            "summary_portlets": [{
-                "name": "Example Developer Component",
-                "type": "xdmod-dash-developer-cmp",
-                "location": {
-                    "row": 2,
-                    "column": 1
-                },
-                "config": {
-                    "property1": "any valid json",
-                    "property2": 3
-                }
-            }]
-        }
-    }
-}
-```
+| Parameter         | Description   |
+| ----------------- | ------------- |
+| `name`            | The string that will be displayed in the title bar of the component in the dashboard tab. |
+| `type`            | The internal unique identifier for the component. |
+| `location.column` | The default column to position the component in the dashboard. The column index starts at zero for the leftmost column. |
+| `location.row`    | The default row to position the component in the dashboard. The row index starts at zero from the top of the tab downwards. |
+| `region`          | Some dashboard components (such as the Center Summary Component) are designed to be displayed full width at the top of the tab. These should have <code>region</code> set to <code>top</code>. The location setting is ignored and may be omitted in this case. |
+| `config`          | The configuration to pass to the component. The specific configuration options for each component are documented below. If a component does not have any configuration settings or the defaults are to be used then the config property may be ommitted. |
 
-The default position of the portlet is specified in the `location` property.
-The `location` setting has two mandatory properties the zero indexed row (`row`)
-and zero indexed column (`column`). The row value should be less than 1024.
-The summary page does not support gaps between the portlets so the row number
-specifies the relative order of the portlets not their absolute position.
-If multiple portlets specify the same location then they will be placed
+The dashboard tab does not support gaps between the components so the row number
+specifies the relative order of the components not their absolute position.
+If multiple components specify the same location then they will be placed
 in the specified column and their relative row position will be in alphabetical
-order by the `name` property. All portlets must have unique names.
+order by the `name` property. All components specified for a given role must
+have a unique name.
+
+## Chart Component
+
+The Chart Component (`type` = `xdmod-dash-chart-cmp`) is used to display charts from the Metric Explorer.
+The configuration porperties are shown below:
+
+| Parameter     | Description   |
+| ------------- | ------------- |
+| `chart`       | A chart configuration object from the Metric Explorer. |
+
+
+The chart configuration objects can be generated using the Metric Explorer:
+* Login to Open XDMoD with a user account that has the "Developer" role.
+* Create a chart in the Metric Explorer.
+* Open the "Chart Options" context menu by left clicking in the chart.
+* Select the "View chart json" menu item.
+
+Clicking the "View chart json" menu item opens a window that contains the
+chart configuration json object for the current chart. This can be copied
+directly into the chart component configuration.
+
+The component also supports some macros in the chart configuration.
+
+| Macro Name   | Description |
+| ------------ | ----------- |
+| `${PERSON_ID}` | The internal Open XDMoD identifier used by the "User" chart filter for the current logged in user. |
+| `${PERSON_NAME}` | The text string for the "User" chart filter for the current logged in user. |
+
+These macros can be used to add chart filters that are tailored to the
+logged in user. For example, the `${PERSON_ID}` macro can be used to add a
+chart filter to only show the jobs for that user.
+
+
+## Saved Charts and Reports Component
+
+The Saved Charts and Reports Component (`type` = `xdmod-dash-savedchart-cmp`) displays a list that contains
+the saved charts from the Metric Explorer and saved reports from the
+Report Generator. This component does not have any additional
+configuration beyond the common configuration settings.
+
+## Chart Thumbnails Component
+
+The Chart Thumbnails Component (`type` = `xdmod-dash-reportthumb-cmp`) shows a
+ set of chart thumbnails. Clicking a thumbnail image brings up a window with
+ the interactive version of the chart. The charts displayed in the component
+are based on a report that is generated from the corresponding report template
+the first time a user logs in.
+
+| Parameter     | Description   |
+| ------------- | ------------- |
+| `timeframe`   | The default timeframe for the chart thumbnails |
+
+
+## Jobs Component
+
+The Jobs Component (`type` = `xdmod-dash-job-cmp`) displays a list of recent jobs.
+The specific jobs available depend on the role of the user.
+
+| Parameter     | Description   |
+| ------------- | ------------- |
+| `timeframe`   | The timeframe of jobs to display |
+| `multiuser`   | Whether to display a drop down box that allows filtering by the person who ran the job. This also enables a column in the jobs table with the name of the job's owner. This value is typically set to true for roles that have access to job information about multiple users, such as PI or Center Staff. It is typically set to false for the user role since that role can only see information about a single person. |

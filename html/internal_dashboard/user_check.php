@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../configuration/linker.php';
 
-@session_start();
+\xd_security\start_session();
 
 if (isset($_POST['xdmod_username']) && isset($_POST['xdmod_password'])) {
     $user = XDUser::authenticate(
@@ -56,10 +56,6 @@ if ($user->isManager() == false) {
  */
 function denyWithMessage($message)
 {
-    $referer
-        = isset($_POST['direct_to'])
-        ? $_POST['direct_to']
-        : $_SERVER['SCRIPT_NAME'];
     $reject_response = $message;
 
     include 'splash.php';

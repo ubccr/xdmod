@@ -29,6 +29,7 @@
         "tildeio/rsvpjs-min-file": "^3.0.18",
         "ubccr/log": "1.13.2",
         "ubccr/simplesamlphp-module-authglobus": "^1.3",
+        "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
         "phpoffice/phpword": "^0.17.0"
     },
     "require-dev": {
@@ -210,6 +211,27 @@
         {
             "type": "package",
             "package": {
+                "name": "jaspersoft/jasperreports-library-jar",
+                "type": "vanilla-plugin",
+                "version": "3.7.6",
+                "license": "LGPL-3.0",
+                "homepage": "http://community.jaspersoft.com/project/jasperreports-library",
+                "dist": {
+                    "url": "https://downloads.sourceforge.net/project/jasperreports/archive/jasperreports/JasperReports%203.7.6/jasperreports-3.7.6.jar",
+                    "type": "file",
+                    "shasum": "6d32314023c5e33a649b6f40fab51eb0922a6da9"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "jasperreports"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "apache/xalan-j-2jars",
                 "type": "vanilla-plugin",
                 "version": "2.7.1",
@@ -370,6 +392,16 @@
             ],
             "external_libraries/{$name}": [
                 "zendframework/zendframework-minimal"
+            ],
+            "reporting/jasper_builder/lib/{$name}": [
+                "jaspersoft/jasperreports-library-jar",
+                "apache/xalan-j-2jars",
+                "apache/poi",
+                "itextpdf/itextpdf",
+                "apache/commons-beanutils",
+                "apache/commons-collections",
+                "apache/commons-digester",
+                "apache/commons-logging"
             ]
         }
     },

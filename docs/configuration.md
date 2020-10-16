@@ -24,6 +24,7 @@ The general settings include:
 - Javac path
 - PhantomJS path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
+- Whether to enable the Dashboard tab (see the [Dashboard Guide](dashboard.html) for details)
 
 These settings are stored in `portal_settings.ini`.
 
@@ -41,20 +42,15 @@ These settings are stored in `portal_settings.ini`.
 You will be required to supply a username and password for a user that
 has privileges to create databases and users.
 
-**NOTE**: If your database is on a different server than the server where Open
-XDMoD is installed you must create the databases manually.  Likewise, if you
-don't want to use this process and would prefer to manually create the
-databases, see the [Database Guide](databases.html).
+#### ACL Database Setup / Population
 
-#### Acl Database Setup / Population
-
-This step will run immediately after you have setup the database that XDMoD will
+This step will run immediately after you have set up the database that Open XDMoD will
 be using and does not require any additional input. It is responsible for creating
-and populating the tables required by the Acl framework.
+and populating the tables required by the ACL framework.
 
-If your XDMoD Installation requires modifications to the acl tables
-(etc/etl/etl_tables.d/acls/xdmod/<table>.json) then running this step again or
-the `acl-config` bin script is required.
+If your Open XDMoD Installation requires modifications to the ACL tables
+(`/etc/xdmod/etl/etl_tables.d/acls/<table>.json`) then running this step
+again or the `acl-config` bin script is required.
 
 ### Organization Settings
 
@@ -120,56 +116,115 @@ See the [Hierarchy Guide](hierarchy.html) for more details.
 Apache Configuration
 --------------------
 
-Uses port 8080 by default, if changed, must also be changed in
-`portal_settings.ini`.
+A template Apache configuration file is provided. The path is `/usr/share/xdmod/templates/apache.conf`
+in the RPM install and `share/templates/apache.conf` in the source code install.
+This template file must be copied to the Apache configuration directory and
+edited to update site specific configuration settings.
 
-    Listen 8080
-    <VirtualHost *:8080>
-        DocumentRoot /usr/share/xdmod/html
-        <Directory /usr/share/xdmod/html>
-            Options FollowSymLinks
-            AllowOverride All
-            DirectoryIndex index.php
-            # Apache 2.4 access controls.
-            <IfModule mod_authz_core.c>
-                Require all granted
-            </IfModule>
-        </Directory>
-        <Directory /usr/share/xdmod/html/rest>
-            RewriteEngine On
-            RewriteRule (.*) index.php [L]
-        </Directory>
-    </VirtualHost>
+For CentOS 7 and RHEL 7 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`
+For other Linux distributions consult the distribution documentation
+to determine the path to the webserver configuration files.
 
-We recommend that you use HTTPS in production.  This will require
-additional configuration.
+This template file must be modified to update site specific settings:
 
-    Listen 443
-    <VirtualHost *:443>
+Valid SSL certificates will need to be installed and configured.  The template
+configuration file must be edited to specify the path to the SSL certificate
+file and SSL certificate key file. Refer to the [Apache SSL documentation](https://httpd.apache.org/docs/2.4/ssl/)
+for SSL configuration information.
 
-        # Customize this section using your SSL certificate.
-        SSLEngine on
-        SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
-        SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
-        <FilesMatch "\.(cgi|shtml|phtml|php)$">
-            SSLOptions +StdEnvVars
-        </FilesMatch>
+The `ServerName` setting should be updated to match the server name in the SSL
+certificate.
 
-        DocumentRoot /usr/share/xdmod/html
-        <Directory /usr/share/xdmod/html>
-            Options FollowSymLinks
-            AllowOverride All
-            DirectoryIndex index.php
-            # Apache 2.4 access controls.
-            <IfModule mod_authz_core.c>
-                Require all granted
-            </IfModule>
-        </Directory>
-        <Directory /usr/share/xdmod/html/rest>
-            RewriteEngine On
-            RewriteRule (.*) index.php [L]
-        </Directory>
-    </VirtualHost>
+The name and port of the server must match with the `site_address` and `user_manual`
+configuration settings in `portal_settings.ini`.
+
+The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header
+to indicate to  web browsers that the Open XDMoD instance should only be accessed using HTTPS.
+
+```apache
+<VirtualHost *:443>
+    # The ServerName and ServerAdmin parameters should be updated.
+    ServerName localhost
+    ServerAdmin postmaster@localhost
+
+    # Production Open XDMoD instances should use HTTPS
+    SSLEngine on
+
+    # Update the SSLCertificateFile and SSLCertificateKeyFile parameters
+    # to the correct paths to your SSL certificate.
+    SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+
+    # Use HTTP Strict Transport Security to force client to use secure connections only
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    DocumentRoot /usr/share/xdmod/html
+
+    <Directory /usr/share/xdmod/html>
+        Options FollowSymLinks
+        AllowOverride All
+        DirectoryIndex index.php
+
+        <IfModule mod_authz_core.c>
+            Require all granted
+        </IfModule>
+    </Directory>
+
+    <Directory /usr/share/xdmod/html/rest>
+        RewriteEngine On
+        RewriteRule (.*) index.php [L]
+    </Directory>
+
+    ## SimpleSAML Single Sign On authentication.
+    #SetEnv SIMPLESAMLPHP_CONFIG_DIR /etc/xdmod/simplesamlphp/config
+    #Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www
+    #<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>
+    #    Options FollowSymLinks
+    #    AllowOverride All
+    #    <IfModule mod_authz_core.c>
+    #        Require all granted
+    #    </IfModule>
+    #</Directory>
+
+    # Update the path to rotatelogs if it is different on your system.
+    ErrorLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-error.log 1M"
+    CustomLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-access.log 1M" combined
+</VirtualHost>
+```
+
+MySQL Configuration
+-------------------
+
+Open XDMoD does not support any of the strict [Server SQL Modes][sql-mode].
+You must set `sql_mode = ''` in your MySQL server configuration.
+
+Open XDMoD uses the `GROUP_CONCAT()` SQL function. The `group_concat_max_len`
+server system variable must be changed to 16MB from its default value of 1024
+bytes.
+
+The `max_allowed_packet` setting must be set to at least 16MB.
+
+Some versions of MySQL have binary logging enabled by default.  This can be an
+issue during the setup process if the user specified to create the databases
+does not have the `SUPER` privilege.  If binary logging is not required you
+should disable it in your MySQL configuration.  If that is not an option you
+can use the less safe [log_bin_trust_function_creators][] variable.  You may
+also grant the `SUPER` privilege to the user that is used to create the Open
+XDMoD database.
+
+The recommended settings in the MySQL server configuration file are as follows:
+
+```ini
+[mysqld]
+sql_mode = ''
+max_allowed_packet = 1G
+group_concat_max_len = 16M
+innodb_stats_on_metadata = off
+```
 
 Logrotate Configuration
 -----------------------
@@ -207,6 +262,7 @@ Primary configuration file. Contains:
 - PhantomJS path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
 - Database configuration
+- Integration settings (see [Integrations](integrations.html) for details)
 
 ### datawarehouse.json
 
@@ -218,22 +274,25 @@ Defines the ranges used for number of processors/cores in "Job Size"
 charts.  Sites may want to align the bucket sizes with the number of
 cores per node on their resources.
 
-    [
-        [1,       1,          1, "1"],
-        [2,       2,          2, "2"],
-        [3,       3,          4, "3 - 4"],
-        [4,       5,          8, "5 - 8"],
-        [5,       9,         16, "9 - 16"],
-        [6,      17,         32, "17 - 32"],
-        [7,      33,         64, "33 - 64"],
-        [8,      65,        128, "65 - 128"],
-        [9,     129,        256, "129 - 256"],
-        [10,    257,        512, "257 - 512"],
-        [11,    513,       1024, "513 - 1024"],
-        [12,   1025,       2048, "1k - 2k"],
-        [13,   2049,       4096, "2k - 4k"],
-        [14,   4097, 2147483647, "> 4k"]
-    ]
+```json
+[
+    ["id", "min_processors", "max_processors", "description"],
+    [1,       1,          1, "1"],
+    [2,       2,          2, "2"],
+    [3,       3,          4, "3 - 4"],
+    [4,       5,          8, "5 - 8"],
+    [5,       9,         16, "9 - 16"],
+    [6,      17,         32, "17 - 32"],
+    [7,      33,         64, "33 - 64"],
+    [8,      65,        128, "65 - 128"],
+    [9,     129,        256, "129 - 256"],
+    [10,    257,        512, "257 - 512"],
+    [11,    513,       1024, "513 - 1024"],
+    [12,   1025,       2048, "1k - 2k"],
+    [13,   2049,       4096, "2k - 4k"],
+    [14,   4097, 2147483647, "> 4k"]
+]
+```
 
 After changing this file it must be re-ingested and all job data must be
 re-aggregated.  If the job data are not re-aggregated the new labels will be
@@ -243,6 +302,44 @@ displayed, but will not be accurate if the corresponding bucket has changed.
 /usr/share/xdmod/tools/etl/etl_overseer.php -a xdmod.jobs-xdw-bootstrap.processorbuckets
 xdmod-ingestor --aggregate=job --last-modified-start-date 1970-01-01
 ```
+
+### etl/etl_data.d/jobs/xdw/gpu-buckets.json
+
+Defines the ranges used for the number of GPUs in "GPU Count" charts.  Sites
+may want to align the bucket sizes with the number of GPUs per node on their
+resources.
+
+```json
+[
+    ["id", "min_gpus", "max_gpus", "description"],
+    [1,       0,           0, "0"],
+    [2,       1,           1, "1"],
+    [3,       2,           2, "2"],
+    [4,       3,           3, "3"],
+    [5,       4,           4, "4"],
+    [6,       5,           5, "5"],
+    [7,       6,           6, "6"],
+    [8,       7,           7, "7"],
+    [9,       8,           8, "8"],
+    [10,      9,          16, "9 - 16"],
+    [11,      17,         32, "17 - 32"],
+    [12,      33,         64, "33 - 64"],
+    [13,      65,        128, "65 - 128"],
+    [14,     129,        256, "129 - 256"],
+    [15,     257,        512, "257 - 512"],
+    [16,     513,       1024, "513 - 1024"],
+    [17,    1025,       2048, "1k - 2k"],
+    [18,    2049,       4096, "2k - 4k"],
+    [19,    4097, 2147483647, "> 4k"]
+]
+```
+
+After changing this file it must be re-ingested and all job data must be
+re-aggregated.  If the job data are not re-aggregated the new labels will be
+displayed, but will not be accurate if the corresponding bucket has changed.
+
+See the section above for commands that can be used to re-ingest and
+re-aggregate the data.
 
 ### roles.json
 
@@ -256,74 +353,78 @@ There is also a `default` role that is used as a basis of all the other
 roles.  The other roles are user (`usr`), center director (`cd`),
 principal investigator (`pi`), center staff (`cs`) and manager (`mgr`).
 
-    {
-        "roles": {
-            "default": {
-                "permitted_modules": [
-                    {
-                        "name": "tg_summary",
-                        "default": true,
-                        "title": "Summary",
-                        "position": 100,
-                        "javascriptClass": "XDMoD.Module.Summary",
-                        "javascriptReference": "CCR.xdmod.ui.tgSummaryViewer",
-                        "tooltip": "Displays Summary Information",
-                        "userManualSectionName": "Summary Tab"
-                    },
-                    ...
-                ],
-                "query_descripters": [
-                    {
-                        "realm": "Jobs",
-                        "group_by": "none"
-                    },
-                    ...
-                ],
-                "summary_charts": [
-                    ...
-                ],
-            }
-            "usr": {
-                "extends": "default",
-                "dimensions": [
-                    "person"
-                ]
-            },
-            "cd": {
-                "extends": "default",
-                "dimensions": [
-                    "provider"
-                ]
-            },
-            "pi": {
-                "extends": "default",
-                "dimensions": [
-                    "pi"
-                ]
-            },
-            "cs": {
-                "extends": "default",
-                "dimensions": [
-                    "provider"
-                ]
-            },
-            "mgr": {
-                "extends": "default",
-                "dimensions": [
-                    "person"
-                ]
-            }
+```json
+{
+    "roles": {
+        "default": {
+            "permitted_modules": [
+                {
+                    "name": "tg_summary",
+                    "default": true,
+                    "title": "Summary",
+                    "position": 100,
+                    "javascriptClass": "XDMoD.Module.Summary",
+                    "javascriptReference": "CCR.xdmod.ui.tgSummaryViewer",
+                    "tooltip": "Displays Summary Information",
+                    "userManualSectionName": "Summary Tab"
+                },
+                ...
+            ],
+            "query_descripters": [
+                {
+                    "realm": "Jobs",
+                    "group_by": "none"
+                },
+                ...
+            ],
+            "summary_charts": [
+                ...
+            ],
+        },
+        "usr": {
+            "extends": "default",
+            "dimensions": [
+                "person"
+            ]
+        },
+        "cd": {
+            "extends": "default",
+            "dimensions": [
+                "provider"
+            ]
+        },
+        "pi": {
+            "extends": "default",
+            "dimensions": [
+                "pi"
+            ]
+        },
+        "cs": {
+            "extends": "default",
+            "dimensions": [
+                "provider"
+            ]
+        },
+        "mgr": {
+            "extends": "default",
+            "dimensions": [
+                "person"
+            ]
         }
     }
+}
+```
 
 ### organization.json
 
 Defines the organization name and abbreviation.
 
-    {
-        "name": "Example Organization",
-        "abbrev": "EO"
-    }
+```json
+{
+    "name": "Example Organization",
+    "abbrev": "EO"
+}
+```
 
 ### resources.json
 
@@ -347,32 +448,37 @@ The default is that resources are assumed to not allow node sharing.  If
 the SUPReMM module is in use and a resource does allow node sharing then
 this should be set to `true`.
 
-    [
-        {
-            "resource": "resource1",
-            "name": "Resource 1",
-            "description": "Our first HPC resource",
-            "resource_type": "HPC"
-        },
-        {
-            "resource": "resource2",
-            "name": "Resource 2",
-            "resource_type": "HPC"
-            "pi_column": "account_name"
-        },
-        {
-            "resource": "resource3",
-            "name": "Resource 3",
-            "resource_type": "HPC"
-            "timezone": "US/Eastern",
-            "shared_jobs": true
-        },
-        {
-            "resource": "resource4",
-            "name": "Resource 4",
-            "resource_type": "Cloud"
-        }
-    ]
+For cloud resources the timezone is not used and times are converted to
+the local timezone that the server is in.
+
+```json
+[
+    {
+        "resource": "resource1",
+        "name": "Resource 1",
+        "description": "Our first HPC resource",
+        "resource_type": "HPC"
+    },
+    {
+        "resource": "resource2",
+        "name": "Resource 2",
+        "resource_type": "HPC",
+        "pi_column": "account_name"
+    },
+    {
+        "resource": "resource3",
+        "name": "Resource 3",
+        "resource_type": "HPC",
+        "timezone": "US/Eastern",
+        "shared_jobs": true
+    },
+    {
+        "resource": "resource4",
+        "name": "Resource 4",
+        "resource_type": "Cloud"
+    }
+]
+```
 
 ### resource_specs.json
 
@@ -396,38 +502,40 @@ processors are allocated to the jobs stored in the Open XDMoD data
 warehouse.  If this data is omitted, it is assumed that the resource is
 100% allocated.
 
-    [
-        {
-            "resource": "resource1",
-            "nodes": 64,
-            "processors": 1024,
-            "ppn": 16
-        },
-        {
-            "resource": "resource2",
-            "end_date": "2013-12-31",
-            "nodes": 32,
-            "processors": 256,
-            "ppn": 8
-        },
-        {
-            "resource": "resource2",
-            "start_date": "2014-01-01",
-            "end_date": "2014-01-15",
-            "nodes": 64,
-            "processors": 512,
-            "ppn": 8,
-            "percent_allocated": 100
-        }
-        {
-            "resource": "resource2",
-            "start_date": "2014-01-16",
-            "nodes": 65,
-            "processors": 520,
-            "ppn": 8,
-            "percent_allocated": 90
-        }
-    ]
+```json
+[
+    {
+        "resource": "resource1",
+        "nodes": 64,
+        "processors": 1024,
+        "ppn": 16
+    },
+    {
+        "resource": "resource2",
+        "end_date": "2013-12-31",
+        "nodes": 32,
+        "processors": 256,
+        "ppn": 8
+    },
+    {
+        "resource": "resource2",
+        "start_date": "2014-01-01",
+        "end_date": "2014-01-15",
+        "nodes": 64,
+        "processors": 512,
+        "ppn": 8,
+        "percent_allocated": 100
+    }
+    {
+        "resource": "resource2",
+        "start_date": "2014-01-16",
+        "nodes": 65,
+        "processors": 520,
+        "ppn": 8,
+        "percent_allocated": 90
+    }
+]
+```
 
 
 ### resource_types.json
@@ -441,9 +549,14 @@ This file typically should not be changed.
 Determines if Open XDMoD will automatically check for updates.  Set
 `"enabled": false` to disable.
 
-    {
-        "enabled": true,
-        "name": "John Doe",
-        "organization": "Acme Widgets",
-        "email": "j.doe@example.com"
-    }
+```json
+{
+    "enabled": true,
+    "name": "John Doe",
+    "organization": "Acme Widgets",
+    "email": "j.doe@example.com"
+}
+```
+
+[log_bin_trust_function_creators]: https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html#option_mysqld_log-bin-trust-function-creators
+[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html

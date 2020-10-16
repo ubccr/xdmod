@@ -64,15 +64,19 @@ See the [Configuration Guide](configuration.html) for more details.
 Copy Configuration Files
 ------------------------
 
-    # cp /opt/xdmod/etc/apache.d/xdmod.conf /etc/apache2/conf.d/xdmod.conf
+    # cp /opt/xdmod/share/templates/apache.conf /etc/apache2/conf.d/xdmod.conf
 
     # cp /opt/xdmod/etc/cron.d/xdmod /etc/cron.d/xdmod
 
     # cp /opt/xdmod/etc/logrotate.d/xdmod /etc/logrotate.d/xdmod
 
 The directories where these files are needed may differ depending on
-your operating system.  By default, the Apache configuration creates a
-virtual host on port 8080.
+your operating system.
+
+The Apache configuration file is an example template. This template will need
+to be edited to specify site-specific parameters such as the SSL certificate
+paths and server name.  See the [Apache Configuration
+Guide](configuration.html#apache-configuration) for details.
 
 Shred Data
 ----------
@@ -122,11 +126,11 @@ See the [Ingestor Guide](ingestor.html) for more details.
 Restart Apache
 --------------
 
-    # /etc/init.d/apache2 restart
+    # systemctl restart httpd.service
 
 This command may be different depending on your operating system.
 
 Check Portal
 ------------
 
-    http://localhost:8080/
+    https://localhost/

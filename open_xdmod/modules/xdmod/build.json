@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "9.0.0",
+    "version": "9.5.0",
     "release": "1.0",
     "files": {
         "include_paths": [
@@ -98,9 +98,6 @@
             {"configuration/modules.d/xdmod.json": "modules.d/xdmod.json"},
             "email_templates"
         ],
-        "etc/httpd": {
-            "configuration/apache.conf": "xdmod.conf"
-        },
         "etc/logrotated": {
             "configuration/logrotate.conf": "xdmod"
         },

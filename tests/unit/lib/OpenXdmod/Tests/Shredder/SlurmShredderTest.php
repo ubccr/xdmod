@@ -5,40 +5,14 @@
 
 namespace OpenXdmod\Tests\Shredder;
 
-use CCR\DB\NullDB;
 use OpenXdmod\Shredder;
-use Log;
-use TestHarness\TestFiles;
 
 /**
  * PBS shredder test class.
  */
-class SlurmShredderTest extends \PHPUnit_Framework_TestCase
+class SlurmShredderTest extends JobShredderBaseTestCase
 {
     const TEST_GROUP = 'unit/shredder/slurm';
-
-    private $testFiles;
-
-    protected $db;
-
-    protected $logger;
-
-    public function setUp()
-    {
-        $this->db = new NullDB();
-        $this->logger = Log::singleton('null');
-    }
-
-    /**
-     * @return \TestHarness\TestFiles
-     */
-    public function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../../../..');
-        }
-        return $this->testFiles;
-    }
 
     public function testShredderConstructor()
     {
@@ -127,42 +101,155 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Load test data.
+     * Test how job records with non-ended job states are handled.
      *
-     * The input must be in a line oriented file ending with ".log" and the
-     * output must be in a JSON file with a top level element that is an array.
-     * Each line in the input file and each element of the array will be
-     * returned together.
-     *
-     * @return array[]
+     * @dataProvider nonEndedJobStateLogProvider
      */
-    private function getTestCases($name)
+    public function testNonEndedJobStateHandling($line, $messages)
     {
-        $files = $this->getTestFiles();
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->never())
+            ->method('insertRow');
 
-        // Load input file into an array.
-        $inputFile = $files->getFile(self::TEST_GROUP, $name, 'input', '.log');
-        $inputData = file($inputFile, FILE_IGNORE_NEW_LINES);
+        $logger = $this
+            ->getMockBuilder('\Log')
+            ->setMethods(['debug', 'warning'])
+            ->getMock();
+        $logger
+            ->expects($this->never())
+            ->method('warning');
 
-        // Output file must contain a JSON array.
-        $outputData = $files->loadJsonFile(self::TEST_GROUP, $name, 'output');
+        // "withConsecutive" requires argument unpacking.
+        call_user_func_array(
+            [
+                $logger->expects($this->exactly(count($messages['debug'])))
+                    ->method('debug'),
+                'withConsecutive'
+            ],
+            $this->convertLoggerArgumentsToAssertions($messages['debug'])
+        );
 
-        // Using array_map to zip input and output.
-        return array_map(null, $inputData, $outputData);
+        $shredder->setLogger($logger);
+        $shredder->shredLine($line);
+    }
+
+    /**
+     * Test how job records with unknown job states are handled.
+     *
+     * @dataProvider unknownJobStateLogProvider
+     */
+    public function testUnknownJobStateHandling($line, $messages)
+    {
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->never())
+            ->method('insertRow');
+
+        $logger = $this
+            ->getMockBuilder('\Log')
+            ->setMethods(['debug', 'warning'])
+            ->getMock();
+
+        // "withConsecutive" requires argument unpacking.
+        call_user_func_array(
+            [
+                $logger->expects($this->exactly(count($messages['debug'])))
+                    ->method('debug'),
+                'withConsecutive'
+            ],
+            $this->convertLoggerArgumentsToAssertions($messages['debug'])
+        );
+
+        // "withConsecutive" requires argument unpacking.
+        call_user_func_array(
+            [
+                $logger->expects($this->exactly(count($messages['warning'])))
+                    ->method('warning'),
+                'withConsecutive'
+            ],
+            $this->convertLoggerArgumentsToAssertions($messages['warning'])
+        );
+
+        $shredder->setLogger($logger);
+        $shredder->shredLine($line);
+    }
+
+    /**
+     * Test parsing job names that contain multibyte UTF-8 characters.
+     *
+     * @dataProvider utf8MultibyteCharsLogProvider()
+     */
+    public function testUtf8MultibyteCharsParsing($line, $job)
+    {
+        $jobName = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
+
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow'])
+            ->getMock();
+        $shredder
+            ->expects($this->once())
+            ->method('insertRow')
+            ->with(new \PHPUnit_Framework_Constraint_ArraySubset(['job_name' => $jobName]));
+        $shredder->setLogger($this->logger);
+        $shredder->shredLine($line);
     }
 
     public function accountingLogProvider()
     {
-        return $this->getTestCases('accounting-logs');
+        return $this->getLogFileTestCases('accounting-logs');
     }
 
     public function accountingLogWithJobArraysProvider()
     {
-        return $this->getTestCases('accounting-logs-with-job-arrays');
+        return $this->getLogFileTestCases('accounting-logs-with-job-arrays');
     }
 
     public function accountingLogWithGpuGresProvider()
     {
-        return $this->getTestCases('accounting-logs-with-gpu-gres');
+        return $this->getLogFileTestCases('accounting-logs-with-gpu-gres');
+    }
+
+    public function nonEndedJobStateLogProvider()
+    {
+        return $this->getLogFileTestCases('non-ended-job-state');
+    }
+
+    public function unknownJobStateLogProvider()
+    {
+        return $this->getLogFileTestCases('unknown-job-state');
+    }
+
+    public function utf8MultibyteCharsLogProvider()
+    {
+        return $this->getLogFileTestCases('utf8-multibyte-chars');
+    }
+
+    /**
+     * Convert test data to PHPUnit asserts.
+     *
+     * Transforms the test used to test log messages.  Input is an array of
+     * strings that are regular expression.
+     *
+     * @param string[] $loggerPatterns
+     * @return array[]
+     */
+    private function convertLoggerArgumentsToAssertions(array $logPatterns)
+    {
+        $assertions = [];
+        foreach ($logPatterns as $pattern) {
+            $assertions[] = [$this->matchesRegularExpression($pattern)];
+        }
+        return $assertions;
     }
 }

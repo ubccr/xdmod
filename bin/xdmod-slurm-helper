@@ -39,6 +39,7 @@ function main()
         array('',   'debug'),
         array('q',  'quiet'),
         array('r:', 'resource:'),
+        array('c:', 'cluster:'),
         array('',   'start-time:'),
         array('',   'end-time:'),
     );
@@ -58,7 +59,7 @@ function main()
 
     $help = false;
 
-    $resource = $startTime = $endTime = null;
+    $resource = $cluster = $startTime = $endTime = null;
 
     $logLevel = -1;
 
@@ -88,6 +89,10 @@ function main()
             case 'resource':
                 $resource = $value;
                 break;
+            case 'c':
+            case 'cluster':
+                $cluster = $value;
+                break;
             case 'start-time':
                 $startTime = $value;
                 break;
@@ -100,6 +105,8 @@ function main()
                 break;
         }
     }
+
+    if ($cluster === null) { $cluster = $resource; }
 
     if ($logLevel === -1) { $logLevel = Log::NOTICE; }
 
@@ -163,7 +170,7 @@ function main()
         $sacct = 'sacct';
     }
 
-    $args = getSacctCmdArgs($shredder, $startTime, $endTime);
+    $args = getSacctCmdArgs($shredder, $cluster, $startTime, $endTime);
     array_unshift($args, $sacct);
     $cmd = implode(' ', $args);
 
@@ -209,6 +216,7 @@ function main()
 
 function getSacctCmdArgs(
     Shredder $shredder,
+    $cluster = null,
     $startTime = null,
     $endTime = null
 ) {
@@ -224,7 +232,7 @@ function getSacctCmdArgs(
 
     if ($shredder->hasResource()) {
         $args[] = '--clusters';
-        $args[] = $shredder->getResource();
+        $args[] = $cluster;
     } else {
         throw new Exception('Shredder resource not set.');
     }
@@ -234,10 +242,6 @@ function getSacctCmdArgs(
     $format = implode(',', $shredder->getFieldNames());
     $args[] = '--format';
     $args[] = $format;
-
-    $states = implode(',', $shredder->getStates());
-    $args[] = '--state';
-    $args[] = $states;
 
     if ($startTime !== null) {
         $args[] = '--starttime';
@@ -387,7 +391,7 @@ function displayHelpText()
 {
     echo <<<'EOF'
 
-Usage: xdmod-slurm-helper [-v] [-r resource]
+Usage: xdmod-slurm-helper [-v] [-r resource] [-c cluster]
 
     -h, --help
         Display this message and exit.
@@ -402,9 +406,13 @@ Usage: xdmod-slurm-helper [-v] [-r resource]
         Output warning level logging.
 
     -r, --resource *resource*
-        Shred accounting data for the specified cluster.  This value
-        will be passed to the sacct --clusters option.  Unlike the sacct
-        command, only one cluster should be specified.
+        Shred accounting data for the specified cluster.
+        Value is used for --clusters if that argument is not specified.
+
+    -c, --cluster *cluster*
+        SLURM cluster to shred. This value is passed to sacct --clusters option.
+        Unlike the sacct command, only one cluster should be specified.
+        Value of --resource is used if not specified.
 
     --start-time *datetime*
         Specify the start date and time to shred from sacct  The
@@ -421,4 +429,3 @@ Usage: xdmod-slurm-helper [-v] [-r resource]
 
 EOF;
 }
-

@@ -246,6 +246,8 @@ class DataWarehouseInitializer
                 ),
                 $this->logger
             );
+
+            $this->ingestCloudResourceSpecs();
         }
         catch( Exception $e ){
             if( $e->getCode() == 1146 ){
@@ -255,6 +257,23 @@ class DataWarehouseInitializer
                 throw $e;
             }
         }
+    }
+
+    /**
+     * Ingesting the cloud resource specifications from the raw_resource_specs table
+     * in modw_cloud to the cloud_resource_specs table
+     */
+    public function ingestCloudResourceSpecs(){
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not ingesting');
+            return;
+        }
+
+        $this->logger->notice('Ingesting cloud resource specs');
+        Utilities::runEtlPipeline(
+            array('ingest-cloud-resource-specs'),
+            $this->logger
+        );
     }
 
     /**
@@ -275,6 +294,8 @@ class DataWarehouseInitializer
                 array('jobs-cloud-common', 'jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
                 $this->logger
             );
+
+            $this->ingestCloudResourceSpecs();
         }
         catch( Exception $e ){
             if( $e->getCode() == 1146 ){
@@ -319,7 +340,7 @@ class DataWarehouseInitializer
     public function aggregateCloudData($lastModifiedStartDate)
     {
         if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            $this->logger->notice('Cloud realm not enabled, not aggregating');
             return;
         }
 
@@ -330,9 +351,32 @@ class DataWarehouseInitializer
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
 
+        $this->aggregateCloudResourceSpecs($lastModifiedStartDate);
+
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
         $filterListBuilder->buildRealmLists('Cloud');
+    }
+
+    /**
+     * Aggregated cloud resource specifications for use with utilization statistic
+     * in the cloud realm. If the cloud realm is not enabled then do nothing
+     *
+     * @param string $lastModifiedStartDate Aggregate data ingested on or after
+     *     this date.
+     */
+    public function aggregateCloudResourceSpecs($lastModifiedStartDate){
+        if( !$this->isRealmEnabled('Cloud') ){
+            $this->logger->debug('Cloud realm not enabled, not aggregating');
+            return;
+        }
+
+        $this->logger->notice('Aggregating Cloud Resource Specification data');
+        Utilities::runEtlPipeline(
+            array('aggregate-cloud-resource-specs'),
+            $this->logger,
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
     }
 
     /**

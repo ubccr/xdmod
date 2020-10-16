@@ -21,4 +21,4 @@ FROM (
      ) inc
          LEFT JOIN modw_cloud.`domains` cur
                    ON cur.id = inc.id
-WHERE cur.id IS NULL;
+WHERE cur.id IS NULL//

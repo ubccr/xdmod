@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Used for docker build, cache file will need to be upgraded if newer version is needed
-CACHE_FILE='/tmp/saml-idp.tar.gz'
+CACHE_FILE='/root/saml-idp.tar.gz'
 
 DEFAULT_INSTALL_DIR=/usr/share/xdmod
 DEFAULT_VENDOR_DIR=$DEFAULT_INSTALL_DIR/vendor
@@ -135,7 +135,7 @@ sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
 
 
 cp "$VENDOR_DIR/simplesamlphp/simplesamlphp/config-templates/config.php" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
-sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost:8080'),/" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
+sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost'),/" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
 
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 <?php
@@ -238,5 +238,5 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
 );
 EOF
 
-node app.js  --acs http://localhost:8080/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud http://localhost:8080/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https false > /var/log/xdmod/samlidp.log 2>&1 &
+node app.js  --acs https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://localhost/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https false > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start

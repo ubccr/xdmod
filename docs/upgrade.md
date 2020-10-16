@@ -24,11 +24,6 @@ General Upgrade Notes
 RPM Upgrade Process
 -------------------
 
-After upgrading the RPM, you may need to manually update your Apache
-config file (`/etc/httpd/conf.d/xdmod.conf`).  Check to see if a file
-named `/etc/httpd/conf.d/xdmod.conf.rpmnew` exists.  If so, you'll need
-to merge the changes into `/etc/httpd/conf.d/xdmod.conf`.
-
 ### Download Latest Open XDMoD RPM package
 
 Download available at [GitHub][github-latest-release].
@@ -49,7 +44,7 @@ backup and merge any changes after running the upgrade script.
 ### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
-the recommended values listed on the [software requirements page][mysql-config].
+the recommended values listed in the [Configuration Guide][mysql-config].
 
 ### Upgrade Database Schema and Config Files
 
@@ -93,68 +88,34 @@ changed in the new version.  You do not need to merge
 If you have manually edited this file, you should create a backup and
 merge any changes after running the upgrade script.
 
+*NOTE: This upgrade removes the `PhantomJS` and `ghostscript` dependencies; it adds dependencies of `chromium`, `libRSVG` and `exiftool`. These new dependencies will need to be manually installed. See the [Software Requirements](software-requirements.html) for more details.
+`PhantomJS` is no longer required, however, it WILL NOT be removed automatically; it will need to be removed manually.*
+
 ### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
-the recommended values listed on the [software requirements page][mysql-config].
+the recommended values listed in the [Configuration Guide][mysql-config].
 
 ### Upgrade Database Schema and Config Files
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-9.0.0 Upgrade Notes
+9.5.0 Upgrade Notes
 -------------------
 
-Open XDMoD 9.0.0 is a major release that includes new features along with many
+Open XDMoD 9.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 8.5.0 or 8.5.1.
+You may upgrade directly from 9.0.0.
 
-This is the first version of Open XDMoD that supports GPU data in the jobs
-realm.  Since Open XDMoD 6.5 data from slurm (`ReqGRES`) has been ingested into
-the database, but not displayed in the portal.  These jobs may now be
-re-ingested and any GPU data will be used.
-
-### Input File Format Changes
-
-The input file format for Slurm data has changed to include the `AllocTRES`
-field.  If you are generating Slurm input for the `xdmod-shredder` command then
-you will need to make the appropriate changes.  Refer to the [Slurm
-Notes](resource-manager-slurm.html#input-format) for the example `sacct`
-command.  If you are using the `xdmod-slurm-helper` command then no changes are
-necessary.
+*NOTE: This upgrade removes the `PhantomJS` and `ghostscript` dependencies; it adds dependencies of `chromium`, `libRSVG` and `exiftool`.. These new dependencies will be automatically installed by the RPM.
+`PhantomJS` is no longer required, however, it WILL NOT be removed automatically; it will need to be removed manually.*
 
 ### Configuration File Changes
 
-The `xdmod-upgrade` script will migrate user editable configuration files to
-the new version.
+The `xdmod-upgrade` script will migrate user editable configuration files to the new version and ask for the location of `chromium`.
 
 ### Database Changes
 
-The `xdmod-upgrade` script will migrate the database schemas to the new
-version.  Tables may be altered the first time they are used during ingestion.
-
-- The `moddb`.`ReportTemplateACL` database table is no longer used and is
-removed by the upgrade script.
-- The following tables are altered to store GPU data:
-  `mod_shredder`.`shredded_job_slurm`, `mod_shredder`.`shredded_job`,
-  `mod_shredder`.`staging_job`, `mod_hpcdb`.`hpcdb_jobs`, `modw`.`job_tasks`,
-  and tables in `modw_aggregates` prefixed with `jobfact_by_`.
-- New table `moddb`.`gpu_buckets` for GPU count ranges used for "Group By GPU
-  Count".
-- Added another index to `mod_logger`.`log_table` to improve performance of
-  queries used by the administrative dashboard's "Log Data" tab.  If this table
-  contains tens of millions of rows it may take over an hour to add the index.
-  It may be desirable to delete old log data from this table before performing
-  the migration if the data is no longer needed.
-
-- The `modw_cloud`.`account`, `modw_cloud`.`instance_type` and `modw_cloud`.`instance`
-tables have had their Primary Keys changed to better support the local and global filters
-in the Metric Explorer.
-
-- Because of database changes to `modw_cloud`.`account`, `modw_cloud`.`instance_type`
-tables any saved charts or reports using the Account or Configuration group by in the
-Cloud realm should be recreated.
-
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
-[mysql-config]: software-requirements.md#mysql
+[mysql-config]: configuration.md#mysql-configuration

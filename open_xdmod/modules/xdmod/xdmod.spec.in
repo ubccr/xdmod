@@ -1,4 +1,4 @@
-Name:          xdmod
+name:          xdmod
 Version:       __VERSION__
 Release:       __RELEASE__%{?dist}
 Summary:       Data warehouse and web portal for mining statistical data from resource managers
@@ -11,14 +11,16 @@ Source:        %{name}-%{version}__PRERELEASE__.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{release}-XXXXXX)
 BuildArch:     noarch
 BuildRequires: php-cli
-Requires:      httpd
+Requires:      httpd mod_ssl
 Requires:      mariadb >= 5.5.3
 Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring
 Requires:      php-pear-MDB2 php-pear-MDB2-Driver-mysql php-pecl-apcu
 Requires:      libreoffice
+Requires:      chromium-headless
+Requires:      librsvg2-tools
 Requires:      crontabs
 Requires:      logrotate
-Requires:      ghostscript
+Requires:      perl-Image-ExifTool
 Requires:      jq
 
 %description
@@ -85,7 +87,6 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/%{name}/*.json
 %config(noreplace) %{_sysconfdir}/%{name}/email_templates/
 %config(noreplace) %{_sysconfdir}/%{name}/etl/
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
@@ -93,13 +94,23 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
+* Tue Aug 18 2020 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.5.0-1.0
+    - Add `chromium-headless` and `librsvg2-tools` to required dependencies
+    - Replace `ghostscript` with `exiftool`
+* Thu Aug 13 2020 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.0.0-1.0
+    - Release 9.0.0
+    - Add `mod_ssl` to required dependencies
+    - Replace `cronie` with `crontabs` in required dependencies
+    - Remove `php-mcrypt` from required dependencies
+    - Change log file and directory permissions
+    - Remove Apache httpd configuration file
 * Tue Oct 29 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.5.1-1.0
     - Release 8.5.1
 * Mon Oct 21 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.5.0-1.0
     - Release 8.5.0
     - Remove `node_modules` management from `%pre`
     - Add data warehouse batch export directory `/var/spool/xdmod/export`
-    - Add php-pecl-apcu` to required dependencies
+    - Add `php-pecl-apcu` to required dependencies
 * Mon May 06 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.2-1.0
     - Update `%pre` with steps for `node_modules` on 8.1.2 release
 * Thu May 02 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.1-1.0

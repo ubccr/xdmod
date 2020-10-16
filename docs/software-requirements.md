@@ -6,6 +6,8 @@ Open XDMoD requires the following software:
 
 - [Apache][] 2.4
     - [mod_rewrite][]
+    - [mod_ssl][]
+    - [mod_headers][]
 - [MariaDB][]/[MySQL][] 5.5.3+
 - [PHP][] 5.4+
     - [PDO][]
@@ -19,8 +21,11 @@ Open XDMoD requires the following software:
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
-- [PhantomJS][] 2.1+
-- [ghostscript][] 9+
+- [libreoffice][]
+- [Chromium][]
+    - `chromium-headless` is assumed, but chromium has been known to work
+- [libRsvg][]
+- [exiftool][]
 - [cron][]
 - [logrotate][]
 - [MTA][] with `sendmail` compatibility (e.g. [postfix][], [exim][] or
@@ -29,6 +34,8 @@ Open XDMoD requires the following software:
 
 [apache]:          https://httpd.apache.org/
 [mod_rewrite]:     https://httpd.apache.org/docs/current/mod/mod_rewrite.html
+[mod_ssl]:         https://httpd.apache.org/docs/current/mod/mod_ssl.html
+[mod_headers]:     https://httpd.apache.org/docs/current/mod/mod_headers.html
 [mariadb]:         https://mariadb.org/
 [mysql]:           https://mysql.com/
 [php]:             https://secure.php.net/
@@ -44,8 +51,9 @@ Open XDMoD requires the following software:
 [php-mbstring]:    https://secure.php.net/manual/en/book.mbstring.php
 [php-pecl-apcu]:   https://www.php.net/manual/en/book.apcu.php
 [libreoffice]:     https://www.libreoffice.org
-[phantomjs]:       http://phantomjs.org/
-[ghostscript]:     https://www.ghostscript.com/
+[chromium]:        https://www.chromium.org/Home
+[librsvg]:         https://wiki.gnome.org/Projects/LibRsvg
+[exiftool]:        http://www.sno.phy.queensu.ca/%7Ephil/exiftool/
 [cron]:            https://en.wikipedia.org/wiki/Cron
 [logrotate]:       https://linux.die.net/man/8/logrotate
 [mta]:             https://en.wikipedia.org/wiki/Message_transfer_agent
@@ -76,12 +84,8 @@ added with this command for CentOS 7:
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   libreoffice \
                   mariadb-server mariadb cronie logrotate \
-                  ghostscript php-mbstring php-pecl-apcu jq
-
-**NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
-so that must be installed manually.  Packages are available for
-[download](http://phantomjs.org/download.html) from the PhantomJS
-website.
+                  perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
+                  chromium-headless librsvg2-tools
 
 **NOTE**: After installing Apache and MySQL you must make sure that they
 are running.  CentOS may not start these services and they will not
@@ -94,18 +98,32 @@ Additional Notes
 
 ### PHP
 
+Open XDMoD is tested to work with PHP 5.4.16 and may be compatible with more
+recent releases of PHP 5.  Open XDMoD is not compatible with PHP 7 at this
+time.
+
 Some Linux distributions (including CentOS) do not set the timezone used
 by PHP in their default configuration.  This will result in many warning
 messages from PHP.  You should set the timezone in your `php.ini` file
 by adding the following, but substituting your timezone:
 
-    date.timezone = America/New_York
+```ini
+date.timezone = America/New_York
+```
 
 The PHP website contains the full list of supported [timezones][].
+
+Production Open XDMoD instances should use HTTPS, which is enabled via the webserver
+configuration (see below).
 
 [timezones]: https://secure.php.net/manual/en/timezones.php
 
 ### Apache
+
+Production instances of Open XDMoD should use HTTPS. This requires
+the `mod_ssl` module be installed and enabled. The `mod_headers` module
+is also recommended so that the [HTTP Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
+header can be set on the webserver.
 
 Open XDMoD requires that mod_rewrite be installed and enabled.  Since
 the Open XDMoD portal is a web application you will also need to make
@@ -116,80 +134,20 @@ network access.
 
 MySQL 5.5.3+ is currently required for use with Open XDMoD.
 
-Some versions of MySQL have binary logging enabled by default.  This can
-be an issue during the setup process if the user specified to create the
-databases does not have the `SUPER` privilege.  If binary logging is not
-required you should disable it in your MySQL configuration.  If that is
-not an option you can use the less safe
-[log_bin_trust_function_creators][] variable.  You may also grant the
-`SUPER` privilege to the user that is used to create the Open XDMoD
-database.
+Open XDMoD is tested to work with MariaDB 5.5.60 and may be compatible with
+more recent releases of MySQL and MariaDB.  Open XDMoD is currently not
+compatible with MySQL 8.0 at this time.
 
-[log_bin_trust_function_creators]: https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html#option_mysqld_log-bin-trust-function-creators
+Refer to the [Configuration Guide](configuration.html#mysql-configuration)
+for configuration details.
 
-**NOTE**: Open XDMoD does not support any of the strict
-[Server SQL Modes][sql-mode].  You must set `sql_mode = ''` in your MySQL
-server configuration.
+### Chromium
 
-**NOTE**: Open XDMoD uses the `GROUP_CONCAT()` sql function. The `group_concat_max_len` server system variable must be changed to 16MB from its default value of 1024 bytes. The `max_allowed_packet`
-setting must be set to at least 16MB. The recommended setting in the mysql server configuration file is as follows:
+Chromium is required for graph exporting.
 
-```ini
-[mysqld]
-max_allowed_packet = 1G
-group_concat_max_len = 16M
-innodb_stats_on_metadata = off
-```
+Open XDMoD has been tested with `chromium-headless` from EPEL, `chromium` from EPEL was shown to be usable, but is not actively tested.
 
-[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
+### SELinux
 
-### PhantomJS
-
-The recommended version is 2.1.1.
-
-**NOTE**: PhantomJS does not work properly with the default CentOS
-SELinux security policy.  You will need to disable SELinux or create a
-custom policy.
-
-#### Creating a custom SELinux Policy for PhantomJS and ghostscript
-
-If you have already tried to generate a report and got an error with phantom JS you can use the [audit2allow][centosselinux] command to generate a policy for you
-
-[centosselinux]: https://wiki.centos.org/HowTos/SELinux#head-faa96b3fdd922004cdb988c1989e56191c257c01
-
-```
-# grep phantomjs /var/log/audit/audit.log | audit2allow -M httpd_phantomjs
-# semodule -i httpd_phantomjs.pp
-```
-
-The other way is to compile the module
-
-```
-# yum install selinux-policy-devel
-# mkdir /tmp/httpd_phantomjs
-# cd /tmp/httpd_phantomjs
-# cat << EOF >> httpd_phantomjs
-module httpd_phantomjs 1.0;
-
-require {
-	type httpd_t;
-	type fonts_t;
-	type ld_so_cache_t;
-	type fonts_cache_t;
-	class process execmem;
-	class file execute;
-}
-
-#============= httpd_t ==============
-allow httpd_t fonts_cache_t:file execute;
-allow httpd_t fonts_t:file execute;
-allow httpd_t ld_so_cache_t:file execute;
-
-#!!!! This avc is allowed in the current policy
-allow httpd_t self:process execmem;
-EOF
-
-# make -f /usr/share/selinux/devel/Makefile
-# semodule -i httpd_phantomjs.pp
-# rm -rf /tmp/httpd_phantomjs
-```
+Open XDMoD does not work with the default CentOS
+SELinux security policy.  You will need to disable SELinux.

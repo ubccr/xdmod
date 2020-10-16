@@ -77,15 +77,24 @@ try {
 
     // PHP Checks.
 
-    _debug('Checking PHP version');
+    _debug('Checking minimum PHP version');
     $requiredVersion = '5.4.0';
     $currentVersion  = phpversion();
-    $result = strcmp($currentVersion, $requiredVersion) >= 0;
+    $result = version_compare($currentVersion, $requiredVersion, '>=');
     displayResult(
         $result,
         "PHP version must be at least $requiredVersion",
         "You have PHP version $currentVersion.  Upgrade to $requiredVersion"
         . " or greater."
+    );
+
+    _debug('Checking for PHP 7 or later');
+    $unsupportedVersion = '7.0.0';
+    $result = version_compare($currentVersion, $unsupportedVersion, '<');
+    displayResult(
+        $result,
+        "PHP 7 and later are not supported",
+        "You have PHP version $currentVersion. Downgrade to PHP 5."
     );
 
     _debug('Checking for PDO class');
@@ -243,13 +252,13 @@ try {
         'Javac executable configured'
     );
 
-    $phantomJsPath
-        = xd_utilities\getConfiguration('reporting', 'phantomjs_path');
-    _debug('Checking for phantomjs executable');
-    $result = file_exists($phantomJsPath) && is_executable($phantomJsPath);
+    $chromiumPath
+        = xd_utilities\getConfiguration('reporting', 'chromium_path');
+    _debug('Checking for chromium executable');
+    $result = file_exists($chromiumPath) && is_executable($chromiumPath);
     displayResult(
         $result,
-        'PhantomJS configured'
+        'Chromium configured'
     );
 
     _debug('Checking for sendmail');

@@ -101,7 +101,6 @@ class XDReportManager
         $report_title,
         $report_header,
         $report_footer,
-        $report_font,
         $report_format,
         $charts_per_page,
         $report_schedule,
@@ -112,7 +111,6 @@ class XDReportManager
         $this->_report_title = $report_title;
         $this->_report_header = $report_header;
         $this->_report_footer = $report_footer;
-        $this->_report_font = $report_font;
         $this->_report_format = $report_format;
         $this->_charts_per_page = $charts_per_page;
         $this->_report_schedule = $report_schedule;
@@ -134,7 +132,6 @@ class XDReportManager
                 title           = :report_title,
                 header          = :report_header,
                 footer          = :report_footer,
-                font            = :font,
                 charts_per_page = :charts_per_page,
                 format          = :format,
                 schedule        = :schedule,
@@ -146,7 +143,6 @@ class XDReportManager
                 'report_title'    => $this->_report_title,
                 'report_header'   => $this->_report_header,
                 'report_footer'   => $this->_report_footer,
-                'font'            => $this->_report_font,
                 'charts_per_page' => $this->_charts_per_page,
                 'format'          => $this->_report_format,
                 'schedule'        => $this->_report_schedule,
@@ -156,11 +152,13 @@ class XDReportManager
         );
     }
 
-    private function fontWrapper($text, $font_name, $font_size = 12)
+    private function fontWrapper($text, $font_size = 12)
     {
-        return '<span style="font-family: ' . strtolower($font_name)
-            . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
-
+        return sprintf(
+            '<span style="font-family: arial, sans-serif; font-size: %dpx">%s</span>',
+            $font_size,
+            $text
+        );
     }
 
     public static function sanitizeFilename($filename)
@@ -174,8 +172,6 @@ class XDReportManager
     public function getPreviewData($report_id, $token, $charts_per_page)
     {
         $report_data = $this->loadReportData($report_id, false);
-
-        $report_font = $report_data['general']['font'];
 
         $rData = array();
         $chartSlot = array();
@@ -224,12 +220,12 @@ class XDReportManager
             }
 
             $chartSlot[$suffix] = array(
-                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
-                'header_text'                    => $this->fontWrapper($report_data['general']['header'], $report_font, 12),
-                'footer_text'                    => $this->fontWrapper($report_data['general']['footer'], $report_font, 12),
-                'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], $report_font, 16),
-                'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], $report_font, 12),
-                'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], $report_font, 14),
+                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->fontWrapper($report_data['general']['title'], 22) . '<br />' : '',
+                'header_text'                    => $this->fontWrapper($report_data['general']['header'], 12),
+                'footer_text'                    => $this->fontWrapper($report_data['general']['footer'], 12),
+                'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], 16),
+                'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], 12),
+                'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], 14),
                 'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
 
@@ -286,7 +282,6 @@ class XDReportManager
                     title,
                     header,
                     footer,
-                    font,
                     format,
                     schedule,
                     delivery,
@@ -300,7 +295,6 @@ class XDReportManager
                     :report_title,
                     :report_header,
                     :report_footer,
-                    :report_font,
                     :report_format,
                     :report_schedule,
                     :report_delivery,
@@ -316,7 +310,6 @@ class XDReportManager
                 'report_title'    => $this->_report_title,
                 'report_header'   => $this->_report_header,
                 'report_footer'   => $this->_report_footer,
-                'report_font'     => $this->_report_font,
                 'report_format'   => $this->_report_format,
                 'report_schedule' => $this->_report_schedule,
                 'report_delivery' => $this->_report_delivery,
@@ -560,7 +553,6 @@ class XDReportManager
                 footer,
                 format,
                 charts_per_page,
-                font,
                 schedule,
                 delivery
             FROM Reports
@@ -591,7 +583,6 @@ class XDReportManager
         $return_data['general']['footer']          = $results[0]['footer'];
         $return_data['general']['format']          = $results[0]['format'];
         $return_data['general']['charts_per_page'] = $results[0]['charts_per_page'];
-        $return_data['general']['font']            = $results[0]['font'];
         $return_data['general']['schedule']        = $results[0]['schedule'];
         $return_data['general']['delivery']        = $results[0]['delivery'];
 
@@ -964,23 +955,6 @@ class XDReportManager
         );
 
         return $results[0]['format'];
-    }
-
-    public function getReportFont($report_id)
-    {
-        $results = $this->_pdo->query(
-            "
-                SELECT font
-                FROM Reports
-                WHERE user_id = :user_id AND report_id = :report_id
-            ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
-        );
-
-        return $results[0]['font'];
     }
 
     public function getReportName($report_id, $sanitize = false)
@@ -1636,7 +1610,7 @@ class XDReportManager
 
         $report_output_file = $template_path . '/' . $report_id . '.' . strtolower($report_format);
 
-        $settings = $this->gatherReportSettings($report_id, $report_format);
+        $settings = $this->gatherReportSettings($report_id);
 
         $rp = new \Reports\ClassicReport($settings);
         $rp->writeReport($template_path . '/' . $report_id . '.doc');
@@ -1735,19 +1709,11 @@ class XDReportManager
      * generate a php array containing the report configuration settings
      * and the chart images.
      * @param $report_id The report to generate
-     * @param $export_format This is used to determine the font selection
      * @return array $settings the report settings
      */
-    private function gatherReportSettings($report_id, $export_format)
+    private function gatherReportSettings($report_id)
     {
         $settings = array();
-
-        // Maintain backwards compatibilty - word versions ignore the font setting
-        if ($export_format == 'pdf') {
-            $settings['font'] = $this->getReportFont($report_id);
-        } else {
-            $settings['font'] = 'Times New Roman';
-        }
 
         $settings['header'] = $this->getReportHeader($report_id);
         $settings['footer'] = $this->getReportFooter($report_id);
@@ -1840,7 +1806,6 @@ SQL;
                     header,
                     footer,
                     format,
-                    font,
                     schedule,
                     delivery,
                     charts_per_page

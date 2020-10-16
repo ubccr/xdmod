@@ -266,7 +266,14 @@ class Lsf extends Shredder
 
         $job = $this->parseLine($line);
 
-        $this->logger->debug('Parsed data: ' . json_encode($job));
+        // The command may use a non-UTF-8 encoding.  Therefore it can't be
+        // included in the array passed to json_encode.  The command isn't
+        // currently stored in the database so it doesn't need to be converted.
+        $command = $job['command'];
+        unset($job['command']);
+        $this->logger->debug('Parsed data (excluding command): ' . json_encode($job));
+        $this->logger->debug('Parsed command: ' . $command);
+        $job['command'] = $command;
 
         if (
             $job['num_ex_hosts'] > 0
