@@ -22,6 +22,7 @@ Open XDMoD requires the following software:
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
 - [libreoffice][]
+    - Only the libreoffice-writer component of libreoffice is used.
 - [Chromium][]
     - `chromium-headless` is assumed, but chromium has been known to work
 - [libRsvg][]
