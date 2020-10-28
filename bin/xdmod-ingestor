@@ -20,6 +20,8 @@ ini_set('memory_limit', -1);
 try {
     main();
 } catch (Exception $e) {
+    global $logger;
+
     do {
         fwrite(STDERR, $e->getMessage() . "\n");
         fwrite(STDERR, $e->getTraceAsString() . "\n");

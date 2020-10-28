@@ -9,6 +9,7 @@
 
 namespace ETL;
 
+use CCR\Log;
 use ETL\Configuration\EtlConfiguration;
 use Exception;
 use stdClass;
