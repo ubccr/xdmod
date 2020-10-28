@@ -10,6 +10,7 @@ use CCR\Log;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
 use ETL\aAction;
+use Psr\Log\LoggerInterface;
 
 /**
  * Base class for ETL tests providing common functionality.
@@ -17,6 +18,9 @@ use ETL\aAction;
 
 abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var LoggerInterface
+     */
     protected static $logger = null;
 
     /**
@@ -25,7 +29,7 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
      * @param string $ident Log identifier string
      * @param int $level Maximum log level to display
      *
-     * @return Log A CCR\Log object
+     * @return LoggerInterface A Monolog Logger Object.
      */
 
     protected static function createLogger($ident = 'PHPUnit', $level = Log::WARNING)
@@ -74,6 +78,10 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
         EtlConfiguration $etlConfig,
         EtlOverseerOptions $overseerOptions
     ) {
+        if (!isset(self::$logger)) {
+            self::$logger = self::createLogger('base-etl-test', Log::DEBUG);
+        }
+
         $action = aAction::factory($etlConfig, $actionName, self::$logger);
         $action->execute($overseerOptions);
     }

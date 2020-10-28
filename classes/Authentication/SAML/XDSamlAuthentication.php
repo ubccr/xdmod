@@ -48,6 +48,9 @@ Unable to Identify Users Organization.
 Additional Setup Required.
 EML;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger = null;
 
     public function __construct()

@@ -20,8 +20,8 @@
 
 namespace ETL;
 
-use Log;
 use \CCR\Loggable;
+use Psr\Log\LoggerInterface;
 
 // Extending stdClass allows us to use this class with when a general class is used.
 
@@ -46,9 +46,11 @@ class VariableStore extends Loggable
      *
      * @param mixed $store An existing VariableStore object, Traversable, or associative array of
      *   variable = value pairs used to initialize this store.
+     * @param LoggerInterface|null $logger
+     * @throws \Exception
      */
 
-    public function __construct($store = null, Log $logger = null)
+    public function __construct($store = null, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

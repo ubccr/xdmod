@@ -3,7 +3,7 @@
 namespace Configuration;
 
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 /**
@@ -113,7 +113,7 @@ class ModuleConfiguration extends XdmodConfiguration
      */
     protected $annotatedConfig = null;
 
-    public function __construct($filename, $baseDir = null, Log $logger = null, array $options = array())
+    public function __construct($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array())
     {
         parent::__construct($filename, $baseDir, $logger, $options);
 

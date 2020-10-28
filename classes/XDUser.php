@@ -2387,7 +2387,7 @@ SQL;
             'db' => true,
             'mail' => false,
             'file' => LOG_DIR . '/xms-auth-rid.log',
-            'fileLogLevel' => PEAR_LOG_DEBUG
+            'fileLogLevel' => Log::DEBUG
         ));
 
         $results = array(

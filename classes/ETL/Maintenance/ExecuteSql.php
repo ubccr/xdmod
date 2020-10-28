@@ -17,7 +17,6 @@ use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use PDOException;
 use ETL\Utilities;
-use Log;
 
 use PHPSQLParser\PHPSQLParser;
 use PHPSQLParser\PHPSQLCreator;
@@ -26,6 +25,8 @@ use PHPSQLParser\exceptions\UnsupportedFeatureException;
 // PHPSQLParser has "use Exception" instead of "use \Exception". In order to catch general
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
+
+use Psr\Log\LoggerInterface;
 
 class ExecuteSql extends aAction implements iAction
 {
@@ -39,7 +40,7 @@ class ExecuteSql extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
             $msg = __CLASS__ . ": Options is not an instance of MaintenanceOptions";

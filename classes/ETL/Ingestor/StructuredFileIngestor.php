@@ -10,10 +10,10 @@
 
 namespace ETL\Ingestor;
 
+use Psr\Log\LoggerInterface;
 use stdClass;
 use Exception;
 use PDOException;
-use Log;
 
 use ETL\iAction;
 use ETL\aOptions;
@@ -41,7 +41,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
     }  // __construct()

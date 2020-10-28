@@ -23,7 +23,7 @@ class HostListTest extends \PHPUnit_Framework_TestCase
         $this->parser = new HostListParser();
 
         if (isset($GLOBALS['LOG_DEBUG']) && $GLOBALS['LOG_DEBUG']) {
-            $logger = \Log::factory('console', '', 'test', \CCR\Log::DEBUG);
+            $logger = \CCR\Log::factory('console', '', 'test', \CCR\Log::DEBUG);
             $this->parser->setLogger($logger);
         }
     }

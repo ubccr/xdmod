@@ -49,7 +49,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
+                $this->assertRegExp('/[WARNING]/', $line);
                 $numWarnings++;
             }
         }
@@ -65,7 +65,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testSqlWarnings() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings');
-
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         /* We are expecting output such as:
@@ -77,17 +76,16 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
          */
 
         $numWarnings = 0;
-
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( false !== strpos($line, 'WARNING') ) {
                     $numWarnings++;
                 }
             }
         }
 
-        $this->assertGreaterThanOrEqual(4, $numWarnings, 'Expected number of SQL warnings');
-        $this->assertEquals('', $result['stderr'], "Std Error");
+        $this->assertGreaterThanOrEqual(1, $numWarnings, 'Expected number of SQL warnings');
+        $this->assertEmpty($result['stderr'], "Std Error");
     }
 
     /**
@@ -96,14 +94,16 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testHideSqlWarnings() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warnings=true"');
-
+        if ($result['exit_status'] !== 0) {
+            print_r($result);
+        }
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         // We are expecting no warnings to be returned
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertNotRegExp('/\[warning\]/', $line);
+                $this->assertNotRegExp('/WARNING/', $line);
             }
         }
 
@@ -117,7 +117,9 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testHideSqlWarningCodes() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
-
+        if ($result['exit_status'] !== 0) {
+            print_r($result);
+        }
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         /* We are expecting output such as:
@@ -130,7 +132,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( false !== strpos($line, 'WARNING') ) {
                     $numWarnings++;
                 }
             }
@@ -141,13 +143,15 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         // Run the same action, but filter all expected warning codes.
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=[1264,1366]"');
-
+        if ($result['exit_status'] !== 0) {
+            print_r($result);
+        }
         $this->assertEquals(0, $result['exit_status'], "Exit code");
         $numWarnings = 0;
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( false !== strpos($line, 'WARNING') ) {
                     $numWarnings++;
                 }
             }
@@ -169,6 +173,10 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             sprintf('-v notice -d "CLOUD_EVENT_LOG_DIR=%s/generic_cloud_logs"', BASE_DIR . self::TEST_INPUT_DIR)
         );
 
+        if ($result['exit_status'] !== 0) {
+            print_r($result);
+        }
+
         $this->assertEquals(0, $result['exit_status'], 'Exit code');
         $this->assertEquals('', $result['stderr'], 'Std Error');
     }
@@ -184,7 +192,9 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             '-v notice',
             self::PIPELINE
         );
-
+        if ($result['exit_status'] !== 0) {
+            print_r($result);
+        }
         // Parse the output looking for [notice] lines indicating how many records were loaded for
         // each action in the pipeline. Ensure the expected number of records were loaded. We are
         // expecting 4 actions to be run:
@@ -197,11 +207,11 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         $recordsLoaded = array();
 
         foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-            if ( false !== strpos($line, '[notice]') ) {
+            if ( false !== strpos($line, 'NOTICE') ) {
                 $matches = array();
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
-                    if ( preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
+                    if ( preg_match('/"records_loaded":\s*([0-9]+)/', $line, $matches) ) {
                         $recordsLoaded[$number] = $matches[1];
                     }
                 }
@@ -243,7 +253,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         }
 
         $command = sprintf('%s %s', $overseer, $options);
-
         return $this->executeCommand($command);
     }
 

@@ -3,7 +3,7 @@
 namespace Configuration;
 
 use CCR\Loggable;
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 /**
@@ -20,7 +20,7 @@ class ModuleTransformer extends Loggable implements iConfigFileKeyTransformer
 
     const KEY = 'module';
 
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         parent::__construct($logger);
     }

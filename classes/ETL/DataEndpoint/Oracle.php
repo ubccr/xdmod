@@ -6,8 +6,8 @@
 namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use Log;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 class Oracle extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
@@ -22,7 +22,7 @@ class Oracle extends aRdbmsEndpoint implements iRdbmsEndpoint
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
         $this->systemQuoteChar = '"';

@@ -7,8 +7,8 @@ use CCR\Loggable;
 use DataWarehouse\Query\RawQuery;
 use Exception;
 use Iterator;
-use Log;
 use PDO;
+use Psr\Log\LoggerInterface;
 use XDUser;
 use xd_utilities;
 
@@ -72,9 +72,9 @@ class BatchDataset extends Loggable implements Iterator
     /**
      * @param mixed $name Description.
      * @param \XDUser $user
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct(RawQuery $query, XDUser $user, Log $logger = null)
+    public function __construct(RawQuery $query, XDUser $user, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

@@ -1,5 +1,7 @@
 <?php
 
+use CCR\Log;
+
 $dir = dirname(__FILE__);
 $baseDir = dirname($dir);
 
@@ -121,16 +123,20 @@ function handle_uncaught_exception($exception)
 {
     $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
-    $logConf = array('mode' => 0644);
-    $logger = \Log::factory('file', $logfile, 'exception', $logConf);
+    $logConf = array(
+        'mode' => 0644,
+        'file' => $logfile
+    );
 
-    $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
-    $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
-    $logger->log('Origin: '.$exception->getFile().' (line '.$exception->getLine().')', PEAR_LOG_INFO);
+    $logger = Log::factory('file', $logConf);
+
+    $logger->log( \CCR\Log::ERR,'Exception Code: '.$exception->getCode());
+    $logger->log( \CCR\Log::ERR,'Message: '.$exception->getMessage());
+    $logger->log(\CCR\Log::INFO, 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')');
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->log("Trace:\n".$stringTrace."\n-------------------------------------------------------", PEAR_LOG_INFO);
+    $logger->log(\CCR\Log::INFO, "Trace:\n".$stringTrace."\n-------------------------------------------------------");
 
    // If working in a server context, build headers to output.
     $httpCode = 500;

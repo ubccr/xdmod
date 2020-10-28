@@ -1,6 +1,5 @@
 <?php
 
-use Log as Logger;  // CCR implementation of PEAR logger
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Loggable;
