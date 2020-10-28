@@ -38,7 +38,6 @@ class GenericReportTemplate extends aReportTemplate
             $this->_report_skeleton['general']['title'],
             $this->_report_skeleton['general']['header'],
             $this->_report_skeleton['general']['footer'],
-            $this->_report_skeleton['general']['font'],
             $this->_report_skeleton['general']['format'],
             $this->_report_skeleton['general']['charts_per_page'],
             $this->_report_skeleton['general']['schedule'],

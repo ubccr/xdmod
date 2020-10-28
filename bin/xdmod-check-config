@@ -252,13 +252,13 @@ try {
         'Javac executable configured'
     );
 
-    $phantomJsPath
-        = xd_utilities\getConfiguration('reporting', 'phantomjs_path');
-    _debug('Checking for phantomjs executable');
-    $result = file_exists($phantomJsPath) && is_executable($phantomJsPath);
+    $chromiumPath
+        = xd_utilities\getConfiguration('reporting', 'chromium_path');
+    _debug('Checking for chromium executable');
+    $result = file_exists($chromiumPath) && is_executable($chromiumPath);
     displayResult(
         $result,
-        'PhantomJS configured'
+        'Chromium configured'
     );
 
     _debug('Checking for sendmail');

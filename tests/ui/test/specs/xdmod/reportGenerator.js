@@ -233,78 +233,6 @@ describe('Report Generator', function () {
                     timeframeType: 'Year to date'
                 }
             ]
-        },
-        {
-            name: expected.centerdirector.report_templates[1].name,
-            chartsPerPage: 1,
-            schedule: 'Once',
-            deliveryFormat: 'PDF',
-            charts: [
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'Total CPU Hours and Jobs',
-                    drillDetails: '',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'Percent Utilization',
-                    drillDetails: '',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'CPU Hours and Number of Jobs - Top 20 Users',
-                    drillDetails: '',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'CPU Hours and Number of Jobs',
-                    drillDetails: 'by Resource',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'CPU Hours, Number of Jobs, and Wait Time per Job',
-                    drillDetails: 'by Job Size',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'CPU Hours and User Expansion Factor',
-                    drillDetails: 'by Job Size',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'Wait Hours per Job',
-                    drillDetails: 'by Queue',
-                    timeframeType: 'Previous quarter'
-                },
-                {
-                    realm: 'Jobs',
-                    startDate: previousQuarterStartDate,
-                    endDate: previousQuarterEndDate,
-                    title: 'CPU Hours and Number of Jobs',
-                    drillDetails: 'by Queue',
-                    timeframeType: 'Previous quarter'
-                }
-            ]
         }
     ];
 
@@ -380,7 +308,7 @@ describe('Report Generator', function () {
         it('No available charts listed', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
         });
-        it('Report templates available', function () {
+        it('No report templates available', function () {
             expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
         });
     });

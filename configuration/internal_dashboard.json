@@ -33,6 +33,10 @@
         {
             "ident": "ReportScheduler",
             "title": "Report Scheduler"
+        },
+        {
+            "ident": "batch-export",
+            "title": "Data Export"
         }
     ],
     "summary": [

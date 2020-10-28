@@ -1,4 +1,5 @@
-<!--- Provide a general summary of your changes in the Title above -->
+<!--- The title text will be used to populate Changelog and associated documentation.
+      Please make sure that the title is a complete sentence -->
 
 ## Description
 <!--- Describe your changes in detail -->
@@ -15,15 +16,9 @@
 <!--- Include details of your testing environment, and the tests you ran to -->
 <!--- see how your change affects other areas of the code, etc. -->
 
-## Types of changes
-<!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to change)
-
 ## Checklist:
-<!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
+<!--- Go over all the following points and make sure they have all been completed -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [ ] My code follows the code style of this project as found in the **CONTRIBUTING** document.
-- [ ] I have added tests to cover my changes.
-- [ ] All new and existing tests passed.
+- [ ] The pull request description is suitable for a Changelog entry
+- [ ] The milestone is set correctly on the pull request
+- [ ] The appropriate labels have been added to the pull request

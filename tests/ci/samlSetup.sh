@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Used for docker build, cache file will need to be upgraded if newer version is needed
-CACHE_FILE='/tmp/saml-idp.tar.gz'
+CACHE_FILE='/root/saml-idp.tar.gz'
 
 DEFAULT_INSTALL_DIR=/usr/share/xdmod
 DEFAULT_VENDOR_DIR=$DEFAULT_INSTALL_DIR/vendor

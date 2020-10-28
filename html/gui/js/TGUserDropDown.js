@@ -40,9 +40,28 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
         return this;
     },
 
-    initializeWithValue: function (v, l) {
-        this.setValue(v, l);
-        this.setRawValue(l);
+    /**
+     * Set the value and raw value.
+     *
+     * @param {number} personId - A person ID.
+     * @param {string} personName - A person name.
+     * @param {boolean} updateCascadeComponent - Execute cascade function if
+     * true (defaults to true).
+     */
+    initializeWithValue: function (
+        personId,
+        personName,
+        updateCascadeComponent
+    ) {
+        var cascade = (typeof updateCascadeComponent !== 'undefined') ?
+            updateCascadeComponent : true;
+
+        this.setValue(personId);
+        this.setRawValue(personName);
+
+        if (cascade) {
+            this.cascadeSelect(personId);
+        }
     },
 
     initComponent: function () {
@@ -91,57 +110,66 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
         CCR.xdmod.ui.TGUserDropDown.superclass.initComponent.apply(this, arguments);
     }, // initComponent
 
+    /**
+     * Update the cascade component if cascade options are defined.
+     *
+     * @param {number} personId - The person ID that was selected.
+     */
+    cascadeSelect: function (personId) {
+        var cascadeOptions = this.cascadeOptions;
+        var comp;
+        var callback;
+        var valueProperty;
+
+        if (cascadeOptions !== undefined) {
+            if (cascadeOptions.component !== undefined) {
+                comp = cascadeOptions.component;
+            }
+            if (cascadeOptions.callback !== undefined) {
+                callback = cascadeOptions.callback;
+            }
+            if (cascadeOptions.valueProperty !== undefined) {
+                valueProperty = cascadeOptions.valueProperty;
+            }
+        }
+
+        if (comp !== undefined) {
+            Ext.Ajax.request({
+                url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
+                method: 'GET',
+                scope: self,
+                callback: function (options, success, response) {
+                    var json;
+
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+                        // eslint-disable-next-line no-param-reassign
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'Setting user mapping failed.'
+                        });
+                        return;
+                    }
+
+                    var value = json.results[valueProperty];
+
+                    if (comp.getValue() !== value && callback !== undefined) {
+                        callback(comp.getValue(), value);
+                    }
+                    comp.setValue(value);
+                }
+            });
+        }
+    },
+
     listeners: {
         select: function (component, record, index) {
             var personId = component.getValue();
-            var cascadeOptions = this.cascadeOptions;
-            var comp;
-            var callback;
-            var valueProperty;
-
-            if (cascadeOptions !== undefined) {
-                if (cascadeOptions.component !== undefined) {
-                    comp = cascadeOptions.component;
-                }
-                if (cascadeOptions.callback !== undefined) {
-                    callback = cascadeOptions.callback;
-                }
-                if (cascadeOptions.valueProperty !== undefined) {
-                    valueProperty = cascadeOptions.valueProperty;
-                }
-            }
-
-            if (comp !== undefined) {
-                Ext.Ajax.request({
-                    url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
-                    method: 'GET',
-                    scope: self,
-                    callback: function (options, success, response) {
-                        var json;
-
-                        if (success) {
-                            json = CCR.safelyDecodeJSONResponse(response);
-                            // eslint-disable-next-line no-param-reassign
-                            success = CCR.checkDecodedJSONResponseSuccess(json);
-                        }
-
-                        if (!success) {
-                            CCR.xdmod.ui.presentFailureResponse(response, {
-                                title: 'User Management',
-                                wrapperMessage: 'Setting user mapping failed.'
-                            });
-                            return;
-                        }
-
-                        var value = json.results[valueProperty];
-
-                        if (comp.getValue() !== value && callback !== undefined) {
-                            callback(comp.getValue(), value);
-                        }
-                        comp.setValue(value);
-                    }
-                });
-            }
+            this.cascadeSelect(personId);
         }
     }
 }); // CCR.xdmod.ui.TGUserDropDown

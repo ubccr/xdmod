@@ -1254,7 +1254,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
 
                         // Remaining inputs ----------------------
-                        cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
+                        cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name, false);
                         cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
                         var userType = parseInt(json.user_information.user_type, 10);

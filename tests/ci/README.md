@@ -5,8 +5,8 @@ of the CI build process.
 
 ## Building From A Base Image
 
-To speed up testing we can create a base image which includes centos with updates, composer, and
-phantomjs and then build our XDMoD image on top of that.
+To speed up testing we can create a base image which includes centos with updates and composer.
+Then build our XDMoD image on top of that.
 
 ```bash
 docker build -t centos7:xdmod-base -f Dockerfile.centos7:xdmod-base .
@@ -43,8 +43,3 @@ chromedriver node module doesn't currently handle the installed version.
 This also prevents the need to download it every time.
 
 https://sites.google.com/a/chromium.org/chromedriver/downloads
-
-### PhantomJS
-Since PhantomJS is no longer maintained, we have a copy that we use instead of
-automatically getting it from the internet every time
-https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
