@@ -248,7 +248,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.2"
+            "php": "5.4"
         },
         "optimize-autoloader": true,
         "apcu-autoloader": true,
