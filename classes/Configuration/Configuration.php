@@ -64,7 +64,6 @@
 
 namespace Configuration;
 
-// PEAR logger
 use CCR\Loggable;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;

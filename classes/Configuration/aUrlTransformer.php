@@ -7,7 +7,6 @@
 
 namespace Configuration;
 
-use Log;
 use CCR\Loggable;
 use Psr\Log\LoggerInterface;
 

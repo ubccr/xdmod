@@ -13,8 +13,6 @@ namespace Configuration;
 
 use Psr\Log\LoggerInterface;
 
-// PEAR logger
-
 interface iConfiguration extends \Iterator
 {
     /**

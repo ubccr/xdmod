@@ -130,8 +130,8 @@ function handle_uncaught_exception($exception)
 
     $logger = Log::factory('file', $logConf);
 
-    $logger->log( \CCR\Log::ERR,'Exception Code: '.$exception->getCode());
-    $logger->log( \CCR\Log::ERR,'Message: '.$exception->getMessage());
+    $logger->log(\CCR\Log::ERR, 'Exception Code: '.$exception->getCode());
+    $logger->log(\CCR\Log::ERR, 'Message: '.$exception->getMessage());
     $logger->log(\CCR\Log::INFO, 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')');
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();

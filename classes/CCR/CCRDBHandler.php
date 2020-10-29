@@ -5,7 +5,6 @@ namespace CCR;
 use CCR\DB\iDatabase;
 use Exception;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
 
 /**
  * This class is meant to provide a means of writing log entries to a database within the Monolog framework.
@@ -48,7 +47,7 @@ class CCRDBHandler extends AbstractProcessingHandler
      * @throws Exception If the 'database' property of the logger section in portal_settings.ini is not present or if its value is empty.
      * @throws Exception If the 'table' property of the logger section in portal_settings.ini is not present or if its value is empty.
      */
-    public function __construct(iDatabase $db = null, string $schema = null, string $table = null, int $level = Logger::DEBUG, $bubble = true)
+    public function __construct(iDatabase $db = null, $schema = null, $table = null, $level = Log::DEBUG, $bubble = true)
     {
         parent::__construct($level, $bubble);
 
@@ -92,7 +91,7 @@ class CCRDBHandler extends AbstractProcessingHandler
      *
      * @throws Exception if any of the sql statements fail to execute.
      */
-    protected function getNextId(): int
+    protected function getNextId()
     {
         $this->db->beginTransaction();
 
