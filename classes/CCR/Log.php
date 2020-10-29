@@ -97,7 +97,7 @@ class Log
      * @throws Exception @see getLogger()
      */
     public static function factory(
-        $ident = 'xdmod-logger',
+        string $ident = 'xdmod-logger',
         array $conf = array()
     ) {
         $conf['lineFormat']
@@ -145,7 +145,7 @@ class Log
      *
      * @throws Exception            If there is a problem instantiating the requested log handlers.
      */
-    public static function singleton($ident, array $config = array('null' => array()))
+    public static function singleton(string $ident, array $config = array('null' => array())): LoggerInterface
     {
         if (!array_key_exists($ident, self::$loggers)) {
             self::$loggers[$ident] = self::factory($ident, $config);
@@ -164,7 +164,7 @@ class Log
      *
      * @throws Exception       If there are any problems w/ instantiating the requested handlers.
      */
-    protected static function getLogger($ident, array $conf)
+    protected static function getLogger(string $ident, array $conf): LoggerInterface
     {
         $loggerTypes = array(
             'console',
@@ -213,7 +213,7 @@ class Log
      *
      * @throws Exception if a StreamHandler to `php://stdout` cannot be instantiated.
      */
-    protected static function getConsoleHandler($ident, array $conf)
+    protected static function getConsoleHandler(string $ident, array $conf): HandlerInterface
     {
         $consoleLogLevel
             = isset($conf['consoleLogLevel'])
@@ -243,7 +243,7 @@ class Log
      *
      * @throws Exception If there is a problem instantiating the StreamHandler to the requested file.
      */
-    protected static function getFileHandler($ident, array $conf)
+    protected static function getFileHandler(string $ident, array $conf): HandlerInterface
     {
         $fileLogLevel
             = isset($conf['fileLogLevel'])
@@ -278,7 +278,7 @@ class Log
      *
      * @throws Exception @see CCRDBHandler::__construct
      */
-    protected static function getDbHandler($ident, array $conf)
+    protected static function getDbHandler(string $ident, array $conf): HandlerInterface
     {
         $dbLogLevel
             = isset($conf['dbLogLevel'])
@@ -305,7 +305,7 @@ class Log
      *
      * @throws Exception @see self::getConfiguration()
      */
-    protected static function getMailHandler($ident, array $conf)
+    protected static function getMailHandler(string $ident, array $conf): HandlerInterface
     {
         $mailLogLevel
             = isset($conf['mailLogLevel'])
@@ -351,7 +351,7 @@ class Log
      * @param string $logType The log handler type to be used when retrieving the default log level.
      * @return int that corresponds w/ this class' constants. i.e. EMERG, ALERT, CRIT, ERR, WARNING, NOTICE, INFO, DEBUG
      */
-    protected static function getDefaultLogLevel($logType)
+    protected static function getDefaultLogLevel(string $logType): int
     {
         $option = 'default_level_' . $logType;
 
@@ -404,7 +404,7 @@ class Log
      * @throws Exception    If $option is not found in the logger section.
      * @throws Exception    If the value of $option is empty.
      */
-    protected static function getConfiguration($option)
+    protected static function getConfiguration(string $option)
     {
         return xd_utilities\getConfiguration('logger', $option);
     }

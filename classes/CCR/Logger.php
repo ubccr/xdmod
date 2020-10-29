@@ -16,7 +16,6 @@ use Psr\Log\LoggerInterface;
  */
 class Logger extends \Monolog\Logger implements LoggerInterface
 {
-
     /**
      * @inheritDoc
      */
