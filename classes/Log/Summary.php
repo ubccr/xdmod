@@ -165,17 +165,17 @@ class Summary
             if (isset($data[Log::WARNING])) {
                 $this->warningCount = $data[Log::WARNING];
             }
-            if (isset($data[Log::ERROR])) {
-                $this->errorCount = $data[Log::ERROR];
+            if (isset($data[Log::ERR])) {
+                $this->errorCount = $data[Log::ERR];
             }
-            if (isset($data[Log::CRITICAL])) {
-                $this->criticalCount = $data[Log::CRITICAL];
+            if (isset($data[Log::CRIT])) {
+                $this->criticalCount = $data[Log::CRIT];
             }
             if (isset($data[Log::ALERT])) {
                 $this->alertCount = $data[Log::ALERT];
             }
-            if (isset($data[Log::EMERGENCY])) {
-                $this->emergencyCount = $data[Log::EMERGENCY];
+            if (isset($data[Log::EMERG])) {
+                $this->emergencyCount = $data[Log::EMERG];
             }
         }
 
@@ -360,7 +360,7 @@ class Summary
                 $counts[$key . '_count'] += $data[$key];
             }
         }
-        
+
         return $counts;
     }
 
