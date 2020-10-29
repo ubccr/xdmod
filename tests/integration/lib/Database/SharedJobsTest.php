@@ -34,8 +34,14 @@ class SharedJobsTest extends BaseTest
             $this->testFiles->getFile('schema/integration', 'shared_jobs.spec', ''),
             false
         );
-
-        $this->validateJson($actual, $schemaObject);
+        $validator = new Validator();
+        $actualDecoded = json_decode(json_encode($actual));
+        $validator->validate($actualDecoded, $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
+        }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {
