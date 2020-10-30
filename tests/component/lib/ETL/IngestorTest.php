@@ -49,7 +49,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/[WARNING]/', $line);
+                $this->assertRegExp('/[warning]/', $line);
                 $numWarnings++;
             }
         }
@@ -78,7 +78,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         $numWarnings = 0;
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, 'WARNING') ) {
+                if ( false !== strpos($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -101,7 +101,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertNotRegExp('/WARNING/', $line);
+                $this->assertNotRegExp('/[warning]/', $line);
             }
         }
 
@@ -127,7 +127,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, 'WARNING') ) {
+                if ( false !== strpos($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -143,7 +143,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, 'WARNING') ) {
+                if ( false !== strpos($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -192,7 +192,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         $recordsLoaded = array();
 
         foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-            if ( false !== strpos($line, 'NOTICE') ) {
+            if ( false !== strpos($line, '[notice]') ) {
                 $matches = array();
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
