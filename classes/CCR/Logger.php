@@ -52,6 +52,9 @@ class Logger extends \Monolog\Logger implements LoggerInterface
                 $nonMessageParts = array();
 
                 while (list($key, $value) = each($message)) {
+                    if (!is_string($value)) {
+                        $value = $this->extractMessage($value);
+                    }
                     $nonMessageParts[] = "$key: $value";
                 }
 
