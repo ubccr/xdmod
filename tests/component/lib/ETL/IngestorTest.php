@@ -78,7 +78,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         $numWarnings = 0;
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '\[warning\]') ) {
+                if ( false !== strpos($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -127,7 +127,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '\[warning\]') ) {
+                if ( false !== strpos($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -143,7 +143,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '\[warning\]') ) {
+                if ( false !== strpos($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
