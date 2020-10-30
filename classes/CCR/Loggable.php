@@ -95,7 +95,7 @@ class Loggable
     {
         $logMessage = array();
         $message = "{$this}: " . ( is_string($message) ? $message : "" );
-        $logLevel = Log::DEBUG;
+        $logLevel = Log::ERR;
         $exceptionProvided = false;
         $code = 0;
 
