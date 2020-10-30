@@ -11,16 +11,14 @@ namespace xd_security;
  */
 function start_session()
 {
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        $cParams = session_get_cookie_params();
-        session_set_cookie_params(
-            $cParams["lifetime"],
-            $cParams["path"],
-            $cParams['domain'],
-            true
-        );
-        @session_start();
-    }
+    $cParams = session_get_cookie_params();
+    session_set_cookie_params(
+        $cParams["lifetime"],
+        $cParams["path"],
+        $cParams['domain'],
+        true
+    );
+    @session_start();
 }
 
 /**
