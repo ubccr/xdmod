@@ -864,7 +864,6 @@ function compareTableData(
                 }
             }
 
-            $logger->debug(sprintf("Missing row: %s", print_r($row, 1)));
         }
 
     } else {
