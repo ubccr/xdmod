@@ -94,9 +94,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testHideSqlWarnings() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warnings=true"');
-        if ($result['exit_status'] !== 0) {
-            print_r($result);
-        }
+
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         // We are expecting no warnings to be returned
@@ -117,9 +115,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testHideSqlWarningCodes() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
-        if ($result['exit_status'] !== 0) {
-            print_r($result);
-        }
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         /* We are expecting output such as:
@@ -143,9 +138,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         // Run the same action, but filter all expected warning codes.
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=[1264,1366]"');
-        if ($result['exit_status'] !== 0) {
-            print_r($result);
-        }
         $this->assertEquals(0, $result['exit_status'], "Exit code");
         $numWarnings = 0;
 
@@ -173,10 +165,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             sprintf('-v notice -d "CLOUD_EVENT_LOG_DIR=%s/generic_cloud_logs"', BASE_DIR . self::TEST_INPUT_DIR)
         );
 
-        if ($result['exit_status'] !== 0) {
-            print_r($result);
-        }
-
         $this->assertEquals(0, $result['exit_status'], 'Exit code');
         $this->assertEquals('', $result['stderr'], 'Std Error');
     }
@@ -192,9 +180,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             '-v notice',
             self::PIPELINE
         );
-        if ($result['exit_status'] !== 0) {
-            print_r($result);
-        }
         // Parse the output looking for [notice] lines indicating how many records were loaded for
         // each action in the pipeline. Ensure the expected number of records were loaded. We are
         // expecting 4 actions to be run:
@@ -211,7 +196,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
                 $matches = array();
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
-                    if ( preg_match('/"records_loaded":\s*([0-9]+)/', $line, $matches) ) {
+                    if ( preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
                         $recordsLoaded[$number] = $matches[1];
                     }
                 }
