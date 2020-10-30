@@ -14,17 +14,54 @@ use Psr\Log\LoggerInterface;
 class Logger extends \Monolog\Logger implements LoggerInterface
 {
 
+    /**
+     * @inheritDoc
+     */
     public function log($level, $message, array $context = array())
     {
-        $message = !is_string($message) ? json_encode($message) : $message;
-
-        return parent::log($level, $message, $context);
+        return parent::log($level, $this->extractMessage($message), $context);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function addRecord($level, $message, array $context = array())
     {
-        $message = !is_string($message) ? json_encode($message) : $message;
+        return parent::addRecord($level, $this->extractMessage($message), $context);
+    }
 
-        return parent::addRecord($level, $message, $context);
+    /**
+     * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
+     *
+     * @param mixed $message
+     *
+     * @return string
+     */
+    protected function extractMessage($message)
+    {
+        if (is_array($message))
+        {
+            $parts = array();
+
+            if (isset($message['message'])) {
+                $parts[] = $message['message'];
+                unset($message['message']);
+            }
+
+            if (count($message) > 0) {
+                $nonMessageParts = array();
+
+                while (list($key, $value) = each($message)) {
+                    $nonMessageParts[] = "$key: $value";
+                }
+
+                $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
+            }
+
+            return implode(' ', $parts);
+        }
+
+        /* Otherwise, we assume the message is a string. */
+        return $message;
     }
 }
