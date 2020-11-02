@@ -33,38 +33,15 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     /**
      * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
      *
-     * @param mixed $message
+     * @param mixed $record
      *
      * @return string
      */
-    protected function extractMessage($message)
+    protected function extractMessage($record)
     {
-        if (is_array($message))
-        {
-            $parts = array();
-
-            if (isset($message['message'])) {
-                $parts[] = $message['message'];
-                unset($message['message']);
-            }
-
-            if (count($message) > 0) {
-                $nonMessageParts = array();
-
-                while (list($key, $value) = each($message)) {
-                    if (!is_string($value)) {
-                        $value = $this->extractMessage($value);
-                    }
-                    $nonMessageParts[] = "$key: $value";
-                }
-
-                $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
-            }
-
-            return implode(' ', $parts);
+        if (is_array($record)) {
+            return json_encode($record);
         }
-
-        /* Otherwise, we assume the message is a string. */
-        return $message;
+        return json_encode(array('message' => $record));
     }
 }

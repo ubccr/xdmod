@@ -3,7 +3,6 @@
 namespace CCR;
 
 use Exception;
-use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
