@@ -3,6 +3,11 @@ env:
     global:
         - COMPOSER_ALLOW_SUPERUSER=1
         - XDMOD_REALMS='jobs,storage,cloud'
+        - NODE_VERSION=6
+        - XDMOD_TEST_ARTIFACTS_MIRROR="$HOME/xdmod-test-artifacts.git"
+        - XDMOD_IS_CORE=true
+        - XDMOD_SOURCE_DIR=$SHIPPABLE_BUILD_DIR
+        - XDMOD_INSTALL_DIR=/usr/share/xdmod
     matrix:
         - XDMOD_TEST_MODE=fresh_install
         - XDMOD_TEST_MODE=upgrade
@@ -11,6 +16,8 @@ build:
     cache_dir_list:
         - /root/.composer
         - /root/.npm
+        - /tmp/pear/cache
+        - $XDMOD_TEST_ARTIFACTS_MIRROR
     pre_ci:
         - docker build -t pseudo_repo/openxdmod:latest .
     pre_ci_boot:
@@ -19,7 +26,12 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
+        - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
+        - source $HOME/.nvm/nvm.sh
+        - git clone --depth=1 --branch="v1" https://github.com/ubccr/xdmod-qa.git .qa
+        - .qa/travis/install.sh
         - composer install --no-progress
+        - .qa/travis/build.sh
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
