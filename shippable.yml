@@ -16,7 +16,6 @@ build:
         - /root/.composer
         - /root/.npm
         - /tmp/pear/cache
-        - $XDMOD_TEST_ARTIFACTS_MIRROR
     pre_ci:
         - docker build -t pseudo_repo/openxdmod:latest .
     pre_ci_boot:
