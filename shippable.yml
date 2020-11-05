@@ -6,7 +6,7 @@ env:
         - NODE_VERSION=6
         - XDMOD_IS_CORE=true
         - XDMOD_SOURCE_DIR=$SHIPPABLE_BUILD_DIR
-        - XDMOD_INSTALL_DIR=/usr/share/xdmod
+        - XDMOD_INSTALL_DIR=/xdmod
     matrix:
         - XDMOD_TEST_MODE=fresh_install
         - XDMOD_TEST_MODE=upgrade
@@ -25,12 +25,14 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
+        - mkdir /xdmod
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
         - composer install --no-progress
         - ./tests/ci/scripts/qa-test-setup.sh
+        - composer install --no-progress
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - mv ./configuration/organization.json ./configuration/organization.json.old
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old

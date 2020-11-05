@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
-# Make sure that we exit if an error occurs.
-set -e
-
 # Only run if we're doing an upgrade
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Check if an XDMOD_QA_BRANCH env variable has been set, if not then set a default.
     if [[ -z "$XDMOD_QA_BRANCH" ]]; then
-        XDMOD_QA_BRANCH="v1"
+        #XDMOD_QA_BRANCH="v1"
+        XDMOD_QA_BRANCH="migrate_travis" # This is only here until I merge this into v1
     fi
 
     # Check if XDMOD_SOURCE_DIR env variable exists, if not then we can't continue.
@@ -17,18 +15,22 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
         exit 1
     fi
 
-    # Make sure that we're in the XDMOD_SOURCE_DIR before continuing
-    pushd "$XDMOD_SOURCE_DIR" >/dev/null || exit 1
-
     # Clone a current copy of the xdmod-qa repo.
-    git clone --depth=1 --branch="$XDMOD_QA_BRANCH" https://github.com/ubccr/xdmod-qa.git .qa
+    #GIT_URL="https://github.com/ubccr/xdmod-qa.git"
+    GIT_URL="https://github.com/ryanrath/xdmod-qa.git"
+    git clone --depth=1 --branch="$XDMOD_QA_BRANCH" "$GIT_URL" $HOME/.qa
+
+    pushd $HOME >/dev/null || exit 1
 
     # Setup the xdmod-qa environment / requirements.
-    .qa/travis/install.sh
+    $HOME/.qa/travis/install.sh
+
+    popd >/dev/null || exit 1
+
+    pushd "$XDMOD_SOURCE_DIR" >/dev/null || exit 1
 
     # Run the xdmod-qa tests.
-    .qa/travis/build.sh
+    $HOME/.qa/travis/build.sh
 
-    # Make sure that we go back to whatever directory we were in pre-pushd.
     popd >/dev/null || exit 1
 fi
