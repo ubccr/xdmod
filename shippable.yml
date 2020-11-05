@@ -4,7 +4,6 @@ env:
         - COMPOSER_ALLOW_SUPERUSER=1
         - XDMOD_REALMS='jobs,storage,cloud'
         - NODE_VERSION=6
-        - XDMOD_TEST_ARTIFACTS_MIRROR="$HOME/xdmod-test-artifacts.git"
         - XDMOD_IS_CORE=true
         - XDMOD_SOURCE_DIR=$SHIPPABLE_BUILD_DIR
         - XDMOD_INSTALL_DIR=/usr/share/xdmod
@@ -26,16 +25,12 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
-        - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
-        - source $HOME/.nvm/nvm.sh
-        - git clone --depth=1 --branch="v1" https://github.com/ubccr/xdmod-qa.git .qa
-        - .qa/travis/install.sh
         - composer install --no-progress
-        - .qa/travis/build.sh
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
         - composer install --no-progress
+        - ./tests/ci/scripts/qa-test-setup.sh
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - mv ./configuration/organization.json ./configuration/organization.json.old
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
