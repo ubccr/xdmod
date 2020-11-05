@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Only run if we're doing an upgrade
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
