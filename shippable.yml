@@ -3,7 +3,6 @@ env:
     global:
         - COMPOSER_ALLOW_SUPERUSER=1
         - XDMOD_REALMS='jobs,storage,cloud'
-        - NODE_VERSION=6
         - XDMOD_IS_CORE=true
         - XDMOD_SOURCE_DIR=$SHIPPABLE_BUILD_DIR
         - XDMOD_INSTALL_DIR=/xdmod
@@ -24,7 +23,7 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
-        - mkdir /xdmod
+        - mkdir -p $XDMOD_INSTALL_DIR
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
