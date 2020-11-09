@@ -22,14 +22,10 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     GIT_URL="https://github.com/ryanrath/xdmod-qa.git"
     git clone --depth=1 --branch="$XDMOD_QA_BRANCH" "$GIT_URL" $HOME/.qa
 
-    pushd $HOME >/dev/null || exit 1
+    pushd "$XDMOD_SOURCE_DIR" >/dev/null || exit 1
 
     # Setup the xdmod-qa environment / requirements.
     $HOME/.qa/travis/install.sh
-
-    popd >/dev/null || exit 1
-
-    pushd "$XDMOD_SOURCE_DIR" >/dev/null || exit 1
 
     # Run the xdmod-qa tests.
     $HOME/.qa/travis/build.sh
