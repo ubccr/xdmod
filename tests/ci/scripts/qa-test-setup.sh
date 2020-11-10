@@ -5,11 +5,10 @@ set -e
 # Only run if we're doing an upgrade
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
-    # Check if an XDMOD_QA_BRANCH env variable has been set, if not then set a default.
-    if [[ -z "$XDMOD_QA_BRANCH" ]]; then
-        #XDMOD_QA_BRANCH="v1"
-        XDMOD_QA_BRANCH="migrate_travis" # This is only here until I merge this into v1
-    fi
+    # Set default values for the environment variables we're going to use.
+    QA_BRANCH=${QA_BRANCH:-migrate_travis}
+    QA_GIT_URL=${QA_GIT_URL:-https://github.com/ryanrath/xdmod-qa.git}
+
 
     # Check if XDMOD_SOURCE_DIR env variable exists, if not then we can't continue.
     if [[ -z "$XDMOD_SOURCE_DIR" ]]; then
@@ -18,9 +17,7 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     fi
 
     # Clone a current copy of the xdmod-qa repo.
-    #GIT_URL="https://github.com/ubccr/xdmod-qa.git"
-    GIT_URL="https://github.com/ryanrath/xdmod-qa.git"
-    git clone --depth=1 --branch="$XDMOD_QA_BRANCH" "$GIT_URL" $HOME/.qa
+    git clone --depth=1 --branch="$QA_BRANCH" "$QA_GIT_URL" $HOME/.qa
 
     pushd "$XDMOD_SOURCE_DIR" >/dev/null || exit 1
 
