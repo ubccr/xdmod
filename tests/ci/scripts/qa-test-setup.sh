@@ -22,10 +22,10 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     pushd "$XDMOD_SOURCE_DIR" >/dev/null || exit 1
 
     # Setup the xdmod-qa environment / requirements.
-    $HOME/.qa/travis/install.sh
+    $HOME/.qa/scripts/install.sh
 
     # Run the xdmod-qa tests.
-    $HOME/.qa/travis/build.sh
+    $HOME/.qa/scripts/build.sh
 
     popd >/dev/null || exit 1
 fi
