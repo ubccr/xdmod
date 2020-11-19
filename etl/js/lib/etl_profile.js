@@ -776,7 +776,11 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     }
 
                     var label = tableColumns[tc].stats[st].label.replace(':field_name', fieldName);
-                    var description = tableColumns[tc].stats[st].description.replace(':field_name', fieldName);
+                    var description = tableColumns[tc].stats[st].description;
+                    if (typeof description === 'string') {
+                       description = description.replace(':field_name', fieldName);
+                    }
+
                     for (var tagidx in tableColumns[tc].dynamictags) {
                         if (tableColumns[tc].dynamictags.hasOwnProperty(tagidx)) {
                             var lSubStr = ':label_' + tagidx;
@@ -784,8 +788,10 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                             var replacement = tableColumns[tc].dynamictags[tagidx];
                             label = label.replace(lSubStr, replacement);
                             label = label.replace(uSubStr, wordToUpper(replacement));
-                            description = description.replace(lSubStr, replacement);
-                            description = description.replace(uSubStr, wordToUpper(replacement));
+                            if (typeof description === 'string') {
+                                description = description.replace(lSubStr, replacement);
+                                description = description.replace(uSubStr, wordToUpper(replacement));
+                            }
                         }
                     }
                     var decimals = 1;
@@ -793,13 +799,24 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                         decimals = tableColumns[tc].stats[st].decimals;
                     }
 
+                    var aggregate_formula;
+                    var timeseries_formula;
+
+                    if (tableColumns[tc].stats[st].sql) {
+                        aggregate_formula = tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name);
+                        timeseries_formula = aggregate_formula;
+                    } else {
+                        aggregate_formula = tableColumns[tc].stats[st].aggregate_sql.replace(/:field_name/g, tableColumns[tc].name);
+                        timeseries_formula = tableColumns[tc].stats[st].timeseries_sql.replace(/:field_name/g, tableColumns[tc].name);
+                    }
+
                     xdmodInteg.addStatistic(statsname);
                     statistics[statsname] = {
-                        aggregate_formula: tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name).replace(':timeseries', 0),
+                        aggregate_formula: aggregate_formula,
                         description_html: description,
                         name: label,
                         precision: decimals,
-                        timeseries_formula: tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name).replace(':timeseries', 1),
+                        timeseries_formula: timeseries_formula,
                         unit: tableColumns[tc].stats[st].unit
                     };
                     if ('requirenotnull' in tableColumns[tc].stats[st]) {
