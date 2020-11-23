@@ -6,8 +6,8 @@ set -e
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Set default values for the environment variables we're going to use.
-    QA_BRANCH=${QA_BRANCH:-migrate_travis}
-    QA_GIT_URL=${QA_GIT_URL:-https://github.com/ryanrath/xdmod-qa.git}
+    QA_BRANCH=${QA_BRANCH:-v1}
+    QA_GIT_URL=${QA_GIT_URL:-https://github.com/ubccr/xdmod-qa.git}
 
 
     # Check if XDMOD_SOURCE_DIR env variable exists, if not then we can't continue.
