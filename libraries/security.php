@@ -37,7 +37,7 @@ function detectUser($failover_methods = array())
     } catch (\Exception $e) {
         if (count($failover_methods) == 0) {
             // Previously: Exception with 'Session Expired', No Logged In User code
-            throw new \SessionExpiredException();
+            throw new \SessionExpiredException(); 
         }
 
         switch ($failover_methods[0]) {
