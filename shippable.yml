@@ -23,8 +23,6 @@ build:
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"
     ci:
-        - mkdir -p $XDMOD_INSTALL_DIR
-        - mkdir -p shippable/testresults
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
