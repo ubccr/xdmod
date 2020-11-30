@@ -168,14 +168,14 @@ function main()
  * logger.  This function should only be used in the global scope where
  * the logger may not have already been created.
  *
- * @return \Log
+ * @return \Psr\Log\LoggerInterface
  */
 function getLogger()
 {
     global $logger;
 
     if (!isset($logger)) {
-        $logger = \Log::singleton('console', '', 'xdmod-packager');
+        $logger = Log::singleton('console', '', 'xdmod-packager');
     }
 
     return $logger;
