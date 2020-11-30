@@ -48,7 +48,6 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 
     public function transform(&$key, &$value, stdClass $obj, Configuration $config)
     {
-        $this->logger->debug(sprintf("Remove comment '%s'", $key));
         $key = null;
         $value = null;
 

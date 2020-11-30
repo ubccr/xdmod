@@ -300,18 +300,6 @@ class Configuration extends Loggable implements iConfiguration
                 $success = null;
                 $cachedInstance = ( $apcuEnabled ? apcu_fetch($cacheKey, $success) : self::$objectCache[$cacheKey] );
                 $cachedInstance->setLogger($logger);
-                if ( null !== $logger ) {
-                    $logger->debug(
-                        sprintf(
-                            'Fetched object %s (%s) from %s cache with key %s in %fs',
-                            $calledClass,
-                            $filename,
-                            ( $apcuEnabled ? 'APCu' : 'local' ),
-                            $cacheKey,
-                            microtime(true) - $startTime
-                        )
-                    );
-                }
             }
         }
 
