@@ -11,7 +11,7 @@ class MySQLHelper
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
