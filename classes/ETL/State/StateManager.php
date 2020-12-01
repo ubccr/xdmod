@@ -19,8 +19,8 @@
 
 namespace ETL\State;
 
+use CCR\Log;
 use Exception;
-use Monolog\Logger;
 use PDO;
 use Psr\Log\LoggerInterface;
 use stdClass;
@@ -49,7 +49,7 @@ class StateManager
      * ------------------------------------------------------------------------------------------
      */
 
-    private static function logAndThrowException($msg, LoggerInterface $logger = null, $logLevel = Logger::ERROR)
+    private static function logAndThrowException($msg, LoggerInterface $logger = null, $logLevel = Log::ERR)
     {
         if ( null !== $logger ) {
             $logger->log($logLevel, $msg);

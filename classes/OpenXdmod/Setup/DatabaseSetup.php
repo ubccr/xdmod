@@ -6,7 +6,6 @@
 namespace OpenXdmod\Setup;
 
 use CCR\Log;
-use Monolog\Logger;
 use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
 use CCR\DB;

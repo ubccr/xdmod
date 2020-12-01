@@ -10,7 +10,6 @@ namespace Xdmod;
 
 use CCR\Log;
 use Exception;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
 /**
