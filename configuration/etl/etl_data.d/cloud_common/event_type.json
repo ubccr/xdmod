@@ -10,9 +10,9 @@
     [7,  "REQUEST_RESUME",                    "Request Resume",	               "Request to resume suspended instance" ],
     [8,  "RESUME",                            "Resume",                        "Resume suspended instance" ],
     [9,  "REQUEST_IP_ATTACH",                 "Request Attach IP",	           "Request to attach IP address" ],
-    [10, "REQUEST_VOLUME_ATTACH",             "Request Attach Volume",    	   "Request to attach storage volume" ],
+    [10, "REQUEST_VOLUME_ATTACH",             "Attach Volume to Instance",    "Request to attach storage volume" ],
     [11, "VOLUME_ATTACH",                     "Volume Attach",                 "Storage volume attached" ],
-    [12, "REQUEST_VOLUME_DETACH",             "Request Detach Volume",         "Request to detach storage volume" ],
+    [12, "REQUEST_VOLUME_DETACH",             "Detach Volume from Instance",         "Request to detach storage volume" ],
     [13, "REQUEST_MIGRATE",                   "Request Migrate",               "Request to migrate instance to another host" ],
     [14, "START_MIGRATE",                     "Start Migrate",                 "Start migrating an instance to another host" ],
     [15, "STOP_MIGRATE",                      "Stop Migrate",                  "Migration of an instance to another host completed" ],
@@ -61,5 +61,12 @@
     [58, "POWER_ON_START",                    "Power On Instance Start",       "Start powering on an instance"],
     [59, "POWER_ON_END",                      "Power On Instance End",         "End powering on an instance"],
     [60, "UNSUSPEND_START",                   "Unsuspend Instance Start",      "Start unsuspending an instance"],
-    [61, "UNSUSPEND_END",                     "Unsuspend Instance End",        "End unsuspending an instance"]
+    [61, "UNSUSPEND_END",                     "Unsuspend Instance End",        "End unsuspending an instance"],
+    [62, "SUSPEND_START",                     "Suspend Instance Start",        "Start suspending an instance"],
+    [63, "UNSHELVE_START",                    "Unshelve Instance Start",       "Start unshelving an instance"],
+    [64, "SHELVE_START",                      "Shelve Instance Start",         "Start shelving an instance"],
+    [65, "REBOOT_ERROR",                      "Error Rebooting Instance",      "Error when rebooting an instance"],
+    [66, "REBUILD_ERROR",                     "Error Rebuilding Instance",     "Error when rebuilding an instance"],
+    [67, "REBOOT_START",                      "Start Rebooting Instance",      "Start rebooting an instance"],
+    [68, "REBOOT_END",                        "End Rebooting Instance",        "End rebooting an instance"]
 ]

@@ -196,6 +196,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 "text" => "Timeseries",
                 "leaf" => false
             ),
+        \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE =>
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE,
+                "dtype" => "infoid",
+                "text" => "VM State/Events",
+                "documentation" => "Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.",
+                "url" => "/rest/v1.0/warehouse/search/cloud/vmstate",
+                "type" => "vmstate",
+                "leaf" => true
+            )
     );
 
     /**
@@ -255,6 +265,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
             ->convert('action', "$conversions::toString");
         $controller
             ->post("$root/search/jobs/{action}", "$current::searchJobsByAction")
+            ->assert('action', '(\w|_|-])+')
+            ->convert('action', "$conversions::toString");
+
+        $controller
+            ->get("$root/search/cloud/{action}", "$current::searchJobsByAction")
+            ->assert('action', '(\w|_|-])+')
+            ->convert('action', "$conversions::toString");
+        $controller
+            ->post("$root/search/cloud/{action}", "$current::searchJobsByAction")
             ->assert('action', '(\w|_|-])+')
             ->convert('action', "$conversions::toString");
 
@@ -352,6 +371,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realm = $this->getStringParam($request, 'realm');
         $title = $this->getStringParam($request, 'title');
 
+        // Find which if else it is going to
         if ($nodeId !== null && $tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
             $result = $this->processJobNodeTimeSeriesRequest($app, $user, $realm, $jobId, $tsId, $nodeId, $infoId, $action);
         } elseif ($tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
@@ -1387,6 +1407,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
                 $results = $this->getJobTimeSeriesData($app, $request, $user, $realm, $jobId, $tsId, $nodeId, $cpuId);
                 break;
+            case 'vmstate':
+                $results = $this->getJobTimeSeriesData($app, $request, $user, $realm, $jobId, null, null, null);
+                break;
             default:
                 $results = $app->json(
                     array(
@@ -1691,6 +1714,19 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
 
         switch ($infoId) {
+            case "" . \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE:
+                $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
+                $info = new $infoclass();
+
+                $result = array();
+                foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
+                    $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/vmstate";
+                    $tsid['type'] = "timeseries";
+                    $tsid['dtype'] = "tsid";
+                    $result[] = $tsid;
+                }
+                return $app->json(array('success' => true, "results" => $result));
+                break;
             case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
                 $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
                 $info = new $infoclass();

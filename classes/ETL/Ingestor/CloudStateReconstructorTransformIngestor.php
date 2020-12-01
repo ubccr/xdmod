@@ -48,6 +48,9 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     private $_start_event_ids;
     private $_instance_state;
     private $_end_time;
+    private $_test_start_ids;
+    private $_test_end_ids;
+    private $_test_all_ids;
 
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
@@ -59,6 +62,9 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $this->_stop_event_ids = array(self::STOP, self::TERMINATE, self::SUSPEND, self::SHELVE, self::POWER_OFF, self::PAUSE);
         $this->_start_event_ids = array(self::START, self::RESUME, self::STATE_REPORT, self::UNSHELVE, self::UNPAUSE, self::UNSUSPEND, self::POWER_ON);
         $this->_all_event_ids = array_merge($this->_start_event_ids, $this->_stop_event_ids);
+        $this->_test_start_ids = array(1,2,3,4,5,7,8,16,17,19,20,44,45,54,55,56,57,58,59,60,61,62,63,64);
+        $this->_test_end_ids = array(2,3,4,5,6,7,8,17,19,20,44,45,54,55,56,57,58,59,60,61,62,63,64);
+        $this->_test_all_ids = array_unique(array_merge($this->_test_start_ids, $this->_test_end_ids));
         $this->_end_time = $etlConfig->getVariableStore()->endDate ? date('Y-m-d H:i:s', strtotime($etlConfig->getVariableStore()->endDate)) : null;
 
         $this->resetInstance();
@@ -66,7 +72,10 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     private function initInstance($srcRecord)
     {
-        $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_ts'];
+        //$default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_ts'];
+        $beginOfDay = strtotime("today", $srcRecord['event_time_ts']);
+
+        $default_end_time = isset($this->_end_time) ? $this->_end_time : strtotime("tomorrow", $beginOfDay) - 1;
 
         $this->_instance_state = array(
             'resource_id' => $srcRecord['resource_id'],
@@ -104,7 +113,8 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         }
 
         if ($this->_instance_state === null) {
-            if (in_array($srcRecord['event_type_id'], $this->_start_event_ids)) {
+            //if (in_array($srcRecord['event_type_id'], $this->_start_event_ids)) {
+            if (in_array($srcRecord['event_type_id'], $this->_test_start_ids)) {
                 $this->initInstance($srcRecord);
             }
             return array();
@@ -114,15 +124,21 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
         if (($this->_instance_state['instance_id'] !== $srcRecord['instance_id']) || ($this->_instance_state['resource_id'] !== $srcRecord['resource_id'])) {
             $transformedRecord[] = $this->_instance_state;
-            if (!in_array($srcRecord['event_type_id'], $this->_stop_event_ids) && $srcRecord['event_type_id'] != self::START_ERROR) {
+            //if (!in_array($srcRecord['event_type_id'], $this->_test_end_ids) && $srcRecord['event_type_id'] != self::START_ERROR) {
+            if (!in_array($srcRecord['event_type_id'], [6]) && $srcRecord['event_type_id'] != self::START_ERROR) {
                 $this->initInstance($srcRecord);
             }
-        } elseif (in_array($srcRecord['event_type_id'], $this->_start_event_ids)) {
+        } elseif (in_array($srcRecord['event_type_id'], [1,16])) {
             $this->updateInstance($srcRecord);
-        } elseif (in_array($srcRecord['event_type_id'], $this->_stop_event_ids)) {
+        } elseif (in_array($srcRecord['event_type_id'], $this->_test_end_ids)) {
+
             $this->updateInstance($srcRecord);
             $transformedRecord[] = $this->_instance_state;
             $this->resetInstance();
+
+            if(in_array($srcRecord['event_type_id'], $this->_test_start_ids)){
+                $this->initInstance($srcRecord);
+            }
         }
 
         return $transformedRecord;
@@ -138,7 +154,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $unionValues = array_fill(0, $colCount, 0);
         $subSelect = "(SELECT DISTINCT instance_id from modw_cloud.event WHERE last_modified > \"" . $this->getEtlOverseerOptions()->getLastModifiedStartDate() . "\")";
 
-        $sql = "$sql WHERE instance_id IN " . $subSelect . " AND event_type_id IN (" . implode(',', $this->_all_event_ids) . ")\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
+        $sql = "$sql WHERE instance_id IN " . $subSelect . " AND event_type_id IN (" . implode(',', $this->_test_all_ids) . ")\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
 
         return $sql;
     }

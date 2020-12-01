@@ -11,6 +11,7 @@
         "records": {
             "resource_id": "raw.resource_id",
             "account_id": "act.account_id",
+            "asset_type_id": 1,
             "provider_identifier": "raw.openstack_resource_id",
             "create_time_ts": "UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone))",
             "size": "raw.size"
