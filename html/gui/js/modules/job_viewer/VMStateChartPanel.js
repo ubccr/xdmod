@@ -116,7 +116,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
               mode: 'lines',
               type: 'scatter',
               legendgroup: legend_group,
-              showlegend: true,
+              showlegend: (i <= 1) ? true : false,
               opacity: 0.7,
               line: {
                 color: statusColor,
