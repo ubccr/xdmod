@@ -6,7 +6,7 @@
         "columns": [
             {
                 "name": "id",
-                "type": "char(50)",
+                "type": "char(255)",
                 "nullable": false,
                 "default": "",
                 "comment": "The name of the queue."
@@ -19,7 +19,7 @@
             },
             {
                 "name": "queue_origin_id",
-                "type": "char(50)",
+                "type": "char(255)",
                 "nullable": true
             }
         ],
