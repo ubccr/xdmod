@@ -2,57 +2,12 @@ Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
 
 XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
 
-  chart: null,
   store: null,
   renderChartTo: '',
-  displayTimezone: 'UTC',
-  selectorOptions: {
-    buttons: [{
-        step: 'month',
-        stepmode: 'backward',
-        count: 1,
-        label: '1m'
-    }, {
-        step: 'month',
-        stepmode: 'backward',
-        count: 1,
-        label: '1m'
-    }, {
-        step: 'year',
-        stepmode: 'todate',
-        count: 1,
-        label: 'YTD'
-    }, {
-        step: 'year',
-        stepmode: 'backward',
-        count: 1,
-        label: '1y'
-    }, {
-        step: 'all',
-    }],
-  },
-  defaultChartSettings: {
-      title: '',
-      xaxis: {
-          rangeselector: this.selectorOptions,
-          rangeslider: {},
-          type: 'date'
-      },
-      yaxis: {
-          fixedrange: true,
-          range: [0, 2],
-          ticks: '',
-          showticklabels: false
-      },
-      font: {
-        family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-        size: 16,
-        color: '#444b6e'
-      },
-      hovermode: 'x unified',
-      hoverdistance: 1
-  },
+  chartTitle: '',
   chartData: [],
+  sliderRangeStart: null,
+  sliderRangeEnd: null,
   initComponent: function () {
       var self = this;
 
@@ -96,7 +51,15 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             var statusColor = 'white';
             var status = "Unknown";
 
-            this.defaultChartSettings.title = "Timeline for VM " + current.provider_identifier;
+            this.chartTitle = "Timeline for VM " + current.provider_identifier;
+
+            if (this.sliderRangeEnd < end_time && this.sliderRangeEnd === null) {
+                this.sliderRangeEnd = end_time;
+            }
+
+            if (this.sliderRangeStart < start_time && this.sliderRangeStart === null) {
+                this.sliderRangeStart = start_time;
+            }
 
             if( active_states.indexOf(parseInt(current.start_event_type_id)) != -1) {
                 statusColor = 'green';
@@ -155,11 +118,40 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             });
         }
 
+        var sliderStartDate = new Date(this.sliderRangeEnd);
+        sliderStartDate.setDate(sliderStartDate.getDate() - 7);
+        if (sliderStartDate.getTime() > this.sliderRangeStart) {
+            this.sliderRangeStart = sliderStartDate.getTime();
+        }
+
         this.fireEvent('renderChart', this);
      },
      renderChart: function(panel) {
         if(Object.keys(this.chartData).length !== 0 && this.renderChartTo != ''){
-            Plotly.newPlot(this.renderChartTo, this.chartData, this.defaultChartSettings, {displayModeBar: false});
+            var chart_settings = {
+                title: this.chartTitle,
+                xaxis: {
+                    rangeselector: {},
+                    rangeslider: {
+                        range: [this.sliderRangeStart, this.sliderRangeEnd]
+                    },
+                    type: 'date'
+                },
+                yaxis: {
+                    fixedrange: true,
+                    range: [0, 2],
+                    ticks: '',
+                    showticklabels: false
+                },
+                font: {
+                  family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                  size: 16,
+                  color: '#444b6e'
+                },
+                hovermode: 'x unified',
+                hoverdistance: 1
+            };
+            Plotly.newPlot(this.renderChartTo, this.chartData, chart_settings, {displayModeBar: false});
         }
      }
   }
