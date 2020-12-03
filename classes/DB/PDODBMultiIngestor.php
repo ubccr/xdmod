@@ -22,6 +22,14 @@ class PDODBMultiIngestor implements Ingestor
     protected $_trackchanges = false;
 
     /**
+     * When running in LOAD INFILE ingest mode this variable is
+     * used to define which character set to use to interpret the data.
+     * If set to null then the mysql defaults will be used.
+     * This is only used in LOAD INFILE mode.
+     */
+    protected $_character_set = null;
+
+    /**
      * Helper instance for destination database.
      *
      * @var MySQLHelper
@@ -241,10 +249,14 @@ class PDODBMultiIngestor implements Ingestor
                 // to specify the character set of the file by using the CHARACTER SET
                 // clause.
 
+                $charset_override = '';
+                if ($this->_character_set !== null) {
+                    $charset_override = ' character set \'' . $this->_character_set . '\'';
+                }
+
                 $load_statement = 'load data local infile \'' . $infile_name
                     . '\' replace into table ' . $this->_insert_table
-                    // Only set the character set for XRAS ingestors to minimize potential impact
-                    . ( 0 === strpos(get_class($this), 'XRAS') ? ' character set \'utf8mb4\'' : '' )
+                    . $charset_override
                     . ' fields terminated by 0x1e optionally enclosed by 0x1f'
                     . ' lines terminated by 0x1d ('
                     . implode(',', $this->_insert_fields) . ')';
