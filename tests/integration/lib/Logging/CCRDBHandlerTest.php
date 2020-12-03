@@ -1,6 +1,8 @@
 <?php
 
-class CCRDBHandlerTest extends PHPUnit_Framework_TestCase
+namespace IntegrationTests\Logging;
+
+class CCRDBHandlerTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testHandlerWritesCorrectly()
@@ -56,11 +58,9 @@ class CCRDBHandlerTest extends PHPUnit_Framework_TestCase
             $json,
             sprintf(
                 "Expected decoded message to be an object with a `message` property. Received: %s",
-                 print_r($json, true)
+                print_r($json, true)
             )
         );
 
     }
-
-
 }
