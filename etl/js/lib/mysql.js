@@ -265,6 +265,8 @@ module.exports.sqlType = function (type, length) {
             return 'tinyint(4)';
         case 'double':
             return 'double';
+        case 'decimal':
+            return 'decimal(18,2)';
         case 'string':
             return 'varchar(' + (length !== undefined ? length : 50) + ')';
         case 'timestamp':
