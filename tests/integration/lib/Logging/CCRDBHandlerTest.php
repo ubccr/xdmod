@@ -11,7 +11,15 @@ class CCRDBHandlerTest extends PHPUnit_Framework_TestCase
         $schema = \xd_utilities\getConfiguration('logger', 'database');
         $table = \xd_utilities\getConfiguration('logger', 'table');
 
-        $logger = new \Monolog\Logger('test-ccr-db-handler');
+        $logger = \CCR\Log::factory(
+            'test-ccr-db-handler',
+            array(
+                'file' => false,
+                'console' => false,
+                'mail' => false
+            )
+        );
+
         $logger->pushHandler(new \CCR\CCRDBHandler());
 
         $logger->debug("Testing DB Write Handler: $now");
@@ -21,6 +29,36 @@ class CCRDBHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $actual, sprintf("Expected 1 log record to be written, but received: %s", $actual));
         $this->assertTrue(is_numeric($results[0]['id']), sprintf("Expected the id value to be numeric, received: %s", $results[0]['id']));
+
+        // Check that the result has the required column
+        $result = $results[0];
+        $this->assertArrayHasKey(
+            'message',
+            $result,
+            sprintf(
+                "Expected there to be a column called 'message' in log table results. Received: %s",
+                print_r($result, true)
+            )
+        );
+
+        // Check that the data contained in the required column is formatted correctly.
+        $message = $result['message'];
+        $json = null;
+        try {
+            $json = json_decode($message);
+        } catch (Exception $e) {
+            $this->fail("Expected the `message` property to be json de-codable. Received: $message");
+        }
+
+        $this->assertNotNull($json);
+        $this->assertObjectHasAttribute(
+            'message',
+            $json,
+            sprintf(
+                "Expected decoded message to be an object with a `message` property. Received: %s",
+                 print_r($json, true)
+            )
+        );
 
     }
 
