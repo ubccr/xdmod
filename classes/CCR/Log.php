@@ -23,14 +23,14 @@ class Log
 
     // Class constants so "Log.php" doesn't need to be required by users
     // of the Log class.
-    const EMERG   = Logger::EMERGENCY;
-    const ALERT   = Logger::ALERT;
-    const CRIT    = Logger::CRITICAL;
-    const ERR     = Logger::ERROR;
-    const WARNING = Logger::WARNING;
-    const NOTICE  = Logger::NOTICE;
-    const INFO    = Logger::INFO;
-    const DEBUG   = Logger::DEBUG;
+    const EMERG   = 0;
+    const ALERT   = 1;
+    const CRIT    = 2;
+    const ERR     = 3;
+    const WARNING = 4;
+    const NOTICE  = 5;
+    const INFO    = 6;
+    const DEBUG   = 7;
 
     /**
      * Holds the loggers instantiated as singletons.
@@ -99,12 +99,11 @@ class Log
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
                 $logger->crit(
-                    sprintf(
-                        "Message: %s\nFile: %s\nLine: %s\nType: %s",
-                        $e['message'],
-                        $e['file'],
-                        $e['line'],
-                        $e['type']
+                    array(
+                        'message' => $e['message'],
+                        'file'    => $e['file'],
+                        'line'    => $e['line'],
+                        'type'    => $e['type'],
                     )
                 );
             }
@@ -342,6 +341,30 @@ class Log
         }
 
         return $level;
+    }
+
+    public static function convertLevel($monologLevel)
+    {
+        switch($monologLevel) {
+            case \Monolog\Logger::EMERGENCY:
+                return self::EMERG;
+            case \Monolog\Logger::ALERT:
+                return self::ALERT;
+            case \Monolog\Logger::CRITICAL:
+                return self::CRIT;
+            case \Monolog\Logger::ERROR:
+                return self::ERR;
+            case \Monolog\Logger::WARNING:
+                return self::WARNING;
+            case \Monolog\Logger::NOTICE:
+                return self::NOTICE;
+            case \Monolog\Logger::INFO:
+                return self::INFO;
+            case \Monolog\Logger::DEBUG:
+                return self::DEBUG;
+            default:
+                throw new Exception('Unknown Log Level');
+        }
     }
 
     /**
