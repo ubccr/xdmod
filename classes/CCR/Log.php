@@ -343,7 +343,7 @@ class Log
         return $level;
     }
 
-    public static function convertLevel($monologLevel)
+    public static function convertToCCRLevel($monologLevel)
     {
         switch($monologLevel) {
             case \Monolog\Logger::EMERGENCY:

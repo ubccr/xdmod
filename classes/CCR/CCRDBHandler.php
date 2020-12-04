@@ -78,7 +78,7 @@ class CCRDBHandler extends AbstractProcessingHandler
         $this->db->execute($sql, array(
             ':id' => $this->getNextId(),
             ':ident' => $record['channel'],
-            ':priority' => Log::convertLevel($record['level']),
+            ':priority' => Log::convertToCCRLevel($record['level']),
             ':message' => $record['message']
         ));
     }
