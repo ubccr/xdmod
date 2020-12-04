@@ -6,8 +6,6 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
   renderChartTo: '',
   chartTitle: '',
   chartData: [],
-  sliderRangeStart: null,
-  sliderRangeEnd: null,
   initComponent: function () {
       var self = this;
 
@@ -53,14 +51,6 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
 
             this.chartTitle = "Timeline for VM " + current.provider_identifier;
 
-            if (this.sliderRangeEnd < end_time && this.sliderRangeEnd === null) {
-                this.sliderRangeEnd = end_time;
-            }
-
-            if (this.sliderRangeStart < start_time && this.sliderRangeStart === null) {
-                this.sliderRangeStart = start_time;
-            }
-
             if( active_states.indexOf(parseInt(current.start_event_type_id)) != -1) {
                 statusColor = 'green';
                 status = 'Active';
@@ -88,6 +78,21 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
               text: "<b>Status:</b> "+ status +"<br /> <b>Start Time:</b> "+current.start_time+"<br /><b>End Time:</b> "+current.end_time+"<br />",
               hoverinfo: 'text',
               name: dataseries_name
+            });
+
+            this.chartData.push({
+              y: [1, 1.5],
+              x: [start_time, start_time],
+              mode: 'lines+markers',
+              showlegend: false,
+              hoverinfo: 'skip',
+              line: {
+                color: statusColor,
+                width: 1
+              },
+              markers: {
+                color: statusColor
+              }
             });
         }
 
@@ -131,10 +136,32 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             var chart_settings = {
                 title: this.chartTitle,
                 xaxis: {
-                    rangeselector: {},
-                    rangeslider: {
-                        range: [this.sliderRangeStart, this.sliderRangeEnd]
+                    rangeselector: {
+                        buttons: [{
+                            step: 'week',
+                            stepmode: 'backward',
+                            count: 1,
+                            label: '1w'
+                        }, {
+                            step: 'month',
+                            stepmode: 'backward',
+                            count: 1,
+                            label: '1m'
+                        }, {
+                            step: 'month',
+                            stepmode: 'backward',
+                            count: 6,
+                            label: '6m'
+                        }, {
+                            step: 'year',
+                            stepmode: 'backward',
+                            count: 1,
+                            label: '1y'
+                        }, {
+                            step: 'all',
+                        }],
                     },
+                    rangeslider: {},
                     type: 'date'
                 },
                 yaxis: {
