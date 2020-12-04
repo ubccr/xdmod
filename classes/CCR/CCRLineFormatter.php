@@ -51,6 +51,6 @@ class CCRLineFormatter extends LineFormatter
         }
 
         /* Otherwise, we assume the message is a string. */
-        return parent::format($record);
+        return $record['message'];
     }
 }
