@@ -198,7 +198,7 @@ class Log
             ? $conf['consoleLogLevel']
             : self::getDefaultLogLevel('console');
 
-        $handler = new StreamHandler('php://stdout', $consoleLogLevel);
+        $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat']));
 
         return $handler;
@@ -236,7 +236,7 @@ class Log
 
         $filePermission = isset($conf['mode']) ? $conf['mode'] : 0660;
 
-        $handler = new StreamHandler($file, $fileLogLevel, true, $filePermission);
+        $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat']));
 
         return $handler;
@@ -263,7 +263,7 @@ class Log
             ? $conf['dbLogLevel']
             : self::getDefaultLogLevel('db');
 
-        return new CCRDBHandler(null, null, null, $dbLogLevel);
+        return new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
     }
 
     /**
@@ -307,7 +307,7 @@ class Log
 
         $maxColumnWidth = array_key_exists('maxColumnWidth', $conf) ? $conf['maxColumnWidth'] : 70;
 
-        return new NativeMailerHandler($to, $subject, $from, $mailLogLevel, true, $maxColumnWidth);
+        return new NativeMailerHandler($to, $subject, $from, self::convertToMonologLevel($mailLogLevel), true, $maxColumnWidth);
     }
 
     /**
@@ -362,6 +362,30 @@ class Log
                 return self::INFO;
             case \Monolog\Logger::DEBUG:
                 return self::DEBUG;
+            default:
+                throw new Exception('Unknown Log Level');
+        }
+    }
+
+    public static function convertToMonologLevel($ccrLevel)
+    {
+        switch($ccrLevel) {
+            case self::EMERG:
+                return \Monolog\Logger::EMERGENCY;
+            case self::ALERT:
+                return \Monolog\Logger::ALERT;
+            case self::CRIT:
+                return \Monolog\Logger::CRITICAL;
+            case self::ERR:
+                return \Monolog\Logger::ERROR;
+            case self::WARNING:
+                return \Monolog\Logger::WARNING;
+            case self::NOTICE:
+                return \Monolog\Logger::NOTICE;
+            case self::INFO:
+                return \Monolog\Logger::INFO;
+            case self::DEBUG:
+                return \Monolog\Logger::DEBUG;
             default:
                 throw new Exception('Unknown Log Level');
         }

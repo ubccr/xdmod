@@ -19,6 +19,9 @@ class Logger extends \Monolog\Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = array())
     {
+        if ($level < \Monolog\Logger::DEBUG) {
+            $level = Log::convertToMonologLevel($level);
+        }
         return parent::log($level, $this->extractMessage($message), $context);
     }
 
