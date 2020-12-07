@@ -32,6 +32,17 @@ class Log
     const INFO    = 6;
     const DEBUG   = 7;
 
+    private static $logLevels = array(
+        self::EMERG => \Monolog\Logger::EMERGENCY,
+        self::ALERT => \Monolog\Logger::ALERT,
+        self::CRIT => \Monolog\Logger::CRITICAL,
+        self::ERR => \Monolog\Logger::ERROR,
+        self::WARNING => \Monolog\Logger::WARNING,
+        self::NOTICE => \Monolog\Logger::NOTICE,
+        self::INFO => \Monolog\Logger::INFO,
+        self::DEBUG => \Monolog\Logger::DEBUG
+    );
+
     /**
      * Holds the loggers instantiated as singletons.
      *
@@ -343,52 +354,35 @@ class Log
         return $level;
     }
 
+    /**
+     * Convert a \Monolog\Logger log level value to a CCR\Log log level.
+     *
+     * @param int $monologLevel the Monolog log level to be converted to a CCR log level.
+     * @return int the CCR log level that corresponds to the provided $monologLevel.
+     * @throws Exception if the provided $monologLevel is not found.
+     */
     public static function convertToCCRLevel($monologLevel)
     {
-        switch($monologLevel) {
-            case \Monolog\Logger::EMERGENCY:
-                return self::EMERG;
-            case \Monolog\Logger::ALERT:
-                return self::ALERT;
-            case \Monolog\Logger::CRITICAL:
-                return self::CRIT;
-            case \Monolog\Logger::ERROR:
-                return self::ERR;
-            case \Monolog\Logger::WARNING:
-                return self::WARNING;
-            case \Monolog\Logger::NOTICE:
-                return self::NOTICE;
-            case \Monolog\Logger::INFO:
-                return self::INFO;
-            case \Monolog\Logger::DEBUG:
-                return self::DEBUG;
-            default:
-                throw new Exception('Unknown Log Level');
+        $flipped = array_flip(self::$logLevels);
+        if (array_key_exists($monologLevel, $flipped)) {
+            return $flipped[$monologLevel];
         }
+        throw new Exception('Unknown Log Level');
     }
 
+    /**
+     * Convert a \CCR\Log log level value to a \Monolog\Logger log level.
+     *
+     * @param int $ccrLevel
+     * @return int the Monolog log level that corresponds to the provided $ccrLevel
+     * @throws Exception if the provided $ccrlLevel is not found.
+     */
     public static function convertToMonologLevel($ccrLevel)
     {
-        switch($ccrLevel) {
-            case self::EMERG:
-                return \Monolog\Logger::EMERGENCY;
-            case self::ALERT:
-                return \Monolog\Logger::ALERT;
-            case self::CRIT:
-                return \Monolog\Logger::CRITICAL;
-            case self::ERR:
-                return \Monolog\Logger::ERROR;
-            case self::WARNING:
-                return \Monolog\Logger::WARNING;
-            case self::NOTICE:
-                return \Monolog\Logger::NOTICE;
-            case self::INFO:
-                return \Monolog\Logger::INFO;
-            case self::DEBUG:
-                return \Monolog\Logger::DEBUG;
-            default:
-                throw new Exception('Unknown Log Level');
+        if (array_key_exists($ccrLevel, self::$logLevels)) {
+            return self::$logLevels[$ccrLevel];
         }
+        throw new Exception('Unknown Log Level');
     }
 
     /**
