@@ -19,6 +19,7 @@ class Logger extends \Monolog\Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = array())
     {
+        // This is so that when code calls $logger->log(\CCR\Log::DEBUG, "Message"); it doesn't bork.
         if ($level < \Monolog\Logger::DEBUG) {
             $level = Log::convertToMonologLevel($level);
         }
