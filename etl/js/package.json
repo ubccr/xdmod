@@ -7,7 +7,7 @@
     "author": "XDMoD CCR Help <ccr-xdmod-help@buffalo.edu",
     "dependencies": {
         "cloneextend": "0.0.x",
-        "ini": "1.2.x",
+        "ini": "1.3.x",
         "glob": "7.1.x",
         "mongodb": "3.1.x",
         "mysql": "2.17.x",
