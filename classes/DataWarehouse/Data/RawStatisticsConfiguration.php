@@ -97,7 +97,7 @@ class RawStatisticsConfiguration
             return [];
         }
 
-        return array_filter(
+        $rawDataRealms =  array_filter(
             $this->config['realms'],
             function ($realm) {
                 // If the "raw_data" key doesn't exist the realm is assumed to
@@ -106,6 +106,10 @@ class RawStatisticsConfiguration
                     && $realm['raw_data'] === false);
             }
         );
+
+        // array_values is used to reset the keys of the array to start a 0 and
+        // be sequential
+        return array_values($rawDataRealms);
     }
 
     /**
