@@ -32,7 +32,6 @@ $filters = array(
 try {
     $user = \xd_security\getLoggedInUser();
     $rm = new XDReportManager($user);
-    $base_path = \xd_utilities\getConfiguration('reporting', 'base_path');
     $post = filter_input_array(INPUT_POST, $filters);
     $map = array();
 
