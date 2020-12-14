@@ -138,9 +138,9 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                 xaxis: {
                     rangeselector: {
                         buttons: [{
-                            step: 'week',
+                            step: 'day',
                             stepmode: 'backward',
-                            count: 1,
+                            count: 7,
                             label: '1w'
                         }, {
                             step: 'month',
