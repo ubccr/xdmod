@@ -97,6 +97,9 @@ class RawStatisticsConfiguration
             return [];
         }
 
+        // The elements returned from array filter preserve their keys. This
+        // may cause gaps since the keys are numeric. array_keys is used below
+        // to reindex the keys
         $rawDataRealms =  array_filter(
             $this->config['realms'],
             function ($realm) {
@@ -107,8 +110,6 @@ class RawStatisticsConfiguration
             }
         );
 
-        // array_values is used to reset the keys of the array to start a 0 and
-        // be sequential
         return array_values($rawDataRealms);
     }
 
