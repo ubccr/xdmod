@@ -13,7 +13,6 @@
         "highsoft/highcharts": "^4.2.5",
         "ircmaxell/password-compat": "~1",
         "itextpdf/itextpdf": "^2.1.7",
-        "jaspersoft/jasperreports-library-jar": "^3.7.6",
         "jquery/jquery-min-file": "^1.12.4",
         "justinrainbow/json-schema": "~5.2",
         "moment/moment-min-file": "^2.13.0",
@@ -31,6 +30,7 @@
         "ubccr/log": "1.13.2",
         "ubccr/simplesamlphp-module-authglobus": "^1.3",
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
+        "phpoffice/phpword": "^0.17.0",
         "plotly/plotly": "^1.57.1"
     },
     "require-dev": {

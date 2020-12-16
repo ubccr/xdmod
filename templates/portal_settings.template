@@ -98,9 +98,6 @@ captcha_public_key = "[:mailer_captcha_public_key:]"
 captcha_private_key = "[:mailer_captcha_private_key:]"
 
 [reporting]
-base_path = "/usr/share/xdmod/reporting/jasper_builder"
-java_path = "[:reporting_java_path:]"
-javac_path = "[:reporting_javac_path:]"
 chromium_path = "[:reporting_chromium_path:]"
 
 [logger]
