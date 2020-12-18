@@ -5,6 +5,12 @@
         "engine": "MyISAM",
         "columns": [
             {
+                "name": "session_id",
+                "type": "bigint(20) unsigned",
+                "extra": "auto_increment",
+                "nullable": false
+            },
+            {
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false
@@ -164,6 +170,11 @@
                     "start_time_ts",
                     "start_event_type_id"
                 ],
+                "is_unique": true
+            },
+            {
+                "name": "increment_key",
+                "columns": ["session_id"],
                 "is_unique": true
             },
             {

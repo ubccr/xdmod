@@ -27,6 +27,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
     ) {
         $realmId = 'Cloud';
         $schema = 'modw_cloud';
+        $dataTablePrefix = 'cloudfact_by_';
 
         parent::__construct(
             $realmId,
@@ -45,16 +46,27 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         // Override values set in Query::__construct() to use the fact table rather than the
         // aggregation table prefix from the Realm configuration.
 
-        $this->setDataTable($schema, 'session_records');
+        //$this->setDataTable($schema, 'session_records');
+        $this->setDataTable($schema, sprintf("%s%s", $dataTablePrefix, $aggregationUnitName));
+        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
+            $aggregationUnitName,
+            $startDate,
+            $endDate,
+            sprintf("%s.%s", $schema, $dataTablePrefix)
+        );
 
         $dataTable = $this->getDataTable();
+        $sessionlistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_sessionlist", "sl");
+        //
+        //$factTable = new Table(new Schema('modw'), "job_tasks", "jt");
         $factTable = new Table(new Schema('modw_cloud'), "instance", "i");
+        $sessionTable = new Table(new Schema('modw_cloud'), "session_records", "sr");
 
         $resourcefactTable = new Table(new Schema('modw'), 'resourcefact', 'rf');
         $this->addTable($resourcefactTable);
 
         $this->addWhereCondition(new WhereCondition(
-            new TableField($dataTable, "resource_id"),
+            new TableField($dataTable, "host_resource_id"),
             '=',
             new TableField($resourcefactTable, "id")
         ));
@@ -73,12 +85,26 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
 
         $this->addField(new TableField($factTable, "provider_identifier", "local_job_id"));
         $this->addField(new TableField($factTable, "instance_id", "jobid"));
+
         $this->addTable($factTable);
+        $this->addTable($sessionlistTable);
+        $this->addTable($sessionTable);
+
+        $this->addWhereCondition(new WhereCondition(
+            new TableField($sessionlistTable, "agg_id"),
+            "=",
+            new TableField($dataTable, "id")
+        ));
+        $this->addWhereCondition(new WhereCondition(
+            new TableField($sessionlistTable, "session_id"),
+            "=",
+            new TableField($sessionTable, "session_id")
+        ));
 
         $this->addWhereCondition(new WhereCondition(
             new TableField($factTable, "instance_id"),
             "=",
-            new TableField($dataTable, "instance_id")
+            new TableField($sessionTable, "instance_id")
         ));
 
         $this->prependOrder(
@@ -88,86 +114,6 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
                 'end_time_ts'
             )
         );
-    }
-
-    protected function setDuration($start_date, $end_date) {
-      $start_date_given = $start_date !== null;
-      $end_date_given = $end_date !== null;
-
-      if ($start_date_given && strtotime($start_date) == false) {
-          throw new \Exception("start_date must be a date");
-      }
-      if ($end_date_given && strtotime($end_date) == false) {
-          throw new \Exception("end_date must be a date");
-      }
-
-      $this->_start_date = $start_date_given ? $start_date : '0000-01-01';
-      $this->_end_date = $end_date_given ? $end_date : '9999-12-31';
-
-      $start_date_parsed = date_parse_from_format('Y-m-d', $this->_start_date);
-      $end_date_parsed = date_parse_from_format('Y-m-d', $this->_end_date);
-
-      $this->_start_date_ts = mktime(
-          $start_date_parsed['hour'],
-          $start_date_parsed['minute'],
-          $start_date_parsed['second'],
-          $start_date_parsed['month'],
-          $start_date_parsed['day'],
-          $start_date_parsed['year']
-      );
-      $this->_end_date_ts = mktime(
-          23,
-          59,
-          59,
-          $end_date_parsed['month'],
-          $end_date_parsed['day'],
-          $end_date_parsed['year']
-      );
-
-      list($this->_min_date_id, $this->_max_date_id) = $this->_aggregation_unit->getDateRangeIds($this->_start_date, $this->_end_date);
-
-      if (!$start_date_given && !$end_date_given) {
-          return;
-      }
-
-      $this->_date_table = new \DataWarehouse\Query\Model\Table(new \DataWarehouse\Query\Model\Schema('modw'), $this->_aggregation_unit.'s', 'duration');
-
-      $this->addTable($this->_date_table);
-
-      $date_id_field = new \DataWarehouse\Query\Model\TableField($this->_date_table, 'id');
-      $data_table_date_id_field = new \DataWarehouse\Query\Model\TableField($this->_data_table, "start_day_id");
-
-      $this->addWhereCondition(
-          new \DataWarehouse\Query\Model\WhereCondition(
-              $date_id_field,
-              '=',
-              $data_table_date_id_field
-          )
-      );
-      $this->addWhereCondition(
-          new \DataWarehouse\Query\Model\WhereCondition(
-              $data_table_date_id_field,
-              'between',
-              new \DataWarehouse\Query\Model\Field(
-                  sprintf("%s and %s", $this->_min_date_id, $this->_max_date_id)
-              )
-          )
-      );
-
-      $duration_query = sprintf(
-          "select sum(dd.hours) as duration from modw.%ss dd where dd.id between %s and %s",
-          $this->aggregationUnitName,
-          $this->_min_date_id,
-          $this->_max_date_id
-      );
-
-      $duration_result = DB::factory($this->_db_profile)->query($duration_query);
-
-      $this->setDurationFormula(
-          new \DataWarehouse\Query\Model\Field(
-              "(" . ( $duration_result[0]['duration'] == '' ? 1 : $duration_result[0]['duration'] ) . ")"
-          )
-      );
     }
 
     public function getQueryType(){

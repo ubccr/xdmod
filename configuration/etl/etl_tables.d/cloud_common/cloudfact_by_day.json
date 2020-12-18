@@ -1,0 +1,181 @@
+{
+    "table_definition": {
+        "name": "cloudfact_by_",
+        "table_prefix": "cloudfact_by_",
+        "engine": "MyISAM",
+        "comment": "Euca facts aggregated by ${AGGREGATION_UNIT}.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },{
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },{
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },{
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },{
+                "name": "host_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
+            },{
+                "name": "account_id",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The account id associated with the VM."
+            },{
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The person id associated with a VM instance."
+            },{
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The system account id associated with a VM instance."
+            },{
+                "name": "processorbucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processor_buckets.id"
+            },{
+                "name": "memorybucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memory_buckets.id"
+            },{
+                "name": "instance_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Type of instance on which an event occurred."
+            },{
+                "name": "num_cores",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Number of cores on a VM."
+            },{
+                "name": "core_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Core hours reserved by a VM."
+            },{
+                "name": "memory_reserved",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Memory reserved by a VM."
+            },{
+                "name": "rv_storage_reserved",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Root volume storage space reserved by a VM."
+            },{
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Amount of memory in MB reserved by a VM."
+            },{
+                "name": "disk_gb",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Disk size in GB reserved by a VM."
+            },{
+                "name": "num_sessions_running",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: Number of sessions running in a given period."
+            },{
+                "name": "num_sessions_started",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: Number of sessions started over a given period."
+            },{
+                "name": "num_sessions_ended",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: Number of sessions ended over a given period."
+            },{
+                "name": "wallduration",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The wall duration of the sessions that were running during this period."
+            },{
+                "name": "submission_venue_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: The venue that a job or virtual machine was initiated from."
+            },
+            {
+                "name": "domain_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A domain is a high-level container for projects, users and groups."
+            },{
+                "name": "service_provider",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "DIMENSION: A service provider is an institution that hosts resources."
+            },{
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "DIMENSION: The PI that owns the allocations that these VM's ran under. References principalinvestigator.person_id"
+            },{
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "DIMENSION: The field of science of the project to which the jobs belong"
+            },{
+                "name": "session_id_list",
+                "type": "mediumtext",
+                "nullable": false,
+                "comment": "METADATA: the ids in the fact table for the rows that went into this row"
+            },{
+                "name": "last_modified",
+                "type": "timestamp",
+                "default": "CURRENT_TIMESTAMP",
+                "nullable": false,
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+
+    "indexes": [
+        {
+            "name": "PRIMARY",
+            "columns": ["id"],
+            "type": "BTREE",
+            "is_unique": true
+        },{
+            "name": "index_account",
+            "columns": [ "account_id" ]
+        },{
+            "name": "index_person",
+            "columns": [ "person_id" ]
+        },{
+            "name": "index_resource",
+            "columns": [ "host_resource_id" ]
+        },{
+            "name": "index_period_value",
+            "columns": [ "${AGGREGATION_UNIT}" ]
+        },{
+            "name": "index_period",
+            "columns": [ "${AGGREGATION_UNIT}_id" ]
+        },{
+            "name": "index_last_modified",
+            "columns": ["last_modified"]
+        }]
+    }
+}

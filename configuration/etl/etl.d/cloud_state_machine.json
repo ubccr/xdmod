@@ -39,6 +39,17 @@
         },
         {
             "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudEventAggregatorByDay",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_metrics_aggregation_by_day.json",
+            "table_prefix": "cloudfact_by_",
+            "aggregation_units": ["day"]
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
             "name": "CloudEventAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
@@ -47,8 +58,19 @@
             "definition_file": "cloud_common/cloud_metrics_aggregation.json",
             "table_prefix": "cloudfact_by_",
             "aggregation_units": [
-                "day", "month", "quarter", "year"
+                "month", "quarter", "year"
             ]
+        },
+        {
+            "name": "aggregation-sessionlist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "cloud_common/cloudfact_by_day_sessionlist.json",
+            "description": "Populate the job list table, which contains the back references from the aggregates table to the fact table",
+            "explode_column": {
+                "session_id_list": "session_id"
+            }
         }
     ]
 }

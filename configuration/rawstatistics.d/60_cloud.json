@@ -8,12 +8,32 @@
     "Cloud": {
         "tables": [
           {
+            "schema": "modw_cloud",
+            "name": "cloudfact_by_day_sessionlist",
+            "alias": "sl",
+            "join": {
+                "primaryKey": "agg_id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "id"
+            }
+          },
+          {
+            "schema": "modw_cloud",
+            "name": "session_records",
+            "alias": "sr",
+            "join": {
+                "primaryKey": "session_id",
+                "foreignTableAlias": "sl",
+                "foreignKey": "session_id"
+            }
+          },
+          {
               "schema": "modw_cloud",
               "name": "instance",
               "alias": "i",
               "join": {
                   "primaryKey": "instance_id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "instance_id"
               }
           },
@@ -23,7 +43,7 @@
               "alias": "rf",
               "join": {
                   "primaryKey": "id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "resource_id"
               }
           },
@@ -34,7 +54,7 @@
               "alias": "sa",
               "join": {
                   "primaryKey": "id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "systemaccount_id"
               }
           },
@@ -44,7 +64,7 @@
               "alias": "p",
               "join": {
                   "primaryKey": "id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "person_id"
               }
           },
@@ -54,7 +74,7 @@
               "alias": "fos",
               "join": {
                   "primaryKey": "id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "fos_id"
               }
           },
@@ -64,7 +84,7 @@
               "alias": "a",
               "join": {
                   "primaryKey": "account_id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "account_id"
               }
           },
@@ -74,7 +94,7 @@
               "alias": "pi",
               "join": {
                   "primaryKey": "person_id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "principalinvestigator_person_id"
               }
           },
@@ -84,7 +104,7 @@
               "alias": "d",
               "join": {
                   "primaryKey": "id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "domain_id"
               }
           },
@@ -94,7 +114,7 @@
               "alias": "h",
               "join": {
                   "primaryKey": "host_id",
-                  "foreignTableAlias": "agg",
+                  "foreignTableAlias": "sr",
                   "foreignKey": "host_id"
               }
           }
@@ -175,7 +195,7 @@
           },
           {
               "name": "Instance Type",
-              "tableAlias": "agg",
+              "tableAlias": "sr",
               "column": "instance_type",
               "group": "Administration",
               "documentation": "The instance type for the VM.",
@@ -183,7 +203,7 @@
           },
           {
               "name": "Number of Cores",
-              "tableAlias": "agg",
+              "tableAlias": "sr",
               "column": "num_cores",
               "group": "Administration",
               "documentation": "The amount of cores a VM has.",
@@ -191,7 +211,7 @@
           },
           {
               "name": "Memory(MB)",
-              "tableAlias": "agg",
+              "tableAlias": "sr",
               "column": "memory_mb",
               "group": "Administration",
               "documentation": "The amount of memory a VM has in MB.",
@@ -199,7 +219,7 @@
           },
           {
               "name": "Root Volume Size",
-              "tableAlias": "agg",
+              "tableAlias": "sr",
               "column": "disk_gb",
               "group": "Administration",
               "documentation": "The name of the job owner.",
@@ -223,7 +243,7 @@
           },
           {
               "name": "Start Date",
-              "formula" : "(SELECT MIN(sr2.start_time) FROM modw_cloud.session_records AS sr2 WHERE sr2.instance_id = agg.instance_id)",
+              "formula" : "(SELECT MIN(sr2.start_time) FROM modw_cloud.session_records AS sr2 WHERE sr2.instance_id = sr.instance_id)",
               "group": "Administration",
               "documentation": "The start date of a VM.",
               "batchExport": true

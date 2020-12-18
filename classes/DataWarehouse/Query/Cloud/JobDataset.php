@@ -20,7 +20,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         array $parameters,
         $stat = "all"
     ) {
-        parent::__construct('Cloud', 'modw_cloud', 'session_records', array());
+        parent::__construct('Cloud', 'modw_cloud', 'cloudfact_by_day', array());
 
         // The same fact table row may correspond to multiple rows in the
         // aggregate table (e.g. a job that runs over two days).
@@ -131,7 +131,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
           $this->addField(new TableField($factTable, "instance_id", "jobid"));
 
           $rt = new Table(new Schema("modw"), "resourcefact", "rf");
-          $this->joinTo($rt, "resource_id", "code", "resource");
+          $this->joinTo($rt, "host_resource_id", "code", "resource");
 
           $pt = new Table(new Schema('modw'), 'person', 'p');
           $this->joinTo($pt, "person_id", "long_name", "name");
