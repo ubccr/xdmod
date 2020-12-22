@@ -72,12 +72,64 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->_stop_event_ids = array(self::STOP, self::TERMINATE, self::SUSPEND, self::SHELVE, self::POWER_OFF, self::PAUSE);
+        /*$this->_stop_event_ids = array(self::STOP, self::TERMINATE, self::SUSPEND, self::SHELVE, self::POWER_OFF, self::PAUSE);
         $this->_start_event_ids = array(self::START, self::RESUME, self::STATE_REPORT, self::UNSHELVE, self::UNPAUSE, self::UNSUSPEND, self::POWER_ON);
-        $this->_all_event_ids = array_merge($this->_start_event_ids, $this->_stop_event_ids);
-        $this->_test_start_ids = array(1,2,3,4,5,7,8,16,17,19,20,44,45,54,55,56,57,58,59,60,61,62,63,64);
-        $this->_test_end_ids = array(2,3,4,5,6,7,8,17,19,20,44,45,54,55,56,57,58,59,60,61,62,63,64);
-        $this->_inactive_end_events = array(4,6,17,19,44,45,55);
+        $this->_all_event_ids = array_merge($this->_start_event_ids, $this->_stop_event_ids);*/
+        $this->_test_start_ids = array(
+          self::REQUEST_START,
+          self::START,
+          self::REQUEST_STOP,
+          self::STOP,
+          self::REQUEST_TERMINATE,
+          self::REQUEST_RESUME,
+          self::RESUME,
+          self::STATE_REPORT,
+          self::SUSPEND,
+          self::SHELVE,
+          self::UNSHELVE,
+          self::POWER_OFF_START,
+          self::POWER_OFF,
+          self::PAUSE_START,
+          self::PAUSE,
+          self::UNPAUSE_START,
+          self::UNPAUSE_END,
+          self::POWER_ON_START,
+          self::POWER_ON,
+          self::UNSUSPEND_START,
+          self::UNSUSPEND,
+          self::SUSPEND_START,
+          self::UNSHELVE_END,
+          self::SHELVE_START
+        );
+
+        $this->_test_end_ids = array(
+          self::REQUEST_START,
+          self::START,
+          self::REQUEST_STOP,
+          self::STOP,
+          self::TERMINATE,
+          self::REQUEST_TERMINATE,
+          self::REQUEST_RESUME,
+          self::RESUME,
+          self::SUSPEND,
+          self::SHELVE,
+          self::UNSHELVE,
+          self::POWER_OFF_START,
+          self::POWER_OFF,
+          self::PAUSE_START,
+          self::PAUSE,
+          self::UNPAUSE_START,
+          self::UNPAUSE_END,
+          self::POWER_ON_START,
+          self::POWER_ON,
+          self::UNSUSPEND_START,
+          self::UNSUSPEND,
+          self::SUSPEND_START,
+          self::UNSHELVE_END,
+          self::SHELVE_START
+        );
+        //$this->_test_end_ids = array(2,3,4,5,6,7,8,17,19,20,44,45,54,55,56,57,58,59,60,61,62,63,64);
+        $this->_inactive_end_events = array(self::STOP,self::TERMINATE,self::SUSPEND, self::SHELVE,self::POWER_OFF_START,self::POWER_OFF, self::PAUSE);
         $this->_test_all_ids = array_unique(array_merge($this->_test_start_ids, $this->_test_end_ids));
         $this->_end_time = $etlConfig->getVariableStore()->endDate ? date('Y-m-d H:i:s', strtotime($etlConfig->getVariableStore()->endDate)) : null;
 
@@ -145,8 +197,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
             }
         } elseif (in_array($srcRecord['event_type_id'], [1,16])) {
             // If the session is an inactive session and a heartbeat event is
-            // encountered end the inactive session and start a new session othewise
-            // just update the session details and move on to the next row
+            // encountered end the inactive session and start a new session.
             if(in_array($this->_instance_state['start_event_id'], $this->_inactive_end_events)) {
               $this->updateInstance($srcRecord);
               $transformedRecord[] = $this->_instance_state;
