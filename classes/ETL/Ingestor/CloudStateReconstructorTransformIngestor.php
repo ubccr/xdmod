@@ -26,6 +26,13 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 {
     // Discrete Event Types
     // Start events
+    const REQUEST_START = 1;
+    const REQUEST_RESUME = 7;
+    const UNPAUSE_END = 57;
+    const UNPAUSE_START = 56;
+    const POWER_ON_START = 58;
+    const UNSUSPEND_START = 60;
+    const UNSHELVE_END = 63;
     const START = 2;
     const RESUME = 8;
     const STATE_REPORT = 16;
@@ -36,6 +43,12 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     //End events
     const STOP = 4;
+    const REQUEST_STOP = 3;
+    const REQUEST_TERMINATE = 5;
+    const POWER_OFF_START = 44;
+    const PAUSE_START = 54;
+    const SUSPEND_START = 62;
+    const SHELVE_START = 64;
     const TERMINATE = 6;
     const SUSPEND = 17;
     const SHELVE = 19;
