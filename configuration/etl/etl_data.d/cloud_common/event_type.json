@@ -64,9 +64,5 @@
     [61, "UNSUSPEND_END",                     "Unsuspend Instance End",        "End unsuspending an instance"],
     [62, "SUSPEND_START",                     "Suspend Instance Start",        "Start suspending an instance"],
     [63, "UNSHELVE_START",                    "Unshelve Instance Start",       "Start unshelving an instance"],
-    [64, "SHELVE_START",                      "Shelve Instance Start",         "Start shelving an instance"],
-    [65, "REBOOT_ERROR",                      "Error Rebooting Instance",      "Error when rebooting an instance"],
-    [66, "REBUILD_ERROR",                     "Error Rebuilding Instance",     "Error when rebuilding an instance"],
-    [67, "REBOOT_START",                      "Start Rebooting Instance",      "Start rebooting an instance"],
-    [68, "REBOOT_END",                        "End Rebooting Instance",        "End rebooting an instance"]
+    [64, "SHELVE_START",                      "Shelve Instance Start",         "Start shelving an instance"]
 ]

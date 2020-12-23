@@ -59,7 +59,5 @@
     [57, 60,    "compute.instance.unsuspend.start"],
     [58, 56,    "compute.instance.unpause.start"],
     [59, 63,    "compute.instance.unshelve.start"],
-    [60, 54,    "compute.instance.pause.start"],
-    [63, 65,    "compute.instance.reboot.error"],
-    [64, 66,    "compute.instance.rebuild.error"]
+    [60, 54,    "compute.instance.pause.start"]
 ]
