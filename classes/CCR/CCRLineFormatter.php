@@ -53,4 +53,14 @@ class CCRLineFormatter extends LineFormatter
         /* Otherwise, we assume the message is a string. */
         return $record['message'];
     }
+
+    /**
+     * @see LineFormatter::replaceNewlines
+     */
+    protected function replaceNewlines($str)
+    {
+        return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
+    }
+
+
 }

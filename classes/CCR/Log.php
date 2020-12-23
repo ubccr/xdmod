@@ -221,7 +221,7 @@ class Log
             : self::getDefaultLogLevel('console');
 
         $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
-        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat']));
+        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
     }
@@ -259,7 +259,7 @@ class Log
         $filePermission = isset($conf['mode']) ? $conf['mode'] : 0660;
 
         $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
-        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat']));
+        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
     }

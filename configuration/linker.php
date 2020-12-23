@@ -125,18 +125,19 @@ function handle_uncaught_exception($exception)
 
     $logConf = array(
         'mode' => 0644,
-        'file' => $logfile
+        'file' => $logfile,
+        'consoleLogLevel' => CCR\Log::INFO
     );
 
     $logger = Log::factory('file', $logConf);
 
-    $logger->log(\CCR\Log::ERR, 'Exception Code: '.$exception->getCode());
-    $logger->log(\CCR\Log::ERR, 'Message: '.$exception->getMessage());
-    $logger->log(\CCR\Log::INFO, 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')');
+    $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
+    $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
+    $logger->info(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->log(\CCR\Log::INFO, "Trace:\n".$stringTrace."\n-------------------------------------------------------");
+    $logger->info(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
 
    // If working in a server context, build headers to output.
     $httpCode = 500;
@@ -179,19 +180,21 @@ function global_uncaught_exception_handler($exception)
     $exceptionOutput = handle_uncaught_exception($exception);
 
    // If running in a server context...
-    if ($exceptionOutput['isServerContext'] && !headers_sent()) {
-        // Set the exception's headers (if any).
-        foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
-            header("$headerKey: $headerValue");
+    if ($exceptionOutput['isServerContext']) {
+        if (!headers_sent()) {
+            // Set the exception's headers (if any).
+            foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
+                header("$headerKey: $headerValue");
+            }
+
+            // Set the status code header.
+            $httpCode = $exceptionOutput['httpCode'];
+            header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
         }
 
-        // Set the status code header.
-        $httpCode = $exceptionOutput['httpCode'];
-        header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
+        // Print the exception's content.
+        echo $exceptionOutput['content'];
     }
-
-   // Print the exception's content.
-    echo $exceptionOutput['content'];
 } // global_uncaught_exception_handler
 
 set_exception_handler('global_uncaught_exception_handler');
