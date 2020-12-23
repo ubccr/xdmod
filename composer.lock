@@ -681,11 +681,7 @@
             "version": "2.1.7",
             "dist": {
                 "type": "file",
-<<<<<<< HEAD
-                "url": "http://central.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
-=======
                 "url": "https://repo1.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
->>>>>>> 4b05b1cddc7912541da65cdb96e25b9883d1554b
                 "shasum": "892bfb3e97074a61123b3b2d7caa2db112750864"
             },
             "type": "vanilla-plugin",
@@ -740,29 +736,6 @@
             "time": "2016-10-03T12:34:15+00:00"
         },
         {
-<<<<<<< HEAD
-            "name": "jaspersoft/jasperreports-library-jar",
-            "version": "3.7.6",
-            "dist": {
-                "type": "file",
-                "url": "https://downloads.sourceforge.net/project/jasperreports/archive/jasperreports/JasperReports%203.7.6/jasperreports-3.7.6.jar",
-                "shasum": "6d32314023c5e33a649b6f40fab51eb0922a6da9"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "jasperreports"
-            },
-            "license": [
-                "LGPL-3.0"
-            ],
-            "homepage": "http://community.jaspersoft.com/project/jasperreports-library"
-        },
-        {
-=======
->>>>>>> 4b05b1cddc7912541da65cdb96e25b9883d1554b
             "name": "jquery/jquery-min-file",
             "version": "1.12.4",
             "dist": {

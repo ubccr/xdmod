@@ -371,7 +371,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realm = $this->getStringParam($request, 'realm');
         $title = $this->getStringParam($request, 'title');
 
-        // Find which if else it is going to
         if ($nodeId !== null && $tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
             $result = $this->processJobNodeTimeSeriesRequest($app, $user, $realm, $jobId, $tsId, $nodeId, $infoId, $action);
         } elseif ($tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
