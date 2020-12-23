@@ -26,10 +26,7 @@ class HostListTest extends \PHPUnit_Framework_TestCase
             $logger = \CCR\Log::factory(
                 'hostlistparser_test',
                 array(
-                    'consoleLogLevel' => \CCR\Log::DEBUG,
-                    'db' => false,
-                    'mail' => false,
-                    'file' => false
+                    'consoleLogLevel' => \CCR\Log::DEBUG
                 )
             );
             $this->parser->setLogger($logger);
