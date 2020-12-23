@@ -61,6 +61,4 @@ class CCRLineFormatter extends LineFormatter
     {
         return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
     }
-
-
 }
