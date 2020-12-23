@@ -43,6 +43,17 @@ class Log
         self::DEBUG => \Monolog\Logger::DEBUG
     );
 
+    private static $flippedLogLevels = array(
+        \Monolog\Logger::EMERGENCY => self::EMERG,
+        \Monolog\Logger::ALERT => self::ALERT,
+        \Monolog\Logger::CRITICAL => self::CRIT,
+        \Monolog\Logger::ERROR => self::ERR,
+        \Monolog\Logger::WARNING => self::WARNING,
+        \Monolog\Logger::NOTICE => self::NOTICE,
+        \Monolog\Logger::INFO => self::INFO,
+        \Monolog\Logger::DEBUG => self::DEBUG
+    );
+
     /**
      * Holds the loggers instantiated as singletons.
      *
@@ -363,9 +374,8 @@ class Log
      */
     public static function convertToCCRLevel($monologLevel)
     {
-        $flipped = array_flip(self::$logLevels);
-        if (array_key_exists($monologLevel, $flipped)) {
-            return $flipped[$monologLevel];
+        if (array_key_exists($monologLevel, self::$flippedLogLevels)) {
+            return self::$flippedLogLevels[$monologLevel];
         }
         throw new Exception('Unknown Log Level');
     }
