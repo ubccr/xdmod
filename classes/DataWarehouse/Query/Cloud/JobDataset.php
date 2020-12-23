@@ -22,10 +22,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     ) {
         parent::__construct('Cloud', 'modw_cloud', 'cloudfact_by_day', array());
 
-        // The same fact table row may correspond to multiple rows in the
-        // aggregate table (e.g. a job that runs over two days).
         $this->setDistinct(true);
-
         $config = RawStatisticsConfiguration::factory();
 
         // The data table is always aliased to "agg".

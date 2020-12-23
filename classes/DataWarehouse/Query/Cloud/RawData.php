@@ -46,7 +46,6 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         // Override values set in Query::__construct() to use the fact table rather than the
         // aggregation table prefix from the Realm configuration.
 
-        //$this->setDataTable($schema, 'session_records');
         $this->setDataTable($schema, sprintf("%s%s", $dataTablePrefix, $aggregationUnitName));
         $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory(
             $aggregationUnitName,

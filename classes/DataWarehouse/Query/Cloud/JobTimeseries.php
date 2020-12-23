@@ -12,7 +12,7 @@ use CCR\DB;
 /*
  * @author Greg Dean <gmdean@buffalo.edu>
  *
- * Helper class that knows how to parse the per-job timeseries summary data
+ * Helper class that retreives sessions and volume events for VM's
  */
 
 class JobTimeseries
@@ -23,11 +23,34 @@ class JobTimeseries
 
     public function get($instance_id) {
         return array('series' => [
-          'events' => $this->getEvents($instance_id),
+          'events' => $this->getVolumeEvents($instance_id),
           'vmstates' => $this->getInstanceStates($instance_id)
         ], 'schema' => []);
     }
 
+    /**
+     * @param $instance_id ID of the instance we want sessions for
+     *
+     * Get active and inactive sessions for an instance. Sesssion that are started
+     * with the following event types are retrieved:
+     *  2 => Start
+     *  4 => Stop
+     *  6 => Terminate
+     *  8 => Resume
+     *  16 => State report
+     *  17 => Suspend
+     *  19 => Shelve
+     *  20 => Unshelve
+     *  45 => Power Off
+     *  57 => Unpause
+     *  55 => Pause
+     *  59 => Power On
+     *  61 => Unsuspend
+     *
+     * The ids come from the modw_cloud.event_type table.
+     *
+     * @return array
+     */
     private function getInstanceStates($instance_id)
     {
         $query = "SELECT
@@ -53,7 +76,14 @@ class JobTimeseries
         return $this->db->query($query, [':instance_id' => $instance_id]);
     }
 
-    private function getEvents($instance_id)
+    /**
+     * @param $instance_id ID of the instance we want to get events for
+     *
+     * Get volume attach and detach events for an instance to show on a timeline.
+     *
+     * @return array
+     */
+    private function getVolumeEvents($instance_id)
     {
         $query = "SELECT
                       ev.event_id as Event_ID,
@@ -76,7 +106,7 @@ class JobTimeseries
                   LEFT JOIN
 	                    modw.systemaccount as sa on sa.id = ev.systemaccount_id
                   WHERE
-                  	  ev.event_type_id IN (10,12,41,65,66)
+                  	  ev.event_type_id IN (10,12)
                   and
                   	  ev.instance_id = :instance_id
                   ORDER BY

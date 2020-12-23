@@ -62,12 +62,12 @@
             ]
         },
         {
-            "name": "aggregation-sessionlist",
+            "name": "CloudAggregatorSessionlist",
             "namespace": "ETL\\Ingestor",
             "class": "ExplodeTransformIngestor",
             "options_class": "IngestorOptions",
             "definition_file": "cloud_common/cloudfact_by_day_sessionlist.json",
-            "description": "Populate the job list table, which contains the back references from the aggregates table to the fact table",
+            "description": "Populate the session list table, which contains the back references from the cloud aggregates table to the session records table",
             "explode_column": {
                 "session_id_list": "session_id"
             }

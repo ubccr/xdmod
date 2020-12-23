@@ -19,10 +19,10 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
             return array();
         }
 
-        $available_data = array( \DataWarehouse\Query\RawQueryTypes::ACCOUNTING => true );
-        $available_data[\DataWarehouse\Query\RawQueryTypes::VM_INSTANCE] = true;
-
-        return $available_data;
+        return array(
+          \DataWarehouse\Query\RawQueryTypes::ACCOUNTING => true,
+          \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE => true
+        );
     }
 
     /**
@@ -46,30 +46,19 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobTimeseriesMetaData(XDUser $user, $jobid)
     {
-        $result = array();
-        $result[] = array( "tsid" => 'instance', "text" => "Instance timeseries for VM", "leaf" => false );
-        return $result;
+        return array( "tsid" => 'instance', "text" => "Instance timeseries for VM", "leaf" => false );
     }
 
-    /**
-     * Note there is no job timeseries data available in the Jobs realm
-     */
     public function getJobTimeseriesMetricMeta(XDUser $user, $jobid, $tsid)
     {
         return array();
     }
 
-    /**
-     * Note there is no job timeseries data available in the Jobs realm
-     */
     public function getJobTimeseriesMetricNodeMeta(XDUser $user, $jobid, $tsid, $nodeid)
     {
         return array();
     }
 
-    /**
-     * Note there is no job timeseries data available in the Jobs realm
-     */
     public function getJobTimeseriesData(XDUser $user, $jobid, $tsid, $nodeid, $cpuid)
     {
         $job = $this->lookupJob($user, $jobid);
@@ -81,15 +70,14 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
         $timeseries =  $ct->get($jobid);
 
         return $timeseries;
-
     }
 
     /**
      * Lookup the job in the datawarehouse to check that it exists and the
      * user has permission to view it.
      *
-     * @param XDUser $user The user to lookup the job for.
-     * @param $jobid the unique identifier for the job.
+     * @param XDUser $user The user to lookup the VM for.
+     * @param $jobid the unique identifier for the VM.
      *
      * @return array() the accounting data for the job or null if no job exists or permission denied
      */

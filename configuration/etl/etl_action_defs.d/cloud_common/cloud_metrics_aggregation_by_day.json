@@ -1,5 +1,5 @@
 {
-    "#": "Aggregation of Cloud data",
+    "#": "Aggregation of Cloud data by day",
         "table_definition": {
             "$ref": "${table_definition_dir}/cloud_common/cloudfact_by_day.json#/table_definition"
         },

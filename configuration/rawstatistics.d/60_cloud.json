@@ -222,7 +222,7 @@
               "tableAlias": "sr",
               "column": "disk_gb",
               "group": "Administration",
-              "documentation": "The name of the job owner.",
+              "documentation": "The size of the root volume for the VM.",
               "batchExport": true
           },
           {
@@ -230,7 +230,7 @@
               "tableAlias": "d",
               "column": "name",
               "group": "Administration",
-              "documentation": "The name of the job owner.",
+              "documentation": "Domain the VM was created in. Applicable to Open Stack VM's only.",
               "batchExport": true
           },
           {
@@ -238,7 +238,7 @@
               "tableAlias": "h",
               "column": "hostname",
               "group": "Administration",
-              "documentation": "The name of the job owner.",
+              "documentation": "The name of the host the VM resides on.",
               "batchExport": true
           },
           {
