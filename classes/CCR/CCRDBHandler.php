@@ -95,27 +95,20 @@ class CCRDBHandler extends AbstractProcessingHandler
     {
         $this->db->beginTransaction();
 
-        $insertSQL = sprintf('INSERT INTO %s.log_id_seq (sequence) VALUES(NULL);', $this->schema);
+        try {
+            $this->db->execute(sprintf('INSERT INTO %s.log_id_seq (sequence) VALUES(NULL);', $this->schema));
 
-        $results = $this->db->execute($insertSQL);
-        if ($results <= 0) {
+            $results  = $this->db->query('SELECT LAST_INSERT_ID() as id');
+
+            $id = $results[0]['id'];
+
+            $this->db->execute(sprintf("DELETE FROM %s.log_id_seq WHERE sequence < :id", $this->schema), array(':id' => $id));
+
+            $this->db->commit();
+        } catch (Exception $e) {
             $this->db->rollBack();
-            throw new Exception('Incrementing log id seq failed');
+            throw $e;
         }
-
-        $results  = $this->db->query('SELECT LAST_INSERT_ID() as id');
-        $id = $results[0]['id'];
-
-        if (!is_numeric($id)) {
-            $this->db->rollBack();
-            throw new Exception('Retrieving latest log id value failed.');
-        }
-
-        // We don't check the number of rows deleted as while it most often will be 1, it is also expected to be zero
-        // when first executed.
-        $this->db->execute(sprintf("DELETE FROM %s.log_id_seq WHERE sequence < :id", $this->schema), array(':id' => $id));
-
-        $this->db->commit();
 
         return (int) $id;
     }
