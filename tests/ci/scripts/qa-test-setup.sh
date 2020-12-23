@@ -24,8 +24,15 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     # Setup the xdmod-qa environment / requirements.
     $HOME/.qa/scripts/install.sh
 
+    # If we're running on Shippable then make sure to include the
+    # base branch that we're merging into.
+    build_args=""
+    if [ "$SHIPPABLE" = "true" ]; then
+        build_args="-r $BASE_BRANCH"
+    fi
+
     # Run the xdmod-qa tests.
-    $HOME/.qa/scripts/build.sh
+    $HOME/.qa/scripts/build.sh $build_args
 
     popd >/dev/null || exit 1
 fi
