@@ -109,7 +109,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 $this->documentation[$alias] = $field;
             }
         }
-        else if ($stat == 'timeseries') {
+        elseif ($stat == 'timeseries') {
             $this->setDistinct(false);
 
             $this->addField(new TableField($tables['agg'], 'start_time'));
