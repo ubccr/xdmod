@@ -55,7 +55,7 @@ class JobTimeseries
     {
         $query = "SELECT
                       i.provider_identifier,
-                    	sr.instance_id,
+                      sr.instance_id,
                       sr.start_time_ts,
                       sr.start_time,
                       sr.end_time_ts,
@@ -63,11 +63,11 @@ class JobTimeseries
                       sr.start_event_type_id,
                       sr.end_event_type_id
                   FROM
-                    	modw_cloud.session_records AS sr
+                      modw_cloud.session_records AS sr
                   LEFT JOIN
-                    	modw_cloud.instance AS i ON i.instance_id = sr.instance_id AND i.resource_id = sr.resource_id
+                      modw_cloud.instance AS i ON i.instance_id = sr.instance_id AND i.resource_id = sr.resource_id
                   WHERE
-                    	i.instance_id = :instance_id
+                      i.instance_id = :instance_id
                   AND
                       sr.start_event_type_id IN (2,4,6,8,16,17,19,20,45,57,55,59,61)
                   ORDER BY
@@ -94,21 +94,21 @@ class JobTimeseries
                       a.provider_identifier as Volume_ID,
                       a.size as Size
                   FROM
-                  	  modw_cloud.event as ev
+                      modw_cloud.event as ev
                   LEFT JOIN
-                  	  modw_cloud.event_asset as ea on ea.event_id = ev.event_id and ea.resource_id = ev.resource_id
+                      modw_cloud.event_asset as ea on ea.event_id = ev.event_id and ea.resource_id = ev.resource_id
                   LEFT JOIN
                       modw_cloud.asset as a on a.asset_id = ea.asset_id and a.resource_id = ea.resource_id AND a.asset_type_id = 1
                   LEFT JOIN
                       modw_cloud.event_type as et on et.event_type_id = ev.event_type_id
                   LEFT JOIN
-	                    modw.person as p on p.id = ev.person_id
+                      modw.person as p on p.id = ev.person_id
                   LEFT JOIN
 	                    modw.systemaccount as sa on sa.id = ev.systemaccount_id
                   WHERE
-                  	  ev.event_type_id IN (10,12)
+                      ev.event_type_id IN (10,12)
                   and
-                  	  ev.instance_id = :instance_id
+                      ev.instance_id = :instance_id
                   ORDER BY
                       ev.event_time_ts ASC";
 
