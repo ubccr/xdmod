@@ -257,7 +257,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
 
                         if (searchType == 'Lookup') {
                             // Since the Quick Lookup search is designed to find an exact job,
-                            // automatically select the jobs returned
+                            // automatically select the jobs returned 
                             self.resultsStore.each(function (record) {
                                 record.set('included', true);
                                 text = record.get('text');
@@ -1527,7 +1527,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             record.set('included', true);
         }
     },
-    
+
     _dateFieldValidator: function (field_id, label) {
             var validDates = {
                 startDateField: Date.parseDate(Ext.getCmp('search_start_date').getRawValue(), 'Y-m-d'),
