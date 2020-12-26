@@ -18,6 +18,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
+        $dbh = DB::factory('datawarehouse');
         if (\CCR\DB\MySQLHelper::DatabaseExists($dbh->_db_host, $dbh->_db_port, $dbh->_db_username, $dbh->_db_password, 'modw_cloud')) {
             Utilities::runEtlPipeline(
                 ['cloud-migration-9-0-0_9-5-0'],

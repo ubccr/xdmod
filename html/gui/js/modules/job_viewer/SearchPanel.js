@@ -1527,7 +1527,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             record.set('included', true);
         }
     },
-
+    
     _dateFieldValidator: function (field_id, label) {
             var validDates = {
                 startDateField: Date.parseDate(Ext.getCmp('search_start_date').getRawValue(), 'Y-m-d'),

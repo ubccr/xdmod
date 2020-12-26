@@ -40,7 +40,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             }
         });
 
-        return chartText
+        return chartText;
     },
     listeners: {
         activate: function () {
@@ -112,7 +112,6 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             for (var c = 0; c < record.data.series.events.length; c++) {
                 var current_record = record.data.series.events[c];
                 var event_time = new Date(current_record.Event_Time).getTime();
-                var chartMsg = '';
 
                 this.chartData.push({
                     y: [0.5, 1],
@@ -185,9 +184,8 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                     hovermode: 'x unified',
                     hoverdistance: 1
                 };
-                Plotly.newPlot(this.renderChartTo, this.chartData, chart_settings, {
-                    displayModeBar: false
-                });
+                var plotlyOpts = {displayModeBar: false};
+                Plotly.newPlot(this.renderChartTo, this.chartData, chart_settings, plotlyOpts);
             }
         }
     }
