@@ -1,3 +1,4 @@
+/* global Plotly */
 Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
 
 XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
@@ -6,7 +7,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
     renderChartTo: '',
     chartTitle: '',
     chartData: [],
-    initComponent: function() {
+    initComponent: function () {
         var self = this;
 
         this.layout = 'fit';
@@ -14,7 +15,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             xtype: 'container',
             id: this.id + '_hc',
             listeners: {
-                render: function() {
+                render: function () {
                     self.renderChartTo = this.id;
                     self.fireEvent('renderChart', self);
                 }
@@ -23,7 +24,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
 
         XDMoD.Module.JobViewer.VMStateChartPanel.superclass.initComponent.call(this, arguments);
 
-        this.store.on('load', function(store, records, params) {
+        this.store.on('load', function (store, records, params) {
             var record = store.getAt(0);
             if (CCR.exists(record)) {
                 self.fireEvent('load_record', self, record);
@@ -31,12 +32,22 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
             self.doLayout();
         });
     },
+    getChartText: function (record) {
+        var chartText = '';
+        Object.entries(record).forEach(function (item, key, value) {
+            if (item[0].length > 0) {
+                chartText += item[0].replace('_', ' ') + ': ' + item[1] + ' <br />';
+            }
+        });
+
+        return chartText
+    },
     listeners: {
-        activate: function() {
+        activate: function () {
             Ext.History.add(this.historyToken);
         },
-        load_record: function(panel, record) {
-
+        load_record: function (panel, record) {
+            var self = this;
             var active_states = [2, 8, 16, 20, 57, 59, 61];
             var inactive_states = [4, 6, 17, 19, 45, 55];
 
@@ -53,12 +64,12 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
 
                 this.chartTitle = 'Timeline for VM ' + current.provider_identifier;
 
-                if (active_states.indexOf(parseInt(current.start_event_type_id)) !== -1) {
+                if (active_states.indexOf(parseInt(current.start_event_type_id, 10)) !== -1) {
                     statusColor = 'green';
                     status = 'Active';
                     legend_group = 'active';
                     dataseries_name = 'VM Active';
-                } else if (inactive_states.indexOf(parseInt(current.start_event_type_id)) !== -1) {
+                } else if (inactive_states.indexOf(parseInt(current.start_event_type_id, 10)) !== -1) {
                     statusColor = 'red';
                     status = 'Stopped';
                     legend_group = 'stopped';
@@ -71,7 +82,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                     mode: 'lines',
                     type: 'scatter',
                     legendgroup: legend_group,
-                    showlegend: (i <= 1) ? true : false,
+                    showlegend: i <= 1,
                     opacity: 0.7,
                     line: {
                         color: statusColor,
@@ -98,19 +109,13 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                 });
             }
 
-            for (i = 0; i < record.data.series.events.length; i++) {
-                var current_record = record.data.series.events[i];
+            for (var c = 0; c < record.data.series.events.length; c++) {
+                var current_record = record.data.series.events[c];
                 var event_time = new Date(current_record.Event_Time).getTime();
                 var chartMsg = '';
 
-                Object.entries(current_record).forEach(function(item, key, value) {
-                    if (item[0].length > 0) {
-                        chartMsg += item[0].replace('_', ' ') + ": " + item[1] + ' <br />';
-                    }
-                });
-
                 this.chartData.push({
-                    y: [.5, 1],
+                    y: [0.5, 1],
                     x: [event_time, event_time],
                     mode: 'lines+markers',
                     showlegend: false,
@@ -121,7 +126,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                     markers: {
                         color: 'black'
                     },
-                    text: chartMsg
+                    text: self.getChartText(current_record)
                 });
             }
 
@@ -133,7 +138,7 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
 
             this.fireEvent('renderChart', this);
         },
-        renderChart: function(panel) {
+        renderChart: function (panel) {
             if (Object.keys(this.chartData).length !== 0 && this.renderChartTo !== '') {
                 var chart_settings = {
                     title: this.chartTitle,
@@ -160,8 +165,8 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                                 count: 1,
                                 label: '1y'
                             }, {
-                                step: 'all',
-                            }],
+                                step: 'all'
+                            }]
                         },
                         rangeslider: {},
                         type: 'date'
