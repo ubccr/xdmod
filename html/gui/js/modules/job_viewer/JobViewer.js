@@ -819,10 +819,10 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                   dtype: dtype,
                   dtypeValue: id,
                   store: new Ext.data.JsonStore({
-                      proxy: new Ext.data.HttpProxy({url: url}),
+                      proxy: new Ext.data.HttpProxy({ url: url }),
                       autoLoad: true,
                       root: 'data',
-                      fields: ["series", "schema"]
+                      fields: ['series', 'schema']
                   })
                 });
                 break;
