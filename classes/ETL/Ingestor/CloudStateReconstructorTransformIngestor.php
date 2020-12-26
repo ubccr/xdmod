@@ -188,13 +188,13 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
             // If the session is an inactive session and a heartbeat event is
             // encountered end the inactive session and start a new session.
             if(in_array($this->_instance_state['start_event_id'], $this->_inactive_end_events)) {
-              $this->updateInstance($srcRecord);
-              $transformedRecord[] = $this->_instance_state;
-              $this->resetInstance();
-              $this->initInstance($srcRecord);
+                $this->updateInstance($srcRecord);
+                $transformedRecord[] = $this->_instance_state;
+                $this->resetInstance();
+                $this->initInstance($srcRecord);
             }
             else {
-              $this->updateInstance($srcRecord);
+                $this->updateInstance($srcRecord);
             }
         } elseif (in_array($srcRecord['event_type_id'], $this->_end_event_ids)) {
 

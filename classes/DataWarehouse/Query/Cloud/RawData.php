@@ -56,8 +56,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
 
         $dataTable = $this->getDataTable();
         $sessionlistTable = new Table($dataTable->getSchema(), $dataTable->getName() . "_sessionlist", "sl");
-        //
-        //$factTable = new Table(new Schema('modw'), "job_tasks", "jt");
+
         $factTable = new Table(new Schema('modw_cloud'), "instance", "i");
         $sessionTable = new Table(new Schema('modw_cloud'), "session_records", "sr");
 

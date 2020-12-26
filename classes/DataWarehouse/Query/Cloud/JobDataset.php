@@ -124,17 +124,17 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             $this->joinTo($st, "systemaccount_id", "username", "username");
 
         } else {
-          $this->addField(new TableField($factTable, "provider_identifier", "local_job_id"));
-          $this->addField(new TableField($factTable, "instance_id", "jobid"));
+            $this->addField(new TableField($factTable, "provider_identifier", "local_job_id"));
+            $this->addField(new TableField($factTable, "instance_id", "jobid"));
 
-          $rt = new Table(new Schema("modw"), "resourcefact", "rf");
-          $this->joinTo($rt, "host_resource_id", "code", "resource");
+            $rt = new Table(new Schema("modw"), "resourcefact", "rf");
+            $this->joinTo($rt, "host_resource_id", "code", "resource");
 
-          $pt = new Table(new Schema('modw'), 'person', 'p');
-          $this->joinTo($pt, "person_id", "long_name", "name");
+            $pt = new Table(new Schema('modw'), 'person', 'p');
+            $this->joinTo($pt, "person_id", "long_name", "name");
 
-          $st = new Table(new Schema('modw'), 'systemaccount', 'sa');
-          $this->joinTo($st, "systemaccount_id", "username", "username");
+            $st = new Table(new Schema('modw'), 'systemaccount', 'sa');
+            $this->joinTo($st, "systemaccount_id", "username", "username");
         }
     }
 

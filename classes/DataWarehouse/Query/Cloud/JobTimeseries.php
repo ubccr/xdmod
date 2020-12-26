@@ -115,5 +115,3 @@ class JobTimeseries
         return $this->db->query($query, [':instance_id' => $instance_id]);
     }
 }
-
-?>
