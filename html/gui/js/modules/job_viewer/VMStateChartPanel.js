@@ -184,9 +184,9 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
                     hovermode: 'x unified',
                     hoverdistance: 1
                 };
-                var plotlyOpts = {displayModeBar: false};
+                var plotlyOpts = { displayModeBar: false };
                 Plotly.newPlot(this.renderChartTo, this.chartData, chart_settings, plotlyOpts);
             }
         }
     }
-})
+});
