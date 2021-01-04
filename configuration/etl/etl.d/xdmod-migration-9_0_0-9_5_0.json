@@ -84,8 +84,8 @@
     ],
     "cloud-migration-9_0_0-9_5_0": [
         {
-          "name": "UpdateEventTypesAndVolumeTables",
-          "description": "Drop tables",
+          "name": "UpdateEventTypes",
+          "description": "Update event type on event table",
           "namespace": "ETL\\Maintenance",
           "class": "ExecuteSql",
           "options_class": "MaintenanceOptions",
