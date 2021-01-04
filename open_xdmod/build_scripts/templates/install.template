@@ -513,11 +513,6 @@ function substitutePaths($dirs)
         '#^\$baseDir\s*=.+$#m' => '$baseDir = \'' . $dirs['data'] . "';",
     ));
 
-    substituteInFile($destDir . $dirs['data'] . '/reporting/jasper_builder/ReportBuilder.sh', array(
-        '#^\s*DIR\s*=.+$#m'        => '',
-        '#^(\s*)SETTINGS\s*=.+$#m' => '$1SETTINGS="' . $dirs['conf'] . '/portal_settings.ini";',
-    ));
-
     substituteInFile($destDir . $dirs['data'] . '/configuration/constants.php', array(
         '/__XDMOD_BIN_PATH__/' => $dirs['bin'],
         "#^define\('CONFIG_DIR',.+$#m"

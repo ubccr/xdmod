@@ -21,11 +21,6 @@ License: Creative Commons Attribution-NonCommercial 3.0
 Author:  Torstein Hønsi
 Link:    http://www.highcharts.com/
 
-Name:    Jasper Reports
-License: LGPL 3.0
-Author:  Jaspersoft Corporation
-Link:    http://community.jaspersoft.com/project/jasperreports-library
-
 Name:    Commons BeanUtils
 License: Apache License Version 2.0
 Author:  The Apache Software Foundation
@@ -85,6 +80,10 @@ Name:    PHP SQL Parser
 License: New BSD License
 Author:  André Rothe, Justin Swanhart
 Link:    http://code.google.com/p/php-sql-parser/
+
+Name:    PHP Word
+License: LGPL 3
+Link:    https://github.com/PHPOffice/PHPWord
 
 Name:    JSON Schema for PHP
 License: MIT License

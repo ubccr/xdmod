@@ -1568,196 +1568,6 @@ class XDReportManager
         return $raw_png_data;
     }
 
-    /*
-     * writeXMLConfiguration()
-     *
-     * This function generates the XML configuration file and image files for
-     * processing by jasper-builder. The files are placed in the supplied
-     * directory (which must exist)
-     *
-     * \param outputdir the name of an existing, writable directory in which to put the files.
-     * \param report_id the identifier for the report
-     * \param export_format the specified export format
-     * \returns The name of the report file that was written
-     */
-    private function writeXMLConfiguration(
-        $outputdir,
-        $report_id,
-        $export_format = null
-    ) {
-        $dom = new \DOMDocument("1.0");
-
-        $nodeRoot = $dom->createElement("Report");
-        $dom->appendChild($nodeRoot);
-
-        $nodeUser = $dom->createElement("User");
-        $nodeRoot->appendChild($nodeUser);
-
-        $this->createElement(
-            $dom,
-            $nodeUser,
-            "LastName",
-            $this->getReportUserLastName($report_id)
-        );
-
-        $this->createElement(
-            $dom,
-            $nodeUser,
-            "FirstName",
-            $this->getReportUserFirstName($report_id)
-        );
-
-        $this->createElement(
-            $dom,
-            $nodeUser,
-            "Email",
-            $this->getReportUserEmailAddress($report_id)
-        );
-
-        $this->createElement(
-            $dom,
-            $nodeRoot,
-            "Format",
-            ($export_format != null)
-            ? $export_format
-            : $this->getReportFormat($report_id)
-        );
-
-        $this->createElement(
-            $dom,
-            $nodeRoot,
-            "Title",
-            $this->getReportTitle($report_id)
-        );
-
-        $this->createElement(
-            $dom,
-            $nodeRoot,
-            "PageHeader",
-            $this->getReportHeader($report_id)
-        );
-
-        $results = $this->fetchReportData($report_id);
-
-        $charts_per_page = $this->getReportChartsPerPage($report_id);
-
-        $chartCount = 0;
-
-        foreach ($results as $entry) {
-            $chartSlot = $chartCount++ % $charts_per_page;
-
-            if ($chartSlot == 0) {
-                $nodeSection = $dom->createElement("Section");
-                $nodeRoot->appendChild($nodeSection);
-            }
-
-            $this->createElement(
-                $dom,
-                $nodeSection,
-                'SectionTitle_' . $chartSlot,
-                $entry['title']
-            );
-
-            if (strtolower($entry['timeframe_type']) == 'user defined') {
-                list($start_date, $end_date)
-                    = explode(' to ', $entry['comments']);
-            }
-            else {
-                $e = \xd_date\getEndpoints($entry['timeframe_type']);
-
-                $start_date = $e['start_date'];
-                $end_date   = $e['end_date'];
-            }
-
-            // Update comments and hyperlink so reporting engine can
-            // work with the correct chart (image)
-            $entry['comments'] = $start_date . ' to ' . $end_date;
-
-            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ) );
-            $imagefilename = $outputdir . "/" . $entry['order'] . ".png";
-            file_put_contents($imagefilename, $imagedata);
-
-            $entry['image_url'] = $imagefilename;
-
-            if (empty($entry['drill_details'])) {
-                $entry['drill_details'] = ORGANIZATION_NAME_ABBREV;
-            }
-
-            $this->createElement(
-                $dom,
-                $nodeSection,
-                'SectionDrillParameters_' . $chartSlot,
-                $entry['drill_details']
-            );
-
-            $this->createElement(
-                $dom,
-                $nodeSection,
-                'SectionDescription_' . $chartSlot,
-                $entry['comments']
-            );
-
-            $this->createElement(
-                $dom,
-                $nodeSection,
-                'SectionImage_' . $chartSlot,
-                $entry['image_url']
-            );
-        }
-
-        $remainingSlots = $chartCount % $charts_per_page;
-
-        if ($remainingSlots > 0) {
-
-            // Handle remainder of charts
-
-            for ($r = $remainingSlots; $r < $charts_per_page; $r++) {
-                $this->createElement(
-                    $dom,
-                    $nodeSection,
-                    'SectionTitle_' . $r,
-                    ''
-                );
-
-                $this->createElement(
-                    $dom,
-                    $nodeSection,
-                    'SectionDrillParameters_' . $r,
-                    ''
-                );
-
-                $this->createElement(
-                    $dom,
-                    $nodeSection,
-                    'SectionDescription_' . $r,
-                    ''
-                );
-
-                $this->createElement(
-                    $dom,
-                    $nodeSection,
-                    'SectionImage_' . $r,
-                    'dummy_image'
-                );
-            }
-        }
-
-        $this->createElement(
-            $dom,
-            $nodeRoot,
-            "PageFooter",
-            $this->getReportFooter($report_id)
-        );
-
-        $report_filename = $outputdir . "/" .  $report_id . ".xml";
-        $bytes = file_put_contents($report_filename, $dom->saveXML() . "\n");
-
-        if ($bytes === false) {
-            throw new \Exception("Failed to write report XML definition file");
-        }
-
-        return $report_filename;
-    }
 
     public function buildReport($report_id, $export_format)
     {
@@ -1781,8 +1591,6 @@ class XDReportManager
             return $response;
         }
 
-        $base_path = \xd_utilities\getConfiguration('reporting', 'base_path');
-
         $report_format = ($export_format != null) ? $export_format : $this->getReportFormat($report_id);
 
         // Initialize a temporary working directory for the report generation
@@ -1800,182 +1608,21 @@ class XDReportManager
             throw new \Exception("Failed to create directory '$template_path'");
         }
 
-        // Copy all report templates into this working directory
+        $report_output_file = $template_path . '/' . $report_id . '.' . strtolower($report_format);
 
-        $paths = glob("$base_path/*.jrxml");
+        $settings = $this->gatherReportSettings($report_id);
 
-        foreach ($paths as $path) {
-            $dest = $template_path . '/' . pathinfo($path, PATHINFO_BASENAME);
+        $rp = new \Reports\ClassicReport($settings);
+        $rp->writeReport($template_path . '/' . $report_id . '.doc');
 
-            if (!copy($path, $dest)) {
-                throw new \Exception("Failed to copy '$path' to '$dest'");
-            }
-        }
-
-        $report_file_name = $report_id;
-        $report_output_file = $template_path . '/' . $report_file_name . '.' . strtolower($report_format);
-
-        // Generate a report definition (XML) to be used as the input to
-        // the Jasper Report Builder application
-        $this->writeXMLConfiguration($template_path, $report_id, $export_format);
-
-        $charts_per_page = $this->getReportChartsPerPage($report_id);
-
-        $report_template = 'template_' . $charts_per_page . 'up';
-
-        $log_file = 'build.log';
-
-        $buildSuccess = $this->executeReportBuilder(
-            $template_path,
-            $report_file_name,
-            $report_template,
-            $log_file
-        );
-
-        if (!file_exists($report_output_file) || !$buildSuccess) {
-            $msg = "There was a problem building the report.  "
-                . "See $template_path/$log_file for details or contact "
-                . "support with that file name.";
-            throw new \Exception($msg);
+        if ($report_format == 'pdf') {
+            exec('HOME=' . $template_path . ' libreoffice --headless --convert-to pdf ' . $template_path . '/' .  $report_id . '.doc --outdir ' . $template_path);
         }
 
         return array(
             'template_path' => $template_path,
             'report_file'   => $report_output_file,
         );
-    }
-
-    /**
-     * Execute the report builder java code.
-     *
-     * Runs Jasper Report Builder application (XML --> PDF).
-     *
-     * @param string $templatePath Directory containing template files.
-     * @param string $reportFileName Name used for report files.
-     * @param string $reportTemplate Template name.
-     * @param string $logFile Log file name.
-     */
-    protected function executeReportBuilder(
-        $templatePath,
-        $reportFileName,
-        $reportTemplate = 'template',
-        $logFile = 'build.log'
-    ) {
-        $builderPath = $templatePath;
-        $inputDir    = $templatePath;
-        $outputDir   = $templatePath;
-        $templateDir = $templatePath;
-
-        $inputFile  = $reportFileName;
-        $outputFile = $reportFileName;
-
-        $logPath = "$templatePath/$logFile";
-
-        $logger = Log::factory('report-builder', array(
-            'file'         => $logPath,
-            'fileLogLevel' => Log::INFO,
-            'console'      => false,
-            'db'           => true,
-            'mail'         => false,
-        ));
-
-        $logger->info("Using template $reportTemplate");
-
-        $currentDir = getcwd();
-        chdir($builderPath);
-
-        $javaPath = \xd_utilities\getConfiguration('reporting', 'java_path');
-        $javacPath = \xd_utilities\getConfiguration('reporting', 'javac_path');
-        $basePath = \xd_utilities\getConfiguration('reporting', 'base_path');
-
-        $classPaths = array(
-            $basePath,
-            "$basePath/lib/commons-beanutils/commons-beanutils-1.8.0.jar",
-            "$basePath/lib/commons-logging/commons-logging.jar",
-            "$basePath/lib/jasperreports/jasperreports-3.7.6.jar",
-            "$basePath/lib/commons-collections/commons-collections-2.1.1.jar",
-            "$basePath/lib/poi/poi-3.6-20091214.jar",
-            "$basePath/lib/commons-digester/commons-digester-1.7.jar",
-            "$basePath/lib/itextpdf/itext-2.1.7.jar",
-            "$basePath/lib/xalan/xalan.jar",
-        );
-
-        // Add the current CLASSPATH if it's set in the environment.
-        $classPath = getenv('CLASSPATH');
-        if (!empty($classPath)) {
-            array_unshift($classPaths, $classPath);
-        }
-
-        $classPath = implode(':', $classPaths);
-
-        $args = array(
-            $javaPath,
-            '-cp', $classPath,
-            'Builder',
-            $inputDir,
-            $inputFile,
-            $outputDir,
-            $outputFile,
-            $templateDir,
-            $reportTemplate
-        );
-
-        $cmd = implode(' ', array_map('escapeshellarg', $args));
-
-        // If a javac path has been configured, prepend its dirname to
-        // the PATH environment variable to ensure that specific javac
-        // is used by Jasper Reports.
-        if ($javacPath !== '') {
-            $javacDir = pathinfo($javacPath, PATHINFO_DIRNAME);
-
-            // If the javac path isn't actually a path, but just a file
-            // name, pathinfo returns ".".  Don't change the PATH since
-            // the executable is presumably already in the PATH.
-            if ($javacDir !== '.') {
-                $path = escapeshellarg($javacDir) . ':' . escapeshellarg(getenv('PATH'));
-                $cmd = 'PATH=' . $path . ' ' . $cmd;
-            }
-        }
-
-        $logger->info("Executing command: $cmd");
-
-        // Assume everything will work just fine.
-        $success = true;
-
-        $logger->info(array(
-            'message' => 'Build start',
-            'ts'      => time(),
-        ));
-
-        $output    = array();
-        $returnVar = 0;
-
-        exec($cmd . ' 2>&1', $output, $returnVar);
-
-        if (count($output) > 0) {
-            $logger->warning('Command output start');
-
-            foreach ($output as $line) {
-                $logger->warning($line);
-            }
-
-            $logger->warning('Command output end');
-        }
-
-        if ($returnVar != 0) {
-            $success = false;
-            $logger->err("Command returned non-zero value '$returnVar'");
-        }
-
-        $logger->info(array(
-            'message' => 'Build end',
-            'ts'      => time(),
-        ));
-
-        chmod($logPath, 0444);
-        chdir($currentDir);
-
-        return $success;
     }
 
     public function mailReport(
@@ -2056,6 +1703,50 @@ class XDReportManager
         }
 
         return true;
+    }
+
+    /**
+     * generate a php array containing the report configuration settings
+     * and the chart images.
+     * @param $report_id The report to generate
+     * @return array $settings the report settings
+     */
+    private function gatherReportSettings($report_id)
+    {
+        $settings = array();
+
+        $settings['header'] = $this->getReportHeader($report_id);
+        $settings['footer'] = $this->getReportFooter($report_id);
+        $settings['title'] = $this->getReportTitle($report_id);
+        $settings['charts_per_page'] = (int) $this->getReportChartsPerPage($report_id);
+
+        $settings['charts'] = array();
+
+        foreach ($this->fetchReportData($report_id) as $entry) {
+
+            $chart = $entry;
+
+            if (empty($entry['drill_details'])) {
+                $chart['drill_details'] = ORGANIZATION_NAME_ABBREV;
+            }
+
+            if (strtolower($entry['timeframe_type']) == 'user defined') {
+                list($start_date, $end_date)
+                    = explode(' to ', $entry['comments']);
+            }
+            else {
+                $e = \xd_date\getEndpoints($entry['timeframe_type']);
+
+                $start_date = $e['start_date'];
+                $end_date   = $e['end_date'];
+            }
+
+            $chart['comments'] = $start_date . ' to ' . $end_date;
+            $chart['imagedata'] = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ) );
+            $settings['charts'][] = $chart;
+        }
+
+        return $settings;
     }
 
     /** retrieve information about the available report templates
