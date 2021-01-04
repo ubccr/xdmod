@@ -13,6 +13,7 @@
 
 - Steven M. Gallo
 - Ben Plessinger
+- Rudra Chakraborty
 - Thomas Yearke
 - Amin Ghadersohi
 - Ryan Gentner
