@@ -2,22 +2,24 @@
 
 ## Current Maintainers
 
-- Steven M. Gallo
 - Jeffrey T. Palmer
 - Nikolay Simakov
 - Joseph White
-- Thomas Yearke
 - Jeanette Sperhac
 - Ryan Rathsam
-- Ben Plessinger
+- Gregary Dean
 
 ## Previous Maintainers
 
+- Steven M. Gallo
+- Ben Plessinger
+- Thomas Yearke
 - Amin Ghadersohi
 - Ryan Gentner
 
 ## Contributors
 
+- Trey Dockendorf
 - Julien Eid
 - Jesse Becker
 - Nathan Rini
