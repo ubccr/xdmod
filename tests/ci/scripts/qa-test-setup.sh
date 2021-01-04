@@ -10,9 +10,9 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     QA_GIT_URL=${QA_GIT_URL:-https://github.com/ubccr/xdmod-qa.git}
 
 
-    # Check if XDMOD_SOURCE_DIR env variable exists, if not then we can't continue.
+    # Check if SHIPPABLE_BUILD_DIR env variable exists, if not then we can't continue.
     if [[ -z "$SHIPPABLE_BUILD_DIR" ]]; then
-        echo "XDMOD_SOURCE_DIR must be set before running this script."
+        echo "The SHIPPABLE_BUILD_DIR env variable must be set before running this script."
         exit 1
     fi
 
@@ -23,13 +23,6 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Setup the xdmod-qa environment / requirements.
     $HOME/.qa/scripts/install.sh
-
-    # If we're running on Shippable then make sure to include the
-    # base branch that we're merging into.
-    build_args=""
-    if [ "$SHIPPABLE" = "true" ]; then
-        build_args="-r $BASE_BRANCH"
-    fi
 
     # Run the xdmod-qa tests.
     $HOME/.qa/scripts/build.sh $build_args
