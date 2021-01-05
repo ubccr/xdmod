@@ -24,6 +24,6 @@ Jeffrey T. Palmer, Steven M. Gallo, Thomas R. Furlani, Matthew D. Jones, Robert 
 "Open XDMoD: A Tool for the Comprehensive Management of High-Performance Computing Resources",
 <i>Computing in Science &amp; Engineering</i>, Vol 17, Issue 4, 2015, pp. 52-62.
 <a href="http://dx.doi.org/10.1109/MCSE.2015.68" target="_blank" rel="noopener noreferrer">10.1109/MCSE.2015.68</a>
-</strong</p>
+</strong></p>
 
 <p id="about-xdmod-version-number">XDMoD Version: <?php print xd_versioning\getPortalVersion(true); ?></p>
