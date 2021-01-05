@@ -18,8 +18,8 @@ use xd_utilities;
 class Log
 {
 
-    const LINE_FORMAT = "%datetime% %channel% [%level_name%] %message%\n";
-    const TIME_FORMAT = 'Y-m-d h:m:s';
+    const LINE_FORMAT = "%datetime% [%level_name%] %message%\n";
+    const TIME_FORMAT = 'Y-m-d h:i:s';
 
     // Class constants so "Log.php" doesn't need to be required by users
     // of the Log class.
