@@ -25,7 +25,7 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     $HOME/.qa/scripts/install.sh
 
     # Run the xdmod-qa tests.
-    $HOME/.qa/scripts/build.sh $build_args
+    $HOME/.qa/scripts/build.sh
 
     popd >/dev/null || exit 1
 fi
