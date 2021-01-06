@@ -126,10 +126,12 @@ function handle_uncaught_exception($exception)
     $logConf = array(
         'mode' => 0644,
         'file' => $logfile,
-        'consoleLogLevel' => CCR\Log::INFO
+        'mail' => false,
+        'db' => false,
+        'console' => false
     );
 
-    $logger = Log::factory('file', $logConf);
+    $logger = Log::singleton('exception', $logConf);
 
     $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
     $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
