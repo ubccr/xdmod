@@ -45,11 +45,6 @@
                 "nullable": true
             },
             {
-                "name": "font",
-                "type": "enum('Times','Arial')",
-                "nullable": true
-            },
-            {
                 "name": "schedule",
                 "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
                 "nullable": true

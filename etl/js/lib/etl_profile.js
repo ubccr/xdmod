@@ -226,6 +226,9 @@ ETLProfile.prototype.getRawStatisticsConfiguration = function () {
     var rawStatsConfig = this.schema.rawStatistics;
     var tables = this.getTables();
 
+    rawStatsConfig.tables = rawStatsConfig.tables || {};
+    rawStatsConfig.fields = rawStatsConfig.fields || {};
+
     for (var t in tables) {
         if ({}.hasOwnProperty.call(tables, t)) {
             var tableName = tables[t].meta.schema + '.' + tables[t].name;
@@ -773,7 +776,11 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     }
 
                     var label = tableColumns[tc].stats[st].label.replace(':field_name', fieldName);
-                    var description = tableColumns[tc].stats[st].description.replace(':field_name', fieldName);
+                    var description = tableColumns[tc].stats[st].description;
+                    if (typeof description === 'string') {
+                       description = description.replace(':field_name', fieldName);
+                    }
+
                     for (var tagidx in tableColumns[tc].dynamictags) {
                         if (tableColumns[tc].dynamictags.hasOwnProperty(tagidx)) {
                             var lSubStr = ':label_' + tagidx;
@@ -781,8 +788,10 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                             var replacement = tableColumns[tc].dynamictags[tagidx];
                             label = label.replace(lSubStr, replacement);
                             label = label.replace(uSubStr, wordToUpper(replacement));
-                            description = description.replace(lSubStr, replacement);
-                            description = description.replace(uSubStr, wordToUpper(replacement));
+                            if (typeof description === 'string') {
+                                description = description.replace(lSubStr, replacement);
+                                description = description.replace(uSubStr, wordToUpper(replacement));
+                            }
                         }
                     }
                     var decimals = 1;
@@ -790,13 +799,24 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                         decimals = tableColumns[tc].stats[st].decimals;
                     }
 
+                    var aggregate_formula;
+                    var timeseries_formula;
+
+                    if (tableColumns[tc].stats[st].sql) {
+                        aggregate_formula = tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name);
+                        timeseries_formula = aggregate_formula;
+                    } else {
+                        aggregate_formula = tableColumns[tc].stats[st].aggregate_sql.replace(/:field_name/g, tableColumns[tc].name);
+                        timeseries_formula = tableColumns[tc].stats[st].timeseries_sql.replace(/:field_name/g, tableColumns[tc].name);
+                    }
+
                     xdmodInteg.addStatistic(statsname);
                     statistics[statsname] = {
-                        aggregate_formula: tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name).replace(':timeseries', 0),
+                        aggregate_formula: aggregate_formula,
                         description_html: description,
                         name: label,
                         precision: decimals,
-                        timeseries_formula: tableColumns[tc].stats[st].sql.replace(/:field_name/g, tableColumns[tc].name).replace(':timeseries', 1),
+                        timeseries_formula: timeseries_formula,
                         unit: tableColumns[tc].stats[st].unit
                     };
                     if ('requirenotnull' in tableColumns[tc].stats[st]) {
@@ -812,8 +832,15 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
         var rawStatsConfig = this.getRawStatisticsConfiguration();
         var rawStatsInteg = new RawStatsIntegrator(rawStatsConfig.realmName, rawStatsConfig.realmDisplay, rawStatsConfig.realmOrder);
         var tableIndex = 1;
+        var key;
 
-        for (var key in rawStatsConfig.fields) {
+        for (key in rawStatsConfig.tables) {
+            if ({}.hasOwnProperty.call(rawStatsConfig.tables, key)) {
+                rawStatsInteg.addTable(rawStatsConfig.tables[key]);
+            }
+        }
+
+        for (key in rawStatsConfig.fields) {
             if ({}.hasOwnProperty.call(rawStatsConfig.fields, key)) {
                 var col = rawStatsConfig.fields[key];
                 var columnName = key;
@@ -868,12 +895,10 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     }
                 }
 
-                rawStatsInteg.addField({
+                var fieldDef = {
                     key: key,
                     alias: alias,
                     name: name,
-                    tableAlias: tableAlias,
-                    column: columnName,
                     dtype: dtype,
                     units: col.unit,
                     per: col.per,
@@ -881,7 +906,20 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     visibility: visibility,
                     batchExport: batchExport,
                     group: group
-                });
+                };
+
+                if (col.formula) {
+                    fieldDef.formula = col.formula;
+                } else {
+                    fieldDef.column = columnName;
+                    fieldDef.tableAlias = tableAlias;
+                }
+
+                if (col.withError) {
+                    fieldDef.withError = col.withError;
+                }
+
+                rawStatsInteg.addField(fieldDef);
             }
         }
 

@@ -3,6 +3,9 @@ env:
     global:
         - COMPOSER_ALLOW_SUPERUSER=1
         - XDMOD_REALMS='jobs,storage,cloud,gateways'
+        - XDMOD_IS_CORE=true
+        - XDMOD_SOURCE_DIR=$SHIPPABLE_BUILD_DIR
+        - XDMOD_INSTALL_DIR=/xdmod
     matrix:
         - XDMOD_TEST_MODE=fresh_install
         - XDMOD_TEST_MODE=upgrade
@@ -11,6 +14,7 @@ build:
     cache_dir_list:
         - /root/.composer
         - /root/.npm
+        - /tmp/pear/cache
     pre_ci:
         - docker build -t pseudo_repo/openxdmod:latest .
     pre_ci_boot:
@@ -23,6 +27,8 @@ build:
         - ~/bin/buildrpm xdmod
         - ./tests/ci/bootstrap.sh
         - ./tests/ci/validate.sh
+        - composer install --no-progress
+        - ./tests/ci/scripts/qa-test-setup.sh
         - composer install --no-progress
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - mv ./configuration/organization.json ./configuration/organization.json.old
