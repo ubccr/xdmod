@@ -176,25 +176,23 @@ function handle_uncaught_exception($exception)
 
 function global_uncaught_exception_handler($exception)
 {
-   // Perform logging and output building for the exception.
+    // Perform logging and output building for the exception.
     $exceptionOutput = handle_uncaught_exception($exception);
 
-   // If running in a server context...
-    if ($exceptionOutput['isServerContext']) {
-        if (!headers_sent()) {
-            // Set the exception's headers (if any).
-            foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
-                header("$headerKey: $headerValue");
-            }
-
-            // Set the status code header.
-            $httpCode = $exceptionOutput['httpCode'];
-            header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
+    // If running in a server context...
+    if ($exceptionOutput['isServerContext'] && !headers_sent()) {
+        // Set the exception's headers (if any).
+        foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
+            header("$headerKey: $headerValue");
         }
 
-        // Print the exception's content.
-        echo $exceptionOutput['content'];
+        // Set the status code header.
+        $httpCode = $exceptionOutput['httpCode'];
+        header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
     }
+
+    // Print the exception's content.
+    echo $exceptionOutput['content'];
 } // global_uncaught_exception_handler
 
 set_exception_handler('global_uncaught_exception_handler');
