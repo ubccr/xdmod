@@ -19,7 +19,7 @@ class Log
 {
 
     const LINE_FORMAT = "%datetime% [%level_name%] %message%\n";
-    const TIME_FORMAT = 'Y-m-d h:i:s';
+    const TIME_FORMAT = 'Y-m-d H:i:s';
 
     // Class constants so "Log.php" doesn't need to be required by users
     // of the Log class.
