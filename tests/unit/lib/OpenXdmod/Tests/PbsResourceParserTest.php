@@ -31,7 +31,7 @@ class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
      * @covers ::parseResourceListNodes
      * @covers ::getGpuCountFromResourceListNodes
      */
-    public function testReqGresGpuCountParsing($resourceListNodes, $gpuCount)
+    public function testGpuCountParsing($resourceListNodes, $gpuCount)
     {
         $nodesData = $this->parser->parseResourceListNodes($resourceListNodes);
         $this->assertEquals(

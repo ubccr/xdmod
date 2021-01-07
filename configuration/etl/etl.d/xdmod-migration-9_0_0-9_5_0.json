@@ -62,6 +62,27 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "update-mod_shredder-shredded_job_slurm-table",
+            "description": "Update mod_shredder.shredded_job_slurm table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                {
+                    "sql_file": "migrations/9.0.0-9.5.0/mod_shredder/alter-shredded-job-slurm-table.sql",
+                    "delimiter": ";"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
         }
     ]
 }
