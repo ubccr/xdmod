@@ -115,6 +115,16 @@ You may upgrade directly from 9.0.0.
 
 The `xdmod-upgrade` script will migrate user editable configuration files to the new version and ask for the location of `chromium`.
 
+### Slurm Input File Format Changes
+
+The input file format for Slurm data has changed to remove the `ReqGRES` field.
+
+**If you are generating Slurm input for the `xdmod-shredder` command then you
+will need to make the appropriate changes.**  Refer to the [Slurm
+Notes](resource-manager-slurm.html#input-format) for the example `sacct`
+command.  If you are using the `xdmod-slurm-helper` command then no changes are
+necessary.
+
 ### Database Changes
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
