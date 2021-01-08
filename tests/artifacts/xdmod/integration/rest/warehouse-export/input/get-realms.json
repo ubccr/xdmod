@@ -11,6 +11,10 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
+            },
+            {
+                "id": "Gateways",
+                "name": "Gateways"
             }
         ]
     ],
@@ -26,6 +30,10 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
+            },
+            {
+                "id": "Gateways",
+                "name": "Gateways"
             }
         ]
     ],
@@ -41,6 +49,10 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
+            },
+            {
+                "id": "Gateways",
+                "name": "Gateways"
             }
         ]
     ],
@@ -56,6 +68,10 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
+            },
+            {
+                "id": "Gateways",
+                "name": "Gateways"
             }
         ]
     ],
@@ -71,6 +87,10 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
+            },
+            {
+                "id": "Gateways",
+                "name": "Gateways"
             }
         ]
     ],
