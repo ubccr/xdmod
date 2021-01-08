@@ -13,7 +13,8 @@
     "person_id": "114",
     "raw_data_allowed_realms":[
         "Jobs",
-        "Cloud"
+        "Cloud",
+        "Gateways"
     ]
   }
 }
