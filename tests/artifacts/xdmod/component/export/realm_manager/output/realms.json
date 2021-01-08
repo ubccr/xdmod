@@ -4,6 +4,10 @@
             {
                 "name": "Jobs",
                 "display": "Jobs"
+            },
+            {
+                "name": "Gateways",
+                "display": "Gateways"
             }
         ]
     ]
