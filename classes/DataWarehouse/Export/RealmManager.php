@@ -41,12 +41,16 @@ class RealmManager
             $this->config->getBatchExportRealms()
         );
 
-        return array_filter(
+        $realms = array_filter(
             Realms::getRealms(),
             function ($realm) use ($exportable) {
                 return in_array($realm->getName(), $exportable);
             }
         );
+
+        // Use array_values to remove gaps in keys that may have been
+        // introduced by the use of array_filter.
+        return array_values($realms);
     }
 
     /**
@@ -57,12 +61,16 @@ class RealmManager
      */
     public function getRealmsForUser(XDUser $user)
     {
-        return array_filter(
+        $realms = array_filter(
             $this->getRealms(),
             function ($realm) use ($user) {
                 return BatchExport::realmExists($user, $realm->getName());
             }
         );
+
+        // Use array_values to remove gaps in keys that may have been
+        // introduced by the use of array_filter.
+        return array_values($realms);
     }
 
     /**
