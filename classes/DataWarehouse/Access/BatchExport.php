@@ -22,12 +22,16 @@ class BatchExport
         $config = RawStatisticsConfiguration::factory();
         $allowedRealms = Realms::getRealmIdsForUser($user);
 
-        return array_filter(
+        $realms = array_filter(
             $config->getBatchExportRealms(),
             function ($realm) use ($allowedRealms) {
                 return in_array($realm['name'], $allowedRealms);
             }
         );
+
+        // Use array_values to remove gaps in keys that may have been
+        // introduced by the use of array_filter.
+        return array_values($realms);
     }
 
     /**
