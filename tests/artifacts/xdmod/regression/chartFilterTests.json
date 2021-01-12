@@ -410,7 +410,7 @@
         },
         "expected": {
             "subtitle": "Resource = ( nutsetters,  openstack )",
-            "yvalue": 129681.4764
+            "yvalue": 129441.6319
         }
     },
     {
@@ -425,7 +425,7 @@
         },
         "expected": {
             "subtitle": "Submission Venue =  OpenStack API",
-            "yvalue": 129681.4764
+            "yvalue": 129441.6319
         }
     },
     {

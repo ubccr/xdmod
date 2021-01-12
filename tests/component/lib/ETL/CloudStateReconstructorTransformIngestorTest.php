@@ -80,7 +80,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         "instance_id" => 2343,
         "start_time_ts" => "1517936941.000000",
         "start_event_id" => 2,
-        "end_time_ts" => "1517961599.000000",
+        "end_time_ts" => "1517936941.000000",
         "end_event_id" => 4
     );
 
