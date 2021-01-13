@@ -22,12 +22,16 @@ class RawData
         $config = RawStatisticsConfiguration::factory();
         $allowedRealms = Realms::getRealmsForUser($user);
 
-        return array_filter(
+        $realms = array_filter(
             $config->getRawDataRealms(),
             function ($realmConfig) use ($allowedRealms) {
                 return in_array($realmConfig['name'], $allowedRealms);
             }
         );
+
+        // Use array_values to remove gaps in keys that may have been
+        // introduced by the use of array_filter.
+        return array_values($realms);
     }
 
     /**
