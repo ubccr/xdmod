@@ -66,7 +66,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
             new TableField($resourcefactTable, "id")
         ));
 
-        // For Gateways realm the analog (with person_id) is the Gateway table: 
+        // For Gateways realm the analog (with person_id) is the Gateway table:
         $personTable = new Table(new Schema('modw_gateways'), 'gateway', 'p');
 
         $this->addTable($personTable);
