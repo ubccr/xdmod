@@ -128,7 +128,7 @@
                 "column": "username",
                 "group": "Administration",
                 "visibility": "non-public",
-                "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
+                "documentation": "The username on the resource of the gateway proxy user that ran the job. May be a UID or string username depending on the resource.",
                 "batchExport": "anonymize"
             },
             {
@@ -144,7 +144,7 @@
                 "tableAlias": "o",
                 "column": "name",
                 "group": "Administration",
-                "documentation": "The organization of the person who ran the task",
+                "documentation": "The organization associated with the gateway proxy user that ran the task",
                 "batchExport": true
             },
             {
