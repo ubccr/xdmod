@@ -62,9 +62,9 @@
                 "name": "gateway",
                 "alias": "p",
                 "join": {
-                    "primaryKey": "id",
+                    "primaryKey": "proxy_person_id",
                     "foreignTableAlias": "jt",
-                    "foreignKey": "proxy_person_id"
+                    "foreignKey": "person_id"
                 }
             },
             {
