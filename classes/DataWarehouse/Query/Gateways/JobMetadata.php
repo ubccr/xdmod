@@ -22,7 +22,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     }
 
     /**
-     * Note there is no job summary data available in the Jobs realm
+     * Note there is no job summary data available in the Gateways realm
      */
     public function getJobSummary(XDUser $user, $jobid)
     {
@@ -30,7 +30,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     }
 
     /**
-     * Note there is no job executable data available in the Jobs realm
+     * Note there is no job executable data available in the Gateways realm
      */
     public function getJobExecutableInfo(XDUser $user, $jobid)
     {
@@ -38,7 +38,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     }
 
     /**
-     * Note there is no job timeseries data available in the Jobs realm
+     * Note there is no job timeseries data available in the Gateways realm
      */
     public function getJobTimeseriesMetaData(XDUser $user, $jobid)
     {
@@ -46,7 +46,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     }
 
     /**
-     * Note there is no job timeseries data available in the Jobs realm
+     * Note there is no job timeseries data available in the Gateways realm
      */
     public function getJobTimeseriesMetricMeta(XDUser $user, $jobid, $tsid)
     {
@@ -54,7 +54,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     }
 
     /**
-     * Note there is no job timeseries data available in the Jobs realm
+     * Note there is no job timeseries data available in the Gateways realm
      */
     public function getJobTimeseriesMetricNodeMeta(XDUser $user, $jobid, $tsid, $nodeid)
     {
@@ -62,7 +62,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     }
 
     /**
-     * Note there is no job timeseries data available in the Jobs realm
+     * Note there is no job timeseries data available in the Gateways realm
      */
     public function getJobTimeseriesData(XDUser $user, $jobid, $tsid, $nodeid, $cpuid)
     {
