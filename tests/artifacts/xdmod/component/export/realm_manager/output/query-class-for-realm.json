@@ -2,5 +2,9 @@
     "Jobs realm": [
         "Jobs",
         "\\DataWarehouse\\Query\\Jobs\\JobDataset"
+    ],
+    "Gateways realm": [
+        "Gateways",
+        "\\DataWarehouse\\Query\\Gateways\\JobDataset"
     ]
 }
