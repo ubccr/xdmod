@@ -41,6 +41,8 @@ class ETLControllerProvider extends BaseControllerProvider
         $class = get_class($this);
 
         $controller->get("$root/pipelines/actions", "$class::getActionsForPipelines");
+        $controller->post("$root/pipelines/actions", "$class::getActionsForPipelines");
+
         $controller->get("$root/pipelines/{pipeline}/actions", "$class::getActionsForPipeline");
         $controller->get("$root/pipelines/{pipeline}/endpoints", "$class::getEndpointsForPipeline");
 
@@ -51,8 +53,6 @@ class ETLControllerProvider extends BaseControllerProvider
         $controller->post("$root/files", "$class::getFileNames");
 
         $controller->get("$root/endpoints", "$class::getDataEndpoints");
-
-
     }
 
     /**
@@ -201,7 +201,7 @@ class ETLControllerProvider extends BaseControllerProvider
         if ($isArray) {
             $keys = array_keys($source);
         } elseif ($isObject) {
-            $keys = get_object_vars($source);
+            $keys = array_keys(get_object_vars($source));
         }
 
         foreach ($keys as $key) {
@@ -289,7 +289,7 @@ class ETLControllerProvider extends BaseControllerProvider
                 #echo "\t Skipping $pipelineName\n";
             }
         }
-        return $app->json($results);
+        return $app->json($this->convertForTreeGrid($results));
     }
 
     public function getActionsForPipeline(Request $request, Application $app, $pipeline)
@@ -453,7 +453,8 @@ class ETLControllerProvider extends BaseControllerProvider
                     $endpoints[$destination['key']] = $destination;
                 }
 
-                $results[$pipelineName][] = array(
+                $name = substr($actionName, strlen($pipelineName) + 1);
+                $results[$name] = array(
                     'name' => $actionName,
                     'class' => $configClass,
                     'source' => $source,

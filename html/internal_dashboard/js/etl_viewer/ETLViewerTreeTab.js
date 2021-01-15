@@ -65,9 +65,8 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
             updateHistory: true,
             title: 'ETL Pipeline Viewer',
             autoScroll: true,
-            columnResize: true,
             enableDD: true,
-            dataUrl: XDMoD.REST.url  + '/etl/pipelines',
+            dataUrl: XDMoD.REST.url  + '/etl/pipelines/actions',
             columns: [
                 {
                     header: 'Name',

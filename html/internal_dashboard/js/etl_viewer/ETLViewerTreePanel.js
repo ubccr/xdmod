@@ -8,7 +8,7 @@ XDMoD.Admin.ETL.ETLViewerTreePanel = Ext.extend(XDMoD.Admin.ETL.ETLViewerTree, {
     url: null,
 
     initComponent: function () {
-        this.url = XDMoD.REST.url + '/etl/pipelines';
+        this.url = XDMoD.REST.url + '/etl/pipelines/actions';
         this.loaded = false;
 
         XDMoD.Admin.ETL.ETLViewerTreePanel.superclass.initComponent.call(this, arguments);
