@@ -6,5 +6,9 @@
     "Cloud realm": [
         "Cloud",
         "\\DataWarehouse\\Query\\Cloud\\JobDataset"
+    ],
+    "Gateways realm": [
+        "Gateways",
+        "\\DataWarehouse\\Query\\Gateways\\JobDataset"
     ]
 }
