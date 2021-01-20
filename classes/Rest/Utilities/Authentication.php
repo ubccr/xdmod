@@ -3,7 +3,6 @@
 namespace Rest\Utilities;
 
 use Exception;
-use Log;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;

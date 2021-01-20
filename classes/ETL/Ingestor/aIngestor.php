@@ -16,7 +16,7 @@ use ETL\aRdbmsDestinationAction;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
 use ETL\aOptions;
-use Log;
+use Psr\Log\LoggerInterface;
 
 abstract class aIngestor extends aRdbmsDestinationAction
 {
@@ -26,7 +26,7 @@ abstract class aIngestor extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $requiredKeys = array("definition_file");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);

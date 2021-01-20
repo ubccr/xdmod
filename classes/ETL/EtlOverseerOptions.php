@@ -10,10 +10,10 @@
 
 namespace ETL;
 
-use Log;
 use Exception;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DbModel\Query;
+use Psr\Log\LoggerInterface;
 
 class EtlOverseerOptions extends \CCR\Loggable
 {
@@ -123,7 +123,7 @@ class EtlOverseerOptions extends \CCR\Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(array $options, Log $logger = null)
+    public function __construct(array $options, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

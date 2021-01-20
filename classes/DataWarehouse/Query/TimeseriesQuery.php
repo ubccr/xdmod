@@ -60,8 +60,8 @@
 
 namespace DataWarehouse\Query;
 
-use Log as Logger;  // CCR implementation of PEAR logger
 use CCR\DB;
+use Psr\Log\LoggerInterface;
 
 class TimeseriesQuery extends Query implements iQuery
 {
@@ -78,7 +78,7 @@ class TimeseriesQuery extends Query implements iQuery
         $groupById = null,
         $statisticId = null,
         array $parameters = array(),
-        Logger $logger = null
+        LoggerInterface $logger = null
     ) {
         parent::__construct(
             $realmId,

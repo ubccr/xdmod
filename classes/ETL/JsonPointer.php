@@ -10,7 +10,6 @@
 
 namespace ETL;
 
-use Log;
 use Exception;
 use \CCR\Loggable;
 

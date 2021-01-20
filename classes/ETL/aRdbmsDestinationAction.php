@@ -30,8 +30,8 @@ use PHPSQLParser\PHPSQLParser;
 
 use Exception;
 use PDOException;
+use Psr\Log\LoggerInterface;
 use stdClass;
-use Log;
 
 abstract class aRdbmsDestinationAction extends aAction
 {
@@ -71,7 +71,7 @@ abstract class aRdbmsDestinationAction extends aAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $requiredKeys = array("destination");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);

@@ -13,7 +13,7 @@ namespace ETL;
 use ETL\Configuration\EtlConfiguration;
 use ETL\Ingestor\IngestorOptions;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Ingestor
 {
@@ -43,7 +43,7 @@ class Ingestor
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function factory(IngestorOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public static function factory(IngestorOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $options->verify();
 

@@ -24,8 +24,9 @@
 
 namespace ETL\DbModel;
 
+use CCR\Log;
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 use Exception;
 
@@ -70,7 +71,7 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         // Property merging is performed first so the values can be used in the constructor
         parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
@@ -445,7 +446,7 @@ ORDER BY trigger_name ASC";
         if ( array_key_exists($item->name, $this->columns) && ! $overwriteDuplicates ) {
             $this->logAndThrowException(
                 sprintf("Cannot add duplicate column '%s'", $item->name),
-                array('log_level' => PEAR_LOG_WARNING)
+                array('log_level' => Log::WARNING)
             );
         }
 

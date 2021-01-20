@@ -9,7 +9,7 @@
 
 namespace ETL\DbModel;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 class ForeignKeyConstraint extends SchemaEntity implements iEntity
@@ -44,7 +44,7 @@ class ForeignKeyConstraint extends SchemaEntity implements iEntity
     public function __construct(
         $config,
         $systemQuoteChar = null,
-        Log $logger = null
+        LoggerInterface $logger = null
     ) {
         // Property merging is performed first so the values can be used in the
         // constructor

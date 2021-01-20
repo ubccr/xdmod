@@ -55,7 +55,7 @@ use CCR\DB\MySQLHelper;
 use PDOException;
 use Exception;
 use PDO;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class pdoIngestor extends aIngestor
 {
@@ -167,11 +167,11 @@ class pdoIngestor extends aIngestor
      *
      * @param aOptions $options Options specific to this Ingestor
      * @param EtlConfiguration $etlConfig Parsed configuration options for this ETL
-     * @param Log $logger PEAR Log object for system logging
+     * @param LoggerInterface $logger Monolog object for system logging
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 

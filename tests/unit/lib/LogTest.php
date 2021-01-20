@@ -1,6 +1,6 @@
 <?php
 /** -----------------------------------------------------------------------------------------
- * Tests for ubccr/Log class forked from pear/Log.
+ * Tests for Monolog Logger class usage.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2018-02-05
@@ -47,7 +47,6 @@ class LogTest extends \PHPUnit_Framework_TestCase
         $logger->notice('Notice');
         $logger->info('Info');
         $logger->debug('Debug');
-        $logger->trace('Trace');
 
         $logMessages = file($tmpFile);
         unlink($tmpFile);
@@ -68,9 +67,9 @@ class LogTest extends \PHPUnit_Framework_TestCase
     public function logLevelProvider()
     {
         return array(
-            array(Log::TRACE, 9),
-            array(Log::WARNING, 5),
-            array(Log::ALERT, 2)
+            array(\CCR\Log::DEBUG, 8),
+            array(\CCR\Log::WARNING, 5),
+            array(\CCR\Log::ALERT, 2)
         );
     }
 }

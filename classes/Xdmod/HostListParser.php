@@ -8,7 +8,9 @@
 
 namespace Xdmod;
 
+use CCR\Log;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * Helper class for parsing compressed host lists.
@@ -28,7 +30,7 @@ class HostListParser
     /**
      * Logger object.
      *
-     * @var \Log
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -44,15 +46,15 @@ class HostListParser
      */
     public function __construct()
     {
-        $this->logger = \Log::singleton('null');
+        $this->logger = Log::singleton('null');
     }
 
     /**
      * Set the logger.
      *
-     * @param Logger $logger The logger instance.
+     * @param LoggerInterface $logger The logger instance.
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

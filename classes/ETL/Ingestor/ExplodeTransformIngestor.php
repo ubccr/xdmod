@@ -15,7 +15,7 @@ use ETL\aAction;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 class ExplodeTransformIngestor extends pdoIngestor implements iAction
 {
@@ -31,7 +31,7 @@ class ExplodeTransformIngestor extends pdoIngestor implements iAction
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
      */
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 
