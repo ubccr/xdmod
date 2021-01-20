@@ -53,6 +53,9 @@ class ETLControllerProvider extends BaseControllerProvider
         $controller->post("$root/files", "$class::getFileNames");
 
         $controller->get("$root/endpoints", "$class::getDataEndpoints");
+
+        $controller->get("$root/search", "$class::search");
+        $controller->post("$root/search", "$class::search");
     }
 
     /**
@@ -280,16 +283,44 @@ class ETLControllerProvider extends BaseControllerProvider
 
         $results = array();
         foreach ($pipelineNames as $pipelineName) {
-            #echo "Getting Actions For: $pipelineName\n";
             try {
                 $results[$pipelineName] = $this->getPipelineActions($pipelineName);
-            } catch(NotFoundHttpException $e) {
-                #echo "\tSkipping $pipelineName\n";
-            } catch (Exception $e) {
-                #echo "\t Skipping $pipelineName\n";
+            } catch (\Exception $e){
+
             }
+
         }
+
         return $app->json($this->convertForTreeGrid($results));
+    }
+
+    private function getAllActionsAndEndpoints()
+    {
+        $configOptions = array('default_module_name' => 'xdmod');
+        $configOptions['config_variables'] = array(
+            'CLOUD_EVENT_LOG_DIRECTORY' => 'cloud_openstack/events',
+            'CLOUD_RESOURCE_SPECS_DIRECTORY' => 'cloud_openstack/resource_specs'
+        );
+
+        $etlConfig = EtlConfiguration::factory(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            null,
+            $configOptions
+        );
+        $pipelineNames = $etlConfig->getSectionNames();
+        sort($pipelineNames);
+
+        $results = array();
+        foreach ($pipelineNames as $pipelineName) {
+            try {
+                $results[$pipelineName] =  $this->getPipelineActionsAndEndpoints($pipelineName);
+            } catch (\Exception $e) {
+
+            }
+
+        }
+        return $results;
     }
 
     public function getActionsForPipeline(Request $request, Application $app, $pipeline)
@@ -308,6 +339,27 @@ class ETLControllerProvider extends BaseControllerProvider
         return $app->json(
             $flattened ? $this->flattenEndpoints($endpoints) : $endpoints
         );
+    }
+
+    public function search(Request $request, Application $app)
+    {
+        $term = $this->getStringParam($request, 'term', true);
+
+        $results = array();
+
+        $actionsAndEndPoints = $this->getAllActionsAndEndpoints();
+        foreach($actionsAndEndPoints as $pipeline => list($actions, $endpoints)) {
+            $actionResults = $this->recursiveSearch($actions, $term);
+            $endpointResults = $this->recursiveSearch($endpoints, $term);
+            if (!empty($actionResults)) {
+                $results[$pipeline]['actions'] = $actionResults;
+            }
+            if (!empty($endpointResults)) {
+                $results[$pipeline]['endpoints'] = $endpointResults;
+            }
+        }
+
+        return $app->json($results);
     }
 
     private function getPipelineEndpoints($pipeline)
@@ -466,6 +518,22 @@ class ETLControllerProvider extends BaseControllerProvider
         return array($results, $endpoints);
     }
 
+    private function recursiveSearch(array $source, $term, array $breadcrumbs = array())
+    {
+        $results = array();
+
+        foreach($source as $key => $value) {
+            if (is_array($value)) {
+                $breadcrumbs[] = $key;
+                return $this->recursiveSearch($value, $term, $breadcrumbs);
+            } else if(strpos((string)$value, $term) !== false) {
+                $results[implode('.', $breadcrumbs)] = $value;
+            }
+        }
+
+        return $results;
+    }
+
     private function getEndpointData($endpoint)
     {
         $result = new \stdClass();
@@ -543,4 +611,5 @@ class ETLControllerProvider extends BaseControllerProvider
 
         return $results;
     }
+
 }
