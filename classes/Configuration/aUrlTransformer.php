@@ -7,8 +7,8 @@
 
 namespace Configuration;
 
-use Log;
 use CCR\Loggable;
+use Psr\Log\LoggerInterface;
 
 abstract class aUrlTransformer extends Loggable
 {
@@ -25,7 +25,7 @@ abstract class aUrlTransformer extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         parent::__construct($logger);
     }

@@ -5,8 +5,8 @@
 
 namespace UnitTesting\ETL\Configuration;
 
+use CCR\Log;
 use ETL\DbModel\Table;
-use Log;
 use PHPUnit_Framework_TestCase;
 
 class TableTest extends PHPUnit_Framework_TestCase

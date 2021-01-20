@@ -7,7 +7,7 @@ namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
 use CCR\DB;
-use Log;
+use Psr\Log\LoggerInterface;
 use xd_utilities;
 use Exception;
 use PDOException;
@@ -55,7 +55,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
 

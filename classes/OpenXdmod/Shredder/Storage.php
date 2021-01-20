@@ -6,9 +6,9 @@
 namespace OpenXdmod\Shredder;
 
 use CCR\DB\iDatabase;
+use CCR\Log;
 use ETL\Utilities;
 use Exception;
-use Log;
 use OpenXdmod\Shredder;
 
 /**

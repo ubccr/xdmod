@@ -2,9 +2,10 @@
 
 namespace UnitTesting\DataWarehouse\Export;
 
+use CCR\Log;
 use DataWarehouse\Export\FileWriter\JsonFileWriter;
 use PHPUnit_Framework_TestCase;
-use Log;
+use Psr\Log\LoggerInterface;
 use TestHarness\TestFiles;
 
 /**
@@ -19,7 +20,7 @@ class JsonFileWriterTest extends PHPUnit_Framework_TestCase
     const TEST_GROUP = 'unit/data_warehouse/export/file_writer/json';
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     private static $logger;
 

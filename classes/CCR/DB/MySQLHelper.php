@@ -2,14 +2,16 @@
 
 namespace CCR\DB;
 
+use CCR\Log;
 use Exception;
 use CCR\DB\MySQLDB;
+use Psr\Log\LoggerInterface;
 
 class MySQLHelper
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -38,15 +40,15 @@ class MySQLHelper
     protected function __construct(MySQLDB $db)
     {
         $this->db     = $db;
-        $this->logger = \Log::singleton('null');
+        $this->logger = Log::singleton('null');
     }
 
     /**
      * Set the logger.
      *
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

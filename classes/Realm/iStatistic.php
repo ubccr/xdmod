@@ -10,7 +10,7 @@
 
 namespace Realm;
 
-use Log as Logger;  // PEAR logger
+use Psr\Log\LoggerInterface;
 
 interface iStatistic
 {
@@ -21,14 +21,14 @@ interface iStatistic
      *   instantiated.
      * @param stdClass $config An object containing the configuration for this GroupBy
      * @param Realm $realm Realm object that this Statistic will belong to.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      *
      * @return Statistic A Statistic class.
      *
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($shortName, \stdClass $config, Realm $realm, Logger $logger = null);
+    public static function factory($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null);
 
     /**
      * @return Realm The realm that this Statistic is associated with.

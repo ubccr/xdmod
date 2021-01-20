@@ -5,9 +5,9 @@
 
 namespace UnitTesting\ETL\Configuration;
 
+use CCR\Log;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
-use Log;
 use PHPUnit_Framework_TestCase;
 use TestHarness\TestFiles;
 use stdClass;

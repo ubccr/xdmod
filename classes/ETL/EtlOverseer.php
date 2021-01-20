@@ -16,8 +16,8 @@
 namespace ETL;
 
 use \Exception;  // Base exception
-use Log;
 use ETL\Configuration\EtlConfiguration;
+use Psr\Log\LoggerInterface;
 
 class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 {
@@ -41,7 +41,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(EtlOverseerOptions $options, Log $logger = null)
+    public function __construct(EtlOverseerOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->etlOverseerOptions = $options;

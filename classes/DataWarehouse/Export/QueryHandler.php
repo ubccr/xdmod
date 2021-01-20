@@ -30,7 +30,7 @@ namespace DataWarehouse\Export;
 use Exception;
 use CCR\DB;
 use CCR\Loggable;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class QueryHandler extends Loggable
 {
@@ -73,7 +73,7 @@ class QueryHandler extends Loggable
      */
     private $whereDeleted = "WHERE is_deleted = 1 ";
 
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->dbh = DB::factory('database');

@@ -2,7 +2,7 @@
 
 namespace DataWarehouse\Export\FileWriter;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 /**
  * Interface for writing data warehouse batch export data to a file.
@@ -13,9 +13,9 @@ interface iFileWriter
      * Open the file for writing.
      *
      * @param string $file
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct($file, Log $logger);
+    public function __construct($file, LoggerInterface $logger);
 
     /**
      * Close the file being written to.

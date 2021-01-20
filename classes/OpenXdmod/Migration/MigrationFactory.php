@@ -5,6 +5,9 @@
 
 namespace OpenXdmod\Migration;
 
+use CCR\Log;
+use Psr\Log\LoggerInterface;
+
 class MigrationFactory
 {
 
@@ -15,7 +18,7 @@ class MigrationFactory
      * @param string $toVersion The Open XDMoD version migrating to.
      * @param bool $updateConfigFiles True to migrate config files.
      * @param bool $updateDatabases True to migrate databases.
-     * @param \Log $logger Logger to use.
+     * @param LoggerInterface|null $logger either a Monolog Logger to use or null, which indicates that a Null Logger will be used..
      *
      * @return Migration
      */
@@ -27,7 +30,7 @@ class MigrationFactory
         $logger = null
     ) {
         if ($logger === null) {
-            $logger = \Log::singleton('null');
+            $logger = Log::singleton('null');
         }
 
         $from = preg_replace('/[^0-9]/', '', $fromVersion);
