@@ -31,7 +31,7 @@
       "charset": "utf8",
       "collation": "utf8_general_ci",
       "nullable": false,
-      "default": "first name",
+      "default": "'first name'",
       "extra": null,
       "comment": null,
       "hints": null,
