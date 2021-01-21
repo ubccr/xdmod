@@ -367,13 +367,13 @@ EOF;
         $ret[] = array($baseSettings, 'image/png', 'image/png; charset=binary');
 
         $baseSettings['format'] = 'svg';
-        $ret[] = array($baseSettings, 'image/svg+xml', 'text/plain; charset=utf-8');
+        $ret[] = array($baseSettings, 'image/svg+xml', 'image/svg; charset=utf-8');
 
         $baseSettings['format'] = 'csv';
         $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
 
         $baseSettings['format'] = 'xml';
-        $ret[] = array($baseSettings, 'text/xml', 'application/xml; charset=us-ascii');
+        $ret[] = array($baseSettings, 'text/xml;charset=UTF-8', 'text/xml; charset=us-ascii');
 
         return $ret;
     }
