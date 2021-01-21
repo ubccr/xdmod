@@ -26,7 +26,7 @@
         },
         "dt": {
             "type": "string",
-            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}",
             "description": "Date and time usage data was recorded"
         },
         "file_count": {
