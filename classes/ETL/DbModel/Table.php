@@ -316,7 +316,7 @@ AND table_name = :tablename";
 column_name as name, column_type as type, is_nullable as nullable,
 character_set_name as charset,
 collation_name as collation,
-column_default as " . $endpoint->quoteSystemIdentifier("default") . ",
+IF('NULL' = column_default, NULL, column_default) as " . $endpoint->quoteSystemIdentifier("default") . ",
 IF('' = extra, NULL, extra) as extra,
 IF('' = column_comment, NULL, column_comment) as " . $endpoint->quoteSystemIdentifier("comment") . "
 FROM information_schema.columns
