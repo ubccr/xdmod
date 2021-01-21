@@ -36,7 +36,7 @@ class SharedJobsTest extends BaseTest
         );
         $validator = new Validator();
         $actualDecoded = json_decode(json_encode($actual));
-        $validator->validate($actualDecoded,$schemaObject);
+        $validator->validate($actualDecoded, $schemaObject);
         $errors = array();
         foreach ($validator->getErrors() as $err) {
             $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
