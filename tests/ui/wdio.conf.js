@@ -22,7 +22,7 @@ var HeadlessChrome = {
 var Chrome = {
     acceptInsecureCerts: true,
     browserName: 'chrome',
-    version: '84.0',
+    version: '87.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
