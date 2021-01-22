@@ -15,7 +15,8 @@
   "dependencies": {
     "chai": "4.1.2",
     "cheerio": "1.0.0-rc.3",
-    "chromedriver": "84.0.1",
+    "chromedriver": "87.0.7",
+    "fibers": "^5.0.0",
     "mocha": "5.2",
     "require-dir": "1.0",
     "selenium-standalone": "6.16.0",
