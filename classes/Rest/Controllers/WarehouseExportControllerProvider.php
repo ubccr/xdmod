@@ -10,6 +10,7 @@ use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
 use DateTime;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +34,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     private $realmManager;
 
     /**
-     * @var \CCR\Log
+     * @var LoggerInterface
      */
     private $logger;
 

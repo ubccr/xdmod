@@ -6,6 +6,7 @@
  */
 namespace OpenXdmod\Shredder;
 
+use CCR\Log;
 use Exception;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
@@ -21,7 +22,7 @@ abstract class aCloud extends Shredder
      */
     public function __construct(iDatabase $db, array $pipelines)
     {
-        $this->logger = \Log::singleton('null');
+        $this->logger = Log::singleton('null');
         $this->etlPipelines = $pipelines;
     }
 

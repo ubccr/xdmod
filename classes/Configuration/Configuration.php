@@ -64,13 +64,12 @@
 
 namespace Configuration;
 
-// PEAR logger
 use CCR\Loggable;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\VariableStore;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 use Traversable;
 
@@ -210,10 +209,10 @@ class Configuration extends Loggable implements iConfiguration
      * A factory / helper method for instantiating a Configuration object, initializing it, and
      * returning the results of its `toAssocArray` function.
      *
-     * @param string         $filename the base configuration file name to be processed.
-     * @param string|null    $baseDir  the directory in which $filename can be found.
-     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
-     * @param array          $options  options that will be used during construction of the Configuration object.
+     * @param string                $filename the base configuration file name to be processed.
+     * @param string|null           $baseDir  the directory in which $filename can be found.
+     * @param LoggerInterface|null  $logger   A Monolog Logger that Configuration will utilize during its processing.
+     * @param array                 $options  options that will be used during construction of the Configuration object.
      *
      * @return array the results of the instantiated configuration objects `toAssocArray` function.
      */
@@ -221,7 +220,7 @@ class Configuration extends Loggable implements iConfiguration
     public static function assocArrayFactory(
         $filename,
         $baseDir = null,
-        Log $logger = null,
+        LoggerInterface $logger = null,
         array $options = array()
     ) {
         return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
@@ -230,10 +229,10 @@ class Configuration extends Loggable implements iConfiguration
     /**
      * A helper function that instantiates, initializes, and returns a Configuration object.
      *
-     * @param string         $filename the base configuration file name to be processed.
-     * @param string|null    $baseDir  the directory in which $filename can be found.
-     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
-     * @param array          $options  options that will be used during construction of the Configuration object.
+     * @param string               $filename the base configuration file name to be processed.
+     * @param string|null          $baseDir  the directory in which $filename can be found.
+     * @param LoggerInterface|null $logger   A Monolog Logger that Configuration will utilize during its processing.
+     * @param array                $options  options that will be used during construction of the Configuration object.
      *
      * @return Configuration an initialized instance of Configuration.
      */
@@ -241,7 +240,7 @@ class Configuration extends Loggable implements iConfiguration
     public static function factory(
         $filename,
         $baseDir = null,
-        Log $logger = null,
+        LoggerInterface $logger = null,
         array $options = array()
     ) {
         $calledClass = get_called_class();
@@ -301,18 +300,6 @@ class Configuration extends Loggable implements iConfiguration
                 $success = null;
                 $cachedInstance = ( $apcuEnabled ? apcu_fetch($cacheKey, $success) : self::$objectCache[$cacheKey] );
                 $cachedInstance->setLogger($logger);
-                if ( null !== $logger ) {
-                    $logger->trace(
-                        sprintf(
-                            'Fetched object %s (%s) from %s cache with key %s in %fs',
-                            $calledClass,
-                            $filename,
-                            ( $apcuEnabled ? 'APCu' : 'local' ),
-                            $cacheKey,
-                            microtime(true) - $startTime
-                        )
-                    );
-                }
             }
         }
 
@@ -417,7 +404,7 @@ class Configuration extends Loggable implements iConfiguration
      * @param string $filename Name of the JSON configuration file to parse
      * @param string $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file. If not set, use the same directory as the config file.
-     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      * @param array $options An associative array of additional options passed from the parent.
      *   These include, but are not limited to:
      *   local_config_dir: Directory to look for local configuration files
@@ -438,7 +425,7 @@ class Configuration extends Loggable implements iConfiguration
     public function __construct(
         $filename,
         $baseDir = null,
-        Log $logger = null,
+        LoggerInterface $logger = null,
         array $options = array()
     ) {
         parent::__construct($logger);

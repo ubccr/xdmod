@@ -6,6 +6,7 @@
  */
 namespace OpenXdmod\Shredder;
 
+use CCR\Log;
 use Exception;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
@@ -19,7 +20,7 @@ class Cloudresourcespecs extends Shredder
      */
     public function __construct(iDatabase $db)
     {
-        $this->logger = \Log::singleton('null');
+        $this->logger = Log::singleton('null');
     }
 
     /**

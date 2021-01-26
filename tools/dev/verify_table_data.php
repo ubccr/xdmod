@@ -204,9 +204,6 @@ foreach ($args as $arg => $value) {
         case 'v':
         case 'verbosity':
             switch ( $value ) {
-                case 'trace':
-                    $scriptOptions['verbosity'] = Log::TRACE;
-                    break;
                 case 'debug':
                     $scriptOptions['verbosity'] = Log::DEBUG;
                     break;
@@ -867,7 +864,6 @@ function compareTableData(
                 }
             }
 
-            $logger->trace(sprintf("Missing row: %s", print_r($row, 1)));
         }
 
     } else {

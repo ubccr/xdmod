@@ -17,11 +17,11 @@ use ETL\aAction;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 class DummyAggregator extends aAction implements iAction
 {
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
     }

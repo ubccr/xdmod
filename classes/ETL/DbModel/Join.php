@@ -13,7 +13,7 @@
 
 namespace ETL\DbModel;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Join extends SchemaEntity implements iEntity
 {
@@ -37,7 +37,7 @@ class Join extends SchemaEntity implements iEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         // Property merging is performed first so the values can be used in the constructor
         parent::mergeProperties($this->localRequiredProperties, $this->localProperties);

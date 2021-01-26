@@ -65,7 +65,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testSqlWarnings() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings');
-
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         /* We are expecting output such as:
@@ -77,7 +76,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
          */
 
         $numWarnings = 0;
-
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
                 if ( false !== strpos($line, '[warning]') ) {
@@ -87,7 +85,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertGreaterThanOrEqual(4, $numWarnings, 'Expected number of SQL warnings');
-        $this->assertEquals('', $result['stderr'], "Std Error");
+        $this->assertEmpty($result['stderr'], "Std Error");
     }
 
     /**
@@ -117,7 +115,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     public function testHideSqlWarningCodes() {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
-
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
         /* We are expecting output such as:
@@ -141,7 +138,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         // Run the same action, but filter all expected warning codes.
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=[1264,1366]"');
-
         $this->assertEquals(0, $result['exit_status'], "Exit code");
         $numWarnings = 0;
 
@@ -184,7 +180,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             '-v notice',
             self::PIPELINE
         );
-
         // Parse the output looking for [notice] lines indicating how many records were loaded for
         // each action in the pipeline. Ensure the expected number of records were loaded. We are
         // expecting 4 actions to be run:
@@ -243,7 +238,6 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         }
 
         $command = sprintf('%s %s', $overseer, $options);
-
         return $this->executeCommand($command);
     }
 

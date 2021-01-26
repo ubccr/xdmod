@@ -33,8 +33,8 @@ namespace ETL\Configuration;
 
 use Configuration\Configuration;
 use Exception;
+use Psr\Log\LoggerInterface;
 use stdClass;
-use Log;
 use ETL\aOptions;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Aggregator\AggregatorOptions;
@@ -111,7 +111,7 @@ class EtlConfiguration extends Configuration
      * @param $filename Name of the JSON configuration file to parse
      * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file
-     * @param $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      * @param $options An associative array of additional options passed from the parent. In
      *   addition to the options supported by Configuration, the following options are also
      *   supported:
@@ -128,7 +128,7 @@ class EtlConfiguration extends Configuration
     public function __construct(
         $filename,
         $baseDir = null,
-        Log $logger = null,
+        LoggerInterface $logger = null,
         array $options = array()
     ) {
         parent::__construct($filename, $baseDir, $logger, $options);

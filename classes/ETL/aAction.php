@@ -13,10 +13,10 @@
 namespace ETL;
 
 use Configuration\Configuration;
-use Log;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\Configuration\EtlConfiguration;
+use Psr\Log\LoggerInterface;
 
 abstract class aAction extends aEtlObject
 {
@@ -135,7 +135,7 @@ abstract class aAction extends aEtlObject
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         // Set up the default logger
         parent::__construct($logger);
@@ -189,13 +189,13 @@ abstract class aAction extends aEtlObject
      *
      * @param EtlConfiguration $etlConfig Object containing the parsed ETL configuration.
      * @param string $actionName The name of the action to instantiate.
-     * @param Log $logger A PEAR Log object or null to use the null logger
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger
      *
      * @return iAction An object implementing the iAction interface
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function factory(EtlConfiguration $etlConfig, $actionName, Log $logger = null)
+    public static function factory(EtlConfiguration $etlConfig, $actionName, LoggerInterface $logger = null)
     {
         $etlConfig->initialize();
         $options = $etlConfig->getActionOptions($actionName);

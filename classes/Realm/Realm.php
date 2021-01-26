@@ -7,12 +7,12 @@
 
 namespace Realm;
 
-use Log as Logger;  // CCR implementation of PEAR logger
 use Configuration\Configuration;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use DataWarehouse\Query\Exceptions\UnavailableTimeAggregationUnitException;
 use DataWarehouse\Query\TimeAggregationUnit;
 use ETL\VariableStore;
+use Psr\Log\LoggerInterface;
 
 class Realm extends \CCR\Loggable implements iRealm
 {
@@ -152,7 +152,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * some other mechanism. This method must be called once, either directly or indirectly, before
      * a Realm object can be accessed.
      *
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      * @param stdclass|null $options An object containing additional configuration options.
      *
      * @throws Exception If there was an error loading the realm data.
@@ -160,7 +160,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::factory()
      */
 
-    public static function initialize(Logger $logger = null, \stdClass $options = null)
+    public static function initialize(LoggerInterface $logger = null, \stdClass $options = null)
     {
         $filename = ( isset($options->config_file_name) ? $options->config_file_name : 'datawarehouse.json' );
         $configDir = ( isset($options->config_base_dir) ? $options->config_base_dir : CONFIG_DIR );
@@ -184,7 +184,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::getRealmNames()
      */
 
-    public static function getRealmNames($order = self::SORT_ON_ORDER, Logger $logger = null)
+    public static function getRealmNames($order = self::SORT_ON_ORDER, LoggerInterface $logger = null)
     {
         self::initialize($logger);
         return static::getSortedNameList(self::$dataWarehouseConfig->toStdClass(), $order);
@@ -197,7 +197,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * in one place rather than littered throughout the codebase.
      */
 
-    public static function getRealmIds($order = self::SORT_ON_ORDER, Logger $logger = null)
+    public static function getRealmIds($order = self::SORT_ON_ORDER, LoggerInterface $logger = null)
     {
         return array_keys(static::getRealmNames($order, $logger));
     }
@@ -206,7 +206,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::getRealmObjects()
      */
 
-    public static function getRealmObjects($order = self::SORT_ON_ORDER, Logger $logger = null)
+    public static function getRealmObjects($order = self::SORT_ON_ORDER, LoggerInterface $logger = null)
     {
         self::initialize($logger);
         return static::getSortedObjectList('Realm', self::$dataWarehouseConfig->toStdClass(), $order, null, $logger);
@@ -225,7 +225,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::factory()
      */
 
-    public static function factory($shortName, Logger $logger = null, \stdClass $options = null)
+    public static function factory($shortName, LoggerInterface $logger = null, \stdClass $options = null)
     {
         if ( ! is_string($shortName) ) {
             $e = new \Exception("Realm 'shortname' must be a string", true);
@@ -345,7 +345,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @param int $order A specification on how the realm list will be ordered. See iRealm for a
      *   list of possible values.
      * @param Realm A Realm object needed for the factory method of GroupBys and Statistics
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      *
      * @return array An associative array where the keys are entity short names and the values are
      *   instantiated configuration objects for those entities. The array is sorted according to the
@@ -357,7 +357,7 @@ class Realm extends \CCR\Loggable implements iRealm
         \stdClass $configObj,
         $order,
         Realm $realmObj = null,
-        Logger $logger = null
+        LoggerInterface $logger = null
     ) {
         $list = array();
         $sorted = self::sortConfig($configObj, $order);
@@ -409,10 +409,10 @@ class Realm extends \CCR\Loggable implements iRealm
      *
      * @param string $shortName The short name for this realm
      * @param stdClass $specificaiton An object contaning the realm definition.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      */
 
-    public function __construct($shortName, \stdClass $specification, Logger $logger = null)
+    public function __construct($shortName, \stdClass $specification, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

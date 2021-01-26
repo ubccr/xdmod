@@ -8,7 +8,6 @@ namespace ETL\DataEndpoint;
 
 use Exception;
 use JsonSchema\Constraints\Constraint;
-use Log;
 use ETL\JsonPointer;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint\Filter\ExternalProcess;
@@ -16,6 +15,7 @@ use ETL\DataEndpoint\Filter\ExternalProcess;
 use JsonSchema\Validator;
 use JsonSchema\SchemaStorage;
 use JsonSchema\Constraints\Factory;
+use Psr\Log\LoggerInterface;
 
 class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataRecords
 {
@@ -30,7 +30,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
     }
