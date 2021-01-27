@@ -16,8 +16,7 @@
             {
                 "name": "action_datetime",
                 "type": "datetime",
-                "nullable": false,
-                "default": "CURRENT_TIMESTAMP()"
+                "nullable": false
             },
             {
                 "name": "action_type",
@@ -42,6 +41,15 @@
                 "is_unique": true
             }
         ],
-        "triggers": []
+        "triggers": [
+            {
+                "schema": "moddb",
+                "table": "schema_version_history",
+                "name": "xdb_schema_version_history_before_insert",
+                "time": "BEFORE",
+                "event": "INSERT",
+                "body": "SET NEW.action_datetime = NOW();"
+            }
+        ]
     }
 }
