@@ -16,8 +16,7 @@
             {
                 "name": "action_datetime",
                 "type": "datetime",
-                "nullable": false,
-                "default": "CURRENT_TIMESTAMP()"
+                "nullable": false
 
             },
             {
@@ -39,6 +38,16 @@
                     "schema_version",
                     "action_datetime"
                 ]
+            }
+        ],
+        "triggers": [
+            {
+                "schema": "mod_shredder",
+                "table": "schema_version_history",
+                "name": "shredder_schema_version_history_before_insert",
+                "time": "BEFORE",
+                "event": "INSERT",
+                "body": "SET NEW.action_datetime = NOW();"
             }
         ]
     }
