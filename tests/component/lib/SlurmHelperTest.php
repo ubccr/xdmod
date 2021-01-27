@@ -56,8 +56,8 @@ class SlurmHelperTest extends BaseTest
 
         $result = $this->executeSlurmHelper($sacctOutputType, $sacctExitStatus);
         $this->assertEquals($exitStatus, $result['exit_status']);
-        $this->assertEquals('', $result['stderr']);
-        $this->assertRegExp($outputRegex, $result['stdout']);
+        $this->assertEquals('', $result['stdout']);
+        $this->assertRegExp($outputRegex, $result['stderr']);
     }
 
     /**
