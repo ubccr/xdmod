@@ -1,0 +1,86 @@
+{
+    "No output": [
+        "no_output",
+        0,
+        "/^$/",
+        "/^$/",
+        0
+    ],
+    "Valid output": [
+        "valid_output",
+        0,
+        "/^$/",
+        "/^$/",
+        0
+    ],
+    "Invalid output": [
+        "invalid_output",
+        0,
+        "/^$/",
+        "/Malformed Slurm sacct line/",
+        1
+    ],
+    "STDERR output": [
+        "stderr_output",
+        0,
+        "/Error while executing sacct/",
+        "/^$/",
+        1
+    ],
+    "No output and non-zero exit status": [
+        "no_output",
+        1,
+        "/sacct returned 1/",
+        "/^$/",
+        1
+    ],
+    "Valid output and exit status 1": [
+        "valid_output",
+        1,
+        "/sacct returned 1/",
+        "/^$/",
+        1
+    ],
+    "Invalid output and exit status 1": [
+        "invalid_output",
+        1,
+        "/sacct returned 1/",
+        "/^$/",
+        1
+    ],
+    "STDERR output and exit status 1": [
+        "stderr_output",
+        1,
+        "/Error while executing sacct/",
+        "/^$/",
+        1
+    ],
+    "No output and exit status 2": [
+        "no_output",
+        2,
+        "/sacct returned 2/",
+        "/^$/",
+        1
+    ],
+    "Valid output and exit status 2": [
+        "valid_output",
+        2,
+        "/sacct returned 2/",
+        "/^$/",
+        1
+    ],
+    "Invalid output and exit status 2": [
+        "invalid_output",
+        2,
+        "/sacct returned 2/",
+        "/^$/",
+        1
+    ],
+    "STDERR output and exit status 2": [
+        "stderr_output",
+        2,
+        "/Error while executing sacct/",
+        "/^$/",
+        1
+    ]
+}

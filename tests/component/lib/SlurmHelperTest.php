@@ -7,6 +7,7 @@
 namespace ComponentTests;
 
 use CCR\DB;
+use Exception;
 use Models\Services\Realms;
 
 /**
@@ -15,6 +16,11 @@ use Models\Services\Realms;
  */
 class SlurmHelperTest extends BaseTest
 {
+    /**
+     * Test artifacts path.
+     */
+    const TEST_GROUP = 'component/slurm_helper';
+
     /**
      * Database handle for `mod_shredder`.
      * @var \CCR\DB\PDODB
@@ -46,7 +52,8 @@ class SlurmHelperTest extends BaseTest
     public function testSlurmHelper(
         $sacctOutputType,
         $sacctExitStatus,
-        $outputRegex,
+        $stdoutRegex,
+        $stderrRegex,
         $exitStatus
     ) {
         //TODO: Needs further integration for other realms
@@ -56,8 +63,8 @@ class SlurmHelperTest extends BaseTest
 
         $result = $this->executeSlurmHelper($sacctOutputType, $sacctExitStatus);
         $this->assertEquals($exitStatus, $result['exit_status']);
-        $this->assertEquals('', $result['stdout']);
-        $this->assertRegExp($outputRegex, $result['stderr']);
+        $this->assertRegExp($stdoutRegex, $result['stdout']);
+        $this->assertRegExp($stderrRegex, $result['stderr']);
     }
 
     /**
@@ -94,13 +101,13 @@ class SlurmHelperTest extends BaseTest
         $stdout = stream_get_contents($pipes[1]);
 
         if ($stdout === false) {
-            throw new Execption('Failed to get subprocess STDOUT');
+            throw new Exception('Failed to get subprocess STDOUT');
         }
 
         $stderr = stream_get_contents($pipes[2]);
 
         if ($stderr === false) {
-            throw new Execption('Failed to get subprocess STDERR');
+            throw new Exception('Failed to get subprocess STDERR');
         }
 
         $exitStatus = proc_close($process);
@@ -114,84 +121,12 @@ class SlurmHelperTest extends BaseTest
 
     public function sacctCommandProvider()
     {
-        return array(
-            array(
-                'no_output',
-                0,
-                '/^$/',
-                0,
-            ),
-            array(
-                'valid_output',
-                0,
-                '/^$/',
-                0,
-            ),
-            array(
-                'invalid_output',
-                0,
-                '/Malformed Slurm sacct line/',
-                1,
-            ),
-            array(
-                'stderr_output',
-                0,
-                '/Error while executing sacct/',
-                1,
-            ),
-            array(
-                'no_output',
-                1,
-                '/sacct returned 1/',
-                1,
-            ),
-            array(
-                'valid_output',
-                1,
-                '/sacct returned 1/',
-                1,
-            ),
-            array(
-                'invalid_output',
-                1,
-                '/sacct returned 1/',
-                1,
-            ),
-            array(
-                'stderr_output',
-                1,
-                '/Error while executing sacct/',
-                1,
-            ),
-            array(
-                'no_output',
-                2,
-                '/sacct returned 2/',
-                1,
-            ),
-            array(
-                'valid_output',
-                2,
-                '/sacct returned 2/',
-                1,
-            ),
-            array(
-                'invalid_output',
-                2,
-                '/sacct returned 2/',
-                1,
-            ),
-            array(
-                'stderr_output',
-                2,
-                '/Error while executing sacct/',
-                1,
-            ),
-        );
+        return $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, 'sacct');
     }
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         static::$dbh = DB::factory('shredder');
         static::$maxSlurmJobId = static::$dbh->query('SELECT COALESCE(MAX(shredded_job_slurm_id), 0) AS id FROM shredded_job_slurm')[0]['id'];
         static::$maxShreddedJobId = static::$dbh->query('SELECT COALESCE(MAX(shredded_job_id), 0) AS id FROM shredded_job')[0]['id'];
@@ -199,6 +134,7 @@ class SlurmHelperTest extends BaseTest
 
     public static function tearDownAfterClass()
     {
+        parent::tearDownAfterClass();
         static::$dbh->execute('DELETE FROM shredded_job_slurm WHERE shredded_job_slurm_id > :id', array('id' => static::$maxSlurmJobId));
         static::$dbh->execute('DELETE FROM shredded_job WHERE shredded_job_id > :id', array('id' => static::$maxShreddedJobId));
     }
