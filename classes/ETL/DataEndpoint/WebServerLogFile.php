@@ -16,7 +16,7 @@
 
 namespace ETL\DataEndpoint;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use ETL\DataEndpoint\DataEndpointOptions;
 
 class WebServerLogFile extends aStructuredFile implements iStructuredFile
@@ -42,7 +42,7 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
 

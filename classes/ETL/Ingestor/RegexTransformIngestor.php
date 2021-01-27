@@ -29,7 +29,7 @@ use ETL\aOptions;
 use ETL\iAction;
 use ETL\Configuration\EtlConfiguration;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 class RegexTransformIngestor extends pdoIngestor implements iAction
 {
@@ -50,7 +50,7 @@ class RegexTransformIngestor extends pdoIngestor implements iAction
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
      */
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 
