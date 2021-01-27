@@ -309,7 +309,13 @@ EOF;
         $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
 
         $this->assertEquals($response[1]['http_code'], 200);
-        $this->assertEquals($expectedMimeType, $response[1]['content_type']);
+
+        $actualContentType = $response[1]['content_type'];
+        if (is_array($expectedMimeType)) {
+            $this->assertTrue(in_array($actualContentType, $expectedMimeType));
+        } else {
+            $this->assertEquals($expectedMimeType, $actualContentType);
+        }
 
         $actualFinfo = finfo_buffer(finfo_open(FILEINFO_MIME), $response[0]);
 
@@ -377,7 +383,7 @@ EOF;
         $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
 
         $baseSettings['format'] = 'xml';
-        $ret[] = array($baseSettings, 'text/xml;charset=UTF-8', array('text/xml; charset=us-ascii', 'application/xml; charset=us-ascii'));
+        $ret[] = array($baseSettings, array('text/xml;charset=UTF-8', 'text/xml'), array('text/xml; charset=us-ascii', 'application/xml; charset=us-ascii'));
 
         return $ret;
     }
