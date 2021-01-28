@@ -31,8 +31,6 @@ where denoted. These software products are free for commercial use.
   under the [New BSD License][new-bsd].
 - [jQuery](http://jquery.com/), which is available under the
   [MIT License][mit].
-- [Jasper Reports](http://community.jaspersoft.com/project/jasperreports-library),
-  which is available under the [LGPL 3.0][lgpl3].
 - [Commons BeanUtils](http://commons.apache.org/proper/commons-beanutils/),
   which is available under the [Apache License Version 2.0][apache2].
 - [Commons Collections](http://commons.apache.org/proper/commons-collections/),
@@ -57,6 +55,8 @@ where denoted. These software products are free for commercial use.
   the [Apache License Version 2.0][apache2].
 - [PHP SQL Parser](http://code.google.com/p/php-sql-parser/), which is
   available under the [New BSD License][new-bsd].
+- [PHP Word](https://github.com/PHPOffice/PHPWord), which is available under the
+  [LGPL 3.0][lgpl3],
 - [JSON Schema for PHP](https://github.com/justinrainbow/json-schema), which is
   available under the [MIT License][mit].
 - [Symfony Process Component](https://symfony.com/components/Process), which is

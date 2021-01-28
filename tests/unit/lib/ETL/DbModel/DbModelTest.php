@@ -20,12 +20,16 @@ use ETL\DbModel\Index;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
+use Psr\Log\LoggerInterface;
 
 class DbModelTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
 
+    /**
+     * @var LoggerInterface|null
+     */
     private static $logger = null;
 
     public static function setUpBeforeClass()

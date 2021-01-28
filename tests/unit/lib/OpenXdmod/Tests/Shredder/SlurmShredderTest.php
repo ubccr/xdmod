@@ -83,24 +83,6 @@ class SlurmShredderTest extends JobShredderBaseTestCase
     }
 
     /**
-     * @dataProvider accountingLogWithGpuGresProvider
-     */
-    public function testJobGpuGresParsing($line, $gpuCount)
-    {
-        $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
-            ->setConstructorArgs([$this->db])
-            ->setMethods(['insertRow'])
-            ->getMock();
-        $shredder
-            ->expects($this->once())
-            ->method('insertRow')
-            ->with(new \PHPUnit_Framework_Constraint_ArraySubset(['ngpus' => $gpuCount]));
-        $shredder->setLogger($this->logger);
-        $shredder->shredLine($line);
-    }
-
-    /**
      * Test how job records with non-ended job states are handled.
      *
      * @dataProvider nonEndedJobStateLogProvider
@@ -116,8 +98,10 @@ class SlurmShredderTest extends JobShredderBaseTestCase
             ->expects($this->never())
             ->method('insertRow');
 
+
         $logger = $this
-            ->getMockBuilder('\Log')
+            ->getMockBuilder('\CCR\Logger')
+            ->setConstructorArgs(array('slurm-shredder-test'))
             ->setMethods(['debug', 'warning'])
             ->getMock();
         $logger
@@ -155,7 +139,8 @@ class SlurmShredderTest extends JobShredderBaseTestCase
             ->method('insertRow');
 
         $logger = $this
-            ->getMockBuilder('\Log')
+            ->getMockBuilder('\CCR\Logger')
+            ->setConstructorArgs(array('slurm-shredder-test'))
             ->setMethods(['debug', 'warning'])
             ->getMock();
 
@@ -213,11 +198,6 @@ class SlurmShredderTest extends JobShredderBaseTestCase
     public function accountingLogWithJobArraysProvider()
     {
         return $this->getLogFileTestCases('accounting-logs-with-job-arrays');
-    }
-
-    public function accountingLogWithGpuGresProvider()
-    {
-        return $this->getLogFileTestCases('accounting-logs-with-gpu-gres');
     }
 
     public function nonEndedJobStateLogProvider()

@@ -45,6 +45,44 @@
                     "schema": "moddb"
                 }
             }
+        },
+        {
+            "name": "update-modw-tables",
+            "description": "Update modw tables",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/xdw/job-records.json",
+                "jobs/xdw/queue.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse Database",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "update-mod_shredder-shredded_job_slurm-table",
+            "description": "Update mod_shredder.shredded_job_slurm table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                {
+                    "sql_file": "migrations/9.0.0-9.5.0/mod_shredder/alter-shredded-job-slurm-table.sql",
+                    "delimiter": ";"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
         }
     ]
 }

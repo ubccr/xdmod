@@ -7,8 +7,9 @@ namespace OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
 use Exception;
-use Log;
+use CCR\Log;
 use PHPUnit_Framework_TestCase;
+use Psr\Log\LoggerInterface;
 use TestHarness\TestFiles;
 
 /**
@@ -27,7 +28,7 @@ abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
     protected $db;
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 

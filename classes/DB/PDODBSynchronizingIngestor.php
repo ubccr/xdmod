@@ -6,6 +6,8 @@
  */
 
 use CCR\DB\PDODB;
+use CCR\Log;
+use Psr\Log\LoggerInterface;
 
 class PDODBSynchronizingIngestor implements Ingestor
 {
@@ -58,7 +60,7 @@ class PDODBSynchronizingIngestor implements Ingestor
     /**
      * Logger.
      *
-     * @var Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -170,9 +172,9 @@ class PDODBSynchronizingIngestor implements Ingestor
     /**
      * Set the logger.
      *
-     * @param Log $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

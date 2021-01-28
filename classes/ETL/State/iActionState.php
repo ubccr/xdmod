@@ -38,7 +38,7 @@
 
 namespace ETL\State;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 interface iActionState
@@ -54,10 +54,10 @@ interface iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($key, $actionName, $type, stdClass $options = null, Log $logger = null);
+    public function __construct($key, $actionName, $type, stdClass $options = null, LoggerInterface $logger = null);
 
     /* ------------------------------------------------------------------------------------------
-     * @return The key for this state object. 
+     * @return The key for this state object.
      * ------------------------------------------------------------------------------------------
      */
 

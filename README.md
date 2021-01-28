@@ -305,7 +305,6 @@ XDMoD files being missing. These warnings can be safely ignored if they are
 for the following files:
 
 - `/usr/share/xdmod/configuration/linker.php`
-- `/usr/share/xdmod/reporting/jasper_builder/ReportBuilder.sh`
 - `/usr/share/xdmod/configuration/constants.php`
 - `/etc/xdmod/portal_settings.ini`
 - `/usr/local/xdmod/etc/logrotate.d/xdmod`

@@ -10,6 +10,7 @@ namespace OpenXdmod\Migration;
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use OpenXdmod\Setup\Console;
+use Psr\Log\LoggerInterface;
 use xd_utilities;
 
 abstract class DatabasesMigration extends Migration
@@ -35,7 +36,7 @@ abstract class DatabasesMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         parent::setLogger($logger);
 

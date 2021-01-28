@@ -72,7 +72,7 @@
             },
             {
                 "name": "queue",
-                "type": "char(50)",
+                "type": "char(255)",
                 "nullable": false,
                 "comment": "DIMENSION: The queue of the resource on which the jobs ran."
             },

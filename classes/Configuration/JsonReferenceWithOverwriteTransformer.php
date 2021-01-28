@@ -23,8 +23,6 @@
 
 namespace Configuration;
 
-// PEAR logger
-use Log;
 use stdClass;
 
 class JsonReferenceWithOverwriteTransformer extends JsonReferenceTransformer implements iConfigFileKeyTransformer

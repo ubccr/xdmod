@@ -11,6 +11,7 @@ use Exception;
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Json;
+use Psr\Log\LoggerInterface;
 use xd_utilities;
 
 /**
@@ -51,7 +52,7 @@ class Version
     /**
      * Logger instance.
      *
-     * @var \Log
+     * @var LoggerInterface
      */
     protected static $logger = null;
 
@@ -87,9 +88,9 @@ class Version
     /**
      * Set the logger.
      *
-     * @param \Log Logger instance.
+     * @param LoggerInterface $logger A Monolog Logger instance.
      */
-    public static function setLogger(\Log $logger)
+    public static function setLogger(LoggerInterface $logger)
     {
         static::$logger = $logger;
 

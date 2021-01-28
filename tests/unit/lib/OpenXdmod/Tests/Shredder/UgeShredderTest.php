@@ -41,7 +41,7 @@ class UgeShredderTest extends JobShredderBaseTestCase
             ->method('getResourceConfig')
             ->willReturn(array());
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger(\CCR\Log::singleton('null'));
 
         $shredder->setResource('testresource');
 

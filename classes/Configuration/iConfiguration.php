@@ -11,7 +11,7 @@
 
 namespace Configuration;
 
-use Log;  // PEAR logger
+use Psr\Log\LoggerInterface;
 
 interface iConfiguration extends \Iterator
 {
@@ -19,28 +19,28 @@ interface iConfiguration extends \Iterator
      * A factory / helper method for instantiating a Configuration object, initializing it, and
      * returning the results of its `toAssocArray` function.
      *
-     * @param string $filename The base configuration file name to be processed.
-     * @param string|null $baseDir The directory in which $filename can be found.
-     * @param Log|null $logger A Log instance that Configuration will utilize during its processing.
-     * @param array $options The options that will be used during construction of the Configuration object.
+     * @param string               $filename The base configuration file name to be processed.
+     * @param string|null          $baseDir The directory in which $filename can be found.
+     * @param LoggerInterface|null $logger A Monolog Logger that Configuration will utilize during its processing.
+     * @param array                $options The options that will be used during construction of the Configuration object.
      *
      * @return array the results of the instantiated configuration objects `toAssocArray` function.
      */
 
-    public static function assocArrayFactory($filename, $baseDir = null, Log $logger = null, array $options = array());
+    public static function assocArrayFactory($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array());
 
     /**
      * A helper function that instantiates, initializes, and returns a Configuration object.
      *
-     * @param string $filename The base configuration file name to be processed.
-     * @param string|null $baseDir The directory in which $filename can be found.
-     * @param Log|null $logger A Log instance that Configuration will utilize during its processing.
-     * @param array $options The options that will be used during construction of the Configuration object.
+     * @param string               $filename The base configuration file name to be processed.
+     * @param string|null          $baseDir The directory in which $filename can be found.
+     * @param LoggerInterface|null $logger A Monolog Logger that Configuration will utilize during its processing.
+     * @param array                $options The options that will be used during construction of the Configuration object.
      *
      * @return Configuration an initialized instance of Configuration.
      */
 
-    public static function factory($filename, $baseDir = null, Log $logger = null, array $options = array());
+    public static function factory($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array());
 
     /**
      * Enable the object cache.
@@ -63,7 +63,7 @@ interface iConfiguration extends \Iterator
      * @param string $filename Name of the JSON configuration file to parse
      * @param string $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file. If not set, use the same directory as the config file.
-     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      * @param array $options An associative array of additional options passed from the parent.
      *   These include, but are not limited to:
      *   local_config_dir: Directory to look for local configuration files
@@ -81,7 +81,7 @@ interface iConfiguration extends \Iterator
      *     be modified to use the VariableStore.
      */
 
-    public function __construct($filename, $baseDir = null, Log $logger = null, array $options = array());
+    public function __construct($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array());
 
     /**
      * Initialize the configuration objecton.

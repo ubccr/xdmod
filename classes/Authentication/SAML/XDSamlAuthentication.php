@@ -48,6 +48,9 @@ Unable to Identify Users Organization.
 Additional Setup Required.
 EML;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger = null;
 
     public function __construct()
@@ -220,30 +223,31 @@ EML;
      */
     public function getLoginLink()
     {
-        if ($this->isSamlConfigured()) {
-            $idpAuth = \SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler()->getList();
-            $orgDisplay = "";
-            $icon = "";
-            foreach ($idpAuth as $idp) {
-                if (!empty($idp['OrganizationDisplayName'])) {
-                    $orgDisplay = $idp['OrganizationDisplayName'];
-                }
-                if (!empty($idp['icon'])) {
-                    $icon = $idp['icon'];
-                }
-            }
-            if ($orgDisplay === "") {
-                $orgDisplay = array(
-                    'en' => 'Single Sign On'
-                );
-            }
-            return array(
-                'organization' => $orgDisplay,
-                'icon' => $icon
-            );
-        } else {
+        if (!$this->isSamlConfigured()) {
             return false;
         }
+        $idp = \SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler()->getMetadata(
+            \SimpleSAML_Auth_Source::getById($this->authSourceName)->getMetadata()->toArray()['idp'],
+            'saml20-idp-remote'
+        );
+        if (!empty($idp['OrganizationDisplayName'])) {
+            $orgDisplay = $idp['OrganizationDisplayName'];
+        }
+        else {
+            $orgDisplay = array(
+                'en' => 'Single Sign On'
+            );
+        }
+        if (!empty($idp['icon'])) {
+            $icon = $idp['icon'];
+        }
+        else {
+            $icon = "";
+        }
+        return array(
+            'organization' => $orgDisplay,
+            'icon' => $icon
+        );
     }
 
     /**

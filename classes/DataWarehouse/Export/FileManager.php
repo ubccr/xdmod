@@ -7,7 +7,7 @@ use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 use ZipArchive;
 use xd_utilities;
 
@@ -46,7 +46,7 @@ class FileManager extends Loggable
      *
      * @throws \Exception If the data warehouse export directory is not set.
      */
-    public function __construct(Log $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         // Must set properties that are used in `setLogger` before calling the
         // parent constructor.
@@ -88,10 +88,10 @@ class FileManager extends Loggable
      * Set the logger for this object.
      *
      * @see \CCR\Loggable::setLogger()
-     * @param \Log $logger A logger instance or null to use the null logger.
+     * @param LoggerInterface $logger A logger instance or null to use the null logger.
      * @return self This object for method chaining.
      */
-    public function setLogger(Log $logger = null)
+    public function setLogger(LoggerInterface $logger = null)
     {
         parent::setLogger($logger);
         $this->fileWriterFactory->setLogger($logger);

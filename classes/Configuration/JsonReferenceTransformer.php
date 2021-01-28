@@ -11,8 +11,6 @@
 
 namespace Configuration;
 
-// PEAR logger
-use Log;
 use stdClass;
 use CCR\Loggable;
 use ETL\JsonPointer;

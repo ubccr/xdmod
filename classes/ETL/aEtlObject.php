@@ -13,9 +13,9 @@
 namespace ETL;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use Log;
 use Exception;
 use PDOException;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 abstract class aEtlObject extends \CCR\Loggable
@@ -31,7 +31,7 @@ abstract class aEtlObject extends \CCR\Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(Log $logger = null, $name = null)
+    public function __construct(LoggerInterface $logger = null, $name = null)
     {
         parent::__construct($logger);
         $this->name = $name;

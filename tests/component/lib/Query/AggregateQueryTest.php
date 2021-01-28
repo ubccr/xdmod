@@ -8,10 +8,14 @@ namespace ComponentTests\Query;
 
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
+use Psr\Log\LoggerInterface;
 
 class AggregateQueryTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var LoggerInterface|null
+     */
     protected static $logger = null;
 
     public static function setupBeforeClass()
