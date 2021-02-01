@@ -20,13 +20,9 @@ ini_set('memory_limit', -1);
 try {
     main();
 } catch (Exception $e) {
-    global $logger;
-
     do {
-        $logger->crit(array(
-            'message'    => $e->getMessage(),
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        fwrite(STDERR, $e->getMessage() . "\n");
+        fwrite(STDERR, $e->getTraceAsString() . "\n");
     } while ($e = $e->getPrevious());
     exit(1);
 }
