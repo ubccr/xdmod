@@ -460,7 +460,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         $this->logger->info(array(
                                 'message'     => 'start',
                                 'action_name' => $actionName,
-                                'action'      => $actionObj,
+                                'action'      => (string) $actionObj,
                                 'start_date'  => $this->etlOverseerOptions->getStartDate(),
                                 'end_date'    => $this->etlOverseerOptions->getEndDate(),
                                 ));
@@ -486,7 +486,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         $this->logger->info(array(
                                 'message'    => 'end',
                                 'action_name' => $actionName,
-                                'action'     => $actionObj
+                                'action'     => (string) $actionObj,
                                 ));
     }  // _execute()
 }  // class EtlOverseer
