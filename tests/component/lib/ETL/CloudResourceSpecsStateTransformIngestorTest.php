@@ -21,7 +21,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 56,
         "memory_mb" => 196514,
-        "start_date_ts" => '2018-04-17',
+        "fact_date" => '2018-04-17',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1
@@ -32,7 +33,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 100,
         "memory_mb" => 196514,
-        "start_date_ts" => '2018-04-20',
+        "fact_date" => '2018-04-20',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1
@@ -43,7 +45,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 100,
         "memory_mb" => 262030,
-        "start_date_ts" => '2018-04-24',
+        "fact_date" => '2018-04-24',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_time_ts" => 1
@@ -54,7 +57,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 56,
         "memory_mb" => 196514,
-        "start_date_ts" => '2018-04-30',
+        "fact_date" => '2018-04-30',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1
@@ -65,7 +69,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 56,
         "memory_mb" => 262030,
-        "start_date_ts" => '2018-05-02',
+        "fact_date" => '2018-05-02',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1
@@ -76,7 +81,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => -1,
         "memory_mb" => -1,
-        "start_date_ts" => '2018-05-10',
+        "fact_date" => '2018-05-10',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1
@@ -87,7 +93,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 56,
         "memory_mb" => 196514,
-        "start_date_ts" => '2018-05-15',
+        "fact_date" => '2018-05-15',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1
@@ -98,7 +105,8 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
         "vcpus" => 64,
         "memory_mb" => 196514,
-        "start_date_ts" => '2019-04-01',
+        "fact_date" => '2019-04-01',
+        "start_date_ts" => -1,
         "end_date_ts" => -1,
         "start_day_id" => -1,
         "end_day_id" => 1

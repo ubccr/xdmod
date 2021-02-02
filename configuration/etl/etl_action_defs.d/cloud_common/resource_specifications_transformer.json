@@ -20,7 +20,8 @@
             "hostname": "srs.hostname",
             "vcpus": "srs.vcpus",
             "memory_mb": "srs.memory_mb",
-            "start_date_ts": "srs.fact_date",
+            "fact_date": "srs.fact_date",
+            "start_date_ts": -1,
             "end_date_ts": -1,
             "start_day_id": -1,
             "end_day_id": -1

@@ -49,9 +49,9 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
             'hostname' => $srcRecord['hostname'],
             'vcpus' => $srcRecord['vcpus'],
             'memory_mb' => $srcRecord['memory_mb'],
-            'start_date_ts' => strtotime($srcRecord['start_date_ts'] . " 00:00:00"),
+            'start_date_ts' => strtotime($srcRecord['fact_date'] . " 00:00:00"),
             'end_date_ts' => strtotime($default_end_time),
-            'start_day_id' => date('Y', strtotime($srcRecord['start_date_ts'])) * 100000 + date('z', strtotime($srcRecord['start_date_ts'])) + 1,
+            'start_day_id' => date('Y', strtotime($srcRecord['fact_date'])) * 100000 + date('z', strtotime($srcRecord['fact_date'])) + 1,
             'end_day_id' => date('Y', strtotime($default_end_time)) * 100000 + date('z', strtotime($default_end_time)) + 1
         );
     }
@@ -64,7 +64,7 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
     private function updateInstance($srcRecord)
     {
         // The -1 is to make sure we use the last second of the previous day
-        $end_date_timestamp = strtotime($srcRecord['start_date_ts'] . " 00:00:00") - 1;
+        $end_date_timestamp = strtotime($srcRecord['fact_date'] . " 00:00:00") - 1;
         $this->_instance_state['end_date_ts'] = $end_date_timestamp;
 
         // date(z) is zero indexed so +1 is needed to get the correct day of the year
@@ -77,7 +77,7 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
     protected function transform(array $srcRecord, &$orderId)
     {
         // We want to just flush when we hit the dummy row
-        if ($srcRecord['start_date_ts'] === 0) {
+        if ($srcRecord['fact_date'] === 0) {
             if (isset($this->_instance_state)) {
                 return array($this->_instance_state);
             } else {
