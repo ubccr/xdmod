@@ -40,6 +40,8 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
 
     private function initInstance($srcRecord)
     {
+        // Since we only get information for when a configuration changes we assume a configuration has an end date
+        // of today unless we have a row that tells us otherwise
         $default_end_time = isset($this->_end_time) ? $this->_end_time : date('Y-m-d') . ' 23:59:59';
 
         $this->_instance_state = array(
@@ -95,7 +97,7 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
 
         if (($this->_instance_state['hostname'] != $srcRecord['hostname']) || ($this->_instance_state['resource_id'] != $srcRecord['resource_id']) || ($this->_instance_state['vcpus'] != $srcRecord['vcpus'] || $this->_instance_state['memory_mb'] != $srcRecord['memory_mb'])) {
 
-            //Only update the instance if the only thing that is different between $srcRecord and $this->_instance_state is that either the memory or vcpus changed
+            // Only update the instance if the only thing that is different between $srcRecord and $this->_instance_state is that either the memory or vcpus changed
             if (($this->_instance_state['vcpus'] != $srcRecord['vcpus'] || $this->_instance_state['memory_mb'] != $srcRecord['memory_mb'])
                  && ($this->_instance_state['hostname'] == $srcRecord['hostname']) && ($this->_instance_state['resource_id'] == $srcRecord['resource_id'])) {
                 $this->updateInstance($srcRecord);
@@ -104,6 +106,9 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
             $transformedRecord[] = $this->_instance_state;
             $this->resetInstance();
 
+            // Under most circumstances when we detect a change we want to start a new row with data from the row that has changed. This is not
+            // the case when the change detected is a -1 value for vcpus or memory_mb. When vcpus or memory_mb is -1 it means the host has been
+            // removed and we just want to end the row and not create a new row.
             if($srcRecord['vcpus'] != -1 && $srcRecord['memory_mb'] != -1) {
                 $this->initInstance($srcRecord);
             }
