@@ -1,7 +1,7 @@
 <?php
 /**
  * @package OpenXdmod\ComponentTests
- * @author Rudra Chakraborty <rudracha@buffalo.edu>
+ * @author Greg Dean <gmdean@buffalo.edu>
  */
 
 namespace ComponentTests\ETL;
@@ -11,7 +11,7 @@ use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
 
 /**
- * Test Cloud State FSM
+ * Test Cloud Resource Specifications State FSM
  */
 
 class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_TestCase
