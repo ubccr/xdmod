@@ -132,6 +132,7 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
 
     public function transformHelper(array $srcRecord)
     {
+        $orderId = 0;
         return $this->transform($srcRecord, $orderId);
     }
 }
