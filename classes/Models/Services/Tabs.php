@@ -65,7 +65,15 @@ SQL;
             unset($acls['default']);
         }
 
+        $rowsarray = array();
         foreach ($rows as $row) {
+            $rowsarray[] = $row;
+        }
+        if (!$user->isPublicUser()) {
+            $rowsarray[] = array('tab' => 'data_explorer', 'acl' => 'cs');
+        }
+
+        foreach ($rowsarray as $row) {
             $tab = $row['tab'];
             $acl = $row['acl'];
             if (array_key_exists($acl, $acls) && isset($acls[$acl]['permitted_modules'])) {

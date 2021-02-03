@@ -216,6 +216,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         // Search history routes
 
         $controller
+            ->get("$root/search/freeform", "$current::freeformSearch");
+
+        $controller
             ->get("$root/search/history", "$current::searchHistory");
 
         $controller
@@ -309,6 +312,104 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $controller
             ->get("$root/plots", "$current::getPlots");
 
+    }
+
+    public function freeformSearch(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        $query = $this->getStringParam($request, 'query');
+
+        $results = array();
+        $i = 0;
+
+        $debugout = array('missing' => array(), 'info' => array());
+        $candidates = array();
+
+        $searchComponents = preg_split('/\s+/', $query, null, PREG_SPLIT_NO_EMPTY);
+        if (count($searchComponents) > 1) {
+            $dimensionValues = MetricExplorer::getDimensionValues(
+                $user, 'resource', array('Jobs'), 0, null
+            );
+
+            foreach ($dimensionValues['data'] as $dimval) {
+                if (strlen($query) > strlen($dimval['name'])) {
+                    if (substr($query, 0, strlen($dimval['name']) + 1) === ($dimval['name'] . ' ')) {
+                        $candidates = array(
+                            'resource_id' => $dimval['id'],
+                            'search' => substr($query, strlen($dimval['name']) + 1)
+                        );
+
+                        if (ctype_digit(substr($query, strlen($dimval['name']) + 1)) ) {
+                            $QueryClass = "\\DataWarehouse\\Query\\Jobs\\JobDataset";
+                            $params = array('resource_id' => $dimval['id'],
+                                'job_identifier' => substr($query, strlen($dimval['name']) + 1) . '%');
+                            $qinst = new $QueryClass($params, "brief");
+
+                            $allRoles = $user->getAllRoles();
+                            $qinst->setMultipleRoleParameters($allRoles, $user);
+
+                            $stmt = $qinst->getRawStatement(20, 0);
+                            $results = array();
+                            foreach($stmt->fetchAll() as $row) {
+                                $results[] = array(
+                                    'cid' => $i++,
+                                    'Domain' => 'Jobs',
+                                    'content' => $row['resource'] . " " . $row['local_job_id']
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $debugout['candidates']  = $candidates;
+
+        $dimensionValues = MetricExplorer::getDimensionValues(
+            $user,
+            'person',
+            array('SUPREMM'),
+            0,
+            null,
+            $query
+        );
+
+
+        if (!empty($dimensionValues['data'])) {
+            foreach ($dimensionValues['data'] as $value) {
+                $results[] = array(
+                    'cid' => $i++,
+                    'Domain' => 'People',
+                    'content' => $value['name']
+                );
+            }
+        }
+
+        $dimensionValues = MetricExplorer::getDimensionValues(
+            $user,
+            'resource',
+            array('SUPREMM'),
+            0,
+            null,
+            $query
+        );
+
+        if (!empty($dimensionValues['data'])) {
+            foreach ($dimensionValues['data'] as $value) {
+                $results[] = array(
+                    'cid' => $i++,
+                    'Domain' => 'Resources',
+                    'content' => $value['name']
+                );
+            }
+        }
+
+        return $app->json(
+            array(
+                'success' => true,
+                'results' => $results,
+                'debug' => $debugout
+            )
+        );
     }
 
     /**

@@ -65,7 +65,11 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                     $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'local_job_id_raw'), '=', $matches[1]));
                 }
             } else {
-                throw new Exception('invalid "job_identifier" query parameter');
+                $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'resource_id'), '=', $parameters['resource_id']));
+                $table = new Table(new Schema('modw'), 'jobid_lookup', 'jil');
+                $this->addTable($table);
+                $this->addWhereCondition(new WhereCondition(new TableField($table, 'job_id'), '=', new TableField($factTable, 'job_id')));
+                $this->addWhereCondition(new WhereCondition(new TableField($table, 'provider_local_jobid'), 'LIKE', "'" . $parameters['job_identifier'] . "'"));
             }
         } elseif (isset($parameters['start_date']) && isset($parameters['end_date'])) {
             date_default_timezone_set('UTC');
