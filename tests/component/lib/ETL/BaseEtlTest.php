@@ -79,7 +79,10 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
         EtlConfiguration $etlConfig,
         EtlOverseerOptions $overseerOptions
     ) {
-        $action = aAction::factory($etlConfig, $actionName);
-        $action->execute($overseerOptions);
+        $overseerOptions->setActionNames($actionName);
+        $overseerOptions->setLogger(self::$logger);
+
+        $overseer = new EtlOverseer($overseerOptions, self::$logger);
+        $overseer->execute($etlConfig);
     }
 }
