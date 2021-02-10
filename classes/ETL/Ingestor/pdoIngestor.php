@@ -151,6 +151,16 @@ class pdoIngestor extends aIngestor
 
     protected $stringEnclosure = '';
 
+
+    /** -----------------------------------------------------------------------------------------
+     * Escape character for the MySQL LOAD DATA INFILE ESCAPED BY
+     *
+     * @var string
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $escapeChar = '\\';
+
     /** -----------------------------------------------------------------------------------------
      * Database helper object such as MySQLHelper
      *
@@ -605,7 +615,10 @@ class pdoIngestor extends aIngestor
 
             if ( $this->options->force_load_data_infile_replace_into ) {
                 $loadStatement = "LOAD DATA LOCAL INFILE '$infileName' replace into table $qualifiedDestTableName "
-                    . "fields terminated by 0x1e optionally enclosed by 0x1f lines terminated by 0x1d "
+                    . "FIELDS TERMINATED BY " . sprintf("0x%02x", ord($this->fieldSeparator))
+                    . " OPTIONALLY ENCLOSED BY " . sprintf("0x%02x", ord($this->stringEnclosure))
+                    . " ESCAPED BY " . sprintf("0x%02x", ord($this->escapeChar))
+                    . " LINES TERMINATED BY " . sprintf("0x%02x", ord($this->lineSeparator)) . " "
                     . "(" . implode(',', $destColumnList) . ") "
                     . "SHOW WARNINGS";
             } else {
@@ -626,7 +639,10 @@ class pdoIngestor extends aIngestor
                 $loadStatement = "CREATE TABLE $tmpTable LIKE $qualifiedDestTableName; "
                     . "ALTER TABLE $tmpTable DISABLE KEYS; "
                     . "LOAD DATA LOCAL INFILE '$infileName' INTO TABLE $tmpTable "
-                    . "FIELDS TERMINATED BY 0x1e OPTIONALLY ENCLOSED BY 0x1f LINES TERMINATED BY 0x1d "
+                    . "FIELDS TERMINATED BY " . sprintf("0x%02x", ord($this->fieldSeparator))
+                    . " OPTIONALLY ENCLOSED BY " . sprintf("0x%02x", ord($this->stringEnclosure))
+                    . " ESCAPED BY " . sprintf("0x%02x", ord($this->escapeChar))
+                    . " LINES TERMINATED BY " . sprintf("0x%02x", ord($this->lineSeparator)) . " "
                     . "($destColumns); "
                     . "SHOW WARNINGS; "
                     . "INSERT INTO $qualifiedDestTableName ($destColumns) "
@@ -969,9 +985,17 @@ class pdoIngestor extends aIngestor
                 $value = '\N';
             } elseif ( '' === $value ) {
                 $value = $this->stringEnclosure . '' . $this->stringEnclosure;
-            } else {
-                // Handle proper escaping of backslashes to preserve source data containing them.
-                $value = str_replace('\\', '\\\\', $value);
+            } else if (strpos($value, $this->lineSeparator) !== false
+                || strpos($value, $this->fieldSeparator) !== false
+                || strpos($value, $this->stringEnclosure) !== false
+                || strpos($value, $this->escapeChar) !== false) {
+                // if the string contains any special characters it is enclosed in the stringEnclosure
+                // occurences of the stringEnclosure and the escape character are escaped
+
+                $search = array($this->escapeChar, $this->stringEnclosure);
+                $replace = array($this->escapeChar . $this->escapeChar, $this->escapeChar . $this->stringEnclosure);
+
+                $value = $this->stringEnclosure . str_replace($search, $replace, $value) . $this->stringEnclosure;
             }
         }
 
