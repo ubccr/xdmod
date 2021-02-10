@@ -985,7 +985,7 @@ class pdoIngestor extends aIngestor
                 $value = '\N';
             } elseif ( '' === $value ) {
                 $value = $this->stringEnclosure . '' . $this->stringEnclosure;
-            } else if (strpos($value, $this->lineSeparator) !== false
+            } elseif (strpos($value, $this->lineSeparator) !== false
                 || strpos($value, $this->fieldSeparator) !== false
                 || strpos($value, $this->stringEnclosure) !== false
                 || strpos($value, $this->escapeChar) !== false) {
