@@ -4,134 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "06a4cf05ce7bbd49b42ae7598db801df",
+    "content-hash": "16abd0cfed982e03ad3e9f96da950394",
     "packages": [
-        {
-            "name": "apache/commons-beanutils",
-            "version": "1.8.0",
-            "dist": {
-                "type": "tar",
-                "url": "https://archive.apache.org/dist/commons/beanutils/binaries/commons-beanutils-1.8.0-bin.tar.gz",
-                "reference": null,
-                "shasum": "f21decfd6f01a42cae665db8e1a4401b154a2fe9"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "commons-beanutils"
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "homepage": "https://commons.apache.org/proper/commons-beanutils"
-        },
-        {
-            "name": "apache/commons-collections",
-            "version": "2.1.1",
-            "dist": {
-                "type": "tar",
-                "url": "https://archive.apache.org/dist/commons/collections/binaries/commons-collections-2.1.1.tar.gz",
-                "reference": null,
-                "shasum": "26baa7ff12af5b2484b64c0011f32e48a10b0df9"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "commons-collections"
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "homepage": "https://commons.apache.org/proper/commons-collections"
-        },
-        {
-            "name": "apache/commons-digester",
-            "version": "1.7",
-            "dist": {
-                "type": "tar",
-                "url": "https://archive.apache.org/dist/commons/digester/binaries/commons-digester-1.7.tar.gz",
-                "reference": null,
-                "shasum": "43842197ddfe6930bd9a20b526e4e8c96bee1137"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "commons-digester"
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "homepage": "https://commons.apache.org/proper/commons-digester"
-        },
-        {
-            "name": "apache/commons-logging",
-            "version": "1.0.4",
-            "dist": {
-                "type": "tar",
-                "url": "https://archive.apache.org/dist/commons/logging/binaries/commons-logging-1.0.4.tar.gz",
-                "reference": null,
-                "shasum": "633cad7b22536388da2c0b3ddb0661f25a07e849"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "commons-logging"
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "homepage": "https://commons.apache.org/proper/commons-logging"
-        },
-        {
-            "name": "apache/poi",
-            "version": "3.6",
-            "dist": {
-                "type": "tar",
-                "url": "https://archive.apache.org/dist/poi/release/bin/poi-bin-3.6-20091214.tar.gz",
-                "reference": null,
-                "shasum": "e65a6fc5acd1c4e09c654cf72e9f70707235d309"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "poi"
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "homepage": "http://poi.apache.org"
-        },
-        {
-            "name": "apache/xalan-j-2jars",
-            "version": "2.7.1",
-            "dist": {
-                "type": "zip",
-                "url": "https://archive.apache.org/dist/xalan/xalan-j/binaries/xalan-j_2_7_1-bin-2jars.zip",
-                "reference": null,
-                "shasum": "e14810b4c586fb40e80c049b9096215ab22d816d"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "xalan"
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "homepage": "https://xalan.apache.org/xalan-j"
-        },
         {
             "name": "carlo/jquery-base64-file",
             "version": "1.0",
@@ -155,16 +29,16 @@
         },
         {
             "name": "composer/installers",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca"
+                "reference": "1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
-                "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
+                "url": "https://api.github.com/repos/composer/installers/zipball/1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d",
+                "reference": "1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d",
                 "shasum": ""
             },
             "require": {
@@ -175,17 +49,18 @@
                 "shama/baton": "*"
             },
             "require-dev": {
-                "composer/composer": "1.6.* || 2.0.*@dev",
-                "composer/semver": "1.0.* || 2.0.*@dev",
-                "phpunit/phpunit": "^4.8.36",
-                "sebastian/comparator": "^1.2.4",
+                "composer/composer": "1.6.* || ^2.0",
+                "composer/semver": "^1 || ^3",
+                "phpstan/phpstan": "^0.12.55",
+                "phpstan/phpstan-phpunit": "^0.12.16",
+                "symfony/phpunit-bridge": "^4.2 || ^5",
                 "symfony/process": "^2.3"
             },
             "type": "composer-plugin",
             "extra": {
                 "class": "Composer\\Installers\\Plugin",
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-main": "1.x-dev"
                 }
             },
             "autoload": {
@@ -223,6 +98,7 @@
                 "Porto",
                 "RadPHP",
                 "SMF",
+                "Starbug",
                 "Thelia",
                 "Whmcs",
                 "WolfCMS",
@@ -263,6 +139,7 @@
                 "phpbb",
                 "piwik",
                 "ppi",
+                "processwire",
                 "puppet",
                 "pxcms",
                 "reindex",
@@ -278,7 +155,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2020-04-07T06:57:05+00:00"
+            "time": "2021-01-14T11:07:16+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -673,21 +550,6 @@
                 "password"
             ],
             "time": "2014-11-20T16:49:30+00:00"
-        },
-        {
-            "name": "itextpdf/itextpdf",
-            "version": "2.1.7",
-            "dist": {
-                "type": "file",
-                "url": "https://repo1.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
-                "reference": null,
-                "shasum": "892bfb3e97074a61123b3b2d7caa2db112750864"
-            },
-            "type": "vanilla-plugin",
-            "license": [
-                "AGPL-3.0"
-            ],
-            "homepage": "http://itextpdf.com"
         },
         {
             "name": "jaimeperez/twig-configurable-i18n",
