@@ -3,7 +3,7 @@
 namespace DataWarehouse\Export\FileWriter;
 
 use CCR\Loggable;
-use Log;
+use Psr\Log\LoggerInterface;
 
 /**
  * Abstract class for writing data warehouse batch export data.
@@ -24,9 +24,9 @@ abstract class aFileWriter extends Loggable implements iFileWriter
      * Open the file for writing.
      *
      * @param string $file
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct($file, Log $logger)
+    public function __construct($file, LoggerInterface $logger)
     {
         parent::__construct($logger);
 

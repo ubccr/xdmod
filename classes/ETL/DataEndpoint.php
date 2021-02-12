@@ -13,7 +13,8 @@ namespace ETL;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint\iDataEndpoint;
 use Exception;
-use Log;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class DataEndpoint
 {
@@ -99,11 +100,11 @@ class DataEndpoint
      * when new endpoints are created.
      *
      * @param boolean $force Set to TRUE to force re-discovery of endpoints
-     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function discover($force = false, Log $logger = null)
+    public static function discover($force = false, LoggerInterface $logger = null)
     {
         if ( null !== self::$endpointClassMap && ! $force ) {
             return;
@@ -217,7 +218,7 @@ class DataEndpoint
      *
      * @param DataEndpointOptions $options A DataEndpointOptions object containing options
      *   parsed from the ETL config.
-     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      *
      * @return iDataEndpoint A data endpoint object implementing the iDataEndpoint interface.
      *
@@ -227,7 +228,7 @@ class DataEndpoint
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function factory(DataEndpointOptions $options, Log $logger = null)
+    public static function factory(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         self::discover(false, $logger);
         $options->verify();

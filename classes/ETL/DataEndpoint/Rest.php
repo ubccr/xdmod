@@ -8,7 +8,7 @@
 namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Rest extends aDataEndpoint implements iDataEndpoint
 {
@@ -33,7 +33,7 @@ class Rest extends aDataEndpoint implements iDataEndpoint
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
 

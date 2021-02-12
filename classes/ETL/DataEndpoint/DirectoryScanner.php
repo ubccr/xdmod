@@ -14,7 +14,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint\StructuredFile;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComplexDataRecords
 {
@@ -193,7 +193,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
 

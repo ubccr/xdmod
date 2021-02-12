@@ -2,14 +2,16 @@
 
 namespace CCR\DB;
 
+use CCR\Log;
 use Exception;
 use CCR\DB\MySQLDB;
+use Psr\Log\LoggerInterface;
 
 class MySQLHelper
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -38,15 +40,15 @@ class MySQLHelper
     protected function __construct(MySQLDB $db)
     {
         $this->db     = $db;
-        $this->logger = \Log::singleton('null');
+        $this->logger = Log::singleton('null');
     }
 
     /**
      * Set the logger.
      *
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
@@ -228,9 +230,9 @@ class MySQLHelper
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 
-        // --defaults-file must be the first argument.
+        // --defaults-extra-file must be the first argument.
         $args = array(
-            '--defaults-file=' . $optionsFile,
+            '--defaults-extra-file=' . $optionsFile,
             '-ss',
             '--local-infile',
             '-h', $this->db->_db_host,
@@ -267,9 +269,9 @@ class MySQLHelper
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 
-        // --defaults-file must be the first argument.
+        // --defaults-extra-file must be the first argument.
         $args = array(
-            '--defaults-file=' . $optionsFile,
+            '--defaults-extra-file=' . $optionsFile,
             '-h', $this->db->_db_host,
             '-P', $this->db->_db_port,
             '-u', $this->db->_db_username,
@@ -506,8 +508,8 @@ class MySQLHelper
         if ($password !== '') {
             $optionsFile = static::createPasswordFile($password);
 
-            // --defaults-file must be the first argument.
-            array_unshift($args, '--defaults-file=' . $optionsFile);
+            // --defaults-extra-file must be the first argument.
+            array_unshift($args, '--defaults-extra-file=' . $optionsFile);
         }
 
         if ($dbName !== null) {
@@ -554,8 +556,8 @@ class MySQLHelper
         if ($password !== '') {
             $optionsFile = static::createPasswordFile($password);
 
-            // --defaults-file must be the first argument.
-            array_unshift($args, '--defaults-file=' . $optionsFile);
+            // --defaults-extra-file must be the first argument.
+            array_unshift($args, '--defaults-extra-file=' . $optionsFile);
         }
 
         $args[] = $dbName;

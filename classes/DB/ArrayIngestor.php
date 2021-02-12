@@ -4,6 +4,8 @@
  *
  */
 use CCR\DB\iDatabase;
+use CCR\Log;
+use Psr\Log\LoggerInterface;
 
 class ArrayIngestor implements Ingestor
 {
@@ -112,7 +114,7 @@ class ArrayIngestor implements Ingestor
         ));
     }
 
-    public function setLogger(Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->_logger = $logger;
     }

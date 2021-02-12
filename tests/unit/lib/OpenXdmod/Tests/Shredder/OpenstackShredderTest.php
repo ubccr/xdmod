@@ -42,7 +42,7 @@ class OpenstackShredderTest extends \PHPUnit_Framework_TestCase
             ->method('getResourceConfig')
             ->willReturn(array());
 
-        $shredder->setLogger(\Log::singleton('null'));
+        $shredder->setLogger(\CCR\Log::singleton('null'));
 
         $shredder->setResource('testresource');
 

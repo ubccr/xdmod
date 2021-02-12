@@ -10,9 +10,9 @@
 
 namespace ETL\DbModel;
 
-use Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use Psr\Log\LoggerInterface;
 
 class NamedEntity extends Entity
 {
@@ -33,7 +33,7 @@ class NamedEntity extends Entity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         // Property merging is performed first so the values can be used in the constructor
         parent::mergeProperties($this->localRequiredProperties, $this->localProperties);

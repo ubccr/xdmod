@@ -13,7 +13,7 @@ namespace ETL;
 use ETL\Configuration\EtlConfiguration;
 use ETL\Aggregator\AggregatorOptions;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Aggregator
 {
@@ -43,7 +43,7 @@ class Aggregator
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function factory(AggregatorOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public static function factory(AggregatorOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $options->verify();
 

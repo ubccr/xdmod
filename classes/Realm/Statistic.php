@@ -5,8 +5,8 @@
 
 namespace Realm;
 
-use Log as Logger;  // CCR implementation of PEAR logger
 use ETL\VariableStore;
+use Psr\Log\LoggerInterface;
 
 class Statistic extends \CCR\Loggable implements iStatistic
 {
@@ -133,7 +133,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @see iStatistic::factory()
      */
 
-    public static function factory($shortName, \stdclass $config, Realm $realm, Logger $logger = null)
+    public static function factory($shortName, \stdclass $config, Realm $realm, LoggerInterface $logger = null)
     {
         return new static($shortName, $config, $realm, $logger);
     }
@@ -145,10 +145,10 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @param string $shortName The short name for this statistic
      * @param stdClass $config An object contaning the configuration specificaiton.
      * @param Realm $realm Realm object that this GroupBy will belong to.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      */
 
-    public function __construct($shortName, \stdClass $config, Realm $realm, Logger $logger = null)
+    public function __construct($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

@@ -3,7 +3,7 @@
 namespace DataWarehouse\Export\FileWriter;
 
 use CCR\Json;
-use Log;
+use Psr\Log\LoggerInterface;
 
 /**
  * Write data warehouse batch export to file in JSON format.
@@ -26,9 +26,9 @@ class JsonFileWriter extends aFileWriter
      * Open the file and write the opening bracket.
      *
      * @param string $file
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct($file, Log $logger)
+    public function __construct($file, LoggerInterface $logger)
     {
         parent::__construct($file, $logger);
 

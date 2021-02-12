@@ -785,7 +785,7 @@ function processModules(iDatabase $db, array $modules)
         $version = $data['version'];
         $installedOn = isset($data['installed_on'])
                      ? $data['installed_on']
-                     : date("Y-m-d");
+                     : date("Y-m-d H:i:s");
 
         $moduleId = createModule(
             $db,

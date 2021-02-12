@@ -68,10 +68,10 @@ use ETL\DbModel\Table;
 use ETL\Utilities;
 use ETL\Configuration\EtlConfiguration;
 
-use Log;
 use PDOException;
 use PDOStatement;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class pdoAggregator extends aAggregator
 {
@@ -106,11 +106,11 @@ class pdoAggregator extends aAggregator
      *
      * @param IngestorOptions $options Options specific to this Ingestor
      * @param EtlConfiguration $etlConfig Parsed configuration options for this ETL
-     * @param Log $logger PEAR Log object for system logging
+     * @param LoggerInterface $logger Monolog Logger object for system logging
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 
