@@ -1,0 +1,59 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # Specify the version you desire here
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.0.0:centos7.8-0.1
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: 1
+      XDMOD_REALMS: 'jobs,storage,cloud'
+      XDMOD_IS_CORE: 1
+      XDMOD_SOURCE_DIR: $CIRCLE_WORKING_DIRECTORY
+      XDMOD_INSTALL_DIR: /xdmod
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # Using the RAM variation mitigates I/O contention
+      # for database intensive operations.
+      # - image: circleci/mysql:5.7-ram
+      #
+      # - image: redis:2.8.19
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - run: mkdir -p ~/phpunit
+      - run: ~/bin/buildrpm xdmod 
+      - run: ./tests/ci/bootstrap.sh
+      - run: ./tests/ci/validate.sh
+      - run: composer install -n
+      - run: ./tests/ci/scripts/qa-test-setup.sh
+      - run: composer install -n
+      - run: ./tests/regression/runtests.sh
+      - run: mv ./configuration/organization.json ./configuration/organization.json.old 
+      - run: mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
+      - run: cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
+      - run: cp /etc/xdmod/organization.json ./configuration/organization.json
+      - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
+      - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
+      - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
+      - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+      - run: ./tests/ci/samlSetup.sh
+      - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+      - run: ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      - run: mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
+      - run: test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0
