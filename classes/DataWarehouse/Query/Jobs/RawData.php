@@ -6,6 +6,7 @@ use \DataWarehouse\Query\Model\TableField;
 use \DataWarehouse\Query\Model\FormulaField;
 use \DataWarehouse\Query\Model\WhereCondition;
 use \DataWarehouse\Query\Model\Schema;
+use Psr\Log\LoggerInterface;
 
 /**
  * The RawData class is reponsible for generating a query that returns
@@ -22,7 +23,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $groupById = null,
         $statisticId = null,
         array $parameters = array(),
-        Log $logger = null
+        LoggerInterface $logger = null
     ) {
         $realmId = 'Jobs';
         $schema = 'modw_aggregates';

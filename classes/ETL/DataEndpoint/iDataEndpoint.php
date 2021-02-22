@@ -14,8 +14,7 @@
 
 namespace ETL\DataEndpoint;
 
-// PEAR logger
-use Log;
+use Psr\Log\LoggerInterface;
 
 interface iDataEndpoint
 {
@@ -24,10 +23,10 @@ interface iDataEndpoint
      *
      * @param DataEndpointOptions $options A DataEndpointOptions object containing option
      *    information
-     * @param Log $logger Optional PEAR Log object for system logging
+     * @param LoggerInterface $logger Optional Monolog object for system logging
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null);
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null);
 
     /**
      * @return The endpoint type (e.g., mysql, postgres, file)

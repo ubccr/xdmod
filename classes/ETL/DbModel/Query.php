@@ -23,7 +23,7 @@
 namespace ETL\DbModel;
 
 use ETL\Utilities;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Query extends Entity implements iEntity
 {
@@ -84,7 +84,7 @@ class Query extends Entity implements iEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         // Property merging is performed first so the values can be used in the constructor
         parent::mergeProperties($this->localRequiredProperties, $this->localProperties);

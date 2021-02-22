@@ -1,5 +1,7 @@
 <?php
 
+use CCR\Log;
+
 $dir = dirname(__FILE__);
 $baseDir = dirname($dir);
 
@@ -121,16 +123,23 @@ function handle_uncaught_exception($exception)
 {
     $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
-    $logConf = array('mode' => 0644);
-    $logger = \Log::factory('file', $logfile, 'exception', $logConf);
+    $logConf = array(
+        'mode' => 0644,
+        'file' => $logfile,
+        'mail' => false,
+        'db' => false,
+        'console' => false
+    );
 
-    $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
-    $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
-    $logger->log('Origin: '.$exception->getFile().' (line '.$exception->getLine().')', PEAR_LOG_INFO);
+    $logger = Log::singleton('exception', $logConf);
+
+    $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
+    $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
+    $logger->info(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->log("Trace:\n".$stringTrace."\n-------------------------------------------------------", PEAR_LOG_INFO);
+    $logger->info(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
 
    // If working in a server context, build headers to output.
     $httpCode = 500;
@@ -169,10 +178,10 @@ function handle_uncaught_exception($exception)
 
 function global_uncaught_exception_handler($exception)
 {
-   // Perform logging and output building for the exception.
+    // Perform logging and output building for the exception.
     $exceptionOutput = handle_uncaught_exception($exception);
 
-   // If running in a server context...
+    // If running in a server context...
     if ($exceptionOutput['isServerContext'] && !headers_sent()) {
         // Set the exception's headers (if any).
         foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
@@ -184,7 +193,7 @@ function global_uncaught_exception_handler($exception)
         header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
     }
 
-   // Print the exception's content.
+    // Print the exception's content.
     echo $exceptionOutput['content'];
 } // global_uncaught_exception_handler
 

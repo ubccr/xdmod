@@ -157,8 +157,7 @@ ETLProfile.prototype.processDataset = function (dataset, totalCores, coreIndex, 
         mysqlConnection.query(insertLog, function (err, result) {
             mysqlConnection.end();
             if (err) {
-                self.emit('error', err);
-                return;
+                self.emit('error', JSON.stringify(err));
             }
 
             dataset._processed = true;

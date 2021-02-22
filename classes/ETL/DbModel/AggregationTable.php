@@ -16,7 +16,7 @@
 namespace ETL\DbModel;
 
 use ETL\VariableStore;
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 class AggregationTable extends Table
@@ -45,7 +45,7 @@ class AggregationTable extends Table
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         // Property merging is performed first so the values can be used in the constructor
         parent::mergeProperties($this->localRequiredProperties, $this->localProperties);

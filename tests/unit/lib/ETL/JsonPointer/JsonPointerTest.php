@@ -18,6 +18,9 @@ class JsonPointerTest extends \PHPUnit_Framework_TestCase
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
 
+    /**
+     * @var \Monolog\Logger|\Psr\Log\LoggerInterface|null
+     */
     private $logger = null;
 
     public function __construct()

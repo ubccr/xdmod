@@ -42,12 +42,14 @@
             {
                 "name": "created_on",
                 "type": "timestamp",
-                "nullable": true
+                "nullable": false,
+                "default": 0
             },
             {
                 "name": "last_modified_on",
                 "type": "timestamp",
-                "nullable": true
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [

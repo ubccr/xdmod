@@ -9,7 +9,7 @@ namespace ETL\DataEndpoint;
 use ETL\aEtlObject;
 use ETL\DataEndpoint\iDataEndpoint;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 
 abstract class aDataEndpoint extends aEtlObject
 {
@@ -45,7 +45,7 @@ abstract class aDataEndpoint extends aEtlObject
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

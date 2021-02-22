@@ -21,7 +21,7 @@ use ETL\aAction;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iAction
 {
@@ -61,7 +61,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
      */
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 
