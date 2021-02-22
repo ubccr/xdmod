@@ -5,9 +5,11 @@
 
 namespace OpenXdmod\Build;
 
+use CCR\Log;
 use Exception;
 use ArrayIterator;
 use FilesystemIterator;
+use Psr\Log\LoggerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -19,7 +21,7 @@ class Packager
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -148,7 +150,7 @@ class Packager
             $packageName .= $config->getPreRelease();
         }
 
-        $logger = \Log::singleton('null');
+        $logger = Log::singleton('null');
 
         return new static(array(
             'module'       => $module,
@@ -178,9 +180,9 @@ class Packager
     /**
      * Set the logger.
      *
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

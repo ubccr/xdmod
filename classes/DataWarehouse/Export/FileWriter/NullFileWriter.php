@@ -2,7 +2,7 @@
 
 namespace DataWarehouse\Export\FileWriter;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 /**
  * File writer that doesn't actually write to any files.
@@ -15,9 +15,9 @@ class NullFileWriter extends aFileWriter
      * Don't open the file or do anything.
      *
      * @param string $file
-     * @param \Log $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct($file, Log $logger)
+    public function __construct($file, LoggerInterface $logger)
     {
         $this->setLogger($logger);
     }

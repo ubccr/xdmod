@@ -12,7 +12,6 @@ namespace ETL;
 use ETL\Configuration\EtlConfiguration;
 use Exception;
 use stdClass;
-use \CCR\Loggable;
 
 class Utilities
 {

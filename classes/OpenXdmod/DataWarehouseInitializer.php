@@ -3,6 +3,7 @@
 namespace OpenXdmod;
 
 use CCR\DB;
+use CCR\Log;
 use Configuration\XdmodConfiguration;
 use Exception;
 use CCR\DB\iDatabase;
@@ -13,12 +14,13 @@ use ETL\Utilities;
 use FilterListBuilder;
 use Models\Services\Realms;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class DataWarehouseInitializer
 {
 
     /**
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -95,15 +97,15 @@ class DataWarehouseInitializer
     ) {
         $this->hpcdbDb     = $hpcdbDb;
         $this->warehouseDb = $warehouseDb;
-        $this->logger      = \Log::singleton('null');
+        $this->logger      = Log::singleton('null');
     }
 
     /**
      * Set the logger.
      *
-     * @param \Log $logger A logger instance.
+     * @param LoggerInterface $logger A Monolog Logger instance.
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

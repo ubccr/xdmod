@@ -20,8 +20,8 @@ use ETL\DbModel\Table;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aRdbmsDestinationAction;
-use Log;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 class ManageTables extends aRdbmsDestinationAction implements iAction
 {
@@ -33,7 +33,7 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         // Set the logger manually since we are not calling the parent constructor chain until
         // later.

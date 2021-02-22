@@ -10,16 +10,17 @@
 
 namespace DataWarehouse\Query;
 
+use CCR\Log;
 use Configuration\XdmodConfiguration;
 use Exception;
 
-use Log as Logger;
 use CCR\Loggable;
 use CCR\DB;
 use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
 use ETL\VariableStore;
+use Psr\Log\LoggerInterface;
 use Realm\Realm;
 use Realm\Statistic;
 
@@ -114,7 +115,7 @@ class Query extends Loggable
         $groupById = null,
         $statisticId = null,
         array $parameters = array(),
-        Logger $logger = null
+        LoggerInterface $logger = null
     ) {
         // If the logger was not passed in, create one specifically for the query logs
 
@@ -134,7 +135,7 @@ class Query extends Loggable
                     'db' => false,
                     'mail' => false,
                     'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => $sqlDebug ? PEAR_LOG_DEBUG : PEAR_LOG_NOTICE
+                    'fileLogLevel' => $sqlDebug ? Log::DEBUG : Log::NOTICE
                 )
             );
         }

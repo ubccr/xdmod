@@ -2,6 +2,12 @@
 
 namespace CCR;
 
+use Exception;
+use Monolog\Handler\HandlerInterface;
+use Monolog\Handler\NativeMailerHandler;
+use Monolog\Handler\NullHandler;
+use Monolog\Handler\StreamHandler;
+use Psr\Log\LoggerInterface;
 use xd_utilities;
 
 /**
@@ -12,17 +18,48 @@ use xd_utilities;
 class Log
 {
 
+    const LINE_FORMAT = "%datetime% [%level_name%] %message%\n";
+    const TIME_FORMAT = 'Y-m-d H:i:s';
+
     // Class constants so "Log.php" doesn't need to be required by users
     // of the Log class.
-    const EMERG   = PEAR_LOG_EMERG;
-    const ALERT   = PEAR_LOG_ALERT;
-    const CRIT    = PEAR_LOG_CRIT;
-    const ERR     = PEAR_LOG_ERR;
-    const WARNING = PEAR_LOG_WARNING;
-    const NOTICE  = PEAR_LOG_NOTICE;
-    const INFO    = PEAR_LOG_INFO;
-    const DEBUG   = PEAR_LOG_DEBUG;
-    const TRACE   = PEAR_LOG_TRACE;
+    const EMERG   = 0;
+    const ALERT   = 1;
+    const CRIT    = 2;
+    const ERR     = 3;
+    const WARNING = 4;
+    const NOTICE  = 5;
+    const INFO    = 6;
+    const DEBUG   = 7;
+
+    private static $logLevels = array(
+        self::EMERG => \Monolog\Logger::EMERGENCY,
+        self::ALERT => \Monolog\Logger::ALERT,
+        self::CRIT => \Monolog\Logger::CRITICAL,
+        self::ERR => \Monolog\Logger::ERROR,
+        self::WARNING => \Monolog\Logger::WARNING,
+        self::NOTICE => \Monolog\Logger::NOTICE,
+        self::INFO => \Monolog\Logger::INFO,
+        self::DEBUG => \Monolog\Logger::DEBUG
+    );
+
+    private static $flippedLogLevels = array(
+        \Monolog\Logger::EMERGENCY => self::EMERG,
+        \Monolog\Logger::ALERT => self::ALERT,
+        \Monolog\Logger::CRITICAL => self::CRIT,
+        \Monolog\Logger::ERROR => self::ERR,
+        \Monolog\Logger::WARNING => self::WARNING,
+        \Monolog\Logger::NOTICE => self::NOTICE,
+        \Monolog\Logger::INFO => self::INFO,
+        \Monolog\Logger::DEBUG => self::DEBUG
+    );
+
+    /**
+     * Holds the loggers instantiated as singletons.
+     *
+     * @var array => [ <string> => <LoggerInterface>]
+     */
+    private static $loggers = array();
 
     /**
      * Private constructor for factory pattern.
@@ -56,7 +93,8 @@ class Log
      *   - dbLogLevel      => DB Logger log level.
      *   - mailLogLevel    => Mail logger log level.
      *
-     * @return Log
+     * @return LoggerInterface
+     * @throws Exception @see getLogger()
      */
     public static function factory(
         $ident = 'xdmod-logger',
@@ -65,24 +103,14 @@ class Log
         $conf['lineFormat']
             = isset($conf['lineFormat'])
             ? $conf['lineFormat']
-            : '%{timestamp} [%{priority}] %{message}';
+            : self::LINE_FORMAT;
 
         $conf['timeFormat']
             = isset($conf['timeFormat'])
             ? $conf['timeFormat']
-            :'%Y-%m-%d %H:%M:%S';
+            :self::TIME_FORMAT;
 
-        $loggers = self::getLoggers($ident, $conf);
-
-        $logger = \Log::factory('composite');
-
-        foreach ($loggers as $childLogger) {
-            $logger->addChild($childLogger);
-
-            // Unset variable to work around bug in some versions of the
-            // PEAR Log class that store a reference.
-            unset($childLogger);
-        }
+        $logger = self::getLogger($ident, $conf);
 
         // Catch fatal errors and log them.
         register_shutdown_function(function () use ($logger) {
@@ -92,12 +120,14 @@ class Log
                 | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED;
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
-                $logger->crit(array(
-                    'message' => $e['message'],
-                    'file'    => $e['file'],
-                    'line'    => $e['line'],
-                    'type'    => $e['type'],
-                ));
+                $logger->crit(
+                    array(
+                        'message' => $e['message'],
+                        'file'    => $e['file'],
+                        'line'    => $e['line'],
+                        'type'    => $e['type'],
+                    )
+                );
             }
 
             $logger->close();
@@ -106,16 +136,50 @@ class Log
         return $logger;
     }
 
-    protected static function getLoggers($ident, array $conf)
+    /**
+     * Attempt to retrieve a Logger for the provided $ident utilizing a static singleton pattern.
+     *
+     * @param string $ident         The string used to identify the requested logger uniquely.
+     * @param array|array[] $config The configuration array to be used if a logger needs to be instantiated.
+     * @return LoggerInterface      By default this returns a Monolog\Logger.
+     *
+     * @throws Exception            If there is a problem instantiating the requested log handlers.
+     */
+    public static function singleton($ident, array $config = array('null' => array()))
+    {
+        if (!array_key_exists($ident, self::$loggers)) {
+            self::$loggers[$ident] = self::factory($ident, $config);
+        }
+
+        return self::$loggers[$ident];
+    }
+
+    /**
+     * Retrieve a Logger w/ a handler for each type specified in $conf.
+     *
+     * @param string $ident    The unique string identifier for this logger.
+     * @param array $conf      The configuration options to be used when instantiating this loggers handlers.
+     *
+     * @return LoggerInterface By default, this returns a Monolog\Logger.
+     *
+     * @throws Exception       If there are any problems w/ instantiating the requested handlers.
+     */
+    protected static function getLogger($ident, array $conf)
     {
         $loggerTypes = array(
             'console',
             'file',
             'db',
-            'mail',
+            'mail'
         );
 
-        $loggers = array();
+        $logger = new Logger($ident);
+
+        // Short circuit the function if 'null' was asked for since this will be the only handler for the logger.
+        if ($ident === 'null') {
+            $logger->pushHandler(new NullHandler());
+            return $logger;
+        }
 
         foreach ($loggerTypes as $type) {
 
@@ -124,146 +188,169 @@ class Log
                 continue;
             }
 
-            $loggerAccessor = 'get' . ucfirst($type) . 'Logger';
+            $loggerAccessor = 'get' . ucfirst($type) . 'Handler';
+            $handler = call_user_func(array(get_called_class(), $loggerAccessor), $ident, $conf);
 
-            $loggers[] = call_user_func(
-                array(get_called_class(), $loggerAccessor),
-                $ident,
-                $conf
-            );
+            $logger->pushHandler($handler);
         }
 
-        return $loggers;
+        return $logger;
     }
 
-    protected static function getConsoleLogger($ident, array $conf)
+    /**
+     * Retrieve a new StreamHandler configured to output to stdout.
+     *
+     * This function utilizes the following $conf keys:
+     *   - consoleLogLevel: The log level at which this handler will produce a log entry. If none is provided then value
+     *                      of the 'default_level_console' property in the logger section of portal_settings.ini will be used.
+     *   - lineFormat:      The line format to be used when this handler writes a log entry.
+     *   - timeFormat:      The time format to be used when this handler writes a log entry.
+     *
+     * @param string $ident The unique string identifier for this handler's logger.
+     * @param array $conf   The configuration to be used when constructing this handler.
+     *
+     * @return HandlerInterface
+     *
+     * @throws Exception if a StreamHandler to `php://stdout` cannot be instantiated.
+     */
+    protected static function getConsoleHandler($ident, array $conf)
     {
         $consoleLogLevel
             = isset($conf['consoleLogLevel'])
             ? $conf['consoleLogLevel']
             : self::getDefaultLogLevel('console');
 
-        $consoleConf = array(
-            'lineFormat' => $conf['lineFormat'],
-            'timeFormat' => $conf['timeFormat'],
-        );
+        $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
+        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
-        $consoleLogger = \Log::factory(
-            'xdconsole',
-            '',
-            $ident,
-            $consoleConf,
-            $consoleLogLevel
-        );
-
-        return $consoleLogger;
+        return $handler;
     }
 
-    protected static function getFileLogger($ident, array $conf)
+    /**
+     * Retrieve a new StreamHandler configured to write to a file.
+     *
+     * This function utilizes the following $conf keys:
+     *   - fileLogLevel: The log level at which this handler will generate an entry.
+     *   - file:         The file that log entries are to be written to.
+     *   - mode:         The file permissions that the log file should be created with.
+     *   - lineFormat:      The line format to be used when this handler writes a log entry.
+     *   - timeFormat:      The time format to be used when this handler writes a log entry.
+     *
+     * @param string $ident The unique string identifier for this handlers Logger.
+     * @param array $conf   The configuration to be used when constructing this handler.
+     *
+     * @return HandlerInterface
+     *
+     * @throws Exception If there is a problem instantiating the StreamHandler to the requested file.
+     */
+    protected static function getFileHandler($ident, array $conf)
     {
         $fileLogLevel
             = isset($conf['fileLogLevel'])
             ? $conf['fileLogLevel']
             : self::getDefaultLogLevel('file');
 
-        $conf['file']
+        $file
             = isset($conf['file'])
             ? $conf['file']
             : LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident))
             . '.log';
 
-        $conf['mode'] = isset($conf['mode']) ? $conf['mode'] : 0660;
-        $conf['dirmode'] = isset($conf['dirmode']) ? $conf['dirmode'] : 0770;
+        $filePermission = isset($conf['mode']) ? $conf['mode'] : 0660;
 
-        $fileConf = array(
-            'append'     => true,
-            'mode'       => $conf['mode'],
-            'dirmode'    => $conf['dirmode'],
-            'lineFormat' => $conf['lineFormat'],
-            'timeFormat' => $conf['timeFormat'],
-        );
+        $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
+        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
-        $fileLogger = \Log::factory(
-            'xdfile',
-            $conf['file'],
-            $ident,
-            $fileConf,
-            $fileLogLevel
-        );
-
-        return $fileLogger;
+        return $handler;
     }
 
-    protected static function getDbLogger($ident, array $conf)
+    /**
+     * Retrieve a concrete implementation of Monolog's HandlerInterface ( by default, \CCR\CCRDBHandler ) that will
+     * write log entries to a database.
+     *
+     * This function utilizes the following $conf keys:
+     *   - dbLogLevel: The log level at which this handler will generate an entry.
+     *
+     * @param string $ident The unique string identifier for this handlers Logger.
+     * @param array $conf   The configuration to be used when constructing this handler.
+     *
+     * @return HandlerInterface
+     *
+     * @throws Exception @see CCRDBHandler::__construct
+     */
+    protected static function getDbHandler($ident, array $conf)
     {
         $dbLogLevel
             = isset($conf['dbLogLevel'])
             ? $conf['dbLogLevel']
             : self::getDefaultLogLevel('db');
 
-        $dbHost  = self::getConfiguration('host');
-        $dbPort  = self::getConfiguration('port');
-        $dbUser  = self::getConfiguration('user');
-        $dbPass  = self::getConfiguration('pass');
-        $dbName  = self::getConfiguration('database');
-        $dbTable = self::getConfiguration('table');
-
-        $dbConf = array(
-            'dsn' => "mysql://$dbUser:$dbPass@$dbHost:$dbPort/$dbName",
-            'identLimit' => 32,
-        );
-
-        $dbLogger = \Log::factory(
-            'xdmdb2',
-            $dbTable,
-            $ident,
-            $dbConf,
-            $dbLogLevel
-        );
-
-        return $dbLogger;
+        return new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
     }
 
-    protected static function getMailLogger($ident, array $conf)
+    /**
+     * Retrieve a Monolog NativeMailHandler to facilitate logging directly to an email.
+     *
+     * This function utilizes the following $conf keys:
+     *   - mailLogLevel:   The log level at which this handler will generate an email.
+     *   - emailFrom:      The value to be used as the 'from' field.
+     *   - emailTo:        The value to be used as the 'to'  field.
+     *   - emailSubject:   The value to be used as the 'subject' field.
+     *   - maxColumnWidth: The maximum column width that the message lines will have.
+     *
+     * @param string $ident The unique string identifier for this handlers Logger.
+     * @param array $conf   The configuration to be used when constructing this handler.
+     *
+     * @return HandlerInterface
+     *
+     * @throws Exception @see self::getConfiguration()
+     */
+    protected static function getMailHandler($ident, array $conf)
     {
         $mailLogLevel
             = isset($conf['mailLogLevel'])
             ? $conf['mailLogLevel']
             : self::getDefaultLogLevel('mail');
 
-        $conf['emailFrom']
+        $from
             = isset($conf['emailFrom'])
             ? $conf['emailFrom']
             : self::getConfiguration('email_from');
 
-        $conf['emailTo']
+        $to
             = isset($conf['emailTo'])
             ? $conf['emailTo']
             : self::getConfiguration('email_to');
 
-        $conf['emailSubject']
+        $subject
             = isset($conf['emailSubject'])
             ? $conf['emailSubject']
             : self::getConfiguration('email_subject');
 
-        $mailConf = array(
-            'subject'    => $conf['emailSubject'],
-            'from'       => $conf['emailFrom'],
-            'lineFormat' => $conf['lineFormat'],
-            'timeFormat' => $conf['timeFormat'],
-        );
+        $maxColumnWidth = array_key_exists('maxColumnWidth', $conf) ? $conf['maxColumnWidth'] : 70;
 
-        $mailLogger = \Log::factory(
-            'xdmailer',
-            $conf['emailTo'],
-            $ident,
-            $mailConf,
-            $mailLogLevel
-        );
-
-        return $mailLogger;
+        return new NativeMailerHandler($to, $subject, $from, self::convertToMonologLevel($mailLogLevel), true, $maxColumnWidth);
     }
 
+    /**
+     * Retrieves the 'default_level_$logType' property from portal_settings.ini and then returns the class constant that
+     * corresponds this value. If the property is not found, or there is not a corresponding class constant, then
+     * self::WARNING will be returned.
+     *
+     * i.e.
+     * $logType = 'console';
+     *
+     * portal_settings.ini
+     * ```ini
+     * [logger]
+     * default_level_console = "NOTICE"
+     * ```
+     *
+     * returns self::NOTICE;
+     *
+     * @param string $logType The log handler type to be used when retrieving the default log level.
+     * @return int that corresponds w/ this class' constants. i.e. EMERG, ALERT, CRIT, ERR, WARNING, NOTICE, INFO, DEBUG
+     */
     protected static function getDefaultLogLevel($logType)
     {
         $option = 'default_level_' . $logType;
@@ -278,6 +365,45 @@ class Log
         return $level;
     }
 
+    /**
+     * Convert a \Monolog\Logger log level value to a CCR\Log log level.
+     *
+     * @param int $monologLevel the Monolog log level to be converted to a CCR log level.
+     * @return int the CCR log level that corresponds to the provided $monologLevel.
+     * @throws Exception if the provided $monologLevel is not found.
+     */
+    public static function convertToCCRLevel($monologLevel)
+    {
+        if (array_key_exists($monologLevel, self::$flippedLogLevels)) {
+            return self::$flippedLogLevels[$monologLevel];
+        }
+        throw new Exception('Unknown Log Level');
+    }
+
+    /**
+     * Convert a \CCR\Log log level value to a \Monolog\Logger log level.
+     *
+     * @param int $ccrLevel
+     * @return int the Monolog log level that corresponds to the provided $ccrLevel
+     * @throws Exception if the provided $ccrlLevel is not found.
+     */
+    public static function convertToMonologLevel($ccrLevel)
+    {
+        if (array_key_exists($ccrLevel, self::$logLevels)) {
+            return self::$logLevels[$ccrLevel];
+        }
+        throw new Exception('Unknown Log Level');
+    }
+
+    /**
+     * Retrieves the specified $option from the logger section of portal_settings.ini
+     *
+     * @param string $option The option to be retrieved from portal_settings.ini
+     * @return mixed         The value of $option in the logger section of portal_settings.ini.
+     *
+     * @throws Exception    If $option is not found in the logger section.
+     * @throws Exception    If the value of $option is empty.
+     */
     protected static function getConfiguration($option)
     {
         return xd_utilities\getConfiguration('logger', $option);

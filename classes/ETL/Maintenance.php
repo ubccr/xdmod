@@ -13,7 +13,7 @@ namespace ETL;
 use ETL\Configuration\EtlConfiguration;
 use ETL\Maintenance\MaintenanceOptions;
 use Exception;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class Maintenance
 {
@@ -43,7 +43,7 @@ class Maintenance
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function factory(MaintenanceOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public static function factory(MaintenanceOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $options->verify();
 

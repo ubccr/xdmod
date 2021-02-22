@@ -20,8 +20,7 @@
 
 namespace ETL\State;
 
-// PEAR logger
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 use Exception;
 use PDO;
@@ -47,7 +46,7 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($key, $actionName, $type, stdClass $options = null, Log $logger = null)
+    public function __construct($key, $actionName, $type, stdClass $options = null, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

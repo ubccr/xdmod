@@ -15,7 +15,7 @@
 
 namespace Configuration;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 interface iConfigFileKeyTransformer
@@ -27,7 +27,7 @@ interface iConfigFileKeyTransformer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(Log $logger = null);
+    public function __construct(LoggerInterface $logger = null);
 
     /* ------------------------------------------------------------------------------------------
      * Return TRUE if the key is supported by this transformer

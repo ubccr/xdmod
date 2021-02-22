@@ -16,7 +16,7 @@
 
 namespace ETL\DataEndpoint\Filter;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 class ExternalProcess extends \php_user_filter
 {
@@ -155,8 +155,8 @@ class ExternalProcess extends \php_user_filter
             return false;
         }
 
-        if ( isset($this->params->logger) && ! $this->params->logger instanceof Log ) {
-            fwrite(STDERR, "Invalid logger, expected Log and got " . gettype($this->params->logger) . "\n");
+        if ( isset($this->params->logger) && ! $this->params->logger instanceof LoggerInterface ) {
+            fwrite(STDERR, "Invalid logger, expected LoggerInterface and got " . gettype($this->params->logger) . "\n");
             return false;
         }
 

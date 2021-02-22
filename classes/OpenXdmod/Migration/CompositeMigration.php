@@ -7,6 +7,8 @@
 
 namespace OpenXdmod\Migration;
 
+use Psr\Log\LoggerInterface;
+
 class CompositeMigration extends Migration
 {
 
@@ -37,7 +39,7 @@ class CompositeMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         parent::setLogger($logger);
 

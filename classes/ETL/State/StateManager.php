@@ -19,9 +19,10 @@
 
 namespace ETL\State;
 
+use CCR\Log;
 use Exception;
-use Log;
 use PDO;
+use Psr\Log\LoggerInterface;
 use stdClass;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 
@@ -48,10 +49,10 @@ class StateManager
      * ------------------------------------------------------------------------------------------
      */
 
-    private static function logAndThrowException($msg, Log $logger = null, $logLevel = PEAR_LOG_ERR)
+    private static function logAndThrowException($msg, LoggerInterface $logger = null, $logLevel = Log::ERR)
     {
         if ( null !== $logger ) {
-            $logger->log($msg, $logLevel);
+            $logger->log($logLevel, $msg);
         }
         throw new Exception($msg);
     }  // logAndThrowException()
@@ -79,7 +80,7 @@ class StateManager
     public static function get(
         $actionName,
         iRdbmsEndpoint $endpoint,
-        Log $logger = null,
+        LoggerInterface $logger = null,
         $key = null,
         stdClass $options = null)
     {
@@ -135,7 +136,7 @@ class StateManager
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function load($key, iRdbmsEndpoint $endpoint, Log $logger = null)
+    public static function load($key, iRdbmsEndpoint $endpoint, LoggerInterface $logger = null)
     {
         if ( empty($key) || ! is_string($key) ) {
             $msg = "Key must be a non-empty string";
@@ -211,7 +212,7 @@ WHERE state_key = ?";
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function delete($identifier, iRdbmsEndpoint $endpoint, Log $logger = null)
+    public static function delete($identifier, iRdbmsEndpoint $endpoint, LoggerInterface $logger = null)
     {
         $key = null;
 
@@ -273,7 +274,7 @@ WHERE state_key = ?";
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function save(iActionState $stateObj, $actionName, iRdbmsEndpoint $endpoint, Log $logger = null)
+    public static function save(iActionState $stateObj, $actionName, iRdbmsEndpoint $endpoint, LoggerInterface $logger = null)
     {
 
         if ( empty($actionName) || ! is_string($actionName) ) {
@@ -343,7 +344,7 @@ ON DUPLICATE KEY UPDATE
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function getList(iRdbmsEndpoint $endpoint, Log $logger = null)
+    public static function getList(iRdbmsEndpoint $endpoint, LoggerInterface $logger = null)
     {
         $tableName = $endpoint->getSchema(true) . "." . $endpoint->quoteSystemIdentifier(self::STATE_TABLE);
         $sql = "SELECT
