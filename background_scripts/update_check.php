@@ -20,10 +20,10 @@ $logger = Log::factory('update-check', $conf);
 try {
     main();
 } catch (Exception $e) {
-    $logger->err(array(
-        'message'    => $e->getMessage(),
-        'stacktrace' => $e->getTraceAsString(),
-    ));
+    do {
+        fwrite(STDERR, $e->getMessage() . "\n");
+        fwrite(STDERR, $e->getTraceAsString() . "\n");
+    } while ($e = $e->getPrevious());
     exit(1);
 }
 
