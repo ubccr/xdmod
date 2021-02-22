@@ -1,6 +1,7 @@
 <?php
 namespace DataWarehouse\Query\Cloud;
 
+use Psr\Log\LoggerInterface;
 use \DataWarehouse\Query\Model\Table;
 use \DataWarehouse\Query\Model\TableField;
 use \DataWarehouse\Query\Model\FormulaField;
@@ -23,7 +24,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $groupById = null,
         $statisticId = null,
         array $parameters = array(),
-        Log $logger = null
+        LoggerInterface $logger = null
     ) {
         $realmId = 'Cloud';
         $schema = 'modw_cloud';
