@@ -9,9 +9,6 @@ describe('Single Sign On Login', () => {
         browser.waitAndClick('#SSOLoginLink');
     });
     it('Should goto the Single Sign On login page and login', () => {
-        browser.waitUntil(() => {
-            return browser.getTitle() === 'Simple Identity Provider';
-        }, 30000);
         browser.waitForVisible('form[action="/signin"]', 30000);
         browser.submitForm('form[action="/signin"]');
     });

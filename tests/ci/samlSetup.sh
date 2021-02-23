@@ -240,17 +240,3 @@ EOF
 
 node app.js  --acs https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://localhost/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start
-
-echo "Waiting for SimpleSAML Server to startup..."
-for i in {1..30}
-do
-    curl -k https://localhost:7000 > /dev/null 2>&1
-    if [[ $? != 0 ]]; then
-        echo -n .
-        sleep 1;
-    else
-        echo ""
-        echo "SimpleSAML Server Up!"
-        break;
-    fi
-done
