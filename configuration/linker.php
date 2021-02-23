@@ -2,11 +2,8 @@
 
 use CCR\Log;
 
-$dir = dirname(__FILE__);
-$baseDir = dirname($dir);
+$baseDir = dirname(dirname(__FILE__));
 
-require_once($dir . '/constants.php');
-require_once($baseDir . '/libraries/utilities.php');
 require_once($baseDir . "/vendor/autoload.php");
 
 $linkerConfig = \Configuration\XdmodConfiguration::assocArrayFactory('linker.json', CONFIG_DIR);
@@ -46,16 +43,6 @@ function xdmodAutoload($className)
 }
 
 spl_autoload_register('xdmodAutoload');
-
-$libraries = scandir($baseDir . '/libraries');
-
-foreach ($libraries as $library) {
-    $file = "$baseDir/libraries/$library";
-    if (is_dir($file)) {
-        continue;
-    }
-    require_once($file);
-}
 
 class HttpCodeMessages
 {
