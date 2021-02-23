@@ -69,6 +69,8 @@ jobs:
           path: /tmp/screenshots
       - store_artifacts:
           path: /var/log/xdmod
+      - store_test_results:
+          path: ~/phpunit
 
 workflows:
   full-build:
