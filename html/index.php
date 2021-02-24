@@ -86,9 +86,9 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
-<head lang="en">
+<head>
 
     <!-- <meta http-equiv="X-UA-Compatible" content="IE=9" /> -->
     <meta charset="utf-8"/>
