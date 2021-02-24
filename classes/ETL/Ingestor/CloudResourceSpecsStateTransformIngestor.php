@@ -7,6 +7,8 @@
  *
  * If no changes are found the current date is considered the end date of the configuration
  *
+ * A -1 value for the vcpus and memory_mb means the host was not available on that day
+ *
  * @author Greg Dean <gmdean@buffalo.edu>
  * @date 2021-01-27
  */
