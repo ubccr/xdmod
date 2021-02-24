@@ -34,8 +34,11 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-      - run: mkdir -p ~/phpunit
-      - run: mkdir /tmp/screenshots
+      - run:
+          name: Create Test Artifact Directories
+          command: |
+            mkdir ~/phpunit
+            mkdir /tmp/screenshots
       - run:
           name: Setup Environment Variables
           command: |
@@ -49,10 +52,13 @@ jobs:
       - run: ./tests/ci/scripts/qa-test-setup.sh
       - run: composer install --no-progress
       - run: ./tests/regression/runtests.sh
-      - run: mv ./configuration/organization.json ./configuration/organization.json.old
-      - run: mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
-      - run: cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
-      - run: cp /etc/xdmod/organization.json ./configuration/organization.json
+      - run:
+          name: Setup Configuration Files for Integration Tests
+          command: |
+            mv ./configuration/organization.json ./configuration/organization.json.old
+            mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
+            cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
+            cp /etc/xdmod/organization.json ./configuration/organization.json
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
