@@ -1,13 +1,12 @@
 <?php
+/**
+ * Update database from version 9.0.0 To 9.5.0.
+ */
+
 namespace OpenXdmod\Migration\Version900To950;
 
-use Exception;
-use OpenXdmod\Setup\Console;
-use FilterListBuilder;
 use CCR\DB;
 use ETL\Utilities;
-use Xdmod\SlurmResourceParser;
-use Xdmod\PbsResourceParser;
 
 /**
 * Migrate databases from version 9.0.0 to 9.5.0.
