@@ -5,6 +5,24 @@
             "namespace": "ETL\\Maintenance",
             "class": "ExecuteSql",
             "options_class": "MaintenanceOptions"
+          },
+         "cloud-migration-9_0_0-9_5_0": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                }
+             }
         }
     },
     "migration-9_0_0-9_5_0": [
@@ -83,6 +101,31 @@
                     "schema": "mod_shredder"
                 }
             }
+        }
+    ],
+    "cloud-migration-9_0_0-9_5_0": [
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ],
+            "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Aggregate DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_aggregates",
+                  "create_schema_if_not_exists": true,
+                  "truncate_destination": true
+              }
+           }
         }
     ]
 }
