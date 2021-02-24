@@ -1,5 +1,5 @@
 <?php
-namespace OpenXdmod\Migration\Version851To900;
+namespace OpenXdmod\Migration\Version900To950;
 
 use Exception;
 use OpenXdmod\Setup\Console;
