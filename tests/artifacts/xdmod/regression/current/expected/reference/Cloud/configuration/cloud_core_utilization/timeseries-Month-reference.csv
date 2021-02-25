@@ -6,5 +6,9 @@ start,end
 2018-04-18,2018-04-30
 ---------
 Month,"[c1.m4] Core Hour Utilization (%)","[c4.m16] Core Hour Utilization (%)","[c2.m4] Core Hour Utilization (%)","[c1.m1] Core Hour Utilization (%)","[c2.m8] Core Hour Utilization (%)"
+<<<<<<< HEAD
 2018-04,0.7479,0.3498,0.3466,0.0055,0.0004
+=======
+2018-04,0.7919,0.3704,0.3670,0.0058,0.0004
+>>>>>>> 8708fab90c913fd3ff5161fd2a54b7609b31c779
 ---------

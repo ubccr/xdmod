@@ -6,5 +6,9 @@ start,end
 2018-04-18,2018-04-30
 ---------
 Project,"Core Hour Utilization (%)"
+<<<<<<< HEAD
 zealous,0.2524
+=======
+zealous,0.2786
+>>>>>>> 8708fab90c913fd3ff5161fd2a54b7609b31c779
 ---------
