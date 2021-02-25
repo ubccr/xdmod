@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "$ref": "../etl_tables_8.0.0.d/cloud_resource_specs.json#/table_definition"
+    },
+    "destination_record_map": {
+        "cloud_resource_specs": {
+            "resource_id": "resource_id",
+            "hostname": "hostname",
+            "vcpus": "vcpus",
+            "memory_mb": "memory_mb",
+            "start_date_ts": "start_date_ts",
+            "end_date_ts": "end_date_ts",
+            "start_day_id": "start_day_id",
+            "end_day_id": "end_day_id"
+        }
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "srs.resource_id",
+            "hostname": "srs.hostname",
+            "vcpus": "srs.vcpus",
+            "memory_mb": "srs.memory_mb",
+            "start_date_ts": "srs.fact_date",
+            "end_date_ts": -1,
+            "start_day_id": -1,
+            "end_day_id": -1
+        },
+        "joins": [{
+            "name": "staging_resource_specifications",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "srs"
+        }]
+    }
+}
