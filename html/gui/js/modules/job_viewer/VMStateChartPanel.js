@@ -49,8 +49,8 @@ XDMoD.Module.JobViewer.VMStateChartPanel = Ext.extend(Ext.Panel, {
         load_record: function (panel, record) {
             var self = this;
             // The active_states are event types that correlate to the following events,
-            //START = 2, RESUME = 8, STATE_REPORT = 16, const UNSHELVE = 20, const UNSUSPEND = 61,
-            //POWER_ON = 59, UNPAUSE_END = 57
+            // START = 2, RESUME = 8, STATE_REPORT = 16, const UNSHELVE = 20, const UNSUSPEND = 61,
+            // POWER_ON = 59, UNPAUSE_END = 57
             var active_states = [2, 8, 16, 20, 57, 59, 61];
 
             // The inactive_states are event types that correlate to the following events,
