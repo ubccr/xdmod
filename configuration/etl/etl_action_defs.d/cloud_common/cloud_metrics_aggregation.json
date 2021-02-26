@@ -83,6 +83,7 @@
                   "on": "task_resource.id = sr.resource_id"
               }
             ],
+            "#": "The start_event_type_ids correlate to the following events, START = 2, RESUME = 8, STATE_REPORT = 16, const UNSHELVE = 20, const UNSUSPEND = 61, POWER_ON = 59, UNPAUSE_END = 57",
             "where": [
               "sr.start_day_id <= ${:PERIOD_END_DAY_ID} AND sr.end_day_id >= ${:PERIOD_START_DAY_ID}",
               "sr.instance_type != \"Unknown\"",

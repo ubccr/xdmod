@@ -37,7 +37,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     const RESUME = 8;
     const STATE_REPORT = 16;
     const UNSHELVE = 20;
-    const UNPAUSE = 57;
     const UNSUSPEND = 61;
     const POWER_ON = 59;
     const STOP = 4;
