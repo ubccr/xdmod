@@ -242,6 +242,48 @@
             "time": "2021-01-14T11:07:16+00:00"
         },
         {
+            "name": "cytoscape/cytoscape",
+            "version": "3.16.1",
+            "dist": {
+                "type": "file",
+                "url": "https://github.com/cytoscape/cytoscape.js/blob/v3.16.1/dist/cytoscape.min.js",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "vanilla-plugin",
+            "extra": {
+                "installer-name": "cytoscape"
+            },
+            "license": [
+                "MIT"
+            ],
+            "homepage": "https://github.com/cytoscape/cytoscape.js"
+        },
+        {
+            "name": "cytoscape/cytoscape-dagre",
+            "version": "2.3.2",
+            "dist": {
+                "type": "file",
+                "url": "https://github.com/cytoscape/cytoscape.js-dagre/blob/v2.3.2/cytoscape-dagre.js",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "vanilla-plugin",
+            "extra": {
+                "installer-name": "cytoscape-dagre"
+            },
+            "license": [
+                "MIT"
+            ],
+            "homepage": "https://github.com/cytoscape/cytoscape.js-dagre"
+        },
+        {
             "name": "doctrine/lexer",
             "version": "1.0.2",
             "source": {

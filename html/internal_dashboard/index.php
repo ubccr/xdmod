@@ -207,6 +207,10 @@ require_once 'user_check.php';
   <script type="text/javascript" src="js/etl_viewer/ETLViewerTree.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewerTreePanel.js"></script>
 
+  // ETL Viewer Dependencies
+  <script type="text/javascript" src="../gui/lib/cytoscape/cytoscape.min.js"></script>
+  <script type="text/javascript" src="../gui/lib/cytoscape-dagre/cytoscape-dagre.js"></script>
+
   <?php echo \OpenXdmod\Assets::generateAssetTags('internal_dashboard'); ?>
 
     <script type="text/javascript">
