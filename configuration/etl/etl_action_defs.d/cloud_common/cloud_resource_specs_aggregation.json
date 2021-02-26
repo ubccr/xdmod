@@ -27,7 +27,7 @@
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
                 "resource_id": "crs.resource_id",
-                "core_time_available": "COALESCE(SUM(${wallduration}) * crs.vcpus, 0)"
+                "core_time_available": "COALESCE(SUM(${wallduration} * crs.vcpus), 0)"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
