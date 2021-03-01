@@ -42,6 +42,13 @@
         "name": "job_id"
       },
       {
+        "type": "int(11)",
+        "nullable": false,
+        "default": "-1",
+        "comment": "Local job id on the submitting gateway",
+        "name": "gateway_job_id"
+      },
+      {
         "type": "datetime",
         "nullable": false,
         "comment": "Date when job was submitted or run",
@@ -81,6 +88,7 @@
           "gateway_id",
           "username_id",
           "job_id",
+          "gateway_job_id",
           "job_datetime"
         ],
         "type": "BTREE",
