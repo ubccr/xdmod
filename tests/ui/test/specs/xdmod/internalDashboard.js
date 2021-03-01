@@ -172,6 +172,7 @@ describe('Internal Dashboard', function () {
                     browser.waitForInvisible(page.selectors.create_manage_users.loading_mask);
                 });
                 it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
+                    browser.waitForInvisible(page.selectors.create_manage_users.current_users.settings.noUserSelectedModal());
                     if ('dropdown' === setting.type) {
                         const inputTrigger = page.selectors.create_manage_users.current_users.settings.dropDownTriggerByLabel(setting.label);
                         browser.waitForVisible(inputTrigger);
@@ -229,7 +230,11 @@ describe('Internal Dashboard', function () {
                     const inputType = 'dropdown' === setting.type ? 'text' : setting.type;
                     const inputElem = page.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, inputType);
 
-                    browser.waitForVisible(inputElem);
+                    // We need to wait for this mask to be hidden as that is the indicator that the user's information
+                    // has been populated.
+                    browser.waitForInvisible(page.selectors.create_manage_users.current_users.settings.noUserSelectedModal());
+
+                    browser.waitForValue(inputElem);
                     const inputValue = browser.getValue(inputElem);
                     expect(inputValue).to.equal(setting.original);
                 });
@@ -261,6 +266,7 @@ describe('Internal Dashboard', function () {
                     browser.waitForInvisible(page.selectors.create_manage_users.loading_mask);
                 });
                 it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
+                    browser.waitForInvisible(page.selectors.create_manage_users.current_users.settings.noUserSelectedModal());
                     if ('dropdown' === setting.type) {
                         const inputTrigger = page.selectors.create_manage_users.current_users.settings.dropDownTriggerByLabel(setting.label);
                         browser.waitForVisible(inputTrigger);

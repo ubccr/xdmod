@@ -85,8 +85,8 @@
     "ingest-cloud-resource-specs": [
         {
             "name": "CloudResourceSpecsReconstructor",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_common/resource_specifications.json",
+            "class": "CloudResourceSpecsStateTransformIngestor",
+            "definition_file": "cloud_common/resource_specifications_transformer.json",
             "description": "Sets a start and end time for memory and vcpu paring for a compute node on a cloud resource"
         }
     ],

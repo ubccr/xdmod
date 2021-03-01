@@ -200,12 +200,12 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'http://localhost:7000',
+      'Location' => 'https://localhost:7000',
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'http://localhost:7000',
+      'Location' => 'https://localhost:7000',
     ),
   ),
   'SingleLogoutService' =>
@@ -213,7 +213,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'http://localhost:7000/signout',
+      'Location' => 'https://localhost:7000/signout',
     ),
   ),
   'ArtifactResolutionService' =>
@@ -238,5 +238,5 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
 );
 EOF
 
-node app.js  --acs https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://localhost/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https false > /var/log/xdmod/samlidp.log 2>&1 &
+node app.js  --acs https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://localhost/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start
