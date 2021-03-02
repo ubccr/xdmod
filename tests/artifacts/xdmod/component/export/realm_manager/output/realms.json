@@ -1,14 +1,18 @@
 {
     "Batch exportable realms": [
-        [
-            {
+        {
+            "0" : {
                 "name": "Jobs",
                 "display": "Jobs"
             },
-            {
+            "1" : {
+                "name": "Cloud",
+                "display": "Cloud"
+            },
+            "2" : {
                 "name": "Gateways",
                 "display": "Gateways"
             }
-        ]
+        }
     ]
 }

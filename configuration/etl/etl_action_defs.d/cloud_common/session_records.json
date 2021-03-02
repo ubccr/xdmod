@@ -14,6 +14,8 @@
             "instance_type_id": "itt.instance_type_id",
             "num_cores": "itt.num_cores",
             "memory_mb": "itt.memory_mb",
+            "processorbucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.processor_buckets pb WHERE itt.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
+            "memorybucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.memory_buckets mb WHERE itt.memory_mb BETWEEN mb.min_memory AND mb.max_memory)",
             "disk_gb": "itt.disk_gb",
             "start_time_ts": "FLOOR(e.start_time_ts)",
             "end_time_ts": "FLOOR(e.end_time_ts)",
@@ -24,7 +26,11 @@
             "systemaccount_id": "ev.systemaccount_id",
             "submission_venue_id": "ev.submission_venue_id",
             "domain_id": "ev.domain_id",
-            "service_provider": "ev.service_provider"
+            "service_provider": "ev.service_provider",
+            "account_id": "a.account_id",
+            "principalinvestigator_person_id": "a.principalinvestigator_person_id",
+            "fos_id": "a.fos_id",
+            "host_id": "ev.host_id"
         },
         "joins": [
             {
@@ -55,6 +61,13 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "itt",
                 "on": "itt.resource_id = it.resource_id AND itt.instance_type_id = itd.instance_type_id"
+            },
+            {
+                "name": "account",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "a",
+                "type": "LEFT",
+                "on": "it.account_id = a.account_id"
             }
         ],
         "orderby": [
