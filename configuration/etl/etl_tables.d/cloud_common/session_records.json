@@ -5,6 +5,12 @@
         "engine": "MyISAM",
         "columns": [
             {
+                "name": "session_id",
+                "type": "bigint(20) unsigned",
+                "extra": "auto_increment",
+                "nullable": false
+            },
+            {
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false
@@ -53,6 +59,18 @@
                 "name": "memory_mb",
                 "type": "int(11)",
                 "nullable": false
+            },
+            {
+                "name": "processorbucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processor_buckets.id"
+            },
+            {
+                "name": "memorybucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memory_buckets.id"
             },
             {
                 "name": "disk_gb",
@@ -115,6 +133,32 @@
                 "name": "service_provider",
                 "type": "int(11)",
                 "nullable": false
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "DIMENSION: The PI that owns the allocations that these VM's ran under. References principalinvestigator.person_id"
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "DIMENSION: The field of science of the project to which the jobs belong"
+            },
+            {
+                "name": "host_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "DIMENSION: The host the VM is located on"
             }
         ],
         "indexes": [
@@ -123,8 +167,14 @@
                 "columns": [
                     "resource_id",
                     "instance_id",
-                    "start_time_ts"
+                    "start_time_ts",
+                    "start_event_type_id"
                 ],
+                "is_unique": true
+            },
+            {
+                "name": "increment_key",
+                "columns": ["session_id"],
                 "is_unique": true
             },
             {

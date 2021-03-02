@@ -1171,6 +1171,26 @@
             "time": "2013-11-22T08:30:29+00:00"
         },
         {
+            "name": "plotly/plotly",
+            "version": "1.57.1",
+            "dist": {
+                "type": "file",
+                "url": "https://cdn.plot.ly/plotly-1.57.1.min.js",
+                "shasum": "ccf99902ea104599c3b5b4811e83b8ee8118aad3"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "vanilla-plugin",
+            "extra": {
+                "installer-name": "plotly"
+            },
+            "license": [
+                "MIT"
+            ],
+            "homepage": "https://github.com/plotly/plotly.js"
+        },
+        {
             "name": "psr/log",
             "version": "1.1.3",
             "source": {

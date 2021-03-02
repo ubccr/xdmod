@@ -7,6 +7,10 @@
             {
                 "id": "Jobs",
                 "name": "Jobs"
+            },
+            {
+                "id": "Cloud",
+                "name": "Cloud"
             }
         ]
     ],
@@ -18,6 +22,10 @@
             {
                 "id": "Jobs",
                 "name": "Jobs"
+            },
+            {
+                "id": "Cloud",
+                "name": "Cloud"
             }
         ]
     ],
@@ -29,6 +37,10 @@
             {
                 "id": "Jobs",
                 "name": "Jobs"
+            },
+            {
+                "id": "Cloud",
+                "name": "Cloud"
             }
         ]
     ],
@@ -40,6 +52,10 @@
             {
                 "id": "Jobs",
                 "name": "Jobs"
+            },
+            {
+                "id": "Cloud",
+                "name": "Cloud"
             }
         ]
     ],
@@ -51,6 +67,10 @@
             {
                 "id": "Jobs",
                 "name": "Jobs"
+            },
+            {
+                "id": "Cloud",
+                "name": "Cloud"
             }
         ]
     ],

@@ -12,4 +12,5 @@ abstract class RawQueryTypes
     const DETAILED_METRICS   = 5;
     const TIMESERIES_METRICS = 6;
     const ANALYTICS          = 7;
+    const VM_INSTANCE        = 8;
 }
