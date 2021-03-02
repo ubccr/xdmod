@@ -136,7 +136,7 @@
                 "tableAlias": "p",
                 "column": "long_name",
                 "group": "Administration",
-                "documentation": "The name of the gateway proxy user under which the job was run.",
+                "documentation": "The name of the gateway from which the job was submitted.",
                 "batchExport": true
             },
             {
