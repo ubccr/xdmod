@@ -130,4 +130,11 @@ then
     fi
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
+
+    if [[ "$XDMOD_REALMS" == *"cloud"* ]];
+    then
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack -q
+        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack -q
+        sudo -u xdmod xdmod-ingestor
+    fi
 fi

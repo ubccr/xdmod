@@ -12,7 +12,8 @@
     "most_privileged_role": "User",
     "person_id": "-1",
     "raw_data_allowed_realms": [
-        "Jobs"
+        "Jobs",
+        "Cloud"
     ]
   }
 }
