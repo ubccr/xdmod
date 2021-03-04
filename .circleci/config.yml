@@ -10,7 +10,7 @@ executors:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-9.0.0:centos7.8-0.1
   centos8:
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/centos8:base
+      - image: tools-ext-01.ccr.xdmod.org/centos8-0.1:base
 jobs:
   build:
     parameters:
