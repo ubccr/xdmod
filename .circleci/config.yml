@@ -8,7 +8,7 @@ executors:
   centos7:
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-9.0.0:centos7.8-0.1
-  centos8:
+  centos8: &centos8-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/centos8-0.1:base
 jobs:
@@ -81,6 +81,19 @@ jobs:
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
+      - when:
+          condition:
+            equal: [ *centos8-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Update the chromdriver version for Centos8
+                command: sed -i 's/84.0.1/88.0.0/' /root/project/tests/ui/package.json
+            - run:
+                name: Install new chromdriver
+                command: |
+                  cd /root/project/tests/ui
+                  npm install
+                  cd /root/project
       - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
       - run:
           name: 'Run SSO Tests'
