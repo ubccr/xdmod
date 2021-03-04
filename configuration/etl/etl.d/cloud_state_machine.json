@@ -32,6 +32,18 @@
             "description": "Reconstructs discrete runs from cloud events"
         },
         {
+            "name": "delete-session-records",
+            "class": "DeleteSessionRecords",
+            "definition_file": "cloud_common/cloud_state.json",
+            "description": "Deletes session records for VM instances that are being aggregated",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_common/delete_session_records.sql"
+            ]
+        },
+        {
             "name": "cloud-session-records",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_common/session_records.json",
