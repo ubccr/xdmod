@@ -9,24 +9,6 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     // Used when running in hash-generation mode.
     protected static $imagehashes = array();
 
-    /**
-     * An array that will contain OS specific information, if available.
-     *
-     * @var array|false
-     */
-    protected static $osInfo = array();
-
-    public static function setupBeforeClass()
-    {
-        // Attempt to retrieve information on what OS the tests are being run on so that we can select the correct
-        // expected output.
-        try {
-            self::$osInfo = parse_ini_file('/etc/os-release');
-        } catch (\Exception $e) {
-            // If the file is not readable then code will need to account for an empty array.
-        }
-    }
-
     public static function tearDownAfterClass()
     {
         self::$helper->logout();
@@ -81,9 +63,16 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $expectedHashes = array();
         $hashFiles = array();
 
+        $osInfo = false;
+        try {
+            $osInfo = parse_ini_file('/etc/os-release');
+        } catch (\Exception $e) {
+            // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
+        }
+
         // If we have OS info available to us then look for an OS specific expected output file based on this info.
-        if (self::$osInfo !== false && isset(self::$osInfo['VERSION_ID']) && isset(self::$osInfo['ID'])) {
-            $hashFiles[] = sprintf("expected-%s%s.json", self::$osInfo['ID'], self::$osInfo['VERSION_ID']);
+        if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
+            $hashFiles[] = sprintf("expected-%s%s.json", $osInfo['ID'], $osInfo['VERSION_ID']);
         }
         // Otherwise try the default expected.json
         $hashFiles[] = 'expected.json';
