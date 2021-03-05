@@ -185,6 +185,19 @@ $metadata['urn:example:idp'] = array (
 );
 ```
 
+You can also add an optional `icon` property to the metadata. This defines the image that
+is displayed in the login dialog box. The icon can be defined as an inline base64 encoded
+image or a path to an image file (relative to the webserver root). The login box form
+layout is designed for an image that is 272 pixels wide.
+
+```php
+<?php
+$metadata['urn:example:idp'] = array (
+   ...
+   'icon' => 'gui/images/[SSO_LOGIN_ICON].png'
+)
+```
+
 ## Web Server Setup
 
 ### Apache
