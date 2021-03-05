@@ -9,6 +9,24 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     // Used when running in hash-generation mode.
     protected static $imagehashes = array();
 
+    /**
+     * An array that will contain OS specific information, if available.
+     *
+     * @var array|false
+     */
+    protected static $osInfo = array();
+
+    public static function setupBeforeClass()
+    {
+        // Attempt to retrieve information on what OS the tests are being run on so that we can select the correct
+        // expected output.
+        try {
+            self::$osInfo = parse_ini_file('/etc/os-release');
+        } catch (\Exception $e) {
+            // If the file is not readable then code will need to account for an empty array.
+        }
+    }
+
     public static function tearDownAfterClass()
     {
         self::$helper->logout();
@@ -28,7 +46,6 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
 
         $imageData = $response[0];
         if ($expectedHash === false) {
-
             self::$imagehashes[$testName] =  sha1($imageData);
 
             $this->markTestSkipped('Created Expected output for ' . $testName);
@@ -62,10 +79,22 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         self::$helper->authenticate('cd');
 
         $expectedHashes = array();
+        $hashFiles = array();
 
-        $hashFile = realpath(__DIR__ . '/../../../artifacts/xdmod') . '/regression/images/expected.json';
-        if (file_exists($hashFile)) {
-            $expectedHashes = json_decode(file_get_contents($hashFile), true);
+        // If we have OS info available to us then look for an OS specific expected output file based on this info.
+        if (self::$osInfo !== false && isset(self::$osInfo['VERSION_ID']) && isset(self::$osInfo['ID'])) {
+            $hashFiles[] = sprintf("expected-%s%s.json", self::$osInfo['ID'], self::$osInfo['VERSION_ID']);
+        }
+        // Otherwise try the default expected.json
+        $hashFiles[] = 'expected.json';
+
+        $artifactsDir = realpath(__DIR__ . '/../../../artifacts/xdmod/regression/images');
+        foreach($hashFiles as $hashFile) {
+            $hashFilePath = "$artifactsDir/$hashFile";
+            if (file_exists($hashFilePath)) {
+                $expectedHashes = json_decode(file_get_contents($hashFilePath), true);
+                break;
+            }
         }
 
         // Provide all the different combinations of chart settings except Guide Lines (which do not
