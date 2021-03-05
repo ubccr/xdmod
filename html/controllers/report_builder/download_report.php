@@ -6,7 +6,10 @@ use DataWarehouse\Query\Exceptions\BadRequestException;
 $filters = array(
     'format' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_FORMATS_REGEX)
+        'options' => array(
+            'regexp' => ReportGenerator::REPORT_FORMATS_REGEX,
+            'default' => ''
+        )
     ),
     'report_loc' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
