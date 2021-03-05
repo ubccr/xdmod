@@ -65,7 +65,8 @@
                 "cloud_openstack/domain_submission_venue_staging.json",
                 "cloud_openstack/domain_submission_venue.json",
                 "cloud_common/staging_cloud_project_to_pi.json",
-                "cloud_common/session_records.json"
+                "cloud_common/session_records.json",
+                "cloud_common/cloudfact_by_day_sessionlist.json"
             ]
         },
         {
