@@ -79,7 +79,7 @@
                 "name": "instance_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "itype",
-                "on": "itype.instance_type = raw.instance_type AND itype.resource_id = raw.resource_id",
+                "on": "itype.instance_type = raw.instance_type AND itype.resource_id = raw.resource_id AND itype.num_cores = raw.num_cores AND itype.memory_mb = raw.memory_mb AND itype.disk_gb = raw.disk_gb",
                 "type": "LEFT OUTER"
             },
             {
