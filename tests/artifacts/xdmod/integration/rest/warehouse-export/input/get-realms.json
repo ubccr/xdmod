@@ -11,10 +11,6 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
-            },
-            {
-                "id": "Gateways",
-                "name": "Gateways"
             }
         ]
     ],
@@ -30,10 +26,6 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
-            },
-            {
-                "id": "Gateways",
-                "name": "Gateways"
             }
         ]
     ],
@@ -46,13 +38,8 @@
                 "id": "Jobs",
                 "name": "Jobs"
             },
-            {
                 "id": "Cloud",
                 "name": "Cloud"
-            },
-            {
-                "id": "Gateways",
-                "name": "Gateways"
             }
         ]
     ],
@@ -68,10 +55,6 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
-            },
-            {
-                "id": "Gateways",
-                "name": "Gateways"
             }
         ]
     ],
@@ -87,10 +70,6 @@
             {
                 "id": "Cloud",
                 "name": "Cloud"
-            },
-            {
-                "id": "Gateways",
-                "name": "Gateways"
             }
         ]
     ],
