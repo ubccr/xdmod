@@ -5,7 +5,25 @@
             "namespace": "ETL\\Maintenance",
             "class": "ExecuteSql",
             "options_class": "MaintenanceOptions"
-        }
+        },
+        "cloud-migration-9_0_0-9_5_0": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              }
+            }
+         }
     },
     "migration-9_0_0-9_5_0": [
         {
@@ -82,6 +100,108 @@
                     "config": "database",
                     "schema": "mod_shredder"
                 }
+            }
+        }
+    ],
+    "cloud-migration-9_0_0-9_5_0": [
+        {
+          "name": "UpdateEventTypes",
+          "description": "Update event type on event table",
+          "namespace": "ETL\\Maintenance",
+          "class": "ExecuteSql",
+          "options_class": "MaintenanceOptions",
+          "sql_file_list": [
+              {
+                  "delimiter": ";",
+                  "sql_file": "migrations/9.0.0-9.5.0/modw_cloud/update_event_types.sql"
+              }
+          ]
+        },
+        {
+            "name": "cloud-state-action",
+            "class": "CloudStateReconstructorTransformIngestor",
+            "definition_file": "cloud_common/cloud_state.json",
+            "truncate_destination": true,
+            "description": "Reconstructs discrete runs from cloud events"
+        },
+        {
+            "name": "cloud-session-records",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_common/session_records.json",
+            "truncate_destination": true,
+            "description": "Builds intermediate cloud event table"
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudEventAggregatorByDay",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_metrics_aggregation_by_day.json",
+            "table_prefix": "cloudfact_by_",
+            "aggregation_units": ["day"]
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudEventAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_metrics_aggregation.json",
+            "table_prefix": "cloudfact_by_",
+            "aggregation_units": [
+                "month", "quarter", "year"
+            ]
+        },
+        {
+            "name": "CloudAggregatorSessionlist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "cloud_common/cloudfact_by_day_sessionlist.json",
+            "description": "Populate the session list table, which contains the back references from the cloud aggregates table to the session records table",
+            "explode_column": {
+                "session_id_list": "session_id"
+            }
+        },
+        {
+            "name": "CloudResourceSpecsReconstructor",
+            "class": "CloudResourceSpecsStateTransformIngestor",
+            "definition_file": "cloud_common/resource_specifications_transformer.json",
+            "description": "Sets a start and end time for memory and vcpu paring for a compute node on a cloud resource",
+            "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud",
+                  "truncate_destination": true
+              }
+            }
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ],
+            "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Aggregate DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_aggregates",
+                  "create_schema_if_not_exists": true,
+                  "truncate_destination": true
+              }
             }
         }
     ]

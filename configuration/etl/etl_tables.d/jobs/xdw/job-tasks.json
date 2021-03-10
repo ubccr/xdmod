@@ -400,6 +400,14 @@
                 ],
                 "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "job_id_origin_id_idx",
+                "columns": [
+                    "job_id_origin_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
             }
         ],
         "triggers": []

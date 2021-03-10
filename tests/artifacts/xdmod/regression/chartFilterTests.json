@@ -363,7 +363,7 @@
         },
         "expected": {
             "subtitle": "Domain = ( adjunct,  Default )",
-            "yvalue": 81277.6131
+            "yvalue": 81270.6692
         }
     },
     {
@@ -394,7 +394,7 @@
         },
         "expected": {
             "subtitle": "Instance Type =  m1.medium",
-            "yvalue": 29635.5067
+            "yvalue": 29635.4583
         }
     },
     {
@@ -410,7 +410,7 @@
         },
         "expected": {
             "subtitle": "Resource = ( nutsetters,  openstack )",
-            "yvalue": 129483.1342
+            "yvalue": 129441.6319
         }
     },
     {
@@ -425,7 +425,7 @@
         },
         "expected": {
             "subtitle": "Submission Venue =  OpenStack API",
-            "yvalue": 129483.1342
+            "yvalue": 129441.6319
         }
     },
     {
@@ -473,7 +473,7 @@
         },
         "expected": {
             "subtitle": "VM Size: Cores = ( 1,  2 - 3 )",
-            "yvalue": 13394.1358
+            "yvalue": 13394.1086
         }
     },
     {
@@ -489,7 +489,7 @@
         },
         "expected": {
             "subtitle": "VM Size: Memory = ( < 2 GB,  2 - 4 GB )",
-            "yvalue": 13348.1492
+            "yvalue": 13348.1219
         }
     }
 ]

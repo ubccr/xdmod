@@ -1,15 +1,22 @@
 <?php
 
 use \DataWarehouse\Access\ReportGenerator;
+use DataWarehouse\Query\Exceptions\BadRequestException;
 
 $filters = array(
     'format' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_FORMATS_REGEX)
+        'options' => array(
+            'regexp' => ReportGenerator::REPORT_FORMATS_REGEX,
+            'default' => ''
+        )
     ),
     'report_loc' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_TMPDIR_REGEX)
+        'options' => array(
+            'regexp' => ReportGenerator::REPORT_TMPDIR_REGEX,
+            'default' => null
+        )
     )
 );
 
@@ -25,6 +32,10 @@ try {
     if (!XDReportManager::isValidFormat($get['format'])) {
         print "Invalid format specified";
         exit;
+    }
+
+    if ($get['report_loc'] === null) {
+        throw new BadRequestException('Invalid filename');
     }
 
     $output_format = $get['format'];
