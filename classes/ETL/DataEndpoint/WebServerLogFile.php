@@ -59,22 +59,36 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
     }
 
     private function lookupGeoIp($host) {
+
+        if (array_key_exists($host, $this->geoip_cache)) {
+            return $this->geoip_cache[$host];
+        }
+
         $result = new \stdClass();
-        try {
-            $geoip = $this->geoip_lookup->city($host);
-            $result->{"geo_city_name"} = $geoip->city->name;
-            $result->{"geo_subdivision"} = $geoip->mostSpecificSubdivision->isoCode;
-            $result->{"geo_country"} = $geoip->country->isoCode;
-        }
-        catch (\GeoIp2\Exception\AddressNotFoundException $e) {
-            $result->{"geo_city_name"} = 'unknown';
-            $result->{"geo_subdivision"} = 'unknown';
-            $result->{"geo_country"} = 'unknown';
-        }
-        catch (\InvalidArgumentException $e) {
-            $result->{"geo_city_name"} = 'NA';
-            $result->{"geo_subdivision"} = 'NA';
-            $result->{"geo_country"} = 'NA';
+        $result->{"city"} = 'NA';
+        $result->{"subdivision"} = 'NA';
+        $result->{"country"} = 'NA';
+
+        if ($this->geoip_lookup !== null) {
+            try {
+                $geoip = $this->geoip_lookup->city($host);
+                $result->{"city"} = $geoip->city->name;
+                $result->{"subdivision"} = $geoip->mostSpecificSubdivision->isoCode;
+                $result->{"country"} = $geoip->country->isoCode;
+            }
+            catch (\GeoIp2\Exception\AddressNotFoundException $e) {
+                $result->{"city"} = 'unknown';
+                $result->{"subdivision"} = 'unknown';
+                $result->{"country"} = 'unknown';
+            }
+            catch (\InvalidArgumentException $e) {
+                // leave at the default value of 'N/A'
+            }
+
+            if (count($this->geoip_cache) > self::CACHE_SIZE) {
+                array_shift($this->geoip_cache);
+            }
+            $this->geoip_cache[$host] = $result;
         }
 
         return $result;
@@ -115,19 +129,11 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
                 $decoded->{"ua_device_model"} = $ua_decoded->device->model;
             }
 
-            if (property_exists($decoded, 'host') && $this->geoip_lookup !== null) {
-                if (array_key_exists($decoded->host, $this->geoip_cache)) {
-                    $geo_decoded = $this->geoip_cache[$decoded->host];
-                } else {
-                    if (count($this->geoip_cache) > self::CACHE_SIZE) {
-                        array_shift($this->geoip_cache);
-                    }
-                    $geo_decoded = $this->lookupGeoIp($decoded->host);
-                    $this->geoip_cache[$decoded->host] = $geo_decoded;
-                }
-                $decoded->{"geo_city_name"} = $geo_decoded->geo_city_name;
-                $decoded->{"geo_subdivision"} = $geo_decoded->geo_subdivision;
-                $decoded->{"geo_country"} = $geo_decoded->geo_country;
+            if (property_exists($decoded, 'host')) {
+                $location = $this->lookupGeoIp($decoded->host);
+                $decoded->{"geo_city_name"} = $location->city;
+                $decoded->{"geo_subdivision"} = $location->subdivision;
+                $decoded->{"geo_country"} = $location->country;
             }
 
             $this->recordList[] = $decoded;
