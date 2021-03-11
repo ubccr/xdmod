@@ -1,7 +1,7 @@
 {
-    "#": "Aggregation of HPC job records and tasks ingested from the XDCDB",
+    "#": "BY DAY Aggregation of HPC job records and tasks ingested from the XDCDB, for Gateways",
     "table_definition": {
-        "$ref": "${table_definition_dir}/jobs/xdw/jobfact_by_.json#/table_definition"
+        "$ref": "${table_definition_dir}/jobs/xdw/jobfact_by_day.json#/table_definition"
     },
 
     "#": "The aggregation period query determines which periods need to be aggregated based on added or modified",
@@ -10,7 +10,7 @@
     "#": "considered. The first table specified in source_query.joins will be used to determine periods that",
     "#": "need aggregation.",
     "aggregation_period_query": {
-        "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/aggregation_period_query"
+        "$ref": "${action_definition_dir}/jobs/hpc-aggregation-day.json#/aggregation_period_query"
     },
 
     "#": "The destination query block allows us to specify overseer restrictions that apply to operations on",
@@ -19,10 +19,10 @@
     "#": "on the source_query block it is possible to delete an aggregation period from the destination table",
     "#": "with no restictions and replace it with aggregated data that has been restricted.",
     "destination_query": {
-        "$ref": "${action_definition_dir}/jobs/hpc-aggregation.json#/destination_query"
+        "$ref": "${action_definition_dir}/jobs/hpc-aggregation-day.json#/destination_query"
     },
     "source_query": {
-        "$ref-with-overwrite": "${action_definition_dir}/jobs/hpc-aggregation.json#/source_query",
+        "$ref-with-overwrite": "${action_definition_dir}/jobs/hpc-aggregation-day.json#/source_query",
         "$overwrite": {
             "joins": [
                 {
