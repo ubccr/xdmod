@@ -12,20 +12,20 @@ The gateways realm displays jobs information on science gateways for an Open XDM
 The database configuration steps are accomplished by running the script `etl_overseer.php` with different options. You should specify this script's full path when calling it (likely `/usr/share/xdmod/tools/etl/`, but check your system). This script accepts numerous parameters described in the help:
 
 `etl_overseer.php --help`
-    
-### a. Bootstrap the gateways realm 
+
+### a. Bootstrap the gateways realm
 
 This first step of Gateways database configuration creates the modw_gateways database, and some needed tables.
-    
+
 Command:
-    
+
 `etl_overseer.php -p gateways.bootstrap`
-    
+
 Verify:
 
 Successful execution results in creation of the modw_gateways database schema with empty enduser, gateway, gatewayfact_by_day_joblist, and job_metadata tables.
-    
-### b. Select and ingest jobs data for the modw_gateways database 
+
+### b. Select and ingest jobs data for the modw_gateways database
 
 The ingestion step supplies the name of the community user (gateway proxy user) that gateways use to run jobs on your resource, and joins it to the `modw.person` table. This means that the jobs submitted by that community user will be aggregated for the Gateways realm. You can change this query to match your needs, such as specifying multiple community usernames, or restricting a different column from the person table.
 
@@ -39,29 +39,29 @@ To change the specification of gateways jobs to aggregate, edit the file `etl/et
 In its current state, the WHERE condition accepts as a parameter the gateway community user's surname. The command below specifies community user having last name 'Bunting'; replace this with an appropriate surname from your `modw.person` table.
 
 Command:
-    
+
 `etl_overseer.php -p gateways.ingest -d community-user=Bunting`
 
-Verify: 
+Verify:
 
 Successful execution results in population of `modw_gateways.gateway` table with records selected from `modw.person` according to the where clause.
-    
+
 ### c. Aggregate the data
 
-This step creates and populates the joblist, day, month, quarter, and year tables for the gateways realm so that queries over these time periods run quickly. 
+This step creates and populates the joblist, day, month, quarter, and year tables for the gateways realm so that queries over these time periods run quickly.
 
 Command:
-    
+
 `etl_overseer.php -m '2001-01-01' -y '2022-01-01' -p gateways.aggregate`
 
-where: 
+where:
 * -p is "process-section"
 * -m is "last-modified-start-date"
-* -y is "last-modified-end-date"    
-          
+* -y is "last-modified-end-date"
+
 The last-modified-end-date should be interpreted as the date the target records were last changed; it should be greater or equal than the current date. For full aggregation, use 2001-01-01 for -m, or some other date that precedes all jobs in your database.
 
-Verify: 
+Verify:
 
 Successful execution results in creation and population of the `modw_gateways.gatewayfact*` tables containing aggregated job fact and joblist data.
 
@@ -73,14 +73,14 @@ Querying the Open XDMoD database will now show the modw_gateways schema, contain
 
 Table Name | Description
 -----------|-------------
-    enduser | empty, reserved for future development
-    gateway | one record per gateway (from modw.Person)
-    gatewayfact_by_day | jobs aggregated by day
-    gatewayfact_by_day_joblist | joblist by day
-    gatewayfact_by_month | jobs aggregated by month
-    gatewayfact_by_quarter | jobs aggregated by quarter
-    gatewayfact_by_year| jobs aggregated by year
-    job_metadata | empty, reserved for future development
+enduser | empty, reserved for future development
+gateway | one record per gateway (from modw.Person)
+gatewayfact_by_day | jobs aggregated by day
+gatewayfact_by_day_joblist | joblist by day
+gatewayfact_by_month | jobs aggregated by month
+gatewayfact_by_quarter | jobs aggregated by quarter
+gatewayfact_by_year| jobs aggregated by year
+job_metadata | empty, reserved for future development
 
 
 ## 2. Edit resource_types.json
@@ -102,17 +102,17 @@ You may add the Gateways realm anyplace the Jobs realm is specified in the file.
 ...
 }
 ```
-### 3. Run acl-config 
+### 3. Run acl-config
 
 This step enables the UI to display the new Gateways realm that you configured in `resource_types.json`.
 
 Command:
 
 `acl-config`
-    
-### 4. Restart services 
 
-For good measure you may now restart all services (database, webserver, etc.).     
+### 4. Restart services
+
+For good measure you may now restart all services (database, webserver, etc.).
 
 ### 5. Verify
 
@@ -120,19 +120,16 @@ To verify the new realm is present, refresh XDMoD in the browser. You should now
 
 - Usage tab includes Gateways Summary metrics in the Metrics listing.
 - These Gateways usage metrics with your data can be selected, plotted, and drilled down
-    
 - Gateways metrics are available for plotting, drilldown, etc. in Metric Explorer
-- Following two drilldowns, Show Raw Data is available for Gateways data,
-        enabling selection and review of job accounting data in the Job Viewer tab.
-        
-- Gateways data are available for export in the Data Export tab.        
-         
+- Following two drilldowns, Show Raw Data is available for Gateways data, enabling selection and review of job accounting data in the Job Viewer tab.
+- Gateways data are available for export in the Data Export tab.
+
 ## Future work
 
 Further work is planned to enhance the Gateways realm. It includes:
 
 - automate this process of installing the gateways realm
 - incorporate additional job metadata into the gateways schema
-- incorporate gateway enduser metadata into the gateways realm    
+- incorporate gateway enduser metadata into the gateways realm
 - enable search and drill-down by gateway enduser and other gateways metadata
-    
+
