@@ -72,7 +72,7 @@ exit 0
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(0750,root,root,-)
+%defattr(0750,root,xdmod,-)
 %{_bindir}/%{name}-*
 %{_bindir}/acl-*
 
