@@ -1,6 +1,5 @@
 {
     "acronym": {
-        "attribute_table": "gateway",
         "attribute_table_schema": "modw_gateways",
         "attribute_to_aggregate_table_key_map": [
             {
@@ -34,7 +33,6 @@
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"
     },
     "gateway": {
-        "attribute_table": "gateway",
         "attribute_table_schema": "modw_gateways",
         "attribute_to_aggregate_table_key_map": [
             {

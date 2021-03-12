@@ -2173,6 +2173,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         id: Math.random(),
                                         metric: n.attributes.statistic,
                                         realm: n.attributes.realm,
+                                        category: n.attributes.category,
                                         group_by: n.attributes.group_by,
                                         x_axis: false,
                                         log_scale: chartToolbar.getLogScale() == 'y',
@@ -2184,6 +2185,12 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         display_type: (dt == 'bar' || dt == 'h_bar' /*|| dt == 'pie'*/ || dt == 'auto') ? "column" : dt,
                                         combine_type: (ct == 'side' || ct == 'auto') ? "side" : ct == 'percentage' ? 'percent' : 'stack',
                                         sort_type: chartStore.getAt(0).get('sort_type'),
+                                        color: 'auto',
+                                        shadow: false,
+                                        visibility: null,
+                                        z_index: 0,
+                                        line_type: 'Solid',
+                                        line_width: 2,
                                         filters: {
                                             "data": [],
                                             "total": 0
