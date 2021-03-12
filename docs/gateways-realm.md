@@ -132,4 +132,3 @@ Further work is planned to enhance the Gateways realm. It includes:
 - incorporate additional job metadata into the gateways schema
 - incorporate gateway enduser metadata into the gateways realm
 - enable search and drill-down by gateway enduser and other gateways metadata
-
