@@ -54,7 +54,7 @@ XDMoD commands.
 
 Update the bin directory permissions so that only users with the `xdmod` group can run Open XDMoD commands:
 
-    # chmod 0750 /opt/xdmod/bin/*
+    # chmod 750 /opt/xdmod/bin/*
 
 Run Configuration Script
 ------------------------
