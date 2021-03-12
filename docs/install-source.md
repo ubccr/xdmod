@@ -52,7 +52,7 @@ Update log directory and file ownership and permissions:
 The `exceptions.log` and `query.log` may be written to by both Apache and Open
 XDMoD commands.
 
-Update the bin directory permissions:
+Update the bin directory permissions so that only users with the `xdmod` group can run Open XDMoD commands:
 
     # chmod 0750 /opt/xdmod/bin/*
 
