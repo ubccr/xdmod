@@ -135,6 +135,7 @@ then
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack -q
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack -q
-        sudo -u xdmod xdmod-ingestor
+        mysql -e "TRUNCATE TABLE modw_cloud.instance_type;"
+        sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
     fi
 fi
