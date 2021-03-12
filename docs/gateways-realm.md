@@ -1,5 +1,4 @@
 # Enabling the Gateways realm
-Open XDMoD 9.5
 
 The gateways realm displays jobs information due to science gateways. It does this by incorporating jobs data in a new XDMoD database, modw_gateways, created for capturing gateways data. This realm is not enabled by default in the current release. These instructions show you how to enable and populate the gateways realm in your Open XDMoD installation.
 
@@ -9,9 +8,12 @@ The gateways realm displays jobs information on science gateways for an Open XDM
 
 ### etl_overseer.php
 
-The database configuration steps are accomplished by running the script `etl_overseer.php` with different options. You should specify this script's full path when calling it (likely `/usr/share/xdmod/tools/etl/`, but check your system). This script accepts numerous parameters described in the help:
+The database configuration steps are accomplished by running the script `etl_overseer.php` with
+different options. You should specify this script's full path when calling it (RPM install location
+is `/usr/share/xdmod/tools/etl/`). This script accepts numerous parameters described in the help
+output:
 
-`etl_overseer.php --help`
+`$ /usr/share/xdmod/tools/etl/etl_overseer.php --help`
 
 ### a. Bootstrap the gateways realm
 
@@ -19,7 +21,7 @@ This first step of Gateways database configuration creates the modw_gateways dat
 
 Command:
 
-`etl_overseer.php -p gateways.bootstrap`
+`$ /usr/share/xdmod/tools/etl/etl_overseer.php -p gateways.bootstrap`
 
 Verify:
 
@@ -40,7 +42,7 @@ In its current state, the WHERE condition accepts as a parameter the gateway com
 
 Command:
 
-`etl_overseer.php -p gateways.ingest -d community-user=Bunting`
+`$ /usr/share/xdmod/tools/etl/etl_overseer.php -p gateways.ingest -d community-user=Bunting`
 
 Verify:
 
@@ -52,7 +54,7 @@ This step creates and populates the joblist, day, month, quarter, and year table
 
 Command:
 
-`etl_overseer.php -m '2001-01-01' -y '2022-01-01' -p gateways.aggregate`
+`$ /usr/share/xdmod/tools/etl/etl_overseer.php -m '2001-01-01' -y '2022-01-01' -p gateways.aggregate`
 
 where:
 * -p is "process-section"
@@ -108,7 +110,7 @@ This step enables the UI to display the new Gateways realm that you configured i
 
 Command:
 
-`acl-config`
+`$ acl-config`
 
 ### 4. Restart services
 
