@@ -124,11 +124,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                         var conn = new Ext.data.Connection();
                         conn.request({
                             url: XDMoD.REST.url + '/dashboard/viewedUserTour',
-                            params: {
-                                uid: CCR.xdmod.ui.mappedPID,
-                                token: XDMoD.REST.token
-                            },
-                            method: 'GET',
                             success: function (response) {
                                 var serverResp = Ext.decode(response.responseText);
                                 if (serverResp.data.length === 0 || !serverResp.data[0].viewedTour) {
@@ -140,25 +135,25 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                         icon: Ext.Msg.INFO,
                                         fn: function (buttonValue, inputText, showConfig) {
                                             var newUserTourCheckbox = Ext.select('#new-user-tour-checkbox');
+                                            if (newUserTourCheckbox.elements[0].checked) {
+                                                Ext.Ajax.request({
+                                                    url: XDMoD.REST.url + '/dashboard/viewedUserTour',
+                                                    params: {
+                                                        viewedTour: 1
+                                                    },
+                                                    success: function () {
+                                                        if (buttonValue === 'no') {
+                                                            Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
+                                                        }
+                                                    }
+                                                });
+                                            }
                                             if (buttonValue === 'yes') {
                                                 XDMoD.createTour();
                                                 Ext.History.add('main_tab_panel:tg_summary');
                                                 new Ext.util.DelayedTask(function () {
                                                     XDMoD.tour.startTour();
                                                 }).delay(10);
-                                            } else if (buttonValue === 'no' && newUserTourCheckbox.elements[0].checked === true) {
-                                                var connection = new Ext.data.Connection();
-                                                connection.request({
-                                                    url: XDMoD.REST.url + '/dashboard/viewedUserTour',
-                                                    params: {
-                                                        viewedTour: 1,
-                                                        token: XDMoD.REST.token
-                                                    },
-                                                    method: 'POST',
-                                                    callback: function (opt, suc, resp) {
-                                                        Ext.Msg.alert('Status', 'This message will not be displayed again. If you wish to view the tour in the future a link to it can be found by clicking the Help button in the upper right corner of the page.');
-                                                    } // callback
-                                                }); // conn.request
                                             }
                                         }
                                     });
