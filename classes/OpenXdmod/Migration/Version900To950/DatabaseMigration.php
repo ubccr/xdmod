@@ -29,9 +29,9 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
                     FROM
                         modw_cloud.staging_resource_specifications
                     GROUP BY
-                    	   resource_id, hostname, fact_date
+                    	  resource_id, hostname, fact_date
                     HAVING
-                    	   COUNT(*) > 1";
+                        COUNT(*) > 1";
 
             $staging_result = $dbh->query($staging_resource_sql);
 
