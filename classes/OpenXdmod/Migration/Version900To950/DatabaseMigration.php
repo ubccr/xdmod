@@ -27,11 +27,11 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             $staging_resource_sql = "SELECT
                         COUNT(*)
                     FROM
-                    	modw_cloud.staging_resource_specifications
+                        modw_cloud.staging_resource_specifications
                     GROUP BY
-                    	resource_id, hostname, fact_date
+                    	   resource_id, hostname, fact_date
                     HAVING
-                    	COUNT(*) > 1";
+                    	   COUNT(*) > 1";
 
             $staging_result = $dbh->query($staging_resource_sql);
 
@@ -40,7 +40,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 This version of Open XDMoD changes the schema on two tables related to cloud utilization metrics. It appears that
 data in the table modw_cloud.staging_resource_specifications will violate these schema changes. The violation is that
 there cannot be two rows with the same resource ID, hostname, and date. Before you next ingest your cloud resource
-specification files you should either remove any extra rows or truncate this table and then shred and ingest all of 
+specification files you should either remove any extra rows or truncate this table and then shred and ingest all of
 your cloud resource specification files.
 EOT
                 );
