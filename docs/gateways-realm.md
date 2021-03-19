@@ -1,6 +1,6 @@
 # Enabling the Gateways realm
 
-The gateways realm displays jobs information due to science gateways. It does this by incorporating jobs data in a new XDMoD database, modw_gateways, created for capturing gateways data. This realm is not enabled by default in the current release. These instructions show you how to enable and populate the gateways realm in your Open XDMoD installation.
+The gateways realm displays jobs information due to science gateways. It does this by incorporating jobs data in a new XDMoD database, `modw_gateways`, created for capturing gateways data. This realm is not enabled by default in the current release. These instructions show you how to enable and populate the gateways realm in your Open XDMoD installation.
 
 ## 1. Database configuration
 
@@ -42,11 +42,11 @@ To change the specification of gateways jobs to aggregate, edit the file `etl/et
             "p.last_name = '${community-user}'"
 ```
 
-In its current state, the WHERE condition accepts as a parameter the gateway community user's surname. The command below specifies community user having last name 'Bunting'; replace this with an appropriate surname from your `modw.person` table.
+In its current state, the WHERE condition accepts as a parameter the gateway community user's `last_name`. The command below specifies community user 'Gateway proxy user'; replace this with an appropriate `last_name` from your `modw.person` table.
 
 Command:
 
-`$ /usr/share/xdmod/tools/etl/etl_overseer.php -p gateways.ingest -d community-user=Bunting`
+`$ /usr/share/xdmod/tools/etl/etl_overseer.php -p gateways.ingest -d community-user='Gateway proxy user'`
 
 Verify:
 
@@ -116,11 +116,7 @@ Command:
 
 `$ acl-config`
 
-### 4. Restart services
-
-For good measure you may now restart all services (database, webserver, etc.).
-
-### 5. Verify
+### 4. Verify
 
 To verify the new realm is present, refresh XDMoD in the browser. You should now see:
 
