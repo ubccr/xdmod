@@ -32,6 +32,8 @@
             "project_id": "project_id",
             "openstack_resource_id": "resource_id",
             "disk_gb": "disk_gb",
+            "num_cores": "vcpus",
+            "memory_mb": "memory_mb",
             "size": "size",
             "volume_id": "volume_id",
             "state": "state",

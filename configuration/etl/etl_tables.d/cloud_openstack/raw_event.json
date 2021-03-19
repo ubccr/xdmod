@@ -114,6 +114,18 @@
                 "default": null
             },
             {
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "num_cores",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
                 "name": "size",
                 "type": "int(11)",
                 "nullable": true,
