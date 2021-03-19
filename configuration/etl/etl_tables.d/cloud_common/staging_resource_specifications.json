@@ -1,10 +1,11 @@
 {
-    "#": "Record types are global to all cloud resources",
+    "#": "This table contains a specific set of vcpus and memory size for a host for",
+    "#": "a day. There should be no more than one record for a host on a day.",
 
     "table_definition": {
         "name": "staging_resource_specifications",
         "engine": "MyISAM",
-        "comment": "Record type: accounting, administrative, derived, etc.",
+        "comment": "Contains a specific set of vcpus and memory size for a host for a day",
         "columns": [
             {
                 "name": "hostname",
@@ -42,8 +43,6 @@
                 "columns": [
                     "resource_id",
                     "hostname",
-                    "memory_mb",
-                    "vcpus",
                     "fact_date"
                 ],
                 "is_unique": true
