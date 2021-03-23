@@ -28,6 +28,12 @@
                 ],
                 "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "job_id_idx",
+                "columns": ["job_id"],
+                "type": "BTREE",
+                "is_unique": false
             }
         ],
         "triggers": []
