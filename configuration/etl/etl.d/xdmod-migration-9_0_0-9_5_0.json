@@ -23,7 +23,26 @@
                   "schema": "modw_cloud"
               }
             }
-         }
+         },
+         "cloud-resource-specs-migration-9_0_0-9_5_0": {
+             "namespace": "ETL\\Ingestor",
+             "options_class": "IngestorOptions",
+             "endpoints": {
+               "source": {
+                   "type": "mysql",
+                   "name": "Cloud DB",
+                   "config": "datawarehouse",
+                   "schema": "modw_cloud"
+               },
+               "destination": {
+                   "type": "mysql",
+                   "name": "Cloud DB",
+                   "config": "datawarehouse",
+                   "schema": "modw_cloud",
+                   "truncate_destination": true
+               }
+             }
+          }
     },
     "migration-9_0_0-9_5_0": [
         {
@@ -165,21 +184,14 @@
             "explode_column": {
                 "session_id_list": "session_id"
             }
-        },
+        }
+    ],
+    "cloud-resource-specs-migration-9_0_0-9_5_0": [
         {
             "name": "CloudResourceSpecsReconstructor",
             "class": "CloudResourceSpecsStateTransformIngestor",
             "definition_file": "cloud_common/resource_specifications_transformer.json",
-            "description": "Sets a start and end time for memory and vcpu paring for a compute node on a cloud resource",
-            "endpoints": {
-              "destination": {
-                  "type": "mysql",
-                  "name": "Cloud DB",
-                  "config": "datawarehouse",
-                  "schema": "modw_cloud",
-                  "truncate_destination": true
-              }
-            }
+            "description": "Sets a start and end time for memory and vcpu paring for a compute node on a cloud resource"
         },
         {
             "#": "Asset data must be aggregated post ingestion",
@@ -194,14 +206,14 @@
                 "day", "month", "quarter", "year"
             ],
             "endpoints": {
-              "destination": {
-                  "type": "mysql",
-                  "name": "Aggregate DB",
-                  "config": "datawarehouse",
-                  "schema": "modw_aggregates",
-                  "create_schema_if_not_exists": true,
-                  "truncate_destination": true
-              }
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregate DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates",
+                    "create_schema_if_not_exists": true,
+                    "truncate_destination": true
+                }
             }
         }
     ]
