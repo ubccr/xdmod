@@ -291,7 +291,7 @@ class DataWarehouseInitializer
         }
 
         try {
-            $this->logger->notice('Ingesting generic cloud log files');            
+            $this->logger->notice('Ingesting generic cloud log files');
             Utilities::runEtlPipeline(
                 array(
                   'staging-ingest-common',
