@@ -84,6 +84,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $this->addField(new TableField($factTable, 'start_time_ts'));
         $this->addField(new TableField($factTable, 'end_time_ts'));
         $this->addField(new FormulaField('-1', 'cpu_user'));
+        $this->addField(new FormulaField('COALESCE(LEAST(jt.wallduration / jt.timelimit, 1), -1)', 'walltime_accuracy'));
 
         // This is used by Integrations and not currently shown on the XDMoD interface
         $this->addField(new TableField($factTable, 'name', 'job_name'));
