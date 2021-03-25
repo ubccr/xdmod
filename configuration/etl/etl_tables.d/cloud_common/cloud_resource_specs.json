@@ -1,10 +1,10 @@
 {
-    "#": "Record types are global to all cloud resources",
+    "#": "Contains the start and end time for a specific set of vcpus and memory for a cloud host.",
 
     "table_definition": {
         "name": "cloud_resource_specs",
         "engine": "MyISAM",
-        "comment": "Record type: accounting, administrative, derived, etc.",
+        "comment": "Contains the start and end time for a specific set of vcpus and memory for a cloud host",
         "columns": [
             {
                 "name": "host_id",
@@ -62,20 +62,13 @@
                 "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
-
-        "#": "Note that the primary key is (resource, type, identifier, create_time) rather than",
-        "#": "asset_id so we can take advantage of ON DUPLICATE KEY UPDATE to update existing entries",
-        "#": "and still use auto_increment for new entries.",
-
         "indexes": [
             {
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
                     "hostname",
-                    "memory_mb",
-                    "vcpus",
-                    "start_date_ts"
+                    "start_day_id"
                 ],
                 "is_unique": true
             },
