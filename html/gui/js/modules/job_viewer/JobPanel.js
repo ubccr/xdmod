@@ -11,7 +11,7 @@ Ext.ns('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
  */
 XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
 
-    MAX_ANALYTICS: 4,
+    MAX_ANALYTICS: 6,
 
     COMPONENT_DEFAULTS: {
         closable: true,
@@ -188,18 +188,25 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
          */
         update_analytics: function (data) {
             var analyticsPanel = this.getComponent('analytics_container');
+            var i;
+            var metricPanel;
+
             if (!analyticsPanel) {
                 return;
+            }
+
+            // Shrink panel to available metric count
+            if (data.length < this.MAX_ANALYTICS) {
+                for (i = data.length; i < this.MAX_ANALYTICS; i++) {
+                    analyticsPanel.remove('metric' + i);
+                }
+                this.MAX_ANALYTICS = data.length;
             }
 
             analyticsPanel.show();
             this.doLayout();
 
-            var i;
-            var metricPanel;
-            var nMetrics = Math.min(data.length, this.MAX_ANALYTICS);
-
-            for (i = 0; i < nMetrics; i++) {
+            for (i = 0; i < this.MAX_ANALYTICS; i++) {
                 metricPanel = analyticsPanel.getComponent('metric' + i);
                 metricPanel.fireEvent('update_data', {
                     name: data[i].key,
