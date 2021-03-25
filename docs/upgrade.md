@@ -129,3 +129,11 @@ necessary.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
+
+
+### Cloud Realm Changes 
+
+This upgrade fixed a bug with the memory buckets for the cloud realm which was causing certain cloud data to not display correctly. To ensure that all previous cloud data is being displayed and recorded correctly, you can re-ingest the cloud data after the upgrade is complete. 
+
+After the upgrade is complete re-ingest and aggregate your cloud data using the
+commands recommended in our documentation.
