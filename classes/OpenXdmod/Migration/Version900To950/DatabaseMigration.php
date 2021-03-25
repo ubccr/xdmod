@@ -22,6 +22,18 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = \CCR\DB\MySQLHelper::factory($dbh);
+
+        if ($mysql_helper->tableExists('modw_cloud.event')) {
+
+            Utilities::runEtlPipeline(
+                ['cloud-migration-9_0_0-9_5_0'],
+                $this->logger,
+                [
+                    'last-modified-start-date' => '2017-01-01 00:00:00'
+                ]
+            );
+        }
+
         if ($mysql_helper->tableExists('modw_cloud.cloud_resource_specs')) {
 
             $staging_resource_sql = "SELECT
@@ -47,7 +59,7 @@ EOT
             }
 
             Utilities::runEtlPipeline(
-                ['cloud-migration-9_0_0-9_5_0'],
+                ['cloud-resource-specs-migration-9_0_0-9_5_0'],
                 $this->logger,
                 [
                     'last-modified-start-date' => '2017-01-01 00:00:00'
