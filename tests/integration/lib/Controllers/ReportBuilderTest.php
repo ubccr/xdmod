@@ -26,10 +26,12 @@ use IntegrationTests\BaseTest;
  *     - remove_from_queue
  *   - report_image_renderer.php
  *
+ *   Error path testing Only:
+ *     - download_report.php
+ *
  * Remaining controllers:
  *   - report_builder
  *     - build_from_template.php
- *     - download_report.php
  *     - fetch_report_data.php
  *     - get_preview_data.php
  *     - send_report.php
@@ -78,6 +80,82 @@ class ReportBuilderTest extends BaseTest
             $this->verbose = false;
         }
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
+    }
+
+    public function provideDlReportInputValidation()
+    {
+        $tests = array();
+
+        $params = array(
+            'operation' => 'download_report',
+            'report_loc' => '/etc/shadow',
+            'format' => 'pdf'
+        );
+        $response =  array(
+            'success' => false,
+            'message' => 'Invalid filename'
+        );
+
+        $tests[] = array($params, $response);
+
+        $params = array(
+            'operation' => 'download_report',
+            'report_loc' => '3-1614908275-PVe1U',
+            'format' => 'rar'
+        );
+        $response = 'Invalid format specified';
+
+        $tests[] = array($params, $response);
+
+        $params = array(
+            'operation' => 'download_report'
+        );
+        $response = array(
+            'success' => false,
+            'message' => '\'report_loc\' not specified.'
+        );
+
+        $tests[] = array($params, $response);
+
+        $params = array(
+            'operation' => 'download_report',
+            'report_loc' => '322323323232'
+        );
+        $response = array(
+            'success' => false,
+            'message' => '\'format\' not specified.'
+        );
+
+        $tests[] = array($params, $response);
+
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideDlReportInputValidation
+     * Checks that input validation is performed on the dowload_report
+     * endpoint
+     */
+    public function testDownloadReportInputValidation($params, $expected)
+    {
+        $this->helper->authenticate('usr');
+        $data = $this->helper->get('/controllers/report_builder.php', $params);
+
+        $response = $this->helper->get('/controllers/report_builder.php', $params);
+        $data = $response[0];
+        $curlinfo = $response[1];
+
+        if (is_array($expected)) {
+            // expect json data back
+            $this->assertEquals('application/json', $curlinfo['content_type']);
+            foreach ($expected as $key => $value) {
+                $this->assertEquals($value, $data[$key]);
+            }
+        } else {
+            // expect text data back
+            $this->assertEquals('text/html; charset=UTF-8', $curlinfo['content_type']);
+            $this->assertEquals($expected, $response[0]);
+        }
     }
 
     /**

@@ -807,6 +807,25 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     })
                 });
                 break;
+            case 'vmstate':
+                tab = new XDMoD.Module.JobViewer.VMStateChartPanel({
+                  id: chartId,
+                  title: title,
+                  url: base,
+                  baseParams: this._getParams(path),
+                  historyToken: '#' + this.module_id + '?' + this._createHistoryTokenFromArray(path),
+                  path: path,
+                  dtypes: [],
+                  dtype: dtype,
+                  dtypeValue: id,
+                  store: new Ext.data.JsonStore({
+                      proxy: new Ext.data.HttpProxy({ url: url }),
+                      autoLoad: true,
+                      root: 'data',
+                      fields: ['series', 'schema']
+                  })
+                });
+                break;
             case 'analytics':
                 Ext.Ajax.request({
                     dtype: dtype,

@@ -1,0 +1,39 @@
+{
+    "table_definition": {
+        "name": "cloudfact_by_day_sessionlist",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "agg_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "session_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "agg_id",
+                    "session_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "session_lookup_key",
+                "columns": [
+                    "session_id",
+                    "agg_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

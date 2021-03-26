@@ -12,7 +12,8 @@
     "most_privileged_role": "Center Director - screw",
     "person_id": "97",
     "raw_data_allowed_realms": [
-        "Jobs"
+        "Jobs",
+        "Cloud"
     ]
   }
 }

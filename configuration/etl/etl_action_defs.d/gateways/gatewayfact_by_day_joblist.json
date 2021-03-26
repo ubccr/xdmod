@@ -1,0 +1,28 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/gateways/gatewayfact_by_day_joblist.json#/table_definition"
+    },
+    "source_query": {
+        "overseer_restrictions": {
+            "last_modified_start_date": "last_modified >= ${VALUE}",
+            "last_modified_end_date": "last_modified <= ${VALUE}"
+        },
+        "records": {
+            "agg_id": "id",
+            "job_id_list": "job_id_list",
+            "job_id": -1
+        },
+        "joins": [
+            {
+                "name": "gatewayfact_by_day",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ]
+    },
+    "destination_record_map": {
+        "gatewayfact_by_day_joblist": {
+            "agg_id": "agg_id",
+            "jobid": "job_id"
+        }
+    }
+}
