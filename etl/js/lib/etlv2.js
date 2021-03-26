@@ -302,7 +302,11 @@ module.exports = {
 
         for (let i = 0; i < tableColumns.length; ++i) {
             if (tableColumns[i].dimension) {
-                groupby.push(tableColumns[i].name);
+                if (tableColumns[i].useSqlInGroupBy) {
+                    groupby.push(remapSql(tableColumns[i].sql));
+                } else {
+                    groupby.push(tableColumns[i].name);
+                }
             }
             records[tableColumns[i].name] = remapSql(tableColumns[i].sql);
         }
