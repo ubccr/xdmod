@@ -12,7 +12,8 @@
             {
                 "name": "username",
                 "type": "varchar(200)",
-                "nullable": false
+                "nullable": false,
+                "default": ""
             },
             {
                 "name": "password",
