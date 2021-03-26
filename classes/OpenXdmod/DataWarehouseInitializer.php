@@ -293,7 +293,15 @@ class DataWarehouseInitializer
         try {
             $this->logger->notice('Ingesting generic cloud log files');
             Utilities::runEtlPipeline(
-                array('jobs-cloud-common', 'jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
+                array(
+                  'staging-ingest-common',
+                  'jobs-cloud-common',
+                  'jobs-cloud-import-users-generic',
+                  'hpcdb-ingest-common',
+                  'hpcdb-xdw-ingest-common',
+                  'jobs-cloud-extract-generic',
+                  'jobs-cloud-ingest-pi'
+                ),
                 $this->logger
             );
 
