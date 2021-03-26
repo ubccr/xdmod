@@ -924,8 +924,9 @@ SQL;
             throw new Exception('A user must have at least one acl.');
         }
 
-        if (empty($this->_username)) {
-            throw new Exception('A user must have a username.');
+        $match = preg_match(RESTRICTION_USERNAME, $this->_username);
+        if ($match === false || $match === 0) {
+            throw new Exception('A user must have a valid username.');
         }
 
         // Retrieve the userId (if any) for the email associated with this User
