@@ -1,13 +1,15 @@
 describe('Single Sign On Login', () => {
     it('Should have the Single Sign On option', () => {
-        browser.url('/');
+        browser.url('https://');
         browser.waitForInvisible('.ext-el-mask-msg');
         browser.waitAndClick('a[href*=actionLogin]');
+    });
+    it('Should let us select the SSO Login button', () => {
         browser.waitForVisible('#SSOLoginLink');
         browser.waitAndClick('#SSOLoginLink');
     });
     it('Should goto the Single Sign On login page and login', () => {
-        browser.waitForExist('form[action="/signin"]');
+        browser.waitForVisible('form[action="/signin"]', 30000);
         browser.submitForm('form[action="/signin"]');
     });
     it('Display Logged in Users Name', () => {

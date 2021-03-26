@@ -14,7 +14,8 @@
     "source_query": {
         "records": {
             "resource_id": "staging.resource_id",
-            "asset_type_id": "staging.root_volume_type_id",
+            "#": "The asset_type_id comes from the modw_cloud.asset_type table. 2 equals a root volume that comes with a VM",
+            "asset_type_id": 2,
             "provider_identifier": "CONCAT('root-vol-', i.provider_identifier)",
             "size": "itype.disk_gb",
             "account_id": "staging.account_id",

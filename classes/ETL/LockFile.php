@@ -13,8 +13,8 @@
 namespace ETL;
 
 use Exception;
-use Log;
 use \CCR\Loggable;
+use Psr\Log\LoggerInterface;
 
 class LockFile extends Loggable
 {
@@ -64,11 +64,11 @@ class LockFile extends Loggable
      * Set the provided logger or instantiate a null logger if one was not provided.  The
      * null handler consumes log events and does nothing with them.
      *
-     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param LoggerInterface $logger A Monolog Logger object or null to use the null logger.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($lockDir, $lockPrefix = null, Log $logger = null)
+    public function __construct($lockDir, $lockPrefix = null, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
 

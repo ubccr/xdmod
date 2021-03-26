@@ -4,6 +4,8 @@
  */
 
 use CCR\DB\MySQLHelper;
+use CCR\Log;
+use Psr\Log\LoggerInterface;
 
 class PDODBMultiIngestor implements Ingestor
 {
@@ -348,7 +350,7 @@ class PDODBMultiIngestor implements Ingestor
 
     }
 
-    public function setLogger(Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->_logger = $logger;
 

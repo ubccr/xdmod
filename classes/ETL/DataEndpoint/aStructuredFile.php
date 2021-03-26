@@ -11,7 +11,7 @@
 
 namespace ETL\DataEndpoint;
 
-use Log;
+use Psr\Log\LoggerInterface;
 
 abstract class aStructuredFile extends File
 {
@@ -83,7 +83,7 @@ abstract class aStructuredFile extends File
      * @see iDataEndpoint::__construct()
      */
 
-    public function __construct(DataEndpointOptions $options, Log $logger = null)
+    public function __construct(DataEndpointOptions $options, LoggerInterface $logger = null)
     {
         parent::__construct($options, $logger);
 

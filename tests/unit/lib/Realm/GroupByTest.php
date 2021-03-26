@@ -10,10 +10,14 @@
 namespace UnitTesting\Realm;
 
 use CCR\Log as Logger;
+use Psr\Log\LoggerInterface;
 use \Realm\Realm;
 
 class GroupByTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var LoggerInterface|null
+     */
     protected static $logger = null;
 
     public static function setupBeforeClass()

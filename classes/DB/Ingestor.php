@@ -3,7 +3,9 @@
  * @Interface Ingestor
  * The interface for all ingestor classes
  */
- 
+
+use Psr\Log\LoggerInterface;
+
 interface Ingestor
 {
 	/*
@@ -12,7 +14,7 @@ interface Ingestor
 	*/
     public function ingest();
 
-    public function setLogger(Log $logger);
+    public function setLogger(LoggerInterface $logger);
 
 } //Ingestor
 

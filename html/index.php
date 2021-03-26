@@ -86,9 +86,9 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
-<head lang="en">
+<head>
 
     <!-- <meta http-equiv="X-UA-Compatible" content="IE=9" /> -->
     <meta charset="utf-8"/>
@@ -402,6 +402,8 @@ JS;
     <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
     <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
+    <script type="text/javascript" src="gui/lib/plotly/plotly-1.57.1.min.js"></script>
+
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
     <script type="text/javascript" src="gui/lib/highchartsDateformats.src.js"></script>
@@ -496,6 +498,7 @@ JS;
         <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/GanttChart.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/VMStateChartPanel.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/SearchPanel.js"></script>

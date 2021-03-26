@@ -9,7 +9,7 @@
 
 namespace ETL\DbModel;
 
-use Log;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 interface iEntity
@@ -24,14 +24,14 @@ interface iEntity
      *    definition, or possibly a file name if supported by the particular item. If
      *    $config is NULL, an object with no property values should be created.
      * @param string $systemQuoteChar Character used for escaping system identifiers.
-     * @param Log $logger PEAR Log object for system logging
+     * @param LoggerInterface $logger Monolog Logger object for system logging
      *
      * @throw Exception If an invalid nummber of arguments was provided
      * @throw Exception If the column definition was incomplete
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, Log $logger = null);
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null);
 
     /* ------------------------------------------------------------------------------------------
      * Initialize the object properties from a stdClass object. Only supported properties

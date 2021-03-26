@@ -21,9 +21,9 @@ use ETL\aOptions;
 use ETL\iAction;
 use ETL\VariableStore;
 
-use Log;
 use PDO;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 class RestIngestor extends aIngestor implements iAction
 {
@@ -67,7 +67,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
 

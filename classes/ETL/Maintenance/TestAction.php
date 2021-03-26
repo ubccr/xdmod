@@ -19,12 +19,12 @@ use ETL\iAction;
 use ETL\aAction;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use Log;
+use Psr\Log\LoggerInterface;
 
 class TestAction extends aAction implements iAction
 {
     protected $options;
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
+    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         $requiredKeys = array("type");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);

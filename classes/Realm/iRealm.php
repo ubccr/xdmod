@@ -5,7 +5,7 @@
 
 namespace Realm;
 
-use Log as Logger;
+use Psr\Log\LoggerInterface;
 
 interface iRealm
 {
@@ -28,7 +28,7 @@ interface iRealm
      *
      * @param string $shortName The short internal identifier for the realm that will be
      *   instantiated.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      * @param stdclass|null $options An object containing additional configuration options.
      *   Currently supported options are:
      *     - config_file_name: The name of the configuration file to use, useful for testing.
@@ -39,7 +39,7 @@ interface iRealm
      * @throws Exception if there was an error creating the object.
      */
 
-    public static function factory($shortName, Logger $logger = null, \stdClass $options = null);
+    public static function factory($shortName, LoggerInterface $logger = null, \stdClass $options = null);
 
     /**
      * Initialize data for all realms from the definition source. This can mean constructing the
@@ -47,13 +47,13 @@ interface iRealm
      * some other mechanism. This method must be called once, either directly or indirectly, before
      * a Realm object can be accessed.
      *
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      * @param stdclass|null $options An object containing additional configuration options.
      *
      * @throws Exception If there was an error loading the realm data.
      */
 
-    public static function initialize(Logger $logger = null);
+    public static function initialize(LoggerInterface $logger = null);
 
     /**
      * Return an associative array where the array keys are realm short identifier (id) and the values
@@ -61,24 +61,24 @@ interface iRealm
      *
      * @param int $order A specification on how the realm list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      *
      * @return array An associative array of realm ids and names, ordered as specified.
      */
 
-    public static function getRealmNames($order = self::SORT_ON_ORDER, Logger $logger = null);
+    public static function getRealmNames($order = self::SORT_ON_ORDER, LoggerInterface $logger = null);
 
     /**
      * This is a convenience function to return only the list of realm ids.
      *
      * @param int $order A specification on how the realm list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      *
      * @return array An array of realm ids, ordered as specified
      */
 
-    public static function getRealmIds($order = self::SORT_ON_ORDER, Logger $logger = null);
+    public static function getRealmIds($order = self::SORT_ON_ORDER, LoggerInterface $logger = null);
 
     /**
      * Return an associative array where the array keys are realm short identifier (id) and the values
@@ -86,12 +86,12 @@ interface iRealm
      *
      * @param int $order A specification on how the realm list will be ordered. Possible values are:
      *   SORT_ON_ORDER, SORT_ON_SHORT_ID, SORT_ON_NAME.
-     * @param Log|null $logger A Log instance that will be utilized during processing.
+     * @param LoggerInterface|null $logger A Monolog Logger that will be utilized during processing.
      *
      * @return array An associative array of realm ids and Realm objects, ordered as specified.
      */
 
-    public static function getRealmObjects($order = self::SORT_ON_ORDER, Logger $logger = null);
+    public static function getRealmObjects($order = self::SORT_ON_ORDER, LoggerInterface $logger = null);
 
     /**
      * XDMoD supports hidden meta-statistics such as standard error measurements. These are not

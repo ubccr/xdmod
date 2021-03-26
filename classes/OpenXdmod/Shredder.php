@@ -7,11 +7,13 @@
 
 namespace OpenXdmod;
 
+use CCR\Log;
 use Configuration\XdmodConfiguration;
 use Exception;
 use PDOException;
 use CCR\DB\iDatabase;
 use PDODBMultiIngestor;
+use Psr\Log\LoggerInterface;
 
 class Shredder
 {
@@ -65,7 +67,7 @@ class Shredder
     /**
      * Logger object.
      *
-     * @var \Log
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -140,7 +142,7 @@ class Shredder
     protected function __construct(iDatabase $db)
     {
         $this->db     = $db;
-        $this->logger = \Log::singleton('null');
+        $this->logger = Log::singleton('null');
 
         $classPath = explode('\\', strtolower(get_class($this)));
         $this->format = $classPath[count($classPath) - 1];
@@ -181,9 +183,9 @@ class Shredder
     /**
      * Set the logger.
      *
-     * @param Logger $logger The logger instance.
+     * @param LoggerInterface $logger a Monolog Logger instance.
      */
-    public function setLogger(\Log $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

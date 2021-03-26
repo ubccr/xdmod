@@ -115,7 +115,24 @@ You may upgrade directly from 9.0.0.
 
 The `xdmod-upgrade` script will migrate user editable configuration files to the new version and ask for the location of `chromium`.
 
+### Slurm Input File Format Changes
+
+The input file format for Slurm data has changed to remove the `ReqGRES` field.
+
+**If you are generating Slurm input for the `xdmod-shredder` command then you
+will need to make the appropriate changes.**  Refer to the [Slurm
+Notes](resource-manager-slurm.html#input-format) for the example `sacct`
+command.  If you are using the `xdmod-slurm-helper` command then no changes are
+necessary.
+
 ### Database Changes
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
+
+### Cloud Realm Changes
+
+This upgrade fixed a bug with the memory buckets for the cloud realm which was causing certain cloud data to not display correctly. To ensure that all previous cloud data is being displayed and recorded correctly, you can re-ingest the cloud data after the upgrade is complete.
+
+After the upgrade is complete re-ingest and aggregate your cloud data using the
+commands recommended in our documentation.

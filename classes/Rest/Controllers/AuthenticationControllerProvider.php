@@ -2,7 +2,6 @@
 
 namespace Rest\Controllers;
 
-use CCR\Log;
 use CCR\MailWrapper;
 use Models\Services\Acls;
 use Models\Services\Organizations;

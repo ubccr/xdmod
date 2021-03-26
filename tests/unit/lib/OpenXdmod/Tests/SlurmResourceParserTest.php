@@ -27,21 +27,6 @@ class SlurmResourceParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider reqGresGpuCountProvider
-     * @covers ::parseGres
-     * @covers ::getGpuCountFromGres
-     */
-    public function testReqGresGpuCountParsing($reqGres, $gpuCount)
-    {
-        $gresData = $this->parser->parseGres($reqGres);
-        $this->assertEquals(
-            $gpuCount,
-            $this->parser->getGpuCountFromGres($gresData),
-            'GPU count'
-        );
-    }
-
-    /**
      * @dataProvider allocTresGpuCountProvider
      * @covers ::parseTres
      * @covers ::getGpuCountFromTres
@@ -54,12 +39,6 @@ class SlurmResourceParserTest extends \PHPUnit_Framework_TestCase
             $this->parser->getGpuCountFromTres($tresData),
             'GPU count'
         );
-    }
-
-    public function reqGresGpuCountProvider()
-    {
-        $testFiles = new TestFiles(__DIR__ . self::TESTS_BASE_REL_DIR);
-        return $testFiles->loadJsonFile(self::TEST_GROUP, 'req-gres-gpu-count');
     }
 
     public function allocTresGpuCountProvider()

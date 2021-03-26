@@ -9,8 +9,6 @@
  */
 use CCR\Loggable;
 
-use Log as Logger;
-
 class Aggregator extends Loggable
 {
     /**
