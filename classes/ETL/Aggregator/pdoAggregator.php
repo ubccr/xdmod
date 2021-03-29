@@ -207,12 +207,6 @@ class pdoAggregator extends aAggregator
         // but it doesn't matter because the naming will still be consistent.
 
         $columnNames = $this->etlDestinationTable->getColumnNames();
-        $missingColumnNames = array_diff($this->etlSourceQuery->groupby, $columnNames);
-
-        if ( 0 != count($missingColumnNames) ) {
-            $msg = "Columns in group by not found in table: " . implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
-        }
 
         $missingColumnNames = array_diff(array_keys($this->etlSourceQuery->records), $columnNames);
 
@@ -812,6 +806,10 @@ class pdoAggregator extends aAggregator
         $insertStmt = null;
 
         $optimize = $this->allowSingleDatabaseOptimization();
+
+        $this->executeSqlList(array(
+            "SET SESSION sql_mode = CONCAT('ONLY_FULL_GROUP_BY,',@@SESSION.sql_mode)"
+        ), $this->sourceEndpoint);
 
         if ( $optimize ) {
 

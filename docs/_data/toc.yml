@@ -43,6 +43,8 @@ toc:
             url: /simpleSAMLphp-ldap.html
       - page: Upgrade Guide
         url: /upgrade.html
+      - page: Gateways Realm (alpha)
+        url: /gateways-realm.html
   - title: Using
     subfolderitems:
       - page: Shredder Guide
