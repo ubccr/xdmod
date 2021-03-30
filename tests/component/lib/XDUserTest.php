@@ -547,7 +547,7 @@ class XDUserTest extends BaseTest
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp /User "(\w+)" not found/
+     * @expectedExceptionMessageRegExp /User "([\w\d.]+)" not found/
      */
     public function testRemoveUser()
     {
