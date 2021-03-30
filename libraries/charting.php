@@ -130,10 +130,12 @@ function getSvgFromChromium($html, $width, $height){
 
     @unlink($tmpHtmlFile);
 
-    if ($return_value != 0) {
-        throw new \Exception('Unable execute command: "'. $command . '". Details: ' . $err);
-    }
     $result = json_decode(substr($out, 4, -6), true);
+
+    if ($result === null || !isset($result['result']) || !isset($result['result']['value'])) {
+        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
+    }
+
     return $result['result']['value'];
 }
 

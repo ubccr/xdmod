@@ -61,6 +61,11 @@
               "instance_type_id",
               "account_id",
               "systemaccount_id",
+              "submission_venue_id",
+              "domain_id",
+              "service_provider",
+              "principalinvestigator_person_id",
+              "fos_id",
               "person_id"
             ],
             "joins":[
