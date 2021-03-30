@@ -240,7 +240,13 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
     var self = this;
     var multiCore = totalCores !== undefined && coreIndex !== undefined;
     if (this.dataset.input.dbEngine == 'mongodb') {
-        MongoClient.connect(self.dataset.input.config.uri, { useNewUrlParser: true }, function (err, client) {
+        MongoClient.connect(
+            self.dataset.input.config.uri,
+            {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            },
+            function (err, client) {
             if (err) {
                 self.emit("error", self.dataset.name + ': ' + "MongoClient Open Error: " + util.inspect(err));
                 self._processEnded = true;
