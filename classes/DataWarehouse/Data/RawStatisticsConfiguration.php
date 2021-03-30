@@ -187,6 +187,11 @@ class RawStatisticsConfiguration
         $fields = [];
 
         foreach ($this->getQueryFieldDefinitions($realm) as $field) {
+            // Skip "ignore" and "analysis" dtype
+            if (isset($field['dtype']) && in_array($field['dtype'], ['ignore', 'analysis'])) {
+                continue;
+            }
+
             $export = isset($field['batchExport']) ? $field['batchExport'] : false;
             if ($export === false) {
                 continue;
@@ -208,6 +213,7 @@ class RawStatisticsConfiguration
 
             $fields[] = [
                 'name' => $field['name'],
+                'alias' => isset($field['alias']) ? $field['alias'] : $field['name'],
                 'display' => $display,
                 'anonymize' => ($export === 'anonymize'),
                 'documentation' => $field['documentation']
