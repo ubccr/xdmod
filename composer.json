@@ -24,7 +24,10 @@
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
         "phpoffice/phpword": "^0.17.0",
         "monolog/monolog": "^1.25",
-        "plotly/plotly": "^1.57.1"
+        "plotly/plotly": "^1.57.1",
+        "kassner/log-parser": "~1.5",
+        "geoip2/geoip2": "~2.0",
+        "ua-parser/uap-php": "^3.9"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
@@ -247,11 +250,64 @@
         "platform": {
             "php": "5.4"
         },
+        "optimize-autoloader": true,
+        "apcu-autoloader": true,
         "secure-http": false
     },
     "autoload": {
+        "files": [
+            "configuration/constants.php",
+            "libraries/response.php",
+            "libraries/debug.php",
+            "libraries/web_message.php",
+            "libraries/rest.php",
+            "libraries/versioning.php",
+            "libraries/date.php",
+            "libraries/utilities.php",
+            "libraries/dashboard.php",
+            "libraries/security.php",
+            "libraries/regression.php",
+            "libraries/conversions.php",
+            "libraries/controller.php",
+            "libraries/domdocument.php",
+            "libraries/charting.php"
+        ],
         "classmap": [
-            "classes"
-        ]
+            "classes/DataWarehouse.php",
+            "classes/XDChartPool.php",
+            "classes/XDStatistics.php",
+            "classes/SessionExpiredException.php",
+            "classes/XDController.php",
+            "classes/XDUser.php",
+            "classes/UniqueException.php",
+            "classes/XDError.php",
+            "classes/XDUserProfile.php",
+            "classes/UserException.php",
+            "classes/XDException.php",
+            "classes/XDWarehouse.php",
+            "classes/UserStorage.php",
+            "classes/XDReportManager.php",
+            "classes/XDAdmin.php",
+            "classes/XDSessionManager.php",
+            "classes/ExtJS",
+            "classes/DB"
+        ],
+        "psr-4": {
+            "Authentication\\": "classes/Authentication/",
+            "CCR\\": "classes/CCR/",
+            "Common\\": "classes/Common/",
+            "Configuration\\": "classes/Configuration/",
+            "DataWarehouse\\": "classes/DataWarehouse/",
+            "ETL\\": "classes/ETL/",
+            "Log\\": "classes/Log/",
+            "Models\\": "classes/Models/",
+            "OpenXdmod\\": "classes/OpenXdmod/",
+            "Realm\\": "classes/Realm/",
+            "ReportTemplates\\": "classes/ReportTemplates/",
+            "Reports\\": "classes/Reports/",
+            "Rest\\": "classes/Rest/",
+            "User\\": "classes/User/",
+            "Xdmod\\": "classes/Xdmod/"
+        }
     }
 }
