@@ -396,7 +396,6 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
             $ids[] = $datum['id'];
         }
         $data = json_encode($ids);
-        //$this->assertTrue(false, json_encode($beforeContent['data']));
 
         // Delete all existing requests.
         list($content, $info, $headers) = self::$helpers[$role]->delete('rest/warehouse/export/requests', null, $data);
