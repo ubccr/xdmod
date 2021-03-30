@@ -82,6 +82,8 @@ where denoted. These software products are free for commercial use.
   is being referred to).
 - [composer/installers](https://composer.github.io/installers), which is
   available under the [MIT License][mit].
+- [composer/ca-bundle](https://github.com/composer/ca-bundle), which is
+  available under the [MIT License][mit].
 - [EmailValidator](https://github.com/egulias/EmailValidator), which is
   available under the [MIT License][mit].
 - [PDOOCI](https://github.com/taq/pdooci), which is available under the
@@ -103,11 +105,15 @@ where denoted. These software products are free for commercial use.
 - [env-variable](https://github.com/3rd-Eden/env-variable), which is available under the [MIT License][mit].
 - [fast-safe-stringify](https://github.com/davidmarkclements/fast-safe-stringify), which is available under the [MIT License][mit].
 - [fecha](https://github.com/taylorhakes/fecha), which is available under the [MIT License][mit].
+- [geoip2](https://github.com/maxmind/GeoIP2-php), which is available under the [Apache License Version 2.0][apache2].
+- [maxmind/web-service-common](https://github.com/maxmind/web-service-common-php), which is available under the [Apache License Version 2.0][apache2].
+- [maxmind-db/reader](https://github.com/maxmind/MaxMind-DB-Reader-php), which is available under the [Apache License Version 2.0][apache2].
 - [inherits](https://github.com/isaacs/inherits), which is available under the [ISC License][isc].
 - [ini](https://github.com/isaacs/ini), which is available under the [MIT License][mit].
 - [is-arrayish](https://github.com/qix-/node-is-arrayish), which is available under the [MIT License][mit].
 - [is-stream](https://github.com/sindresorhus/is-stream), which is available under the [MIT License][mit].
 - [isarray](https://github.com/juliangruber/isarray), which is available under the [MIT License][mit].
+- [kassner/log-parser](https://github.com/kassner/log-parser), which is available under the [Apache License Version 2.0][apache2].
 - [kuler](https://github.com/3rd-Eden/kuler), which is available under the [MIT License][mit].
 - [lodash](https://github.com/lodash/lodash), which is available under the [MIT License][mit].
 - [logform](https://github.com/winstonjs/logform), which is available under the [MIT License][mit].
@@ -132,6 +138,7 @@ where denoted. These software products are free for commercial use.
 - [text-hex](https://github.com/3rd-Eden/text-hex), which is available under the [MIT License][mit].
 - [triple-beam](https://github.com/winstonjs/triple-beam), which is available under the [MIT License][mit].
 - [tv4](https://github.com/geraintluff/tv4), which is available under the [MIT License][mit].
+- [ua-parser/uap-php](https://github.com/ua-parser/uap-php), which is available under the [MIT License][mit].
 - [util-deprecate](https://github.com/TooTallNate/util-deprecate), which is available under the [MIT License][mit].
 - [winston-transport](https://github.com/winstonjs/winston-transport), which is available under the [MIT License][mit].
 - [winston](https://github.com/winstonjs/winston), which is available under the [MIT License][mit].

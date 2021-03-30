@@ -63,6 +63,11 @@
             "description": "User Support",
             "realms": [
             ]
+        },
+        "Gateway": {
+            "description": "Web-based access to CI resources",
+            "realms": [
+            ]
         }
     }
 }

@@ -52,12 +52,6 @@
                 {
                     "name": "gateway",
                     "schema": "modw_gateways",
-                    "alias": "gw_record",
-                    "on": "gw_record.proxy_person_id = record.person_id"
-                },
-                {
-                    "name": "gateway",
-                    "schema": "modw_gateways",
                     "alias": "gw_task",
                     "on": "gw_task.proxy_person_id = task.person_id"
                 }

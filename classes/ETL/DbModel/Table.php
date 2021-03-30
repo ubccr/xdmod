@@ -345,7 +345,9 @@ GROUP_CONCAT(column_name ORDER BY seq_in_index ASC) as columns
 FROM information_schema.statistics
 WHERE table_schema = :schema
 AND table_name = :tablename
-GROUP BY index_name
+GROUP BY index_name,
+         index_type,
+         is_unique
 ORDER BY index_name ASC";
 
         try {
@@ -382,7 +384,11 @@ INNER JOIN information_schema.referential_constraints rc
 WHERE tc.constraint_type = 'FOREIGN KEY'
     AND tc.table_schema = :schema
     AND tc.table_name = :tablename
-GROUP BY tc.constraint_name
+GROUP BY tc.constraint_name,
+         kcu.referenced_table_schema,
+         kcu.referenced_table_name,
+         rc.update_rule,
+         rc.delete_rule
 ORDER BY tc.constraint_name ASC
 SQL;
 
