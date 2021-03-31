@@ -120,6 +120,43 @@
                     "schema": "mod_shredder"
                 }
             }
+        },
+        {
+            "name": "update-Users-table",
+            "description": "Updating Users.username to not allow null values.",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "xdb/users.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+        {
+            "name": "moddb-disable-empty-usernames",
+            "description": "Disable any accounts that have empty username values.",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.0.0-9.5.0/moddb/disable_empty_username.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ],
     "cloud-migration-9_0_0-9_5_0": [
