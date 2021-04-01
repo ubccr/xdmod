@@ -840,7 +840,7 @@ SQL;
      *
      * @return string a parameterized SQL INSERT or UPDATE statement
      */
-    public function getQuery(array $columnNames): string
+    public function getQuery(array $columnNames)
     {
         if (in_array('id', $columnNames)) {
 

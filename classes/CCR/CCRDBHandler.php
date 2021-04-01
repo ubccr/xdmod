@@ -91,7 +91,7 @@ class CCRDBHandler extends AbstractProcessingHandler
      *
      * @throws Exception if any of the sql statements fail to execute.
      */
-    protected function getNextId(): int
+    protected function getNextId()
     {
         $this->db->beginTransaction();
 

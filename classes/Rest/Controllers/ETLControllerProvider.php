@@ -348,7 +348,8 @@ class ETLControllerProvider extends BaseControllerProvider
         $results = array();
 
         $actionsAndEndPoints = $this->getAllActionsAndEndpoints();
-        foreach($actionsAndEndPoints as $pipeline => list($actions, $endpoints)) {
+        foreach($actionsAndEndPoints as $pipeline => $value) {
+            list($actions, $endpoints) = $value;
             $actionResults = $this->recursiveSearch($actions, $term);
             $endpointResults = $this->recursiveSearch($endpoints, $term);
             if (!empty($actionResults)) {
