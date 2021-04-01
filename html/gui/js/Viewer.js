@@ -15,6 +15,12 @@ var xdmodviewer = (function () {
     return {
 
         init: function () {
+            document.addEventListener('keydown', function (event) {
+               CCR.xdmod.shiftKey = event.shiftKey;
+            });
+            document.addEventListener('keyup', function(event) {
+                CCR.xdmod.shiftKey = event.shiftKey;
+            });
             Ext.History.init();
             Ext.QuickTips.init();
 
