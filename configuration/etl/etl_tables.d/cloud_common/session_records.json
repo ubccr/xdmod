@@ -182,6 +182,13 @@
                 "columns": [
                     "last_modified"
                 ]
+            },
+            {
+                "name": "session_instance_id",
+                "columns": [
+                    "instance_id"
+                ],
+                "is_unique": false
             }
         ]
     }
