@@ -134,5 +134,10 @@ necessary.
 
 This upgrade fixed a bug with the memory buckets for the cloud realm which was causing certain cloud data to not display correctly. To ensure that all previous cloud data is being displayed and recorded correctly, you can re-ingest the cloud data after the upgrade is complete.
 
-After the upgrade is complete re-ingest and aggregate your cloud data using the
-commands recommended in our documentation.
+After the upgrade is complete, re-ingest and aggregate your cloud data using the [`xdmod-shredder`](shredder.md) and [`xdmod-ingestor`](ingestor.md) commands.
+
+    $ xdmod-shredder -r RESOURCE_NAME -d /path/to/logs
+    $ xdmod-ingestor --datatype=CLOUD_DATATYPE
+    $ xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
+
+The `CLOUD_DATATYPE` should be either `openstack` or `genericcloud`. See documentation for the [`xdmod-ingestor`](ingestor.md) command for more information.
