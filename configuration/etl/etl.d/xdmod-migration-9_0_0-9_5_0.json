@@ -239,7 +239,6 @@
             "description": "Aggregate cloud records.",
             "definition_file": "cloud_common/cloud_resource_specs_aggregation.json",
             "table_prefix": "resourcespecsfact_by_",
-            "truncate_destination": true,
             "aggregation_units": [
                 "day", "month", "quarter", "year"
             ],
