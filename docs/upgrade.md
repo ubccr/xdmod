@@ -136,6 +136,6 @@ This upgrade fixed a bug with the memory buckets for the cloud realm which was c
 
     $ xdmod-shredder -r RESOURCE_NAME -d /path/to/logs
     $ xdmod-ingestor --datatype=CLOUD_DATATYPE
-    $ xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
+    $ xdmod-ingestor --aggregate=cloud --last-modified-start-date "2017-01-01 00:00:00"
 
 The `CLOUD_DATATYPE` should be either `openstack` or `genericcloud` and `RESOURCE_NAME` should be the name of the cloud resource you and shredding data for. See documentation for the [`xdmod-shredder`](shredder.md) and [`xdmod-ingestor`](ingestor.md) commands for more information.
