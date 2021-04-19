@@ -45,23 +45,6 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 new TableField($tables[$join['foreignTableAlias']], $join['foreignKey'])
             ));
 
-            /*if(is_array($join[0])) {
-                foreach($join as $j) {
-                    $this->addWhereCondition(new WhereCondition(
-                        new TableField($table, $j['primaryKey']),
-                        '=',
-                        new TableField($tables[$j['foreignTableAlias']], $j['foreignKey'])
-                    ));
-                }
-            } else {
-                $this->addWhereCondition(new WhereCondition(
-                    new TableField($table, $join['primaryKey']),
-                    '=',
-                    new TableField($tables[$join['foreignTableAlias']], $join['foreignKey'])
-                ));
-            }*/
-        }
-
         // This table is defined in the configuration file, but used in the section below.
         $factTable = $tables['i'];
         $sessionTable = $tables['sr'];
