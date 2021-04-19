@@ -6,7 +6,7 @@
             "class": "ExecuteSql",
             "options_class": "MaintenanceOptions"
         },
-        "cloud-migration-9_0_0-9_5_0": {
+        "cloud-migration-9-0-0_9-5-0": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "endpoints": {
@@ -24,7 +24,7 @@
               }
             }
          },
-         "cloud-resource-specs-migration-9_0_0-9_5_0": {
+         "cloud-resource-specs-migration-9-0-0_9-5-0": {
              "namespace": "ETL\\Ingestor",
              "options_class": "IngestorOptions",
              "endpoints": {
@@ -159,7 +159,7 @@
             }
         }
     ],
-    "cloud-migration-9_0_0-9_5_0": [
+    "cloud-migration-9-0-0_9-5-0": [
         {
           "name": "UpdateEventTypes",
           "description": "Update event type on event table",
@@ -170,6 +170,10 @@
               {
                   "delimiter": ";",
                   "sql_file": "migrations/9.0.0-9.5.0/modw_cloud/update_event_types.sql"
+              },
+              {
+                  "delimiter": ";",
+                  "sql_file":"migrations/9.0.0-9.5.0/modw_cloud/update_hosts_table_index.sql"
               }
           ]
         },
@@ -223,7 +227,7 @@
             }
         }
     ],
-    "cloud-resource-specs-migration-9_0_0-9_5_0": [
+    "cloud-resource-specs-migration-9-0-0_9-5-0": [
         {
             "name": "CloudResourceSpecsReconstructor",
             "class": "CloudResourceSpecsStateTransformIngestor",
