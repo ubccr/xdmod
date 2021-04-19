@@ -33,6 +33,15 @@
                 "type": "int(11)",
                 "nullable": false
             }
+        ],
+        "indexes": [
+            {
+                "name": "event_instance_id",
+                "columns": [
+                    "instance_id"
+                ],
+                "is_unique": false
+            }
         ]
     }
 }
