@@ -3,19 +3,56 @@ Ext.namespace('XDMoD', 'XDMoD.Admin', 'XDMoD.Admin.ETL');
 /**
  *
  */
-XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.TabPanel, {
-    frame: false,
-    border: false,
-    activeItem: 0,
-    defaults: {
-        tabCls: 'tab-strip'
+XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.Panel, {
+    id: 'etl_viewer',
+    layout: 'border',
+    initComponent: function() {
+        let self = this;
+        this.tabPanel = new Ext.TabPanel({
+            id: 'etl_viewer_tab_panel',
+            region: 'center',
+            border: false,
+            activeItem: 0,
+            defaults: {
+                tabCls: 'tab-strip'
+            }
+        });
+        Ext.apply(this, {
+            items: [
+                this.tabPanel
+            ],
+            tbar: {
+                items: [
+                    {
+                        xtype: 'button',
+                        text: 'Tree View',
+                        cls: 'x-btn-text-icon',
+                        icon: '',
+                        handler: function() {
+                            var tab = new XDMoD.Admin.ETL.ETLViewerTreeTab();
+                            self.tabPanel.add(tab);
+                            self.tabPanel.setActiveTab(tab);
+                        }
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'Graph View',
+                        cls: 'x-btn-text-icon',
+                        icon: '',
+                        handler: function () {
+                            let tab = new XDMoD.Admin.ETL.GraphPanel({
+                                pipeline: 'xdmod.jobs-cloud-import-users-openstack'
+                            });
+                            self.tabPanel.add(tab);
+                            self.tabPanel.setActiveTab(tab);
+                        }
+                    }
+                ]
+            }
+        });
+        XDMoD.Admin.ETL.ETLViewer.superclass.initComponent.apply(this, arguments);
     },
-
-    listeners: {
-        beforerender: function (tabPanel) {
-            tabPanel.initialize(tabPanel);
-        },
-
+    /*listeners: {
         activate: function () {
             if (!this.loadMask) {
                 this.loadMask = new Ext.LoadMask(this.id);
@@ -35,17 +72,7 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.TabPanel, {
                 return;
             }
         }
-    },
-
-    /**
-     *
-     * @param tabPanel
-     */
-    initialize: function (tabPanel) {
-        this.viewerTreeTab = new XDMoD.Admin.ETL.ETLViewerTreeTab();
-
-        tabPanel.add(this.viewerTreeTab);
-    }, // initialize
+    },*/
 
     /**
      * Retrieve the 'path' values from the provided tree node or window hash.

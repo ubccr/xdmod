@@ -3,6 +3,9 @@ Ext.namespace('XDMoD', 'XDMoD.Admin', 'XDMoD.Admin.ETL');
 XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
     title: 'ETL Tree View',
     layout: 'border',
+    closable: true,
+    height: '100%',
+    width: '100%',
     initComponent: function () {
         var self = this;
         this.tree = new Ext.ux.tree.TreeGrid({
@@ -17,7 +20,7 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                     {
                         xtype: 'button',
                         text: 'Expand All',
-                        iton: '',
+                        icon: '',
                         cls: 'x-btn-text-icon'
                     },
                     {
@@ -26,6 +29,7 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                         icon: '',
                         cls: 'x-btn-text-icon'
                     },
+                    '-',
                     {
                         xtype: 'textfield',
                         emptyText: 'Enter Search Term Here'
@@ -65,9 +69,45 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                     width: 500
                 }
             ],
+
+            /**
+             * We override the parent's `updateColumnWidths` function so that we can add a call to `fitColumns` and thus
+             * have an autoExpanded column.
+             */
             updateColumnWidths : function() {
-                Ext.ux.tree.TreeGrid.updateColumnWidths();
-                this.fitColumns();
+                var fit = arguments.length > 0 ? arguments[0] : true;
+                var cols = this.columns,
+                    colCount = cols.length,
+                    groups = this.outerCt.query('colgroup'),
+                    groupCount = groups.length,
+                    c, g, i, j;
+
+                for(i = 0; i<colCount; i++) {
+                    c = cols[i];
+                    for(j = 0; j<groupCount; j++) {
+                        g = groups[j];
+                        g.childNodes[i].style.width = (c.hidden ? 0 : c.width) + 'px';
+                    }
+                }
+
+                for(i = 0, groups = this.innerHd.query('td'), len = groups.length; i<len; i++) {
+                    c = Ext.fly(groups[i]);
+                    if(cols[i] && cols[i].hidden) {
+                        c.addClass('x-treegrid-hd-hidden');
+                    }
+                    else {
+                        c.removeClass('x-treegrid-hd-hidden');
+                    }
+                }
+
+                var tcw = this.getTotalColumnWidth();
+                Ext.fly(this.innerHd.dom.firstChild).setWidth(tcw + (this.scrollOffset || 0));
+                this.outerCt.select('table').setWidth(tcw);
+                this.syncHeaderScroll();
+                if (fit) {
+                    this.fitColumns();
+                }
+
             },
 
             /**
@@ -90,15 +130,15 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                             g = groups[j];
                             g.childNodes[i].style.width = extraWidth + 'px';
                         }
+                        this.updateColumnWidths(false);
                     }
-                    this.updateColumnWidths();
+
                 }
             }
         });
 
         Ext.apply(this, {
             items: [
-                this.searchPanel,
                 this.tree
             ]
         });

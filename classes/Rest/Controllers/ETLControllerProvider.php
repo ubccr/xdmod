@@ -26,6 +26,25 @@ class ETLControllerProvider extends BaseControllerProvider
     private $etlDir;
 
     private $configFiles;
+    const SOURCES_ID = 'sources';
+    const DESTINATIONS_ID = 'destinations';
+
+    private static $defaultNodes = array(
+        array(
+            'group' => 'nodes',
+            'data' => array(
+                'id' => self::SOURCES_ID,
+                'name' => 'Sources'
+            )
+        ),
+        array(
+            'group' => 'nodes',
+            'data' => array(
+                'id' => self::DESTINATIONS_ID,
+                'name' => 'Destinations'
+            )
+        )
+    );
 
     /**
      * This function is responsible for the setting up of any routes that this
@@ -56,6 +75,9 @@ class ETLControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/search", "$class::search");
         $controller->post("$root/search", "$class::search");
+
+        $controller->get("$root/graph/pipelines/{pipeline}", "$class::getPipelinesForGraph");
+        $controller->post("$root/graph/pipelines/{pipeline}", "$class::getPipelinesForGraph");
     }
 
     /**
@@ -361,6 +383,172 @@ class ETLControllerProvider extends BaseControllerProvider
         }
 
         return $app->json($results);
+    }
+
+    public function getPipelinesForGraph(Request $request, Application $app, $pipeline)
+    {
+        /* Parent Group nodes should be formatted as such:
+         *   { group: 'nodes', data: { id: '<unique_id>', name: '<name>'} }
+         * Child nodes should be formatted as such:
+         *   { group: 'nodes', data: { id: '<unique_id>', name: '<name>', parent: '<parent_id>' } }
+         */
+
+        /* Edge nodes should be formatted as such:
+         *   { group: 'edges', data: { id: '<unique_edge_id>', source: '<source_node_id>', target: '<target_node_id>', name: '<optional>'} }
+         */
+        $results = self::$defaultNodes;
+
+        $actions = $this->getPipelineActions($pipeline);
+        $results = array_merge($results, $this->getTargetTypeNodes($actions));
+
+        /**
+         * Example Hierarchy:
+         * - Pipeline: xdmod.jobs-cloud-import-users-openstack
+         *   - Sources: <Group>
+         *     - MySQL: <Type>
+         *       - Source 1,2,3..N:
+         *     - JSON File: <Type>
+         *       - Source 1,2,3..N:
+         *   - Actions: <Group>
+         *     - Action 1,2,3..N: Action Name
+         *   - Destinations: <Group>
+         *     - MySQL: <Type>
+         *       - Schema: <Sub Type>
+         *         - Table:
+         */
+        $results[] = array(
+            'group' => 'nodes',
+            'data' => array(
+                'id' => $pipeline,
+                'name' => $pipeline,
+            )
+        );
+        foreach($actions as $key => $actionData) {
+            $actionName = $actionData['name'];
+
+            $action = array(
+                'group' => 'nodes',
+                'data' => array(
+                    'id' => $actionName,
+                    'name' => $actionName,
+                    'parent' => $pipeline
+                )
+            );
+            $source = array(
+                'group' => 'nodes',
+                'data' => $this->getTargetData($actionData['source'], 'source')
+            );
+            $destination = array(
+                'group' => 'nodes',
+                'data' => $this->getTargetData($actionData['destination'], 'destination')
+            );
+
+            $results[] = $action;
+            $results[] = $source;
+            $results[] = $destination;
+
+            $sourceId = $source['data']['id'];
+            $actionId = $action['data']['id'];
+            $destinationId = $destination['data']['id'];
+
+            $results[] = array(
+                'group' => 'edges',
+                'data' => array(
+                    'id' => "$sourceId-$actionId",
+                    'source' => $sourceId,
+                    'target' => $actionId
+                )
+            );
+
+            $results[] = array(
+                'group' => 'edges',
+                'data' => array(
+                    'id' => "$actionId-$destinationId",
+                    'source' => $actionId,
+                    'target' => $destinationId
+                )
+            );
+        }
+
+        return $app->json(
+            array(
+                'success' => true,
+                'message' => "Retrieved $pipeline",
+                'data' => $results
+            )
+        );
+    }
+
+    private function getTargetData($target, $idPrefix = null)
+    {
+        return array(
+            'id' => $idPrefix !== null ? sprintf("$idPrefix-%s", $target['key']) : $target['key'],
+            'name' => $this->getFirstProperty($target, array('schema', 'name')),
+            'parent' => $idPrefix !== null ? sprintf("$idPrefix-%s", $target['type']) : $target['type']
+        );
+    }
+
+    /**
+     *
+     * @param array $source
+     * @param array $properties
+     * @param mixed|null $default
+     * @return mixed
+     */
+    function getFirstProperty($source, $properties, $default = null)
+    {
+        foreach($properties as $property) {
+            if (array_key_exists($property, $source)) {
+                return $source[$property];
+            }
+        }
+        return $default;
+    }
+
+    private function getTargetTypeNodes(array $actions)
+    {
+        $targetDefinitions = array(
+            'mysql' => 'MySQL',
+            'jsonfile' => 'JSON File'
+        );
+
+        $results = array();
+        $sourceTypes = array();
+        $destinationTypes = array();
+
+        foreach($actions as $actionName => $action) {
+            $source = $action['source'];
+            $destination = $action['destination'];
+            if (!in_array($source['type'], $sourceTypes)) {
+                $sourceTypes[] = $source['type'];
+            }
+            if (!in_array($destination['type'], $destinationTypes)) {
+                $destinationTypes[] = $destination['type'];
+            }
+        }
+
+        foreach($sourceTypes as $sourceType) {
+            $results[] = array(
+                'group' => 'nodes',
+                'data' => array(
+                    'id' => sprintf('source-%s', $sourceType),
+                    'name' => $targetDefinitions[$sourceType],
+                    'parent' => self::SOURCES_ID
+                )
+            );
+        }
+
+        foreach($destinationTypes as $destinationType) {
+            $results[] = array(
+                'group' => 'nodes',
+                'data' => array(
+                    'id' => sprintf('destination-%s', $destinationType),
+                    'name' => $targetDefinitions[$destinationType],
+                    'parent' => self::DESTINATIONS_ID
+                )
+            );
+        }
+        return $results;
     }
 
     private function getPipelineEndpoints($pipeline)
