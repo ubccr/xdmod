@@ -44,6 +44,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 '=',
                 new TableField($tables[$join['foreignTableAlias']], $join['foreignKey'])
             ));
+        }
 
         // This table is defined in the configuration file, but used in the section below.
         $factTable = $tables['i'];
