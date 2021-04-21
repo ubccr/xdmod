@@ -15,9 +15,6 @@
 
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_common/host.json#/table_definition"
-        },
-        {
             "$ref": "${table_definition_dir}/cloud_common/image.json#/table_definition"
         }
     ],
@@ -52,11 +49,6 @@
     },
 
     "destination_record_map": {
-        "host": {
-            "resource_id": "resource_id",
-            "host_id": "unknown_id",
-            "hostname": "unknown_key"
-        },
         "image": {
             "resource_id": "resource_id",
             "image_id": "unknown_id",

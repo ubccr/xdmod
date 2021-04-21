@@ -26,7 +26,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         if ($mysql_helper->tableExists('modw_cloud.event')) {
 
             Utilities::runEtlPipeline(
-                ['cloud-migration-9_0_0-9_5_0'],
+                ['cloud-migration-9-0-0_9-5-0'],
                 $this->logger,
                 [
                     'last-modified-start-date' => '2017-01-01 00:00:00'
@@ -59,7 +59,7 @@ EOT
             }
 
             Utilities::runEtlPipeline(
-                ['cloud-resource-specs-migration-9_0_0-9_5_0'],
+                ['cloud-resource-specs-migration-9-0-0_9-5-0'],
                 $this->logger,
                 [
                     'last-modified-start-date' => '2017-01-01 00:00:00'
