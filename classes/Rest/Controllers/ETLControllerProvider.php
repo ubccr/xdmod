@@ -406,9 +406,10 @@ class ETLControllerProvider extends BaseControllerProvider
          * - Pipeline: xdmod.jobs-cloud-import-users-openstack
          *   - Sources: <Group>
          *     - MySQL: <Type>
-         *       - Source 1,2,3..N:
+         *       - Schema: <Sub Type>
+         *         - Table:
          *     - JSON File: <Type>
-         *       - Source 1,2,3..N:
+         *       - Source 1,2,3..N: File name
          *   - Actions: <Group>
          *     - Action 1,2,3..N: Action Name
          *   - Destinations: <Group>
@@ -451,23 +452,35 @@ class ETLControllerProvider extends BaseControllerProvider
             $actionId = $action['data']['id'];
             $destinationId = $destination['data']['id'];
 
-            $results[] = array(
-                'group' => 'edges',
-                'data' => array(
-                    'id' => "$sourceId-$actionId",
-                    'source' => $sourceId,
-                    'target' => $actionId
-                )
-            );
+            $sourceChildren = $this->getTargetChildren($actionData['source'], $sourceId);
+            $destinationChildren = $this->getTargetChildren($actionData['destination'], $destinationId);
 
-            $results[] = array(
-                'group' => 'edges',
-                'data' => array(
-                    'id' => "$actionId-$destinationId",
-                    'source' => $actionId,
-                    'target' => $destinationId
-                )
-            );
+            $results = array_merge($results, $sourceChildren);
+            $results = array_merge($results, $destinationChildren);
+
+            foreach($sourceChildren as $sourceChild) {
+                $sourceChildId = $sourceChild['data']['id'];
+                $results[] = array(
+                    'group' => 'edges',
+                    'data' => array(
+                        'id' => sprintf("%s-%s", $sourceChildId, $actionId),
+                        'source' => $sourceChildId,
+                        'target' => $actionId
+                    )
+                );
+            }
+
+            foreach($destinationChildren as $destinationChild) {
+                $destinationChildId = $destinationChild['data']['id'];
+                $results[] = array(
+                    'group' => 'edges',
+                    'data' => array(
+                        'id' => sprintf("%s-%s", $actionId, $destinationChildId),
+                        'source' => $actionId,
+                        'target' => $destinationChildId
+                    )
+                );
+            }
         }
 
         return $app->json(
@@ -486,6 +499,32 @@ class ETLControllerProvider extends BaseControllerProvider
             'name' => $this->getFirstProperty($target, array('schema', 'name')),
             'parent' => $idPrefix !== null ? sprintf("$idPrefix-%s", $target['type']) : $target['type']
         );
+    }
+
+    private function getTargetChildren($target, $parentId)
+    {
+        $results = array();
+
+        if (array_key_exists('tables', $target)) {
+            $key = 'tables';
+        } else if (array_key_exists('definition_file_list', $target)) {
+            $key = 'definition_file_list';
+        } else {
+            return $results;
+        }
+
+        foreach($target[$key] as $child) {
+            $results[] = array(
+                'group' => 'nodes',
+                'data' => array(
+                    'id' => "$parentId-$child",
+                    'name' => $child,
+                    'parent' => $parentId
+                )
+            );
+        }
+
+        return $results;
     }
 
     /**

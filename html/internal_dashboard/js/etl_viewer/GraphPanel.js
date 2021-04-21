@@ -92,7 +92,7 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
                             'text-halign': 'center',
                             height: 'label',
                             width: 'label',
-                            shape: 'rectangle'
+                            shape: 'round-rectangle'
                         }
                     },
                     {
@@ -109,7 +109,10 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
                     {
                         selector: 'edge',
                         css: {
-                            'curve-style': 'bezier',
+                            'curve-style': 'taxi',
+                            'taxi-direction': 'downwards',
+                            'taxi-turn': 20,
+                            'taxi-turn-min-distance': 5,
                             'target-arrow-shape': 'triangle',
                             'line-color': '#00FF00',
                             'target-arrow-color': '#00FF00'
