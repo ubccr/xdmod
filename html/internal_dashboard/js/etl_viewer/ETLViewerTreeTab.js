@@ -6,8 +6,12 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
     closable: true,
     height: '100%',
     width: '100%',
+
+    etlViewer: null,
     initComponent: function () {
-        var self = this;
+
+
+        let self = this;
         this.tree = new Ext.ux.tree.TreeGrid({
             region: 'center',
             closable: false,
@@ -54,6 +58,52 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                 collapsenode: function(node) {
                     if (CCR.xdmod.shiftKey === true && node.hasChildNodes()) {
                         node.collapseChildNodes(true);
+                    }
+                },
+                contextmenu: function (node, event) {
+                    let isPipeline = node.parentNode.isRoot;
+                    let isAction = node.parentNode && node.parentNode.parentNode && node.parentNode.parentNode.isRoot;
+                    if (isPipeline || isAction) {
+                        let title = 'Unknown';
+                        let config = {};
+
+                        if (isPipeline) {
+                            title = 'Pipeline';
+                            config['pipeline'] = node.attributes.name;
+                            config['title'] = node.attributes.name;
+                        } else if (isAction) {
+                            title = 'Action';
+                            let pipeline = node.parentNode.parentNode.attributes.name;
+                            config['action'] = `${pipeline}.${node.attributes.name}`;
+                        }
+
+                        let items = [
+                            `<span class="menu-title" style="margin-left: 26px;">${title}</span></br>`,
+                            '-',
+                            {
+                                text: 'View in Graph Viewer',
+                                iconCls: 'nodes',
+                                id: 'etl-viewer-view-in-graph',
+                                handler: function () {
+                                    self.etlViewer.fireEvent(
+                                        'add_tab',
+                                        'graph',
+                                        config
+                                    );
+                                }
+                            }
+                        ];
+
+                        let menu = new Ext.menu.Menu({
+                            plain: true,
+                            items: items,
+                            listeners: {
+                                hide: function() {
+                                    this.destroy();
+                                }
+                            }
+                        });
+                        menu.showAt(Ext.EventObject.getXY());
                     }
                 }
             },
@@ -142,6 +192,7 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                 this.tree
             ]
         });
+
         XDMoD.Admin.ETL.ETLViewerTreeTab.superclass.initComponent.apply(this, arguments);
     },
     listeners: {

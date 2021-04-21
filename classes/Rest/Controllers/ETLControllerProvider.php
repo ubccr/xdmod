@@ -430,7 +430,7 @@ class ETLControllerProvider extends BaseControllerProvider
                 'group' => 'nodes',
                 'data' => array(
                     'id' => $actionName,
-                    'name' => $actionName,
+                    'name' => $key,
                     'parent' => $pipeline
                 )
             );

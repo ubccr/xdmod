@@ -29,22 +29,9 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.Panel, {
                         cls: 'x-btn-text-icon',
                         icon: '',
                         handler: function() {
-                            var tab = new XDMoD.Admin.ETL.ETLViewerTreeTab();
-                            self.tabPanel.add(tab);
-                            self.tabPanel.setActiveTab(tab);
-                        }
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Graph View',
-                        cls: 'x-btn-text-icon',
-                        icon: '',
-                        handler: function () {
-                            let tab = new XDMoD.Admin.ETL.GraphPanel({
-                                pipeline: 'xdmod.jobs-cloud-import-users-openstack'
+                            self.addTab('tree', {
+                                etlViewer: self
                             });
-                            self.tabPanel.add(tab);
-                            self.tabPanel.setActiveTab(tab);
                         }
                     }
                 ]
@@ -52,6 +39,30 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.Panel, {
         });
         XDMoD.Admin.ETL.ETLViewer.superclass.initComponent.apply(this, arguments);
     },
+
+    listeners: {
+        add_tab: function (type, config) {
+            this.addTab(type, config);
+        }
+    },
+
+    addTab: function (type, config = {}) {
+        let tab = null;
+        switch (type) {
+            case 'tree':
+                tab = new XDMoD.Admin.ETL.ETLViewerTreeTab(config);
+                break;
+            case 'graph':
+                tab = new XDMoD.Admin.ETL.GraphPanel(config);
+                break;
+        }
+
+        if (tab !== null) {
+            this.tabPanel.add(tab);
+            this.tabPanel.setActiveTab(tab);
+        }
+    },
+
     /*listeners: {
         activate: function () {
             if (!this.loadMask) {
