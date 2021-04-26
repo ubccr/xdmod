@@ -46,8 +46,7 @@ abstract class BaseDatabaseTest extends BaseTest
         $skippedMessage,
         $schemaTestGroup = 'schema/integration',
         $expectedTestGroup = 'integration/database'
-    )
-    {
+    ) {
         $actual = $this->db->query($actualSQLQuery);
 
         # Check spec file
@@ -109,5 +108,4 @@ abstract class BaseDatabaseTest extends BaseTest
             }
         }
     }
-
 }
