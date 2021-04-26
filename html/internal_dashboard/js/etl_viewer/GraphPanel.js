@@ -52,7 +52,6 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
                     }).run();
                 },
                 loadexception: function () {
-
                     console.log('loadexception');
                 },
                 exception: function () {
@@ -90,9 +89,14 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
                             content: 'data(name)',
                             'text-valign': 'center',
                             'text-halign': 'center',
+                            shape: 'round-rectangle',
+                            'padding-left': '5px',
                             height: 'label',
                             width: 'label',
-                            shape: 'round-rectangle'
+                            'border-width': '2px',
+                            'border-color': '#000',
+                            'background-color': '#262626',
+                            'background-opacity': 0.3
                         }
                     },
                     {
@@ -109,13 +113,12 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
                     {
                         selector: 'edge',
                         css: {
-                            'curve-style': 'taxi',
-                            'taxi-direction': 'downwards',
-                            'taxi-turn': 20,
-                            'taxi-turn-min-distance': 5,
+                            'curve-style': 'bezier',
+                            'arrow-scale': 0.66,
                             'target-arrow-shape': 'triangle',
-                            'line-color': '#00FF00',
-                            'target-arrow-color': '#00FF00'
+                            'line-color': '#0099ff',
+                            'line-opacity': 0.66,
+                            'target-arrow-color': '#000'
                         }
                     }
                 ],
@@ -124,7 +127,8 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
                     /*@ts-ignore*/
                     fit: true,
                     /*@ts-ignore*/
-                    rankDir: 'LR'
+                    rankDir: 'LR',
+                    nodeSep: 20
                 }
             });
 

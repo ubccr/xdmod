@@ -205,6 +205,7 @@ require_once 'user_check.php';
   // ETL Viewer Dependencies
   <script type="text/javascript" src="../gui/lib/cytoscape/cytoscape.min.js"></script>
   <script type="text/javascript" src="../gui/lib/cytoscape-dagre/cytoscape-dagre-esm.js"></script>
+  <script type="text/javascript" src="../gui/lib/cytoscape-elk/cytoscape-elk.js"></script>
 
   // ETL Viewer
   <script type="text/javascript" src="js/etl_viewer/ETLViewer.js"></script>

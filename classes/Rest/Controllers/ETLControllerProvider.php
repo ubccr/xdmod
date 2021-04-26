@@ -424,6 +424,7 @@ class ETLControllerProvider extends BaseControllerProvider
                 'name' => $pipeline,
             )
         );
+
         foreach($actions as $key => $actionData) {
             $actionName = $actionData['name'];
 
@@ -504,12 +505,16 @@ class ETLControllerProvider extends BaseControllerProvider
     private function getTargetChildren($target, $parentId)
     {
         $results = array();
+        $properties = array('tables', 'definition_file_list', 'sql_file_list', 'definition_file');
+        $key = null;
+        foreach($properties as $property) {
+            if (array_key_exists($property, $target)) {
+                $key = $property;
+                break;
+            }
+        }
 
-        if (array_key_exists('tables', $target)) {
-            $key = 'tables';
-        } else if (array_key_exists('definition_file_list', $target)) {
-            $key = 'definition_file_list';
-        } else {
+        if ($key === null) {
             return $results;
         }
 
@@ -713,8 +718,38 @@ class ETLControllerProvider extends BaseControllerProvider
                         break;
                     case "StructuredFileIngestor":
                         $parsed = $action->parsed_definition_file;
+                        $tables = array();
 
-                        $destination['tables'] = array_keys(get_object_vars($parsed->destination_record_map));
+                        $properties = array(
+                            'destination_record_map' => function ($source) {
+                                return array_keys(get_object_vars($source->destination_record_map));
+                            },
+                            'table_definition' => function ($source) {
+                                if (is_array($source) && count($source) > 0) {
+                                    $table = $source[0];
+                                    return array($table->name);
+                                } elseif (is_object($source)) {
+                                    return array($source->name);
+                                }
+                                /*if (count($source) > 0) {
+
+                                }*/
+                                #var_dump($source);
+                                return array();
+                            }
+                        );
+
+                        foreach($properties as $property => $propertyExtractor) {
+                            if (property_exists($parsed, $property)) {
+                                $tables = $propertyExtractor($parsed->$property);
+                                break;
+                            }
+                        }
+
+                        $destination['tables'] = $tables;
+                        break;
+                    case "ExecuteSql":
+                        $source['sql_file_list'] = $action->options->options->sql_file_list;
                         break;
                     default:
                         break;
