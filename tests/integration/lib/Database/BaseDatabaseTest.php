@@ -25,6 +25,12 @@ abstract class BaseDatabaseTest extends BaseTest
     }
 
     /**
+     * This function provides a generic way of validating the results of a SQL Query are what is expected.
+     * Specifically, it executes `$actualSQLQuery` and validates the results against the schema contained in
+     * `$actualSchemaFilename`. Then, for each realm found in `self::$XDMOD_REALMS` it retrieves what the
+     * expected output is based on `$expectedFileName`. If the file does not exist the function will generate
+     * the expected output and save it in `$expectedFilename`. Finally, it ensures that each expected record
+     * is found within the results of `$actualSQLQuery`.
      *
      * @param string $actualSQLQuery         A sql query that will return the current results to be tested.
      * @param string $actualSchemaFileName   A json schema file that describes what form the results from
@@ -102,9 +108,9 @@ abstract class BaseDatabaseTest extends BaseTest
                 $this->markTestSkipped(sprintf($skippedMessage, $expectedOutputFile));
             }
 
-            $resources = Json::loadFile($expectedOutputFile);
-            foreach($resources as $item) {
-                $this->assertContains($item, $actual);
+            $expectedResults = Json::loadFile($expectedOutputFile);
+            foreach($expectedResults as $expected) {
+                $this->assertContains($expected, $actual);
             }
         }
     }
