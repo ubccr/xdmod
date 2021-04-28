@@ -17,25 +17,11 @@ XDMoD.Admin.ETL.ETLViewer = Ext.extend(Ext.Panel, {
                 tabCls: 'tab-strip'
             }
         });
+        this.treeView = new XDMoD.Admin.ETL.ETLViewerTreeTab({etlViewer: this});
+        this.tabPanel.add(this.treeView)
+
         Ext.apply(this, {
-            items: [
-                this.tabPanel
-            ],
-            tbar: {
-                items: [
-                    {
-                        xtype: 'button',
-                        text: 'Tree View',
-                        cls: 'x-btn-text-icon',
-                        icon: '',
-                        handler: function() {
-                            self.addTab('tree', {
-                                etlViewer: self
-                            });
-                        }
-                    }
-                ]
-            }
+            items: [this.tabPanel]
         });
         XDMoD.Admin.ETL.ETLViewer.superclass.initComponent.apply(this, arguments);
     },

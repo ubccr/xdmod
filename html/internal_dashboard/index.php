@@ -202,10 +202,10 @@ require_once 'user_check.php';
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
+
   // ETL Viewer Dependencies
   <script type="text/javascript" src="../gui/lib/cytoscape/cytoscape.min.js"></script>
-  <script type="text/javascript" src="../gui/lib/cytoscape-dagre/cytoscape-dagre-esm.js"></script>
-  <script type="text/javascript" src="../gui/lib/cytoscape-elk/cytoscape-elk.js"></script>
+  <script type="text/javascript" src="../gui/lib/cytoscape-dagre/cytoscape-dagre.js"></script>
 
   // ETL Viewer
   <script type="text/javascript" src="js/etl_viewer/ETLViewer.js"></script>

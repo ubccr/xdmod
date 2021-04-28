@@ -3,7 +3,6 @@ Ext.namespace('XDMoD', 'XDMoD.Admin', 'XDMoD.Admin.ETL');
 XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
     title: 'ETL Tree View',
     layout: 'border',
-    closable: true,
     height: '100%',
     width: '100%',
 
@@ -25,13 +24,19 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                         xtype: 'button',
                         text: 'Expand All',
                         icon: '',
-                        cls: 'x-btn-text-icon'
+                        cls: 'x-btn-text-icon',
+                        handler: function () {
+                            alert("This doesn't function yet, try pressing shift while expanding a node.");
+                        }
                     },
                     {
                         xtype: 'button',
                         text: 'Collapse All',
                         icon: '',
-                        cls: 'x-btn-text-icon'
+                        cls: 'x-btn-text-icon',
+                        handler: function () {
+                            alert("This doesn't function yet, try pressing shift while collapsing a node.")
+                        }
                     },
                     '-',
                     {
@@ -71,11 +76,14 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                             title = 'Pipeline';
                             config['pipeline'] = node.attributes.name;
                             config['title'] = node.attributes.name;
-                        } else if (isAction) {
+                        }
+
+                        // don't quite have the action specific backend setup yet.
+                        /*else if (isAction) {
                             title = 'Action';
                             let pipeline = node.parentNode.parentNode.attributes.name;
                             config['action'] = `${pipeline}.${node.attributes.name}`;
-                        }
+                        }*/
 
                         let items = [
                             `<span class="menu-title" style="margin-left: 26px;">${title}</span></br>`,
