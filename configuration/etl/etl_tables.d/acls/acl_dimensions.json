@@ -1,0 +1,74 @@
+{
+    "table_definition": {
+        "name": "acl_dimensions",
+        "engine": "InnoDB",
+        "comment": "Tracks which dimension(s) are used by an acl to filter query data.",
+        "columns": [
+            {
+                "name": "acl_dimension_id",
+                "type": "int(11)",
+                "nullable": "false",
+                "extra": "auto_increment"
+            },
+            {
+                "name": "acl_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "group_by_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The group_by that this acl uses to filter query data."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "acl_dimension_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_acl_id",
+                "columns": [
+                    "acl_id"
+                ],
+                "type": "BTREE"
+            },
+            {
+                "name": "idx_group_by_id",
+                "columns": [
+                    "group_by_id"
+                ],
+                "type": "BTREE"
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_ad_acl_id",
+                "columns": [
+                    "acl_id"
+                ],
+                "referenced_table": "acls",
+                "referenced_columns": [
+                    "acl_id"
+                ],
+                "on_delete": "CASCADE"
+            },
+            {
+                "name": "fk_ad_gb_id",
+                "columns": [
+                    "group_by_id"
+                ],
+                "referenced_table": "group_bys",
+                "referenced_columns": [
+                    "group_by_id"
+                ],
+                "on_delete": "CASCADE"
+            }
+        ]
+    }
+}
