@@ -53,4 +53,3 @@ class ParametersTest extends BaseTest
         return $this->getTestFiles()->loadJsonFile('parameters', 'parameters', 'input');
     }
 }
-
