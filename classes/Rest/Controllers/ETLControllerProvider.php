@@ -78,6 +78,9 @@ class ETLControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/graph/pipelines/{pipeline}", "$class::getPipelinesForGraph");
         $controller->post("$root/graph/pipelines/{pipeline}", "$class::getPipelinesForGraph");
+
+        $controller->get("$root/graph/pipelines/{pipeline}/actions/{action}", "$class::getPipelineActionForGraph");
+        $controller->post("$root/graph/pipelines/{pipeline}/actions/{action}", "$class::getPipelineActionForGraph");
     }
 
     /**
@@ -385,7 +388,42 @@ class ETLControllerProvider extends BaseControllerProvider
         return $app->json($results);
     }
 
+    /**
+     * @param Request $request
+     * @param Application $app
+     * @param string $pipeline
+     * @return JsonResponse
+     */
     public function getPipelinesForGraph(Request $request, Application $app, $pipeline)
+    {
+        return $app->json(
+            array(
+                'success' => true,
+                'message' => "Retrieved $pipeline",
+                'data' => $this->preparePipelineForGraph($pipeline)
+            )
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param Application $app
+     * @param string $pipeline
+     * @param string $action
+     * @return JsonResponse
+     */
+    public function getPipelineActionForGraph(Request $request, Application $app, $pipeline, $action)
+    {
+        return $app->json(
+            array(
+                'success' => true,
+                'message' => "Retrieved $action of $pipeline",
+                'data' => $this->preparePipelineForGraph($pipeline, $action)
+            )
+        );
+    }
+
+    protected function preparePipelineForGraph($pipeline, $action = null)
     {
         /* Parent Group nodes should be formatted as such:
          *   { group: 'nodes', data: { id: '<unique_id>', name: '<name>'} }
@@ -426,7 +464,11 @@ class ETLControllerProvider extends BaseControllerProvider
         );
 
         foreach($actions as $key => $actionData) {
+
             $actionName = $actionData['name'];
+            if (isset($action) && $action !== $actionName) {
+                break;
+            }
 
             $action = array(
                 'group' => 'nodes',
@@ -484,13 +526,7 @@ class ETLControllerProvider extends BaseControllerProvider
             }
         }
 
-        return $app->json(
-            array(
-                'success' => true,
-                'message' => "Retrieved $pipeline",
-                'data' => $results
-            )
-        );
+        return $results;
     }
 
     private function getTargetData($target, $idPrefix = null)
