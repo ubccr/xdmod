@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2021-04-?? v9.5.0
+## 2021-05-21 v9.5.0
 
 - New Features
     - General
@@ -11,7 +11,7 @@
         - Add -c/--cluster flag to xdmod-slurm-helper ([\#1401](https://github.com/ubccr/xdmod/pull/1401))
 - Enhancements
     - General
-        - Add indexes that will help federated module ingest be faster ([\#1500](https://github.com/ubccr/xdmod/pull/1500))
+        - Add indexes that reduce the ingest time for the database load when using the Federated XDMoD module ([\#1500](https://github.com/ubccr/xdmod/pull/1500))
         - Change raw statistics variable substitution format ([\#1448](https://github.com/ubccr/xdmod/pull/1448))
         - Populate exports with metadata where appropriate ([\#1425](https://github.com/ubccr/xdmod/pull/1425))
         - Populate joblist table for gateway jobs ([\#1411](https://github.com/ubccr/xdmod/pull/1411))
@@ -93,7 +93,7 @@
     - Infrastructure
         - Removing Unused Code ([\#1462](https://github.com/ubccr/xdmod/pull/1462))
         - Updating ubccr/simplesamlphp-module-authoidcoauth2 to 1.1.0 ([\#1447](https://github.com/ubccr/xdmod/pull/1447))
-        - Migrate Logging: Redux ([\#1461](https://github.com/ubccr/xdmod/pull/1461))
+        - Migrate logging code to use MonoLog rather than PEAR Log ([\#1461](https://github.com/ubccr/xdmod/pull/1461))
         - Update the directory that ui/runtests.sh runs from ([\#1438](https://github.com/ubccr/xdmod/pull/1438))
     - General
         - Use the composer autoloader to load files. ([\#1494](https://github.com/ubccr/xdmod/pull/1494))

@@ -2,6 +2,200 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
+<h2>Version 9.5.0 (2021-05-21)</h2>
+<ul>
+<li>New Features
+<ul>
+<li>General
+<ul>
+<li>Add walltime_accuracy metric to job summary data.</li>
+</ul>
+</li>
+<li>Cloud
+<ul>
+<li>Add cloud instance viewer.</li>
+</ul>
+</li>
+<li>ETL
+<ul>
+<li>Add -c/--cluster flag to xdmod-slurm-helper.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Enhancements
+<ul>
+<li>General
+<ul>
+<li>Add indexes that reduce the ingest time for the database load when using the Federated XDMoD module.</li>
+<li>Change raw statistics variable substitution format.</li>
+<li>Populate exports with metadata where appropriate.</li>
+<li>Populate joblist table for gateway jobs.</li>
+</ul>
+</li>
+<li>ETL
+<ul>
+<li>Add data endpoint that can parse webserver logs.</li>
+<li>Remove use of Slurm ReqGRES field.</li>
+<li>Increase maximum queue name length.</li>
+<li>Add support for terabyte suffix in SGE/UGE logs.</li>
+</ul>
+</li>
+<li>Internal Dashboard
+<ul>
+<li>Add data export logs to administrative dashboard.</li>
+</ul>
+</li>
+<li>ACL
+<ul>
+<li>Use absolute path when running acl-config.</li>
+</ul>
+</li>
+<li>Metric Explorer
+<ul>
+<li>Restore node utilization statistics.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Security
+<ul>
+<li>Infrastructure
+<ul>
+<li>Updating file permissions for XDMoD's bin directory.</li>
+<li>Switch to Chromium instead of the (no-longer maintained) PhantomJS to generate chart export images.</li>
+<li>Remove (no longer maintained) jasper reports and replace with PHPWord/libreoffice  for Report generation.</li>
+</ul>
+</li>
+<li>General
+<ul>
+<li>Disable SSLv3 by default in the template apache configuration file.</li>
+<li>Verifying User Query Count to address TrustedCI feedback.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Bug Fixes
+<ul>
+<li>Data Warehouse Export
+<ul>
+<li>Fix SUPReMM data warehouse export regression.</li>
+</ul>
+</li>
+<li>General
+<ul>
+<li>Change chromium output error detection.</li>
+<li>Ensure "Don't show me this again" checkbox for new users is honoured.</li>
+<li>Ensure dashboard is updated whenever reports change.</li>
+<li>Add missing attributes when gearing over from Usage to Metric.</li>
+<li>Improve input validation for download_report controller.</li>
+<li>Fix bug in language definition in main html page.</li>
+<li>Change top-level exception handling in scripts.</li>
+<li>Fix mysql command line defaults file option.</li>
+<li>Re-index filtered arrays.</li>
+<li>Improve robustness of full groupby checking.</li>
+<li>Re-index value returned from getRawDataRealms function.</li>
+<li>Update version of ini package.</li>
+<li>Update SSO to pull the configured SP's IdP metadata directly.</li>
+<li>Only show the New User Tour Dialog once per session.</li>
+<li>Fix login dialog sign in button rendering on Google Chrome 85+.</li>
+<li>Set the "Show in X tab" label in the Metric Explorer automatically based on whether the dashboard is enabled.</li>
+</ul>
+</li>
+<li>Job Viewer
+<ul>
+<li>Job Analytics panel charts dynamically configurable.</li>
+<li>Update and add GroupBy categories.</li>
+</ul>
+</li>
+<li>Cloud
+<ul>
+<li>Updating pipelines that get run when ingesting data in generic cloud data format.</li>
+<li>Changing constraints on cloud resource specifications tables to prevent extra rows.</li>
+<li>Fix extraneous cloud sessions.</li>
+<li>Fixed memory range typo for cloud memory buckets configuration file.</li>
+<li>Add columns to cloudfact_by_day aggregation.</li>
+<li>Break cloud migration into two pipelines.</li>
+<li>Move to using custom Ingestor for cloud resource specifications.</li>
+<li>Make cloud realm compatible with ONLY_FULL_GROUP_BY.</li>
+</ul>
+</li>
+<li>ETL
+<ul>
+<li>Fix data encoding in etlv2 pdoIngestor.</li>
+<li>Fix hang in nodejs etl on mysql connection failure.</li>
+<li>Improve configurability for the stats defined in the etlv1 schema.</li>
+</ul>
+</li>
+<li>Infrastructure
+<ul>
+<li>Updating the logging code to not throw away all class information.</li>
+</ul>
+</li>
+<li>ACL
+<ul>
+<li>Update moddb.module_version table.</li>
+</ul>
+</li>
+<li>Internal Dashboard
+<ul>
+<li>Fix institution loading during manual user creation.</li>
+</ul>
+</li>
+<li>Report Generator
+<ul>
+<li>Hide dashboard reports from Report Generator.</li>
+<li>Fix chart layout and timeframe radio button crowding.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Documentation
+<ul>
+<li>General
+<ul>
+<li>Updated the upgrade guide documentation to include information on re-ingesting cloud data due to memory buckets bug fix.</li>
+<li>Create Gateways realm installation instructions.</li>
+<li>Update simple SAML documentation to mention the icon.</li>
+<li>Update listing of XDMoD demos from Autumn 2020.</li>
+<li>Remove remaining deprecated html from About tab pages.</li>
+<li>Updated XMS project's authors and team listings.</li>
+<li>Update About tab with recent Publications and Presentations details.</li>
+<li>Removing references to acl-config's recover mode.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Maintenance / Code Quality
+<ul>
+<li>Infrastructure
+<ul>
+<li>Removing Unused Code.</li>
+<li>Updating ubccr/simplesamlphp-module-authoidcoauth2 to 1.1.0.</li>
+<li>Migrate logging code to use MonoLog rather than PEAR Log.</li>
+<li>Update the directory that ui/runtests.sh runs from.</li>
+</ul>
+</li>
+<li>General
+<ul>
+<li>Use the composer autoloader to load files.</li>
+<li>Fix checkbox CSS syntax.</li>
+<li>Remove unnecessary report font code.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Data Quality
+<ul>
+<li>General
+<ul>
+<li>Improve data validity checks for Open XDMoD account usernames.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
 <h2>Version 9.0.0 (2020-08-13)</h2>
 
 <h3>Documentation</h3>
