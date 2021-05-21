@@ -1,5 +1,108 @@
 # Open XDMoD Change Log
 
+## 2021-05-21 v9.5.0
+
+- New Features
+    - General
+        - Add walltime_accuracy metric to job summary data. ([\#1515](https://github.com/ubccr/xdmod/pull/1515))
+    - Cloud
+        - Add cloud instance viewer ([\#1473](https://github.com/ubccr/xdmod/pull/1473))
+    - ETL
+        - Add -c/--cluster flag to xdmod-slurm-helper ([\#1401](https://github.com/ubccr/xdmod/pull/1401))
+- Enhancements
+    - General
+        - Add indexes that reduce the ingest time for the database load when using the Federated XDMoD module ([\#1500](https://github.com/ubccr/xdmod/pull/1500))
+        - Change raw statistics variable substitution format ([\#1448](https://github.com/ubccr/xdmod/pull/1448))
+        - Populate exports with metadata where appropriate ([\#1425](https://github.com/ubccr/xdmod/pull/1425))
+        - Populate joblist table for gateway jobs ([\#1411](https://github.com/ubccr/xdmod/pull/1411))
+    - ETL
+        - Add data endpoint that can parse webserver logs. ([\#1483](https://github.com/ubccr/xdmod/pull/1483))
+        - Remove use of Slurm ReqGRES field ([\#1479](https://github.com/ubccr/xdmod/pull/1479))
+        - Increase maximum queue name length ([\#1460](https://github.com/ubccr/xdmod/pull/1460))
+        - Add support for terabyte suffix in SGE/UGE logs ([\#1457](https://github.com/ubccr/xdmod/pull/1457))
+    - Internal Dashboard
+        - Add data export logs to administrative dashboard ([\#1451](https://github.com/ubccr/xdmod/pull/1451))
+    - ACL
+        - Use absolute path when running acl-config ([\#1437](https://github.com/ubccr/xdmod/pull/1437))
+    - Metric Explorer
+        - Restore node utilization statistics ([\#1431](https://github.com/ubccr/xdmod/pull/1431))
+- Security
+    - Infrastructure
+        - Updating file permissions for XDMoD's bin directory ([\#1510](https://github.com/ubccr/xdmod/pull/1510))
+        - Switch to Chromium instead of the (no-longer maintained) PhantomJS to generate chart export images. ([\#1413](https://github.com/ubccr/xdmod/pull/1413), [\#1428](https://github.com/ubccr/xdmod/pull/1428))
+        - Remove (no longer maintained) jasper reports and replace with PHPWord/libreoffice  for Report generation. ([\#1341](https://github.com/ubccr/xdmod/pull/1341), [\#1496](https://github.com/ubccr/xdmod/pull/1496), [\#1424](https://github.com/ubccr/xdmod/pull/1424))
+    - General
+        - Disable SSLv3 by default in the template apache configuration file. ([\#1466](https://github.com/ubccr/xdmod/pull/1466))
+        - Verifying User Query Count to address TrustedCI feedback ([\#1430](https://github.com/ubccr/xdmod/pull/1430))
+- Bug Fixes
+    - Data Warehouse Export
+        - Fix SUPReMM data warehouse export regression ([\#1520](https://github.com/ubccr/xdmod/pull/1520))
+    - General
+        - Change chromium output error detection. ([\#1519](https://github.com/ubccr/xdmod/pull/1519))
+        - Ensure "Don't show me this" checkbox is honoured ([\#1508](https://github.com/ubccr/xdmod/pull/1508))
+        - Ensure dashboard is updated whenever reports change. ([\#1507](https://github.com/ubccr/xdmod/pull/1507))
+        - Add missing attributes when gearing over from Usage to Metric ([\#1506](https://github.com/ubccr/xdmod/pull/1506))
+        - Improve input validation for download_report controller ([\#1503](https://github.com/ubccr/xdmod/pull/1503))
+        - Fix bug in language definition in main html page. ([\#1492](https://github.com/ubccr/xdmod/pull/1492))
+        - Change top-level exception handling in scripts ([\#1488](https://github.com/ubccr/xdmod/pull/1488))
+        - Fix mysql command line defaults file option ([\#1487](https://github.com/ubccr/xdmod/pull/1487))
+        - Re-index filtered arrays ([\#1481](https://github.com/ubccr/xdmod/pull/1481))
+        - Improve robustness of full groupby checking ([\#1469](https://github.com/ubccr/xdmod/pull/1469))
+        - Re-index value returned from getRawDataRealms function ([\#1468](https://github.com/ubccr/xdmod/pull/1468))
+        - Update version of ini package ([\#1467](https://github.com/ubccr/xdmod/pull/1467))
+        - Update SSO to pull the configured SP's IdP metadata directly ([\#1455](https://github.com/ubccr/xdmod/pull/1455))
+        - Only show the New User Tour Dialog once per session. ([\#1454](https://github.com/ubccr/xdmod/pull/1454))
+        - Fix login dialog sign in button rendering on Google Chrome 85+ ([\#1450](https://github.com/ubccr/xdmod/pull/1450))
+        - Set the "Show in X tab" label in the Metric Explorer automatically based on whether the dashboard is enabled ([\#1400](https://github.com/ubccr/xdmod/pull/1400))
+    - Job Viewer
+        - Job Analytics panel charts dynamically configurable. ([\#1517](https://github.com/ubccr/xdmod/pull/1517))
+        - Update and add GroupBy categories ([\#1441](https://github.com/ubccr/xdmod/pull/1441))
+    - Cloud
+        - Updating pipelines that get run when ingesting data in generic cloud data format ([\#1514](https://github.com/ubccr/xdmod/pull/1514))
+        - Changing constraints on cloud resource specifications tables to prevent extra rows ([\#1511](https://github.com/ubccr/xdmod/pull/1511))
+        - Fix extraneous cloud sessions ([\#1504](https://github.com/ubccr/xdmod/pull/1504))
+        - Fixed memory range typo for cloud memory buckets configuration file. ([\#1502](https://github.com/ubccr/xdmod/pull/1502))
+        - Add columns to cloudfact_by_day aggregation ([\#1518](https://github.com/ubccr/xdmod/pull/1518))
+        - Break cloud migration into two pipelines ([\#1512](https://github.com/ubccr/xdmod/pull/1512))
+        - Move to using custom Ingestor for cloud resource specifications ([\#1489](https://github.com/ubccr/xdmod/pull/1489))
+        - Make cloud realm compatible with ONLY_FULL_GROUP_BY ([\#1480](https://github.com/ubccr/xdmod/pull/1480))
+    - ETL
+        - Fix data encoding in etlv2 pdoIngestor ([\#1495](https://github.com/ubccr/xdmod/pull/1495))
+        - Fix hang in nodejs etl on mysql connection failure. ([\#1477](https://github.com/ubccr/xdmod/pull/1477))
+        - Improve configurability for the stats defined in the etlv1 schema. ([\#1465](https://github.com/ubccr/xdmod/pull/1465))
+    - Infrastructure
+        - Updating the logging code to not throw away all class information ([\#1493](https://github.com/ubccr/xdmod/pull/1493))
+    - ACL
+        - Update moddb.module_version table ([\#1484](https://github.com/ubccr/xdmod/pull/1484))
+    - Internal Dashboard
+        - Fix institution loading during manual user creation ([\#1446](https://github.com/ubccr/xdmod/pull/1446))
+    - Report Generator
+        - Hide dashboard reports from Report Generator ([\#1445](https://github.com/ubccr/xdmod/pull/1445))
+        - Fix chart layout and timeframe radio button crowding ([\#1435](https://github.com/ubccr/xdmod/pull/1435))
+- Documentation
+    - General
+        - Updated the upgrade guide documentation to include information on re-ingesting cloud data due to memory buckets bug fix. ([\#1516](https://github.com/ubccr/xdmod/pull/1516))
+        - Create Gateways realm installation instructions ([\#1509](https://github.com/ubccr/xdmod/pull/1509))
+        - Update simple SAML documentation to mention the icon. ([\#1505](https://github.com/ubccr/xdmod/pull/1505))
+        - Update listing of XDMoD demos from Autumn 2020 ([\#1482](https://github.com/ubccr/xdmod/pull/1482))
+        - Remove remaining deprecated html from About tab pages ([\#1476](https://github.com/ubccr/xdmod/pull/1476))
+        - Updated XMS project's authors and team listings ([\#1474](https://github.com/ubccr/xdmod/pull/1474))
+        - Update About tab with recent Publications and Presentations details ([\#1470](https://github.com/ubccr/xdmod/pull/1470))
+        - Removing references to acl-config's recover mode ([\#1418](https://github.com/ubccr/xdmod/pull/1418))
+- Maintenance / Code Quality
+    - Infrastructure
+        - Removing Unused Code ([\#1462](https://github.com/ubccr/xdmod/pull/1462))
+        - Updating ubccr/simplesamlphp-module-authoidcoauth2 to 1.1.0 ([\#1447](https://github.com/ubccr/xdmod/pull/1447))
+        - Migrate logging code to use MonoLog rather than PEAR Log ([\#1461](https://github.com/ubccr/xdmod/pull/1461))
+        - Update the directory that ui/runtests.sh runs from ([\#1438](https://github.com/ubccr/xdmod/pull/1438))
+    - General
+        - Use the composer autoloader to load files. ([\#1494](https://github.com/ubccr/xdmod/pull/1494))
+        - Fix checkbox CSS syntax ([\#1436](https://github.com/ubccr/xdmod/pull/1436))
+        - Remove unnecessary report font code ([\#1434](https://github.com/ubccr/xdmod/pull/1434))
+- Data Quality
+    - General
+        - Improve data validity checks for Open XDMoD account usernames ([\#1379](https://github.com/ubccr/xdmod/pull/1379))
+
 ## 2020-08-13 v9.0.0
 
 - Documentation
