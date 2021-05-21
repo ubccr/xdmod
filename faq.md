@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.0/faq.html
+redirect_to: /9.5/faq.html
 ---

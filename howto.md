@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.0/howto.html
+redirect_to: /9.5/howto.html
 ---

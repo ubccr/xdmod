@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.0/logo-image.html
+redirect_to: /9.5/logo-image.html
 ---

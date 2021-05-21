@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.0/gpu-metrics.html
+redirect_to: /9.5/gpu-metrics.html
 ---

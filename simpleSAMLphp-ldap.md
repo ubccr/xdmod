@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.0/simpleSAMLphp-ldap.html
+redirect_to: /9.5/simpleSAMLphp-ldap.html
 ---

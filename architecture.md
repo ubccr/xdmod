@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.0/architecture.html
+redirect_to: /9.5/architecture.html
 ---
