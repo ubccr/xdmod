@@ -29,7 +29,8 @@
         "ua-parser/uap-php": "^3.9",
         "cytoscape/cytoscape": "^3.16",
         "cytoscape/cytoscape-dagre": "^2.3",
-        "plotly/plotly": "^1.57.1"
+        "plotly/plotly": "^1.57.1",
+        "gnugat/nomo-spaco": "~0.4"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8",

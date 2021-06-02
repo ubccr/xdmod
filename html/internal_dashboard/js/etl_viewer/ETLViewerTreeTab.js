@@ -66,27 +66,25 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                     }
                 },
                 contextmenu: function (node, event) {
-                    let isPipeline = node.parentNode.isRoot;
+                    let isPipeline = node.parentNode && node.parentNode.isRoot;
                     let isAction = node.parentNode && node.parentNode.parentNode && node.parentNode.parentNode.isRoot;
                     if (isPipeline || isAction) {
-                        let title = 'Unknown';
+                        let menuTitle = 'Unknown';
                         let config = {};
 
                         if (isPipeline) {
-                            title = 'Pipeline';
+                            menuTitle = 'Pipeline';
                             config['pipeline'] = node.attributes.name;
                             config['title'] = node.attributes.name;
+                        } else if (isAction) {
+                            menuTitle = 'Action';
+                            config['pipeline'] = node.parentNode.attributes.name;
+                            config['action'] = node.attributes.name;
+                            config['title'] = `${node.parentNode.attributes.name}.${node.attributes.name}`
                         }
 
-                        // don't quite have the action specific backend setup yet.
-                        /*else if (isAction) {
-                            title = 'Action';
-                            let pipeline = node.parentNode.parentNode.attributes.name;
-                            config['action'] = `${pipeline}.${node.attributes.name}`;
-                        }*/
-
                         let items = [
-                            `<span class="menu-title" style="margin-left: 26px;">${title}</span></br>`,
+                            `<span class="menu-title" style="margin-left: 26px;">${menuTitle}</span></br>`,
                             '-',
                             {
                                 text: 'View in Graph Viewer',

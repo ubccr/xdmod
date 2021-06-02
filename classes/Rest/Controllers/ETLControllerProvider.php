@@ -423,7 +423,7 @@ class ETLControllerProvider extends BaseControllerProvider
         );
     }
 
-    protected function preparePipelineForGraph($pipeline, $action = null)
+    public function preparePipelineForGraph($pipeline, $requestedAction = null)
     {
         /* Parent Group nodes should be formatted as such:
          *   { group: 'nodes', data: { id: '<unique_id>', name: '<name>'} }
@@ -465,15 +465,38 @@ class ETLControllerProvider extends BaseControllerProvider
 
         foreach($actions as $key => $actionData) {
 
-            $actionName = $actionData['name'];
-            if (isset($action) && $action !== $actionName) {
-                break;
+            $fullActionName = $actionData['name'];
+            $fullNameParts = explode('.', $fullActionName);
+            $actionName = array_pop($fullNameParts);
+
+            if (isset($requestedAction) && $requestedAction !== $actionName) {
+                continue;
             }
+/*
+ * aws.cloudwatch.0623c9c8-57bc-3776-a210-a6b3dc61ed93
+aws.cloudwatch.12f8a7f6-4fd6-3851-8a36-d106f7753047
+aws.cloudwatch.13d98017-8384-368b-a14e-4a596a7ba3bf
+aws.cloudwatch.21378f23-d0a2-393c-ad77-03ec7e9ed570
+aws.cloudwatch.22079260-6475-3e15-a5e6-09dd932c4706
+aws.cloudwatch.27c5ec13-26a2-37f1-a6f1-ee42e647d80b
+aws.cloudwatch.37129597-c560-394c-9ae9-16f0ba7ba47c
+aws.cloudwatch.532e54c0-a622-34b8-8082-265c99d4b189
+aws.cloudwatch.66d4ef0e-1616-39db-93a7-3349c7f62c02
+aws.cloudwatch.70157f97-5cc0-3a63-97c7-e45de025c6d5
+aws.cloudwatch.70df9667-63e3-3750-b52c-19495e28362a
+aws.cloudwatch.81a4710e-54fe-3731-8701-e1e084a99756
+aws.cloudwatch.8df3b226-e4ad-35e4-ae6a-f20ce700143a
+aws.cloudwatch.916385f7-2ffa-3b89-a678-9c678a71898a
+aws.cloudwatch.af7f65b2-1feb-38d7-9741-87a56fe64e7d
+aws.cloudwatch.d17df3fa-3ea8-3a66-ba13-5664f188e23a
+aws.cloudwatch.dfd4e5d6-7b42-3908-923c-7a404e6b5d96
+aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
+ * */
 
             $action = array(
                 'group' => 'nodes',
                 'data' => array(
-                    'id' => $actionName,
+                    'id' => $fullActionName,
                     'name' => $key,
                     'parent' => $pipeline
                 )

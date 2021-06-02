@@ -16,6 +16,10 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
     // *NOTE: supplied by the code instantiating this panel.
     pipeline: null,
 
+    action: null,
+
+    url: XDMoD.REST.url + '/etl/graph/pipelines/',
+
     /**
      * Initialize this component's contents.
      */
@@ -25,10 +29,16 @@ XDMoD.Admin.ETL.GraphPanel = Ext.extend(Ext.Panel, {
         cytoscape.use(cytoscapeDagre);
 
         this.containerId = this.id + '_hc';
+        if (this.pipeline) {
+           this.url += self.pipeline;
+        }
+        if (this.action) {
+            this.url += `/actions/${this.action}`;
+        }
 
         this.store = new Ext.data.JsonStore({
 
-            url: XDMoD.REST.url + '/etl/graph/pipelines/' + self.pipeline,
+            url: this.url,
 
             autoDestroy: false,
 
