@@ -108,8 +108,6 @@ Log Files
 Report Generator Code
 ---------------------
 
-Includes the Java code used to generate reports.
-
 - Source Tarball: `reporting/`
 - RPM Installation: `/usr/share/xdmod/reporting/`
 - Source Installation: `/opt/xdmod/share/reporting/`
