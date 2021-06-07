@@ -18,7 +18,7 @@ selectMenuOption 1
 answerQuestion {Site Address} https://localhost/
 provideInput {Email Address:} xdmod@example.com
 answerQuestion {Java Path} /usr/bin/java
-answerQuestion {Javac Path} /usr/bin/javac
+provideInput {Javac Path:} /usr/bin/javac
 provideInput {Chromium Path:} /usr/lib64/chromium-browser/headless_shell
 provideInput {Center Logo Path:} {}
 provideInput {Enable Dashboard Tab*} {off}

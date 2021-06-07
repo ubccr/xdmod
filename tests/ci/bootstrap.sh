@@ -110,9 +110,6 @@ then
     copy_template_httpd_conf
     sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
 
-    # Remove php-mcrypt until new Docker image is built without it.
-    yum -y remove php-mcrypt || true
-
     ~/bin/services start
 
     # TODO: Replace diff files with hard fixes
