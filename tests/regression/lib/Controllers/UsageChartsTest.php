@@ -18,6 +18,37 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
         }
     }
+
+    private function phash($type, $imageData)
+    {
+        $out = "";
+
+        if ($type === 'png') {
+            $pipes = array();
+            $descriptor_spec = array(
+                    0 => array('pipe', 'r'),
+                    1 => array('pipe', 'w'),
+                    2 => array('pipe', 'w'),
+                    );
+            $process = proc_open('/root/bin/imagehash', $descriptor_spec, $pipes);
+            if (!is_resource($process)) {
+                throw new \Exception('Unable execute command Details: ' . print_r(error_get_last(), true));
+            }
+            fwrite($pipes[0], $imageData);
+            fclose($pipes[0]);
+
+            $out = stream_get_contents($pipes[1]);
+            $err = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            proc_close($process);
+        } else {
+            $out = sha1($imageData);
+        }
+
+        return $out;
+    }
+
     /**
      * @dataProvider chartSettingsProvider
      */
@@ -29,13 +60,13 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $imageData = $response[0];
         if ($expectedHash === false) {
 
-            self::$imagehashes[$testName] =  sha1($imageData);
+            self::$imagehashes[$testName] =  $this->phash($input['format'], $imageData);
 
             $this->markTestSkipped('Created Expected output for ' . $testName);
 
         } else {
 
-            $actualHash = sha1($imageData);
+            $actualHash = $this->phash($input['format'], $imageData);
             $this->assertEquals($expectedHash, $actualHash, $testName);
         }
     }
