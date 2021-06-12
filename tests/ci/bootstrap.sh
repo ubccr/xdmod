@@ -22,6 +22,12 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
+# -------------------8<-------------------------
+yum install -y python3
+pip3 install imagehash
+cp $REPODIR/tests/ci/scripts/imagehash /root/bin
+# ------------------->8-------------------------
+
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
