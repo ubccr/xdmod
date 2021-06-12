@@ -41,7 +41,10 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             $err = stream_get_contents($pipes[2]);
             fclose($pipes[1]);
             fclose($pipes[2]);
-            proc_close($process);
+            $retval = proc_close($process);
+            if (strlen($err) > 0 || $retval !== 0) {
+                throw new Exception("imagehash returned $retval stderr='$err'");
+            }
         } else {
             $out = sha1($imageData);
         }
