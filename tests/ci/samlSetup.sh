@@ -19,7 +19,7 @@ then
     tar -zxf $CACHE_FILE
     cd saml-idp
 else
-    git clone https://github.com/mcguinness/saml-idp/
+    git clone https://github.com/mcguinness/saml-idp
     cd saml-idp
     git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
     rm -f package-lock.json

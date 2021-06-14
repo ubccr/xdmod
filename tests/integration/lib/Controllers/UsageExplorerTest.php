@@ -310,11 +310,21 @@ EOF;
 
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $this->assertEquals($expectedMimeType, $response[1]['content_type']);
+        $actualContentType = $response[1]['content_type'];
+        if (is_array($expectedMimeType)) {
+            $this->assertTrue(in_array($actualContentType, $expectedMimeType));
+        } else {
+            $this->assertEquals($expectedMimeType, $actualContentType);
+        }
 
-        // Check the mime type of the file is correct.
-        $finfo = finfo_open(FILEINFO_MIME);
-        $this->assertEquals($expectedFinfo, finfo_buffer($finfo, $response[0]));
+        $actualFinfo = finfo_buffer(finfo_open(FILEINFO_MIME), $response[0]);
+
+        if (is_array($expectedFinfo)) {
+            $this->assertTrue(in_array($actualFinfo, $expectedFinfo));
+        } else {
+            $this->assertEquals($expectedFinfo, $actualFinfo);
+        }
+
     }
 
     public function exportDataProvider()
@@ -367,13 +377,13 @@ EOF;
         $ret[] = array($baseSettings, 'image/png', 'image/png; charset=binary');
 
         $baseSettings['format'] = 'svg';
-        $ret[] = array($baseSettings, 'image/svg+xml', 'text/plain; charset=utf-8');
+        $ret[] = array($baseSettings, 'image/svg+xml', array('image/svg; charset=utf-8', 'text/plain; charset=utf-8'));
 
         $baseSettings['format'] = 'csv';
         $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
 
         $baseSettings['format'] = 'xml';
-        $ret[] = array($baseSettings, 'text/xml', 'application/xml; charset=us-ascii');
+        $ret[] = array($baseSettings, array('text/xml;charset=UTF-8', 'text/xml'), array('text/xml; charset=us-ascii', 'application/xml; charset=us-ascii'));
 
         return $ret;
     }

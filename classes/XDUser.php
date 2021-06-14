@@ -977,7 +977,7 @@ SQL;
                 $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
                 $update_data['password'] = $this->_password;
             }
-            $update_data['password_last_updated'] = 'NOW()';
+            $update_data['password_last_updated'] = date('Y-m-d H:i:s');
         }
         $update_data['email_address'] = ($this->_email);
         $update_data['first_name'] = ($this->_firstName);

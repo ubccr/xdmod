@@ -391,6 +391,7 @@ class Column extends NamedEntity implements iEntity
                  ( $this->nullable && "NULL" == $this->default ) ||
                  ( "timestamp" == $this->type && is_numeric($this->default) ) ||
                  ( "timestamp" == $this->type && in_array(strtolower($this->default), $currentTimestampAliases) ) ||
+                 ( "datetime" === $this->type && in_array(strtolower($this->default), $currentTimestampAliases) ) ||
                  is_numeric($this->default) ||
                  "b'" == substr($this->default, 0, 2) ||
                  "x'" == substr(strtolower($this->default), 0, 2)
