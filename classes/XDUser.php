@@ -924,6 +924,11 @@ SQL;
             throw new Exception('A user must have at least one acl.');
         }
 
+        $match = preg_match(RESTRICTION_USERNAME, $this->_username);
+        if ($match === false || $match === 0) {
+            throw new Exception('A user must have a valid username.');
+        }
+
         // Retrieve the userId (if any) for the email associated with this User
         // object.
         $id_of_user_holding_email_address = self::userExistsWithEmailAddress($this->_email);
@@ -962,6 +967,7 @@ SQL;
         if ($forUpdate) {
             $update_data['id'] = $this->_id;
         }
+
         $update_data['username'] = $this->_username;
         $includePassword = strlen($this->_password) <= CHARLIM_PASSWORD;
         if ($includePassword) {

@@ -547,7 +547,7 @@ class XDUserTest extends BaseTest
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp /User "(\w+)" not found/
+     * @expectedExceptionMessageRegExp /User "([\w\d.]+)" not found/
      */
     public function testRemoveUser()
     {
@@ -950,10 +950,6 @@ class XDUserTest extends BaseTest
 
     private static function getUserName($username)
     {
-        while (array_key_exists($username, self::$users)) {
-            $suffix = rand(self::MIN_USERS, self::MAX_USERS);
-            $username = "$username$suffix";
-        }
-        return $username;
+        return sprintf("%s%s", $username, uniqid("", true));
     }
 }

@@ -1,4 +1,4 @@
-name:          xdmod
+Name:          xdmod
 Version:       __VERSION__
 Release:       __RELEASE__%{?dist}
 Summary:       Data warehouse and web portal for mining statistical data from resource managers
@@ -72,9 +72,11 @@ exit 0
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root,-)
+%defattr(0750,root,xdmod,-)
 %{_bindir}/%{name}-*
 %{_bindir}/acl-*
+
+%defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
@@ -94,9 +96,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
-* Tue Aug 18 2020 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.5.0-1.0
+* Fri May 21 2021 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.5.0-1.0
     - Add `chromium-headless` and `librsvg2-tools` to required dependencies
-    - Replace `ghostscript` with `exiftool`
+    - Replace `ghostscript` dependency with `exiftool`
+    - Replace java dependencies with `libreoffice-writer`
+    - Change default file permissions for executables in the bin/ directory
+      to only be run by the xdmod user (or root)
 * Thu Aug 13 2020 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.0.0-1.0
     - Release 9.0.0
     - Add `mod_ssl` to required dependencies

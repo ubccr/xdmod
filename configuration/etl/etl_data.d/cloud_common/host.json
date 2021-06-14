@@ -1,0 +1,4 @@
+[
+    ["resource_id", "host_id", "hostname"],
+    [-1,            1,         "Unknown"]
+]

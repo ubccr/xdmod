@@ -202,7 +202,7 @@ class BatchDataset extends Loggable implements Iterator
         $row = [];
 
         foreach ($this->fields as $field) {
-            $key = $field['name'];
+            $key = $field['alias'];
             $row[] = $field['anonymize']
                 ? $this->anonymizeField($rawRow[$key])
                 : $rawRow[$key];

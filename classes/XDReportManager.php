@@ -1615,7 +1615,7 @@ class XDReportManager
         $rp = new \Reports\ClassicReport($settings);
         $rp->writeReport($template_path . '/' . $report_id . '.doc');
 
-        if ($report_format == 'pdf') {
+        if (strtolower($report_format) == 'pdf') {
             exec('HOME=' . $template_path . ' libreoffice --headless --convert-to pdf ' . $template_path . '/' .  $report_id . '.doc --outdir ' . $template_path);
         }
 

@@ -9,6 +9,9 @@ use Psr\Log\LoggerInterface;
  * messages while still utilizing Monolog but this will only be the case for loggers retrieved from CCR\Log::factory|singleton
  * or if code instantiates this class directly.
  *
+ * Note: This logger supports string and array "messages". If an array is provided that contains objects, then this class
+ * will use the __toString() function to convert the object to a string.
+ *
  * @package CCR
  */
 class Logger extends \Monolog\Logger implements LoggerInterface
@@ -44,8 +47,28 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     protected function extractMessage($record)
     {
         if (is_array($record)) {
-            return json_encode($record);
+            return json_encode($this->recursivelyStringifyObjects($record));
         }
         return json_encode(array('message' => $record));
+    }
+
+    /**
+     * This function recursively iterates over the provided $array keys and values. If a value is an object it replaces
+     * the object with it's cast string value.
+     *
+     * @param array $array The array to be recursively iterated over
+     *
+     * @return array returns the provided $array w/ any object values cast to strings.
+     */
+    protected function recursivelyStringifyObjects(&$array)
+    {
+        while (list($key, $value) = each($array)) {
+            if (is_object($value)) {
+                $array[$key] = (string) $value;
+            } elseif (is_array($value)) {
+                $array[$key] = $this->recursivelyStringifyObjects($value);
+            }
+        }
+        return $array;
     }
 }

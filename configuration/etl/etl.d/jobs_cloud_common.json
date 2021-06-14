@@ -50,6 +50,7 @@
                 "cloud_common/account.json",
                 "cloud_common/event.json",
                 "cloud_common/asset.json",
+                "cloud_common/host.json",
                 "cloud_common/instance_data.json",
                 "cloud_common/event_asset.json",
                 "cloud_common/raw_resource_specs.json",
@@ -64,7 +65,9 @@
                 "cloud_common/domains.json",
                 "cloud_openstack/domain_submission_venue_staging.json",
                 "cloud_openstack/domain_submission_venue.json",
-                "cloud_common/staging_cloud_project_to_pi.json"
+                "cloud_common/staging_cloud_project_to_pi.json",
+                "cloud_common/session_records.json",
+                "cloud_common/cloudfact_by_day_sessionlist.json"
             ]
         },
         {
@@ -103,6 +106,21 @@
                     "type": "jsonfile",
                     "name": "Cloud record types",
                     "path": "cloud_common/record_type.json"
+                }
+            }
+        },
+        {
+            "#": "Note that any actions run after this cannot truncate the tables set here",
+
+            "name": "CloudHostUnknownInitializer",
+            "description": "Initialize value for unknown host",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/host.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/host.json"
                 }
             }
         },

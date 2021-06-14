@@ -375,6 +375,7 @@ ETLProfile.prototype.getAggregationTables = function () {
 			newf.sql = agg.sql || newf.name;
 			newf.sql = newf.sql.replace(/\:field_name/g, field);
 			newf.sqlType = sqlType(newf.type, newf.length);
+            newf.useSqlInGroupBy = agg.sql && !agg.name;
 			tables[agg.table].columns[newf.name] = newf;
 		} else {
 			throw Error('ETLProfile.prototype.getAggregationTables: addAggregationField(agg, f, field): agg.table is required: agg: ' + util.inspect(agg));
