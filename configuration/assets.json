@@ -3,6 +3,7 @@
         "portal": {
             "js": [
                 "gui/js/modules/job_viewer/JobGrid.js",
+                "gui/js/modules/data_explorer/DataExplorer.js",
                 "gui/js/modules/dashboard/ChartComponent.js",
                 "gui/js/modules/dashboard/JobComponent.js",
                 "gui/js/modules/dashboard/SavedChartsReportsComponent.js",
@@ -10,6 +11,7 @@
             ],
             "css": [
                 "gui/css/JobComponent.css",
+                "gui/css/forum.css",
                 "gui/css/ChartComponent.css",
                 "gui/css/ReportThumbnailsComponent.css"
             ]
