@@ -10,7 +10,7 @@ jobs:
         type: string
     docker:
       # The first image entry here will be used as the image for the parent container.
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.0.0:centos7.8-0.1
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-1.0
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud'

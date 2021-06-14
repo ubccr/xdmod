@@ -21,7 +21,7 @@ proc confirmUpgrade { } {
 set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
-answerQuestion {Chromium Path} "\n"
+
 expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1
