@@ -99,6 +99,34 @@ incorrect then please contact support at %s.
 %s
 EML;
 
+    const UAGBP_INSERT_QUERY = <<<SQL
+INSERT INTO user_acl_group_by_parameters(user_id, acl_id, group_by_id, value)
+SELECT inc.*
+FROM (
+    SELECT u.id           AS user_id,
+           a.acl_id       AS acl_id,
+           gb.group_by_id AS group_by_id,
+           CASE
+               WHEN gb.name IN ('provider', 'organization', 'institution') THEN u.organization_id
+               WHEN gb.name IN ('person', 'pi') THEN u.person_id
+               END        AS value
+    FROM acl_dimensions ad
+        JOIN group_bys  gb ON ad.group_by_id = gb.group_by_id
+        JOIN user_acls  ua ON ad.acl_id = ua.acl_id
+        JOIN Users      u ON ua.user_id = u.id
+        JOIN acls       a ON ad.acl_id = a.acl_id
+    WHERE u.id =     :user_id AND
+          a.acl_id = :acl_id
+)                                          inc
+    LEFT JOIN user_acl_group_by_parameters cur
+                  ON cur.user_id = inc.user_id AND
+                     cur.acl_id = inc.acl_id AND
+                     cur.group_by_id = inc.group_by_id AND
+                     cur.value = inc.value
+WHERE cur.user_acl_parameter_id IS NULL;
+SQL;
+
+
     /**
      * The acls in OpenXDMoD that have a dependency on centers / organizations.
      * NOTE: This should be pulled from a configuration file not hard coded. Explore in future
@@ -1040,16 +1068,32 @@ SQL;
             array('user_id' => $this->_id)
         );
 
+        // REMOVE: existing user_acl_group_by_parameter records for this user.
+        $this->_pdo->execute(
+            'DELETE FROM moddb.user_acl_group_by_parameters WHERE user_id = :user_id',
+            array('user_id' => $this->_id)
+        );
+
         // ADD: current user -> acl relations
         foreach ($this->_acls as $acl) {
             if (null !== $acl->getAclId()) {
+                $params = array(
+                    ':user_id' => $this->_id,
+                    ':acl_id' => $acl->getAclId()
+                );
+
+                // Add the appropriate user_acl record.
                 $this->_pdo->execute(
                     'INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)',
-                    array(
-                        'user_id' => $this->_id,
-                        'acl_id' => $acl->getAclId()
-                    )
+                    $params
                 );
+
+                // Add the appropriate user_acl_group_by_parameters record.
+                $this->_pdo->execute(
+                    self::UAGBP_INSERT_QUERY,
+                    $params
+                );
+
             }
         }
         /* END:   ACL data processing */
