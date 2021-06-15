@@ -472,26 +472,6 @@ class ETLControllerProvider extends BaseControllerProvider
             if (isset($requestedAction) && $requestedAction !== $actionName) {
                 continue;
             }
-/*
- * aws.cloudwatch.0623c9c8-57bc-3776-a210-a6b3dc61ed93
-aws.cloudwatch.12f8a7f6-4fd6-3851-8a36-d106f7753047
-aws.cloudwatch.13d98017-8384-368b-a14e-4a596a7ba3bf
-aws.cloudwatch.21378f23-d0a2-393c-ad77-03ec7e9ed570
-aws.cloudwatch.22079260-6475-3e15-a5e6-09dd932c4706
-aws.cloudwatch.27c5ec13-26a2-37f1-a6f1-ee42e647d80b
-aws.cloudwatch.37129597-c560-394c-9ae9-16f0ba7ba47c
-aws.cloudwatch.532e54c0-a622-34b8-8082-265c99d4b189
-aws.cloudwatch.66d4ef0e-1616-39db-93a7-3349c7f62c02
-aws.cloudwatch.70157f97-5cc0-3a63-97c7-e45de025c6d5
-aws.cloudwatch.70df9667-63e3-3750-b52c-19495e28362a
-aws.cloudwatch.81a4710e-54fe-3731-8701-e1e084a99756
-aws.cloudwatch.8df3b226-e4ad-35e4-ae6a-f20ce700143a
-aws.cloudwatch.916385f7-2ffa-3b89-a678-9c678a71898a
-aws.cloudwatch.af7f65b2-1feb-38d7-9741-87a56fe64e7d
-aws.cloudwatch.d17df3fa-3ea8-3a66-ba13-5664f188e23a
-aws.cloudwatch.dfd4e5d6-7b42-3908-923c-7a404e6b5d96
-aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
- * */
 
             $action = array(
                 'group' => 'nodes',
@@ -520,6 +500,8 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
 
             $sourceChildren = $this->getTargetChildren($actionData['source'], $sourceId);
             $destinationChildren = $this->getTargetChildren($actionData['destination'], $destinationId);
+
+
 
             $results = array_merge($results, $sourceChildren);
             $results = array_merge($results, $destinationChildren);
@@ -564,7 +546,8 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
     private function getTargetChildren($target, $parentId)
     {
         $results = array();
-        $properties = array('tables', 'definition_file_list', 'sql_file_list', 'definition_file');
+        $properties = array('tables', 'definition_file_list', 'sql_file_list', 'definition_file', 'path');
+        $childProperties = array('sql_file');
         $key = null;
         foreach($properties as $property) {
             if (array_key_exists($property, $target)) {
@@ -577,7 +560,28 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
             return $results;
         }
 
-        foreach($target[$key] as $child) {
+        $value = $target[$key];
+        if (is_array($value)) {
+            foreach($target[$key] as $child) {
+                $childId = $child;
+                if (!is_string($child)) {
+                    foreach($childProperties as $childProperty) {
+                        if (array_key_exists($childProperty, $child)) {
+                            $childId = $child[$childProperty];
+                        }
+                    }
+                }
+                $results[] = array(
+                    'group' => 'nodes',
+                    'data' => array(
+                        'id' => "$parentId-$childId",
+                        'name' => $childId,
+                        'parent' => $parentId
+                    )
+                );
+            }
+        } else {
+            $child = urlencode(basename($value, '.json'));
             $results[] = array(
                 'group' => 'nodes',
                 'data' => array(
@@ -608,6 +612,13 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
         return $default;
     }
 
+    /**
+     * This function will return a unique list of target ( sources or destinations ) types for the array of actions
+     * provided.
+     *
+     * @param array $actions
+     * @return array
+     */
     private function getTargetTypeNodes(array $actions)
     {
         $targetDefinitions = array(
@@ -685,7 +696,6 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
             'CLOUD_EVENT_LOG_DIRECTORY' => 'cloud_openstack/events',
             'community-user' => 'community_user'
         );
-
         $etlConfig = EtlConfiguration::factory(
             CONFIG_DIR . '/etl/etl.json',
             null,
@@ -781,7 +791,7 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
 
                         $properties = array(
                             'destination_record_map' => function ($source) {
-                                return array_keys(get_object_vars($source->destination_record_map));
+                                return array_keys(get_object_vars($source));
                             },
                             'table_definition' => function ($source) {
                                 if (is_array($source) && count($source) > 0) {
@@ -790,10 +800,6 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
                                 } elseif (is_object($source)) {
                                     return array($source->name);
                                 }
-                                /*if (count($source) > 0) {
-
-                                }*/
-                                #var_dump($source);
                                 return array();
                             }
                         );
@@ -804,6 +810,7 @@ aws.cloudwatch.eaf8299e-6cce-37b2-af5e-bdec36501017
                                 break;
                             }
                         }
+                        $source['file'] = $sourceEndpoint->path;
 
                         $destination['tables'] = $tables;
                         break;

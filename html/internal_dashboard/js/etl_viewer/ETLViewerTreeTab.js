@@ -17,31 +17,21 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
             updateHistory: true,
             autoScroll: true,
             enableDD: true,
+            enableKeyEvents: true,
             autoExpandColumn: 'value',
             tbar: {
                 items: [
                     {
-                        xtype: 'button',
-                        text: 'Expand All',
-                        icon: '',
-                        cls: 'x-btn-text-icon',
-                        handler: function () {
-                            alert("This doesn't function yet, try pressing shift while expanding a node.");
-                        }
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Collapse All',
-                        icon: '',
-                        cls: 'x-btn-text-icon',
-                        handler: function () {
-                            alert("This doesn't function yet, try pressing shift while collapsing a node.")
-                        }
-                    },
-                    '-',
-                    {
                         xtype: 'textfield',
-                        emptyText: 'Enter Search Term Here'
+                        emptyText: 'Enter Search Term Here',
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function (field, event) {
+                                if (event.getKey() === event.ENTER) {
+                                    self.filter.filter(field.getValue(), ['value', 'name']);
+                                }
+                            }
+                        }
                     }
                 ]
             },
@@ -190,8 +180,18 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
                     }
 
                 }
+            },
+
+            filterNodes: function(searchTerm) {
+
+            },
+
+            filterNode: function(searchTerm) {
+
             }
         });
+
+        this.filter = new CCR.xdmod.ui.ETLViewerTreeFilter(this.tree, {autoClear: true, clearBlank: true});
 
         Ext.apply(this, {
             items: [

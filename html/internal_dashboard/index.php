@@ -208,6 +208,7 @@ require_once 'user_check.php';
   <script type="text/javascript" src="../gui/lib/cytoscape-dagre/cytoscape-dagre.js"></script>
 
   // ETL Viewer
+  <script type="text/javascript" src="js/etl_viewer/ETLViewerTreeFilter.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewer.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewerTreeTab.js"></script>
   <script type="text/javascript" src="js/etl_viewer/ETLViewerTree.js"></script>
