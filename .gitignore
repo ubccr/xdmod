@@ -288,6 +288,7 @@ external_libraries/
 /html/gui/lib/moment
 /html/gui/lib/moment-timezone
 /html/gui/lib/rsvp
+/html/gui/lib/plotly
 
 # Custom PHPUnit configuration files.
 /open_xdmod/modules/*/tests/phpunit.xml
