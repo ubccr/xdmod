@@ -341,6 +341,114 @@ class TimeseriesDataset
     }
 
     /**
+     * Implementation notes: This function is very similar to the corresponding
+     * one in SimpleDataset. However it is different enough to warrant its own
+     * implementation. Note also that even though it appears that this
+     * code is generating output that is fed into ExtJS infact it gets heavily
+     * manipulated in the DataWarehouse/Access/Usage class before heading
+     * out on its merry way over the network.
+     *
+     * Note the limit and offset parameters are ignored by this function and
+     * only exist for API compatibility.
+     */
+    public function exportJsonStore($limit = null, $offset = null)
+    {
+        list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
+        $stat = reset($this->query->getStats());
+
+        $fields = array(
+            array('name' => $timeGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'),
+            array('name' => $spaceGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'),
+            array('name' => $stat->getId(), 'type' => 'float', 'sortDir' => 'DESC')
+        );
+
+        $stat_unit = $stat->getUnit();
+        $data_unit = '';
+        if (substr($stat_unit, -1) == '%') {
+            $data_unit = '%';
+        }
+
+        $stat_header = $stat->getName();
+        if ($stat_header !== $stat_unit
+            && strpos($stat_header, $stat_unit) === false
+        ) {
+            $stat_header .= ' (' . $stat_unit . ')';
+        }
+
+        $columns = array(
+            array(
+                'header' => $timeGroup->getName(),
+                'width' => 150,
+                'dataIndex' => $timeGroup->getId(),
+                'sortable' => true,
+                'editable' => false,
+                'locked' => true
+            ),
+            array(
+                'header' => $spaceGroup->getId() === 'none' ? 'Source' : $spaceGroup->getName(),
+                'width' => 150,
+                'dataIndex' => $spaceGroup->getId(),
+                'sortable' => true,
+                'editable' => false,
+                'locked' => true
+            ),
+            array(
+                'header'    => $stat_header,
+                'width'     => 140,
+                'dataIndex' => $stat->getId(),
+                'sortable'  => true,
+                'editable'  => false,
+                'align'     => 'right',
+                'xtype'     => 'numbercolumn',
+                'format'    => ($stat->getPrecision() > 0 ? '0,000.' . str_repeat(0, $stat->getPrecision()) : '0,000') . $data_unit,
+            )
+        );
+
+        $statement = $this->query->getRawStatement();
+        $statement->execute();
+        $records = array();
+        while ($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
+            $records[] = array(
+                $timeGroup->getId() => $row[$timeGroup->getId() . '_name'],
+                $stat->getId() => $row[$stat->getId()],
+                $spaceGroup->getId() => $row[$spaceGroup->getId() . '_name']
+            );
+        }
+
+        $message = '';
+
+        if (empty($records)) {
+            $message = 'Dataset is empty';
+            $fields = array(array("name" => 'Message', "type" => 'string'));
+            $records = array(array('Message' => $message));
+            $columns = array(array(
+                "header"    => 'Message',
+                "width"     => 600,
+                "dataIndex" => 'Message',
+                "sortable"  => false,
+                'editable'  => false,
+                'align'     => 'left',
+                'renderer'  => "CCR.xdmod.ui.stringRenderer",
+            ));
+        }
+
+        return array(
+            'metaData' => array(
+                'totalProperty'   => 'total',
+                'messageProperty' => 'message',
+                'root'            => 'records',
+                'id'              => 'id',
+                'fields'          => $fields
+            ),
+            'message' => '<ul>' . $message . '</ul>',
+            'success' => true,
+            'total'   => count($records),
+            'records' => $records,
+            'columns' => $columns
+        );
+    }
+
+    /**
      * @see SimpleDataset::export
      */
     public function export($export_title = 'title')
