@@ -8,9 +8,31 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
 
     etlViewer: null,
     initComponent: function () {
-
-
         let self = this;
+
+        Ext.QuickTips.init();
+
+        let search = new Ext.form.TextField({
+            emptyText: 'Enter Search Term Here',
+            enableKeyEvents: true,
+            listeners: {
+                keypress: function (field, event) {
+                    if (event.getKey() === event.ENTER) {
+                        self.filter.filter(field.getValue(), ['value', 'name'], self.tree.root);
+                    }
+                }
+            }
+        });
+
+        let clearButton = new Ext.Button({
+            iconCls: 'general_btn_close',
+            tooltip: 'Clear Search',
+            handler: function () {
+                search.setValue('');
+                self.filter.clear();
+            }
+        });
+
         this.tree = new Ext.ux.tree.TreeGrid({
             region: 'center',
             closable: false,
@@ -21,18 +43,8 @@ XDMoD.Admin.ETL.ETLViewerTreeTab = Ext.extend(Ext.Panel, {
             autoExpandColumn: 'value',
             tbar: {
                 items: [
-                    {
-                        xtype: 'textfield',
-                        emptyText: 'Enter Search Term Here',
-                        enableKeyEvents: true,
-                        listeners: {
-                            keypress: function (field, event) {
-                                if (event.getKey() === event.ENTER) {
-                                    self.filter.filter(field.getValue(), ['value', 'name']);
-                                }
-                            }
-                        }
-                    }
+                    search,
+                    clearButton
                 ]
             },
             dataUrl: XDMoD.REST.url  + '/etl/pipelines/actions',

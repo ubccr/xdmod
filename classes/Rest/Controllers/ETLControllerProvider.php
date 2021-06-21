@@ -29,6 +29,8 @@ class ETLControllerProvider extends BaseControllerProvider
     const SOURCES_ID = 'sources';
     const DESTINATIONS_ID = 'destinations';
 
+    private static $searchAttributes = array('name', 'value');
+
     private static $defaultNodes = array(
         array(
             'group' => 'nodes',
@@ -61,6 +63,9 @@ class ETLControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/pipelines/actions", "$class::getActionsForPipelines");
         $controller->post("$root/pipelines/actions", "$class::getActionsForPipelines");
+
+        $controller->get("$root/pipelines/actions/search", "$class::searchAllActions");
+        $controller->post("$root/pipelines/actions/search", "$class::searchAllActions");
 
         $controller->get("$root/pipelines/{pipeline}/actions", "$class::getActionsForPipeline");
         $controller->get("$root/pipelines/{pipeline}/endpoints", "$class::getEndpointsForPipeline");
@@ -291,6 +296,11 @@ class ETLControllerProvider extends BaseControllerProvider
 
     public function getActionsForPipelines(Request $request, Application $app)
     {
+        return $app->json($this->_getActionsForPipelines());
+    }
+
+    private function _getActionsForPipelines()
+    {
         $configOptions = array('default_module_name' => 'xdmod');
         $configOptions['config_variables'] = array(
             'CLOUD_EVENT_LOG_DIRECTORY' => 'cloud_openstack/events',
@@ -316,7 +326,7 @@ class ETLControllerProvider extends BaseControllerProvider
 
         }
 
-        return $app->json($this->convertForTreeGrid($results));
+        return $this->convertForTreeGrid($results);
     }
 
     private function getAllActionsAndEndpoints()
@@ -533,6 +543,50 @@ class ETLControllerProvider extends BaseControllerProvider
 
         return $results;
     }
+
+    public function searchAllActions(Request $request, Application $app)
+    {
+        $term = trim($request->get('term', ''));
+
+        $allActions =$this->_getActionsForPipelines();
+
+        if ($term === '') {
+            return $app->json($allActions);
+        }
+
+        return $app->json($this->searchActions($term, $allActions, self::$searchAttributes));
+    }
+
+    private function searchActions($term, $actions, $attributes = array())
+    {
+        $results = array();
+        $stack = array();
+
+        foreach($actions as $action) {
+            $action['match'] = $this->matchAction($term, $action, $attributes);
+            if (array_key_exists('children', $action)) {
+
+            }
+        }
+
+        return $results;
+    }
+
+    private function processAction($action)
+    {
+
+    }
+
+    private function matchAction($term, $action, $attributes)
+    {
+        foreach($attributes as $attribute) {
+            if (array_key_exists($attribute, $action) && strpos($action[$attribute], $term) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private function getTargetData($target, $idPrefix = null)
     {
