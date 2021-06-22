@@ -1,5 +1,9 @@
-Ext.namespace('CCR', 'CCR.xdmod', 'CCR.xdmod.ui');
-
+/**
+ * @class CCR.xdmod.ui.ETLViewerTreeFilter
+ * Note this class is experimental and doesn't update the indent (lines) or expand collapse icons of the nodes
+ * @param {Ext.tree.TreePanel} tree
+ * @param {Object} config (optional)
+ */
 CCR.xdmod.ui.ETLViewerTreeFilter = function (tree, config) {
     this.tree = tree;
     this.filtered = {};
@@ -11,7 +15,6 @@ CCR.xdmod.ui.ETLViewerTreeFilter.prototype = {
     clearBlank: false,
     reverse: false,
     autoClear: false,
-    remove: false,
 
     /**
      * Filter the data by a specific attribute.
@@ -23,144 +26,126 @@ CCR.xdmod.ui.ETLViewerTreeFilter.prototype = {
     filter: function (value, attrs, startNode) {
         attrs = attrs || ["text"];
 
-        if (typeof attrs === 'string') {
+        if (typeof attrs === "string") {
             attrs = [attrs]
         }
 
-        let matchFunction;
-        if (typeof value == "string") {
-            // auto clear empty filter
-            if (value.length === 0 && this.clearBlank) {
-                this.clear();
-                return;
-            }
-
-            value = value.toLowerCase();
-            matchFunction = function (node) {
-                let found = false;
-                for (let i = 0; i < attrs.length; i++) {
-                    let attr = attrs[i];
-
-                    if (node.attributes && attr in node.attributes && node.attributes[attr]) {
-                        found = node.attributes[attr].toLowerCase().includes(value);
-                    } else if (attr in node && node[attr]) {
-                        if (typeof node[attr] === 'string') {
-                            found = node[attr].toLowerCase().includes(value);
-                        } else {
-                            found = String(node[attr]).toLowerCase().includes(value);
-                        }
-                    }
-
-                    if (found) {
-                        break;
-                    }
-                }
-                return found;
-            };
-        } else if (value.exec) { // regex?
-            matchFunction = function (node) {
-                let found = false;
-                for (let i = 0; i < attrs.length; i++) {
-                    let attr = attrs[i];
-                    if (attr in node.attributes) {
-                        found = value.test(node.attributes[attrs]);
-                        break;
-                    }
-                }
-                return found;
-            };
-        } else {
-            throw 'Illegal filter type, must be string or regex';
+        if (typeof value !== 'string') {
+            throw 'Invalid value type, Expected string.'
         }
-        this.filterBy(matchFunction, null, startNode);
+
+        if (value.length === 0 && this.clearBlank) {
+            this.clear();
+            return;
+        }
+
+        this.filterBy(value, attrs, startNode);
     },
 
     /**
      * Filter by a function. The passed function will be called with each
-     * node in the tree (or from the startNode). If the function returns true, the node is kept
+     * node in the tree (or from the node). If the function returns true, the node is kept
      * otherwise it is filtered. If a node is filtered, its children are also filtered.
-     * @param {Function} matchFunction The match function
-     * @param {Object} scope (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current Node.
-     * @param {Ext.tree.TreeNode} startNode (optional)
+     * @param {String} value The filter function
+     * @param {String[]} attrs (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current Node.
+     * @param {Ext.tree.TreeNode|Ext.tree.AsyncTreeNode} node
      */
-    filterBy: function (matchFunction, scope, startNode) {
-        /**
-         * - DFS through nodes & their child nodes
-         * - current node is marked as matching or not based on the match function.
-         * - After being marked, the current node is pushed onto a stack.
-         * - if a node has the `leaf` attribute & it's set to `true` then that's the end of this branch.
-         * - If the leaf node is not a match then hide it and add it to the filtered.
-         * - Now, iterate through each node in the stack:
-         *   - Match Truth Table:
-         *     - Leaf Node Match | Stack Node Match | Stack Node Visible | Notes
-         *     -        T        |        F         |          T         | The Stack Node needs to be visible so that the leaf node can ultimately be shown.
-         *     -        T        |        T         |          T         | If they're both a match then it should of course be visible.
-         *     -        F        |        T         |          T         | Even if we're not showing a leaf, if the stack node matches it should be visible.
-         *     -        F        |        F         |          F         | If neither are a match then it should obviously be hidden.
-         * - Once the stack is empty, than continue processing the rest of the tree.
-         */
+    filterBy: function (value, attrs, node) {
+        node = node || this.tree.root;
 
-        this.processNode(matchFunction, startNode);
-
-        let children = [];
-        if ('children' in startNode && startNode.children) {
-            children = startNode.children;
-        } else if ('attributes' in startNode && 'children' in startNode.attributes && startNode.attributes['children']) {
-            children = startNode.attributes['children']
-        } else if (startNode.hasChildNodes && startNode.hasChildNodes() && startNode.childNodes && startNode.childNodes.length > 0) {
-            children = startNode.childNodes;
-        }
-
-        for (let i = 0; i < children.length; i++) {
-            let child = children[i];
-            this.filterBy(matchFunction, null, child);
-        }
-    },
-
-    processNode: function (matchFunction, node) {
-        if (node === this.tree.root) {
-            return;
-        }
         let stack = this.stack;
         let filtered = this.filtered;
 
-        let name = null;
-        if (node.attributes && 'name' in node.attributes && node.attributes['name']) {
-            name = node.attributes['name'];
-        } else if (node.name) {
-            name = node.name;
-        }
-        this.log(name, stack.length);
+        node.match = this.matchString(value, attrs, node);
 
-        let match = matchFunction(node);
-        node.match = match;
-        stack.push(node);
-
-        if (('leaf' in node && node.leaf === true) || ('isLeaf' in node && typeof node.isLeaf === 'function' && node.isLeaf() === true)) {
-            while (stack.length > 0) {
-                let leafNode = stack.pop();
-                let leafNodeMatch = null;
-                if ('match' in leafNode) {
-                    leafNodeMatch = leafNode.match;
-                } else if ('attributes' in leafNode && 'match' in leafNode.attributes) {
-                    leafNodeMatch = leafNode.attributes['match'];
+        // If this is a leaf node, make sure to hide it if needed.
+        if (this.isLeaf(node)) {
+            if (node.match) {
+                for (let i = 0; i < stack.length; i++) {
+                    let ancestor = stack[i];
+                    this.show(ancestor);
                 }
-                if (match === false && leafNodeMatch === false) {
-                    if (leafNode.ui && leafNode.ui.hide && typeof leafNode.ui.hide === 'function') {
-                        leafNode.ui.hide();
-                    } else {
-                        leafNode.visible = false;
-                    }
-                    let id = leafNode.id ? leafNode.id : Ext.id();
-                    filtered[id] = leafNode;
-                }
+                this.show(node);
+            } else {
+                this.hide(node);
             }
+        } else {
+            stack.push(node);
+            if (node.match) {
+                this.show(node);
+            } else if (!('text' in node && node.text && node.text === 'Root')) {
+                this.hide(node);
+
+                let id = node.id ? node.id : Ext.id();
+                if (!node.id) {
+                    node.id = id;
+                }
+
+                filtered[id] = node;
+            }
+
+            let children = this.getChildren(node);
+
+            for (let i = 0; i < children.length; i++) {
+                let child = children[i];
+                this.filterBy(value, attrs, child);
+            }
+
+            // After we're done with this node then pop it off the stack.
+            stack.pop();
         }
     },
 
-    log: function (value, indent) {
-        let prefix = new Array(indent + 1).join(' ');
-        console.log(`${prefix}${value}`);
+    matchString: function (value, attrs, node) {
+        let found = false;
+        for (let i = 0; i < attrs.length; i++) {
+            let attr = attrs[i];
+            if (node.attributes && attr in node.attributes && node.attributes[attr]) {
+                found = node.attributes[attr].toLowerCase().includes(value);
+            } else if (attr in node && node[attr]) {
+                if (typeof node[attr] === "string") {
+                    found = node[attr].toLowerCase().includes(value);
+                } else {
+                    found = String(node[attr]).toLowerCase().includes(value);
+                }
+            }
+            if (found) {
+                break;
+            }
+        }
+        return found;
+    },
+
+    hide: function (node) {
+        if (node.ui && node.ui.hide && typeof node.ui.hide === "function") {
+            node.ui.hide();
+        } else {
+            node.hidden = true;
+        }
+    },
+
+    show: function (node) {
+        if (node.ui && node.ui.show && typeof node.ui.show === 'function') {
+            node.ui.show();
+        } else {
+            node.hidden = false;
+        }
+    },
+
+    getChildren: function (node) {
+        let children = [];
+        if ("children" in node && node.children) {
+            children = node.children;
+        } else if ("attributes" in node && "children" in node.attributes && node.attributes["children"]) {
+            children = node.attributes["children"]
+        } else if (node.hasChildNodes && node.hasChildNodes() && node.childNodes && node.childNodes.length > 0) {
+            children = node.childNodes;
+        }
+        return children;
+    },
+
+    isLeaf: function (node) {
+        return ("leaf" in node && node.leaf === true) || ("isLeaf" in node && typeof node.isLeaf === "function" && node.isLeaf() === true)
     },
 
     /**
@@ -168,17 +153,10 @@ CCR.xdmod.ui.ETLViewerTreeFilter.prototype = {
      * set a filter cannot be cleared.
      */
     clear: function () {
-        let filtered = this.filtered;
-        for (let id in filtered) {
-            if (typeof id != "function" && filtered.hasOwnProperty(id)) {
-                let node = filtered[id];
-                if (node && node.ui && typeof node.ui.show === 'function') {
-                    node.ui.show();
-                } else if (node && 'visible' in node) {
-                    node.visible = true;
-                }
-            }
-        }
         this.filtered = {};
+        this.tree.getRootNode().cascade(function (node) {
+            node.hidden = false;
+            node.show();
+        });
     }
 };
