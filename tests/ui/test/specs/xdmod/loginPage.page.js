@@ -37,7 +37,7 @@ class LoginPage {
                 browser.url('/');
                 const actual = browser.getTitle();
                 expect(actual).to.equal(expected.title);
-                 // $(this.logo).waitForVisible(2000);
+
                 $('#logo').waitForVisible(2000);
                 var logoSize = browser.getElementSize('#logo');
                 expect(logoSize.width).to.equal(93);
@@ -65,7 +65,7 @@ class LoginPage {
     logout() {
         describe('Logout', function logout() {
             it('Click the logout link', function clickLogout() {
-                browser.waitAndClick('#logout_link');
+                browser.clickSelectorAndWaitForMask('#logout_link');
             });
             it('Display Logged out State', function clickLogout() {
                 browser.waitForInvisible('.ext-el-mask-msg');
@@ -73,12 +73,6 @@ class LoginPage {
                 $('#main_tab_panel__about_xdmod').waitForVisible();
             });
         });
-/*
-        describe("Update Screenshot Repository", function screenshots() {
-            it("Should upload screenshots", function screenshotsSync() {
-                //return browser.sync();
-            });
-        });*/
     }
 }
 module.exports = new LoginPage();

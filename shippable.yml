@@ -30,6 +30,7 @@ build:
         - composer install --no-progress
         - ./tests/ci/scripts/qa-test-setup.sh
         - composer install --no-progress
+        - ./tools/dev/code_coverage/codeCoverageSetup.sh -e JOB_TRIGGERED_BY_NAME -a "xdmod-time-trigger" -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
         - ./tests/regression/runtests.sh --junit-output-dir `pwd`/shippable/testresults
         - mv ./configuration/organization.json ./configuration/organization.json.old
         - mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
@@ -42,6 +43,7 @@ build:
         - ./tests/ci/samlSetup.sh
         - ./tests/ui/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
         - ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit `pwd`/shippable/testresults/xdmod-sso-integration.xml
+        - ./tools/dev/code_coverage/codeCoverageProcess.sh -e JOB_TRIGGERED_BY_NAME -a "xdmod-time-trigger"
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0
     on_failure:

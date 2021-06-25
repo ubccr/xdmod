@@ -27,5 +27,9 @@
     "wdio-spec-reporter": "0.1.5",
     "webdriverio": "4.13.0"
   },
-  "repository": "https://github.com/ubccr/xdmod"
+  "repository": "https://github.com/ubccr/xdmod",
+  "devDependencies": {
+    "chromedriver": "^74.0.0",
+    "wdio-chromedriver-service": "^0.1.3"
+  }
 }
