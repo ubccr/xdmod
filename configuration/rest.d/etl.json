@@ -1,0 +1,6 @@
+{
+  "etl": {
+    "prefix": "etl",
+    "controller": "Rest\\Controllers\\ETLControllerProvider"
+  }
+}

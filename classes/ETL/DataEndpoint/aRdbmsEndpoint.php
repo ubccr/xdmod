@@ -12,7 +12,7 @@ use xd_utilities;
 use Exception;
 use PDOException;
 
-abstract class aRdbmsEndpoint extends aDataEndpoint
+abstract class aRdbmsEndpoint extends aDataEndpoint implements \JsonSerializable
 {
     /**
      * @ var string The database schema for this endpoint
@@ -357,4 +357,19 @@ ORDER BY ordinal_position ASC";
      */
 
     abstract public function createSchema($schemaName = null);
+
+    public function jsonSerialize()
+    {
+        return array_merge(
+            parent::jsonSerialize(),
+            array(
+                'config' => $this->config,
+                'schema' => $this->schema,
+                'host_name' => $this->hostname,
+                'port'=> $this->port,
+                'username'=> $this->username,
+                'create_schema_if_not_exists' => $this->createSchemaIfNotExists
+            )
+        );
+    }
 }

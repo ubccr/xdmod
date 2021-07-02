@@ -12,7 +12,14 @@ XDMoD.Dashboard.Viewport = Ext.extend(Ext.Viewport, {
     firstload:true,
     constructor: function (config) {
         config = config || {};
-        
+
+        document.addEventListener('keydown', function (event) {
+            CCR.xdmod.shiftKey = event.shiftKey;
+        });
+        document.addEventListener('keyup', function(event) {
+            CCR.xdmod.shiftKey = event.shiftKey;
+        });
+
         var active_tab="top-tab-panel";
         var i_active_tab=0;
         //var tabpanel=this.getComponent("dashboard-tabpanel");
@@ -74,7 +81,7 @@ XDMoD.Dashboard.Viewport = Ext.extend(Ext.Viewport, {
                                     }
                                 }
                             }
-                            
+
                             Ext.History.add(hist);
                         },
                         scope: this

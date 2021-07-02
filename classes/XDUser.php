@@ -831,53 +831,45 @@ SQL;
     // ---------------------------
 
     /**
-     * Returns a parameterized Update query for the 'User' table. If the
-     * $updateToken parameter is set then it includes the 'token'
-     * and the 'token_expiration' fields.
+     * This function will construct a sql statement, either an UPDATE, if an `id` column name is found, or an INSERT
+     * statement from the provided array of $columnNames for the `moddb.Users` table. Regardless of the type of
+     * statement constructed, they will both be parameterized with the values being presented in the form
+     * `:column_name`.
      *
-     * @param bool $updateToken signifies whether or not to include the 'token'
-     *             related columns in the return value.
-     * @param bool $includePassword signifies whether or not to include the
-     *             'password' related columns in the return value.
+     * @param array $columnNames an array containing the column names of the table to be used in generating the INSERT / UPDATE statement.
      *
-     * @return string a parameterized query for the 'User' table
+     * @return string a parameterized SQL INSERT or UPDATE statement
      */
-    public function getUpdateQuery($updateToken = false, $includePassword = false)
+    public function getQuery(array $columnNames)
     {
-        $result = 'UPDATE moddb.Users SET username = :username,  email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, sticky = :sticky WHERE id = :id';
-        if ($updateToken && $includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, password_last_updated = :password_last_updated, sticky = :sticky WHERE id = :id';
-        } else if (!$updateToken && $includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, password_last_updated = :password_last_updated, sticky = :sticky WHERE id = :id';
-        } else if ($updateToken && !$includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :usernam, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, sticky = :sticky WHERE id = :id';
-        }
-        return $result;
-    }
+        if (in_array('id', $columnNames)) {
 
-    /**
-     * Returns a parameterized Insert query for the 'User' table. If the
-     * $updateToken parameter is set then it includes the 'token'
-     * and the 'token_expiration' fields.
-     *
-     * @param bool $updateToken signifies whether or not to include the 'token'
-     *             related columns in the return value.
-     * @param bool $includePassword signifies whether or not to include the
-     *             'password' related columns in the return value.
-     *
-     * @return string a parameterized query for the 'User' table
-     */
-    public function getInsertQuery($updateToken = false, $includePassword = false)
-    {
-        $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
-        if ($updateToken && $includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
-        } else if (!$updateToken && $includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated,  email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
-        } else if ($updateToken && !$includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
+            unset($columnNames['id']);
+
+            $results = array();
+
+            foreach($columnNames as $key) {
+                $results[] = sprintf("%s = :%s", $key, $key);
+            }
+
+            $setClauses = implode(', ', $results);
+
+            return sprintf("UPDATE moddb.Users SET %s WHERE id = :id", $setClauses);
+        } else {
+            $columns = array();
+            $values = array();
+
+            foreach($columnNames as $key) {
+                $columns[] = $key;
+                $values[] = ":$key";
+            }
+
+            return sprintf(
+                'INSERT INTO moddb.Users (%s) VALUES(%s)',
+                implode(', ', $columns),
+                implode(', ', $values)
+            );
         }
-        return $result;
     }
 
     /**
@@ -977,19 +969,22 @@ SQL;
                 $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
                 $update_data['password'] = $this->_password;
             }
-            $update_data['password_last_updated'] = 'NOW()';
+            $update_data['password_last_updated'] = date('Y-m-d H:i:s');
         }
         $update_data['email_address'] = ($this->_email);
         $update_data['first_name'] = ($this->_firstName);
         $update_data['middle_name'] = ($this->_middleName);
         $update_data['last_name'] = ($this->_lastName);
         $update_data['account_is_active'] = ($this->_account_is_active) ? '1' : '0';
-        $update_data['person_id'] = $this->_personID == null
-            ? 'NULL'
-            : ($this->_personID);
-        $update_data['organization_id'] = $this->_organizationID == null
-            ? 'NULL'
-            : ($this->_organizationID);
+
+        if ($this->_personID !== null) {
+            $update_data['person_id'] = $this->_personID;
+        }
+
+        if ($this->_organizationID !== null) {
+            $update_data['organization_id'] =$this->_organizationID;
+        }
+
         $update_data['field_of_science'] = ($this->_field_of_science);
         if ($this->_update_token) {
             $update_data['token'] = ($this->_generateToken());
@@ -1001,9 +996,7 @@ SQL;
         /* END: Query Data Population */
         try {
             /* BEGIN: Construct the parameterized query */
-            $query = $forUpdate
-                ? $this->getUpdateQuery($this->_update_token, $includePassword)
-                : $this->getInsertQuery($this->_update_token, $includePassword);
+            $query = $this->getQuery(array_keys($update_data));
             /* END: Construct the parameterized query */
 
             /* BEGIN: Execute the query */
@@ -1017,7 +1010,7 @@ SQL;
                 $this->_id = $new_user_id;
             }
         } catch (Exception $e) {
-            throw new Exception("Exception occured while inserting / updating. UpdateToken: [{$this->_update_token}] Query: [$query] data: [{$this->arrayToString($update_data)}]", null, $e);
+            throw new Exception("Exception occurred while inserting / updating. UpdateToken: [{$this->_update_token}] Query: [$query] data: [{$this->arrayToString($update_data)}]", null, $e);
         }
         /* END: Execute the query */
 

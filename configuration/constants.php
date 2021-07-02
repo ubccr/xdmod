@@ -66,6 +66,7 @@ define('EMAIL_TEMPLATE_DIR', BASE_DIR.'/email_templates');
  */
 
 define('CONFIG_PORTAL_SETTINGS', CONFIG_DIR.'/portal_settings.ini');
+define('DEFAULT_ETL_CONFIG_FILE', CONFIG_DIR.'/etl/etl.json');
 
 /**
  * COMMON ERROR CODES

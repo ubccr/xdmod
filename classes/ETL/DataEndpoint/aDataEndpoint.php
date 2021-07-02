@@ -11,7 +11,7 @@ use ETL\DataEndpoint\iDataEndpoint;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-abstract class aDataEndpoint extends aEtlObject
+abstract class aDataEndpoint extends aEtlObject implements \JsonSerializable
 {
     /**
      * @var string The endpoint type (e.g., mysql, pdo, file, url)
@@ -135,4 +135,16 @@ abstract class aDataEndpoint extends aEtlObject
      */
 
     abstract public function connect();
+
+    public function jsonSerialize()
+    {
+        return array_merge(
+            parent::jsonSerialize(),
+            array(
+                'type' => $this->type,
+                'key' => $this->key,
+                'key_separator' => $this->keySeparator
+            )
+        );
+    }
 }

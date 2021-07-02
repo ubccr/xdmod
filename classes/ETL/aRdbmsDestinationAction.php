@@ -33,7 +33,7 @@ use PDOException;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
-abstract class aRdbmsDestinationAction extends aAction
+abstract class aRdbmsDestinationAction extends aAction implements \JsonSerializable
 {
     /** -----------------------------------------------------------------------------------------
      * An array of one or more Table objects representing the destination tables supported
@@ -966,4 +966,16 @@ abstract class aRdbmsDestinationAction extends aAction
         return $quotedNames;
 
     }  // quoteIdentifierNames()
+
+    public function jsonSerialize()
+    {
+        return array_merge(
+            parent::jsonSerialize(),
+            array(
+                'etl_destination_table_list'=> $this->etlDestinationTableList,
+                'destination_field_mappings'=> $this->destinationFieldMappings,
+                'full_source_to_destination_mapping' => $this->fullSourceToDestinationMapping
+            )
+        );
+    }
 }  // abstract class aRdbmsDestinationAction

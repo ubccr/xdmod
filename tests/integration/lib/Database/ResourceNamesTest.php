@@ -34,13 +34,8 @@ class ResourceNamesTest extends BaseTest
             $this->testFiles->getFile('schema/integration', 'resource_names.spec', ''),
             false
         );
-        $validator = new Validator();
-        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
-        $errors = array();
-        foreach ($validator->getErrors() as $err) {
-            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
-        }
-        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
+
+        $this->validateJson($actual, $schemaObject);
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {

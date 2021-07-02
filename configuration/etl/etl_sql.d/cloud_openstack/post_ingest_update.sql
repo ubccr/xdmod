@@ -56,7 +56,7 @@ SELECT
     instance_type_id,
     instance_type,
     resource_id,
-    IF ( @current_instance_type = instance_type AND @prev_start IS NOT NULL, @prev_start - INTERVAL 1 SECOND, NULL) AS end_time,
+    IF ( @current_instance_type = instance_type AND @prev_start IS NOT NULL, @prev_start - 1, NULL) AS end_time,
     @current_instance_type := instance_type AS junk1,
     @prev_start := start_time AS junk2
 FROM ${DESTINATION_SCHEMA}.instance_type
