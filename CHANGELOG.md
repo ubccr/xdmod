@@ -1,5 +1,11 @@
 # Open XDMoD Change Log
 
+## 2021-07-12 v 9.5.1
+
+- Refactors and Miscellaneous
+    - Updated jQuery from v1.12.4 to v3.6.0
+
+
 ## 2021-05-21 v9.5.0
 
 - New Features
