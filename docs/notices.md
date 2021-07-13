@@ -31,20 +31,6 @@ where denoted. These software products are free for commercial use.
   under the [New BSD License][new-bsd].
 - [jQuery](http://jquery.com/), which is available under the
   [MIT License][mit].
-- [Commons BeanUtils](http://commons.apache.org/proper/commons-beanutils/),
-  which is available under the [Apache License Version 2.0][apache2].
-- [Commons Collections](http://commons.apache.org/proper/commons-collections/),
-  which is available under the [Apache License Version 2.0][apache2].
-- [Commons Digester](http://commons.apache.org/proper/commons-digester/),
-  which is available under the [Apache License Version 2.0][apache2].
-- [Commons Logging](http://commons.apache.org/proper/commons-logging/),
-  which is available under the [Apache License Version 2.0][apache2].
-- [iText](http://itextpdf.com/), which is available under the
-  [Affero General Public License][agpl].
-- [Apache POI](http://poi.apache.org/), which is available under the
-  [Apache License Version 2.0][apache2].
-- [Xalan-Java](http://xml.apache.org/xalan-j/), which is available under
-  the [Apache License Version 2.0][apache2].
 - [RSVP.js](https://github.com/tildeio/rsvp.js), which is available
   under the [MIT License][mit].
 - [Silex](http://silex.sensiolabs.org), which is available under the

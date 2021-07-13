@@ -68,32 +68,11 @@ EOT
 
         $this->console->displayBlankLine();
         $this->console->displayMessage(<<<"EOT"
-Java and Chromium  are required by the report generator for constructing
-reports.  Setup will attempt to detect the presence of java, and
-chromium on your system.
+Chromium is required by the report generator for constructing reports.  Setup
+will attempt to detect the presence of chromium on your system.
 EOT
         );
         $this->console->displayBlankLine();
-
-        if ($settings['reporting_java_path'] == '') {
-            $settings['reporting_java_path']
-                = exec('which java 2>/dev/null');
-        }
-
-        $settings['reporting_java_path'] = $this->console->prompt(
-            'Java Path:',
-            $settings['reporting_java_path']
-        );
-
-        if ($settings['reporting_javac_path'] == '') {
-            $settings['reporting_javac_path']
-                = exec('which javac 2>/dev/null');
-        }
-
-        $settings['reporting_javac_path'] = $this->console->prompt(
-            'Javac Path:',
-            $settings['reporting_javac_path']
-        );
 
         if ($settings['reporting_chromium_path'] == '') {
             $chromiumPath = '/usr/lib64/chromium-browser/headless_shell';

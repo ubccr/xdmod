@@ -20,9 +20,7 @@ The general settings include:
 - Site address (The URL you will use to access Open XDMoD)
 - Email address (The email address Open XDMoD will use when sending
   emails)
-- Java path
-- Javac path
-- PhantomJS path
+- Chromium path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
 - Whether to enable the Dashboard tab (see the [Dashboard Guide](dashboard.html) for details)
 
@@ -258,8 +256,7 @@ Primary configuration file. Contains:
 - Site address (The URL you will use to access Open XDMoD)
 - Email address (The email address Open XDMoD will use when sending
   emails)
-- Java path
-- PhantomJS path
+- Chromium path
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
 - Database configuration
 - Integration settings (see [Integrations](integrations.html) for details)
