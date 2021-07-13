@@ -5,6 +5,28 @@ namespace IntegrationTests\Controllers;
 use TestHarness\XdmodTestHelper;
 use IntegrationTests\BaseTest;
 
+function arrayRecursiveDiff($a1, $a2) {
+    $retval = array();
+
+    foreach ($a1 as $key => $value) {
+        if (array_key_exists($key, $a2)) {
+            if (is_array($value)) {
+                $result = arrayRecursiveDiff($value, $a2[$key]);
+                if (count($result)) {
+                    $retval[$key] = $result;
+                }
+            } else {
+                if ($value != $a2[$key]) {
+                    $retval[$key] = $value;
+                }
+            }
+        } else {
+            $retval[$key] = $value;
+        }
+    }
+    return $retval;
+}
+
 class UsageExplorerTest extends BaseTest
 {
     private static $publicView;
@@ -190,6 +212,155 @@ EOF;
             $past,
             $future
         );
+    }
+
+    public function provideJsonExport() {
+
+        $input = array(
+            'public_user' => 'true',
+            'realm' => 'Jobs',
+            'group_by' => 'none',
+            'statistic' => 'max_processors',
+            'start_date' => '2016-12-01',
+            'end_date' => '2016-12-31',
+            'timeframe_label' => 'User%20Defined',
+            'scale' => '1',
+            'aggregation_unit' => 'Auto',
+            'dataset_type' => 'timeseries',
+            'thumbnail' => 'n',
+            'query_group' => 'tg_usage',
+            'display_type' => 'datasheet',
+            'combine_type' => 'side',
+            'limit' => '10',
+            'offset' => '0',
+            'log_scale' => 'n',
+            'show_guide_lines' => 'y',
+            'show_trend_line' => 'n',
+            'show_error_bars' => 'n',
+            'show_aggregate_labels' => 'n',
+            'show_error_labels' => 'n',
+            'hide_tooltip' => 'false',
+            'show_title' => 'y',
+            'width' => '876',
+            'height' => '592',
+            'legend_type' => 'bottom_center',
+            'font_size' => '3',
+            'drilldowns' => '%5Bobject%20Object%5D',
+            'none' => '-9999',
+            'format' => 'jsonstore',
+            'operation' => 'get_data'
+        );
+
+        $expected = json_decode(<<<EOF
+{
+    "metaData": {
+        "totalProperty": "total",
+        "messageProperty": "message",
+        "root": "records",
+        "id": "id",
+        "fields": [],
+        "sortInfo": {
+            "field": "day",
+            "direction": "asc"
+        }
+    },
+    "message": "",
+    "success": true,
+    "total": "",
+    "records": [],
+    "columns": [],
+    "restrictedByRoles": false,
+    "roleRestrictionsMessage": ""
+}
+EOF
+, true);
+
+        $data = array();
+
+        $input['group_by']  = 'none';
+        $expected['message'] = '<ul><li><b>Screwdriver</b>: Summarizes Jobs data reported to the Screwdriver database.</li><li><b>Job Size: Max (Core Count)</b>: The maximum size Screwdriver job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.</li></ul>';
+        $expected['total'] = 10;
+        $fieldCount = 2;
+        $recordCount = 10;
+
+        $data[] = array($input, $expected, $fieldCount, $recordCount);
+
+        $input['group_by']  = 'pi';
+        $expected['message'] = '<ul><li><b>PI</b>: The principal investigator of a project.</li><li><b>Job Size: Max (Core Count)</b>: The maximum size Screwdriver job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.</li></ul>';
+        $expected['total'] = 145;
+        $fieldCount = 42;
+        $recordCount = 10;
+
+        $data[] = array($input, $expected, $fieldCount, $recordCount);
+
+        $input['pi_filter'] = "5,7,32,11";
+        $expected['total'] = 18;
+        $fieldCount = 5;
+        $recordCount = 10;
+        $data[] = array($input, $expected, $fieldCount, $recordCount);
+
+        return $data;
+    }
+    /**
+     * @dataProvider provideJsonExport
+     */
+    public function testJsonExport($input, $expected, $fieldCount, $recordCount)
+    {
+        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+
+        $got = json_decode($response[0], true);
+
+        // Check correct syntax of fields argument.
+
+        $fields = $got['metaData']['fields'];
+        $this->assertCount($fieldCount, $fields);
+
+        $firstField = array_shift($fields);
+        $this->assertEquals('day', $firstField['name']);
+        $this->assertEquals('string', $firstField['type']);
+        $this->assertEquals('DESC', $firstField['sortDir']);
+
+        foreach($fields as $field) {
+            $this->assertRegExp('/dimension_column_\d+/', $field['name']);
+            $this->assertEquals('float', $field['type']);
+            $this->assertEquals('DESC', $field['sortDir']);
+        }
+
+        // Check correct syntax of records argument.
+        $records = $got['records'];
+        $this->assertCount($recordCount, $records);
+        foreach($records as $record) {
+            $this->assertRegexp('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
+            foreach($record as $rkey => $rval) {
+                $this->assertRegExp('/^day|dimension_column_\d+$/', $rkey);
+            }
+        }
+
+        // Check correct syntax of columns argument.
+        $columns = $got['columns'];
+        $this->assertCount($fieldCount, $columns);
+        $firstCol = array_shift($columns);
+
+        $this->assertEquals(array('header' => 'Day', 'width' => 150, 'dataIndex' => 'day', 'sortable' => 1, 'editable' => false, 'locked' => 1), $firstCol);
+
+        foreach($columns as $column) {
+            $this->assertRegExp('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
+            $this->assertEquals(140, $column['width']);
+            $this->assertRegExp('/^dimension_column_\d+$/', $column['dataIndex']);
+            $this->assertEquals(1, $column['sortable']);
+            $this->assertEquals(false, $column['editable']);
+            $this->assertEquals('right', $column['align']);
+            $this->assertEquals('numbercolumn', $column['xtype']);
+            $this->assertEquals('0,000', $column['format']);
+        }
+
+        // These have been checked - zero out so allow checking
+        // of the rest
+        $got['metaData']['fields'] = array();
+        $got['columns'] = array();
+        $got['records'] = array();
+        $result = arrayRecursiveDiff($got, $expected);
+        $this->assertEmpty($result);
     }
 
     /**
