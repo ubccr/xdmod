@@ -39,7 +39,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
 
         var self = this;
 
-        this.baseChartOptions = jQuery.extend(true, {}, {
+        this.baseChartOptions = XDMoD.utils.extend(true, {}, {
             chart: {
                 renderTo: this.id,
                 width: this.width,
@@ -88,7 +88,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
                     if (t.getCount() <= 0) {
                         return;
                     }
-                    this.chartOptions = jQuery.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
+                    this.chartOptions = XDMoD.utils.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
 
                     this.chartOptions.exporting.enabled = (this.exporting === true);
                     this.chartOptions.credits.enabled = (this.credits === true);
@@ -127,9 +127,9 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
         }
         var finalChartOptions = {};
         if (chartOptions) {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
+            XDMoD.utils.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
         } else {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
+            XDMoD.utils.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
         }
         this.chart = XDMoD.utils.createChart(finalChartOptions);
     },

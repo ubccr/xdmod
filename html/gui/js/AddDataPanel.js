@@ -81,8 +81,8 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     },
     initRecord: function (store, config, selectedFilters, timeseries) {
         var conf = {};
-        jQuery.extend(true, conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
-        if (config) jQuery.extend(true, conf, config);
+        XDMoD.utils.extend(true, conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
+        if (config) XDMoD.utils.extend(true, conf, config);
         conf.id = Math.random();
         conf.z_index = store.getCount();
         conf.filters = selectedFilters ? selectedFilters : {
@@ -101,7 +101,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         if (this.filtersStore) {
             this.filtersStore.each(
                 function (record) {
-                    var data = jQuery.extend({}, record.data);
+                    var data = XDMoD.utils.extend({}, record.data);
                     ret.push(data);
                 });
         }
@@ -127,7 +127,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
         }
         this.originalData = {};
-        jQuery.extend(this.originalData, this.record.data);
+        XDMoD.utils.extend(this.originalData, this.record.data);
         var filtersMenu = new Ext.menu.Menu({
             showSeparator: false,
             ignoreParentClicks: true
@@ -271,7 +271,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             ])
         });
         if (this.record.data.filters) {
-            var currentFilters = jQuery.extend({}, this.record.data.filters);
+            var currentFilters = XDMoD.utils.extend({}, this.record.data.filters);
             this.filtersStore.loadData(currentFilters, false);
         }
         var selectAllButton = new Ext.Button({

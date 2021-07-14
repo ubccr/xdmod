@@ -28,11 +28,6 @@ require_once 'user_check.php';
   <script type="text/javascript" src="../gui/lib/internet-explorer-polyfills.js"></script>
   <?php ExtJS::loadSupportScripts('../gui/lib'); ?>
   <script type="text/javascript" src="../gui/lib/ext-oldie-history-patch.js"></script>
-  <script type="text/javascript" src="../gui/lib/jquery/jquery-1.12.4.min.js"></script>
-
-  <script type="text/javascript">
-    jQuery.noConflict();
-  </script>
 
   <link rel="stylesheet" type="text/css" href="../gui/css/viewer.css">
 
