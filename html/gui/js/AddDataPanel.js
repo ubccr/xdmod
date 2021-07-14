@@ -82,7 +82,9 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     initRecord: function (store, config, selectedFilters, timeseries) {
         var conf = {};
         XDMoD.utils.extend(true, conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
-        if (config) XDMoD.utils.extend(true, conf, config);
+        if (config) {
+            XDMoD.utils.extend(true, conf, config);
+        }
         conf.id = Math.random();
         conf.z_index = store.getCount();
         conf.filters = selectedFilters ? selectedFilters : {
