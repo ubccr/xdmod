@@ -1,12 +1,10 @@
 {
     "require": {
-        "carlo/jquery-base64-file": "^1.0",
         "egulias/email-validator": "^1.2",
         "google/recaptcha": "~1.1",
         "greenlion/php-sql-parser": "~4.2",
         "highsoft/highcharts": "^4.2.5",
         "ircmaxell/password-compat": "~1",
-        "jquery/jquery-min-file": "^1.12.4",
         "justinrainbow/json-schema": "~5.2",
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",

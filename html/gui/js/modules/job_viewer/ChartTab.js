@@ -97,7 +97,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
                 }
             };
 
-            var chartOptions = jQuery.extend(true, {}, defaultChartSettings, self.chartSettings);
+            var chartOptions = XDMoD.utils.extend(true, {}, defaultChartSettings, self.chartSettings);
 
             self.chart = new Highcharts.Chart(chartOptions);
             self.chart.showLoading();
@@ -142,7 +142,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             }
         };
 
-        var storeSettings = jQuery.extend(true, {}, defaultStoreSettings, this.panelSettings.store);
+        var storeSettings = XDMoD.utils.extend(true, {}, defaultStoreSettings, this.panelSettings.store);
 
         this.store = new Ext.data.JsonStore(storeSettings);
 

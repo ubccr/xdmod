@@ -10,7 +10,6 @@
     "ga": false,
     "moment": false,
     "_gaq": false,
-    "jQuery": false,
     "Highcharts": false,
     "truncateText": false,
     "XDMoD": false,

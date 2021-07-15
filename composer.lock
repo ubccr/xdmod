@@ -4,28 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2ea6be5f2da98081a49b4f4e324affe",
+    "content-hash": "6ccf06d7006778f5d3c24ae6f7ef66e6",
     "packages": [
-        {
-            "name": "carlo/jquery-base64-file",
-            "version": "1.0",
-            "dist": {
-                "type": "file",
-                "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
-                "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "base64"
-            },
-            "license": [
-                "MIT"
-            ],
-            "homepage": "https://github.com/carlo/jquery-base64"
-        },
         {
             "name": "composer/ca-bundle",
             "version": "1.2.9",
@@ -99,16 +79,16 @@
         },
         {
             "name": "composer/installers",
-            "version": "v1.10.0",
+            "version": "v1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d"
+                "reference": "ae03311f45dfe194412081526be2e003960df74b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d",
-                "reference": "1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d",
+                "url": "https://api.github.com/repos/composer/installers/zipball/ae03311f45dfe194412081526be2e003960df74b",
+                "reference": "ae03311f45dfe194412081526be2e003960df74b",
                 "shasum": ""
             },
             "require": {
@@ -202,6 +182,7 @@
                 "majima",
                 "mako",
                 "mediawiki",
+                "miaoxing",
                 "modulework",
                 "modx",
                 "moodle",
@@ -219,6 +200,7 @@
                 "sydes",
                 "sylius",
                 "symfony",
+                "tastyigniter",
                 "typo3",
                 "wordpress",
                 "yawik",
@@ -239,7 +221,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-14T11:07:16+00:00"
+            "time": "2021-04-28T06:42:17+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -730,26 +712,6 @@
             ],
             "abandoned": "simplesamlphp/twig-configurable-i18n",
             "time": "2016-10-03T12:34:15+00:00"
-        },
-        {
-            "name": "jquery/jquery-min-file",
-            "version": "1.12.4",
-            "dist": {
-                "type": "file",
-                "url": "https://code.jquery.com/jquery-1.12.4.min.js",
-                "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "jquery"
-            },
-            "license": [
-                "MIT"
-            ],
-            "homepage": "https://jquery.com"
         },
         {
             "name": "justinrainbow/json-schema",

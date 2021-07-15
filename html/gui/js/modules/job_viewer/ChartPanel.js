@@ -95,7 +95,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
         this.loaded = false;
 
-        jQuery.extend(true, this.options, this._DEFAULT_CONFIG.chartOptions);
+        XDMoD.utils.extend(true, this.options, this._DEFAULT_CONFIG.chartOptions);
         XDMoD.Module.JobViewer.ChartPanel.superclass.initComponent.call(this, arguments);
 
         // ADD: store listeners ( if we have a store )

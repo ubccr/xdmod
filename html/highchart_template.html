@@ -6,7 +6,6 @@
       <title>Highcharts Template</title>
 
       <style type="text/css">html,body{margin:0px;height:100%;}</style>
-      <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-1.12.4.min.js"></script>
       <script type="text/javascript" src="_html_dir_/gui/js/StringExtensions.js"></script>
 
       <script type="text/javascript">
@@ -22,7 +21,7 @@
          // _ chartOptions _ is a macro that is substituted by \xd_charting\exportHighchart()
          var inputChartOptions = _chartOptions_;
 
-         $(document).ready(function() {
+         document.addEventListener("DOMContentLoaded", function() {
 
             var chartOptions = {
 
@@ -47,7 +46,7 @@
 
             };//chartOptions
 
-            jQuery.extend(true,inputChartOptions,chartOptions);
+            XDMoD.utils.extend(true, inputChartOptions, chartOptions);
 
             // Needed to provide comma as thousands separator in export
             Highcharts.setOptions ({
