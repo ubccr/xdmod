@@ -152,33 +152,6 @@ try {
         'PHP XMLWriter extension installed'
     );
 
-    _debug('Checking for Log class');
-    $result = class_exists('Log');
-    displayResult(
-        $result,
-        'PHP PEAR Log class installed'
-    );
-
-    _debug('Including Log/mdb2.php');
-    include_once 'Log/mdb2.php';
-
-    _debug('Checking for Log_mdb2 class');
-    $result = class_exists('Log_mdb2');
-    displayResult(
-        $result,
-        'PHP MDB2 class installed'
-    );
-
-    _debug('Including MDB2/Driver/mysql.php');
-    include_once 'MDB2/Driver/mysql.php';
-
-    _debug('Checking for MDB2_Driver_mysql class');
-    $result = class_exists('MDB2_Driver_mysql');
-    displayResult(
-        $result,
-        'PHP MDB2 MySQL driver installed'
-    );
-
     _debug('Checking for json_encode function');
     $result = function_exists('json_encode');
     displayResult(

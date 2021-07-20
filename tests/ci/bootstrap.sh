@@ -136,3 +136,7 @@ then
         sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
     fi
 fi
+
+# Remove old PEAR dependencies.  This command can be removed when a new Docker
+# image is created without these packages installed.
+yum -y remove php-pear-MDB2 php-pear-MDB2-Driver-mysql
