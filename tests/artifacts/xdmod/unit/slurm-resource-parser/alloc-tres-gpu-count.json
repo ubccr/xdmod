@@ -22,5 +22,17 @@
     [
         "billing=1,cpu=1,gres/gpu=1,mem=125G,node=1",
         1
+    ],
+    [
+        "billing=1,cpu=1,gres/gpu:p100=1,mem=125G,node=1",
+        1
+    ],
+    [
+        "gres/gpu:volta=2,mem=125G,node=1",
+        2
+    ],
+    [
+        "billing=1,cpu=1,gres/gpu:tesla=4",
+        4
     ]
 ]
