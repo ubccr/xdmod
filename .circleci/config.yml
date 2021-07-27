@@ -7,7 +7,7 @@ version: 2.1
 executors:
   centos7:
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.8-0.3
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
   centos8: &centos8-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/centos8-0.1:base
@@ -81,6 +81,12 @@ jobs:
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
+      - run:
+          name: Install UI Test Depdencies
+          command: |
+              cd /root/project/tests/ui
+              npm install
+              cd /root/project
       - when:
           condition:
             equal: [ *centos8-executor, << parameters.os >> ]
