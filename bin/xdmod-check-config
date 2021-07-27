@@ -124,13 +124,6 @@ try {
         'PHP GD extension installed'
     );
 
-    _debug('Checking for gmp_abs function');
-    $result = function_exists('gmp_abs');
-    displayResult(
-        $result,
-        'PHP GMP extension installed'
-    );
-
     _debug('Checking for curl_close function');
     $result = function_exists('curl_close');
     displayResult(

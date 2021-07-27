@@ -13,7 +13,6 @@ Open XDMoD requires the following software:
     - [PDO][]
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
-    - [GMP][php-gmp]
     - [cURL][php-curl]
     - [DOM][php-dom]
     - [XMLWriter][php-xmlwriter]
@@ -41,7 +40,6 @@ Open XDMoD requires the following software:
 [pdo]:             https://secure.php.net/manual/en/book.pdo.php
 [pdo-mysql]:       https://secure.php.net/manual/en/ref.pdo-mysql.php
 [php-gd]:          https://secure.php.net/manual/en/book.image.php
-[php-gmp]:         https://secure.php.net/manual/en/book.gmp.php
 [php-curl]:        https://secure.php.net/manual/en/book.curl.php
 [php-dom]:         https://secure.php.net/manual/en/book.dom.php
 [php-xmlwriter]:   https://secure.php.net/manual/en/book.xmlwriter.php
@@ -76,8 +74,7 @@ added with this command for CentOS 7:
 
     # yum install epel-release
 
-    # yum install httpd php php-cli php-mysql php-gd \
-                  gmp-devel php-gmp php-pdo php-xml \
+    # yum install httpd php php-cli php-mysql php-gd php-pdo php-xml \
                   libreoffice \
                   mariadb-server mariadb cronie logrotate \
                   perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
