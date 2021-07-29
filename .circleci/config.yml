@@ -10,7 +10,7 @@ executors:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
   centos8: &centos8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/centos8-0.1:base
+      - image: tools-ext-01.ccr.xdmod.org/centos8-0.2:base
 jobs:
   build:
     parameters:
@@ -87,7 +87,7 @@ jobs:
           steps:
             - run:
                 name: Update the chromdriver version for Centos8
-                command: sed -i 's/91.0.0/88.0.0/' /root/project/tests/ui/package.json
+                command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
             - run:
                 name: Install new chromdriver
                 command: |
