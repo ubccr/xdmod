@@ -61,7 +61,7 @@
                           "type": "external",
                           "name": "jq",
                           "path": "jq",
-                          "arguments": "-c '.hypervisors[].date += (.ts | fromdate | strftime(\"%Y-%m-%d %H:%m:%S\")) | .hypervisors'"
+                          "arguments": "-c '.hypervisors[].date += (.ts ) | .hypervisors'"
                         }]
                     }
                 }

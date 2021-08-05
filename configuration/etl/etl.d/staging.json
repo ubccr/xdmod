@@ -234,13 +234,7 @@
                             "physical_usage",
                             "soft_threshold",
                             "hard_threshold"
-                        ],
-                        "filters": [{
-                            "type": "external",
-                            "name": "jq",
-                            "path": "jq",
-                            "arguments": "-c '[ .[] | (.dt = (.dt | fromdate | strftime(\"%Y-%m-%d %H:%m:%S\"))) ]'"
-                        }]
+                        ]
                     }
                 }
             }
