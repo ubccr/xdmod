@@ -338,7 +338,7 @@ SELECT column_name                                   AS name,
 FROM information_schema.columns
 WHERE table_schema = :schema
   AND table_name = :tablename
-ORDER BY ordinal_position ASC;";
+ORDER BY ordinal_position ASC";
 
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
