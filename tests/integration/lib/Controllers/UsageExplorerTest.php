@@ -311,20 +311,10 @@ EOF;
         $this->assertEquals($response[1]['http_code'], 200);
 
         $actualContentType = $response[1]['content_type'];
-        if (is_array($expectedMimeType)) {
-            $this->assertTrue(in_array($actualContentType, $expectedMimeType));
-        } else {
-            $this->assertEquals($expectedMimeType, $actualContentType);
-        }
+        $this->assertEquals($expectedMimeType, $actualContentType);
 
         $actualFinfo = finfo_buffer(finfo_open(FILEINFO_MIME), $response[0]);
-
-        if (is_array($expectedFinfo)) {
-            $this->assertTrue(in_array($actualFinfo, $expectedFinfo));
-        } else {
-            $this->assertEquals($expectedFinfo, $actualFinfo);
-        }
-
+        $this->assertEquals($expectedFinfo, $actualFinfo);
     }
 
     public function exportDataProvider()
@@ -376,14 +366,60 @@ EOF;
         $baseSettings['format'] = 'png';
         $ret[] = array($baseSettings, 'image/png', 'image/png; charset=binary');
 
-        $baseSettings['format'] = 'svg';
-        $ret[] = array($baseSettings, 'image/svg+xml', array('image/svg; charset=utf-8', 'text/plain; charset=utf-8'));
-
         $baseSettings['format'] = 'csv';
         $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
 
-        $baseSettings['format'] = 'xml';
-        $ret[] = array($baseSettings, array('text/xml;charset=UTF-8', 'text/xml'), array('text/xml; charset=us-ascii', 'application/xml; charset=us-ascii'));
+        /**
+         * The following array of expected values are necessary due to `finfo` returning different
+         * values for the same input from PHP 5.4 -> PHP 7.2. The response mimetype has also changed
+         * when returning xml from centos7 -> centos8, again for the same input.
+         */
+        $osSpecificExpected = array(
+            'svg' => array(
+                'centos8' => array(
+                    'image/svg+xml',
+                    'image/svg; charset=utf-8'
+                ),
+                'centos7' => array(
+                    'image/svg+xml',
+                    'text/plain; charset=utf-8',
+                )
+            ),
+            'xml' => array(
+                'centos8' => array(
+                    'text/xml;charset=UTF-8',
+                    'text/xml; charset=us-ascii'
+
+                ),
+                'centos7' => array(
+                    'text/xml',
+                    'application/xml; charset=us-ascii'
+                )
+            )
+        );
+
+        // Try to determine what os / version we're operating on ( CentOS only ).
+        $osInfo = false;
+        try {
+            $osInfo = parse_ini_file('/etc/os-release');
+        } catch (\Exception $e) {
+            // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
+        }
+
+        // If we do have some osInfo then make sure we have the distribution ( `ID` ) and the version (`VERSION_ID`)
+        // and continue on
+        if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
+            $osIdentifier = implode("", array($osInfo['ID'], $osInfo['VERSION_ID']));
+            foreach($osSpecificExpected as $fileType => $fileTypeExpected) {
+                $baseSettings['format'] = $fileType;
+                if (isset($fileTypeExpected[$osIdentifier])) {
+                    list($mimetype, $finfo) = $fileTypeExpected[$osIdentifier];
+                    $ret[] = array($baseSettings, $mimetype, $finfo);
+                }
+            }
+        } else {
+            throw new Exception('Unable to determine which OS these integration tests are being run on.');
+        }
 
         return $ret;
     }
