@@ -100,6 +100,13 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
+9.5.1 Upgrade Notes
+-------------------
+
+Open XDMoD 9.5.1 is a minor release that includes security and bug fixes.
+
+You may upgrade directly from 9.0.0 or 9.5.0.
+
 9.5.0 Upgrade Notes
 -------------------
 
