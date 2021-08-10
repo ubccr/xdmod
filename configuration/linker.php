@@ -111,7 +111,6 @@ function handle_uncaught_exception($exception)
     $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
     $logConf = array(
-        'mode' => 0644,
         'file' => $logfile,
         'mail' => false,
         'db' => false,
