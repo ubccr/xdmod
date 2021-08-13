@@ -1,18 +1,22 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -e
 ASSETS=/tmp/assets
 
+# Copy required assets.
+if [[ ! -f $ASSETS/browser-tests-node-modules.tar.gz ]]; then
+    echo browser-tests-node-modules.tar.gz is required in $ASSETS >&2
+    exit 1
+fi
+mv $ASSETS/browser-tests-node-modules.tar.gz /root
+
 # Copy optional assets.
-if [ -e $ASSETS/chromedriver_linux64.zip ]; then
+if [[ -f $ASSETS/chromedriver_linux64.zip ]]; then
     mv $ASSETS/chromedriver_linux64.zip /root
 fi
-if [ -e $ASSETS/saml-idp.tar.gz ]; then
+if [[ -f $ASSETS/saml-idp.tar.gz ]]; then
     mv $ASSETS/saml-idp.tar.gz /root
 fi
-if [ -e $ASSETS/browser-tests-node-modules.tar.gz ]; then
-    mv $ASSETS/browser-tests-node-modules.tar.gz /root
-fi
-if [ -e $ASSETS/composer-cache.tar.gz ]; then
+if [[ -f $ASSETS/composer-cache.tar.gz ]]; then
     mkdir -p /root/.composer
     tar -xf $ASSETS/composer-cache.tar.gz -C /root/.composer
 fi

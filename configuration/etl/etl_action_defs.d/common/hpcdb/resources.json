@@ -5,7 +5,7 @@
     "source_query": {
         "records": {
             "resource_id": "r.resource_id",
-            "resource_type_id": "COALESCE(srt.resource_type_id, -1)",
+            "resource_type_id": "COALESCE(srt.resource_type_id, 0)",
             "organization_id": "1",
             "resource_name": "rc.name",
             "resource_code": "rc.resource",
