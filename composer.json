@@ -6,7 +6,7 @@
         "greenlion/php-sql-parser": "~4.2",
         "highsoft/highcharts": "^4.2.5",
         "ircmaxell/password-compat": "~1",
-        "jquery/jquery-min-file": "^1.12.4",
+        "jquery/jquery-min-file": "^3.6",
         "justinrainbow/json-schema": "~5.2",
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
@@ -147,13 +147,13 @@
             "package": {
                 "name": "jquery/jquery-min-file",
                 "type": "vanilla-plugin",
-                "version": "1.12.4",
+                "version": "3.6.0",
                 "license": "MIT",
                 "homepage": "https://jquery.com",
                 "dist": {
-                    "url": "https://code.jquery.com/jquery-1.12.4.min.js",
+                    "url": "https://code.jquery.com/jquery-3.6.0.min.js",
                     "type": "file",
-                    "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
+                    "shasum": "b82d238d4e31fdf618bae8ac11a6c812c03dd0d4"
                 },
                 "require": {
                     "composer/installers": "~1.0"
