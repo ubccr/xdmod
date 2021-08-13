@@ -39,11 +39,6 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
-      - run:
-          name: Setup Environment Variables
-          command: |
-            echo "export XDMOD_SOURCE_DIR=${CIRCLE_WORKING_DIRECTORY}" >> $BASH_ENV
-            echo "export SHIPPABLE_BUILD_DIR=${CIRCLE_WORKING_DIRECTORY}" >> $BASH_ENV
       - run: ~/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from RPM
