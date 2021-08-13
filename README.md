@@ -46,13 +46,19 @@ For more information, visit the Application Kernels Module
 [website](http://appkernels.xdmod.org/ak-overview.html) and
 [repository](https://github.com/ubccr/xdmod-appkernels).
 
-### SUPReMM
+### Job Performance (SUPReMM)
 
 This module enables analysis of individual and aggregate job performance using
 hardware data from CPUs, memory, filesystems, network interfaces, and more.
-For more information, visit the SUPReMM Module
+For more information, visit the Job Performance Module
 [website](http://supremm.xdmod.org/supremm-overview.html) and
 [repository](https://github.com/ubccr/xdmod-supremm).
+
+### Open OnDemand
+
+This module enables display and analysis of usage of [Open OnDemand](https://openondemand.org/).
+For more information, visit the module [website](https://ondemand.xdmod.org) and
+[repository](https://github.com/ubccr/xdmod-ondemand).
 
 ## Installation
 
