@@ -14,6 +14,7 @@ jobs:
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud'
+      TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
       XDMOD_IS_CORE: yes
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
@@ -54,9 +55,6 @@ jobs:
       - run:
           name: Make sure that the Composer Test Depedencies are installed
           command: composer install --no-progress
-      - run:
-          name: Add an upstream remote to XDMod so that the QA tests function properly
-          command: git remote add upstream https://github.com/ubccr/xdmod.git
       - run:
           name: Setup & Run QA Tests
           command: ./tests/ci/scripts/qa-test-setup.sh
