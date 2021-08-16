@@ -331,8 +331,13 @@ class UserAdminTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
             false
         );
-
-        $this->validateJson($actual, $schemaObject);
+        $validator = new Validator();
+        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
+        }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
 
         # Check expected file
         $expected = array();
@@ -482,7 +487,13 @@ class UserAdminTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('schema', 'dw_descripter.spec', ''),
             false
         );
-        $this->validateJson($actual, $schemaObject);
+        $validator = new Validator();
+        $validator->validate(json_decode(json_encode($actual)), $schemaObject);
+        $errors = array();
+        foreach ($validator->getErrors() as $err) {
+            $errors[] = sprintf("[%s] %s\n", $err['property'], $err['message']);
+        }
+        $this->assertEmpty($errors, implode("\n", $errors) . "\n" . json_encode($actual, JSON_PRETTY_PRINT));
         $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();

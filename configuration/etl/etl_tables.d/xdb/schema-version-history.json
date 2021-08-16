@@ -41,15 +41,6 @@
                 "is_unique": true
             }
         ],
-        "triggers": [
-            {
-                "schema": "moddb",
-                "table": "schema_version_history",
-                "name": "xdb_schema_version_history_before_insert",
-                "time": "BEFORE",
-                "event": "INSERT",
-                "body": "SET NEW.action_datetime = NOW();"
-            }
-        ]
+        "triggers": []
     }
 }

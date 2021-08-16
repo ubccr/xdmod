@@ -38,16 +38,6 @@
                     "action_datetime"
                 ]
             }
-        ],
-        "triggers": [
-            {
-                "schema": "mod_hpcdb",
-                "table": "schema_version_history",
-                "name": "hpcdb_schema_version_history_before_insert",
-                "time": "BEFORE",
-                "event": "INSERT",
-                "body": "SET NEW.action_datetime = NOW();"
-            }
         ]
     }
 }

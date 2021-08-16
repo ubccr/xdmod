@@ -200,7 +200,7 @@ class UserOrganizationTest extends BaseUserAdminTest
 
         $rows = $db->execute($query, $params);
 
-        return $rows > 0;
+        return count($rows) > 0;
     }
 
     /**
@@ -222,7 +222,7 @@ class UserOrganizationTest extends BaseUserAdminTest
 
         $rows = $db->execute($query, $params);
 
-        return $rows > 0;
+        return count($rows) > 0;
     }
 
     /**
@@ -241,6 +241,6 @@ class UserOrganizationTest extends BaseUserAdminTest
 
         $rows = $db->execute($query, $params);
 
-        return $rows > 0;
+        return count($rows) > 0;
     }
 }

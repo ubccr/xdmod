@@ -61,7 +61,7 @@
                           "type": "external",
                           "name": "jq",
                           "path": "jq",
-                          "arguments": "-c '.hypervisors[].date += (.ts ) | .hypervisors'"
+                          "arguments": "-c '.hypervisors[].date += .ts | .hypervisors'"
                         }]
                     }
                 }
