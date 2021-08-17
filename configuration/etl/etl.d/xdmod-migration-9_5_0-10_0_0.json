@@ -4,8 +4,63 @@
         "migration-9_5_0-10_0_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
+        },
+        "cloud-migration-9-5-0_10-0-0": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                }
+            }
         }
     },
     "migration-9_5_0-10_0_0": [
+    ],
+    "cloud-migration-9-5-0_10-0-0": [
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudEventAggregatorByDay",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_metrics_aggregation_by_day.json",
+            "table_prefix": "cloudfact_by_",
+            "aggregation_units": ["day"]
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "CloudEventAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregate cloud records.",
+            "definition_file": "cloud_common/cloud_metrics_aggregation.json",
+            "table_prefix": "cloudfact_by_",
+            "aggregation_units": [
+                "month", "quarter", "year"
+            ]
+        },
+        {
+            "name": "CloudAggregatorSessionlist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "cloud_common/cloudfact_by_day_sessionlist.json",
+            "description": "Populate the session list table, which contains the back references from the cloud aggregates table to the session records table",
+            "explode_column": {
+                "session_id_list": "session_id"
+            }
+        }
     ]
 }

@@ -79,6 +79,7 @@ class UsageExplorerCloudTest extends \PHPUnit_Framework_TestCase
             'fieldofscience',
             'nsfdirectorate',
             'parentscience',
+            'host'
         );
 
         $varSettings = array(

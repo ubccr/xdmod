@@ -47,7 +47,8 @@
                 "domain_id": "sr.domain_id",
                 "service_provider": "sr.service_provider",
                 "principalinvestigator_person_id": "sr.principalinvestigator_person_id",
-                "fos_id": "sr.fos_id"
+                "fos_id": "sr.fos_id",
+                "host_id": "sr.host_id"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
@@ -65,7 +66,8 @@
               "service_provider",
               "principalinvestigator_person_id",
               "fos_id",
-              "person_id"
+              "person_id",
+              "host_id"
             ],
             "joins":[
               {

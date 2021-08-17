@@ -1,0 +1,22 @@
+title
+"Number of Sessions Started: by VM Host"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[srv-p24-33.cbls.ccr.buffalo.edu] Number of Sessions Started","[srv-p24-34.cbls.ccr.buffalo.edu] Number of Sessions Started","[srv-p24-35.cbls.ccr.buffalo.edu] Number of Sessions Started","[srv-p24-32.cbls.ccr.buffalo.edu] Number of Sessions Started","[srv-p24-36.cbls.ccr.buffalo.edu] Number of Sessions Started"
+2018-04-18,4,5,4,5,4
+2018-04-19,4,5,8,1,0
+2018-04-20,6,2,1,0,0
+2018-04-21,0,0,0,0,0
+2018-04-22,0,0,0,0,0
+2018-04-23,0,0,0,0,0
+2018-04-24,0,0,0,0,0
+2018-04-25,0,0,0,0,0
+2018-04-26,0,2,0,0,0
+2018-04-27,0,0,1,0,0
+2018-04-28,0,0,0,0,0
+2018-04-29,0,0,0,0,0
+2018-04-30,0,0,0,1,0
+---------

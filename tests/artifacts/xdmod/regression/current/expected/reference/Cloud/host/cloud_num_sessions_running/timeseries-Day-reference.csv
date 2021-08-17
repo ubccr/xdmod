@@ -1,0 +1,22 @@
+title
+"Number of Sessions Active: by VM Host"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[srv-p24-33.cbls.ccr.buffalo.edu] Number of Sessions Active","[srv-p24-34.cbls.ccr.buffalo.edu] Number of Sessions Active","[srv-p24-35.cbls.ccr.buffalo.edu] Number of Sessions Active","[srv-p24-32.cbls.ccr.buffalo.edu] Number of Sessions Active","[srv-p24-36.cbls.ccr.buffalo.edu] Number of Sessions Active"
+2018-04-18,4,5,4,5,4
+2018-04-19,5,6,10,3,1
+2018-04-20,6,2,1,1,1
+2018-04-21,1,0,1,1,1
+2018-04-22,1,0,1,1,1
+2018-04-23,1,0,1,1,1
+2018-04-24,1,0,1,1,1
+2018-04-25,1,0,1,1,1
+2018-04-26,1,2,1,1,1
+2018-04-27,1,1,2,1,1
+2018-04-28,1,1,1,0,1
+2018-04-29,1,1,1,0,1
+2018-04-30,1,1,1,1,1
+---------

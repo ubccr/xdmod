@@ -1,0 +1,14 @@
+title
+"Wall Hours: Total: by VM Host"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Host","Wall Hours: Total"
+srv-p24-36.cbls.ccr.buffalo.edu,294.7078
+srv-p24-35.cbls.ccr.buffalo.edu,292.8419
+srv-p24-33.cbls.ccr.buffalo.edu,274.8381
+srv-p24-32.cbls.ccr.buffalo.edu,238.3797
+srv-p24-34.cbls.ccr.buffalo.edu,126.1422
+---------

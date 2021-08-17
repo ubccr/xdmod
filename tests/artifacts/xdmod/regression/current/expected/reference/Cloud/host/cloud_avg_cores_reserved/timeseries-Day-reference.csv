@@ -1,0 +1,22 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by VM Host"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[srv-p24-34.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-32.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-36.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-33.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-35.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours"
+2018-04-18,1.6751,1.0250,2.1851,1.1293,1.0000
+2018-04-19,1.0000,1.2778,1.0000,1.3028,1.0000
+2018-04-20,1.0000,2.0000,1.0000,1.0000,1.0000
+2018-04-21,0,2.0000,1.0000,1.0000,1.0000
+2018-04-22,0,2.0000,1.0000,1.0000,1.0000
+2018-04-23,0,2.0000,1.0000,1.0000,1.0000
+2018-04-24,0,2.0000,1.0000,1.0000,1.0000
+2018-04-25,0,2.0000,1.0000,1.0000,1.0000
+2018-04-26,3.7980,2.0000,1.0000,1.0000,1.0000
+2018-04-27,4.0000,2.0000,1.0000,1.0000,1.0000
+2018-04-28,4.0000,0,1.0000,1.0000,1.0000
+2018-04-29,4.0000,0,1.0000,1.0000,1.0000
+2018-04-30,4.0000,2.0000,1.0000,1.0000,1.0000
+---------

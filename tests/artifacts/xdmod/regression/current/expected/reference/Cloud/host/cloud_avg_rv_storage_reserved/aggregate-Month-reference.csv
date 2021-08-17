@@ -1,0 +1,14 @@
+title
+"Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes): by VM Host"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Host","Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)"
+srv-p24-32.cbls.ccr.buffalo.edu,21474836480.0000
+srv-p24-33.cbls.ccr.buffalo.edu,21474836480.0000
+srv-p24-34.cbls.ccr.buffalo.edu,21474836480.0000
+srv-p24-35.cbls.ccr.buffalo.edu,21474836480.0000
+srv-p24-36.cbls.ccr.buffalo.edu,21474836480.0000
+---------

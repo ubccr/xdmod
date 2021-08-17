@@ -84,6 +84,37 @@
     "month": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
     },
+    "host": {
+        "attribute_table_schema": "modw_cloud",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "host_id": "host_id"
+            }
+        ],
+        "attribute_filter_map_query": {
+            "host_id": "SELECT host_id FROM modw_cloud.host WHERE host_id in (__filter_values__)"
+        },
+        "attribute_description_query": "SELECT DISTINCT hostname AS filter_name FROM modw_cloud.host WHERE host_id IN (__filter_values__) ORDER BY hostname",
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "host"
+                }
+            ],
+            "orderby": [
+                "hostname"
+            ],
+            "records": {
+                "id": "host_id",
+                "name": "hostname",
+                "order_id": "hostname",
+                "short_name": "hostname"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The host that a VM resides on",
+        "name": "VM Host"
+    },
     "person": {
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
