@@ -137,7 +137,7 @@
                 "name": "host_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
+                "default": 1,
                 "comment": "DIMENSION: The ID of the host the VM is on. References modw_cloud.host"
             }
         ],
