@@ -19,8 +19,6 @@ class DatabasesMigration extends AbstractDatabasesMigration
     {
         parent::execute();
 
-        $console = Console::factory();
-
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = \CCR\DB\MySQLHelper::factory($dbh);
 
