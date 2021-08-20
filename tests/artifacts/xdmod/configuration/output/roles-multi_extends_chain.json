@@ -157,6 +157,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ],
       "summary_charts": [
@@ -458,6 +462,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ]
     },
@@ -631,6 +639,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ],
       "summary_charts": [
@@ -974,6 +986,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ],
       "summary_charts": [
@@ -1304,6 +1320,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ],
       "summary_charts": [
@@ -1641,6 +1661,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ],
       "summary_charts": [

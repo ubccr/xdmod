@@ -5,6 +5,6 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Month,"[srv-p24-36.cbls.ccr.buffalo.edu] Wall Hours: Per Session","[srv-p24-32.cbls.ccr.buffalo.edu] Wall Hours: Per Session","[srv-p24-35.cbls.ccr.buffalo.edu] Wall Hours: Per Session","[srv-p24-33.cbls.ccr.buffalo.edu] Wall Hours: Per Session","[srv-p24-34.cbls.ccr.buffalo.edu] Wall Hours: Per Session"
+Month,"[srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Per Session","[srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Per Session","[srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Per Session","[srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Per Session","[srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Per Session"
 2018-04,73.67694444,34.05424603,20.91728175,19.63128968,9.01015873
 ---------

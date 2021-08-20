@@ -5,6 +5,6 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Year,"[srv-p24-32.cbls.ccr.buffalo.edu] Core Hours: Total","[srv-p24-34.cbls.ccr.buffalo.edu] Core Hours: Total","[srv-p24-36.cbls.ccr.buffalo.edu] Core Hours: Total","[srv-p24-35.cbls.ccr.buffalo.edu] Core Hours: Total","[srv-p24-33.cbls.ccr.buffalo.edu] Core Hours: Total"
+Year,"[srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)] Core Hours: Total","[srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)] Core Hours: Total","[srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)] Core Hours: Total","[srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)] Core Hours: Total","[srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)] Core Hours: Total"
 2018,441.6928,434.3922,303.8386,292.8419,281.3778
 ---------

@@ -6,9 +6,9 @@ start,end
 2018-04-18,2018-04-30
 ---------
 "VM Host","Core Hour Utilization (%)"
-srv-p24-32.cbls.ccr.buffalo.edu,0.3866
-srv-p24-34.cbls.ccr.buffalo.edu,0.3802
-srv-p24-36.cbls.ccr.buffalo.edu,0.2660
-srv-p24-35.cbls.ccr.buffalo.edu,0.2563
-srv-p24-33.cbls.ccr.buffalo.edu,0.2463
+"srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)",0.3866
+"srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)",0.3802
+"srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)",0.2660
+"srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)",0.2563
+"srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)",0.2463
 ---------

@@ -385,6 +385,10 @@
         {
           "name": "parentscience",
           "class": "GroupByParentScience"
+        },
+        {
+            "name": "host",
+            "class": "GroupByHost"
         }
       ],
       "statistics": [

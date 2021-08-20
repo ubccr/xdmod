@@ -53,6 +53,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ]
     },
@@ -109,6 +113,10 @@
         {
             "realm": "Cloud",
             "group_by": "parentscience"
+        },
+        {
+            "realm": "Cloud",
+            "group_by": "host"
         }
       ]
     },

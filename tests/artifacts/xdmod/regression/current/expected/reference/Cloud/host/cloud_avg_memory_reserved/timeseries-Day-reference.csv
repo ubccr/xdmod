@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[srv-p24-34.cbls.ccr.buffalo.edu] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-36.cbls.ccr.buffalo.edu] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-32.cbls.ccr.buffalo.edu] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-33.cbls.ccr.buffalo.edu] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-35.cbls.ccr.buffalo.edu] Average Memory Reserved Weighted By Wall Hours (Bytes)"
+Day,"[srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)] Average Memory Reserved Weighted By Wall Hours (Bytes)","[srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)] Average Memory Reserved Weighted By Wall Hours (Bytes)"
 2018-04-18,7931526150.1578,9384914658.2532,4397219366.0267,4294967296.0000,4294967296.0000
 2018-04-19,4294967296.0000,4294967296.0000,4294967296.0000,4285630141.2782,4198197807.1372
 2018-04-20,4294967296.0000,4294967296.0000,4294967296.0000,4294967296.0000,4294967296.0000

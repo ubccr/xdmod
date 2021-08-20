@@ -6,9 +6,9 @@ start,end
 2018-04-18,2018-04-30
 ---------
 "VM Host","Wall Hours: Per Session"
-srv-p24-36.cbls.ccr.buffalo.edu,73.67694444
-srv-p24-32.cbls.ccr.buffalo.edu,34.05424603
-srv-p24-35.cbls.ccr.buffalo.edu,20.91728175
-srv-p24-33.cbls.ccr.buffalo.edu,19.63128968
-srv-p24-34.cbls.ccr.buffalo.edu,9.01015873
+"srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)",73.67694444
+"srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)",34.05424603
+"srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)",20.91728175
+"srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)",19.63128968
+"srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)",9.01015873
 ---------

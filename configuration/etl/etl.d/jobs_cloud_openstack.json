@@ -234,7 +234,15 @@
             "name": "OpenStackCloudHostIngestor",
             "description": "OpenStack cloud host data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/host.json"
+            "definition_file": "cloud_openstack/host.json",
+            "endpoints": {
+                "utility": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         },
         {
             "name": "OpenStackCloudImageIngestor",

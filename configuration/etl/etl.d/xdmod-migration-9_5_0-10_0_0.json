@@ -28,6 +28,24 @@
     ],
     "cloud-migration-9-5-0_10-0-0": [
         {
+            "name": "CloudHostTableManagement",
+            "class": "ManageTables",
+            "description": "Manage job tables not managed by other actions",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": ["cloud_common/host.json"]
+        },
+        {
+            "name": "AddHostDisplayName",
+            "description": "Add a display name value on the modw_cloud.host table",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migrations/9.5.0-10.0.0/modw_cloud/add_host_display_name.sql"
+            ]
+        },
+        {
             "#": "Asset data must be aggregated post ingestion",
             "name": "CloudEventAggregatorByDay",
             "namespace": "ETL\\Aggregator",

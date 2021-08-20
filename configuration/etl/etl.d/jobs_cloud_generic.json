@@ -259,7 +259,15 @@
             "name": "GenericCloudHostIngestor",
             "description": "Generic cloud host data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_generic/host.json"
+            "definition_file": "cloud_generic/host.json",
+            "endpoints": {
+                "utility": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         },
         {
             "name": "GenericCloudImageIngestor",

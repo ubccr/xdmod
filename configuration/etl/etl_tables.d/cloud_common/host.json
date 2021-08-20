@@ -23,6 +23,12 @@
                 "type": "varchar(64)",
                 "nullable": false,
                 "default": "Unknown"
+            },
+            {
+                "name": "display",
+                "type": "varchar(64)",
+                "nullable": false,
+                "default": "Unknown"
             }
         ],
 

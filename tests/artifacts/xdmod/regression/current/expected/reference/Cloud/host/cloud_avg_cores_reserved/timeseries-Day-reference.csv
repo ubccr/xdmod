@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[srv-p24-34.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-32.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-36.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-33.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours","[srv-p24-35.cbls.ccr.buffalo.edu] Average Cores Reserved Weighted By Wall Hours"
+Day,"[srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)] Average Cores Reserved Weighted By Wall Hours","[srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)] Average Cores Reserved Weighted By Wall Hours","[srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)] Average Cores Reserved Weighted By Wall Hours","[srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)] Average Cores Reserved Weighted By Wall Hours","[srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)] Average Cores Reserved Weighted By Wall Hours"
 2018-04-18,1.6751,1.0250,2.1851,1.1293,1.0000
 2018-04-19,1.0000,1.2778,1.0000,1.3028,1.0000
 2018-04-20,1.0000,2.0000,1.0000,1.0000,1.0000

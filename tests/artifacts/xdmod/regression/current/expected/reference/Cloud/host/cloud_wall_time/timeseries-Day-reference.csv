@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[srv-p24-36.cbls.ccr.buffalo.edu] Wall Hours: Total","[srv-p24-35.cbls.ccr.buffalo.edu] Wall Hours: Total","[srv-p24-33.cbls.ccr.buffalo.edu] Wall Hours: Total","[srv-p24-32.cbls.ccr.buffalo.edu] Wall Hours: Total","[srv-p24-34.cbls.ccr.buffalo.edu] Wall Hours: Total"
+Day,"[srv-p24-36.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Total","[srv-p24-35.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Total","[srv-p24-33.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Total","[srv-p24-32.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Total","[srv-p24-34.cbls.ccr.buffalo.edu (OpenStack)] Wall Hours: Total"
 2018-04-18,7.7047,9.1619,5.4756,9.4100,6.1436
 2018-04-19,24.0000,29.1914,19.2619,35.8536,14.0136
 2018-04-20,24.0000,9.8119,11.0956,24.0000,4.1589

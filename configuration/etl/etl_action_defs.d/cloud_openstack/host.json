@@ -11,7 +11,8 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "hostname": "raw.hostname"
+            "hostname": "raw.hostname",
+            "display": "CONCAT(raw.hostname, ' (', rf.name, ')')"
         },
 
         "joins": [
@@ -19,6 +20,12 @@
                 "name": "openstack_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
+            },
+            {
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "rf",
+                "on": "rf.id = raw.resource_id"
             }
         ],
 
