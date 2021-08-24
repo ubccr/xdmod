@@ -7,5 +7,21 @@
         }
     },
     "migration-9_5_0-10_0_0": [
+        {
+            "name": "update-modw-quarters",
+            "description": "Update modw.quarters table definition",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/xdw/quarters.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        }
     ]
 }
