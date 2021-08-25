@@ -692,7 +692,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
                             '<div class="x-grid3-cell-inner x-grid3-col-{id} selectable-text" {attr}>{value}</div>',
                             '</td>'
-                        ),
+                        )
                     })
                 });
                 break;
