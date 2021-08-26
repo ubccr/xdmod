@@ -4,6 +4,11 @@
  * put them into variable and then add them to the proper `capabilities`
  * variable
  */
+const crypto = require('crypto');
+const fs = require('fs');
+
+const screenshotDir = '/tmp/screenshots';
+
 var HeadlessChrome = {
     acceptInsecureCerts: true,
     browserName: 'chrome',
@@ -37,7 +42,14 @@ var Chrome = {
 var secrets = require('../ci/testing.json');
 secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
 var excludes = [
-    './test/**/*.page.js'
+    './test/**/*.page.js',
+    './test/**/about.js',
+    './test/**/exportDialog.js',
+    './test/**/mainToolbar.js',
+    './test/**/metricExplorer.js',
+    './test/**/myProfile.js',
+    './test/**/reportGenerator.js',
+    './test/**/usageTab.js'
 ];
 if (!process.env.SSO) {
     excludes.push('./test/specs/xdmod/SSOLogin.js');
@@ -247,6 +259,12 @@ exports.config = {
      * Get's executed after each test.
      */
     afterTest: function afterTest(test, context) {
+        if (!test.passed) {
+            let hash = crypto.createHash('md5').update(test.fullTitle).digest('hex');
+            let filename = `${screenshotDir}/${hash}`;
+            browser.saveScreenshot(`${filename}.png`);
+            fs.writeFileSync(`${filename}.json`, JSON.stringify(test));
+        }
     },
     //
     // Gets executed after all workers got shut down and the process is about to exit. It is not
