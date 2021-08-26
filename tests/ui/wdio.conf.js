@@ -247,7 +247,7 @@ exports.config = {
     /**
      * Get's executed after each test.
      */
-    afterTest: function afterTest(test, context, {error, result, duration, passed, retries}) {
+    afterTest: function afterTest(test, context, { error, result, duration, passed, retries }) {
         if (error) {
             browser.saveScreenshot(`/tmp/screenshots/failed_test_${failedTests}.png`);
             failedTests++;
