@@ -234,7 +234,7 @@ describe('Internal Dashboard', function () {
                     // has been populated.
                     browser.waitForInvisible(page.selectors.create_manage_users.current_users.settings.noUserSelectedModal());
 
-                    browser.waitUntil(function() {
+                    browser.waitUntil(function () {
                         return browser.getValue(inputElem) === setting.original;
                     }, 10000, `Expected that ${setting.label} would be back to ${setting.original} `);
                     const inputValue = browser.getValue(inputElem);
