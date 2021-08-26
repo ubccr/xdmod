@@ -4,6 +4,7 @@
  * put them into variable and then add them to the proper `capabilities`
  * variable
  */
+let failedTests = 0;
 var HeadlessChrome = {
     acceptInsecureCerts: true,
     browserName: 'chrome',
@@ -241,6 +242,16 @@ exports.config = {
     // the test.
     after: function after(/* failures, pid */) {
         // do something
+    },
+
+    /**
+     * Get's executed after each test.
+     */
+    afterTest: function afterTest(test, context, {error, result, duration, passed, retries}) {
+        if (error) {
+            browser.saveScreenshot(`/tmp/screenshots/failed_test_${failedTests}.png`);
+            failedTests++;
+        }
     },
     //
     // Gets executed after all workers got shut down and the process is about to exit. It is not
