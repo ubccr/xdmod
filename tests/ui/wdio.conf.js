@@ -258,10 +258,10 @@ exports.config = {
         log.debug(arguments);
         log.debug('********************************');
         failedTests++;
-        /*if (error) {
+        /* if (error) {
             browser.saveScreenshot(`/tmp/screenshots/failed_test_${failedTests}.png`);
             failedTests++;
-        }*/
+        } */
     },
     //
     // Gets executed after all workers got shut down and the process is about to exit. It is not
