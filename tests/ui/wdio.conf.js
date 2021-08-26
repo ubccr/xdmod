@@ -4,6 +4,11 @@
  * put them into variable and then add them to the proper `capabilities`
  * variable
  */
+const log4js = require('log4js');
+log4js.configure('log4js.json');
+
+let log = log4js.getLogger('app');
+
 let failedTests = 0;
 var HeadlessChrome = {
     acceptInsecureCerts: true,
@@ -247,11 +252,16 @@ exports.config = {
     /**
      * Get's executed after each test.
      */
-    afterTest: function afterTest(test, context, { error, result, duration, passed, retries }) {
-        if (error) {
+    afterTest: function afterTest(test, context) {
+        log.debug(`After Test for ${failedTests}`);
+        log.debug('Arguments: ');
+        log.debug(arguments);
+        log.debug('********************************');
+        failedTests++;
+        /*if (error) {
             browser.saveScreenshot(`/tmp/screenshots/failed_test_${failedTests}.png`);
             failedTests++;
-        }
+        }*/
     },
     //
     // Gets executed after all workers got shut down and the process is about to exit. It is not
