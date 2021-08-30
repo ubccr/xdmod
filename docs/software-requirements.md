@@ -13,12 +13,9 @@ Open XDMoD requires the following software:
     - [PDO][]
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
-    - [GMP][php-gmp]
     - [cURL][php-curl]
     - [DOM][php-dom]
     - [XMLWriter][php-xmlwriter]
-    - [PEAR MDB2 Package][pear-mdb2]
-    - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
 - [libreoffice][]
@@ -43,12 +40,9 @@ Open XDMoD requires the following software:
 [pdo]:             https://secure.php.net/manual/en/book.pdo.php
 [pdo-mysql]:       https://secure.php.net/manual/en/ref.pdo-mysql.php
 [php-gd]:          https://secure.php.net/manual/en/book.image.php
-[php-gmp]:         https://secure.php.net/manual/en/book.gmp.php
 [php-curl]:        https://secure.php.net/manual/en/book.curl.php
 [php-dom]:         https://secure.php.net/manual/en/book.dom.php
 [php-xmlwriter]:   https://secure.php.net/manual/en/book.xmlwriter.php
-[pear-mdb2]:       https://pear.php.net/package/MDB2
-[pear-mdb2-mysql]: https://pear.php.net/package/MDB2_Driver_mysql
 [php-mbstring]:    https://secure.php.net/manual/en/book.mbstring.php
 [php-pecl-apcu]:   https://www.php.net/manual/en/book.apcu.php
 [libreoffice]:     https://www.libreoffice.org
@@ -80,9 +74,7 @@ added with this command for CentOS 7:
 
     # yum install epel-release
 
-    # yum install httpd php php-cli php-mysql php-gd \
-                  gmp-devel php-gmp php-pdo php-xml \
-                  php-pear-MDB2 php-pear-MDB2-Driver-mysql \
+    # yum install httpd php php-cli php-mysql php-gd php-pdo php-xml \
                   libreoffice \
                   mariadb-server mariadb cronie logrotate \
                   perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
