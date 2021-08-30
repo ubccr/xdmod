@@ -234,24 +234,6 @@ try {
     #    ""
     #);
 
-    // Java
-
-    $javaPath = xd_utilities\getConfiguration('reporting', 'java_path');
-    _debug('Checking for java executable');
-    $result = file_exists($javaPath) && is_executable($javaPath);
-    displayResult(
-        $result,
-        'Java executable configured'
-    );
-
-    $javacPath = xd_utilities\getConfiguration('reporting', 'javac_path');
-    _debug('Checking for javac executable');
-    $result = file_exists($javacPath) && is_executable($javacPath);
-    displayResult(
-        $result,
-        'Javac executable configured'
-    );
-
     $chromiumPath
         = xd_utilities\getConfiguration('reporting', 'chromium_path');
     _debug('Checking for chromium executable');
