@@ -88,9 +88,6 @@ changed in the new version.  You do not need to merge
 If you have manually edited this file, you should create a backup and
 merge any changes after running the upgrade script.
 
-*NOTE: This upgrade removes the `PhantomJS` and `ghostscript` dependencies; it adds dependencies of `chromium`, `libRSVG` and `exiftool`. These new dependencies will need to be manually installed. See the [Software Requirements](software-requirements.html) for more details.
-`PhantomJS` is no longer required, however, it WILL NOT be removed automatically; it will need to be removed manually.*
-
 ### Verify Server Configuration Settings
 
 Double check that the MySQL server configuration settings are consistent with
@@ -100,39 +97,17 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-9.5.0 Upgrade Notes
+10.0.0 Upgrade Notes
 -------------------
 
-Open XDMoD 9.5.0 is a major release that includes new features along with many
+Open XDMoD 10.0.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 9.0.0.
-
-*NOTE: This upgrade removes the `PhantomJS` and `ghostscript` dependencies; it adds dependencies of `chromium`, `libRSVG` and `exiftool`.. These new dependencies will be automatically installed by the RPM.
-`PhantomJS` is no longer required, however, it WILL NOT be removed automatically; it will need to be removed manually.*
+You may upgrade directly from 9.5.0.
 
 ### Configuration File Changes
-
-The `xdmod-upgrade` script will migrate user editable configuration files to the new version and ask for the location of `chromium`.
-
-### Slurm Input File Format Changes
-
-The input file format for Slurm data has changed to remove the `ReqGRES` field.
-
-**If you are generating Slurm input for the `xdmod-shredder` command then you
-will need to make the appropriate changes.**  Refer to the [Slurm
-Notes](resource-manager-slurm.html#input-format) for the example `sacct`
-command.  If you are using the `xdmod-slurm-helper` command then no changes are
-necessary.
 
 ### Database Changes
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
-
-### Cloud Realm Changes
-
-This upgrade fixed a bug with the memory buckets for the cloud realm which was causing certain cloud data to not display correctly. To ensure that all previous cloud data is being displayed and recorded correctly, you can re-ingest the cloud data after the upgrade is complete.
-
-After the upgrade is complete re-ingest and aggregate your cloud data using the
-commands recommended in our documentation.

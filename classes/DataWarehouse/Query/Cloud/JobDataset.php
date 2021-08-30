@@ -48,6 +48,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         // This table is defined in the configuration file, but used in the section below.
         $factTable = $tables['i'];
+        $sessionTable = $tables['sr'];
 
         if (isset($parameters['primary_key'])) {
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'instance_id'), "=", $parameters['primary_key']));
@@ -57,33 +58,21 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         } elseif (isset($parameters['start_date']) && isset($parameters['end_date'])) {
             date_default_timezone_set('UTC');
             $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
-            $startDateTs = mktime(
-                0,
-                0,
-                0,
-                $startDate['month'],
-                $startDate['day'],
-                $startDate['year']
-            );
+            $startDateTs = mktime(0, 0, 0, $startDate['month'], $startDate['day'], $startDate['year']);
+
             if ($startDateTs === false) {
                 throw new Exception('invalid "start_date" query parameter');
             }
 
             $endDate = date_parse_from_format('Y-m-d', $parameters['end_date']);
-            $endDateTs = mktime(
-                23,
-                59,
-                59,
-                $endDate['month'],
-                $endDate['day'],
-                $endDate['year']
-            );
+            $endDateTs = mktime(23, 59, 59, $endDate['month'], $endDate['day'], $endDate['year']);
+
             if ($startDateTs === false) {
                 throw new Exception('invalid "end_date" query parameter');
             }
 
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), ">=", $startDateTs));
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), "<=", $endDateTs));
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($sessionTable, 'end_time_ts'), ">=", $startDateTs));
+            $this->addPdoWhereCondition(new WhereCondition(new TableField($sessionTable, 'start_time_ts'), "<=", $endDateTs));
         } else {
             throw new Exception('invalid query parameters');
         }

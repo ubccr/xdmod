@@ -260,10 +260,7 @@ class Version
             return false;
         }
 
-        // Compare version numbers.  Assumes a longer version is newer.
-        return
-            strlen($latestVersion) > strlen($currentVersion)
-            || strcmp($latestVersion, $currentVersion) > 0;
+        return version_compare($latestVersion, $currentVersion, '>');
     }
 
     /**

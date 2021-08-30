@@ -1,5 +1,5 @@
-FROM centos:7.8.2003
-ENV BRANCH=xdmod9.0
+FROM centos:7.9.2009
+ENV BRANCH=xdmod9.5
 LABEL description="Base image containing XDMoD required software."
 
 COPY assets/google-chrome.repo /etc/yum.repos.d
@@ -52,5 +52,5 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)" && \
     ACTUAL_SIGNATURE="$(php -r "echo hash_file('SHA384', 'composer-setup.php');")" && \
     if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then echo 'ERROR: Invalid composer signature'; exit 1; fi && \
-    php composer-setup.php --install-dir=/bin --filename=composer && \
+    php composer-setup.php --install-dir=/bin --filename=composer --1 && \
     php -r "unlink('composer-setup.php');"
