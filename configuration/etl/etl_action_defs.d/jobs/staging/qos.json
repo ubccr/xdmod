@@ -1,0 +1,20 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/qos.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "qos_name": "DISTINCT j.qos_name"
+        },
+        "joins": [
+            {
+                "name": "shredded_job",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "j"
+            }
+        ],
+        "where": [
+            "j.qos_name IS NOT NULL"
+        ]
+    }
+}
