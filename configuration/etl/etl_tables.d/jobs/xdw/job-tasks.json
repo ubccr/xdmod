@@ -291,6 +291,11 @@
                 "extra": "on update CURRENT_TIMESTAMP"
             },
             {
+                "name": "last_modified_ts",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "is_deleted",
                 "type": "tinyint(1)",
                 "nullable": false,
@@ -386,7 +391,9 @@
             {
                 "name": "deleted",
                 "columns": [
-                    "is_deleted"
+                    "is_deleted",
+                    "end_day_id",
+                    "start_day_id"
                 ],
                 "type": "BTREE",
                 "is_unique": false
@@ -408,8 +415,33 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "last_modified_ts_idx",
+                "columns": [
+                    "last_modified_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
             }
         ],
-        "triggers": []
+        "triggers": [
+            {
+                "time": "BEFORE",
+                "event": "INSERT",
+                "table": "job_tasks",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(NEW.last_modified);",
+                "schema": "modw",
+                "name": "last_modified_ts_insert"
+            },
+            {
+                "time": "BEFORE",
+                "event": "UPDATE",
+                "table": "job_tasks",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(NEW.last_modified);",
+                "schema": "modw",
+                "name": "last_modified_ts_update"
+            }
+        ]
     }
 }
