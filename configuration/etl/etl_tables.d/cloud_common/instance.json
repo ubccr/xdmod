@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "instance",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Cloud instances",
         "columns": [
             {

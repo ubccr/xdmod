@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "image",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Images used by cloud instances",
         "columns": [
             {
@@ -48,8 +48,8 @@
                 "#": "https://www.ryadel.com/en/mysql-two-columns-primary-key-with-auto-increment/",
                 "name": "autoincrement_key",
                 "columns": [
-                    "resource_id",
-                    "image_id"
+                    "image_id",
+                    "resource_id"
                 ],
                 "is_unique": true
             }

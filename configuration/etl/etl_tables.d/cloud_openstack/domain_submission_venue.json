@@ -3,7 +3,7 @@
 
   "table_definition": {
     "name": "domain_submission_venues",
-    "engine": "MyISAM",
+    "engine": "InnoDB",
     "comment": "Which domains are currently being tracked by the Cloud realm",
     "columns": [
       {
