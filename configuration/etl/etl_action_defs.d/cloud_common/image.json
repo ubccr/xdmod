@@ -1,0 +1,8 @@
+{
+    "#": "This action loads data from a structured file and only needs the table definition",
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/image.json#/table_definition"
+        }
+    ]
+}
