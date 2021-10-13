@@ -4,8 +4,39 @@
         "migration-9_5_0-10_0_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
-        }
+        },
+        "cloud-resource-specs-migration-9-5-0_10-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                }
+             }
+         }
     },
     "migration-9_5_0-10_0_0": [
+    ],
+    "cloud-resource-specs-migration-9-5-0_10-0-0": [
+        {
+            "name": "InsertCloudResourceSpecsHostname",
+            "description": "Update event type on event table",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_cloud_resource_specs_host.sql"
+                }
+            ]
+        }
     ]
 }
