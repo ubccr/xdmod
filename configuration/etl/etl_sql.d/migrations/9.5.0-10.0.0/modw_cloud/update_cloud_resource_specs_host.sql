@@ -1,11 +1,17 @@
+ALTER TABLE modw_cloud.cloud_resource_specs MODIFY host_id INT(11) NOT NULL;
+ALTER TABLE modw_cloud.cloud_resource_specs DROP INDEX autoincrement_key;
+
 INSERT INTO `modw_cloud`.`host` (resource_id, hostname) SELECT
   rs.resource_id,
   rs.hostname
 FROM
-    `modw_cloud`.`cloud_resource_specs` as rs
+  `modw_cloud`.`cloud_resource_specs` as rs
 GROUP BY
-    rs.resource_id,
-    rs.hostname;
+  rs.resource_id,
+  rs.hostname
+ON DUPLICATE KEY UPDATE
+  resource_id = VALUES(resource_id), hostname = VALUES(hostname);
+
 
 UPDATE
   `modw_cloud`.`cloud_resource_specs` AS rs
