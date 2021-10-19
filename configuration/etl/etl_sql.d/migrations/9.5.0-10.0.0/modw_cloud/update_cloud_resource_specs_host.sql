@@ -1,6 +1,8 @@
 ALTER TABLE modw_cloud.cloud_resource_specs MODIFY host_id INT(11) NOT NULL;
 ALTER TABLE modw_cloud.cloud_resource_specs DROP INDEX autoincrement_key;
 
+-- Any hostnames in the cloud_resource_specs table that do not exist in
+-- `modw_cloud`.`host` should be added to that table
 INSERT INTO `modw_cloud`.`host` (resource_id, hostname) SELECT
   rs.resource_id,
   rs.hostname
@@ -12,7 +14,7 @@ GROUP BY
 ON DUPLICATE KEY UPDATE
   resource_id = VALUES(resource_id), hostname = VALUES(hostname);
 
-
+-- Update the new host_id field to a value that is in `modw_cloud`.`host`
 UPDATE
   `modw_cloud`.`cloud_resource_specs` AS rs
 JOIN
