@@ -33,5 +33,9 @@ class DatabasesMigration extends AbstractDatabasesMigration
             );
         }
 
+        if ($mysql_helper->tableExists('modw_cloud.cloud_resource_specs')) {
+            Utilities::runEtlPipeline(['cloud-resource-specs-migration-9-5-0_10-0-0'], $this->logger);
+        }
+
     }
 }
