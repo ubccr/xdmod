@@ -48,7 +48,7 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
 
         $this->_instance_state = array(
             'resource_id' => $srcRecord['resource_id'],
-            'hostname' => $srcRecord['hostname'],
+            'host_id' => $srcRecord['host_id'],
             'vcpus' => $srcRecord['vcpus'],
             'memory_mb' => $srcRecord['memory_mb'],
             'start_date_ts' => strtotime($srcRecord['fact_date'] . " 00:00:00"),
@@ -97,11 +97,11 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
 
         $transformedRecord = array();
 
-        if (($this->_instance_state['hostname'] != $srcRecord['hostname']) || ($this->_instance_state['resource_id'] != $srcRecord['resource_id']) || ($this->_instance_state['vcpus'] != $srcRecord['vcpus'] || $this->_instance_state['memory_mb'] != $srcRecord['memory_mb'])) {
+        if (($this->_instance_state['host_id'] != $srcRecord['host_id']) || ($this->_instance_state['resource_id'] != $srcRecord['resource_id']) || ($this->_instance_state['vcpus'] != $srcRecord['vcpus'] || $this->_instance_state['memory_mb'] != $srcRecord['memory_mb'])) {
 
             // Only update the instance if the only thing that is different between $srcRecord and $this->_instance_state is that either the memory or vcpus changed
             if (($this->_instance_state['vcpus'] != $srcRecord['vcpus'] || $this->_instance_state['memory_mb'] != $srcRecord['memory_mb'])
-                 && ($this->_instance_state['hostname'] == $srcRecord['hostname']) && ($this->_instance_state['resource_id'] == $srcRecord['resource_id'])) {
+                 && ($this->_instance_state['host_id'] == $srcRecord['host_id']) && ($this->_instance_state['resource_id'] == $srcRecord['resource_id'])) {
                 $this->updateInstance($srcRecord);
             }
 

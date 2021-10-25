@@ -5,7 +5,7 @@
     "destination_record_map": {
         "cloud_resource_specs": {
             "resource_id": "resource_id",
-            "hostname": "hostname",
+            "host_id": "host_id",
             "vcpus": "vcpus",
             "memory_mb": "memory_mb",
             "start_date_ts": "start_date_ts",
@@ -17,7 +17,7 @@
     "source_query": {
         "records": {
             "resource_id": "srs.resource_id",
-            "hostname": "srs.hostname",
+            "host_id": "srs.host_id",
             "vcpus": "srs.vcpus",
             "memory_mb": "srs.memory_mb",
             "fact_date": "srs.fact_date",
