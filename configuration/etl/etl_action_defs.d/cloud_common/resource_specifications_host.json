@@ -1,0 +1,33 @@
+{
+    "#": "Load hosts into the dimension table that are not yet loaded",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/host.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "hostname": "raw.hostname"
+        },
+
+        "joins": [
+            {
+                "name": "raw_resource_specs",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+
+        "where": [
+            "raw.hostname IS NOT NULL"
+        ],
+
+        "groupby": [
+            "raw.resource_id",
+            "raw.hostname"
+        ]
+    }
+}

@@ -7,7 +7,7 @@
       "source_query": {
           "records": {
               "resource_id": "raw.resource_id",
-              "hostname": "raw.hostname",
+              "host_id": "COALESCE(h.host_id, 1)",
               "vcpus": "raw.vcpus",
               "memory_mb": "raw.memory_mb",
               "fact_date": "DATE(CONVERT_TZ(raw.fact_date, '+00:00', @@session.time_zone))"
@@ -16,6 +16,13 @@
               "name": "raw_resource_specs",
               "schema": "${SOURCE_SCHEMA}",
               "alias": "raw"
+          },
+          {
+              "name": "host",
+              "schema": "${SOURCE_SCHEMA}",
+              "alias": "h",
+              "type": "LEFT",
+              "on": "raw.resource_id = h.resource_id AND raw.hostname = h.hostname"
           }]
       }
 }
