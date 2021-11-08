@@ -168,18 +168,15 @@
             }
         },
         {
-            "#": "Note that any actions run after this cannot truncate the tables set here",
-
-            "name": "CloudUnknownDimensionInitializer",
+            "name": "CloudImageUnknownInitializer",
             "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_common/initialize_unknown_dimension_values.json",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/image.json",
             "endpoints": {
                 "source": {
-                    "type": "mysql",
-                    "name": "XDMoD DW",
-                    "config": "datawarehouse",
-                    "schema": "modw"
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/image.json"
                 }
             }
         },
