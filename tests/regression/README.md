@@ -23,6 +23,9 @@ This will generate the expected test output data in
 reference dataset copy these files to the artifact reference directory
 (`tests/artifacts/xdmod/regression/current/expected/reference/`).
 
+The hashes in `tests/artifacts/xdmod/regression/images/expected.json` will also
+be updated.
+
 ## Environment Variables
 
 ### `XDMOD_REALMS`
