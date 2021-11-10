@@ -4,6 +4,9 @@ namespace RegressionTests\Controllers;
 
 class UsageChartsTest extends \PHPUnit_Framework_TestCase
 {
+    /** Hash data JSON file relative to __DIR__ */
+    const HASH_FILE_REL_PATH = '/../../../artifacts/xdmod/regression/images/expected.json';
+
     protected static $helper;
 
     // Used when running in hash-generation mode.
@@ -13,9 +16,19 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     {
         self::$helper->logout();
         if(!empty(self::$imagehashes)) {
-            // print to stdout rather than, e.g., overwriting
-            // the expected results file.
-            print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
+            if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
+                // Overwrite test data.
+                $hashFile = realpath(__DIR__ . self::HASH_FILE_REL_PATH);
+                $expectedHashes = json_decode(file_get_contents($hashFile), true);
+                foreach (self::$imagehashes as $testName => $hash) {
+                    $expectedHashes[$testName] = $hash;
+                }
+                file_put_contents($hashFile, json_encode($expectedHashes, JSON_PRETTY_PRINT));
+            } else {
+                // print to stdout rather than, e.g., overwriting
+                // the expected results file.
+                print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
+            }
         }
     }
     /**
@@ -27,15 +40,12 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
-        if ($expectedHash === false) {
+        $actualHash = sha1($imageData);
 
-            self::$imagehashes[$testName] =  sha1($imageData);
-
+        if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
+            self::$imagehashes[$testName] = $actualHash;
             $this->markTestSkipped('Created Expected output for ' . $testName);
-
         } else {
-
-            $actualHash = sha1($imageData);
             $this->assertEquals($expectedHash, $actualHash, $testName);
         }
     }
@@ -63,7 +73,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
 
         $expectedHashes = array();
 
-        $hashFile = realpath(__DIR__ . '/../../../artifacts/xdmod') . '/regression/images/expected.json';
+        $hashFile = realpath(__DIR__ . self::HASH_FILE_REL_PATH);
         if (file_exists($hashFile)) {
             $expectedHashes = json_decode(file_get_contents($hashFile), true);
         }
