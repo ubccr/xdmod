@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "mountpoint",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "charset": "utf8",
         "collation": "utf8_unicode_ci",
         "comment": "Storage file system mountpoints",

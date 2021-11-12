@@ -103,7 +103,8 @@
                 "jobs/meta_job.json",
                 "jobs/submission_venue.json",
                 "jobs/unit.json",
-                "storage/xdw/storagefact.json"
+                "storage/xdw/storagefact.json",
+                "storage/xdw/mountpoint.json"
               ],
               "endpoints": {
                   "destination": {
