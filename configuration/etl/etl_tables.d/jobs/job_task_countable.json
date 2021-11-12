@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_task_countable",
         "comment": "Countable values. e.g., Num databases, num gpus allocated, etc.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_id",
