@@ -18,7 +18,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 {
     private $resource_spec_01 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "fact_date" => '2018-04-17',
@@ -30,7 +30,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_02 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 100,
         "memory_mb" => 196514,
         "fact_date" => '2018-04-20',
@@ -42,7 +42,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_03 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 100,
         "memory_mb" => 262030,
         "fact_date" => '2018-04-24',
@@ -54,7 +54,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_04 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "fact_date" => '2018-04-30',
@@ -66,7 +66,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_05 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 262030,
         "fact_date" => '2018-05-02',
@@ -78,7 +78,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_06 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => -1,
         "memory_mb" => -1,
         "fact_date" => '2018-05-10',
@@ -90,7 +90,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_07 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "fact_date" => '2018-05-15',
@@ -102,7 +102,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_08 = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 64,
         "memory_mb" => 196514,
         "fact_date" => '2019-04-01',
@@ -114,7 +114,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_zero = array(
         "resource_id" => 0,
-        "hostname" => 0,
+        "host_id" => 0,
         "vcpus" => 0,
         "memory_mb" => 0,
         "start_date_ts" => 0,
@@ -125,7 +125,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_vcpu_changed = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "start_date_ts" => 1523923200,
@@ -136,7 +136,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_memory_changed = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 100,
         "memory_mb" => 196514,
         "start_date_ts" => 1524182400,
@@ -147,7 +147,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_vcpu_changed_original_value = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "start_date_ts" => 1525046400,
@@ -158,7 +158,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_host_removed = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "start_date_ts" => 1523923200,
@@ -169,7 +169,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $resource_spec_host_added_back = array(
         "resource_id" => 8,
-        "hostname" => 'srv-p24-36.cbls.ccr.buffalo.edu',
+        "host_id" => 7,
         "vcpus" => 56,
         "memory_mb" => 196514,
         "start_date_ts" => 1526342400,
