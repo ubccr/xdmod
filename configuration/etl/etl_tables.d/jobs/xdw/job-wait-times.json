@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "job_wait_times",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

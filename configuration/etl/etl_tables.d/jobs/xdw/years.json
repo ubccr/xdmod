@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "years",
         "comment": "autogen - one rec for each year of TG operation.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

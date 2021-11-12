@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "account",
         "comment": "This table has records for all the accounts/projects.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

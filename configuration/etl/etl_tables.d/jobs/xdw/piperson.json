@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "piperson",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "person_id",
