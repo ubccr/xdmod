@@ -48,7 +48,7 @@
             },
             {
                 "name": "quarter_start_ts",
-                "type": "int(11)",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "The start timestamp of the quarter in epochs."
             },

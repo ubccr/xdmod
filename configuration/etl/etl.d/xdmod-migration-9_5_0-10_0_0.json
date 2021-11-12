@@ -4,8 +4,90 @@
         "migration-9_5_0-10_0_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
-        }
+        },
+        "cloud-migration-9-5-0_10-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              }
+           }
+        },
+        "cloud-resource-specs-migration-9-5-0_10-0-0": {
+          "namespace": "ETL\\Maintenance",
+             "options_class": "MaintenanceOptions",
+             "endpoints": {
+                 "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                 },
+                 "destination": {
+                     "type": "mysql",
+                     "name": "Cloud DB",
+                     "config": "datawarehouse",
+                     "schema": "modw_cloud"
+                 }
+             }
+         }
     },
     "migration-9_5_0-10_0_0": [
+        {
+            "name": "update-modw-quarters",
+            "description": "Update modw.quarters table definition",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/xdw/quarters.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        }
+    ],
+    "cloud-migration-9-5-0_10-0-0": [
+        {
+            "name": "UpdateIndexes",
+            "description": "Update event type on event table",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_asset_index.sql"
+                },
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_image_index.sql"
+                }
+            ]
+        }
+    ],
+    "cloud-resource-specs-migration-9-5-0_10-0-0": [
+        {
+            "name": "InsertCloudResourceSpecsHostname",
+            "description": "Update event type on event table",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_cloud_resource_specs_host.sql"
+                }
+            ]
+        }
     ]
 }
