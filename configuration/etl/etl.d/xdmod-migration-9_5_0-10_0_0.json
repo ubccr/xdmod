@@ -73,6 +73,10 @@
                 {
                     "delimiter": ";",
                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_image_index.sql"
+                },
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_event_index.sql"
                 }
             ]
         }
