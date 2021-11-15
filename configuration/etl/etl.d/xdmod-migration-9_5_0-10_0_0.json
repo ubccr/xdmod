@@ -118,8 +118,6 @@
                 "cloud_common/asset_type.json",
                 "cloud_common/asset.json",
                 "cloud_common/cloud_resource_specs.json",
-                "cloud_common/cloudfact_by_.json",
-                "cloud_common/cloudfact_by_day.json",
                 "cloud_common/domains.json",
                 "cloud_common/event_asset.json",
                 "cloud_common/event_reconstructed.json",
@@ -134,7 +132,6 @@
                 "cloud_common/processor_buckets.json",
                 "cloud_common/raw_resource_specs.json",
                 "cloud_common/record_type.json",
-                "cloud_common/resourcespecsfact_by_.json",
                 "cloud_common/session_records.json",
                 "cloud_common/staging_cloud_project_to_pi.json",
                 "cloud_common/staging_resource_specifications.json",
@@ -150,6 +147,17 @@
                 "cloud_openstack/raw_volume.json",
                 "cloud_openstack/staging_event.json"
               ]
+         },
+         {
+             "name": "ConvertToInnodbCloudAggregateTables",
+             "description": "Convert cloud realm aggregate tables to InnoDB",
+             "class": "ExecuteSql",
+             "sql_file_list": [
+                 {
+                     "delimiter": ";",
+                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/convert_innodb_aggregate_tables.sql"
+                 }
+             ]
          }
     ]
 }

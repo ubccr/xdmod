@@ -22,9 +22,10 @@ class DatabasesMigration extends AbstractDatabasesMigration
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = \CCR\DB\MySQLHelper::factory($dbh);
         $console = Console::factory();
+        $innodbConversionPipelines = [];
 
         if ($mysql_helper->tableExists('modw_cloud.event')) {
-
+            $innodbConversionPipelines[] = 'cloud-migration-innodb-9-5-0_10-0-0';
             Utilities::runEtlPipeline(
                 ['cloud-migration-9-5-0_10-0-0'],
                 $this->logger,
@@ -43,15 +44,10 @@ This version of Open XDMoD converts any table with the MyISAM engine to InnoDB. 
 EOT
         );
 
-        if ($mysql_helper->tableExists('modw_cloud.event')) {
-
-            Utilities::runEtlPipeline(
-                ['cloud-migration-innodb-9-5-0_10-0-0'],
-                $this->logger,
-                [
-                    'last-modified-start-date' => '2017-01-01 00:00:00'
-                ]
-            );
-        }
+        Utilities::runEtlPipeline(
+            $innodbConversionPipelines,
+            $this->logger,
+            ['last-modified-start-date' => '2017-01-01 00:00:00']
+        );
     }
 }
