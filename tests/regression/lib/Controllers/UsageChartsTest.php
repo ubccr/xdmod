@@ -12,7 +12,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     const HASH_DIR_REL_PATH = '/../../../artifacts/xdmod/regression/images';
 
     /** Hash data JSON file relative to __DIR__ */
-    const HASH_FILE_REL_PATH = self::HASH_DIR_REL_PATH . "/expected.json";
+    const HASH_FILE_REL_PATH = '/../../../artifacts/xdmod/regression/images/expected.json';
 
     protected static $helper;
 
