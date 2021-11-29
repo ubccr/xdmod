@@ -4,8 +4,15 @@ namespace RegressionTests\Controllers;
 
 class UsageChartsTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * The path relative to this file that contains the expected hashes for this test case.
+     *
+     * @var string
+     */
+    const HASH_DIR_REL_PATH = '/../../../artifacts/xdmod/regression/images';
+
     /** Hash data JSON file relative to __DIR__ */
-    const HASH_FILE_REL_PATH = '/../../../artifacts/xdmod/regression/images/expected.json';
+    const HASH_FILE_REL_PATH = self::HASH_DIR_REL_PATH . "/expected.json";
 
     protected static $helper;
 
@@ -88,7 +95,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         // Otherwise try the default expected.json
         $hashFiles[] = 'expected.json';
 
-        $artifactsDir = realpath(__DIR__ . '/../../../artifacts/xdmod/regression/images');
+        $artifactsDir = realpath(__DIR__ . self::HASH_DIR_REL_PATH);
         foreach($hashFiles as $hashFile) {
             $hashFilePath = "$artifactsDir/$hashFile";
             if (file_exists($hashFilePath)) {
