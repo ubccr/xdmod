@@ -58,6 +58,60 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "add-last-updated-timestamp-column",
+            "description": "Update modw.quarters table definition",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "storage/xdw/storagefact.json",
+                "jobs/xdw/job-tasks.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "add-last-updated-timestamp-column-modw_cloud",
+            "description": "Update modw.quarters table definition",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/cloud_resource_specs.json",
+                "cloud_common/event.json",
+                "cloud_common/session_records.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                }
+            }
+        },
+        {
+            "name": "update-last-updated-timestamp-columns",
+            "description": "Update modw.quarters table definition",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_last_modified_timestamp_columns.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         }
     ],
     "cloud-migration-9-5-0_10-0-0": [

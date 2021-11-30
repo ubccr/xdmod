@@ -130,6 +130,11 @@
                 "extra": "on update CURRENT_TIMESTAMP"
             },
             {
+                "name": "last_modified_ts",
+                "type": "int(11) unsigned",
+                "nullable": true
+            },
+            {
                 "name": "service_provider",
                 "type": "int(11)",
                 "nullable": false
@@ -189,6 +194,30 @@
                     "instance_id"
                 ],
                 "is_unique": false
+            },
+            {
+                "name": "index_last_modified_ts",
+                "columns": [
+                    "last_modified_ts"
+                ]
+            }
+        ],
+        "triggers": [
+            {
+                "time": "BEFORE",
+                "event": "INSERT",
+                "table": "session_records",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw_cloud",
+                "name": "session_records_last_modified_ts_insert"
+            },
+            {
+                "time": "BEFORE",
+                "event": "UPDATE",
+                "table": "session_records",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw_cloud",
+                "name": "session_records_last_modified_ts_update"
             }
         ]
     }

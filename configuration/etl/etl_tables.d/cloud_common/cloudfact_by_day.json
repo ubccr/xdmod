@@ -149,6 +149,10 @@
                 "default": "CURRENT_TIMESTAMP",
                 "nullable": false,
                 "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            },{
+                "name": "last_modified_ts",
+                "type": "int(11) unsigned",
+                "nullable": true
             }
         ],
 
@@ -176,6 +180,27 @@
         },{
             "name": "index_last_modified",
             "columns": ["last_modified"]
-        }]
+        },{
+            "name": "index_last_modified_ts",
+            "columns": ["last_modified_ts"]
+        }],
+        "triggers": [
+            {
+                "time": "BEFORE",
+                "event": "INSERT",
+                "table": "cloudfact_by_day",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw_cloud",
+                "name": "cloud_sessions_last_modified_ts_insert"
+            },
+            {
+                "time": "BEFORE",
+                "event": "UPDATE",
+                "table": "cloudfact_by_day",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw_cloud",
+                "name": "cloud_sessions_last_modified_ts_update"
+            }
+        ]
     }
 }

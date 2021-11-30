@@ -364,6 +364,11 @@
                 "default": "CURRENT_TIMESTAMP",
                 "nullable": false,
                 "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "last_modified_ts",
+                "type": "int(11) unsigned",
+                "nullable": true
             }
         ],
         "indexes": [
@@ -494,6 +499,32 @@
                 "columns": [
                     "${AGGREGATION_UNIT}_id"
                 ]
+            },
+            {
+                "name": "last_modified_ts_idx",
+                "columns": [
+                    "last_modified_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": [
+            {
+                "time": "BEFORE",
+                "event": "INSERT",
+                "table": "jobfact_by_day",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw_aggregates",
+                "name": "joblist_last_modified_ts_insert"
+            },
+            {
+                "time": "BEFORE",
+                "event": "UPDATE",
+                "table": "jobfact_by_day",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw_aggregates",
+                "name": "joblist_last_modified_ts_update"
             }
         ],
         "table_prefix": "jobfact_by_"

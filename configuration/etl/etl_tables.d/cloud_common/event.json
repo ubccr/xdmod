@@ -152,7 +152,7 @@
                 "table": "event",
                 "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
                 "schema": "modw_cloud",
-                "name": "last_modified_ts_insert"
+                "name": "cloud_last_modified_ts_insert"
             },
             {
                 "time": "BEFORE",
@@ -160,7 +160,7 @@
                 "table": "event",
                 "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
                 "schema": "modw_cloud",
-                "name": "last_modified_ts_update"
+                "name": "cloud_last_modified_ts_update"
             }
         ]
     }

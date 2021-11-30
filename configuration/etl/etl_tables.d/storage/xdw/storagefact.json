@@ -107,6 +107,11 @@
                 "nullable": false,
                 "default": "CURRENT_TIMESTAMP",
                 "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "last_modified_ts",
+                "type": "int(11) unsigned",
+                "nullable": true
             }
         ],
         "indexes": [
@@ -177,6 +182,32 @@
                     "fos_id",
                     "ts"
                 ]
+            },
+            {
+                "name": "last_modified_ts_idx",
+                "columns": [
+                    "last_modified_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": [
+            {
+                "time": "BEFORE",
+                "event": "INSERT",
+                "table": "storagefact",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw",
+                "name": "storage_last_modified_ts_insert"
+            },
+            {
+                "time": "BEFORE",
+                "event": "UPDATE",
+                "table": "storagefact",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
+                "schema": "modw",
+                "name": "storage_last_modified_ts_update"
             }
         ]
     }

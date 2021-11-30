@@ -292,7 +292,7 @@
             },
             {
                 "name": "last_modified_ts",
-                "type": "int(11)",
+                "type": "int(11) unsigned",
                 "nullable": true
             },
             {
@@ -430,17 +430,17 @@
                 "time": "BEFORE",
                 "event": "INSERT",
                 "table": "job_tasks",
-                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(NEW.last_modified);",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
                 "schema": "modw",
-                "name": "last_modified_ts_insert"
+                "name": "jobs_last_modified_ts_insert"
             },
             {
                 "time": "BEFORE",
                 "event": "UPDATE",
                 "table": "job_tasks",
-                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(NEW.last_modified);",
+                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
                 "schema": "modw",
-                "name": "last_modified_ts_update"
+                "name": "jobs_last_modified_ts_update"
             }
         ]
     }
