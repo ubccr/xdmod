@@ -58,6 +58,25 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "convert-modw-aggregates-to-innodb",
+            "description": "Convert modw_aggregates to use InnoDB",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_aggregates/convert-to-innodb.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates"
+                }
+            }
         }
     ],
     "cloud-migration-9-5-0_10-0-0": [
