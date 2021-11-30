@@ -8,8 +8,8 @@
         "comment": "Contains a specific set of vcpus and memory size for a host for a day",
         "columns": [
             {
-                "name": "hostname",
-                "type": "varchar(225)",
+                "name": "host_id",
+                "type": "int(11)",
                 "nullable": false
             },
             {
@@ -42,7 +42,7 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "hostname",
+                    "host_id",
                     "fact_date"
                 ],
                 "is_unique": true
