@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "event_type",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Event type: start, stop, attach, detach, etc.",
         "columns": [
             {
