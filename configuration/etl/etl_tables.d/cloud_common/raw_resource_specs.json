@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "raw_resource_specs",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Record type: accounting, administrative, derived, etc.",
         "columns": [
             {

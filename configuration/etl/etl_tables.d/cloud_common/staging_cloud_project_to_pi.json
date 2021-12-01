@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "staging_pi_to_project",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Record type: accounting, administrative, derived, etc.",
         "columns": [
             {

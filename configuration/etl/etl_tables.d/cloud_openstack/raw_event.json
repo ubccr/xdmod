@@ -4,7 +4,7 @@
     "#": "These will be stored here and filtered out later. For example, several events with type",
     "table_definition": {
         "name": "openstack_raw_event",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Raw events from Open Stack log events.",
         "columns": [{
                 "name": "resource_id",
