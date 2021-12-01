@@ -6,7 +6,7 @@
 
     "table_definition": {
         "name": "openstack_raw_instance_type",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Raw instance type data parsed from log files.",
         "columns": [
             {

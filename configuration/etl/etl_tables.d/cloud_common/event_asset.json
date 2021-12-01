@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "event_asset",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Assets associated with an event",
         "columns": [
             {

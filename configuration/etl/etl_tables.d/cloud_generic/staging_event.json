@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "generic_cloud_staging_event",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Staged events with some ids.",
         "columns": [
             {

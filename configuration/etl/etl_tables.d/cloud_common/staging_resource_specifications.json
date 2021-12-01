@@ -4,7 +4,7 @@
 
     "table_definition": {
         "name": "staging_resource_specifications",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Contains a specific set of vcpus and memory size for a host for a day",
         "columns": [
             {

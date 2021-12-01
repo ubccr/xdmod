@@ -10,7 +10,7 @@
 
     "table_definition": {
         "name": "openstack_raw_volume",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Raw block devices/volumes from the log file.",
         "columns": [
             {
