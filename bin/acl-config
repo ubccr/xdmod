@@ -873,7 +873,9 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls, array $
  * @param string    $type        the type of acl this is. Optional.
  * @param array     $hierarchies the hierarchy information associated
  *                               with this acl. Optional.
- *
+ * @param array     $dimensions  an array of group_by names that indicate the
+ *                               default filtering behavior this acl has on a
+ *                               users data.
  * @return int|null null if the acl was not able to be created or the acl_id if
  *                       it was created or exists.
  **/
@@ -1160,6 +1162,11 @@ SQL;
 }
 
 /**
+ * This function accepts an acl's name and its associated `dimension` data ( an array of group_by names ) that will be
+ * used to populate the `acl_dimensions_staging` table ( and ultimately the `acl_dimensions` table ). This table serves
+ * to relate acls and group_bys and provide the default filtering of a user's data when they do not have a record
+ * present in the `user_acl_group_by_parameters` table.
+ *
  * @param iDatabase $db
  * @param string    $aclName
  * @param array     $dimensions

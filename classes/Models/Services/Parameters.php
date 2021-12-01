@@ -7,7 +7,7 @@ use CCR\DB;
 /**
  * Class Parameters
  *
- * This class is meant to provide the
+ * This class is meant to provide the parameters used by other parts of XDMoD to filter requested data.
  *
  * @package Models\Services
  */
