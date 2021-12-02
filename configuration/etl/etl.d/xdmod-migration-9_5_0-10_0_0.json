@@ -83,7 +83,6 @@
             "class": "ManageAggregateTables",
             "aggregation_units": ["month", "quarter", "year"],
             "definition_file_list": [
-                "cloud_common/resourcespecsfact_by_.json",
                 "jobs/xdw/jobfact_by_.json",
                 "storage/xdw/storagefact.aggregation.json"
               ],
@@ -102,7 +101,6 @@
              "class": "ManageAggregateTables",
              "aggregation_units": ["day"],
              "definition_file_list": [
-                "cloud_common/resourcespecsfact_by_.json",
                 "jobs/xdw/jobfact_by_day.json",
                 "storage/xdw/storagefact.aggregation.json"],
              "endpoints": {
