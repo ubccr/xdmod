@@ -78,24 +78,42 @@
             }
         },
         {
-            "name": "convert-modw-aggregates-to-innodb",
-            "description": "Convert modw_aggregates to use InnoDB",
-            "class": "ExecuteSql",
-            "sql_file_list": [
-                {
-                    "delimiter": ";",
-                    "sql_file": "migrations/9.5.0-10.0.0/modw_aggregates/convert-to-innodb.sql"
-                }
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "XDMoD Data Warehouse",
-                    "config": "datawarehouse",
-                    "schema": "modw_aggregates"
-                }
-            }
-        }
+            "name": "update-mod-aggregate-tables",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageAggregateTables",
+            "aggregation_units": ["month", "quarter", "year"],
+            "definition_file_list": [
+                "cloud_common/resourcespecsfact_by_.json",
+                "jobs/xdw/jobfact_by_.json",
+                "storage/xdw/storagefact.aggregation.json"
+              ],
+              "endpoints": {
+                  "destination": {
+                      "type": "mysql",
+                      "name": "XDMoD Data Warehouse",
+                      "config": "datawarehouse",
+                      "schema": "modw_aggregates"
+                  }
+              }
+         },
+         {
+             "name": "update-mod-aggregate-tables-by-day",
+             "description": "Update modw_cloud tables to InnoDB",
+             "class": "ManageAggregateTables",
+             "aggregation_units": ["day"],
+             "definition_file_list": [
+                "cloud_common/resourcespecsfact_by_.json",
+                "jobs/xdw/jobfact_by_day.json",
+                "storage/xdw/storagefact.aggregation.json"],
+             "endpoints": {
+                 "destination": {
+                     "type": "mysql",
+                     "name": "XDMoD Data Warehouse",
+                     "config": "datawarehouse",
+                     "schema": "modw_aggregates"
+                 }
+             }
+          }
     ],
     "cloud-migration-9-5-0_10-0-0": [
         {
