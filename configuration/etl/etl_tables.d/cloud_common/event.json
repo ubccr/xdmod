@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "event",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Events on an instance",
         "columns": [
             {

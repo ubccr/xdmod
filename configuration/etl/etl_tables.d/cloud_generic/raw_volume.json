@@ -10,7 +10,7 @@
 
     "table_definition": {
         "name": "generic_cloud_raw_volume",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Raw block devices/volumes from the log file.",
         "columns": [
             {

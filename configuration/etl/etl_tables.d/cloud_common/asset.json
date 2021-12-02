@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "asset",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Generic assets",
         "columns": [
             {

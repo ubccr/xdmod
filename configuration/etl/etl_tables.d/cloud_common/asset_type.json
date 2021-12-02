@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "asset_type",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Type of an asset",
         "columns": [
             {
