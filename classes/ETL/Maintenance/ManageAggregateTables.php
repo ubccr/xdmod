@@ -22,64 +22,8 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use ETL\DbModel\AggregationTable;
 
-class ManageAggregateTables extends aRdbmsDestinationAction implements iAction
+class ManageAggregateTables extends ManageTables
 {
-    // List of ETL Table objects generated from the definition files
-    private $etlTableDefinitions = array();
-
-    /* ------------------------------------------------------------------------------------------
-     * @see aAction::__construct()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
-    {
-        // Set the logger manually since we are not calling the parent constructor chain until
-        // later.
-
-        $this->setLogger($logger);
-
-        $requiredKeys = array("definition_file_list");
-        $this->verifyRequiredConfigKeys($requiredKeys, $options);
-
-        if ( ! $options instanceof MaintenanceOptions ) {
-            $msg = "Options is not an instance of MaintenanceOptions";
-            $this->logAndThrowException($msg);
-        }
-
-        // The table definition list must be provided and be an array
-
-        if ( ! is_array($options->definition_file_list) ) {
-            $msg = "definition_file_list must be an array";
-            $this->logAndThrowException($msg);
-        } elseif ( 0 == count($options->definition_file_list) ) {
-            $msg = "definition_file_list must contain at least one element";
-            $this->logAndThrowException($msg);
-        }
-
-        parent::__construct($options, $etlConfig, $logger);
-
-    }  // __construct()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iAction::initialize()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isInitialized() ) {
-            return;
-        }
-
-        parent::initialize($etlOverseerOptions);
-
-        $this->initialized = true;
-
-        return true;
-
-    }  // initialize()
-
     /* ------------------------------------------------------------------------------------------
      * Override aRdbmsDestinationAction::createDestinationTableObjects() because there are
      * multiple definition files referenced by this action and we will be generating a
@@ -92,9 +36,11 @@ class ManageAggregateTables extends aRdbmsDestinationAction implements iAction
      protected function createDestinationTableObjects()
      {
        foreach ( $this->options->definition_file_list as $defFile ) {
+
            if ( isset($this->options->paths->table_definition_dir) ) {
                $defFile = \xd_utilities\qualify_path($defFile, $this->options->paths->table_definition_dir);
            }
+
            $this->logger->notice(sprintf("Parse table definition: '%s'", $defFile));
 
            $tableConfig = Configuration::factory(
