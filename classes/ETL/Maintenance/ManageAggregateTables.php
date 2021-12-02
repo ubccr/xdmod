@@ -43,10 +43,10 @@ class ManageAggregateTables extends ManageTables
             $this->logger->notice(sprintf("Parse table definition: '%s'", $defFile));
 
             $tableConfig = Configuration::factory(
-               $defFile,
-               $this->options->paths->base_dir,
-               $this->logger
-           );
+                $defFile,
+                $this->options->paths->base_dir,
+                $this->logger
+            );
 
             // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
             if (! isset($tableConfig->table_definition)) {
@@ -59,9 +59,9 @@ class ManageAggregateTables extends ManageTables
             if (is_array($tableConfig->table_definition)) {
                 if (count($tableConfig->table_definition) > 1) {
                     $this->logger->warning(sprintf(
-                       "%s does not support multiple ETL destination tables, using first table",
-                       $this
-                   ));
+                        "%s does not support multiple ETL destination tables, using first table",
+                        $this
+                    ));
                 }
                 $tableDefinition = $tableConfig->table_definition;
                 $tableConfig->table_definition = array_shift($tableDefinition);
@@ -73,10 +73,10 @@ class ManageAggregateTables extends ManageTables
 
             $this->logger->debug("Create ETL destination aggregation table object");
             $this->etlDestinationTable = new AggregationTable(
-               $tableConfig->table_definition,
-               $this->destinationEndpoint->getSystemQuoteChar(),
-               $this->logger
-           );
+                $tableConfig->table_definition,
+                $this->destinationEndpoint->getSystemQuoteChar(),
+                $this->logger
+            );
 
             $this->etlDestinationTable->schema = $this->destinationEndpoint->getSchema();
 
@@ -95,7 +95,7 @@ class ManageAggregateTables extends ManageTables
             // the table list since it is used by methods upstream.
             $this->etlDestinationTableList[$tableConfig->table_definition->name] = $this->etlDestinationTable;
         }
-    }  // createDestinationTableObjects()
+    }
 
     /* ------------------------------------------------------------------------------------------
      * @see iAction::execute()
@@ -124,8 +124,8 @@ class ManageAggregateTables extends ManageTables
                     $msg = "Error managing ETL table " . $etlTable->getFullName() . ": " . $e->getMessage();
                     $this->logAndThrowException($msg);
                 }
-            }  // foreach ( $this->etlDestinationTables as $etlTable )
-        } // foreach ( $this->options->aggregation_units as $aggregationUnit )
+            }
+        }
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
@@ -135,5 +135,5 @@ class ManageAggregateTables extends ManageTables
                                     'end_time'     => $time_end,
                                     'elapsed_time' => round($time, 5)
                                   ));
-    }  // execute()
-}  // class ManageAggregateTables
+    }
+}
