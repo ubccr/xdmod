@@ -33,72 +33,69 @@ class ManageAggregateTables extends ManageTables
      * ------------------------------------------------------------------------------------------
      */
 
-     protected function createDestinationTableObjects()
-     {
-       foreach ( $this->options->definition_file_list as $defFile ) {
+    protected function createDestinationTableObjects()
+    {
+        foreach ($this->options->definition_file_list as $defFile) {
+            if (isset($this->options->paths->table_definition_dir)) {
+                $defFile = \xd_utilities\qualify_path($defFile, $this->options->paths->table_definition_dir);
+            }
 
-           if ( isset($this->options->paths->table_definition_dir) ) {
-               $defFile = \xd_utilities\qualify_path($defFile, $this->options->paths->table_definition_dir);
-           }
+            $this->logger->notice(sprintf("Parse table definition: '%s'", $defFile));
 
-           $this->logger->notice(sprintf("Parse table definition: '%s'", $defFile));
-
-           $tableConfig = Configuration::factory(
+            $tableConfig = Configuration::factory(
                $defFile,
                $this->options->paths->base_dir,
                $this->logger
            );
 
-           // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
-           if ( ! isset($tableConfig->table_definition) ) {
-               $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
-           }
+            // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
+            if (! isset($tableConfig->table_definition)) {
+                $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
+            }
 
-           // This action only supports 1 destination table so use the first one and log a warning if
-           // there are multiple.
+            // This action only supports 1 destination table so use the first one and log a warning if
+            // there are multiple.
 
-           if ( is_array($tableConfig->table_definition) ) {
-               if ( count($tableConfig->table_definition) > 1 ) {
-                   $this->logger->warning(sprintf(
+            if (is_array($tableConfig->table_definition)) {
+                if (count($tableConfig->table_definition) > 1) {
+                    $this->logger->warning(sprintf(
                        "%s does not support multiple ETL destination tables, using first table",
                        $this
                    ));
-               }
-               $tableDefinition = $tableConfig->table_definition;
-               $tableConfig->table_definition = array_shift($tableDefinition);
-           }
+                }
+                $tableDefinition = $tableConfig->table_definition;
+                $tableConfig->table_definition = array_shift($tableDefinition);
+            }
 
-           if ( ! is_object($tableConfig->table_definition) ) {
-               $this->logAndThrowException("Table definition must be an object.");
-           }
+            if (! is_object($tableConfig->table_definition)) {
+                $this->logAndThrowException("Table definition must be an object.");
+            }
 
-           $this->logger->debug("Create ETL destination aggregation table object");
-           $this->etlDestinationTable = new AggregationTable(
+            $this->logger->debug("Create ETL destination aggregation table object");
+            $this->etlDestinationTable = new AggregationTable(
                $tableConfig->table_definition,
                $this->destinationEndpoint->getSystemQuoteChar(),
                $this->logger
            );
 
-           $this->etlDestinationTable->schema = $this->destinationEndpoint->getSchema();
+            $this->etlDestinationTable->schema = $this->destinationEndpoint->getSchema();
 
-           if ( isset($this->options->table_prefix) &&
-                $this->options->table_prefix != $this->etlDestinationTable->table_prefix )
-           {
-               $msg =
+            if (isset($this->options->table_prefix) &&
+                $this->options->table_prefix != $this->etlDestinationTable->table_prefix) {
+                $msg =
                    "Overriding table prefix from " .
                    $this->etlDestinationTable->table_prefix
                    . " to " .
                    $this->options->table_prefix;
-               $this->logger->debug($msg);
-               $this->etlDestinationTable->table_prefix = $this->options->table_prefix;
-           }
+                $this->logger->debug($msg);
+                $this->etlDestinationTable->table_prefix = $this->options->table_prefix;
+            }
 
-           // Aggregation does not support multiple destination tables but we must still populate
-           // the table list since it is used by methods upstream.
-           $this->etlDestinationTableList[$tableConfig->table_definition->name] = $this->etlDestinationTable;
-         }
-
-     }  // createDestinationTableObjects()
+            // Aggregation does not support multiple destination tables but we must still populate
+            // the table list since it is used by methods upstream.
+            $this->etlDestinationTableList[$tableConfig->table_definition->name] = $this->etlDestinationTable;
+        }
+    }  // createDestinationTableObjects()
 
     /* ------------------------------------------------------------------------------------------
      * @see iAction::execute()
@@ -110,9 +107,8 @@ class ManageAggregateTables extends ManageTables
         $time_start = microtime(true);
         $this->initialize($etlOverseerOptions);
 
-        foreach ( $this->options->aggregation_units as $aggregationUnit ) {
-            foreach ( $this->etlDestinationTableList as $etlTable ) {
-
+        foreach ($this->options->aggregation_units as $aggregationUnit) {
+            foreach ($this->etlDestinationTableList as $etlTable) {
                 try {
                     // The aggregation unit must be set for the AggregationTable
                     $etlTable->aggregation_unit = $aggregationUnit;
@@ -121,12 +117,10 @@ class ManageAggregateTables extends ManageTables
                     // Optionally truncate the destination table
                     $this->truncateDestination();
 
-                    $qualifiedDestTableName = $etlTable->getFullName();
                     $substitutedEtlAggregationTable = $etlTable->copyAndApplyVariables($this->variableStore);
-
                     $this->manageTable($substitutedEtlAggregationTable, $this->destinationEndpoint);
 
-                } catch ( Exception $e ) {
+                } catch (Exception $e) {
                     $msg = "Error managing ETL table " . $etlTable->getFullName() . ": " . $e->getMessage();
                     $this->logAndThrowException($msg);
                 }
