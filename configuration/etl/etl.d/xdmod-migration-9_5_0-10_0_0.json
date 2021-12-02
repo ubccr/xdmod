@@ -79,7 +79,7 @@
         },
         {
             "name": "update-mod-aggregate-tables",
-            "description": "Update modw_cloud tables to InnoDB",
+            "description": "Update modw_aggregates tables to use InnoDB table engine",
             "class": "ManageAggregateTables",
             "aggregation_units": ["month", "quarter", "year"],
             "definition_file_list": [
@@ -98,7 +98,7 @@
          },
          {
              "name": "update-mod-aggregate-tables-by-day",
-             "description": "Update modw_cloud tables to InnoDB",
+             "description": "Update modw_aggregates _by_day tables to use InnoDB table engine",
              "class": "ManageAggregateTables",
              "aggregation_units": ["day"],
              "definition_file_list": [
