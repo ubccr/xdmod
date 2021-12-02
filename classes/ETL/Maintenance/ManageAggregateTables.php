@@ -142,4 +142,4 @@ class ManageAggregateTables extends ManageTables
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-}  // class ManageTables
+}  // class ManageAggregateTables
