@@ -23,6 +23,24 @@
               }
            }
         },
+        "cloud-migration-innodb-9-5-0_10-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              }
+           }
+        },
         "cloud-resource-specs-migration-9-5-0_10-0-0": {
           "namespace": "ETL\\Maintenance",
              "options_class": "MaintenanceOptions",
@@ -93,5 +111,57 @@
                 }
             ]
         }
+    ],
+    "cloud-migration-innodb-9-5-0_10-0-0": [
+        {
+            "name": "update-modw-cloud-tables",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/account.json",
+                "cloud_common/asset_type.json",
+                "cloud_common/asset.json",
+                "cloud_common/cloud_resource_specs.json",
+                "cloud_common/domains.json",
+                "cloud_common/event_asset.json",
+                "cloud_common/event_reconstructed.json",
+                "cloud_common/event_type.json",
+                "cloud_common/event.json",
+                "cloud_common/host.json",
+                "cloud_common/image.json",
+                "cloud_common/instance_data.json",
+                "cloud_common/instance_type.json",
+                "cloud_common/instance.json",
+                "cloud_common/memory_buckets.json",
+                "cloud_common/processor_buckets.json",
+                "cloud_common/raw_resource_specs.json",
+                "cloud_common/record_type.json",
+                "cloud_common/session_records.json",
+                "cloud_common/staging_cloud_project_to_pi.json",
+                "cloud_common/staging_resource_specifications.json",
+                "cloud_generic/raw_event.json",
+                "cloud_generic/raw_instance_type.json",
+                "cloud_generic/raw_volume.json",
+                "cloud_generic/staging_event.json",
+                "cloud_openstack/domain_submission_venue_staging.json",
+                "cloud_openstack/domain_submission_venue.json",
+                "cloud_openstack/openstack_event_map.json",
+                "cloud_openstack/raw_event.json",
+                "cloud_openstack/raw_instance_type.json",
+                "cloud_openstack/raw_volume.json",
+                "cloud_openstack/staging_event.json"
+              ]
+         },
+         {
+             "name": "ConvertToInnodbCloudAggregateTables",
+             "description": "Convert cloud realm aggregate tables to InnoDB",
+             "class": "ExecuteSql",
+             "sql_file_list": [
+                 {
+                     "delimiter": ";",
+                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/convert_innodb_aggregate_tables.sql"
+                 }
+             ]
+         }
     ]
 }

@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "cloudfact_by_",
         "table_prefix": "cloudfact_by_",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Cloud facts aggregated by ${AGGREGATION_UNIT}.",
         "columns": [
             {

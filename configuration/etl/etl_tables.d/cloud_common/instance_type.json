@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "instance_type",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Instance type configurations. Values for the same name may change over time.",
         "columns": [
             {

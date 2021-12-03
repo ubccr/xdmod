@@ -7,7 +7,7 @@
 
     "table_definition": {
         "name": "generic_cloud_raw_event",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Raw events from the log file.",
         "columns": [
             {
