@@ -76,6 +76,57 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "update-schema-version-history-tables-to-innodb",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "common/hpcdb/schema-version-history.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "update-shredder-tables-to-innodb",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "common/shredder/schema-version-history.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "convert-mod-logger-tables-to-innodb",
+            "description": "Convert mod_logger tables to InnoDB",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_logger/convert_to_innodb.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_logger"
+                }
+            }
         }
     ],
     "cloud-migration-9-5-0_10-0-0": [

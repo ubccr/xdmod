@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "schema_version_history",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "database_name",
