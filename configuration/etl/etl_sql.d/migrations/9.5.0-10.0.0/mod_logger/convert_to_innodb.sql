@@ -1,5 +1,5 @@
--- If you lock these tables for writing while converting to InnoDB you will get a
--- deadlock and the migration process will time out.
+-- These tables cannot be locked for writing while converting to InnoDB as it
+-- will cause a deadlock and the migration process will time out.
 
 ALTER TABLE `mod_logger`.`log_id_seq` ENGINE=InnoDB;
 ALTER TABLE `mod_logger`.`log_level` ENGINE=InnoDB;
