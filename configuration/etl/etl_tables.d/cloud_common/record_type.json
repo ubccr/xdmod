@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "record_type",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Record type: accounting, administrative, derived, etc.",
         "columns": [
             {
