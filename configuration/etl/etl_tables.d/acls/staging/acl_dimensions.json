@@ -1,0 +1,32 @@
+{
+    "table_definition": {
+        "$ref-with-overwrite": "etl_tables.d/acls/acl_dimensions.json#/table_definition",
+        "$overwrite": {
+            "name": "acl_dimensions_staging",
+            "foreign_key_constraints": [
+                {
+                    "name": "fk_ad_stg_acl_id",
+                    "columns": [
+                        "acl_id"
+                    ],
+                    "referenced_table": "acls_staging",
+                    "referenced_columns": [
+                        "acl_id"
+                    ],
+                    "on_delete": "CASCADE"
+                },
+                {
+                    "name": "fk_ad_stg_gb_id",
+                    "columns": [
+                        "group_by_id"
+                    ],
+                    "referenced_table": "group_bys_staging",
+                    "referenced_columns": [
+                        "group_by_id"
+                    ],
+                    "on_delete": "CASCADE"
+                }
+            ]
+        }
+    }
+}

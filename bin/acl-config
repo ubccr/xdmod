@@ -48,7 +48,8 @@ $tables = array(
     'tabs',
     'acl_tabs',
     'user_acls',
-    'user_acl_group_by_parameters'
+    'user_acl_group_by_parameters',
+    'acl_dimensions'
 );
 
 $lockFile = new \ETL\LockFile(sys_get_temp_dir(), 'acl-config');
@@ -139,7 +140,7 @@ function main()
     $blacklist = array('default');
 
     // the sections of roles.json that we want to process.
-    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies');
+    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies', 'dimensions');
 
     // the ultimate destination for the parsed information from
     // roles/datawarehouse
@@ -840,8 +841,9 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls, array $
         $hierarchies = isset($aclData['hierarchies'])
                      ? $aclData['hierarchies']
                      : null;
+        $dimensions = isset($aclData['dimensions']) ? $aclData['dimensions'] : null;
 
-        processAcl($db, $module, $acl, $display, $type, $hierarchies);
+        processAcl($db, $module, $acl, $display, $type, $hierarchies, $dimensions);
 
         if (null !== $permittedModules && count($permittedModules) > 0) {
             $log->info("Processing tabs for Acl [$acl]");
@@ -871,11 +873,13 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls, array $
  * @param string    $type        the type of acl this is. Optional.
  * @param array     $hierarchies the hierarchy information associated
  *                               with this acl. Optional.
- *
+ * @param array     $dimensions  an array of group_by names that indicate the
+ *                               default filtering behavior this acl has on a
+ *                               users data.
  * @return int|null null if the acl was not able to be created or the acl_id if
  *                       it was created or exists.
  **/
-function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hierarchies = null)
+function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hierarchies = null, $dimensions = null)
 {
     global $dryRun, $log;
     $msg = "[Module: $module, Name: $name, Display: $display, Type: $type]";
@@ -980,6 +984,11 @@ SQL;
     if (null !== $hierarchies) {
         processAclHierarchy($db, $module, $name, $hierarchies);
     }
+
+    if (null !== $dimensions) {
+        processDimensions($db, $name, $dimensions);
+    }
+
 
     return $aclId;
 }
@@ -1150,6 +1159,57 @@ SQL;
 
     $processed = count($hierarchies);
     $log->notice("Processed: $processed, Inserted: $inserted");
+}
+
+/**
+ * This function accepts an acl's name and its associated `dimension` data ( an array of group_by names ) that will be
+ * used to populate the `acl_dimensions_staging` table ( and ultimately the `acl_dimensions` table ). This table serves
+ * to relate acls and group_bys and provide the default filtering of a user's data when they do not have a record
+ * present in the `user_acl_group_by_parameters` table.
+ *
+ * @param iDatabase $db
+ * @param string    $aclName
+ * @param array     $dimensions
+ */
+function processDimensions(iDatabase $db, $aclName, $dimensions)
+{
+    global $dryRun, $log;
+    $query = <<<SQL
+INSERT INTO acl_dimensions_staging(acl_id, group_by_id)
+SELECT inc.*
+FROM (
+    SELECT a.acl_id,
+           gb.group_by_id
+    FROM acls      a,
+         group_bys gb
+    WHERE BINARY a.name = :acl_name
+      AND BINARY gb.name = :group_by_name
+)                            inc
+    LEFT JOIN acl_dimensions_staging cur ON
+        cur.acl_id = inc.acl_id AND
+        cur.group_by_id = inc.group_by_id
+WHERE cur.acl_dimension_id IS NULL;
+SQL;
+
+    $log->notice("Processing Dimensions...");
+    $processed = 0;
+    $inserted = 0;
+    foreach($dimensions as $dimension) {
+
+        if ($dryRun) {
+            $log->notice("Would have processed dimension $dimension");
+            $processed++;
+            break;
+        }
+
+        if ($db->execute($query, array(':acl_name' => $aclName, ':group_by_name' => $dimension)) > 0) {
+            $inserted++;
+        }
+
+        $processed++;
+    }
+
+    $log->notice("Dimensions Processed: $processed, Inserted: $inserted");
 }
 
 /**
