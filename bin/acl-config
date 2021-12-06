@@ -1180,8 +1180,8 @@ SELECT inc.*
 FROM (
     SELECT a.acl_id,
            gb.group_by_id
-    FROM acls      a,
-         group_bys gb
+    FROM acls_staging      a,
+         group_bys_staging gb
     WHERE BINARY a.name = :acl_name
       AND BINARY gb.name = :group_by_name
 )                            inc
