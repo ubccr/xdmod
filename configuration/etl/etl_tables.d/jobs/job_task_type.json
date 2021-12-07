@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_task_type",
         "comment": "hpc, provisioning, boot, suspend, resume, etc.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_task_type_id",

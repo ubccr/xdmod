@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "staging_jobhosts",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_id",
