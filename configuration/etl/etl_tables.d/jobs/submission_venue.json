@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "submission_venue",
         "comment": "Submission mechanism: cli, gateway, etc.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "submission_venue_id",

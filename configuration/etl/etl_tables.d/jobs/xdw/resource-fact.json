@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "resourcefact",
         "comment": "Information about resources.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

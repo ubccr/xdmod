@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "storagefact",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Storage usage fact table",
         "columns": [
             {
