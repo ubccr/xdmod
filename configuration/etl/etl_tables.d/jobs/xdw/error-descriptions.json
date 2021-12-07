@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "error_descriptions",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
