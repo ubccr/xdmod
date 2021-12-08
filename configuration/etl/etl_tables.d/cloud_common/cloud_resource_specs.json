@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "cloud_resource_specs",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Contains the start and end time for a specific set of vcpus and memory for a cloud host",
         "columns": [
             {

@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_records",
         "comment": "Request for resources by a user",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_id",

@@ -23,6 +23,24 @@
               }
            }
         },
+        "cloud-migration-innodb-9-5-0_10-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Cloud DB",
+                  "config": "datawarehouse",
+                  "schema": "modw_cloud"
+              }
+           }
+        },
         "cloud-resource-specs-migration-9-5-0_10-0-0": {
           "namespace": "ETL\\Maintenance",
              "options_class": "MaintenanceOptions",
@@ -77,31 +95,101 @@
             }
         },
         {
-            "name": "add-last-updated-timestamp-column-modw_cloud",
-            "description": "Update modw.quarters table definition",
+            "name": "update-modw-tables-to-innodb",
+            "description": "Update modw_cloud tables to InnoDB",
             "class": "ManageTables",
             "definition_file_list": [
-                "cloud_common/cloud_resource_specs.json",
-                "cloud_common/event.json",
-                "cloud_common/session_records.json"
+                "jobs/xdw/account.json",
+                "jobs/xdw/allocation-breakdown.json",
+                "jobs/xdw/allocation-on-resource.json",
+                "jobs/xdw/allocation.json",
+                "jobs/xdw/days.json",
+                "jobs/xdw/error-descriptions.json",
+                "jobs/xdw/field-of-science-hierarchy.json",
+                "jobs/xdw/field-of-science.json",
+                "jobs/xdw/gpu-buckets.json",
+                "jobs/xdw/hosts.json",
+                "jobs/xdw/job-records.json",
+                "jobs/xdw/job-tasks.json",
+                "jobs/xdw/job-times.json",
+                "jobs/xdw/job-wait-times.json",
+                "jobs/xdw/jobhosts.json",
+                "jobs/xdw/months.json",
+                "jobs/xdw/organization.json",
+                "jobs/xdw/people-under-pi.json",
+                "jobs/xdw/person.json",
+                "jobs/xdw/piperson.json",
+                "jobs/xdw/principal-investigator.json",
+                "jobs/xdw/processor-buckets.json",
+                "jobs/xdw/quarters.json",
+                "jobs/xdw/queue.json",
+                "jobs/xdw/request.json",
+                "jobs/xdw/resource-fact.json",
+                "jobs/xdw/schema-version-history.json",
+                "jobs/xdw/service-provider.json",
+                "jobs/xdw/staging-jobhosts.json",
+                "jobs/xdw/system-account.json",
+                "jobs/xdw/years.json",
+                "jobs/countable_type.json",
+                "jobs/job_record_type.json",
+                "jobs/job_task_countable.json",
+                "jobs/job_task_type.json",
+                "jobs/meta_job_record.json",
+                "jobs/meta_job.json",
+                "jobs/submission_venue.json",
+                "jobs/unit.json",
+                "storage/xdw/storagefact.json",
+                "storage/xdw/mountpoint.json"
+              ],
+              "endpoints": {
+                  "destination": {
+                      "type": "mysql",
+                      "name": "XDMoD Data Warehouse",
+                      "config": "datawarehouse",
+                      "schema": "modw"
+                  }
+              }
+         },
+         {
+            "name": "update-schema-version-history-tables-to-innodb",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "common/hpcdb/schema-version-history.json"
             ],
             "endpoints": {
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
                     "config": "datawarehouse",
-                    "schema": "modw_cloud"
+                    "schema": "mod_hpcdb"
                 }
             }
         },
         {
-            "name": "update-last-updated-timestamp-columns",
-            "description": "Update modw.quarters table definition",
+            "name": "update-shredder-tables-to-innodb",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "common/shredder/schema-version-history.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "convert-mod-logger-tables-to-innodb",
+            "description": "Convert mod_logger tables to InnoDB",
             "class": "ExecuteSql",
             "sql_file_list": [
                 {
                     "delimiter": ";",
-                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_last_modified_timestamp_columns.sql"
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_logger/convert_to_innodb.sql"
                 }
             ],
             "endpoints": {
@@ -109,7 +197,7 @@
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
                     "config": "datawarehouse",
-                    "schema": "modw"
+                    "schema": "mod_logger"
                 }
             }
         }
@@ -133,6 +221,26 @@
                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_event_index.sql"
                 }
             ]
+        },
+        {
+            "name": "add-last-updated-timestamp-column-modw_cloud",
+            "description": "Update modw.quarters table definition",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/event.json",
+                "cloud_common/session_records.json"
+              ]
+        },
+        {
+            "name": "update-last-updated-timestamp-columns",
+            "description": "Update modw.quarters table definition",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_last_modified_timestamp_columns.sql"
+                }
+            ]
         }
     ],
     "cloud-resource-specs-migration-9-5-0_10-0-0": [
@@ -146,6 +254,77 @@
                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_cloud_resource_specs_host.sql"
                 }
             ]
+        },
+        {
+            "name": "add-last-updated-timestamp-column-modw_cloud",
+            "description": "Update modw.quarters table definition",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/cloud_resource_specs.json"
+              ]
+        },
+        {
+            "name": "update-last-updated-timestamp-columns",
+            "description": "Update modw.quarters table definition",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/cloud_resource_specs_update_last_modified_timestamp_columns.sql"
+                }
+            ]
         }
+    ],
+    "cloud-migration-innodb-9-5-0_10-0-0": [
+        {
+            "name": "update-modw-cloud-tables",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/account.json",
+                "cloud_common/asset_type.json",
+                "cloud_common/asset.json",
+                "cloud_common/cloud_resource_specs.json",
+                "cloud_common/domains.json",
+                "cloud_common/event_asset.json",
+                "cloud_common/event_reconstructed.json",
+                "cloud_common/event_type.json",
+                "cloud_common/event.json",
+                "cloud_common/host.json",
+                "cloud_common/image.json",
+                "cloud_common/instance_data.json",
+                "cloud_common/instance_type.json",
+                "cloud_common/instance.json",
+                "cloud_common/memory_buckets.json",
+                "cloud_common/processor_buckets.json",
+                "cloud_common/raw_resource_specs.json",
+                "cloud_common/record_type.json",
+                "cloud_common/session_records.json",
+                "cloud_common/staging_cloud_project_to_pi.json",
+                "cloud_common/staging_resource_specifications.json",
+                "cloud_generic/raw_event.json",
+                "cloud_generic/raw_instance_type.json",
+                "cloud_generic/raw_volume.json",
+                "cloud_generic/staging_event.json",
+                "cloud_openstack/domain_submission_venue_staging.json",
+                "cloud_openstack/domain_submission_venue.json",
+                "cloud_openstack/openstack_event_map.json",
+                "cloud_openstack/raw_event.json",
+                "cloud_openstack/raw_instance_type.json",
+                "cloud_openstack/raw_volume.json",
+                "cloud_openstack/staging_event.json"
+              ]
+         },
+         {
+             "name": "ConvertToInnodbCloudAggregateTables",
+             "description": "Convert cloud realm aggregate tables to InnoDB",
+             "class": "ExecuteSql",
+             "sql_file_list": [
+                 {
+                     "delimiter": ";",
+                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/convert_innodb_aggregate_tables.sql"
+                 }
+             ]
+         }
     ]
 }

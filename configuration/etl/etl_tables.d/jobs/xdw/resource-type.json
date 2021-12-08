@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "resourcetype",
         "comment": "The different types of resources.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

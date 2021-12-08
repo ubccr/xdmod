@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "meta_job_record",
         "comment": "Grouping of jobs that are related, such as a cluster in a cloud",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "meta_job_id",

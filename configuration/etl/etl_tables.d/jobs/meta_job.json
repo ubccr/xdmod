@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "meta_job",
         "comment": "Grouping of individual job records",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "meta_job_id",
