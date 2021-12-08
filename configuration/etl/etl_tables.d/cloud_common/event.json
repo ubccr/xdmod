@@ -92,7 +92,7 @@
             },
             {
                 "name": "last_modified_ts",
-                "type": "int(11)",
+                "type": "int(11) unsigned",
                 "nullable": true
             }
         ],

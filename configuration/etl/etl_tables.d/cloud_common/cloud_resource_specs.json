@@ -57,7 +57,7 @@
             },
             {
                 "name": "last_modified_ts",
-                "type": "timestamp",
+                "type": "int(11) unsigned",
                 "nullable": true
             }
         ],

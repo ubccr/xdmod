@@ -95,6 +95,25 @@
             }
         },
         {
+            "name": "update-last-updated-timestamp-columns",
+            "description": "Update modw.quarters table definition",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/modw/update_last_timestamp_ts.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
             "name": "update-modw-tables-to-innodb",
             "description": "Update modw_cloud tables to InnoDB",
             "class": "ManageTables",
