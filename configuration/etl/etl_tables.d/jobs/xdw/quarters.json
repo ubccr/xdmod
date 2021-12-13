@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "quarters",
         "comment": "autogen - one rec for each quarter of TG operation.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "queue",
         "comment": "The queue names of the different resources.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

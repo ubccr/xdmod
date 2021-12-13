@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "systemaccount",
         "comment": "User's accounts on various resources.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
