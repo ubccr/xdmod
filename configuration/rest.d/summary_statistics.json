@@ -1,6 +1,0 @@
-{
-  "summary_statistics": {
-    "prefix": "summary_statistics",
-    "controller": "Rest\\Controllers\\SummaryStatisticsControllerProvider"
-  }
-}
