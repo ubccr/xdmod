@@ -746,10 +746,10 @@ class MetricExplorer extends Common
                 }
             }
 
-            //Get group by object to check if realm is allowed to show all values
+            //Get group by object to check if realm is allowed to show all values.
             $group_by = $realmObj->getGroupByObject($dimension_id);
 
-            //Show all dimension values if specified and dimension is in allowed list 
+            //Show all dimension values if specified and dimension is in allowed list
             if($showAllDimensionValues && $group_by->showAllDimensionValues()) {
                 $query = new \DataWarehouse\Query\AggregateQuery(
                     $realm,
