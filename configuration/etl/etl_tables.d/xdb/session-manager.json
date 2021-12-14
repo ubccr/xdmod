@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "SessionManager",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "session_token",
