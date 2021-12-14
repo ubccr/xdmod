@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "AccountRequests",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
