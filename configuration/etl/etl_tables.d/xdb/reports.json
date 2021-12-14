@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "Reports",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "report_id",
