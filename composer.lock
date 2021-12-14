@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2ea6be5f2da98081a49b4f4e324affe",
+    "content-hash": "fce9c9d08c33d4bf9cdad9f768ebedcb",
     "packages": [
         {
             "name": "carlo/jquery-base64-file",
@@ -733,11 +733,11 @@
         },
         {
             "name": "jquery/jquery-min-file",
-            "version": "1.12.4",
+            "version": "3.6.0",
             "dist": {
                 "type": "file",
-                "url": "https://code.jquery.com/jquery-1.12.4.min.js",
-                "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
+                "url": "https://code.jquery.com/jquery-3.6.0.min.js",
+                "shasum": "b82d238d4e31fdf618bae8ac11a6c812c03dd0d4"
             },
             "require": {
                 "composer/installers": "~1.0"
