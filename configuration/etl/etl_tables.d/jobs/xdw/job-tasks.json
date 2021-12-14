@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_tasks",
         "comment": "Consumption of resources",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_id",

@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS `log_id_seq`;
 CREATE TABLE `log_id_seq` (
   `sequence` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`sequence`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `log_level`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -25,7 +25,7 @@ CREATE TABLE `log_level` (
   `level` varchar(16) NOT NULL,
   `description` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`log_level_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `log_table`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -41,7 +41,7 @@ CREATE TABLE `log_table` (
   KEY `priority_idx` (`priority`),
   KEY `logscan` (`ident`,`priority`,`id`),
   KEY `get_messages_idx` (`ident`,`logtime`,`priority`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `schema_version_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -53,7 +53,7 @@ CREATE TABLE `schema_version_history` (
   `action_type` enum('created','upgraded') NOT NULL,
   `script_name` varchar(255) NOT NULL,
   PRIMARY KEY (`database_name`,`schema_version`,`action_datetime`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -64,4 +64,3 @@ CREATE TABLE `schema_version_history` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-

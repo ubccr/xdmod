@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "organization",
         "comment": "The various organization.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

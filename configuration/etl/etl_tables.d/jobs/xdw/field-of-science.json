@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "fieldofscience",
         "comment": "The various fields of science.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
