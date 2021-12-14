@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "instance_data",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Additional instance information",
         "columns": [
             {

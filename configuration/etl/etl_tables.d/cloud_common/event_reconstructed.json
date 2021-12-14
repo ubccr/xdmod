@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "event_reconstructed",
         "comment": "The start and end times for cloud instances reconstructed from event data.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [{
                 "name": "resource_id",
                 "type": "int(11)",

@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "allocationbreakdown",
         "comment": "Assigns people to a part of an allocation.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

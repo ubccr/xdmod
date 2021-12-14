@@ -42,6 +42,16 @@
             "options_class": "IngestorOptions",
             "definition_file": "acls/report-template-acls.json",
             "truncate_destination": true
+        },
+        {
+            "name": "xdmod-populate-uagbp-based-on-acl-dimensions",
+            "description": "Adds any missing records to uagbp based on the new acl_dimensions table.",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/update_user_acl_group_by_parameters.sql",
+                    "delimiter": ";"
+                }
+            ]
         }
     ]
 }

@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "quarters",
         "comment": "autogen - one rec for each quarter of TG operation.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
@@ -48,7 +48,7 @@
             },
             {
                 "name": "quarter_start_ts",
-                "type": "int(11)",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "The start timestamp of the quarter in epochs."
             },
