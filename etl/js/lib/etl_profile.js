@@ -508,7 +508,7 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
 
     this.write = function() {
 
-        // Sort role configuration data and output
+        // Sort role configuration data and output.
 
         roles.sort(self.groupbysorter("group_by"));
 
