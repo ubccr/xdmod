@@ -8,6 +8,6 @@
  */
 
 module.exports = function waitForAllInvisible(selector, ms) {
-    var timeOut = ms || 9000;
+    var timeOut = ms || 18000;
     browser.waitUntil(() => $$(selector).filter(el => el.isVisible()).length === 0, timeOut);
 };
