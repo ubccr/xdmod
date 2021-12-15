@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "ChartPool",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "user_id",
