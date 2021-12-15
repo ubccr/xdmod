@@ -65,6 +65,7 @@ class LoginPage {
     logout() {
         describe('Logout', function logout() {
             it('Click the logout link', function clickLogout() {
+                browser.waitForInvisible('.ext-el-mask-msg');
                 browser.waitAndClick('#logout_link');
             });
             it('Display Logged out State', function clickLogout() {
