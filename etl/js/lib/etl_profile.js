@@ -700,7 +700,7 @@ var generateGroupBy = function (itemAlias, column)
         data_sort_order: null,
         description_html: description,
         name: label || itemAlias,
-        show_all_dimension_values: column.show_all_dimension_values || false
+        show_all_dimension_values: column.show_all_dimension_values
     };
 }
 
@@ -766,7 +766,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                         }
                         xdmodInteg.addGroupBy(itemName, tableColumns[tc].roles);
                     }
-                } 
+                }
 
 				for(var st in tableColumns[tc].stats) {
                     var statsname = tableColumns[tc].stats[st].name;
