@@ -54,11 +54,6 @@
                 "nullable": false,
                 "default": "CURRENT_TIMESTAMP",
                 "extra": "on update CURRENT_TIMESTAMP"
-            },
-            {
-                "name": "last_modified_ts",
-                "type": "int(11) unsigned",
-                "nullable": true
             }
         ],
         "indexes": [
@@ -72,30 +67,10 @@
                 "is_unique": true
             },
             {
-                "name": "last_modified_ts_idx",
+                "name": "index_last_modified",
                 "columns": [
-                    "last_modified_ts"
-                ],
-                "type": "BTREE",
-                "is_unique": false
-            }
-        ],
-        "triggers": [
-            {
-                "time": "BEFORE",
-                "event": "INSERT",
-                "table": "cloud_resource_specs",
-                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
-                "schema": "modw_cloud",
-                "name": "cloud_resource_specs_last_modified_ts_insert"
-            },
-            {
-                "time": "BEFORE",
-                "event": "UPDATE",
-                "table": "cloud_resource_specs",
-                "body": "SET NEW.last_modified_ts = UNIX_TIMESTAMP(CURRENT_TIMESTAMP());",
-                "schema": "modw_cloud",
-                "name": "cloud_resource_specs_last_modified_ts_update"
+                    "last_modified"
+                ]
             }
         ]
     }

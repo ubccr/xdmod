@@ -30,7 +30,7 @@ SET
     END
 WHERE
     rs.q_ppn IS NOT NULL
-    AND task.last_modified_ts >= UNIX_TIMESTAMP(${LAST_MODIFIED})
+    AND task.last_modified >= ${LAST_MODIFIED}
 //
 
 -- Set the CPU time for each job and update the submit time and wait duration. These are done here
@@ -58,5 +58,5 @@ SET
       ELSE submit_time_ts
     END
 WHERE
-    task.last_modified_ts >= UNIX_TIMESTAMP(${LAST_MODIFIED})
+    task.last_modified >= ${LAST_MODIFIED}
 //

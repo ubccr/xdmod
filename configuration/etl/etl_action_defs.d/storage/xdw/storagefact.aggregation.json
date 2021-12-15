@@ -8,8 +8,8 @@
             "end_day_id": "DATE_FORMAT(dt, '%Y00%j')"
         },
         "overseer_restrictions": {
-            "last_modified_start_date": "last_modified_ts >= UNIX_TIMESTAMP(${VALUE})",
-            "last_modified_end_date": "last_modified_ts <= UNIX_TIMESTAMP(${VALUE})"
+            "last_modified_start_date": "last_modified >= ${VALUE}",
+            "last_modified_end_date": "last_modified <= ${VALUE}"
         }
     },
     "source_query": {
