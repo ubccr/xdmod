@@ -116,9 +116,6 @@ then
     copy_template_httpd_conf
     sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
 
-    # Remove php-mcrypt until new Docker image is built without it.
-    yum -y remove php-mcrypt || true
-
     ~/bin/services start
 
     # TODO: Replace diff files with hard fixes
@@ -145,3 +142,7 @@ then
         sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
     fi
 fi
+
+# Remove old PEAR dependencies.  This command can be removed when a new Docker
+# image is created without these packages installed.
+yum -y remove php-pear-MDB2 php-pear-MDB2-Driver-mysql

@@ -124,13 +124,6 @@ try {
         'PHP GD extension installed'
     );
 
-    _debug('Checking for gmp_abs function');
-    $result = function_exists('gmp_abs');
-    displayResult(
-        $result,
-        'PHP GMP extension installed'
-    );
-
     _debug('Checking for curl_close function');
     $result = function_exists('curl_close');
     displayResult(
@@ -150,33 +143,6 @@ try {
     displayResult(
         $result,
         'PHP XMLWriter extension installed'
-    );
-
-    _debug('Checking for Log class');
-    $result = class_exists('Log');
-    displayResult(
-        $result,
-        'PHP PEAR Log class installed'
-    );
-
-    _debug('Including Log/mdb2.php');
-    include_once 'Log/mdb2.php';
-
-    _debug('Checking for Log_mdb2 class');
-    $result = class_exists('Log_mdb2');
-    displayResult(
-        $result,
-        'PHP MDB2 class installed'
-    );
-
-    _debug('Including MDB2/Driver/mysql.php');
-    include_once 'MDB2/Driver/mysql.php';
-
-    _debug('Checking for MDB2_Driver_mysql class');
-    $result = class_exists('MDB2_Driver_mysql');
-    displayResult(
-        $result,
-        'PHP MDB2 MySQL driver installed'
     );
 
     _debug('Checking for json_encode function');
@@ -233,24 +199,6 @@ try {
     #    $result,
     #    ""
     #);
-
-    // Java
-
-    $javaPath = xd_utilities\getConfiguration('reporting', 'java_path');
-    _debug('Checking for java executable');
-    $result = file_exists($javaPath) && is_executable($javaPath);
-    displayResult(
-        $result,
-        'Java executable configured'
-    );
-
-    $javacPath = xd_utilities\getConfiguration('reporting', 'javac_path');
-    _debug('Checking for javac executable');
-    $result = file_exists($javacPath) && is_executable($javacPath);
-    displayResult(
-        $result,
-        'Javac executable configured'
-    );
 
     $chromiumPath
         = xd_utilities\getConfiguration('reporting', 'chromium_path');

@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "request",
         "comment": "Requests by PIs for allocations on TG.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

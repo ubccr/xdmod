@@ -277,10 +277,7 @@ function getSacctCmdArgs(
         $args[] = $endTime;
     } else {
         $end = new DateTime('now');
-        $end->sub(new DateInterval('P1D'));
-        $end->setTime(23, 59, 59);
         $end->setTimezone($utc);
-
         $args[] = '--endtime';
         $args[] = $end->format('Y-m-d\TH:i:s');
     }
@@ -422,7 +419,7 @@ Usage: xdmod-slurm-helper [-v] [-r resource] [-c cluster]
     --end-time *datetime*
         Specify the end date and time to shred from sacct.  The datetime
         must be in a format accepted by the sacct --endtime option.
-        Defaults to 23:59:59 of the day before the current day.
+        Defaults to the current date and time.
 
 
 EOF;

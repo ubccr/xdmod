@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "allocation",
         "comment": "Holds allocation records.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

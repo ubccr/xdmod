@@ -93,7 +93,20 @@ class CCRDBHandler extends AbstractProcessingHandler
      */
     protected function getNextId()
     {
-        $this->db->beginTransaction();
+        try {
+            $this->db->beginTransaction();
+        } catch (\PDOException $e) {
+            if ($e->errorInfo[0] === 'HY000' && $e->errorInfo[1] === 2006) {
+                // This is the MySQL server gone away error, which is seen when
+                // there is a long delay between log messages and the
+                // connection times out. It occurs here since this is the first DB
+                // call for a log message.
+                $this->db->disconnect();
+                $this->db->beginTransaction();
+            } else {
+                throw $e;
+            }
+        }
 
         try {
             $this->db->execute(sprintf('INSERT INTO %s.log_id_seq (sequence) VALUES(NULL);', $this->schema));
