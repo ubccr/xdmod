@@ -369,7 +369,8 @@ ETLProfile.prototype.getAggregationTables = function () {
                 dimension_table: agg.dimension_table,
                 category: agg.category,
 				def: agg.def || f.def,
-				dimension: agg.dimension || false
+				dimension: agg.dimension || false,
+                show_all_dimension_values: agg.show_all_dimension_values || false
 			};
             newf.name = newf.name.replace(/\:field_name/g, field);
 			newf.sql = agg.sql || newf.name;
@@ -698,7 +699,8 @@ var generateGroupBy = function (itemAlias, column)
         },
         data_sort_order: null,
         description_html: description,
-        name: label || itemAlias
+        name: label || itemAlias,
+        show_all_dimension_values: column.show_all_dimension_values || false
     };
 }
 
@@ -764,7 +766,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                         }
                         xdmodInteg.addGroupBy(itemName, tableColumns[tc].roles);
                     }
-                }
+                } 
 
 				for(var st in tableColumns[tc].stats) {
                     var statsname = tableColumns[tc].stats[st].name;
