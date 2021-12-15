@@ -22,11 +22,10 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
-# -------------------8<-------------------------
-yum install -y python3
-pip3 install imagehash
+# Install python dependencies for the image hash comparison algorithm
+yum install -y python3 python3-six python3-numpy python3-pillow python36-scipy
+pip3 install imagehash==4.2.1
 cp $REPODIR/tests/ci/scripts/imagehash /root/bin
-# ------------------->8-------------------------
 
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
