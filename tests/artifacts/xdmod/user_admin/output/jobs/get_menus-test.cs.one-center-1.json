@@ -140,6 +140,20 @@
         "leaf": false
     },
     {
+        "text": "Jobs by QOS",
+        "id": "group_by_Jobs_qos",
+        "group_by": "qos",
+        "query_group": "tg_usage",
+        "category": "Jobs",
+        "realm": "Jobs",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "QOS",
+        "leaf": false
+    },
+    {
         "text": "Jobs by Queue",
         "id": "group_by_Jobs_queue",
         "group_by": "queue",

@@ -1,0 +1,28 @@
+title
+"Number of Jobs Ended: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Number of Jobs Ended"
+banana-cream,55819
+curry,14118
+apple,531
+bumbleberry,231
+derby,177
+buttermilk,92
+green-grape,84
+cashew,53
+boysenberry,52
+coconut-cream,34
+bavarian-cream,32
+blackberry,28
+cheese,15
+chestnut,13
+fish,12
+butter,9
+cherry,6
+flapper,4
+blueberry,3
+---------
