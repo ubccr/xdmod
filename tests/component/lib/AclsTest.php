@@ -300,6 +300,7 @@ TXT;
             'parentscience',
             'person',
             'pi',
+            'qos',
             'queue',
             'resource',
             'resource_type',
