@@ -109,5 +109,15 @@ You may upgrade directly from 9.5.0.
 
 ### Database Changes
 
+### Slurm Input Format Changes
+
+The input file format for Slurm data has changed to include the `qos` field.
+
+**If you are generating Slurm input for the `xdmod-shredder` command then you
+will need to make the appropriate changes.**  Refer to the [Slurm
+Notes](resource-manager-slurm.html#input-format) for the example `sacct`
+command.  If you are using the `xdmod-slurm-helper` command then no changes are
+necessary.
+
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration

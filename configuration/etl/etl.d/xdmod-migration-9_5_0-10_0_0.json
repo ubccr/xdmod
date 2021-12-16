@@ -213,6 +213,98 @@
                     "schema": "mod_logger"
                 }
             }
+        },
+        {
+            "name": "alter-shredded_job_slurm",
+            "description": "Alter mod_shredder.shredded_job_slurm to add qos_name column",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_shredder/alter-shredded_job_slurm.sql",
+                    "delimiter": ";"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "update-mod_shredder-qos",
+            "description": "Add QOS table and columns to mod_shredder",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/shredder/job.json",
+                "common/staging/qos.json",
+                "jobs/staging/job.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "update-mod_hpcdb-qos",
+            "description": "Add QOS table and columns to mod_hpcdb",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "common/hpcdb/qos.json",
+                "jobs/hpcdb/jobs.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "hpcdb",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "update-modw-qos",
+            "description": "Add QOS table and columns to modw",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/xdw/job-records.json",
+                "jobs/xdw/qos.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "insert-modw-qos",
+            "description": "Insert QOS modw data",
+            "class": "StructuredFileIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "jobs/xdw/qos.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown qos data",
+                    "path": "jobs/xdw/qos.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
         }
     ],
     "cloud-migration-9-5-0_10-0-0": [

@@ -16,6 +16,7 @@
             "group_name": "group_name",
             "gid_number": "gid_number",
             "pi_name": "pi_name",
+            "qos_name": "qos_name",
             "account_name": "account_name",
             "project_name": "project_name",
             "start_time": "start_time",

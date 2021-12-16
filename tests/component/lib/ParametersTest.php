@@ -26,7 +26,7 @@ class ParametersTest extends BaseTest
         $expectedFilePath = $this->getTestFiles()->getFile('parameters', $expectedFileName);
         // if the file containing the expected output is not present then create it.
         if (!file_exists($expectedFilePath)) {
-            file_put_contents($expectedFilePath, json_encode($actual, JSON_PRETTY_PRINT));
+            file_put_contents($expectedFilePath, json_encode($actual, JSON_PRETTY_PRINT) . "\n");
             $this->markTestSkipped("Generated expected test output: $expectedFilePath");
         } else {
             $expected = Json::loadFile($expectedFilePath);

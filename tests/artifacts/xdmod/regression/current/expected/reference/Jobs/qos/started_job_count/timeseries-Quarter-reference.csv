@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[banana-cream] Number of Jobs Started","[curry] Number of Jobs Started","[apple] Number of Jobs Started","[bumbleberry] Number of Jobs Started","[derby] Number of Jobs Started","[buttermilk] Number of Jobs Started","[green-grape] Number of Jobs Started","[cashew] Number of Jobs Started","[boysenberry] Number of Jobs Started","[coconut-cream] Number of Jobs Started","[bavarian-cream] Number of Jobs Started","[blackberry] Number of Jobs Started","[cheese] Number of Jobs Started","[chestnut] Number of Jobs Started","[fish] Number of Jobs Started","[butter] Number of Jobs Started","[cherry] Number of Jobs Started","[flapper] Number of Jobs Started","[blueberry] Number of Jobs Started"
+"2016 Q4",46482,8821,378,18,164,64,61,53,52,13,31,28,15,1,12,4,6,3,3
+"2017 Q1",9337,5297,153,213,13,28,23,0,0,21,1,0,0,12,0,5,0,1,0
+---------

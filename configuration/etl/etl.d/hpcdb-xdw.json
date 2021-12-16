@@ -82,6 +82,10 @@
         "definition_file": "jobs/xdw/principal-investigator.json",
         "description": "principal investigator records"
     }, {
+        "name": "qos",
+        "definition_file": "jobs/xdw/qos.json",
+        "description": "qos records"
+    }, {
         "name": "request",
         "definition_file": "jobs/xdw/request.json",
         "description": "request records"
