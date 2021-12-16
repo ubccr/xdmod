@@ -5,6 +5,10 @@
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
         },
+        "storage-table-definition-update-9-5-0_10-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+        },
         "cloud-migration-9-5-0_10-0-0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
@@ -74,36 +78,6 @@
                     "name": "XDMoD Data Warehouse",
                     "config": "datawarehouse",
                     "schema": "modw"
-                }
-            }
-        },
-        {
-            "name": "update-moddb-tables-to-innodb",
-            "description": "Update moddb tables to InnoDB",
-            "class": "ManageTables",
-            "definition_file_list": [
-                "xdb/account-requests.json",
-                "xdb/api-keys.json",
-                "xdb/chart-pool.json",
-                "xdb/colors.json",
-                "xdb/exception-email-addresses.json",
-                "xdb/report-template-charts.json",
-                "xdb/report-templates.json",
-                "xdb/reports.json",
-                "xdb/restx509.json",
-                "xdb/schema-version-history.json",
-                "xdb/session-manager.json",
-                "xdb/user-profiles.json",
-                "xdb/user-types.json",
-                "xdb/version-check.json",
-                "acls/report-template-acls-staging.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "XDMoD Data Warehouse",
-                    "config": "datawarehouse",
-                    "schema": "moddb"
                 }
             }
         },
@@ -247,6 +221,24 @@
                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_cloud_resource_specs_host.sql"
                 }
             ]
+        }
+    ],
+    "storage-table-definition-update-9-5-0_10-0-0": [
+        {
+            "name": "UpateStagingStorageUsageTable",
+            "description": "Update event type on event table",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "storage/staging/usage.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                }
+            }
         }
     ],
     "cloud-migration-innodb-9-5-0_10-0-0": [
