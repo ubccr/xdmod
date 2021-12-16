@@ -9,6 +9,7 @@
             "resource_id": "r.resource_id",
             "allocation_breakdown_id": "upr.user_pi_resource_id",
             "allocation_id": "pr.pi_resource_id",
+            "qos_id": "IFNULL(q.qos_id, -1)",
             "account_id": "p.pi_id",
             "local_jobid": "j.job_id",
             "local_job_array_index": "IFNULL(j.job_array_index, -1)",
@@ -75,6 +76,13 @@
                 "alias": "upr",
                 "type": "LEFT",
                 "on": "j.user_name = upr.user_name AND j.pi_name = upr.pi_name AND j.resource_name = upr.resource_name"
+            },
+            {
+                "name": "staging_qos",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "q",
+                "type": "LEFT",
+                "on": "j.qos_name = q.qos_name"
             }
         ],
         "where": [

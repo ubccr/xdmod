@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[cheese] Job Size: Min (Core Count)","[blueberry] Job Size: Min (Core Count)","[apple] Job Size: Min (Core Count)","[bumbleberry] Job Size: Min (Core Count)","[butter] Job Size: Min (Core Count)","[coconut-cream] Job Size: Min (Core Count)","[flapper] Job Size: Min (Core Count)","[boysenberry] Job Size: Min (Core Count)","[banana-cream] Job Size: Min (Core Count)","[bavarian-cream] Job Size: Min (Core Count)","[blackberry] Job Size: Min (Core Count)","[buttermilk] Job Size: Min (Core Count)","[cashew] Job Size: Min (Core Count)","[cherry] Job Size: Min (Core Count)","[chestnut] Job Size: Min (Core Count)","[curry] Job Size: Min (Core Count)","[derby] Job Size: Min (Core Count)","[fish] Job Size: Min (Core Count)","[green-grape] Job Size: Min (Core Count)"
+2016,20,12,8,8,8,8,5,2,1,1,1,1,1,1,12,1,1,1,1
+2017,0,0,8,12,8,8,5,2,4,1,1,1,8,4,1,1,16,0,12
+---------

@@ -8,6 +8,7 @@ CREATE TABLE ${DESTINATION_SCHEMA}.`shredded_job_slurm` (
   `job_name` tinytext NOT NULL,
   `cluster_name` tinytext NOT NULL,
   `partition_name` tinytext NOT NULL,
+  `qos_name` tinytext DEFAULT NULL,
   `user_name` tinytext NOT NULL,
   `uid_number` int(10) unsigned DEFAULT NULL,
   `group_name` tinytext NOT NULL,

@@ -1,0 +1,20 @@
+title
+"Job Size: Per Job (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[fish] Job Size: Per Job (Core Count)","[coconut-cream] Job Size: Per Job (Core Count)","[butter] Job Size: Per Job (Core Count)","[derby] Job Size: Per Job (Core Count)","[cheese] Job Size: Per Job (Core Count)","[green-grape] Job Size: Per Job (Core Count)","[blueberry] Job Size: Per Job (Core Count)","[bumbleberry] Job Size: Per Job (Core Count)","[cashew] Job Size: Per Job (Core Count)","[buttermilk] Job Size: Per Job (Core Count)","[banana-cream] Job Size: Per Job (Core Count)","[apple] Job Size: Per Job (Core Count)","[boysenberry] Job Size: Per Job (Core Count)","[bavarian-cream] Job Size: Per Job (Core Count)","[curry] Job Size: Per Job (Core Count)","[blackberry] Job Size: Per Job (Core Count)","[flapper] Job Size: Per Job (Core Count)","[chestnut] Job Size: Per Job (Core Count)","[cherry] Job Size: Per Job (Core Count)"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,0,0,12.0000,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,1.0000,0,0,0,12.0000,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,1.0000,0,0,0,12.0000,0
+2016-12-25,0,0,0,0,0,0,0,0,0,0,24.0000,16.0000,0,1.0000,0,0,0,12.0000,0
+2016-12-26,0,0,0,0,0,0,0,0,16.0000,0,24.0000,16.0000,0,1.0000,0,0,0,12.0000,0
+2016-12-27,28.5556,64.0000,0,58.4000,0,0,0,0,16.0000,0,16.0000,18.0000,0,11.0000,41.0000,1.0000,0,12.0000,0
+2016-12-28,28.9000,64.0000,0,41.8667,20.0000,0,0,0,16.0000,0,94.1053,18.0000,0,11.0000,5.3852,1.0000,0,12.0000,0
+2016-12-29,29.4167,64.0000,0,13.8108,20.0000,0,12.0000,0,16.0000,112.0000,16.6935,11.6364,2.0000,14.4444,3.9027,3.2500,5.0000,12.0000,4.0000
+2016-12-30,29.4167,51.2000,40.0000,16.7532,20.0000,14.1471,12.0000,10.0000,16.0000,25.6667,9.0316,8.4356,2.0000,10.7143,3.6283,3.6000,5.0000,12.0000,1.6000
+2016-12-31,0,47.1111,8.0000,29.9592,0,21.3704,12.0000,12.0000,10.3542,14.8750,9.8405,8.1064,7.8846,8.5000,3.0475,5.5556,5.0000,12.0000,2.0000
+2017-01-01,0,19.2727,18.0000,44.2222,0,22.9565,0,12.0000,10.5532,1.0000,9.7079,8.2013,2.0000,8.5000,8.0224,3.7273,5.0000,4.0769,4.0000
+---------

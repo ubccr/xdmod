@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[curry] Node Hours: Total","[banana-cream] Node Hours: Total","[derby] Node Hours: Total","[cashew] Node Hours: Total","[apple] Node Hours: Total","[coconut-cream] Node Hours: Total","[buttermilk] Node Hours: Total","[blackberry] Node Hours: Total","[bavarian-cream] Node Hours: Total","[fish] Node Hours: Total","[bumbleberry] Node Hours: Total","[chestnut] Node Hours: Total","[cherry] Node Hours: Total","[boysenberry] Node Hours: Total","[cheese] Node Hours: Total","[butter] Node Hours: Total","[blueberry] Node Hours: Total","[flapper] Node Hours: Total","[green-grape] Node Hours: Total"
+2016,102250.6458,22118.5364,6358.0903,2246.7575,921.1331,868.0764,938.2947,773.9442,683.7492,676.7792,4.0917,232.7464,113.6931,89.6122,49.1336,29.2169,42.4689,28.9964,21.2169
+2017,15066.8469,969.3614,344.4442,526.7989,219.3428,183.3078,27.1514,149.7428,23.2497,0,261.3203,26.1203,11.4906,17.6292,0,16.3167,0,4.2811,9.1608
+---------
