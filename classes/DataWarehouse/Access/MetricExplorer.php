@@ -728,9 +728,10 @@ class MetricExplorer extends Common
         // Get a dimension values query for each valid realm.
         $dimensionValuesQueries = array();
         foreach ($realms as $realm) {
-
+            
             // Attempt to get the group by object for this realm to check that
             // the dimension exists for this realm.
+
             $realmObj = \Realm\Realm::factory($realm);
 
             if ( ! $realmObj->groupByExists($dimension_id) ) {
@@ -746,50 +747,40 @@ class MetricExplorer extends Common
                 }
             }
 
-            //Get group by object to check if realm is allowed to show all values.
             $group_by = $realmObj->getGroupByObject($dimension_id);
 
-            //Show all dimension values if specified and dimension is in allowed list
-            if($showAllDimensionValues && $group_by->showAllDimensionValues()) {
-                $query = new \DataWarehouse\Query\AggregateQuery(
+            // Get the user's roles that are authorized to view this data.
+            try {
+                $realmAuthorizedRoles = MetricExplorer::checkDataAccess(
+                    $user,
                     $realm,
-                    $queryAggregationUnit,
+                    $dimension_id,
                     null,
-                    null,
-                    $dimension_id
+                    $includePub
                 );
-
-                $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
-            }else {
-                // Get the user's roles that are authorized to view this data.
-                try {
-                    $realmAuthorizedRoles = MetricExplorer::checkDataAccess(
-                        $user,
-                        $realm,
-                        $dimension_id,
-                        null,
-                        $includePub
-                    );
-                } catch (AccessDeniedException $e) {
-                    // Only throw an exception that the user is not authorized if
-                    // they requested this realm's data explicitly. Otherwise, just
-                    // skip this realm.
-                    if ($realmsSpecified) {
-                        throw $e;
-                    }
-                    continue;
+            } catch (AccessDeniedException $e) {
+                // Only throw an exception that the user is not authorized if
+                // they requested this realm's data explicitly. Otherwise, just
+                // skip this realm.
+                if ($realmsSpecified) {
+                    throw $e;
                 }
+                continue;
+            }
 
-                // Generate the dimension values query for this realm.
-                $query = new \DataWarehouse\Query\AggregateQuery(
-                    $realm,
-                    $queryAggregationUnit,
-                    null,
-                    null,
-                    $dimension_id
-                );
+            // Generate the dimension values query for this realm.
+            $query = new \DataWarehouse\Query\AggregateQuery(
+                $realm,
+                $queryAggregationUnit,
+                null,
+                null,
+                $dimension_id
+            );
+
+            if($showAllDimensionValues && $group_by->showAllDimensionValues()){
+                $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
+            }else{
                 $query->setMultipleRoleParameters($realmAuthorizedRoles, $user);
-
                 $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
             }
         }
