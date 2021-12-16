@@ -42,14 +42,7 @@ var Chrome = {
 var secrets = require('../ci/testing.json');
 secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
 var excludes = [
-    './test/**/*.page.js',
-    './test/**/about.js',
-    './test/**/exportDialog.js',
-    './test/**/mainToolbar.js',
-    './test/**/metricExplorer.js',
-    './test/**/myProfile.js',
-    './test/**/reportGenerator.js',
-    './test/**/usageTab.js'
+    './test/**/*.page.js'
 ];
 if (!process.env.SSO) {
     excludes.push('./test/specs/xdmod/SSOLogin.js');
