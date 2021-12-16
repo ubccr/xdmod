@@ -681,8 +681,8 @@ class MetricExplorer extends Common
      *                                       in each result. If null, this
      *                                       property will not be set.
      *                                       (Defaults to null.)
-     * @param  bool|false $showAllDimensionValues (Optional) A boolean to determine 
-     *                                       if all values in the dimension set should 
+     * @param  bool|false $showAllDimensionValues (Optional) A boolean to determine
+     *                                       if all values in the dimension set should
      *                                       be shown. If true, all values are only shown
      *                                       if group_by allows.
      * @return array                      A result representation containing:
