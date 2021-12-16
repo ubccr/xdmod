@@ -82,6 +82,36 @@
             }
         },
         {
+            "name": "update-moddb-tables-to-innodb",
+            "description": "Update moddb tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "xdb/account-requests.json",
+                "xdb/api-keys.json",
+                "xdb/chart-pool.json",
+                "xdb/colors.json",
+                "xdb/exception-email-addresses.json",
+                "xdb/report-template-charts.json",
+                "xdb/report-templates.json",
+                "xdb/reports.json",
+                "xdb/restx509.json",
+                "xdb/schema-version-history.json",
+                "xdb/session-manager.json",
+                "xdb/user-profiles.json",
+                "xdb/user-types.json",
+                "xdb/version-check.json",
+                "acls/report-template-acls-staging.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "moddb"
+                }
+            }
+        },
+        {
             "name": "update-modw-tables-to-innodb",
             "description": "Update modw_cloud tables to InnoDB",
             "class": "ManageTables",
