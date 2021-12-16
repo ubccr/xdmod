@@ -50,6 +50,12 @@
                 "nullable": false
             },
             {
+                "name": "qos_name",
+                "type": "varchar(255)",
+                "nullable": true,
+                "default": null
+            },
+            {
                 "name": "user_name",
                 "type": "varchar(255)",
                 "nullable": false

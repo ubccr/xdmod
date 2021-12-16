@@ -210,6 +210,33 @@
         "description_html": "A service provider is an institution that hosts resources.",
         "name": "Service Provider"
     },
+    "qos": {
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "qos_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "qos"
+                }
+            ],
+            "orderby": [
+                "name"
+            ],
+            "records": {
+                "id": "id",
+                "name": "name",
+                "order_id": "name",
+                "short_name": "name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "The quality of service of the job",
+        "name": "QOS"
+    },
     "queue": {
         "additional_join_constraints": [
             {

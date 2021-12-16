@@ -37,6 +37,7 @@
                 "common/staging/organization.json",
                 "common/staging/pi-resource.json",
                 "common/staging/pi.json",
+                "common/staging/qos.json",
                 "common/staging/resource-config.json",
                 "common/staging/resource-spec.json",
                 "common/staging/resource-type.json",
@@ -199,6 +200,11 @@
             "name": "user-pi-resource",
             "description": "Ingest job User/PI/Resource permutations",
             "definition_file": "jobs/staging/user-pi-resource.json"
+        },
+        {
+            "name": "qos",
+            "description": "Ingest job QOS",
+            "definition_file": "jobs/staging/qos.json"
         },
         {
             "name": "job",

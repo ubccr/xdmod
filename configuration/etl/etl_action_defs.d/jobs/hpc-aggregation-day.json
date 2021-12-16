@@ -64,6 +64,7 @@
             "processorbucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.processor_buckets pb WHERE task.processor_count BETWEEN pb.min_processors AND pb.max_processors)",
             "gpu_count": "task.gpu_count",
             "gpubucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.gpu_buckets gb WHERE task.gpu_count BETWEEN gb.min_gpus AND gb.max_gpus)",
+            "qos_id": "record.qos_id",
             "submitted_job_count": "SUM( IF(task.submit_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, 1, 0) )",
             "ended_job_count": "SUM( IF(task.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0) )",
             "started_job_count": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0) )",
@@ -110,7 +111,8 @@
             "account_id",
             "systemaccount_id",
             "allocation_id",
-            "principalinvestigator_person_id"
+            "principalinvestigator_person_id",
+            "qos_id"
         ],
         "joins": [
             {
