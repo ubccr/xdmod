@@ -728,10 +728,9 @@ class MetricExplorer extends Common
         // Get a dimension values query for each valid realm.
         $dimensionValuesQueries = array();
         foreach ($realms as $realm) {
-            
+
             // Attempt to get the group by object for this realm to check that
             // the dimension exists for this realm.
-
             $realmObj = \Realm\Realm::factory($realm);
 
             if ( ! $realmObj->groupByExists($dimension_id) ) {
