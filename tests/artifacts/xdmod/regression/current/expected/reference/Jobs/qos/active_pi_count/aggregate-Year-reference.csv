@@ -1,0 +1,28 @@
+title
+"Number of PIs: Active: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Number of PIs: Active"
+curry,27
+banana-cream,7
+green-grape,7
+derby,6
+bumbleberry,3
+apple,2
+bavarian-cream,2
+boysenberry,2
+butter,2
+buttermilk,2
+cheese,2
+coconut-cream,2
+fish,2
+flapper,2
+blackberry,1
+blueberry,1
+cashew,1
+cherry,1
+chestnut,1
+---------

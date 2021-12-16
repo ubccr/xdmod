@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[curry] Number of Users: Active","[banana-cream] Number of Users: Active","[derby] Number of Users: Active","[green-grape] Number of Users: Active","[bavarian-cream] Number of Users: Active","[apple] Number of Users: Active","[buttermilk] Number of Users: Active","[bumbleberry] Number of Users: Active","[butter] Number of Users: Active","[coconut-cream] Number of Users: Active","[blackberry] Number of Users: Active","[boysenberry] Number of Users: Active","[cheese] Number of Users: Active","[cherry] Number of Users: Active","[fish] Number of Users: Active","[flapper] Number of Users: Active","[blueberry] Number of Users: Active","[cashew] Number of Users: Active","[chestnut] Number of Users: Active"
+"2016 Q4",30,15,11,8,7,5,4,3,3,3,2,2,2,2,2,2,1,1,1
+"2017 Q1",16,6,4,1,2,3,3,1,2,3,2,1,0,1,0,1,0,1,1
+---------

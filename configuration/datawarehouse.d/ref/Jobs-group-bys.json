@@ -72,6 +72,9 @@
     "provider": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
     },
+    "qos": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/qos"
+    },
     "quarter": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
     },

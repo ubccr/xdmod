@@ -96,6 +96,16 @@
                     "foreignTableAlias": "jr",
                     "foreignKey": "fos_id"
                 }
+            },
+            {
+                "schema": "modw",
+                "name": "qos",
+                "alias": "qos",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jr",
+                    "foreignKey": "qos_id"
+                }
             }
         ],
         "fields": [
@@ -145,6 +155,14 @@
                 "column": "name",
                 "group": "Administration",
                 "documentation": "The organization of the person who ran the task",
+                "batchExport": true
+            },
+            {
+                "name": "Quality of Service",
+                "tableAlias": "qos",
+                "column": "name",
+                "group": "Administration",
+                "documentation": "The job quality of service.",
                 "batchExport": true
             },
             {

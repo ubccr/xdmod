@@ -25,6 +25,7 @@ class JobViewerTest extends BaseTest
             'nodecount',
             'pi',
             'fieldofscience',
+            'qos',
             'queue',
             'resource',
             'resource_type',

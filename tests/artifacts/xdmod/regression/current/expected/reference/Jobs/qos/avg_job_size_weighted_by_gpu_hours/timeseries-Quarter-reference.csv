@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[chestnut] Job Size: Weighted By GPU Hours (GPU Count)","[apple] Job Size: Weighted By GPU Hours (GPU Count)","[banana-cream] Job Size: Weighted By GPU Hours (GPU Count)","[bavarian-cream] Job Size: Weighted By GPU Hours (GPU Count)","[blackberry] Job Size: Weighted By GPU Hours (GPU Count)","[blueberry] Job Size: Weighted By GPU Hours (GPU Count)","[boysenberry] Job Size: Weighted By GPU Hours (GPU Count)","[bumbleberry] Job Size: Weighted By GPU Hours (GPU Count)","[butter] Job Size: Weighted By GPU Hours (GPU Count)","[buttermilk] Job Size: Weighted By GPU Hours (GPU Count)","[cashew] Job Size: Weighted By GPU Hours (GPU Count)","[cheese] Job Size: Weighted By GPU Hours (GPU Count)","[cherry] Job Size: Weighted By GPU Hours (GPU Count)","[coconut-cream] Job Size: Weighted By GPU Hours (GPU Count)","[curry] Job Size: Weighted By GPU Hours (GPU Count)","[derby] Job Size: Weighted By GPU Hours (GPU Count)","[fish] Job Size: Weighted By GPU Hours (GPU Count)","[flapper] Job Size: Weighted By GPU Hours (GPU Count)","[green-grape] Job Size: Weighted By GPU Hours (GPU Count)"
+"2016 Q4",12.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",12.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000
+---------
