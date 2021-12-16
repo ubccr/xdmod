@@ -683,10 +683,8 @@ class MetricExplorer extends Common
      *                                       (Defaults to null.)
      * @param  bool|false $showAllDimensionValues (Optional) A boolean to determine 
      *                                       if all values in the dimension set should 
-     *                                       be shown. If true, all values can only be shown
-     *                                       when the dimension for the realm you are trying to 
-     *                                       view is present in the allowed dimensions array.
-     *
+     *                                       be shown. If true, all values are only shown
+     *                                       if group_by allows.
      * @return array                      A result representation containing:
      *                                        * data: An array of values.
      *                                        * totalCount: The total number
