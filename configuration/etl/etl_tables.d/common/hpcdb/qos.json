@@ -1,0 +1,31 @@
+{
+    "table_definition": {
+        "name": "hpcdb_qos",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "qos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "qos_name",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "qos_id"
+                ]
+            }
+        ]
+    }
+}
