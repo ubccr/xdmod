@@ -972,7 +972,7 @@ ETLProfile.prototype.regressionTests = function () {
 
     this.datasets.forEach(function (dataset) {
         try {
-            // Check that the getQuery and MarkAsDone functions can be called
+            // Check that the getQuery and MarkAsDone functions can be called.
             if ( dataset.input.getQuery() == null ) {
                 throw "GetQuery returned null";
             }
