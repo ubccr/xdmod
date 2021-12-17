@@ -369,7 +369,7 @@ ETLProfile.prototype.getAggregationTables = function () {
                 dimension_table: agg.dimension_table,
                 category: agg.category,
 				def: agg.def || f.def,
-				dimension: agg.dimension || false,
+                dimension: agg.dimension || false,
                 show_all_dimension_values: agg.show_all_dimension_values || false
 			};
             newf.name = newf.name.replace(/\:field_name/g, field);
