@@ -215,6 +215,25 @@
             }
         },
         {
+            "name": "alter-mod_logger-log_id_seq-sequence_column",
+            "description": "Remove `AUTO_INCREMENT` from the `sequence` column",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_logger/alter_log_id_seq.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_logger"
+                }
+            }
+        },
+        {
             "name": "alter-shredded_job_slurm",
             "description": "Alter mod_shredder.shredded_job_slurm to add qos_name column",
             "class": "ExecuteSql",
