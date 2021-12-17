@@ -228,7 +228,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -246,7 +246,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
