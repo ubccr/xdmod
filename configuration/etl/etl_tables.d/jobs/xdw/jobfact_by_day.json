@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "jobfact_by_",
         "comment": "Jobfacts aggregated by ${AGGREGATION_UNIT}.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
