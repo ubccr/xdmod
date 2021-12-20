@@ -500,6 +500,12 @@
                 "columns": [
                     "${AGGREGATION_UNIT}_id"
                 ]
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
             }
         ],
         "table_prefix": "jobfact_by_"
