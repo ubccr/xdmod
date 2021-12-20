@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "processor_buckets",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

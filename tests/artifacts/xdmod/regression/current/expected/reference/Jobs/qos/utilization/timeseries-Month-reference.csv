@@ -1,0 +1,11 @@
+title
+"Screwdriver Utilization (%): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[curry] Screwdriver Utilization (%)","[banana-cream] Screwdriver Utilization (%)","[derby] Screwdriver Utilization (%)","[cashew] Screwdriver Utilization (%)","[fish] Screwdriver Utilization (%)","[buttermilk] Screwdriver Utilization (%)","[coconut-cream] Screwdriver Utilization (%)","[apple] Screwdriver Utilization (%)","[bavarian-cream] Screwdriver Utilization (%)","[chestnut] Screwdriver Utilization (%)","[blackberry] Screwdriver Utilization (%)","[bumbleberry] Screwdriver Utilization (%)","[cheese] Screwdriver Utilization (%)","[butter] Screwdriver Utilization (%)","[blueberry] Screwdriver Utilization (%)","[green-grape] Screwdriver Utilization (%)","[cherry] Screwdriver Utilization (%)","[boysenberry] Screwdriver Utilization (%)","[flapper] Screwdriver Utilization (%)"
+2016-12,11.108145320,2.324283892,2.204919579,1.005620958,0.652712300,0.477002511,0.233353868,0.195724052,0.124077985,0.093849350,0.045350480,0.000816140,0.033019900,0.011655989,0.017124552,0.008228112,0.006472073,0.006841024,0.004871705
+2017-01,1.408883429,0.091973912,0.128255862,0.164598193,0,0.000912345,0.049276284,0.061886798,0.012486970,0.009644359,0.019135090,0.105371080,0,0.009264225,0,0.003693884,0.001544430,0.001184756,0.000719273
+---------

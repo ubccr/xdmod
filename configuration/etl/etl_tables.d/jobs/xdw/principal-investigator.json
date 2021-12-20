@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "principalinvestigator",
         "comment": "Only PIs are allowed to make requests.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "person_id",

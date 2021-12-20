@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "peopleunderpi",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "principalinvestigator_person_id",

@@ -4,7 +4,7 @@
     "table_definition": {
         "name": "resourcespecsfact_by_",
         "table_prefix": "resourcespecsfact_by_",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Record type: accounting, administrative, derived, etc.",
         "columns": [
             {

@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "gpu_buckets",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

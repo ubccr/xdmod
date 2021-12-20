@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "host",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Hostnames for each resource",
         "columns": [
             {

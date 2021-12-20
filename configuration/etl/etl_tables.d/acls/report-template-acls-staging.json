@@ -1,7 +1,7 @@
 {
   "table_definition": {
     "name": "report_template_acls_staging",
-    "engine": "MyISAM",
+    "engine": "InnoDB",
     "columns": [
       {
         "name": "template_id",

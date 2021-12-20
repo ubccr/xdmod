@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "openstack_event_map",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Maps Open Stack events to list of defined events in event_type table",
         "columns": [
             {

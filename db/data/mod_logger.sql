@@ -15,6 +15,12 @@ LOCK TABLES `log_level` WRITE;
 INSERT INTO `log_level` VALUES (0,'EMERG','System is unusable'),(1,'ALERT','Immediate action required'),(2,'CRIT','Critical conditions'),(3,'ERR','Error conditions'),(4,'WARNING','Warning conditions'),(5,'NOTICE','Normal but significant'),(6,'INFO','Informational'),(7,'DEBUG','Debug-level message'),(8,'TRACE','Trace-level message');
 /*!40000 ALTER TABLE `log_level` ENABLE KEYS */;
 UNLOCK TABLES;
+
+LOCK TABLES `log_id_seq` WRITE;
+/*!40000 ALTER TABLE `log_id_seq` DISABLE KEYS */;
+INSERT INTO `log_id_seq` VALUES (0);
+/*!40000 ALTER TABLE `log_id_seq` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

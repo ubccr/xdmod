@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[curry] Wait Hours: Total","[banana-cream] Wait Hours: Total","[derby] Wait Hours: Total","[bumbleberry] Wait Hours: Total","[bavarian-cream] Wait Hours: Total","[apple] Wait Hours: Total","[fish] Wait Hours: Total","[blackberry] Wait Hours: Total","[cashew] Wait Hours: Total","[chestnut] Wait Hours: Total","[blueberry] Wait Hours: Total","[green-grape] Wait Hours: Total","[boysenberry] Wait Hours: Total","[buttermilk] Wait Hours: Total","[cheese] Wait Hours: Total","[coconut-cream] Wait Hours: Total","[butter] Wait Hours: Total","[cherry] Wait Hours: Total","[flapper] Wait Hours: Total"
+2016,228182.6833,49249.0436,2665.4319,1.9639,182.9422,72.0419,64.3475,56.5503,36.5339,0.0003,0.1544,0.0247,0.0172,0.0106,0.0150,0.0025,0.0042,0.0003,0.0000
+2017,16995.4911,6606.9172,9.5739,2187.0100,0.0067,33.3481,0,0.0000,0.0000,1.2328,0,0.0047,0.0000,0.0047,0,0.0031,0.0006,0.0000,0.0003
+---------
