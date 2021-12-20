@@ -334,6 +334,16 @@ interface iGroupBy
 
     public function getCategory();
 
+     /**
+     * Provides boolean for each GroupBy that determines if it is allowed to show all values to
+     * every user or not. This is currently used by the Job Efficiency Tab to show all bucket values for
+     * histograms on drilldown.
+     *
+     * @return bool Returns true if group by is allowed to show all dimension values.
+     */
+
+    public function showAllDimensionValues();
+
     /**
      * Generate a string representation of the object
      */

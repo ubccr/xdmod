@@ -681,7 +681,10 @@ class MetricExplorer extends Common
      *                                       in each result. If null, this
      *                                       property will not be set.
      *                                       (Defaults to null.)
-     *
+     * @param  bool|false $showAllDimensionValues (Optional) A boolean to determine
+     *                                       if all values in the dimension set should
+     *                                       be shown. If true, all values are only shown
+     *                                       if group_by allows.
      * @return array                      A result representation containing:
      *                                        * data: An array of values.
      *                                        * totalCount: The total number
@@ -708,7 +711,8 @@ class MetricExplorer extends Common
         $limit = null,
         $searchText = null,
         array $selectedFilterIds = null,
-        $includePub = true
+        $includePub = true,
+        $showAllDimensionValues = false
     ) {
         // Check if the realms were specified, and if not, use all realms.
         $realmsSpecified = !empty($realms);
@@ -725,7 +729,6 @@ class MetricExplorer extends Common
 
             // Attempt to get the group by object for this realm to check that
             // the dimension exists for this realm.
-
             $realmObj = \Realm\Realm::factory($realm);
 
             if ( ! $realmObj->groupByExists($dimension_id) ) {
@@ -740,6 +743,8 @@ class MetricExplorer extends Common
                     continue;
                 }
             }
+
+            $group_by = $realmObj->getGroupByObject($dimension_id);
 
             // Get the user's roles that are authorized to view this data.
             try {
@@ -768,9 +773,13 @@ class MetricExplorer extends Common
                 null,
                 $dimension_id
             );
-            $query->setMultipleRoleParameters($realmAuthorizedRoles, $user);
 
-            $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
+            if($showAllDimensionValues && $group_by->showAllDimensionValues()){
+                $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
+            }else{
+                $query->setMultipleRoleParameters($realmAuthorizedRoles, $user);
+                $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
+            }
         }
 
         // Throw an exception if no queries could be generated.
