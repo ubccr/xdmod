@@ -31,7 +31,7 @@
             "local_job_array_index": "j.local_job_array_index",
             "local_job_id_raw": "j.local_job_id_raw",
             "job_name": "j.jobname",
-            "qos_id": "j.qos_id",
+            "qos_id": "COALESCE(j.qos_id, -1)",
             "queue": "COALESCE(j.queue, 'NA')",
             "node_count": "j.nodecount",
             "systemaccount_id": "sa.system_account_id",
