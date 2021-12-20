@@ -37,6 +37,12 @@
                 "nullable": false
             },
             {
+                "name": "qos_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
                 "name": "local_jobid",
                 "type": "int(11)",
                 "nullable": false
@@ -242,6 +248,12 @@
                 "columns": [
                     "end_time"
                 ]
+            },
+            {
+                "name": "qos_idx",
+                "columns": [
+                    "qos_id"
+                ]
             }
         ],
         "foreign_key_constraints": [
@@ -293,6 +305,16 @@
                 "referenced_table": "hpcdb_people",
                 "referenced_columns": [
                     "person_id"
+                ]
+            },
+            {
+                "name": "fk_jobs_fk7",
+                "columns": [
+                    "qos_id"
+                ],
+                "referenced_table": "hpcdb_qos",
+                "referenced_columns": [
+                    "qos_id"
                 ]
             }
         ]

@@ -60,6 +60,12 @@
                 "nullable": true
             },
             {
+                "name": "qos_name",
+                "type": "varchar(255)",
+                "nullable": true,
+                "default": null
+            },
+            {
                 "name": "account_name",
                 "type": "varchar(255)",
                 "nullable": true

@@ -1,0 +1,38 @@
+{
+    "table_definition": {
+        "name": "qos",
+        "comment": "Quality of service.",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "The quality of service name."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_name",
+                "columns": [
+                    "name"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}

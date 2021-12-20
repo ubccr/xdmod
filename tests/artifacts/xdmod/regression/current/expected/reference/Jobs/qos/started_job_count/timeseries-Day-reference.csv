@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[banana-cream] Number of Jobs Started","[curry] Number of Jobs Started","[apple] Number of Jobs Started","[bumbleberry] Number of Jobs Started","[derby] Number of Jobs Started","[buttermilk] Number of Jobs Started","[green-grape] Number of Jobs Started","[cashew] Number of Jobs Started","[boysenberry] Number of Jobs Started","[coconut-cream] Number of Jobs Started","[bavarian-cream] Number of Jobs Started","[blackberry] Number of Jobs Started","[cheese] Number of Jobs Started","[chestnut] Number of Jobs Started","[fish] Number of Jobs Started","[butter] Number of Jobs Started","[cherry] Number of Jobs Started","[flapper] Number of Jobs Started","[blueberry] Number of Jobs Started"
+2016-12-22,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,1,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,4,8,1,0,5,0,0,0,0,1,2,1,0,0,9,0,0,0,0
+2016-12-28,14,371,0,0,10,0,0,11,0,0,0,0,1,0,1,0,0,0,0
+2016-12-29,229,968,7,0,59,4,0,4,1,0,6,7,0,0,2,0,1,1,1
+2016-12-30,22180,4555,191,2,80,32,34,0,0,4,5,7,14,0,0,3,4,2,2
+2016-12-31,24054,2919,176,16,10,28,27,33,51,8,17,13,0,0,0,1,1,0,0
+2017-01-01,9337,5297,153,213,13,28,23,0,0,21,1,0,0,12,0,5,0,1,0
+---------

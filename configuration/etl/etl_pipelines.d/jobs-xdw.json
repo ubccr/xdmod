@@ -35,6 +35,7 @@
                 "jobs/xdw/processor-buckets.json",
                 "jobs/xdw/quarters.json",
                 "jobs/xdw/queue.json",
+                "jobs/xdw/qos.json",
                 "jobs/xdw/request.json",
                 "jobs/xdw/resource-allocated.json",
                 "jobs/xdw/resource-fact.json",
@@ -140,6 +141,18 @@
                     "type": "jsonfile",
                     "name": "unknown pi-person data data",
                     "path": "jobs/xdw/pi-person.json"
+                }
+            }
+        },
+        {
+            "name": "qos",
+            "definition_file": "jobs/xdw/qos.json",
+            "description": "QOS data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown qos data",
+                    "path": "jobs/xdw/qos.json"
                 }
             }
         },

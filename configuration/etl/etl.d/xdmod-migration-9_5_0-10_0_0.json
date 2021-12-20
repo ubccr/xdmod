@@ -164,6 +164,43 @@
               }
          },
          {
+           "name": "update-mod-aggregate-tables",
+           "description": "Update modw_aggregates tables to use InnoDB table engine",
+           "class": "ManageAggregateTables",
+           "aggregation_units": ["month", "quarter", "year"],
+           "definition_file_list": [
+               "cloud_common/resourcespecsfact_by_.json",
+               "jobs/xdw/jobfact_by_.json",
+               "storage/xdw/storagefact.aggregation.json"
+             ],
+             "endpoints": {
+                 "destination": {
+                     "type": "mysql",
+                     "name": "XDMoD Data Warehouse",
+                     "config": "datawarehouse",
+                     "schema": "modw_aggregates"
+                 }
+             }
+         },
+         {
+             "name": "update-mod-aggregate-tables-by-day",
+             "description": "Update modw_aggregates _by_day tables to use InnoDB table engine",
+             "class": "ManageAggregateTables",
+             "aggregation_units": ["day"],
+             "definition_file_list": [
+                "cloud_common/resourcespecsfact_by_.json",
+                "jobs/xdw/jobfact_by_day.json",
+                "storage/xdw/storagefact.aggregation.json"],
+             "endpoints": {
+                 "destination": {
+                     "type": "mysql",
+                     "name": "XDMoD Data Warehouse",
+                     "config": "datawarehouse",
+                     "schema": "modw_aggregates"
+                 }
+             }
+          },
+          {
             "name": "update-schema-version-history-tables-to-innodb",
             "description": "Update modw_cloud tables to InnoDB",
             "class": "ManageTables",
@@ -211,6 +248,117 @@
                     "name": "XDMoD Data Warehouse",
                     "config": "datawarehouse",
                     "schema": "mod_logger"
+                }
+            }
+        },
+        {
+            "name": "alter-mod_logger-log_id_seq-sequence_column",
+            "description": "Remove `AUTO_INCREMENT` from the `sequence` column",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_logger/alter_log_id_seq.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_logger"
+                }
+            }
+        },
+        {
+            "name": "alter-shredded_job_slurm",
+            "description": "Alter mod_shredder.shredded_job_slurm to add qos_name column",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_shredder/alter-shredded_job_slurm.sql",
+                    "delimiter": ";"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "update-mod_shredder-qos",
+            "description": "Add QOS table and columns to mod_shredder",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/shredder/job.json",
+                "common/staging/qos.json",
+                "jobs/staging/job.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "name": "update-mod_hpcdb-qos",
+            "description": "Add QOS table and columns to mod_hpcdb",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "common/hpcdb/qos.json",
+                "jobs/hpcdb/jobs.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "hpcdb",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "update-modw-qos",
+            "description": "Add QOS table and columns to modw",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/xdw/job-records.json",
+                "jobs/xdw/qos.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "insert-modw-qos",
+            "description": "Insert QOS modw data",
+            "class": "StructuredFileIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "jobs/xdw/qos.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown qos data",
+                    "path": "jobs/xdw/qos.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
                 }
             }
         }

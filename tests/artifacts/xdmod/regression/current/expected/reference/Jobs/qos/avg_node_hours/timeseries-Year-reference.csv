@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[fish] Node Hours: Per Job","[cashew] Node Hours: Per Job","[derby] Node Hours: Per Job","[blackberry] Node Hours: Per Job","[coconut-cream] Node Hours: Per Job","[bavarian-cream] Node Hours: Per Job","[cherry] Node Hours: Per Job","[chestnut] Node Hours: Per Job","[blueberry] Node Hours: Per Job","[buttermilk] Node Hours: Per Job","[flapper] Node Hours: Per Job","[curry] Node Hours: Per Job","[butter] Node Hours: Per Job","[cheese] Node Hours: Per Job","[apple] Node Hours: Per Job","[boysenberry] Node Hours: Per Job","[bumbleberry] Node Hours: Per Job","[banana-cream] Node Hours: Per Job","[green-grape] Node Hours: Per Job"
+2016,56.39826389,42.39165094,38.76884316,27.64086310,66.77510684,22.05642473,18.94884259,232.74638889,14.15629630,14.66085503,9.66546296,11.59172949,7.30423611,3.27557407,2.43685994,1.72331197,0.22731481,0.47585165,0.34781876
+2017,0,11.20848700,19.13578704,13.61297980,8.33217172,11.62486111,11.49055556,2.00925214,0,0.96969246,4.28111111,2.38928750,2.71944444,0,1.37951433,17.62916667,1.16142346,0.09990327,0.39829710
+---------
