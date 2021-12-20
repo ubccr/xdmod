@@ -44,6 +44,10 @@
                 },
                 {
                     "realm": "Jobs",
+                    "group_by": "qos"
+                },
+                {
+                    "realm": "Jobs",
                     "group_by": "queue"
                 },
                 {

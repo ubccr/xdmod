@@ -179,6 +179,12 @@
                 "comment": "DIMENSION: Pre-determined GPU bucket sizes. References gpu_buckets.id"
             },
             {
+                "name": "qos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Quality of service. References qos.id"
+            },
+            {
                 "name": "submitted_job_count",
                 "type": "int(11)",
                 "comment": "FACT: The number of jobs that started during this day.",

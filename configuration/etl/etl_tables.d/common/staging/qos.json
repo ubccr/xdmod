@@ -1,0 +1,36 @@
+{
+    "table_definition": {
+        "name": "staging_qos",
+        "engine": "InnoDB",
+        "comment": "Staging table for quality of service",
+        "columns": [
+            {
+                "name": "qos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "qos_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "QOS name"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "qos_name"
+                ]
+            },
+            {
+                "name": "uk_qos_id",
+                "columns": [
+                    "qos_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

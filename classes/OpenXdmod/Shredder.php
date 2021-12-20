@@ -396,6 +396,12 @@ class Shredder
             while (($line = fgets($fh)) !== false) {
                 $lineNumber++;
 
+                // Remove trailing whitespace.
+                $line = rtrim($line);
+
+                // Remove control characters.
+                $line = preg_replace('/[\x00-\x1F\x7F]/', '', $line);
+
                 // skip empty lines
                 if ($line === '') {
                     $this->logger->debug([
@@ -407,12 +413,6 @@ class Shredder
                 }
 
                 $recordCount++;
-
-                // Remove trailing whitespace.
-                $line = rtrim($line);
-
-                // Remove control characters.
-                $line = preg_replace('/[\x00-\x1F\x7F]/', '', $line);
 
                 try {
                     $this->shredLine($line);

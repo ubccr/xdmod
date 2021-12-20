@@ -1,0 +1,20 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[buttermilk] Job Size: Weighted By CPU Hours (Core Count)","[banana-cream] Job Size: Weighted By CPU Hours (Core Count)","[coconut-cream] Job Size: Weighted By CPU Hours (Core Count)","[derby] Job Size: Weighted By CPU Hours (Core Count)","[curry] Job Size: Weighted By CPU Hours (Core Count)","[butter] Job Size: Weighted By CPU Hours (Core Count)","[bavarian-cream] Job Size: Weighted By CPU Hours (Core Count)","[fish] Job Size: Weighted By CPU Hours (Core Count)","[green-grape] Job Size: Weighted By CPU Hours (Core Count)","[cheese] Job Size: Weighted By CPU Hours (Core Count)","[apple] Job Size: Weighted By CPU Hours (Core Count)","[cashew] Job Size: Weighted By CPU Hours (Core Count)","[blueberry] Job Size: Weighted By CPU Hours (Core Count)","[bumbleberry] Job Size: Weighted By CPU Hours (Core Count)","[chestnut] Job Size: Weighted By CPU Hours (Core Count)","[boysenberry] Job Size: Weighted By CPU Hours (Core Count)","[flapper] Job Size: Weighted By CPU Hours (Core Count)","[blackberry] Job Size: Weighted By CPU Hours (Core Count)","[cherry] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,12.0000,0,0,0,0
+2016-12-23,0,0,0,0,0,0,1.0000,0,0,0,12.0000,0,0,0,12.0000,0,0,0,0
+2016-12-24,0,0,0,0,0,0,1.0000,0,0,0,12.0000,0,0,0,12.0000,0,0,0,0
+2016-12-25,0,24.0000,0,0,0,0,1.0000,0,0,0,12.8595,0,0,0,12.0000,0,0,0,0
+2016-12-26,0,24.0000,0,0,0,0,1.0000,0,0,0,18.0000,16.0000,0,0,12.0000,0,0,0,0
+2016-12-27,0,21.1888,64.0000,96.7935,84.5627,0,14.0214,31.6875,0,0,18.4583,16.0000,0,0,12.0000,0,0,1.0000,0
+2016-12-28,0,170.8284,64.0000,81.4098,78.4676,0,15.5455,31.8818,0,20.0000,20.0000,16.0000,0,0,12.0000,0,0,1.0000,0
+2016-12-29,112.0000,166.1714,64.0000,56.9898,68.0983,0,30.1045,31.9078,0,20.0000,19.4737,16.0000,12.0000,0,12.0000,2.0000,5.0000,3.8435,4.0000
+2016-12-30,111.6728,79.0105,63.8308,44.6214,68.0094,79.9505,39.8777,31.8699,20.1259,20.0000,11.2898,16.0000,12.0000,11.6133,12.0000,2.0000,5.0000,3.8626,2.6435
+2016-12-31,111.0872,29.9186,63.9287,64.2508,57.3480,8.0000,41.4913,0,21.3018,0,12.1534,11.9114,12.0000,12.0000,12.0000,7.1817,5.0000,3.9543,2.0581
+2017-01-01,1.0000,12.1089,58.3187,56.1041,23.8051,18.5309,15.9990,0,22.0668,0,9.1338,10.2343,0,12.0000,11.6043,2.0000,5.0000,3.9482,4.0000
+---------

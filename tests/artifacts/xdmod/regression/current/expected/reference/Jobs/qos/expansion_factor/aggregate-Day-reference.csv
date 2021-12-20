@@ -1,0 +1,28 @@
+title
+"User Expansion Factor: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"User Expansion Factor"
+bumbleberry,9.2475
+banana-cream,3.2904
+curry,3.2822
+derby,1.7973
+bavarian-cream,1.4475
+fish,1.0951
+apple,1.0924
+blackberry,1.0612
+cashew,1.0132
+chestnut,1.0048
+blueberry,1.0036
+green-grape,1.0017
+cheese,1.0003
+boysenberry,1.0002
+butter,1.0002
+buttermilk,1.0000
+cherry,1.0000
+coconut-cream,1.0000
+flapper,1.0000
+---------

@@ -727,48 +727,6 @@ SQL;
 
     /*
      *
-     * @function isCampusChampion
-     *
-     * @param int $person_id
-     *
-     * @returns false (boolean) if the person referenced by person_id is NOT a campus champion
-     * @returns the numerical organization id (int) if the person IS a campus champion
-     *
-     */
-
-    public static function isCampusChampion($person_id)
-    {
-
-        $pdo = DB::factory('database');
-
-        $ccCheck = $pdo->query(
-
-            "SELECT DISTINCT acct.id, acct.granttype_id
-                          FROM modw.account AS acct, modw.peopleonaccount AS poa
-                          WHERE poa.person_id=:person_id AND acct.id = poa.account_id AND acct.granttype_id = 2",
-
-            array('person_id' => $person_id)
-
-        );
-
-        if (count($ccCheck) > 0) {
-
-            $orgCheck = $pdo->query("SELECT organization_id FROM modw.person WHERE id=:person_id", array('person_id' => $person_id));
-
-            return $orgCheck[0]['organization_id'];
-
-        } else {
-
-            return false;
-
-        }
-
-    }//isCampusChampion
-
-    // ---------------------------
-
-    /*
-     *
      * @function authenticate
      *
      * This function may only be used to authenticate users that have local user

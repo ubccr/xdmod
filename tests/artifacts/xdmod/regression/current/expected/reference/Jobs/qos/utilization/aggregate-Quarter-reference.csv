@@ -1,0 +1,28 @@
+title
+"Screwdriver Utilization (%): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Screwdriver Utilization (%)"
+curry,35.275262837
+banana-cream,6.809453809
+derby,6.575312605
+cashew,3.297890336
+fish,1.839461937
+buttermilk,1.346850957
+coconut-cream,0.796503157
+apple,0.638790088
+bavarian-cream,0.367269597
+chestnut,0.291664089
+blackberry,0.154768979
+bumbleberry,0.150777462
+cheese,0.093056082
+butter,0.058956965
+blueberry,0.048260101
+green-grape,0.033598353
+cherry,0.022591961
+boysenberry,0.020948680
+flapper,0.015756392
+---------
