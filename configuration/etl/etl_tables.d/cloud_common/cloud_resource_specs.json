@@ -65,6 +65,12 @@
                     "start_day_id"
                 ],
                 "is_unique": true
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
             }
         ]
     }

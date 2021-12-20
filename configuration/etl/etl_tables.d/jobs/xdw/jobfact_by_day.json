@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "jobfact_by_",
         "comment": "Jobfacts aggregated by ${AGGREGATION_UNIT}.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",
@@ -499,6 +499,12 @@
                 "name": "index_period",
                 "columns": [
                     "${AGGREGATION_UNIT}_id"
+                ]
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
                 ]
             }
         ],
