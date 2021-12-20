@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "storagefact_by_",
         "table_prefix": "storagefact_by_",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Aggregate storage usage data",
         "columns": [
             {

@@ -168,6 +168,43 @@
               }
          },
          {
+           "name": "update-mod-aggregate-tables",
+           "description": "Update modw_aggregates tables to use InnoDB table engine",
+           "class": "ManageAggregateTables",
+           "aggregation_units": ["month", "quarter", "year"],
+           "definition_file_list": [
+               "cloud_common/resourcespecsfact_by_.json",
+               "jobs/xdw/jobfact_by_.json",
+               "storage/xdw/storagefact.aggregation.json"
+             ],
+             "endpoints": {
+                 "destination": {
+                     "type": "mysql",
+                     "name": "XDMoD Data Warehouse",
+                     "config": "datawarehouse",
+                     "schema": "modw_aggregates"
+                 }
+             }
+         },
+         {
+             "name": "update-mod-aggregate-tables-by-day",
+             "description": "Update modw_aggregates _by_day tables to use InnoDB table engine",
+             "class": "ManageAggregateTables",
+             "aggregation_units": ["day"],
+             "definition_file_list": [
+                "cloud_common/resourcespecsfact_by_.json",
+                "jobs/xdw/jobfact_by_day.json",
+                "storage/xdw/storagefact.aggregation.json"],
+             "endpoints": {
+                 "destination": {
+                     "type": "mysql",
+                     "name": "XDMoD Data Warehouse",
+                     "config": "datawarehouse",
+                     "schema": "modw_aggregates"
+                 }
+             }
+          },
+          {
             "name": "update-schema-version-history-tables-to-innodb",
             "description": "Update modw_cloud tables to InnoDB",
             "class": "ManageTables",
@@ -219,6 +256,25 @@
             }
         },
         {
+            "name": "alter-mod_logger-log_id_seq-sequence_column",
+            "description": "Remove `AUTO_INCREMENT` from the `sequence` column",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/mod_logger/alter_log_id_seq.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_logger"
+                }
+            }
+        },
+        {
             "name": "alter-shredded_job_slurm",
             "description": "Alter mod_shredder.shredded_job_slurm to add qos_name column",
             "class": "ExecuteSql",
@@ -232,7 +288,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -250,7 +306,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -343,7 +399,15 @@
                     "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_cloud_resource_specs_host.sql"
                 }
             ]
-        }
+        },
+        {
+            "name": "update-modw-cloud-tables",
+            "description": "Update modw_cloud tables to InnoDB",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/cloud_resource_specs.json"
+              ]
+         }
     ],
     "storage-table-definition-update-9-5-0_10-0-0": [
         {

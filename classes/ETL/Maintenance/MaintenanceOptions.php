@@ -74,6 +74,16 @@ class MaintenanceOptions extends aOptions
                 }
                 break;
 
+            case 'aggregation_units':
+                $value = ( is_array($value) ? $value : array($value) );
+                foreach ( $value as $v ) {
+                    if ( ! is_string($v) ) {
+                        $msg = get_class($this) . ": '$property' must be a string or array of strings (type = " . gettype($v) . ")";
+                        throw new Exception($msg);
+                    }
+                }
+                break;
+
             default:
                 break;
         }
