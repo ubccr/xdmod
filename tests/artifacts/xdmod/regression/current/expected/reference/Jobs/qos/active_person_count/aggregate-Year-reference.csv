@@ -1,0 +1,28 @@
+title
+"Number of Users: Active: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Number of Users: Active"
+curry,31
+banana-cream,15
+derby,11
+green-grape,8
+bavarian-cream,7
+apple,5
+buttermilk,4
+bumbleberry,3
+butter,3
+coconut-cream,3
+blackberry,2
+boysenberry,2
+cheese,2
+cherry,2
+fish,2
+flapper,2
+blueberry,1
+cashew,1
+chestnut,1
+---------

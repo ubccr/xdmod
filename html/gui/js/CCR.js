@@ -449,7 +449,7 @@ XDMoD.constants.maxEmailLength = 200;
 /**
  * The minimum length of a username.
  */
-XDMoD.constants.minUsernameLength = 5;
+XDMoD.constants.minUsernameLength = 2;
 
 /**
  * The maximum length of a username.

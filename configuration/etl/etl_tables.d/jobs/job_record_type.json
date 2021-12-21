@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_record_type",
         "comment": "hpc, cloud, reservation, etc.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_type_id",

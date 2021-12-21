@@ -44,6 +44,7 @@
                 "common/hpcdb/people-on-accounts-history.json",
                 "common/hpcdb/requests.json",
                 "common/hpcdb/principal-investigators.json",
+                "common/hpcdb/qos.json",
                 "common/hpcdb/resource-allocated.json",
                 "common/hpcdb/resource-specs.json",
                 "common/hpcdb/system-accounts.json",
@@ -119,6 +120,11 @@
             "name": "resource-allocated",
             "description": "Ingest resource allocated data",
             "definition_file": "common/hpcdb/resource-allocated.json"
+        },
+        {
+            "name": "qos",
+            "description": "Ingest QOS",
+            "definition_file": "common/hpcdb/qos.json"
         },
         {
             "name": "accounts",

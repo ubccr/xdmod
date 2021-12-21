@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_records",
         "comment": "Request for resources by a user",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_id",
@@ -122,6 +122,13 @@
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "Method used to submit this job: cli, gateway, ..."
+            },
+            {
+                "name": "qos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Job quality of service"
             },
             {
                 "name": "queue",

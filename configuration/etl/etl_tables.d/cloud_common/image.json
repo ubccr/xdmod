@@ -3,7 +3,7 @@
 
     "table_definition": {
         "name": "image",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Images used by cloud instances",
         "columns": [
             {

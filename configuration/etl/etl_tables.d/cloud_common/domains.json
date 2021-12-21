@@ -2,7 +2,7 @@
   "#": "Domains are high-level containers for projects, users and groups and are specific to a resource.",
   "table_definition": {
     "name": "domains",
-    "engine": "MyISAM",
+    "engine": "InnoDB",
     "charset": "utf8",
     "comment": "Which domains are currently being tracked by the Cloud realm",
     "columns": [
