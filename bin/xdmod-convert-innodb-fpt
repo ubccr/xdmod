@@ -268,7 +268,7 @@ function drop_innodb_tables() {
             $res = $db->execute($sql_command);
         }
         catch ( Exception $e){
-            $logger->error($e->errorInfo[2]);
+            $logger->error($e->getMessage());
         }
 
         $logger->notice("Export Started: ". $command_start);
