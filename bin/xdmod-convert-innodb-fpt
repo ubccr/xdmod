@@ -11,9 +11,9 @@
  * The process of enabling the innodb_file_per_table MySQL option and making sure
  * existing InnoDB data is moved to the appropriate file by using the following steps.
  *
- * 1. Export all InnoDB tables. This can be done using this script and using the
+ * 1. Export all XDMoD InnoDB tables. This can be done using this script and using the
  *    --export-tables and --dir flags
- * 2. Drop all InnoDB tables. This can be done using the --drop-tables flag. Make
+ * 2. Drop all XDMoD InnoDB tables. This can be done using the --drop-tables flag. Make
  *    sure you have either run this script using the --export-tables flag or have
  *    manually exported the InnoDB tables.
  * 3. Shutdown the MySQL server
@@ -22,7 +22,7 @@
  * 5. Delete the ibdata1, ib_logfile0 and ib_logfile1 files from the mysql data
  *    directory. The default location for this is /var/lib/mysql
  * 6. Restart MySQL
- * 7. Import InnoDB data previously exported. This can be done using the
+ * 7. Import XDMoD InnoDB data previously exported. This can be done using the
  *   --import-tables and --dir flags.
  *
  * @package OpenXdmod
