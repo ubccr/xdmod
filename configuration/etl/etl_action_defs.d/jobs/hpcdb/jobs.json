@@ -9,7 +9,7 @@
             "resource_id": "r.resource_id",
             "allocation_breakdown_id": "upr.user_pi_resource_id",
             "allocation_id": "pr.pi_resource_id",
-            "qos_id": "IFNULL(q.qos_id, -1)",
+            "qos_id": "q.qos_id",
             "account_id": "p.pi_id",
             "local_jobid": "j.job_id",
             "local_job_array_index": "IFNULL(j.job_array_index, -1)",

@@ -254,6 +254,12 @@
                 "columns": [
                     "qos_id"
                 ]
+            },
+            {
+                "name": "nodecount_idx",
+                "columns": [
+                    "nodecount"
+                ]
             }
         ],
         "foreign_key_constraints": [
