@@ -313,7 +313,7 @@ function displayHelpText()
 {
     echo <<<'EOF'
 
-Usage: xdmod-ingestor [-v]
+Usage: xdmod-convert-innodb-fpt [-v]
 
     -h, --help
         Display this message and exit.
