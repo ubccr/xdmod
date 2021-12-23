@@ -421,7 +421,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "XDMoD Data Warehouse",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
