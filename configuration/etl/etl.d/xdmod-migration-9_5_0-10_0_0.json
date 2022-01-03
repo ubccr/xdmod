@@ -5,6 +5,10 @@
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
         },
+        "storage-table-definition-update-9-5-0_10-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+        },
         "cloud-migration-9-5-0_10-0-0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
@@ -319,7 +323,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "HPCDB Database",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -404,6 +408,24 @@
                 "cloud_common/cloud_resource_specs.json"
               ]
          }
+    ],
+    "storage-table-definition-update-9-5-0_10-0-0": [
+        {
+            "name": "UpateStagingStorageUsageTable",
+            "description": "Update event type on event table",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "storage/staging/usage.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        }
     ],
     "cloud-migration-innodb-9-5-0_10-0-0": [
         {

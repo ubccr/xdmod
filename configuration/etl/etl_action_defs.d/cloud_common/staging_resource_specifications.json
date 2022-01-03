@@ -10,7 +10,7 @@
               "host_id": "COALESCE(h.host_id, 1)",
               "vcpus": "raw.vcpus",
               "memory_mb": "raw.memory_mb",
-              "fact_date": "DATE(CONVERT_TZ(raw.fact_date, '+00:00', @@session.time_zone))"
+              "fact_date": "DATE(CONVERT_TZ(STR_TO_DATE(raw.fact_date, '%Y-%m-%dT%H:%i:%sZ'), '+00:00', @@session.time_zone))"
           },
           "joins": [{
               "name": "raw_resource_specs",

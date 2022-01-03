@@ -159,7 +159,7 @@ define('RESTRICTION_YES_NO', '/^[ny]$/');
 define('RESTRICTION_NON_EMPTY', '/^.+$/');
 define('RESTRICTION_RID', '/^[0-9]+|[0-9]{10,19}|[a-zA-z0-9]{64}$/');
 define('RESTRICTION_UID', '/^(\-?)[0-9]+$/');
-define('RESTRICTION_USERNAME', '/^[a-zA-Z0-9@.\-_+\']{5,'.CHARLIM_USERNAME.'}$/');
+define('RESTRICTION_USERNAME', '/^[a-zA-Z0-9@.\-_+\']{2,'.CHARLIM_USERNAME.'}$/');
 define('RESTRICTION_PASSWORD', '/^.{5,60}$/');
 define('RESTRICTION_FIRST_NAME', '/^.{1,'.CHARLIM_FIRST_NAME.'}$/');
 define('RESTRICTION_LAST_NAME', '/^.{1,'.CHARLIM_LAST_NAME.'}$/');
