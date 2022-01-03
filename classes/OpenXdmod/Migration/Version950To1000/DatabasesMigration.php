@@ -24,12 +24,29 @@ class DatabasesMigration extends AbstractDatabasesMigration
         $console = Console::factory();
         $pipelinesToRun = [];
 
+        if ($mysql_helper->tableExists('mod_shredder.staging_storage_usage')) {
+            Utilities::runEtlPipeline(
+                ['storage-table-definition-update-9-5-0_10-0-0'],
+                $this->logger,
+                ['last-modified-start-date' => '2017-01-01 00:00:00']
+            );
+        }
+
+        if ($mysql_helper->tableExists('modw_cloud.event')) {
+            Utilities::runEtlPipeline(
+                ['cloud-migration-9-5-0_10-0-0'],
+                $this->logger,
+                [
+                    'last-modified-start-date' => '2017-01-01 00:00:00'
+                ]
+            );
+        }
+
         if ($mysql_helper->tableExists('modw_cloud.cloud_resource_specs')) {
             $pipelinesToRun[] = 'cloud-resource-specs-migration-9-5-0_10-0-0';
         }
 
         if ($mysql_helper->tableExists('modw_cloud.event')) {
-            $pipelinesToRun[] = 'cloud-migration-9-5-0_10-0-0';
             $pipelinesToRun[] = 'cloud-migration-innodb-9-5-0_10-0-0';
         }
 
