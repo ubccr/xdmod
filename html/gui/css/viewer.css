@@ -748,3 +748,11 @@ img.data-export-action-icon {
 img.data-export-action-icon-hidden {
     display: none;
 }
+
+/* Class to enable text to be selectable. Originally added for Job Viewer Accounting data */
+.selectable-text {
+    user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -webkit-user-select: text;
+}
