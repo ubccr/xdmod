@@ -405,8 +405,20 @@
             "description": "Update modw_cloud tables to InnoDB",
             "class": "ManageTables",
             "definition_file_list": [
+                "cloud_common/raw_resource_specs.json",
                 "cloud_common/cloud_resource_specs.json"
               ]
+         },
+         {
+           "name": "UpdateCloudResourceSpecDatetimes",
+           "description": "Update datetimes in raw_resource_specs to correct format",
+           "class": "ExecuteSql",
+           "sql_file_list": [
+               {
+                   "delimiter": ";",
+                   "sql_file": "migrations/9.5.0-10.0.0/modw_cloud/update_cloud_resource_datetimes.sql"
+               }
+           ]
          }
     ],
     "storage-table-definition-update-9-5-0_10-0-0": [
@@ -425,6 +437,25 @@
                     "schema": "mod_shredder"
                 }
             }
+        },
+        {
+          "name": "UpdateStorageDatetimes",
+          "description": "Update datetimes in modw_shredder.staging_storage_usage to correct format",
+          "class": "ExecuteSql",
+          "sql_file_list": [
+              {
+                  "delimiter": ";",
+                  "sql_file": "migrations/9.5.0-10.0.0/mod_shredder/update_storage_datetimes.sql"
+              }
+          ],
+          "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "XDMoD Data Warehouse",
+                  "config": "database",
+                  "schema": "mod_shredder"
+              }
+          }
         }
     ],
     "cloud-migration-innodb-9-5-0_10-0-0": [
@@ -449,7 +480,6 @@
                 "cloud_common/instance.json",
                 "cloud_common/memory_buckets.json",
                 "cloud_common/processor_buckets.json",
-                "cloud_common/raw_resource_specs.json",
                 "cloud_common/record_type.json",
                 "cloud_common/session_records.json",
                 "cloud_common/staging_cloud_project_to_pi.json",
