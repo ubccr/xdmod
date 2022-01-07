@@ -86,7 +86,7 @@ jobs:
             equal: [ *centos8-executor, << parameters.os >> ]
           steps:
             - run:
-                name: Update the chromdriver version for Centos8
+                name: Update the chromedriver version for Centos8
                 command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
             - run:
                 name: Install new chromdriver
