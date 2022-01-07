@@ -89,7 +89,7 @@ jobs:
                 name: Update the chromedriver version for Centos8
                 command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
             - run:
-                name: Install new chromdriver
+                name: Install new chromedriver
                 command: |
                   cd /root/project/tests/ui
                   npm install
