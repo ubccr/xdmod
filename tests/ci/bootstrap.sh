@@ -132,8 +132,19 @@ then
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack -q
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack -q
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
         mysql -e "TRUNCATE TABLE modw_cloud.instance_type;"
         sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
+    fi
+
+    if [[ "$XDMOD_REALMS" == *"storage"* ]];
+    then
+        for storage_dir in $REF_DIR/storage/*; do
+            sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
+        done
+        last_modified_start_date=$(date +'%F %T')
+        sudo -u xdmod xdmod-ingestor --datatype storage
+        sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     fi
 fi
 
