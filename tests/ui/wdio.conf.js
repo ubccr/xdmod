@@ -4,6 +4,11 @@
  * put them into variable and then add them to the proper `capabilities`
  * variable
  */
+const crypto = require('crypto');
+const fs = require('fs');
+
+const screenshotDir = '/tmp/screenshots';
+
 var HeadlessChrome = {
     acceptInsecureCerts: true,
     browserName: 'chrome',
@@ -22,7 +27,7 @@ var HeadlessChrome = {
 var Chrome = {
     acceptInsecureCerts: true,
     browserName: 'chrome',
-    version: '84.0',
+    version: '87.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
@@ -241,6 +246,18 @@ exports.config = {
     // the test.
     after: function after(/* failures, pid */) {
         // do something
+    },
+
+    /**
+     * Get's executed after each test.
+     */
+    afterTest: function afterTest(test, context) {
+        if (!test.passed) {
+            let hash = crypto.createHash('md5').update(test.fullTitle).digest('hex');
+            let filename = `${screenshotDir}/${hash}`;
+            browser.saveScreenshot(`${filename}.png`);
+            fs.writeFileSync(`${filename}.json`, JSON.stringify(test));
+        }
     },
     //
     // Gets executed after all workers got shut down and the process is about to exit. It is not

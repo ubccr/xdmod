@@ -12,9 +12,12 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
-Requires:      mariadb >= 5.5.3
-Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring
-Requires:      php-pecl-apcu
+%{?el8:Requires: mariadb >= 10.3.17}
+%{?el8:Requires: php >= 7.2 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix}
+%{?el8:Requires: php-pecl-apcu php-json}
+%{?el7:Requires: mariadb >= 5.5.3}
+%{?el7:Requires: php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring}
+%{?el7:Requires: php-pecl-apcu}
 Requires:      libreoffice-writer
 Requires:      chromium-headless
 Requires:      librsvg2-tools
