@@ -176,12 +176,12 @@ function get_query($separator=' ') {
       'mod_hpcdb',
       'modw_filters',
       'mod_etl',
-      'mod_supremm',
+      'modw_supremm',
       'modw_ondemand',
       'modw_jobefficiency',
       'mod_logger',
       'mod_hardware',
-      'mod_apperknel',
+      'mod_appkernel',
       'mod_shredder'
     );
 
