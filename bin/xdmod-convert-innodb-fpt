@@ -52,7 +52,7 @@ try {
 
 function main()
 {
-    global $argv, $db, $logger, $directory;
+    global $argv, $db, $logger, $directory, $file_suffix, $file_suffix_length;
 
     $logLevel = -1;
 
@@ -87,6 +87,8 @@ function main()
     $help = false;
     $action = null;
     $directory = null;
+    $file_suffix = '_innodb_tables_backup.sql';
+    $file_suffix_length = strlen($file_suffix);
 
     foreach ($args as $key => $value) {
         if (is_array($value)) {
@@ -140,7 +142,7 @@ function main()
         'manage-innodb-tables',
         array(
             'file' => false,
-            'db' => true,
+            'db' => false,
             'mail' => false,
             'console' => true,
             'consoleLogLevel' => $logLevel
@@ -203,7 +205,7 @@ function get_query($separator=' ') {
 }
 
 function export_innodb_tables() {
-    global $logger, $db, $directory;
+    global $logger, $db, $directory, $file_suffix;
 
     if ( $directory === null) {
         $logger->crit("You must specify the directory export the tables too using the ---dir flag");
@@ -219,7 +221,8 @@ function export_innodb_tables() {
     $start = date('Y-m-d h:i:s');
 
     foreach ($tables_to_export as $table) {
-        $innodb_filepath = $directory .'/'. $table['table_schema']. '_innodb_tables_backup.sql';
+        $innodb_filepath = $directory .'/'. $table['table_schema'] . $file_suffix;
+        $logger->notice("Saving to: " . $innodb_filepath);
         $command_start = date('Y-m-d h:i:s');
         $logger->notice("Exporting from database: " . $table['table_schema']);
         $logger->notice("Exporting tables: ".$table['table_name']);
@@ -238,7 +241,7 @@ function export_innodb_tables() {
 }
 
 function drop_innodb_tables() {
-    global $logger, $db, $directory;
+    global $logger, $db, $directory, $file_suffix_length, $file_suffix;
     $console = Console::factory();
     $db = DB::factory('database');
 
@@ -280,20 +283,20 @@ function drop_innodb_tables() {
 }
 
 function import_innodb_tables() {
-    global $logger, $db, $directory;
+    global $logger, $db, $directory, $file_suffix, $file_suffix_length;
 
     if ( $directory === null) {
         $logger->crit("You must specify the directory export the tables too using the ---dir flag");
         return;
     }
 
-    $innodb_export_files = $directory . '/*_innodb_tables_backup.sql';
+    $innodb_export_files = $directory . '/*'.$file_suffix;
     $start = date('Y-m-d h:i:s');
     $files = glob($innodb_export_files);
 
     foreach( $files as $file ){
         $command_start = date('Y-m-d h:i:s');
-        $db_name = substr(basename($file), 0, -25);
+        $db_name = substr(basename($file), 0, -$file_suffix_length);
         $logger->notice("Importing from file: ".$file);
         $logger->notice("Importing into database: ". $db_name);
         $cmd = "mysql --init-command='SET SESSION FOREIGN_KEY_CHECKS=0;' ". $db_name . " < ". $file;
