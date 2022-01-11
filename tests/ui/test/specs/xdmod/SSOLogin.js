@@ -19,7 +19,7 @@ describe('Single Sign On Login', () => {
         $('#main_tab_panel__about_xdmod').waitForVisible();
     });
     it('Should prompt with My Profile', () => {
-        browser.waitForVisible('#xdmod-profile-editor button.general_btn_close');
+        browser.waitForVisible('#xdmod-profile-editor button.general_btn_close', 30000);
         browser.waitAndClick('#xdmod-profile-editor button.general_btn_close');
         browser.waitForInvisible('#xdmod-profile-editor');
     });

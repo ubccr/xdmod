@@ -3,7 +3,6 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
-use JsonSchema\Validator;
 
 class UserInterfaceTest extends BaseUserAdminTest
 {
@@ -60,7 +59,6 @@ class UserInterfaceTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
             false
         );
-
         $this->validateJson($actual, $schemaObject);
 
         # Check expected file
