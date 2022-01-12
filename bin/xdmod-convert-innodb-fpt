@@ -175,7 +175,7 @@ function get_query($separator=' ') {
       'modw_cloud',
       'mod_hpcdb',
       'modw_filters',
-      'mod_etl',
+      'modw_etl',
       'modw_supremm',
       'modw_ondemand',
       'modw_jobefficiency',
