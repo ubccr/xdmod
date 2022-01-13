@@ -370,6 +370,7 @@ ETLProfile.prototype.getAggregationTables = function () {
                 category: agg.category,
 				def: agg.def || f.def,
                 dimension: agg.dimension || false,
+                alternate_group_by: agg.alternate_group_by || false,
                 show_all_dimension_values: agg.show_all_dimension_values || false
 			};
             newf.name = newf.name.replace(/\:field_name/g, field);
@@ -748,6 +749,9 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 
                     var itemAlias = tableColumns[tc].alias || tableColumns[tc].name;
                     xdmodInteg.addGroupBy(itemAlias, tableColumns[tc].roles);
+                    if (tableColumns[tc].alternate_group_by) {
+                        xdmodInteg.addGroupBy(tableColumns[tc].alternate_group_by, tableColumns[tc].roles);
+                    }
 
                     groupBys[itemAlias] = generateGroupBy(itemAlias, tableColumns[tc]);
 
