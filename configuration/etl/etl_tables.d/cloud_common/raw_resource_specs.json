@@ -32,7 +32,7 @@
             },
             {
                 "name": "fact_date",
-                "type": "datetime",
+                "type": "varchar(25)",
                 "nullable": false
             }
         ],

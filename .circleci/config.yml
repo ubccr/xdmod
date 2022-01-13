@@ -3,14 +3,22 @@
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
 version: 2.1
+
+executors:
+  centos7:
+    docker:
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
+  centos8: &centos8-executor
+    docker:
+      - image: tools-ext-01.ccr.xdmod.org/centos8-0.3:base
 jobs:
   build:
     parameters:
+      os:
+        type: executor
       install-type:
         type: string
-    docker:
-      # The first image entry here will be used as the image for the parent container.
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-1.0
+    executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud'
@@ -19,8 +27,14 @@ jobs:
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
+      - run:
+          name: Generate OpenSSL Key
+          command: openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
+      - run:
+          name: Generate Certificate
+          command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
-      # We need to update our acct before we can enable docker layer caching.
+      # We need to update our acct before we can enable docker layer caching
       #- setup_remote_docker:
       #    docker_layer_caching: true
       # Download and cache dependencies
@@ -67,6 +81,19 @@ jobs:
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
+      - when:
+          condition:
+            equal: [ *centos8-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Update the chromedriver version for Centos8
+                command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
+            - run:
+                name: Install new chromedriver
+                command: |
+                  cd /root/project/tests/ui
+                  npm install
+                  cd /root/project
       - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
       - run:
           name: 'Run SSO Tests'
@@ -90,4 +117,8 @@ workflows:
       - build:
           matrix:
             parameters:
+              os: [centos7, centos8]
               install-type: ["fresh_install", "upgrade"]
+            exclude:
+              - os: centos8
+                install-type: "upgrade"

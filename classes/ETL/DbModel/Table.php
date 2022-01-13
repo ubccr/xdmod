@@ -312,16 +312,32 @@ AND table_name = :tablename";
         // SMG: We should do a better job of detecting equivalent columns. For example "int unsigned" is
         // equivalent to "int(10) unsigned".
 
-        $sql = "SELECT
-column_name as name, column_type as type, is_nullable as nullable,
-character_set_name as charset,
-collation_name as collation,
-column_default as " . $endpoint->quoteSystemIdentifier("default") . ",
-IF('' = extra, NULL, extra) as extra,
-IF('' = column_comment, NULL, column_comment) as " . $endpoint->quoteSystemIdentifier("comment") . "
+        // NOTE: An additional `IF` statement was added to the `COLUMN_DEFAULT` clause as MariaDB 10.2+ started
+        // reporting default values differently than previous MySQL / MariaDB versions.
+        // Related links:
+        //   - https://jira.mariadb.org/browse/MDEV-15377
+        //   - https://mariadb.com/kb/en/incompatibilities-and-feature-differences-between-mariadb-102-and-mysql-57/
+        //       - "Since MariaDB supports expressions in the DEFAULT clause, in MariaDB, the INFORMATION_SCHEMA.COLUMNS
+        //         table contains extra fields, and also quotes the DEFAULT value of a string in the COLUMN_DEFAULT
+        //         field in order to distinguish it from an expression.
+        $sql = "
+SELECT column_name                                   AS name,
+       column_type                                   AS type,
+       is_nullable                                   AS nullable,
+       character_set_name                            AS charset,
+       collation_name                                AS collation,
+       IF(
+           INSTR(COLUMN_DEFAULT, '\''),
+           SUBSTR(column_default, 2, LENGTH(COLUMN_DEFAULT) - 2),
+           IF(COLUMN_DEFAULT = 'NULL',
+               NULL,
+               COLUMN_DEFAULT)
+           ) as 'default',
+       IF('' = extra, NULL, extra)                   AS extra,
+       IF('' = column_comment, NULL, column_comment) AS 'comment'
 FROM information_schema.columns
 WHERE table_schema = :schema
-AND table_name = :tablename
+  AND table_name = :tablename
 ORDER BY ordinal_position ASC";
 
         try {

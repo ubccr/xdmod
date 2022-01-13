@@ -149,7 +149,7 @@ class Utilities
 
         $vs = new VariableStore();
 
-        if ( isset($config->args) && count($config->args) > 0 ) {
+        if ( isset($config->args) ) {
             $vs->add((array) $config->args);
             $macro = $vs->substitute($macro);
 
