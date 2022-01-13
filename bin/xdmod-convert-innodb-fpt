@@ -1,0 +1,347 @@
+#!/usr/bin/env php
+<?php
+/**
+ * This is a helper script for changes related to enabling the innodb_file_per_table
+ * configuration option for the MySQL database XDMoD is using.
+ *
+ * When enabling innodb_file_per_table we recommend that you export, drop and
+ * re-import all XDMoD InnoDB tables in order to make sure existing InnoDB data
+ * is moved to one file per table.
+ *
+ * The process of enabling the innodb_file_per_table MySQL option and making sure
+ * existing InnoDB data is moved to the appropriate file by using the following steps.
+ *
+ * 1. Export all XDMoD InnoDB tables. This can be done using this script and using the
+ *    --export-tables and --dir flags
+ * 2. Drop all XDMoD InnoDB tables. This can be done using the --drop-tables flag. Make
+ *    sure you have either run this script using the --export-tables flag or have
+ *    manually exported the InnoDB tables.
+ * 3. Shutdown the MySQL server
+ * 4. Add the following line to /etc/my.cnf file.
+ *    innodb_file_per_table = 'On'
+ * 5. Delete the ibdata1, ib_logfile0 and ib_logfile1 files from the mysql data
+ *    directory. The default location for this is /var/lib/mysql
+ * 6. Restart MySQL
+ * 7. Import XDMoD InnoDB data previously exported. This can be done using the
+ *   --import-tables and --dir flags.
+ *
+ * @package OpenXdmod
+ *
+ * @author Greg Dean<gmdean@ccr.buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\Log;
+use OpenXdmod\DataWarehouseInitializer;
+use OpenXdmod\Setup\Console;
+
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        fwrite(STDERR, $e->getMessage() . "\n");
+        fwrite(STDERR, $e->getTraceAsString() . "\n");
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+function main()
+{
+    global $argv, $db, $logger, $directory, $file_suffix, $file_suffix_length;
+
+    $logLevel = -1;
+
+    $opts = array(
+        array('h', 'help'),
+        array('d:', 'dir:'),
+
+        // Logging levels.
+        array('v', 'verbose'),
+        array('',  'debug'),
+        array('q', 'quiet'),
+
+        // Phases.
+        array('', 'drop-tables'),
+        array('', 'import-tables'),
+        array('', 'export-tables')
+    );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = false;
+    $action = null;
+    $directory = null;
+    $file_suffix = '_innodb_tables_backup.sql';
+    $file_suffix_length = strlen($file_suffix);
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'd':
+            case 'dir':
+                if (!is_dir($value)) {
+                  fwrite(STDERR, "The directory '$value' does not exist. Please create it or specify the full path to another directory.\n");
+                  exit(1);
+                }
+                $directory = $value;
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'export-tables':
+                $action = 'export_innodb_tables';
+                break;
+            case 'drop-tables':
+                $action = 'drop_innodb_tables';
+                break;
+            case 'import-tables':
+                $action = 'import_innodb_tables';
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    $logger = Log::factory(
+        'manage-innodb-tables',
+        array(
+            'file' => false,
+            'db' => false,
+            'mail' => false,
+            'console' => true,
+            'consoleLogLevel' => $logLevel
+        )
+    );
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    if ($action !== null) {
+        $logger->notice("Calling action: ".$action);
+        call_user_func($action);
+    }
+    else {
+        $logger->notice("No action was set. Please look at the help text.");
+        exit;
+    }
+
+
+}
+
+function get_query($separator=' ') {
+
+    $database_list = array(
+      'moddb',
+      'modw',
+      'modw_aggregates',
+      'modw_cloud',
+      'mod_hpcdb',
+      'modw_filters',
+      'modw_etl',
+      'modw_supremm',
+      'modw_ondemand',
+      'modw_jobefficiency',
+      'mod_logger',
+      'mod_hardware',
+      'mod_appkernel',
+      'mod_shredder'
+    );
+
+    $query = "SELECT
+                table_schema,
+                GROUP_CONCAT(table_name SEPARATOR '".$separator."') AS table_name
+            FROM
+                INFORMATION_SCHEMA.TABLES
+            WHERE
+                engine = 'InnoDB'
+            AND
+                table_type = 'BASE TABLE'
+            AND
+                table_schema
+            IN
+                ('".implode('\',\'', $database_list)."')
+            GROUP BY
+                table_schema";
+
+    return $query;
+}
+
+function export_innodb_tables() {
+    global $logger, $db, $directory, $file_suffix;
+
+    if ( $directory === null) {
+        $logger->crit("You must specify the directory export the tables too using the ---dir flag");
+        return;
+    }
+
+    $db = DB::factory('database');
+
+    $query = get_query();
+    $logger->debug("Running query: " . $query);
+    $tables_to_export = $db->query($query);
+
+    $start = date('Y-m-d h:i:s');
+
+    foreach ($tables_to_export as $table) {
+        $innodb_filepath = $directory .'/'. $table['table_schema'] . $file_suffix;
+        $logger->notice("Saving to: " . $innodb_filepath);
+        $command_start = date('Y-m-d h:i:s');
+        $logger->notice("Exporting from database: " . $table['table_schema']);
+        $logger->notice("Exporting tables: ".$table['table_name']);
+        $cmd = "mysqldump " .$table['table_schema']." ".$table['table_name']." > " . $innodb_filepath;
+        $logger->debug("Command being run: " . $cmd);
+        exec($cmd);
+        $command_end = date('Y-m-d h:i:s');
+        $logger->notice("Export Started: ". $command_start);
+        $logger->notice("Export Ended: ". $command_end);
+    }
+
+    $end = date('Y-m-d h:i:s');
+
+    $logger->notice("Total Export Started: ". $start);
+    $logger->notice("Total Export Ended: ". $end);
+}
+
+function drop_innodb_tables() {
+    global $logger, $db, $directory, $file_suffix_length, $file_suffix;
+    $console = Console::factory();
+    $db = DB::factory('database');
+
+    $start = date('Y-m-d h:i:s');
+    $tables_to_drop = $db->query(get_query(','));
+
+    $console->displayMessage("===========WARNING!!!!============");
+    $console->displayMessage("You are about to drop all of your InnoDB tables!!! If you have not exported these tables already, please do so now.");
+    $proceed = $console->prompt(
+        "Are you sure you want to drop all of your InnoDB tables?",
+        'no',
+        array('yes', 'no')
+    ) === 'yes';
+
+    if( !$proceed ) {
+        $logger->notice("Dropping tables aborted");
+        exit(1);
+    }
+
+    foreach( $tables_to_drop as $table ) {
+        $command_start = date('Y-m-d h:i:s');
+        $sql_command = "SET foreign_key_checks=0; USE ".$table['table_schema']."; DROP TABLE IF EXISTS ". $table['table_name'] ."; SET foreign_key_checks = 1;";
+        $logger->notice("Dropping tables in database: ". $table['table_schema']);
+        $logger->notice("Dropping table: ". $table['table_name']);
+
+        try{
+            $res = $db->execute($sql_command);
+        }
+        catch ( Exception $e){
+            $logger->error($e->getMessage());
+        }
+
+        $logger->notice("Export Started: ". $command_start);
+        $logger->notice("Export Ended: ". date('Y-m-d h:i:s'));
+    }
+
+    $logger->notice("Total Export Started: ". $start);
+    $logger->notice("Total Export Ended: ". date('Y-m-d h:i:s'));
+}
+
+function import_innodb_tables() {
+    global $logger, $db, $directory, $file_suffix, $file_suffix_length;
+
+    if ( $directory === null) {
+        $logger->crit("You must specify the directory export the tables too using the ---dir flag");
+        return;
+    }
+
+    $innodb_export_files = $directory . '/*'.$file_suffix;
+    $start = date('Y-m-d h:i:s');
+    $files = glob($innodb_export_files);
+
+    foreach( $files as $file ){
+        $command_start = date('Y-m-d h:i:s');
+        $db_name = substr(basename($file), 0, -$file_suffix_length);
+        $logger->notice("Importing from file: ".$file);
+        $logger->notice("Importing into database: ". $db_name);
+        $cmd = "mysql --init-command='SET SESSION FOREIGN_KEY_CHECKS=0;' ". $db_name . " < ". $file;
+        $logger->notice($cmd);
+
+        exec($cmd);
+
+        $logger->notice("Export Started: ". $command_start);
+        $logger->notice("Export Ended: ". date('Y-m-d h:i:s'));
+    }
+
+    $logger->notice("Total Export Started: ". $start);
+    $logger->notice("Total Export Ended: ". date('Y-m-d h:i:s'));
+}
+
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Usage: xdmod-convert-innodb-fpt [-v]
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level and above log messages.
+
+    --debug
+        Output debug level and above log messages.
+
+    --d, --dir
+        Location where the InnoDB database sql are to be written to or read from. Should be used when
+        using the --export-tables or --import-tables flags.
+
+    --export-tables
+        Exports all InnoDB tables that exist in XDMoD databases to SQL files. Use the --dir flag to
+        specify the location to export the tables to.
+
+    --drop-tables
+        Drop all InnoDB tables that exist in XDMoD databases. Make sure you either run --export-tables
+        or manually export all InnoDB tables before using this flag.
+
+    --import-tables
+        Import XDMoD InnoDB tables from a directory specified using the --dir flag. This is meant to
+        import tables that were exported using the --export-tables flag.
+
+EOF;
+}
