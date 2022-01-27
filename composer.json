@@ -67,9 +67,9 @@
                 ],
                 "homepage": "https://www.highcharts.com/products/highcharts",
                 "dist": {
-                    "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
+                    "url": "https://code.highcharts.com/zips/Highcharts-4.2.7.zip",
                     "type": "zip",
-                    "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
+                    "shasum": "d73108287fe8e34448e1dddda1558cf824be3d4d"
                 },
                 "require": {
                     "composer/installers": "~1.0"

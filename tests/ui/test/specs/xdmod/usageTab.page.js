@@ -25,10 +25,11 @@ class Usage {
         };
         this.chart = '//div[@id="tg_usage"]//div[@class="highcharts-container"]//*[local-name() = "svg"]';
         this.chartByTitle = function (title) {
-            return module.exports.chart + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
+            return module.exports.chart +'/*[name() = "text"]/*[contains(text(), "' + title +'")]';
         };
+        // //div[@id="tg_usage"]//div[@class="highcharts-container"]//*[local-name() = "svg"]/*[name() = "text"]/*[contains(text(), "CPU Hours: Total")]
         this.chartXAxisLabelByName = function (name) {
-            return module.exports.chart + '/*[name() = "g" and contains(@class, "highcharts-xaxis-labels")]/*[name() = "text" and text() = "' + name + '"]';
+            return module.exports.chart + '/*[name() = "g" and contains(@class, "highcharts-xaxis-labels")]//*[text() = "' + name + '"]';
         };
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';

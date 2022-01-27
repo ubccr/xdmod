@@ -625,11 +625,11 @@
         },
         {
             "name": "highsoft/highcharts",
-            "version": "4.2.5",
+            "version": "4.2.7",
             "dist": {
                 "type": "zip",
-                "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
-                "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
+                "url": "https://code.highcharts.com/zips/Highcharts-4.2.7.zip",
+                "shasum": "d73108287fe8e34448e1dddda1558cf824be3d4d"
             },
             "require": {
                 "composer/installers": "~1.0"
