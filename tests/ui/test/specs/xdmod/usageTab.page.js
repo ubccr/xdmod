@@ -25,7 +25,7 @@ class Usage {
         };
         this.chart = '//div[@id="tg_usage"]//div[@class="highcharts-container"]//*[local-name() = "svg"]';
         this.chartByTitle = function (title) {
-            return module.exports.chart +'/*[name() = "text"]/*[contains(text(), "' + title +'")]';
+            return module.exports.chart + '/*[name() = "text"]/*[contains(text(), "' + title + '")]';
         };
         // //div[@id="tg_usage"]//div[@class="highcharts-container"]//*[local-name() = "svg"]/*[name() = "text"]/*[contains(text(), "CPU Hours: Total")]
         this.chartXAxisLabelByName = function (name) {
