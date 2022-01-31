@@ -15,16 +15,31 @@ use ETL\Utilities;
  */
 class DatabasesMigration extends AbstractDatabasesMigration
 {
+    /**
+     * Check whether a table exists in the datawarehouse. Note this creates (and destroys)
+     * a new connection for the check. This mitigates problems with a persistent connection
+     * timing out (which can happen if there is a long time between queries).
+     * @param string $tableName the name of the table to check.
+     * @return bool whether the table exists in the datawarehouse.
+     */
+    private function tableExists($tableName)
+    {
+        $dbh = DB::factory('datawarehouse');
+        $mysql_helper = \CCR\DB\MySQLHelper::factory($dbh);
+        $exists = $mysql_helper->tableExists($tableName);
+        $mysql_helper = null;
+        $dbh = null;
+        return $exists;
+    }
+
     public function execute()
     {
         parent::execute();
 
-        $dbh = DB::factory('datawarehouse');
-        $mysql_helper = \CCR\DB\MySQLHelper::factory($dbh);
         $console = Console::factory();
         $pipelinesToRun = [];
 
-        if ($mysql_helper->tableExists('mod_shredder.staging_storage_usage')) {
+        if ($this->tableExists('mod_shredder.staging_storage_usage')) {
             Utilities::runEtlPipeline(
                 ['storage-table-definition-update-9-5-0_10-0-0'],
                 $this->logger,
@@ -32,7 +47,7 @@ class DatabasesMigration extends AbstractDatabasesMigration
             );
         }
 
-        if ($mysql_helper->tableExists('modw_cloud.event')) {
+        if ($this->tableExists('modw_cloud.event')) {
             Utilities::runEtlPipeline(
                 ['cloud-migration-9-5-0_10-0-0'],
                 $this->logger,
@@ -42,11 +57,11 @@ class DatabasesMigration extends AbstractDatabasesMigration
             );
         }
 
-        if ($mysql_helper->tableExists('modw_cloud.cloud_resource_specs')) {
+        if ($this->tableExists('modw_cloud.cloud_resource_specs')) {
             $pipelinesToRun[] = 'cloud-resource-specs-migration-9-5-0_10-0-0';
         }
 
-        if ($mysql_helper->tableExists('modw_cloud.event')) {
+        if ($this->tableExists('modw_cloud.event')) {
             $pipelinesToRun[] = 'cloud-migration-innodb-9-5-0_10-0-0';
         }
 
