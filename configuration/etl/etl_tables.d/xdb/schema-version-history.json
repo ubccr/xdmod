@@ -16,7 +16,8 @@
             {
                 "name": "action_datetime",
                 "type": "datetime",
-                "nullable": false
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP"
             },
             {
                 "name": "action_type",

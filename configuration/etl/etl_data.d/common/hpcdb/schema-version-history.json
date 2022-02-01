@@ -1,4 +1,4 @@
 [
-    ["database_name", "schema_version", "action_datetime", "action_type", "script_name"],
-    ["mod_hpcdb", "8.0.0", "NOW()", "created", "N/A"]
+    ["database_name", "schema_version","action_type", "script_name"],
+    ["mod_hpcdb", "8.0.0", "created", "N/A"]
 ]
