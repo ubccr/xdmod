@@ -52,6 +52,18 @@
                 ],
                 "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "idx_user_id",
+                "columns": [
+                    "user_id"
+                ]
+            },
+            {
+                "name": "idx_init_time",
+                "columns": [
+                    "init_time"
+                ]
             }
         ],
         "triggers": []
