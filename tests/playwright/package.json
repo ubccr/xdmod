@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "ui_tests",
+  "version": "1.0.0",
+  "description": "UI tests for Open XDMoD",
+  "author": "Ryan Rathsam",
+  "license": "GPL-3.0",
+  "repository": "https://github.com/ubccr/xdmod",
+  "devDependencies": {
+    "@playwright/test": "^1.18.0"
+  },
+  "dependencies": {
+    "D": "^1.0.0",
+    "npx": "^10.2.2"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "sameSite": "Lax",
+      "name": "PHPSESSID",
+      "value": "2j1igi8bhboh16upsp8f58k8u2",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "Lax",
+      "name": "xdmod_token",
+      "value": "5762e5001b75cfa9fd61502740e0f7c8",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true
+    }
+  ],
+  "origins": []
+}
