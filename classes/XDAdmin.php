@@ -53,25 +53,16 @@ class XDAdmin
                 u.first_name,
                 u.last_name,
                 u.account_is_active,
-                CASE
-                    WHEN (
-                        SELECT init_time
-                        FROM SessionManager
-                        WHERE user_id = u.id
-                        ORDER BY init_time DESC
-                        LIMIT 1
-                    ) IS NULL
-                        THEN '0'
-                    ELSE (
-                        SELECT init_time
-                        FROM SessionManager
-                        WHERE user_id = u.id
-                        ORDER BY init_time DESC
-                        LIMIT 1
-                    )
-                END AS last_logged_in
+                COALESCE(MAX(sm.init_time), 0) AS last_logged_in
             FROM Users u
+            LEFT JOIN SessionManager sm ON sm.user_id = u.id
             $filterSQL
+            GROUP BY
+                u.id,
+                u.username,
+                u.first_name,
+                u.last_name,
+                u.account_is_active
             ORDER BY last_logged_in DESC
         ";
 
