@@ -1,0 +1,1 @@
+ALTER TABLE `mod_hpcdb`.schema_version_history ALTER action_datetime SET DEFAULT CURRENT_TIMESTAMP;
