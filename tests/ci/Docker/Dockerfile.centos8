@@ -22,21 +22,34 @@ RUN openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interru
 # Generate SSL Certificate
 RUN /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
 
+# Setup the base mysql db dir
 RUN mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 
-WORKDIR /root
-RUN mkdir -p /root/rpmbuild/RPMS/noarch
-RUN git clone --single-branch https://github.com/ubccr/xdmod/ --branch $BRANCH /root/xdmod
 
+# Create the directory that XDMoD RPM will be built / saved to.
+RUN mkdir -p /root/rpmbuild/RPMS/noarch
+
+# Checkout the latest XDMoD branch
+RUN git clone --single-branch --depth=1 https://github.com/ubccr/xdmod/ --branch $BRANCH /root/xdmod
+
+# buildrpm requires us to start the script from the directory that we checked XDMoD out to.
 WORKDIR /root/xdmod
+
+#
+RUN composer install
+
+# Build the XDMoD RPM that will be installed in this docker image.
 RUN /root/bin/buildrpm xdmod
 
-WORKDIR /root
+# Install / Upgrade based on the XDMOD_TEST_MODE env variable.
 RUN /root/xdmod/tests/ci/bootstrap.sh
 
+# We need to be in the tests/ui dir to install the dependencies in package.json
 WORKDIR /root/xdmod/tests/ui
+# Install the ui test dependencies
 RUN npm install
 
+# Clean everything up
 RUN yum clean all
 RUN rm -rf /var/cache/yum /root/xdmod /root/rpmbuild
 
