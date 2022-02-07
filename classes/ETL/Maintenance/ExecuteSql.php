@@ -267,6 +267,11 @@ class ExecuteSql extends aAction implements iAction
 
             $this->logger->notice("Finished Processing $numStatementsProcessed SQL statements");
 
+            // close the connection after each file if there are multiple files then
+            // a new connection will be created. This mitigates problems with long
+            // running queries.
+            $this->destinationEndpoint->disconnect();
+
         }  // foreach ( $this->options->sql_file_list as $sqlFile )
 
         $time_end = microtime(true);
