@@ -1,4 +1,0 @@
-[
-    ["database_name", "schema_version","action_type", "script_name"],
-    ["mod_hpcdb", "8.0.0", "created", "N/A"]
-]
