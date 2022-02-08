@@ -29,6 +29,13 @@ class Version
     protected static $latestVersion;
 
     /**
+     * Array of MySQLHelper objects.
+     *
+     * @var MySQLHelper[]
+     */
+    protected static $databaseHelpers = array();
+
+      /**
      * HTTP query timeout length in seconds.
      *
      * @var int
@@ -41,6 +48,7 @@ class Version
      * @var LoggerInterface
      */
     protected static $logger = null;
+
 
     /**
      * Set the HTTP query timeout.
