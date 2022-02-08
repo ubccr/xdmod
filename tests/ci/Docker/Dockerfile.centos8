@@ -1,10 +1,12 @@
 FROM tools-ext-01.ccr.xdmod.org/centos8.4:xdmod-base
-# tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos8.4-0.1
+
 ENV BRANCH=xdmod10.0
 ENV REL=10.0
 ENV BUILD=1.0
 ENV TERM=xterm-256color
 ENV XDMOD_TEST_MODE=fresh_install
+
+LABEL description="The main XDMoD image used in our CI builds or local testing."
 
 # We have some caches that we put in place for automated builds.
 # This will copy them into place if they exist
