@@ -365,6 +365,22 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "update-moddb-users",
+            "description": "Update moddb Users table",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "xdb/users.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "moddb"
+                }
+            }
         }
     ],
     "cloud-migration-9-5-0_10-0-0": [

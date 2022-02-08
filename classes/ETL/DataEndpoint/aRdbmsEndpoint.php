@@ -150,7 +150,8 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
         // in the config file. You can, however, explicitly reference a schema in your query.
 
         try {
-            $this->handle = DB::factory($this->config);
+            $this->handle = DB::factory($this->config, false);
+            $this->handle->disconnect();
         } catch (Exception $e) {
             $msg = "Error connecting to data endpoint '" . $this->name . "'. " . $e->getMessage();
             $this->logAndThrowException($msg);
