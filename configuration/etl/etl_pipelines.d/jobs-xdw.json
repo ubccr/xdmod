@@ -41,7 +41,6 @@
                 "jobs/xdw/resource-fact.json",
                 "jobs/xdw/resource-specs.json",
                 "jobs/xdw/resource-type.json",
-                "jobs/xdw/schema-version-history.json",
                 "jobs/xdw/service-provider.json",
                 "jobs/xdw/staging-jobhosts.json",
                 "jobs/xdw/system-account.json",
@@ -153,18 +152,6 @@
                     "type": "jsonfile",
                     "name": "unknown qos data",
                     "path": "jobs/xdw/qos.json"
-                }
-            }
-        },
-        {
-            "name": "schema-version",
-            "definition_file": "jobs/xdw/schema-version-history.json",
-            "description": "resource-type + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "schema version history",
-                    "path": "jobs/xdw/schema-version-history.json"
                 }
             }
         },
