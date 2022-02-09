@@ -220,7 +220,7 @@
                      "schema": "modw_aggregates"
                  }
              }
-         },
+        },
         {
             "name": "convert-mod-logger-tables-to-innodb",
             "description": "Convert mod_logger tables to InnoDB",

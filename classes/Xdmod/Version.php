@@ -35,7 +35,7 @@ class Version
      */
     protected static $databaseHelpers = array();
 
-      /**
+    /**
      * HTTP query timeout length in seconds.
      *
      * @var int
