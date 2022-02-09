@@ -18,7 +18,7 @@ case "$OS_VERSION" in
           mv $ASSETS/chromedriver_linux64.zip /root
       fi
       ;;
-    8)
+    8|8.5)
       if [[ -f $ASSETS/chromedriver_linux64-97.0.zip ]]; then
           mv $ASSETS/chromedriver_linux64-97.0.zip /root/chromedriver_linux64.zip
       fi
