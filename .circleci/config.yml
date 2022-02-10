@@ -125,5 +125,7 @@ workflows:
               os: [centos7, centos8, rocky8]
               install-type: ["fresh_install", "upgrade"]
             exclude:
-              - os: [centos8, rocky8]
+              - os: centos8
+                install-type: "upgrade"
+              - os: rocky8
                 install-type: "upgrade"
