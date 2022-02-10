@@ -1,4 +1,4 @@
-FROM tools-ext-01.ccr.xdmod.org/rocky8:xdmod-base
+FROM tools-int-01.ccr.xdmod.org/rockylinux8:xdmod-base
 
 ENV BRANCH=xdmod10.0
 ENV REL=10.0
