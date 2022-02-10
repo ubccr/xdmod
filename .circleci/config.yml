@@ -11,6 +11,9 @@ executors:
   centos8: &centos8-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod10.0.0:centos8.4-0.1
+  rocky8: &rocky8-executor
+    docker:
+      - image: tools-ext-01.ccr.xdmod.org/xdmod10.0.0:rockylinux8-0.1
 jobs:
   build:
     parameters:
@@ -119,8 +122,8 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [centos7, centos8]
+              os: [centos7, centos8, rocky8]
               install-type: ["fresh_install", "upgrade"]
             exclude:
-              - os: centos8
+              - os: [centos8, rocky8]
                 install-type: "upgrade"
