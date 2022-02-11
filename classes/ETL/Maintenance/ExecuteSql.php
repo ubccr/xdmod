@@ -218,9 +218,9 @@ class ExecuteSql extends aAction implements iAction
 
                 $commentPatterns = array(
                     // Hash-style comments
-                    '/^\s*#.*[\r\n]+/',
+                    '/^\s*#.*[\r\n]+/m',
                     // Standard SQL comments.
-                    '/^\s*-- ?.*[\r\n]+/'
+                    '/^\s*-- ?.*[\r\n]+/m'
                     );
                 $sql = preg_replace($commentPatterns, "", $sql);
 
