@@ -181,6 +181,11 @@ class ExecuteSql extends aAction implements iAction
         $this->initialize($etlOverseerOptions);
 
         foreach ( $this->options->sql_file_list as $sqlFile ) {
+            // close the connection so that a branch new connection will be created
+            // for each file. This mitigates problems with long
+            // running queries causing database connection timeouts.
+            $this->destinationEndpoint->disconnect();
+
             $delimiter = self::DEFAULT_MULTI_STATEMENT_DELIMITER;
 
             // An object can be used to override the default delimiter.
@@ -242,7 +247,7 @@ class ExecuteSql extends aAction implements iAction
                         "sql" => $sql
                     ));
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
-                        $numRowsAffected = $this->destinationHandle->execute($sql);
+                        $numRowsAffected = $this->destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
                     $this->logAndThrowException(
@@ -267,10 +272,6 @@ class ExecuteSql extends aAction implements iAction
 
             $this->logger->notice("Finished Processing $numStatementsProcessed SQL statements");
 
-            // close the connection after each file if there are multiple files then
-            // a new connection will be created. This mitigates problems with long
-            // running queries.
-            $this->destinationEndpoint->disconnect();
 
         }  // foreach ( $this->options->sql_file_list as $sqlFile )
 
