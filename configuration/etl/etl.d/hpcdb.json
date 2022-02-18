@@ -30,7 +30,6 @@
             "options_class": "MaintenanceOptions",
             "#": "Table creation order is important due to foreign key constraints",
             "definition_file_list": [
-                "common/hpcdb/schema-version-history.json",
                 "common/hpcdb/accounts.json",
                 "common/hpcdb/organizations.json",
                 "common/hpcdb/resource-types.json",
@@ -74,20 +73,6 @@
                     "type": "jsonfile",
                     "name": "Default fields of science",
                     "path": "common/hpcdb/fields-of-science.json"
-                }
-            }
-        },
-        {
-            "name": "schema-version-history",
-            "description": "Load schema version history",
-            "namespace": "ETL\\Ingestor",
-            "class": "StructuredFileIngestor",
-            "definition_file": "common/hpcdb/schema-version-history.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "Schema version history",
-                    "path": "common/hpcdb/schema-version-history.json"
                 }
             }
         }

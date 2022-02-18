@@ -211,6 +211,18 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $generated);
 
         $config = (object) array(
+            'name' => 'created',
+            'type' => 'datetime',
+            'nullable' => false,
+            'default' => 'NOW()',
+            'comment' => 'The date and time at which a thing is created.'
+        );
+        $obj = new Column($config, '`', self::$logger);
+        $generated = $obj->getSql();
+        $expected = "`created` datetime NOT NULL DEFAULT NOW() COMMENT 'The date and time at which a thing is created.'";
+        $this->assertEquals($expected, $generated);
+
+        $config = (object) array(
             'columns' => array('col1', 'col2')
         );
 

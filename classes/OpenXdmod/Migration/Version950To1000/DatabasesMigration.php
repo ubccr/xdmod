@@ -25,21 +25,11 @@ class DatabasesMigration extends AbstractDatabasesMigration
         $pipelinesToRun = [];
 
         if ($mysql_helper->tableExists('mod_shredder.staging_storage_usage')) {
-            Utilities::runEtlPipeline(
-                ['storage-table-definition-update-9-5-0_10-0-0'],
-                $this->logger,
-                ['last-modified-start-date' => '2017-01-01 00:00:00']
-            );
+            $pipelinesToRun[] = 'storage-table-definition-update-9-5-0_10-0-0';
         }
 
         if ($mysql_helper->tableExists('modw_cloud.event')) {
-            Utilities::runEtlPipeline(
-                ['cloud-migration-9-5-0_10-0-0'],
-                $this->logger,
-                [
-                    'last-modified-start-date' => '2017-01-01 00:00:00'
-                ]
-            );
+            $pipelinesToRun[] = 'cloud-migration-9-5-0_10-0-0';
         }
 
         if ($mysql_helper->tableExists('modw_cloud.cloud_resource_specs')) {
@@ -55,10 +45,12 @@ This version of Open XDMoD converts any table with the MyISAM engine to InnoDB. 
 EOT
         );
 
-        Utilities::runEtlPipeline(
-            $pipelinesToRun,
-            $this->logger,
-            ['last-modified-start-date' => '2017-01-01 00:00:00']
-        );
+        foreach ($pipelinesToRun as $pipeline) {
+            Utilities::runEtlPipeline(
+                [$pipeline],
+                $this->logger,
+                ['last-modified-start-date' => '2017-01-01 00:00:00']
+            );
+        }
     }
 }

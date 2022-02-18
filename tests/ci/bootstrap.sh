@@ -22,6 +22,16 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
+# Detect what version of CentOS we're running in, if it's 8 then we need to do some rejiggering of the yum repos to
+# make things work. From: https://stackoverflow.com/questions/70926799/centos-through-vm-no-urls-in-mirrorlist
+OS_VERSION=$(grep VERSION_ID < /etc/os-release  | cut -d"=" -f 2 | tr -d '"')
+case "$OS_VERSION" in
+    "8")
+        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
+        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+        ;;
+esac
+
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
@@ -132,8 +142,19 @@ then
     then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack -q
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack -q
+        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
         mysql -e "TRUNCATE TABLE modw_cloud.instance_type;"
         sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
+    fi
+
+    if [[ "$XDMOD_REALMS" == *"storage"* ]];
+    then
+        for storage_dir in $REF_DIR/storage/*; do
+            sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
+        done
+        last_modified_start_date=$(date +'%F %T')
+        sudo -u xdmod xdmod-ingestor --datatype storage
+        sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     fi
 fi
 

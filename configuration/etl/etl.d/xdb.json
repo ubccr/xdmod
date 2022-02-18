@@ -45,7 +45,6 @@
                 "xdb/report-templates.json",
                 "xdb/reports.json",
                 "xdb/restx509.json",
-                "xdb/schema-version-history.json",
                 "xdb/session-manager.json",
                 "xdb/users.json",
                 "xdb/user-profiles.json",
@@ -87,18 +86,6 @@
                     "type": "jsonfile",
                     "name": "report-templates",
                     "path": "xdb/report-templates.json"
-                }
-            }
-        },
-        {
-            "name": "schema-version",
-            "definition_file": "xdb/schema-version-history.json",
-            "description": "Schema Version History + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "schema version history",
-                    "path": "xdb/schema-version-history.json"
                 }
             }
         },
