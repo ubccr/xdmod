@@ -236,7 +236,7 @@ innodb_log_file_size = 2G
 
 We recommend setting `innodb_file_per_table = On` for your XDMoD instance but it
 is not required. This setting helps to control the size of the database files and
-provides a minor speed up for InnoDB tables. It is important to not that setting
+provides a minor speed up for InnoDB tables. It is important to note that setting
 `innodb_file_per_table` to `On` is a global setting that will affect all databases
 on the database server not just XDMoD related databases.  
 
@@ -246,8 +246,8 @@ to make sure existing InnoDB data is moved to one file per table.
 
 A script, `/bin/xdmod-innodb-convert-fpt`, is provided to help with this process.
 This script will only convert XDMoD related databases. For any non-XDMoD databases
-with InnoDB tables on your server you will need to export the tables manually and
-load them back in.
+with InnoDB tables on your server you will need to export the tables manually, drop
+the tables and then load them back in.
 
 The steps to enable the innodb_file_per_table MySQL option and making sure
 existing InnoDB data is moved to the appropriate file by using the `xdmod-innodb-convert-fpt`

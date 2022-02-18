@@ -109,6 +109,20 @@ You may upgrade directly from 9.5.0.
 
 ### Database Changes
 
+Open XDMoD 10.0.0 is converting all database tables that use the MyISAM table
+engine to use the InnoDB table engine. This conversion will take place as part
+of the upgrade process. There are two things to note about this conversion.
+
+1. This conversion can cause the upgrade process to take a long time. When running
+the upgrade process on our Open XDMoD install at the University at Buffalo, the
+upgrade took around 30 hours with most of that time being spent on converting
+the tables from MyISAM to InnoDB.
+
+2. Additional disk space will be needed for the conversion of the tables and to
+store the data afterwards. On our development instance, which contains about 20
+years of data and around 49 million jobs, the `modw` schema increased from 58GB
+to 94GB after converting to InnoDB.
+
 ### Slurm Input Format Changes
 
 The input file format for Slurm data has changed to include the `qos` field.
