@@ -228,8 +228,6 @@ max_allowed_packet = 1G
 group_concat_max_len = 16M
 innodb_stats_on_metadata = off
 innodb_file_per_table = On
-innodb_buffer_pool_size = 8G
-innodb_log_file_size = 2G
 ```
 
 ### Enabling InnoDB File Per Table setting
