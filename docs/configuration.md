@@ -236,7 +236,7 @@ We recommend setting `innodb_file_per_table = On` for your XDMoD instance but it
 is not required. This setting helps to control the size of the database files and
 provides a minor speed up for InnoDB tables. It is important to note that setting
 `innodb_file_per_table` to `On` is a global setting that will affect all databases
-on the database server not just XDMoD related databases.  
+on the database server not just XDMoD related databases.
 
 While not mandatory, when changing the innodb_file_per_table to `innodb_file_per_table = On`
 we recommend that you export, drop, and re-import all XDMoD InnoDB tables in order
