@@ -123,6 +123,9 @@ store the data afterwards. On our development instance, which contains about 20
 years of data and around 49 million jobs, the `modw` schema increased from 58GB
 to 94GB after converting to InnoDB.
 
+We also recommend changing the `innodb_file_per_table` setting to `On` for this
+release. Instructions on how to do this can be found in the [Configuration Guide][mysql-config]
+
 ### Slurm Input Format Changes
 
 The input file format for Slurm data has changed to include the `qos` field.
