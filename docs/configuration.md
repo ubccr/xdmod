@@ -232,40 +232,40 @@ innodb_file_per_table = On
 
 ### Enabling InnoDB File Per Table setting
 
-We recommend setting `innodb_file_per_table = On` for your XDMoD instance but it
+We recommend setting `innodb_file_per_table = On` for your Open XDMoD instance but it
 is not required. This setting helps to control the size of the database files and
 provides a minor speed up for InnoDB tables. It is important to note that setting
 `innodb_file_per_table` to `On` is a global setting that will affect all databases
-on the database server not just XDMoD related databases.
+on the database server not just Open XDMoD related databases.
 
-While not mandatory, when changing the innodb_file_per_table to `innodb_file_per_table = On`
-we recommend that you export, drop, and re-import all XDMoD InnoDB tables in order
+While not mandatory, when changing the `innodb_file_per_table` to `innodb_file_per_table = On`
+we recommend that you export, drop, and re-import all Open XDMoD InnoDB tables in order
 to make sure existing InnoDB data is moved to one file per table.
 
 A script, `/bin/xdmod-innodb-convert-fpt`, is provided to help with this process.
-This script will only convert XDMoD related databases. For any non-XDMoD databases
+This script will only convert Open XDMoD related databases. For any non-Open XDMoD databases
 with InnoDB tables on your server you will need to export the tables manually, drop
 the tables and then load them back in.
 
-The steps to enable the innodb_file_per_table MySQL option and making sure
+The steps to enable the `innodb_file_per_table` MySQL option and making sure
 existing InnoDB data is moved to the appropriate file by using the `xdmod-innodb-convert-fpt`
 script is listed below.
 
-1. Export all XDMoD InnoDB tables. This can be done with the following command
+1. Export all Open XDMoD InnoDB tables. This can be done with the following command
 `xdmod-innodb-convert-fpt --export-tables --dir=path/to/dir`
-2. Drop all XDMoD InnoDB tables. This can be done using the --drop-tables flag,
-`xdmod-innodb-convert-fpt --drop-tables`. This command will delete your XDMoD tables!
+2. Drop all Open XDMoD InnoDB tables. This can be done using the `--drop-tables` flag,
+`xdmod-innodb-convert-fpt --drop-tables`. This command will drop your Open XDMoD InnoDB tables!
 Please make sure you have either run the command `xdmod-innodb-convert-fpt --export-tables --dir=path/to/dir`
 or have manually exported the InnoDB tables before running it.
 3. Shutdown the MySQL server
-4. Add the following line to /etc/my.cnf file.
+4. Add the following line to `/etc/my.cnf` file.
    ```ini
-   innodb_file_per_table = 'On'
+   innodb_file_per_table = On
    ```
-5. Delete the ibdata1, ib_logfile0 and ib_logfile1 files from the mysql data directory.
+5. Delete the `ibdata1`, `ib_logfile0` and `ib_logfile1` files from the MySQL data directory.
 The default location for this is `/var/lib/mysql`
 6. Restart MySQL
-7. Import XDMoD InnoDB data previously exported. This can be done with the following command:
+7. Import Open XDMoD InnoDB data previously exported. This can be done with the following command:
 `xdmod-innodb-convert-fpt --import-tables --dir=path/to/dir`
 
 Logrotate Configuration

@@ -115,7 +115,7 @@ of the upgrade process. There are two things to note about this conversion.
 
 1. This conversion can cause the upgrade process to take a long time. When running
 the upgrade process on our Open XDMoD install at the University at Buffalo, the
-upgrade took around 30 hours with most of that time being spent on converting
+upgrade took around 40 hours with most of that time being spent on converting
 the tables from MyISAM to InnoDB.
 
 2. Additional disk space will be needed for the conversion of the tables and to
