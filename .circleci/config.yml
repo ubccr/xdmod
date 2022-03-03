@@ -97,7 +97,9 @@ jobs:
                   ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - when:
           condition:
-            equal: [ *centos8-executor, << parameters.os >> ]
+            or:
+              - equal: [ *centos8-executor, << parameters.os >> ]
+              - equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
             - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
             - run:
