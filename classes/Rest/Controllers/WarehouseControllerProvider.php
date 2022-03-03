@@ -1584,7 +1584,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         return $app->json(
-            $this->arraytostore($execInfo),
+            $this->arraytostore(json_decode(json_encode($execInfo), true)),
             200
         );
     }
