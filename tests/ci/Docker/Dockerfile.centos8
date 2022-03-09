@@ -16,7 +16,6 @@ COPY bin /root/bin
 
 # Copy mariadb
 RUN mv /root/bin/mariadb-wait-ready /usr/libexec/
-RUN mv /root/bin/mysql-prepare-db-dir /usr/libexec/mariadb-prepare-db-dir
 
 # Generate SSL Key
 RUN openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
@@ -37,7 +36,7 @@ RUN git clone --single-branch --depth=1 https://github.com/ubccr/xdmod/ --branch
 # buildrpm requires us to start the script from the directory that we checked XDMoD out to.
 WORKDIR /root/xdmod
 
-#
+# Make sure that we install XDMoD's dependencies before building the RPM.
 RUN composer install
 
 # Build the XDMoD RPM that will be installed in this docker image.
@@ -45,11 +44,6 @@ RUN /root/bin/buildrpm xdmod
 
 # Install / Upgrade based on the XDMOD_TEST_MODE env variable.
 RUN /root/xdmod/tests/ci/bootstrap.sh
-
-# We need to be in the tests/ui dir to install the dependencies in package.json
-WORKDIR /root/xdmod/tests/ui
-# Install the ui test dependencies
-RUN npm install
 
 # Clean everything up
 RUN yum clean all

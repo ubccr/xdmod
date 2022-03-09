@@ -1,4 +1,4 @@
-FROM rockylinux:8
+FROM rockylinux:8.5
 ENV BRANCH=xdmod10.0
 LABEL description="Base image containing XDMoD required software."
 
@@ -19,9 +19,6 @@ RUN yum -y install \
     gcc-c++ \
     openssl \
     rsync \
-    gmp-devel \
-    java-1.8.0-openjdk \
-    java-1.8.0-openjdk-devel \
     nodejs \
     python39 \
     cronie \

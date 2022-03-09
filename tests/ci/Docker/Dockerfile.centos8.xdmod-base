@@ -5,14 +5,11 @@ LABEL description="Base image containing XDMoD required software."
 COPY assets/google-chrome.repo /etc/yum.repos.d
 
 # We need to fix things since they binned Centos8
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-* && \
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
 # We need to install the epel before installing XDMoD's dependencies.
 RUN yum makecache && yum -y install epel-release
-
-# Fixup the repo urls now that CentOS8 is not supported anymore.
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
 
 # These are the software pre-requisites for an XDMoD Install ( minus PHP )
 RUN yum -y install \
@@ -28,9 +25,6 @@ RUN yum -y install \
     gcc-c++ \
     openssl \
     rsync \
-    gmp-devel \
-    java-1.8.0-openjdk \
-    java-1.8.0-openjdk-devel \
     nodejs \
     python39 \
     cronie \

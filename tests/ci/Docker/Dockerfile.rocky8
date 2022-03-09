@@ -1,4 +1,4 @@
-FROM tools-int-01.ccr.xdmod.org/rockylinux8:xdmod-base
+FROM tools-int-01.ccr.xdmod.org/rockylinux8.5:xdmod-base
 
 ENV BRANCH=xdmod10.0
 ENV REL=10.0
@@ -16,7 +16,6 @@ COPY bin /root/bin
 
 # Copy mariadb
 RUN mv /root/bin/mariadb-wait-ready /usr/libexec/
-RUN mv /root/bin/mysql-prepare-db-dir /usr/libexec/mariadb-prepare-db-dir
 
 # Generate SSL Key
 RUN openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key

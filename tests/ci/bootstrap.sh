@@ -27,8 +27,8 @@ set -o pipefail
 OS_VERSION=$(grep VERSION_ID < /etc/os-release  | cut -d"=" -f 2 | tr -d '"')
 case "$OS_VERSION" in
     "8")
-        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
-        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
         ;;
 esac
 
