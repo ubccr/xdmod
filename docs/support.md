@@ -11,7 +11,7 @@ addition to limited access to our support team.
 
 | Version | Release Date       | End of Support     |
 | ------- | ------------------ | ------------------ |
-| 10.0    | March 9, 2022      | March 9, 2023      |
+| 10.0    | March 10, 2022     | March 10, 2023     |
 | 9.5     | May 21, 2021       | May 21, 2022       |
 
 Supported Operating Systems
