@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2022-??-?? v10.0.0
+## 2022-03-10 v10.0.0
 
 - Bug Fixes
     - ETL
