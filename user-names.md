@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.5/user-names.html
+redirect_to: /10.0/user-names.html
 ---

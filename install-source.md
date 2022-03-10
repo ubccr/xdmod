@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.5/install-source.html
+redirect_to: /10.0/install-source.html
 ---

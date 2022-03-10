@@ -1,3 +1,3 @@
 ---
-redirect_to: /9.5/commands.html
+redirect_to: /10.0/commands.html
 ---
