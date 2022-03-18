@@ -1,9 +1,9 @@
 <?php
 /**
- * Update config files from version 9.5.0 To 10.0.0.
+ * Update config files from version 10.0.0 to 10.5.0.
  */
 
-namespace OpenXdmod\Migration\Version950To1000;
+namespace OpenXdmod\Migration\Version1000To1050;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;

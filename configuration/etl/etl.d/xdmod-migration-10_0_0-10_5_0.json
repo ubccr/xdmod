@@ -1,0 +1,11 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "migration-10_0_0-10_5_0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+         }
+    },
+    "migration-10_0_0-10_5_0": [
+    ]
+}

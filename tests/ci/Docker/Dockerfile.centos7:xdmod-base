@@ -1,5 +1,5 @@
 FROM centos:7.9.2009
-ENV BRANCH=xdmod9.5
+ENV BRANCH=xdmod10.0
 LABEL description="Base image containing XDMoD required software."
 
 COPY assets/google-chrome.repo /etc/yum.repos.d
