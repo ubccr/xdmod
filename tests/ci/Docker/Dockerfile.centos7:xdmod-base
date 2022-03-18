@@ -6,16 +6,16 @@ COPY assets/google-chrome.repo /etc/yum.repos.d
 
 # Dependencies needed by XDMoD
 RUN yum makecache && \
-    yum -y install epel-release && \
+    yum -y install epel-release centos-release-scl-rh && \
     yum -y install \
     expect \
     gcc-c++ \
     gnu-free-sans-fonts \
     google-chrome-stable \
     mariadb-server \
-    npm \
     openssl \
     postfix \
+    rh-nodejs6 \
     rpm-build \
     rsync \
     sudo \

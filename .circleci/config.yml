@@ -94,7 +94,7 @@ jobs:
                   cd /root/project/tests/ui
                   npm install
                   cd /root/project
-      - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+      - run: scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit"
       - run:
           name: 'Run SSO Tests'
           command: |

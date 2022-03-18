@@ -1,4 +1,4 @@
-FROM tas-tools-ext-01.ccr.xdmod.org/xdmod-base-10.0:centos7.9-0.2
+FROM tas-tools-ext-01.ccr.xdmod.org/xdmod-base-10.0:centos7.9-0.3
 
 ENV BRANCH=xdmod10.0
 ENV REL=10.0.0
