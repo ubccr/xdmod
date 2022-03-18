@@ -28,4 +28,22 @@ EOF
         fi
         git show refs/remotes/upstream/$branch:$file | sed "$sedscript" > $outfile
     done
+
+    filelist=$(git ls-tree --name-only  upstream/$branch docs/  | egrep '.*\.(json|html)$')
+    for file in $filelist;
+    do
+        outfile=$(echo $file | awk 'BEGIN{FS="/"} { for(i=2; i < NF; i++) { printf "%s/", $i } print "'$version'/" $NF}')
+        mkdir -p $(dirname $outfile)
+        if [[ $outfile == *.html ]]; then
+            if [ "$branch" = "$latest" ]; then
+                basefile=$(basename $outfile .html)
+                cat > ${basefile}.md << EOF
+---
+redirect_to: /$version/${basefile}.html
+---
+EOF
+            fi
+        fi
+        git show refs/remotes/upstream/$branch:$file > $outfile
+    done
 done
