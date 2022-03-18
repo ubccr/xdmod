@@ -1,5 +1,56 @@
 # Open XDMoD Change Log
 
+## 2022-03-10 v10.0.0
+
+- Bug Fixes
+    - ETL
+        - Fix comment removal in ETL SQL execution ([\#1609](https://github.com/ubccr/xdmod/pull/1609))
+        - Fix cloud resource specs and storage database tables date formats ([\#1600](https://github.com/ubccr/xdmod/pull/1600))
+        - Add SHOW WARNINGS to StructuredFileIngestor ([\#1586](https://github.com/ubccr/xdmod/pull/1586))
+        - Fix quarters start timestamp column type ([\#1560](https://github.com/ubccr/xdmod/pull/1560))
+        - Change slurm helper default end time ([\#1546](https://github.com/ubccr/xdmod/pull/1546))
+        - Fix resource ingestor default resource type ([\#1537](https://github.com/ubccr/xdmod/pull/1537))
+        - Fix shredder empty line checking ([\#1525](https://github.com/ubccr/xdmod/pull/1525))
+    - General
+        - Set minimum username length to 2 ([\#1594](https://github.com/ubccr/xdmod/pull/1594))
+        - Change exceptions.log file permissions ([\#1550](https://github.com/ubccr/xdmod/pull/1550))
+        - Restore global exception file name and number, and stack trace logging ([\#1549](https://github.com/ubccr/xdmod/pull/1549))
+        - Remove PEAR Log dependencies ([\#1543](https://github.com/ubccr/xdmod/pull/1543))
+        - Add exportJson function back. ([\#1532](https://github.com/ubccr/xdmod/pull/1532))
+- Enhancements
+    - Internal Dashboard
+        - Refactor admin dashboard user listing query and add indexes to Users and SessionManager tables ([\#1606](https://github.com/ubccr/xdmod/pull/1606))
+    - ETL
+        - Fix warnings seen when ingesting cloud or storage files ([\#1592](https://github.com/ubccr/xdmod/pull/1592))
+        - Performance improvements to ETLv2 action that loads queues for jobs realm ([\#1580](https://github.com/ubccr/xdmod/pull/1580))
+        - Improve Slurm TRES GRES/GPU parsing ([\#1544](https://github.com/ubccr/xdmod/pull/1544))
+    - General
+        - Convert tables in moddb database to the InnoDB table engine ([\#1585](https://github.com/ubccr/xdmod/pull/1585))
+        - Convert tables in modw_aggregates to InnoDB and add class to manage aggregate tables ([\#1584](https://github.com/ubccr/xdmod/pull/1584))
+        - Add index to mod_logger.log_table for help with better query planning ([\#1582](https://github.com/ubccr/xdmod/pull/1582))
+        - InnoDB Performance Improvements for ingestion and aggregation ([\#1579](https://github.com/ubccr/xdmod/pull/1579))
+        - Convert tables in mod_logger, mod_hpcdb, and mod_shredder to InnoDB ([\#1576](https://github.com/ubccr/xdmod/pull/1576))
+        - Convert tables in modw database to the innodb table engine ([\#1573](https://github.com/ubccr/xdmod/pull/1573))
+        - Add support for PHP 7.2 and MariaDB 10.3 ([\#1486](https://github.com/ubccr/xdmod/pull/1486))
+    - Cloud
+        - Convert modw_cloud tables to InnoDB table engine ([\#1572](https://github.com/ubccr/xdmod/pull/1572))
+        - Remove multi column auto-increment key from modw_cloud.cloud_resource_specs ([\#1569](https://github.com/ubccr/xdmod/pull/1569))
+    - Job Viewer
+        - Enabled text selection / copying in Job Viewer Accounting Tab ([\#1561](https://github.com/ubccr/xdmod/pull/1561))
+    - Infrastructure
+        - Update query filtering to be based on ACLs ([\#1531](https://github.com/ubccr/xdmod/pull/1531))
+- Uncategorized
+    - General
+        - Change SQL connection reuse strategy ([\#1604](https://github.com/ubccr/xdmod/pull/1604))
+        - More robustness improvements for webdriverio-based UI tests ([\#1587](https://github.com/ubccr/xdmod/pull/1587))
+        - Handle MySQL server has gone away errors ([\#1566](https://github.com/ubccr/xdmod/pull/1566))
+- New Features
+    - General
+        - Add script to help convert to using innodb-file-per-table mysql setting ([\#1598](https://github.com/ubccr/xdmod/pull/1598))
+        - Add quality of service group by with Slurm support ([\#1589](https://github.com/ubccr/xdmod/pull/1589))
+        - Updated etl_profile.js to add an extra group_by parameter "show_all_dimension_values". ([\#1588](https://github.com/ubccr/xdmod/pull/1588))
+        - Update Metric Explorer Controller to include ability to show all possible dimension values. ([\#1578](https://github.com/ubccr/xdmod/pull/1578))
+
 ## 2021-05-21 v9.5.0
 
 - New Features

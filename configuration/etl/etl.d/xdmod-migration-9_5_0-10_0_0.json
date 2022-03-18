@@ -66,6 +66,25 @@
     },
     "migration-9_5_0-10_0_0": [
         {
+            "name": "drop-all-schema-version-history-tables",
+            "description": "Drop all schema_version_history tables.",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                {
+                    "delimiter": ";",
+                    "sql_file": "migrations/9.5.0-10.0.0/drop_schema_version_history.sql"
+                }
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_logger"
+                }
+            }
+        },
+        {
             "name": "update-modw-quarters",
             "description": "Update modw.quarters table definition",
             "class": "ManageTables",
@@ -95,7 +114,6 @@
                 "xdb/report-templates.json",
                 "xdb/reports.json",
                 "xdb/restx509.json",
-                "xdb/schema-version-history.json",
                 "xdb/session-manager.json",
                 "xdb/user-profiles.json",
                 "xdb/user-types.json",
@@ -142,7 +160,6 @@
                 "jobs/xdw/queue.json",
                 "jobs/xdw/request.json",
                 "jobs/xdw/resource-fact.json",
-                "jobs/xdw/schema-version-history.json",
                 "jobs/xdw/service-provider.json",
                 "jobs/xdw/staging-jobhosts.json",
                 "jobs/xdw/system-account.json",
@@ -203,38 +220,6 @@
                      "schema": "modw_aggregates"
                  }
              }
-          },
-          {
-            "name": "update-schema-version-history-tables-to-innodb",
-            "description": "Update modw_cloud tables to InnoDB",
-            "class": "ManageTables",
-            "definition_file_list": [
-                "common/hpcdb/schema-version-history.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "XDMoD Data Warehouse",
-                    "config": "datawarehouse",
-                    "schema": "mod_hpcdb"
-                }
-            }
-        },
-        {
-            "name": "update-shredder-tables-to-innodb",
-            "description": "Update modw_cloud tables to InnoDB",
-            "class": "ManageTables",
-            "definition_file_list": [
-                "common/shredder/schema-version-history.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "XDMoD Data Warehouse",
-                    "config": "datawarehouse",
-                    "schema": "mod_shredder"
-                }
-            }
         },
         {
             "name": "convert-mod-logger-tables-to-innodb",
@@ -363,6 +348,22 @@
                     "name": "Data Warehouse",
                     "config": "datawarehouse",
                     "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "update-moddb-users",
+            "description": "Update moddb Users table",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "xdb/users.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "moddb"
                 }
             }
         }

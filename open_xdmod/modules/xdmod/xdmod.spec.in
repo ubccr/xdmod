@@ -99,6 +99,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
+* Thu Mar 10 2022 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.0.0-1.0
+    - Release 10.0.0
+    - Remove `php-pear-MDB2` and `php-pear-MDB2-Driver-mysql` from required dependencies
+    - Add required dependencies for enterprise Linux 8
 * Fri May 21 2021 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.5.0-1.0
     - Add `chromium-headless` and `librsvg2-tools` to required dependencies
     - Replace `ghostscript` dependency with `exiftool`

@@ -20,7 +20,6 @@
             "class": "ManageTables",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
-                "common/shredder/schema-version-history.json",
                 "jobs/shredder/job-lsf.json",
                 "jobs/shredder/job-pbs.json",
                 "jobs/shredder/job-sge.json",
@@ -36,21 +35,6 @@
             "sql_file_list": [
                 "jobs/shredder/job-slurm.sql"
             ]
-        },
-        {
-            "name": "schema-version-history",
-            "description": "Load schema version history",
-            "namespace": "ETL\\Ingestor",
-            "class": "StructuredFileIngestor",
-            "options_class": "IngestorOptions",
-            "definition_file": "common/shredder/schema-version-history.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "Schema version history",
-                    "path": "common/shredder/schema-version-history.json"
-                }
-            }
         }
     ]
 }

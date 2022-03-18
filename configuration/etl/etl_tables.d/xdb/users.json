@@ -130,6 +130,12 @@
                 ],
                 "type": "BTREE",
                 "is_unique":  true
+            },
+            {
+                "name": "idx_user_type",
+                "columns": [
+                    "user_type"
+                ]
             }
         ],
         "triggers": [
