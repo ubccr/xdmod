@@ -98,8 +98,8 @@ jobs:
       - run:
           name: 'Run SSO Tests'
           command: |
-            ./tests/ci/samlSetup.sh
-            ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
+            scl enable rh-nodejs6 "./tests/ci/samlSetup.sh"
+            scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso"
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
           name: Ensure that no unexpected Apache errors were generated
