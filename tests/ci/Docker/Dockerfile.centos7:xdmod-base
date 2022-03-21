@@ -13,6 +13,7 @@ RUN yum makecache && \
     gnu-free-sans-fonts \
     google-chrome-stable \
     mariadb-server \
+    npm \
     openssl \
     postfix \
     rh-nodejs6 \
