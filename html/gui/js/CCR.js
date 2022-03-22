@@ -2,7 +2,7 @@
 // This is for IE8-. In IE9+ ( even IE9 w/ IE8 compatability mode on ) this works
 // just fine.
 Date.now = Date.now || function () {
-    return +new Date;
+    return Number(new Date());
 };
 
 // JavaScript Document
@@ -194,6 +194,8 @@ XDMoD.GlobalToolbar.Contact = function () {
                 break;
             case 'Submit Support Request':
                 new XDMoD.SupportDialog().show();
+                break;
+            default:
                 break;
         }
     };
@@ -799,6 +801,7 @@ CCR.safelyDecodeJSONResponse = function (response) {
     try {
         responseObject = Ext.decode(response.responseText);
     } catch (e) {
+        // NO-OP
     }
 
     return responseObject;
@@ -816,6 +819,7 @@ CCR.checkDecodedJSONResponseSuccess = function (responseObject) {
     try {
         responseSuccessful = responseObject.success === true;
     } catch (e) {
+        // NO-OP
     }
 
     return responseSuccessful;
@@ -1054,7 +1058,7 @@ CCR.BrowserWindow = Ext.extend(Ext.Window, {
                 text: 'Close',
                 iconCls: 'general_btn_close',
                 handler: function () {
-                    if (self.closeAction == 'close') {
+                    if (self.closeAction === 'close') {
                         self.close();
                     } else {
                         self.hide();
@@ -1702,11 +1706,13 @@ CCR.xdmod.ui.extractErrorMessageFromResponse = function (response, options) {
             responseObject = Ext.decode(response.responseText);
         }
     } catch (e) {
+        // NO-OP
     }
 
     try {
         responseMessage = responseObject.message || responseObject.status || responseMessage;
     } catch (e) {
+        // NO-OP
     }
 
     if (options.htmlEncode) {
@@ -1803,7 +1809,7 @@ CCR.xdmod.ui.gridComboRenderer = function (combo) {
 };
 
 CCR.isBlank = function (value) {
-    return !value || value === 'undefined' || !value.trim() ? true : false;
+    return !value || value === 'undefined' || !value.trim();
 };
 
 CCR.Types = {};
@@ -1849,12 +1855,12 @@ CCR.merge = function (obj1, obj2) {
     return obj3;
 };
 CCR.getParameter = function (name, source) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(source);
+    var newName = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + newName + '=([^&#]*)');
+    var results = regex.exec(source);
     return results === null
-        ? ""
-        : decodeURIComponent(results[1].replace(/\+/g, " "));
+        ? ''
+        : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 /*
  * Process the location hash string. The string should have the form:
@@ -1947,7 +1953,6 @@ CCR.objectToArray = function (object) {
 };
 
 CCR.join = function (values, joiners) {
-
     if (!CCR.exists(values) || !CCR.isType(values, CCR.Types.Array)) {
         return "";
     }
@@ -1961,9 +1966,10 @@ CCR.join = function (values, joiners) {
         return values.join('');
     }
 
-    var joinerIndex = 0;
+    var index = 0;
     var result;
 
+    // eslint-disable-next-line no-shadow
     var joinValue = function (value, joiners, joinerIndex) {
         var isArray = CCR.isType(value, CCR.Types.Array);
         var holdsArrays = isArray && value.length > 0 && CCR.isType(value[0], CCR.Types.Array);
@@ -1980,7 +1986,7 @@ CCR.join = function (values, joiners) {
         return result.join(joiners[joinerIndex]);
     };
 
-    result = joinValue(values, joiners, joinerIndex);
+    result = joinValue(values, joiners, index);
 
     return result;
 };
@@ -2135,17 +2141,17 @@ CCR.encode = function (values) {
 CCR.apply = function (lhs, rhs) {
     if (typeof lhs === 'object' && typeof rhs === 'object') {
         var results = {};
-        for (var property in lhs) {
-            if (lhs.hasOwnProperty(property)) {
-                results[property] = lhs[property];
+        for (var leftProperty in lhs) {
+            if (lhs.hasOwnProperty(leftProperty)) {
+                results[leftProperty] = lhs[leftProperty];
             }
         }
-        for (property in rhs) {
-            if (rhs.hasOwnProperty(property)) {
-                var rhsExists = rhs[property] !== undefined
-                    && rhs[property] !== null;
+        for (var rightProperty in rhs) {
+            if (rhs.hasOwnProperty(rightProperty)) {
+                var rhsExists = rhs[rightProperty] !== undefined
+                    && rhs[rightProperty] !== null;
                 if (rhsExists) {
-                    results[property] = rhs[property];
+                    results[rightProperty] = rhs[rightProperty];
                 }
             }
         }
@@ -2180,8 +2186,10 @@ CCR.toInt = function (value) {
  */
 CCR.error = function (title, message, success, failure, buttons) {
     buttons = buttons || Ext.MessageBox.OK;
+    // eslint-disable-next-line no-param-reassign
     success = success || function () {
     };
+    // eslint-disable-next-line no-param-reassign
     failure = failure || function () {
     };
 
@@ -2193,7 +2201,7 @@ CCR.error = function (title, message, success, failure, buttons) {
         fn: function (buttonId, text, options) {
             var compare = CCR.compare;
             if (compare.strings(buttonId, Ext.MessageBox.buttonText['no'])
-                || compare.strings(buttonId, Ext.MessageBox.buttonText['cancel'])) {
+                || compare.strings(buttonId, Ext.MessageBox.buttonText.cancel)) {
                 failure(buttonId, text, options);
             } else {
                 success(buttonId, text, options);
@@ -2267,6 +2275,7 @@ CCR.getInstance = function (instancePath, classPath, config) {
      * @return {*} the result of walking the provided 'path'.
      **/
     var getReference = function (path, callback) {
+        // eslint-disable-next-line no-param-reassign
         callback = callback !== undefined
             ? callback
             : function (previous, current) {
@@ -2282,18 +2291,18 @@ CCR.getInstance = function (instancePath, classPath, config) {
      * walking the 'classPath' is not a function then instead of invoking it
      * it is itself, returned.
      *
-     * @param {String} classPath          the '.' delimited string of the
+     * @param {String} innerClassPath          the '.' delimited string of the
      *                                    'class' that is to be instantiated.
-     * @param {Object} [config=undefined] an object that will be passed to the
+     * @param {Object} [innerConfig=undefined] an object that will be passed to the
      *                                    invocation of 'classPath' should it
      *                                    be found.
      *
      * @return {*} The return value of invoking 'classPath' or, failing that,
      *             the value of 'classPath'.
      **/
-    var instantiateClass = function (classPath, config) {
-        var Class = getReference(classPath);
-        return typeof Class === 'function' ? new Class(config) : Class;
+    var instantiateClass = function (innerClassPath, innerConfig) {
+        var Class = getReference(innerClassPath);
+        return typeof Class === 'function' ? new Class(innerConfig) : Class;
     };
 
     var result = getReference(instancePath);
@@ -2333,7 +2342,8 @@ CCR.intersect = function (left, right) {
 };
 
 CCR.randomInt = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min)
+    // eslint-disable-next-line no-mixed-operators
+    return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 
@@ -2503,7 +2513,7 @@ Ext.override(Ext.menu.Item, {
         if (this.tooltip) {
             this.tooltip = new Ext.ToolTip(Ext.apply({
                 target: this.el
-            }, Ext.isObject(this.tooltip) ? this.toolTip : {html: this.tooltip}));
+            }, Ext.isObject(this.tooltip) ? this.toolTip : { html: this.tooltip }));
         }
         Ext.menu.Item.superclass.onRender.call(this, container, position);
     }
