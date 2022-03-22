@@ -72,13 +72,10 @@ try {
 
     $datasetid = $_REQUEST['datasetId'];
 
-    // used to compare to floats, in this case the datasetId and the data_series->id
-    $epsilon = 0.00000000000001;
-
     // find requested dataset.
     $data_description = null;
     foreach ($all_data_series as $data_description_index => $data_series) {
-        if (abs($data_series->id - $datasetid) < $epsilon) {
+        if ("{$data_series->id}" == "$datasetid") {
             $data_description = $data_series;
             break;
         }
