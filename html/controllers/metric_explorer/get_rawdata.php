@@ -75,6 +75,7 @@ try {
     // find requested dataset.
     $data_description = null;
     foreach ($all_data_series as $data_description_index => $data_series) {
+        // NOTE: this only works if the id's are not floats.
         if ("{$data_series->id}" == "$datasetid") {
             $data_description = $data_series;
             break;
