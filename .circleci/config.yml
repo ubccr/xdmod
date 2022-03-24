@@ -5,12 +5,12 @@
 version: 2.1
 
 executors:
-  centos7:
+  centos7: &centos7-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
   centos8: &centos8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/centos8-0.3:base
+      - image: tools-ext-01.ccr.xdmod.org/centos8-0.5:base
 jobs:
   build:
     parameters:
@@ -83,24 +83,26 @@ jobs:
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
       - when:
           condition:
+            equal: [ *centos7-executor, << parameters.os >> ]
+          steps:
+            - run: scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit"
+            - run:
+                name: 'Run SSO Tests'
+                command: |
+                  scl enable rh-nodejs6 "./tests/ci/samlSetup.sh"
+                  scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso"
+                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      - when:
+          condition:
             equal: [ *centos8-executor, << parameters.os >> ]
           steps:
+            - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
             - run:
-                name: Update the chromedriver version for Centos8
-                command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
-            - run:
-                name: Install new chromedriver
+                name: 'Run SSO Tests'
                 command: |
-                  cd /root/project/tests/ui
-                  npm install
-                  cd /root/project
-      - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
-      - run:
-          name: 'Run SSO Tests'
-          command: |
-            ./tests/ci/samlSetup.sh
-            ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
-            ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+                  ./tests/ci/samlSetup.sh
+                  ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
+                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
           name: Ensure that no unexpected Apache errors were generated
           command: test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0

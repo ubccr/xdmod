@@ -30,7 +30,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
                 foreach (self::$imagehashes as $testName => $hash) {
                     $expectedHashes[$testName] = $hash;
                 }
-                file_put_contents($hashFile, json_encode($expectedHashes, JSON_PRETTY_PRINT));
+                file_put_contents($hashFile, json_encode($expectedHashes, JSON_PRETTY_PRINT) . "\n");
             } else {
                 // print to stdout rather than, e.g., overwriting
                 // the expected results file.
