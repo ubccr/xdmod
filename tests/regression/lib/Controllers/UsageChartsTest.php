@@ -35,6 +35,8 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
         }
 
+        $hashFiles = [];
+
         // If we have OS info available to us then look for an OS specific expected output file based on this info.
         if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
             $hashFiles[] = sprintf("expected-%s%s.json", $osInfo['ID'], $osInfo['VERSION_ID']);
