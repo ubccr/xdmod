@@ -122,7 +122,7 @@ then
 
     ~/bin/services start
 
-    # TODO: Replace diff files with hard fixes
+    # TODO: Replace diff files with hard fixes A
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then
         if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
