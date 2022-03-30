@@ -84,7 +84,7 @@ The convention for shredding cloud files is identical to job data:
 **Storage:**
 
 The shredder accepts one format for storage data.  See the [Storage
-Metrics](storage.md) documentation for an example.  The convention for
+Metrics](storage.html) documentation for an example.  The convention for
 shredding storage files is identical to job data:
 
     $ xdmod-shredder -f storage ...
