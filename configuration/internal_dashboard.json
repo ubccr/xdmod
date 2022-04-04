@@ -37,6 +37,10 @@
         {
             "ident": "batch-export",
             "title": "Data Export"
+        },
+        {
+            "ident": "etl_overseer",
+            "title": "ETL Overseer"
         }
     ],
     "summary": [
