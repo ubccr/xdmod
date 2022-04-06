@@ -77,7 +77,9 @@ jobs:
           command: composer install --no-progress
       - when:
           condition:
-            equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            and:
+              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
                 name: Installing Code Coverage Dependencies
@@ -120,7 +122,9 @@ jobs:
                   ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - when:
           condition:
-            equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            and:
+              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -140,7 +144,9 @@ jobs:
           path: ~/phpunit
       - when:
           condition:
-            equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            and:
+              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
