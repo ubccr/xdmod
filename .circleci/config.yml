@@ -21,8 +21,6 @@ jobs:
         type: executor
       install-type:
         type: string
-      triggered-by:
-        type: string
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
@@ -31,7 +29,6 @@ jobs:
       XDMOD_IS_CORE: yes
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
-      JOB_TRIGGERED_BY: << parameters.triggered-by >>
     steps:
       - run:
           name: Generate OpenSSL Key
@@ -80,7 +77,7 @@ jobs:
           command: composer install --no-progress
       - when:
           condition:
-            equal: [ "xdmod-time-trigger", << parameters.triggered-by >> ]
+            equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
                 name: Installing Code Coverage Dependencies
@@ -121,10 +118,9 @@ jobs:
                   ./tests/ci/samlSetup.sh
                   ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
                   ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
-      ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - when:
           condition:
-            equal: [ "xdmod-time-trigger", << parameters.triggered-by >> ]
+            equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -144,7 +140,7 @@ jobs:
           path: ~/phpunit
       - when:
           condition:
-            equal: [ "xdmod-time-trigger", << parameters.triggered-by >> ]
+            equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
