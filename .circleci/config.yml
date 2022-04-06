@@ -21,6 +21,8 @@ jobs:
         type: executor
       install-type:
         type: string
+      triggered-by:
+        type: string
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
@@ -29,6 +31,7 @@ jobs:
       XDMOD_IS_CORE: yes
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
+      JOB_TRIGGERED_BY: << parameters.triggered-by >>
     steps:
       - run:
           name: Generate OpenSSL Key
@@ -57,6 +60,8 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
+            mkdir ~/code_coverage_raw
+            mkdir ~/code_coverage
       - run: ~/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from RPM
@@ -73,6 +78,13 @@ jobs:
       - run:
           name: Make sure that the Composer Test Depedencies are installed
           command: composer install --no-progress
+      - when:
+          condition:
+            equal: [ "xdmod-time-trigger", << parameters.triggered-by >> ]
+          steps:
+            - run:
+                name: Installing Code Coverage Dependencies
+                command: ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - run: ./tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
@@ -109,6 +121,18 @@ jobs:
                   ./tests/ci/samlSetup.sh
                   ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
                   ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      - when:
+          condition:
+            equal: [ "xdmod-time-trigger", << parameters.triggered-by >> ]
+          steps:
+            - run:
+                name: Process Code Coverage Data
+                no_output_timeout: 45m
+                command: ./tools/dev/code_coverage/codeCoverageProcess.sh -i ~/code_coverage_raw
+            - run:
+                name: Tar Up Code Coverage Report for later download
+                command: tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw
       - run:
           name: Ensure that no unexpected Apache errors were generated
           command: test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0
@@ -118,7 +142,12 @@ jobs:
           path: /var/log/xdmod
       - store_test_results:
           path: ~/phpunit
-
+      - when:
+          condition:
+            equal: [ "xdmod-time-trigger", << parameters.triggered-by >> ]
+          steps:
+            - store_artifacts:
+                path: ~/code_coverage
 workflows:
   full-build:
     jobs:
