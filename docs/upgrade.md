@@ -97,13 +97,13 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-10.0.0 Upgrade Notes
+10.5.0 Upgrade Notes
 -------------------
 
-Open XDMoD 10.0.0 is a major release that includes new features along with many
+Open XDMoD 10.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 9.5.0.
+You may upgrade directly from 10.0.0.
 
 ### Configuration File Changes
 

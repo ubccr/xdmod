@@ -165,6 +165,12 @@
                 ]
             },
             {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
+            },
+            {
                 "name": "uk_dimensions",
                 "is_unique": true,
                 "columns": [

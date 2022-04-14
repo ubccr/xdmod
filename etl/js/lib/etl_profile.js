@@ -369,7 +369,9 @@ ETLProfile.prototype.getAggregationTables = function () {
                 dimension_table: agg.dimension_table,
                 category: agg.category,
 				def: agg.def || f.def,
-				dimension: agg.dimension || false
+                dimension: agg.dimension || false,
+                alternate_group_by: agg.alternate_group_by || false,
+                show_all_dimension_values: agg.show_all_dimension_values || false
 			};
             newf.name = newf.name.replace(/\:field_name/g, field);
 			newf.sql = agg.sql || newf.name;
@@ -507,7 +509,7 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
 
     this.write = function() {
 
-        // Sort role configuration data and output
+        // Sort role configuration data and output.
 
         roles.sort(self.groupbysorter("group_by"));
 
@@ -698,7 +700,8 @@ var generateGroupBy = function (itemAlias, column)
         },
         data_sort_order: null,
         description_html: description,
-        name: label || itemAlias
+        name: label || itemAlias,
+        show_all_dimension_values: column.show_all_dimension_values
     };
 }
 
@@ -746,6 +749,9 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 
                     var itemAlias = tableColumns[tc].alias || tableColumns[tc].name;
                     xdmodInteg.addGroupBy(itemAlias, tableColumns[tc].roles);
+                    if (tableColumns[tc].alternate_group_by) {
+                        xdmodInteg.addGroupBy(tableColumns[tc].alternate_group_by, tableColumns[tc].roles);
+                    }
 
                     groupBys[itemAlias] = generateGroupBy(itemAlias, tableColumns[tc]);
 
@@ -970,7 +976,7 @@ ETLProfile.prototype.regressionTests = function () {
 
     this.datasets.forEach(function (dataset) {
         try {
-            // Check that the getQuery and MarkAsDone functions can be called
+            // Check that the getQuery and MarkAsDone functions can be called.
             if ( dataset.input.getQuery() == null ) {
                 throw "GetQuery returned null";
             }

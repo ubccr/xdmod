@@ -380,6 +380,20 @@ class RegressionTestHelper extends XdmodTestHelper
 
             if ($expected === $csvdata) {
                 return true;
+            } else {
+                try {
+                    $decodedCsv = json_decode($csvdata);
+                    if ($decodedCsv !== false) {
+                        $actualJson = json_encode($decodedCsv, JSON_PRETTY_PRINT);
+                        $expectedJson = json_encode(json_decode($expected), JSON_PRETTY_PRINT);
+
+                        if (trim($expectedJson) === trim($actualJson)) {
+                            return true;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // go ahead and ignore as this is just for json data and will fail w/ actual csv data.
+                }
             }
 
             $this->messages[] = sprintf(

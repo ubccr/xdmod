@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS `log_id_seq`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `log_id_seq` (
-  `sequence` int(11) NOT NULL AUTO_INCREMENT,
+  `sequence` int(11) NOT NULL,
   PRIMARY KEY (`sequence`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -42,18 +42,6 @@ CREATE TABLE `log_table` (
   KEY `ident_priority_idx` (`ident`, `priority`),
   KEY `logscan` (`ident`,`priority`,`id`),
   KEY `get_messages_idx` (`ident`,`logtime`,`priority`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `schema_version_history`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `schema_version_history` (
-  `database_name` char(64) NOT NULL,
-  `schema_version` char(64) NOT NULL,
-  `action_datetime` datetime NOT NULL,
-  `action_type` enum('created','upgraded') NOT NULL,
-  `script_name` varchar(255) NOT NULL,
-  PRIMARY KEY (`database_name`,`schema_version`,`action_datetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[buttermilk] Job Size: Weighted By CPU Hours (Core Count)","[banana-cream] Job Size: Weighted By CPU Hours (Core Count)","[coconut-cream] Job Size: Weighted By CPU Hours (Core Count)","[derby] Job Size: Weighted By CPU Hours (Core Count)","[curry] Job Size: Weighted By CPU Hours (Core Count)","[butter] Job Size: Weighted By CPU Hours (Core Count)","[bavarian-cream] Job Size: Weighted By CPU Hours (Core Count)","[fish] Job Size: Weighted By CPU Hours (Core Count)","[green-grape] Job Size: Weighted By CPU Hours (Core Count)","[cheese] Job Size: Weighted By CPU Hours (Core Count)","[apple] Job Size: Weighted By CPU Hours (Core Count)","[cashew] Job Size: Weighted By CPU Hours (Core Count)","[blueberry] Job Size: Weighted By CPU Hours (Core Count)","[bumbleberry] Job Size: Weighted By CPU Hours (Core Count)","[chestnut] Job Size: Weighted By CPU Hours (Core Count)","[boysenberry] Job Size: Weighted By CPU Hours (Core Count)","[flapper] Job Size: Weighted By CPU Hours (Core Count)","[blackberry] Job Size: Weighted By CPU Hours (Core Count)","[cherry] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12,111.5740,86.6872,63.9407,62.6246,66.2292,47.1149,34.7919,31.8851,20.6234,20.0000,15.5414,14.3905,12.0000,11.9138,12.0000,6.4787,5.0000,3.8683,2.6389
+2017-01,1.0000,12.1089,58.3187,56.1041,23.8051,18.5309,15.9990,0,22.0668,0,9.1338,10.2343,0,12.0000,11.6043,2.0000,5.0000,3.9482,4.0000
+---------

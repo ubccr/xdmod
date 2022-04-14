@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "jobfact_by_",
         "comment": "Jobfacts aggregated by ${AGGREGATION_UNIT}.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "${AGGREGATION_UNIT}_id",
@@ -171,6 +171,12 @@
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: Pre-determined GPU bucket sizes. References gpu_buckets.id"
+            },
+            {
+                "name": "qos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Quality of service. References qos.id"
             },
             {
                 "name": "submitted_job_count",

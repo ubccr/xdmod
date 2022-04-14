@@ -44,7 +44,7 @@ options that limit the output.
 ```
 $ TZ=UTC sacct --clusters *cluster* --allusers \
     --parsable2 --noheader --allocations --duplicates \
-    --format jobid,jobidraw,cluster,partition,account,group,gid,user,uid,\
+    --format jobid,jobidraw,cluster,partition,qos,account,group,gid,user,uid,\
 submit,eligible,start,end,elapsed,exitcode,state,nnodes,ncpus,reqcpus,reqmem,\
 reqtres,alloctres,timelimit,nodelist,jobname \
     --starttime 2013-01-01T00:00:00 --endtime 2013-01-01T23:59:59 \

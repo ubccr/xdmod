@@ -1,0 +1,18 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/qos.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "qos_id": "qos.qos_id",
+            "qos_name": "qos.qos_name"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_qos",
+                "alias": "qos"
+            }
+        ]
+    }
+}

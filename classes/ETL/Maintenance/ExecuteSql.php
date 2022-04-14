@@ -181,6 +181,11 @@ class ExecuteSql extends aAction implements iAction
         $this->initialize($etlOverseerOptions);
 
         foreach ( $this->options->sql_file_list as $sqlFile ) {
+            // close the connection so that a branch new connection will be created
+            // for each file. This mitigates problems with long
+            // running queries causing database connection timeouts.
+            $this->destinationEndpoint->disconnect();
+
             $delimiter = self::DEFAULT_MULTI_STATEMENT_DELIMITER;
 
             // An object can be used to override the default delimiter.
@@ -218,9 +223,9 @@ class ExecuteSql extends aAction implements iAction
 
                 $commentPatterns = array(
                     // Hash-style comments
-                    '/^\s*#.*[\r\n]+/',
+                    '/^\s*#.*[\r\n]+/m',
                     // Standard SQL comments.
-                    '/^\s*-- ?.*[\r\n]+/'
+                    '/^\s*-- ?.*[\r\n]+/m'
                     );
                 $sql = preg_replace($commentPatterns, "", $sql);
 
@@ -242,7 +247,7 @@ class ExecuteSql extends aAction implements iAction
                         "sql" => $sql
                     ));
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
-                        $numRowsAffected = $this->destinationHandle->execute($sql);
+                        $numRowsAffected = $this->destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
                     $this->logAndThrowException(
@@ -266,6 +271,7 @@ class ExecuteSql extends aAction implements iAction
             }  // foreach ($sqlStatementList as $sql)
 
             $this->logger->notice("Finished Processing $numStatementsProcessed SQL statements");
+
 
         }  // foreach ( $this->options->sql_file_list as $sqlFile )
 

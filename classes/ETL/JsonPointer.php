@@ -84,9 +84,8 @@ class JsonPointer
         }
 
         if ( null !== $expectedFirstToken ) {
-            $firstToken = array_shift(
-                array_slice(array_map('urldecode', explode('/', $pointer)), 1)
-            );
+            $tokens = array_slice(array_map('urldecode', explode('/', $pointer)), 1);
+            $firstToken = array_shift($tokens);
             return ( $firstToken == $expectedFirstToken );
         }
         return true;
@@ -106,11 +105,8 @@ class JsonPointer
         if ( ! static::isValidPointer($pointer) ) {
             return false;
         }
-
-        return array_shift(
-            array_slice(array_map('urldecode', explode('/', $pointer)), 1)
-        );
-
+        $tokens = array_slice(array_map('urldecode', explode('/', $pointer)), 1);
+        return array_shift($tokens);
     }  // getFirstToken()
 
     /** -----------------------------------------------------------------------------------------

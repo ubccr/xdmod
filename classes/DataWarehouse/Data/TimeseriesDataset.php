@@ -65,7 +65,8 @@ class TimeseriesDataset
         $statement = $this->agg_query->getRawStatement($limit, $offset);
         $statement->execute();
 
-        $groupInstance = reset($this->agg_query->getGroupBys());
+        $groupBys = $this->agg_query->getGroupBys();
+        $groupInstance = reset($groupBys);
         $groupIdColumn = $groupInstance->getId() . '_id';
 
         $seriesIds = array();
@@ -114,8 +115,8 @@ class TimeseriesDataset
         $summaryDataset = null;
 
         list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
-
-        $statObj = reset($this->query->getStats());
+        $stats = $this->query->getStats();
+        $statObj = reset($stats);
         $seriesIds = $this->getSeriesIds($limit, $offset);
 
         if (!empty($seriesIds)) {
@@ -472,7 +473,8 @@ class TimeseriesDataset
 
         $exportData['headers'][] = $timeGroup->getName();
 
-        $stat = reset($this->query->getStats());
+        $stats = $this->query->getStats();
+        $stat = reset($stats);
         $stat_unit  = $stat->getUnit();
 
         $seriesName = $stat->getName();
