@@ -101,7 +101,6 @@ jobs:
               - equal: [ *centos8-executor, << parameters.os >> ]
               - equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
-            - run: pushd ./tests/ui && npm install && popd
             - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
             - run:
                 name: 'Run SSO Tests'
