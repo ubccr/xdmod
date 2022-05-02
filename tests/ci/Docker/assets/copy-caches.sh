@@ -11,23 +11,9 @@ if [[ ! -f $ASSETS/browser-tests-node-modules.tar.gz ]]; then
 fi
 mv $ASSETS/browser-tests-node-modules.tar.gz /root
 
-# Copy optional assets based on which os version we're operating on.
-case "$OS_VERSION" in
-    7)
-      if [[ -f $ASSETS/chromedriver_linux64.zip ]]; then
-          mv $ASSETS/chromedriver_linux64.zip /root
-      fi
-      ;;
-    8|8.5)
-      if [[ -f $ASSETS/chromedriver_linux64-97.0.zip ]]; then
-          mv $ASSETS/chromedriver_linux64-97.0.zip /root/chromedriver_linux64.zip
-      fi
-      ;;
-    *)
-      # Error out ?
-      ;;
-esac
-
+if [[ -f $ASSETS/chromedriver_linux64.zip ]]; then 
+    mv $ASSETS/chromedriver_linux64.zip /root
+fi
 
 if [[ -f $ASSETS/saml-idp.tar.gz ]]; then
     mv $ASSETS/saml-idp.tar.gz /root
