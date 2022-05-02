@@ -10,10 +10,10 @@ executors:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
   centos8: &centos8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod10.0.0:centos8.4-0.1
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos8.4-0.2
   rocky8: &rocky8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod10.0.0:rockylinux8-0.1
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.3
 jobs:
   build:
     parameters:
