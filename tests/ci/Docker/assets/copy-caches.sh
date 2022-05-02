@@ -11,7 +11,7 @@ if [[ ! -f $ASSETS/browser-tests-node-modules.tar.gz ]]; then
 fi
 mv $ASSETS/browser-tests-node-modules.tar.gz /root
 
-if [[ -f $ASSETS/chromedriver_linux64.zip ]]; then 
+if [[ -f $ASSETS/chromedriver_linux64.zip ]]; then
     mv $ASSETS/chromedriver_linux64.zip /root
 fi
 
