@@ -2,8 +2,6 @@
 set -e
 ASSETS=/tmp/assets
 
-OS_VERSION=$(cat /etc/os-release | grep "VERSION_ID" | cut -d'=' -f 2 | tr -d '"')
-
 # Copy required assets.
 if [[ ! -f $ASSETS/browser-tests-node-modules.tar.gz ]]; then
     echo browser-tests-node-modules.tar.gz is required in $ASSETS >&2
