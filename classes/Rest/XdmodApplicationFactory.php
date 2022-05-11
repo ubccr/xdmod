@@ -115,11 +115,16 @@ class XdmodApplicationFactory
             $start = $request->attributes->get('start');
             $end = microtime(true);
             $elapsed = $end - $start;
+            
+            $referer = null;
+            if (isset($_SERVER['HTTP_REFERER'])) {
+                $referer = $_SERVER['HTTP_REFERER'];
+            }
 
             // Begin constructing the value to be logged / "returned".
             $retval['path'] = $request->getPathInfo();
             $retval['query'] = $request->getQueryString();
-            $retval['referer'] = $_SERVER['HTTP_REFERER'];
+            $retval['referer'] = $referer;
             $retval['elapsed'] = $elapsed;
             $retval['post'] = $post;
             $retval['data'] = array(
