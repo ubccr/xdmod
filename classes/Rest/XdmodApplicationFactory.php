@@ -118,6 +118,7 @@ class XdmodApplicationFactory
 
             // Begin constructing the value to be logged / "returned".
             $retval['path'] = $request->getPathInfo();
+            $retval['referer'] = $_SERVER['HTTP_REFERER'];
             $retval['elapsed'] = $elapsed;
             $retval['post'] = $post;
             $retval['data'] = array(
