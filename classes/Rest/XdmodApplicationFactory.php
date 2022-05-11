@@ -115,7 +115,7 @@ class XdmodApplicationFactory
             $start = $request->attributes->get('start');
             $end = microtime(true);
             $elapsed = $end - $start;
-            
+
             $referer = null;
             if (isset($_SERVER['HTTP_REFERER'])) {
                 $referer = $_SERVER['HTTP_REFERER'];
