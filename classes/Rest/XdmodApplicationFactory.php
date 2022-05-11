@@ -81,28 +81,8 @@ class XdmodApplicationFactory
         });
 
         $app->before(function (Request $request, Application $app) {
-            $logger = $app['logger.db'];
-
-            $retval = array('message' => "Route called");
-
-            $authInfo = Authentication::getAuthenticationInfo($request);
-            $method = $request->getMethod();
-            $host = $request->getHost();
-            $port = $request->getPort();
-            $retval['path'] = $request->getPathInfo();
-
-            $retval['data'] = array(
-              'host' => $host,
-              'port' => $port,
-              'method' => $method,
-              'username' => $authInfo['username'],
-              'ip' => $authInfo['ip'],
-              'token' => $authInfo['token'],
-              'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])
-            );
-
-            $logger->info($retval);
-
+            $request->attributes->set('start', microtime(true));
+            return $app;
         }, Application::EARLY_EVENT);
 
         // SETUP: a before middleware that detects / starts the query debug mode for a request.
@@ -114,6 +94,52 @@ class XdmodApplicationFactory
 
         // SETUP: the authentication Middleware to be run before the route is.
         $app->before("\Rest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
+
+        $app->after(function (Request $request, Response $response, Application $app) {
+            $logger = $app['logger.db'];
+
+            $retval = array('message' => "Route called");
+
+            $authInfo = Authentication::getAuthenticationInfo($request);
+            $method = $request->getMethod();
+            $host = $request->getHost();
+            $port = $request->getPort();
+
+            // Extracting any POST variables provided in the Request.
+            $post = array();
+            foreach($request->request->getIterator() as $key => $value) {
+                $post[$key] = json_decode($value, true);
+            }
+
+            // Calculate the amount of time that has elapsed serving this request.
+            $start = $request->attributes->get('start');
+            $end = microtime(true);
+            $elapsed = $end - $start;
+
+            $referer = null;
+            if (isset($_SERVER['HTTP_REFERER'])) {
+                $referer = $_SERVER['HTTP_REFERER'];
+            }
+
+            // Begin constructing the value to be logged / "returned".
+            $retval['path'] = $request->getPathInfo();
+            $retval['query'] = $request->getQueryString();
+            $retval['referer'] = $referer;
+            $retval['elapsed'] = $elapsed;
+            $retval['post'] = $post;
+            $retval['data'] = array(
+                'host' => $host,
+                'port' => $port,
+                'method' => $method,
+                'username' => $authInfo['username'],
+                'ip' => $authInfo['ip'],
+                'token' => $authInfo['token'],
+                'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])
+            );
+
+            $logger->info($retval);
+
+        }, Application::EARLY_EVENT);
 
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
