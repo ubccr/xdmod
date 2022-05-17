@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "schema": "mod_logger",
+        "name": "log_level",
+        "engine": "InnoDB",
+        "charset": "latin1",
+        "collation": "latin1_swedish_ci",
+        "columns": [
+            {
+                "name": "log_level_id",
+                "type": "smallint(6)",
+                "nullable": false
+            },
+            {
+                "name": "level",
+                "type": "varchar(16)",
+                "nullable": false
+            },
+            {
+                "name": "description",
+                "type": "varchar(64)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "log_level_id"
+                ]
+            }
+        ]
+    }
+}
