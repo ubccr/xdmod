@@ -91,6 +91,10 @@ For example:
 
 This would indicate that the job used 1 GPU.
 
+Grid Engine accounting logs contain one line per node.  If conflicting GPU
+counts are found in the data for a job then the greatest value will be used for
+the GPU count.
+
 [slurm-sacct-alloctres]: https://slurm.schedmd.com/sacct.html#OPT_AllocTres
 [slurm-tres]: https://slurm.schedmd.com/tres.html
 [slurm-gres]: https://slurm.schedmd.com/gres.html
