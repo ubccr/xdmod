@@ -35,10 +35,12 @@ was developed to monitor the NSF supported portfolio of supercomputers
 that fall under the [XSEDE](https://www.xsede.org/) program.
 
 This work was sponsored by NSF under grant numbers
-[ACI 1025159][nsf-1025159] and [ACI 1445806][nsf-1445806].
+[ACI 1025159][nsf-1025159], [ACI 1445806][nsf-1445806] and
+[ACI 2137603][nsf-2137603].
 
 [nsf-1025159]: http://nsf.gov/awardsearch/showAward?AWD_ID=1025159
 [nsf-1445806]: http://nsf.gov/awardsearch/showAward?AWD_ID=1445806
+[nsf-2137603]: http://nsf.gov/awardsearch/showAward?AWD_ID=2137603
 
 For more information, questions, or feedback send email to
 `ccr-xdmod-help` at `buffalo.edu`.
