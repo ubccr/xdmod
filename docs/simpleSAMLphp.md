@@ -90,8 +90,8 @@ More specifically if you have used this guide and named things the same you can 
 $config = array(
   /*
    * If you want to support both local auth and Single Sign On auth look into
-   * https://simplesamlphp.org/docs/stable/multiauth:multiauth
-   * https://simplesamlphp.org/docs/stable/sqlauth:sql
+   * https://simplesamlphp.org/docs/latest/multiauth/multiauth.html
+   * https://simplesamlphp.org/docs/1.17/sqlauth/sql.html
    * An updated example will be provided when this is implemented.
    */
   'default-sp' => array(
@@ -267,8 +267,8 @@ see [Integrations][integrations] for more information
 
 [integrations]: integrations.html
 [ssp]: https://simplesamlphp.org/
-[ssp-config]: https://simplesamlphp.org/docs/stable/simplesamlphp-sp
+[ssp-config]: https://simplesamlphp.org/docs/latest/simplesamlphp-sp.html
 [ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus
-[ssp-idp-remote]: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-remote
-[ssp-apache]: https://simplesamlphp.org/docs/stable/simplesamlphp-install#section_6
+[ssp-idp-remote]: https://simplesamlphp.org/docs/latest/simplesamlphp-reference-idp-remote.html
+[ssp-apache]: https://simplesamlphp.org/docs/latest/simplesamlphp-install.html#configuring-apache
 [saml-idp]: https://github.com/mcguinness/saml-idp/
