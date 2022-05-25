@@ -140,12 +140,6 @@ sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('l
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 <?php
 \$config = array(
-  /*
-   * If you want to support both local auth and Single Sign On auth look into
-   * https://simplesamlphp.org/docs/stable/multiauth:multiauth
-   * https://simplesamlphp.org/docs/stable/sqlauth:sql
-   * An updated example will be provided when this is implemented.
-   */
   'xdmod-sp' => array(
     'saml:SP',
     'idp' => 'urn:example:idp',
