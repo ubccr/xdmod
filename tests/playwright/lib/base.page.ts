@@ -6,7 +6,7 @@ export class BasePage {
     readonly mask: Locator;
     readonly baseUrl: string;
 
-    constructor(page: Page, baseUrl: string  = 'https://localhost') {
+    constructor(page: Page, baseUrl: string) {
         this.page = page;
         this.maskSelector = '.ext-el-mask-msg';
         this.mask = page.locator(this.maskSelector);

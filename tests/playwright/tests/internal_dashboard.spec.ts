@@ -10,7 +10,7 @@ test.describe('Internal Dashboard Tests', async () => {
     test('Create a new user', async ({page}) => {
         // Make sure that we start at the Internal Dashboard page and that we're logged in per our use of the
         // storageState above.
-        await page.goto('https://localhost/internal_dashboard');
+        await page.goto('/internal_dashboard');
         await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
 
         await test.step('Select User Management tab', async () => {
@@ -145,7 +145,7 @@ test.describe('Internal Dashboard Tests', async () => {
     test('Test that settings can be discarded.', async ({page}) => {
         // Make sure that we start at the Internal Dashboard page and that we're logged in per our use of the
         // storageState above.
-        await page.goto('https://localhost/internal_dashboard');
+        await page.goto('/internal_dashboard');
         await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
 
         await test.step('Select User Management tab', async () => {
@@ -259,7 +259,7 @@ test.describe('Internal Dashboard Tests', async () => {
     });
 
     test('Remove the newly created user', async ({page}) => {
-        await page.goto('https://localhost/internal_dashboard');
+        await page.goto('/internal_dashboard');
         await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
 
         await test.step('Select User Management tab', async () => {
@@ -284,7 +284,7 @@ test.describe('Internal Dashboard Tests', async () => {
 
         await test.step('Ensure that the "Actions" button is visible and click it', async () => {
             const selector = InternalDashboard.selectors.create_manage_users.current_users.settings.toolbar.actions.button();
-            await expect(page.locator(selector));
+            await expect(page.locator(selector)).toBeVisible();
             await page.click(selector);
 
             await expect(page.locator(InternalDashboard.selectors.create_manage_users.current_users.settings.toolbar.actions.container)).toBeVisible();
