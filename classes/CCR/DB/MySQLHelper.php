@@ -591,8 +591,15 @@ class MySQLHelper
 
         $output    = array();
         $returnVar = 0;
+        $tmpHome = static::createTemporaryDirectory();
 
-        exec($command . ' 2>&1', $output, $returnVar);
+        exec(
+            sprintf('%s %s 2>&1', 'HOME=' . escapeshellarg($tmpHome), $command),
+            $output,
+            $returnVar
+        );
+
+        rmdir($tmpHome);
 
         if ($returnVar != 0) {
             $msg = "Command returned non-zero value '$returnVar': "
@@ -648,5 +655,31 @@ class MySQLHelper
     private static function quoteOptionsString($str)
     {
         return '"' . str_replace('"', '""', $str) . '"';
+    }
+
+    /**
+     * Create a temporary directory.
+     *
+     * PHP does not have the equivalent of "mktemp -d".
+     *
+     * @return string The path to the temporary directory.
+     */
+    private static function createTemporaryDirectory()
+    {
+        $tmpDir = tempnam(sys_get_temp_dir(), 'mysql-helper-');
+
+        if ($tmpDir === false) {
+            throw new Exception("Failed to create temporary file");
+        }
+
+        if (!unlink($tmpDir)) {
+            throw new Exception("Failed to remove file '$tmpDir'");
+        }
+
+        if (!mkdir($tmpDir, 0700)) {
+            throw new Exception("Failed to create directory '$tmpDir'");
+        }
+
+        return $tmpDir;
     }
 }
