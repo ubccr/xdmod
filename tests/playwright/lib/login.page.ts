@@ -22,8 +22,8 @@ export class LoginPage extends BasePage implements LoginInterface {
     readonly loginTitle: string;
     readonly adminTitle: string;
 
-    constructor(page: Page) {
-        super(page);
+    constructor(page: Page, baseUrl: string) {
+        super(page, baseUrl);
         this.logo = page.locator('#logo');
         this.loginLink = page.locator('a[href*=actionLogin]');
         this.username = page.locator('#txt_login_username');
