@@ -10,7 +10,10 @@ executors:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
   centos8: &centos8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/centos8-0.5:base
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos8.4-0.2
+  rocky8: &rocky8-executor
+    docker:
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.4
 jobs:
   build:
     parameters:
@@ -94,8 +97,11 @@ jobs:
                   ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - when:
           condition:
-            equal: [ *centos8-executor, << parameters.os >> ]
+            or:
+              - equal: [ *centos8-executor, << parameters.os >> ]
+              - equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
+            - run: pushd ./tests/ui && npm install && popd
             - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
             - run:
                 name: 'Run SSO Tests'
@@ -119,8 +125,10 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [centos7, centos8]
+              os: [centos7, centos8, rocky8]
               install-type: ["fresh_install", "upgrade"]
             exclude:
               - os: centos8
+                install-type: "upgrade"
+              - os: rocky8
                 install-type: "upgrade"
