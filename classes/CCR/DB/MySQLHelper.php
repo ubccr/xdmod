@@ -6,6 +6,7 @@ use CCR\Log;
 use Exception;
 use CCR\DB\MySQLDB;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 
 class MySQLHelper
 {
@@ -669,15 +670,15 @@ class MySQLHelper
         $tmpDir = tempnam(sys_get_temp_dir(), 'mysql-helper-');
 
         if ($tmpDir === false) {
-            throw new Exception("Failed to create temporary file");
+            throw new UnexpectedValueException("Failed to create temporary file");
         }
 
         if (!unlink($tmpDir)) {
-            throw new Exception("Failed to remove file '$tmpDir'");
+            throw new UnexpectedValueException("Failed to remove file '$tmpDir'");
         }
 
         if (!mkdir($tmpDir, 0700)) {
-            throw new Exception("Failed to create directory '$tmpDir'");
+            throw new UnexpectedValueException("Failed to create directory '$tmpDir'");
         }
 
         return $tmpDir;
