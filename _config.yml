@@ -56,7 +56,14 @@ defaults:
       sw_version: "9.5.0"
       style: "effervescence"
       tocversion: "v9_5toc"
-
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      style: "obsolete"
+      
 # Build settings
 markdown: kramdown
 theme_subdir: "/xdmod-jekyll-theme"
