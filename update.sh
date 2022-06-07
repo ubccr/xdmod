@@ -47,3 +47,8 @@ EOF
         git show refs/remotes/upstream/$branch:$file > $outfile
     done
 done
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $BASEDIR
+python3 ./get_sitemap.py
+cd -
