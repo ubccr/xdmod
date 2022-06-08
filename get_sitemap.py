@@ -1,6 +1,9 @@
+# this script is run by update.sh
+
 import yaml
 from yaml.loader import SafeLoader
 from datetime import date
+# yaml parser not built-in, make sure to pip install pyyaml
 
 last_mod = date.today()
 
