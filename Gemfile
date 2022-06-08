@@ -10,7 +10,7 @@ ruby RUBY_VERSION
 # This will help ensure the proper Jekyll version is running.
 # Happy Jekylling!
 
-gem 'github-pages', 226
+gem 'github-pages', '226'
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do
