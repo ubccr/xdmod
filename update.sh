@@ -1,5 +1,5 @@
 #!/bin/bash
-# needs jq, curl, awk and sed
+# needs python3, pyyaml, jq, curl, awk and sed
 
 set -e
 
