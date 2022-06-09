@@ -1,0 +1,14 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: rockylinux:8
+    steps:
+      - run: echo No tests ran for gh-pages
+workflows:
+  full-build:
+    jobs:
+      - build:
+        filters:
+          branches:
+            ignore: gh-pages
