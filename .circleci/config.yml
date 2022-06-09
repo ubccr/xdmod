@@ -1,4 +1,8 @@
 version: 2.1
+jobs:
+  build:
+    steps:
+      - run: echo No tests ran for gh-pages
 workflows:
   full-build:
     jobs:
