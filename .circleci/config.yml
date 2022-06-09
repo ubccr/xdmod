@@ -1,0 +1,8 @@
+version: 2.1
+workflows:
+  full-build:
+    jobs:
+      - build:
+        filters:
+          branches:
+            ignore: gh-pages
