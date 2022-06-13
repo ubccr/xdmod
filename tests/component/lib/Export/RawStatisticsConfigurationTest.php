@@ -5,24 +5,15 @@ namespace ComponentTests\Export;
 use CCR\Json;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use Exception;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Test data warehouse export raw statistics configuration.
  *
  * @coversDefaultClass \DataWarehouse\Data\RawStatisticsConfiguration
  */
-class RawStatisticsConfigurationTest extends \PHPUnit_Framework_TestCase
+class RawStatisticsConfigurationTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \DataWarehouse\Data\RawStatisticsConfiguration
-     */
-    private static $configuration;
-
-    /**
-     * @var array Enabled realm names before adding test realms.
-     */
-    private static $realmNames = [];
-
     /**
      * @var array Realms used for testing.
      */
@@ -38,24 +29,28 @@ class RawStatisticsConfigurationTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
+     * @var array Enabled realm names before adding test realms.
+     */
+    private static $realmNames = [];
+
+    /**
      * @var array Configuration files created before running tests.
      */
     private static $testConfigFiles = [];
 
     /**
-     * Store batch export realms before adding new test configuration files
-     * and then add test configuration files.
+     * Store enabled batch export realm names before adding new test
+     * configuration files and then add test configuration files.
      */
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        static::$configuration = RawStatisticsConfiguration::factory();
 
         static::$realmNames = array_map(
             function ($realm) {
                 return $realm['name'];
             },
-            static::$configuration->getBatchExportRealms()
+            RawStatisticsConfiguration::factory()->getBatchExportRealms()
         );
 
         $dir = CONFIG_DIR . '/rawstatistics.d';
@@ -79,9 +74,6 @@ class RawStatisticsConfigurationTest extends \PHPUnit_Framework_TestCase
 
             static::$testConfigFiles[] = $file;
         }
-
-        // Must clear cache after changing configuration.
-        apcu_clear_cache();
     }
 
     /**
@@ -90,43 +82,65 @@ class RawStatisticsConfigurationTest extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         parent::tearDownAfterClass();
+
         foreach (static::$testConfigFiles as $file) {
-            if (!unlink($file)) {
+            // The file may not exist because this function is run twice due to
+            // the use of `@runInSeparateProcess`.
+            if (file_exists($file) && !unlink($file)) {
                 throw new Exception("Failed to remove file '$file'");
             }
         }
-
-        // Must clear cache after changing configuration.
-        apcu_clear_cache();
     }
 
     /**
      * Test which realms are enabled.
      *
+     * This test must run in a separate process because the
+     * `RawStatisticsConfiguration` singleton caches configuration data.  Using
+     * a separate process ensures that the configuration files are read again
+     * during the test.
+     *
+     * @runInSeparateProcess
      * @covers ::getBatchExportRealms
      */
     public function testEnabledRealms()
     {
+        // Names of all currently enabled realms.
         $realmNames = array_map(
             function ($realm) {
                 return $realm['name'];
             },
-            static::$configuration->getBatchExportRealms()
+            RawStatisticsConfiguration::factory()->getBatchExportRealms()
         );
 
-        // Make sure all the realms enabled before configuration changes are
+        // Check that all the realms enabled before configuration changes are
         // still enabled.
         foreach (static::$realmNames as $realmName) {
             $this->assertTrue(in_array($realmName, $realmNames), "$realmName is enabled");
         }
 
+        // Collected enabled test realm names for use in later assertions.
+        $enabledTestRealmNames = [];
+
+        // Check that test realms are included or excluded according to
+        // enabled/disabled configuration.
         foreach (static::$testRealms as $realm) {
             $realmName = $realm['name'];
             if ($realm['enabled']) {
+                $enabledTestRealmNames[] = $realmName;
                 $this->assertTrue(in_array($realmName, $realmNames), "$realmName is enabled");
             } else {
                 $this->assertTrue(!in_array($realmName, $realmNames), "$realmName is not enabled");
             }
+        }
+
+        // Check that all currently enabled realms should be enabled.  This
+        // will fail if a realm is returned from `getBatchExportRealms` that
+        // should not be enabled.
+        foreach ($realmNames as $realmName) {
+            $isEnabledRealm = in_array($realmName, static::$realmNames)
+                || in_array($realmName, $enabledTestRealmNames);
+            $this->assertTrue($isEnabledRealm, "$realmName is enabled and was before the test or is a test realm");
         }
     }
 }
