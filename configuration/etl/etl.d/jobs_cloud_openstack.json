@@ -243,7 +243,27 @@
             "definition_file": "cloud_openstack/image.json"
         },
         {
-            "name": "OpenStackCloudInstanceTypeIngestor",
+            "name": "OpenStackCloudInstanceTypeRawStagingIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/staging_raw_instance_type.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/staging_existing_instance_type.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeStagingIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "CloudInstanceTypeStateIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_staging.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeEndTimeIngestor",
             "description": "Open Stack cloud instance type data",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/instance_type.json"

@@ -19,5 +19,22 @@ class DatabasesMigration extends AbstractDatabasesMigration
     {
         parent::execute();
 
+        $dbh = DB::factory('datawarehouse');
+        $mysql_helper = \CCR\DB\MySQLHelper::factory($dbh);
+        $console = Console::factory();
+        $pipelinesToRun = array();
+
+        if ($mysql_helper->tableExists('modw_cloud.event')) {
+            $pipelinesToRun[] = 'cloud-migration-10-0-0_10-5-0';
+        }
+
+        foreach ($pipelinesToRun as $pipeline) {
+            Utilities::runEtlPipeline(
+                [$pipeline],
+                $this->logger,
+                ['last-modified-start-date' => '2017-01-01 00:00:00']
+            );
+        }
+
     }
 }
