@@ -22,7 +22,7 @@ description: >
   resource utilization, resource performance, and impact on scholarship
   and research.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://open.xdmod.org" # the base hostname & protocol for your site
+url: "https://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
 latest_version: "10.0"
