@@ -31,13 +31,13 @@
     "cloud-migration-10-0-0_10-5-0": [
         {
             "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
-            "description": "Open Stack cloud instance type data",
+            "description": "Open Stack cloud instance type data for existing instance types",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/staging_existing_instance_type.json"
         },
         {
             "name": "OpenStackCloudInstanceTypeStagingIngestor",
-            "description": "Open Stack cloud instance type data",
+            "description": "Sets end times for instance type configurations",
             "class": "CloudInstanceTypeStateIngestor",
             "definition_file": "cloud_openstack/instance_type_staging.json"
         },

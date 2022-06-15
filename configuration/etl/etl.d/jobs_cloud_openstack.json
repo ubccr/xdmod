@@ -251,7 +251,7 @@
         },
         {
             "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
-            "description": "Open Stack cloud instance type data existing instance types",
+            "description": "Open Stack cloud instance type data for existing instance types",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/staging_existing_instance_type.json"
         },
@@ -263,7 +263,7 @@
             "definition_file": "cloud_openstack/instance_type_staging.json"
         },
         {
-            "name": "OpenStackCloudInstanceTypeEndTimeIngestor",
+            "name": "OpenStackCloudInstanceTypeIngestor",
             "description": "Open Stack cloud instance type data",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/instance_type.json"
