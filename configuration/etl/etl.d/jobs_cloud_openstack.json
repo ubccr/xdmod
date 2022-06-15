@@ -244,20 +244,20 @@
         },
         {
             "name": "OpenStackCloudInstanceTypeRawStagingIngestor",
-            "description": "Open Stack cloud instance type data",
+            "description": "Open Stack cloud instance type data for newly shredded data",
             "class": "DatabaseIngestor",
             "truncate_destination": true,
             "definition_file": "cloud_openstack/staging_raw_instance_type.json"
         },
         {
             "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
-            "description": "Open Stack cloud instance type data",
+            "description": "Open Stack cloud instance type data existing instance types",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/staging_existing_instance_type.json"
         },
         {
             "name": "OpenStackCloudInstanceTypeStagingIngestor",
-            "description": "Open Stack cloud instance type data",
+            "description": "Sets end times for instance type configurations",
             "class": "CloudInstanceTypeStateIngestor",
             "truncate_destination": true,
             "definition_file": "cloud_openstack/instance_type_staging.json"

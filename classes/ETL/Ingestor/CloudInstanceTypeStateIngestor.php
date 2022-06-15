@@ -1,16 +1,15 @@
 <?php
 /* ==========================================================================================
- * This class simulates a Finite State Machine to reconstruct the start and end time of a specific
- * set of vcpus and memory for a cloud host. It get a set of rows that contains the vcpus and memory
- * sorted by resource, host and start time of the configuration. This list is iterated over and an end
- * time is set anytime a changed is detected in the number of vcpus or memory for a host.
+ * This class simulates a Finite State Machine to determine the end times for a VM instance type.
+ * It gets a set of rows that contains the vcpus, memory and disk size of a instance type and it is
+ * sorted by resource, instance_type and start time for that instance type configuration. This list
+ * is iterated over and an end time is set anytime a change is detected in vcpus, memory or
+ * disk size for an instance type configuraion.
  *
  * If no changes are found the current date is considered the end date of the configuration
  *
- * A -1 value for the vcpus and memory_mb means the host was not available on that day
- *
  * @author Greg Dean <gmdean@buffalo.edu>
- * @date 2021-01-27
+ * @date 2022-06-15
  */
 
 namespace ETL\Ingestor;

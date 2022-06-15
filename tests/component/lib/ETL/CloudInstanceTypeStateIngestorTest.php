@@ -247,7 +247,7 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->instance_state_change_cores_result, $instance_state2[0]);
     }
 
-    // Test for when the number of cores for an instance changes
+    // Test for when the amount of memory for an instance changes
     public function testChangeMem()
     {
         $this->fsm->transformHelper($this->instance_type_state_first_record);
@@ -258,7 +258,7 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->instance_state_change_mem_result, $instance_state2[0]);
     }
 
-    // Test for when the number of cores for an instance changes
+    // Test for when the disk size for an instance changes
     public function testChangeDisk()
     {
         $this->fsm->transformHelper($this->instance_type_state_first_record);
@@ -269,7 +269,7 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->instance_state_change_disk_gb_result, $instance_state2[0]);
     }
 
-    // Test for when the number of cores for an instance changes
+    // Test when a instance configuration changes back to a previous configuration
     public function testChangeInstanceToPrevious()
     {
         $this->fsm->transformHelper($this->instance_type_state_first_record);
@@ -282,6 +282,7 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->instance_state_change_to_previous_result, $instance_state3[0]);
     }
 
+    // Test updating an existing record with a new start time.
     public function testUpdateExisting()
     {
         $this->fsm->transformHelper($this->instance_type_state_first_record);
