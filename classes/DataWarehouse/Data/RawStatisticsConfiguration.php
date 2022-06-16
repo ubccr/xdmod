@@ -124,9 +124,18 @@ class RawStatisticsConfiguration
             return [];
         }
 
-        // Every realm that has a `rawstatistics` configuration is currently
+        // Every realm that has a `rawstatistics` configuration and is not disabled is
         // batch exportable.
-        return $this->config['realms'];
+        $realms = array_filter(
+            $this->config['realms'],
+            function ($realm) {
+                return !(array_key_exists('export_enabled', $realm) && $realm['export_enabled'] === false);
+            }
+        );
+
+        // Use array_values to remove gaps in keys that may have been
+        // introduced by the use of array_filter.
+        return array_values($realms);
     }
 
     /**
