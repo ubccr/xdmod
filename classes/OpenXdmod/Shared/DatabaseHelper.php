@@ -114,45 +114,6 @@ class DatabaseHelper
                 $settings['db_user'],
                 $settings['db_pass']
             );
-
-            $console->displayMessage(
-                "Initializing database `$database`."
-            );
-            self::mysqlImportData($settings, $database);
-        }
-    }
-
-    /**
-     * Import database files.
-     *
-     * @param array $settings
-     * @param string $db The database name.
-     */
-    private static function mysqlImportData(array $settings, $db)
-    {
-        $schemaPath = BASE_DIR . "/db/schema/$db.sql";
-
-        MySQLHelper::staticExecuteFile(
-            $settings['db_host'],
-            $settings['db_port'],
-            $settings['db_user'],
-            $settings['db_pass'],
-            $db,
-            $schemaPath
-        );
-
-        // Import any data if necessary.
-        $dataPath = BASE_DIR . "/db/data/$db.sql";
-
-        if (file_exists($dataPath)) {
-            MySQLHelper::staticExecuteFile(
-                $settings['db_host'],
-                $settings['db_port'],
-                $settings['db_user'],
-                $settings['db_pass'],
-                $db,
-                $dataPath
-            );
         }
     }
 }

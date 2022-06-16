@@ -1,0 +1,85 @@
+{
+    "table_definition": {
+        "schema": "mod_logger",
+        "name": "log_table",
+        "engine": "InnoDB",
+        "charset": "latin1",
+        "collation": "latin1_swedish_ci",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "logtime",
+                "type": "datetime",
+                "nullable": true
+            },
+            {
+                "name": "ident",
+                "type": "char(32)",
+                "nullable": true
+            },
+            {
+                "name": "priority",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "message",
+                "type": "longtext",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "get_messages_idx",
+                "type": "BTREE",
+                "columns": [
+                    "ident",
+                    "logtime",
+                    "priority"
+                ]
+            },
+            {
+                "name": "ident_idx",
+                "type": "BTREE",
+                "columns": [
+                    "ident"
+                ]
+            },
+            {
+                "name": "ident_priority_idx",
+                "type": "BTREE",
+                "columns": [
+                    "ident",
+                    "priority"
+                ]
+            },
+            {
+                "name": "logscan",
+                "type": "BTREE",
+                "columns": [
+                    "ident",
+                    "priority",
+                    "id"
+                ]
+            },
+            {
+                "name": "priority_idx",
+                "type": "BTREE",
+                "columns": [
+                    "priority"
+                ]
+            },
+            {
+                "name": "unique_id_idx",
+                "type": "BTREE",
+                "columns": [
+                    "id"
+                ]
+            }
+        ]
+    }
+}
