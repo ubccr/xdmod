@@ -286,7 +286,7 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
     public function testUpdateExisting()
     {
         $this->fsm->transformHelper($this->instance_type_state_first_record);
-        $instance_state = $this->fsm->transformHelper($this->instance_type_state_existing_record);
+        $this->fsm->transformHelper($this->instance_type_state_existing_record);
         $instance_state2 = $this->fsm->transformHelper($this->instance_type_state_change_num_cores);
 
         $this->assertEquals($this->instance_state_update_existing, $instance_state2[0]);

@@ -102,7 +102,7 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
             $this->resetInstance();
             $this->initInstance($srcRecord);
         }
-        else if (
+        elseif (
             (($this->_instance_type_state['instance_type'] == $srcRecord['instance_type']) &&
             ($this->_instance_type_state['resource_id'] == $srcRecord['resource_id'])) &&
             (($this->_instance_type_state['num_cores'] != $srcRecord['num_cores']) ||
@@ -117,7 +117,7 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
             $this->initInstance($srcRecord);
 
         }
-        else if (
+        elseif (
             ($this->_instance_type_state['instance_type'] == $srcRecord['instance_type']) &&
             ($this->_instance_type_state['resource_id'] == $srcRecord['resource_id']) &&
             ($this->_instance_type_state['num_cores'] == $srcRecord['num_cores']) &&
