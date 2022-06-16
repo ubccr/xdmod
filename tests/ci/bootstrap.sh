@@ -74,6 +74,8 @@ then
         done
     fi
 
+    sudo -u xdmod xdmod-ingestor
+
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
     then
         last_modified_start_date=$(date +'%F %T')
