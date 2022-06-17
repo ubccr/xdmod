@@ -43,6 +43,14 @@ Resource_List.nodes=2:ppn=32:gpus=2
 
 This would indicate that the job used 4 GPUs (2 GPUs per node * 2 nodes).
 
+Other versions of PBS use `Resource_List.ngpus`:
+
+```
+Resource_List.ngpus=4
+```
+
+This would indicate that the job used 4 GPUs.
+
 ### Non-Standard PBS GPU data
 
 In addition to the standard way of logging GPUs, two non-standard ways of
