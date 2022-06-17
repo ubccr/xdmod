@@ -82,5 +82,18 @@ the `batchExport` option:
 }
 ```
 
+## Data Export Batch Process
+
+Data export requests are fulfilled by a batch process that is run nightly via
+cron.  The cron job is scheduled in the file `/etc/cron.d/xdmod`.  This file
+may be modified to alter the schedule for the job.  The command used to
+generate the data export files is `batch_export_manager.php`.  If you suspect
+that there is a problem with the export process the following command may be
+run by the `xdmod` user to produce debugging output:
+
+```sh
+/usr/lib64/xdmod/batch_export_manager.php --debug
+```
+
 [salt]: https://en.wikipedia.org/wiki/Salt_(cryptography)
 [supremm]: https://supremm.xdmod.org/
