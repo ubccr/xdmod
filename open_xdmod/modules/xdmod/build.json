@@ -43,7 +43,6 @@
     "file_maps": {
         "data": [
             "classes",
-            "db",
             "etl",
             "html",
             "libraries",
