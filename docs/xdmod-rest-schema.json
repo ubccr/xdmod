@@ -427,6 +427,22 @@
                     "total",
                     "data"
                 ]
+            },
+            "extstore-error": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "enum": [false]
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "success",
+                    "message"
+                ]
             }
         },
         "securitySchemes": {
@@ -2372,17 +2388,81 @@
                 "tags": [
                     "Data Export"
                 ],
-                "summary": "",
-                "description": "",
+                "summary": "Get list of realms available for data export",
                 "operationId": "get-warehouse-export-realms",
-                "parameters": [],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "List of realms",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/extstore"
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "const": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "Realm identifier",
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "description": "Realm name",
+                                                        "type": "string"
+                                                    },
+                                                    "fields": {
+                                                        "description": "Realm export fields",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "description": "Field name",
+                                                                    "type": "string"
+                                                                },
+                                                                "alias": {
+                                                                    "description": "Field alias",
+                                                                    "type": "string"
+                                                                },
+                                                                "display": {
+                                                                    "description": "Field display name",
+                                                                    "type": "string"
+                                                                },
+                                                                "anonymize": {
+                                                                    "description": "Will this field be anonymized in the export?",
+                                                                    "type": "boolean"
+                                                                },
+                                                                "documentation": {
+                                                                    "description": "Field description",
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
                                 }
                             }
                         }
@@ -2395,17 +2475,104 @@
                 "tags": [
                     "Data Export"
                 ],
-                "summary": "",
-                "description": "",
+                "summary": "Create a data export request",
                 "operationId": "post-warehouse-export-request",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "realm",
+                        "in": "query",
+                        "required": true,
+                        "description": "Realm identifier",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true,
+                        "description": "Start date of requested data",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true,
+                        "description": "End date of requested data",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "required": true,
+                        "description": "Export file format",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "CSV",
+                                "JSON"
+                            ]
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "The export request identifier",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/extstore"
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "const": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The export request identifier",
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
                                 }
                             }
                         }
@@ -2418,17 +2585,140 @@
                 "tags": [
                     "Data Export"
                 ],
-                "summary": "",
+                "summary": "Get list of data export requests",
                 "description": "",
                 "operationId": "get-warehouse-export-requests",
-                "parameters": [],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "List of data export requests",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/extstore"
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "const": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "realm": {
+                                                        "description": "Realm identifier",
+                                                        "type": "string"
+                                                    },
+                                                    "start_date": {
+                                                        "description": "Start date of requested data",
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    },
+                                                    "end_date": {
+                                                        "description": "End date of requested data",
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    },
+                                                    "export_succeeded": {
+                                                        "description": "Did the export succeed?",
+                                                        "anyOf": [
+                                                            {
+                                                                "type": "null"
+                                                            },
+                                                            {
+                                                                "type": "integer",
+                                                                "format": "int32",
+                                                                "minimum": 0,
+                                                                "maximum": 1
+                                                            }
+                                                        ]
+                                                    },
+                                                    "export_expired": {
+                                                        "description": "Is the export expired?",
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "minimum": 0,
+                                                        "maximum": 1
+                                                    },
+                                                    "export_expires_datetime": {
+                                                        "description": "Data export expiration date",
+                                                        "anyOf": [
+                                                            {
+                                                                "type": "null"
+                                                            },
+                                                            {
+                                                                "type": "string",
+                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "export_created_datetime": {
+                                                        "description": "Data export creation date",
+                                                        "anyOf": [
+                                                            {
+                                                                "type": "null"
+                                                            },
+                                                            {
+                                                                "type": "string",
+                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "export_file_format": {
+                                                        "description": "Data export file type",
+                                                        "enum": [
+                                                            "CSV",
+                                                            "JSON"
+                                                        ]
+                                                    },
+                                                    "requested_datetime": {
+                                                        "description": "Data export request creation date",
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                    },
+                                                    "downloaded_datetime": {
+                                                        "description": "Data export (first) download date",
+                                                        "anyOf": [
+                                                            {
+                                                                "type": "null"
+                                                            },
+                                                            {
+                                                                "type": "string",
+                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "state": {
+                                                        "description": "Data export state",
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "Submitted",
+                                                            "Available",
+                                                            "Failed",
+                                                            "Expired"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
                                 }
                             }
                         }
@@ -2437,19 +2727,80 @@
             },
             "delete": {
                 "tags": [
-                    "Data Warehouse"
+                    "Data Export"
                 ],
-                "summary": "",
-                "description": "",
+                "summary": "Delete multiple existing export requests",
                 "operationId": "delete-warehouse-export-requests",
-                "parameters": [],
+                "requestBody": {
+                    "description": "List of identifiers for export requests",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "description": "The identifier for the export request",
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "List of identifiers for deleted export requests",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/extstore"
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "const": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The identifier for the export request",
+                                                        "type": "integer",
+                                                        "format": "int32"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data export request not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
                                 }
                             }
                         }
@@ -2486,6 +2837,36 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data export request not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2509,11 +2890,58 @@
                 }],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "List of deleted request identifiers",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/extstore"
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "const": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The identifier for the export request",
+                                                        "type": "integer",
+                                                        "format": "int32"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data export request not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
                                 }
                             }
                         }

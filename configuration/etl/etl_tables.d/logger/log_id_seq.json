@@ -1,0 +1,22 @@
+{
+    "table_definition": {
+        "schema": "mod_logger",
+        "name": "log_id_seq",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "sequence",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "sequence"
+                ]
+            }
+        ]
+    }
+}

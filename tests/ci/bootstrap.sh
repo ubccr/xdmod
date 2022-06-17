@@ -22,18 +22,10 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
-PYTHON_SCIPY=python36-scipy
-
-# Detect what version of CentOS we're running in, if it's 8 then we need to do some rejiggering of the yum repos to
-# make things work. From: https://stackoverflow.com/questions/70926799/centos-through-vm-no-urls-in-mirrorlist
-OS_VERSION=$(grep VERSION_ID < /etc/os-release  | cut -d"=" -f 2 | tr -d '"')
-case "$OS_VERSION" in
-    "8")
-        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
-        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
-        PYTHON_SCIPY=python3-scipy
-        ;;
-esac
+PYTHON_SCIPY=python3-scipy
+if [ `rpm -E %{rhel}` = 7 ]; then
+    PYTHON_SCIPY=python36-scipy
+fi
 
 # Install python dependencies for the image hash comparison algorithm
 yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
