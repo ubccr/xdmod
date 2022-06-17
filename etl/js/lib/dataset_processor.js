@@ -18,8 +18,7 @@ var mysql = require('mysql');
 var MongoClient = require('mongodb').MongoClient;
 var metricErrors = require('./metric_errors.js');
 var ce = require('cloneextend');
-var defaultMaxProcessing = 2;
-var defaultMaxMaxProcessing = 4;
+const MAX_PROCESSING = 4;
 var defaultPoolConnectionMax = 4;
 var printDetailPer = 1000;
 var volatileCacheSize = 1000000;
@@ -129,7 +128,6 @@ var DatasetProcessor = module.exports = function (etlProfile, dataset, markProce
 
     this._processEnded = false;
     this.config = {
-        maxProcessing: defaultMaxProcessing,
         poolConnectionMax: poolConnectionMax ? poolConnectionMax : defaultPoolConnectionMax,
         markProcessedRecords: markProcessedRecords
     };
@@ -402,7 +400,7 @@ DatasetProcessor.prototype.onBeginDoc = function () {
     if (!this.stream) {
         throw Error(self.dataset.name + ': ' + 'DatasetProcessor::onBeginDoc called before this.stream init');
     }
-    if (this.stats.currentlyProcessing >= this.config.maxProcessing) {
+    if (this.stats.currentlyProcessing >= MAX_PROCESSING) {
         this.stream.pause(); //pause until doc is processed.
     }
 }
@@ -417,7 +415,7 @@ DatasetProcessor.prototype.onEndDoc = function (doc, start_ts, extraInfo) {
     function onBeforeEnd() {
         self.stats.currentlyProcessing--;
         //release the stream 
-        if (self.stats.currentlyProcessing < self.config.maxProcessing) {
+        if (self.stats.currentlyProcessing < MAX_PROCESSING) {
             self.stream.resume();
         }
     }
@@ -439,12 +437,6 @@ DatasetProcessor.prototype.onEndDoc = function (doc, start_ts, extraInfo) {
                         }
                     }
                 }
-            }
-            //adjust buffer size, kind of like tcp window
-            if (self.mysqlPool._connectionQueue.length == 0 && self.config.maxProcessing < defaultMaxMaxProcessing) {
-                self.config.maxProcessing++;
-            } else if (self.mysqlPool._connectionQueue.length > 0 && self.config.maxProcessing > 1) {
-                self.config.maxProcessing--;
             }
             var processingDetails = self.getProcessingDetails();
             self.printProcessingDetails(processingDetails);
@@ -643,6 +635,7 @@ DatasetProcessor.prototype.onDoc = function (doc) {
                         conn.query(errorInsertStatement, function (err, result) {
                             self.stats._profiling.insert_error += ((Date.now()) - _s_insert_error_ts);
                             if (err) {
+                                conn.release();
                                 self.emit('error', self.dataset.name + ': ' + err + ': errorInsertStatement: ' + errorInsertStatement);
                                 self.stats.insertErrorCount++;
                                 self.onEndDoc(doc, __start_ts, {
