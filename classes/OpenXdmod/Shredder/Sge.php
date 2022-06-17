@@ -104,6 +104,7 @@ class Sge extends Shredder
         'resource_list_h_fsize',
         'resource_list_num_proc',
         'resource_list_mem_free',
+        'resource_list_gpu',
     );
 
     /**
@@ -204,6 +205,7 @@ class Sge extends Shredder
         'h_fsize',
         'num_proc',
         'mem_free',
+        'gpu',
     );
 
     /**
@@ -252,6 +254,7 @@ class Sge extends Shredder
         'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submission_time AS SIGNED), 0)',
         'node_count'      => 'COUNT(DISTINCT hostname)',
         'cpu_count'       => 'GREATEST(COALESCE(slots, 1), COALESCE(resource_list_num_proc, 1))',
+        'gpu_count'       => 'MAX(COALESCE(resource_list_gpu, 0))',
         'node_list'       => 'GROUP_CONCAT(hostname)',
     );
 
