@@ -373,6 +373,11 @@
                 "name": "resource_list_mem_free",
                 "type": "bigint(20)",
                 "nullable": true
+            },
+            {
+                "name": "resource_list_gpu",
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [
