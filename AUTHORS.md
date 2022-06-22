@@ -5,12 +5,14 @@
 - Jeffrey T. Palmer
 - Nikolay Simakov
 - Joseph White
-- Jeanette Sperhac
 - Ryan Rathsam
 - Gregary Dean
+- Hannah Taylor
+- Conner Saeli
 
 ## Previous Maintainers
 
+- Jeanette Sperhac
 - Steven M. Gallo
 - Ben Plessinger
 - Rudra Chakraborty

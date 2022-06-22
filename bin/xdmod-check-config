@@ -88,13 +88,13 @@ try {
         . " or greater."
     );
 
-    _debug('Checking for PHP 7 or later');
-    $unsupportedVersion = '7.0.0';
+    _debug('Checking for PHP 8 or later');
+    $unsupportedVersion = '8.0.0';
     $result = version_compare($currentVersion, $unsupportedVersion, '<');
     displayResult(
         $result,
-        "PHP 7 and later are not supported",
-        "You have PHP version $currentVersion. Downgrade to PHP 5."
+        "PHP 8 and later are not supported",
+        "You have PHP version $currentVersion. Downgrade to PHP 5 or 7."
     );
 
     _debug('Checking for PDO class');
