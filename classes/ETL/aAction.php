@@ -353,7 +353,7 @@ abstract class aAction extends aEtlObject
     }  // setOverseerRestrictionOverrides()
 
     /** -----------------------------------------------------------------------------------------
-     * Initialize the variable map based on ETL settings in the overseer options.
+     * Initialize the variable map based on ETL settings in the overseer options and constants.
      *
      * @return This object to support method chaining.
      * ------------------------------------------------------------------------------------------
@@ -361,6 +361,9 @@ abstract class aAction extends aEtlObject
 
     private function initializeVariableStore()
     {
+        // Constants used in substitutions.
+        $this->variableStore->HIERARCHY_BOTTOM_LEVEL_INFO = HIERARCHY_BOTTOM_LEVEL_INFO;
+
         if ( null === $this->etlOverseerOptions ) {
             return;
         }
