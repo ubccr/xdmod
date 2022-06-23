@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "job_tasks",
         "comment": "Consumption of resources",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_id",
@@ -386,7 +386,9 @@
             {
                 "name": "deleted",
                 "columns": [
-                    "is_deleted"
+                    "is_deleted",
+                    "end_day_id",
+                    "start_day_id"
                 ],
                 "type": "BTREE",
                 "is_unique": false
@@ -408,8 +410,13 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
             }
-        ],
-        "triggers": []
+        ]
     }
 }

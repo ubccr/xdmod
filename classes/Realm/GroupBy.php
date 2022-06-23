@@ -216,6 +216,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $disabled = false;
 
     /**
+     * @var boolean Set to true if this group by should allow all values to be shown for all users.
+     */
+
+    protected $showAllDimensionValues = false;
+
+    /**
      * @see iGroupBy::factory()
      */
 
@@ -285,7 +291,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             'is_aggregation_unit' => 'bool',
             'module' => 'string',
             'order' => 'int',
-            'show_in_catalog' => 'bool'
+            'show_in_catalog' => 'bool',
+            'show_all_dimension_values' => 'bool'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
@@ -440,6 +447,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'order':
                     $this->order = filter_var($value, FILTER_VALIDATE_INT);
+                    break;
+                case 'show_all_dimension_values':
+                    $this->showAllDimensionValues = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     break;
                 default:
                     $this->logger->notice(
@@ -1472,6 +1482,15 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * @see iGroupBy::showAllDimensionValues()
+     */
+
+    public function showAllDimensionValues()
+    {
+        return $this->showAllDimensionValues;
     }
 
     /**

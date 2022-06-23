@@ -1,8 +1,0 @@
-{
-    "#": "This action loads data from a structured file and only needs the table definition",
-    "table_definition": [
-        {
-            "$ref": "${table_definition_dir}/jobs/xdw/schema-version-history.json#/table_definition"
-        }
-    ]
-}

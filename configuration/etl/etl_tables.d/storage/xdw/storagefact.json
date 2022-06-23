@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "storagefact",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "comment": "Storage usage fact table",
         "columns": [
             {
@@ -162,6 +162,12 @@
                 "name": "idx_ts",
                 "columns": [
                     "ts"
+                ]
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
                 ]
             },
             {

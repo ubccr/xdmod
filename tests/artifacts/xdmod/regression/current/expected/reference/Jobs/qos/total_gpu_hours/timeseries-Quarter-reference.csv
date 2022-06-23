@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[chestnut] GPU Hours: Total","[apple] GPU Hours: Total","[banana-cream] GPU Hours: Total","[bavarian-cream] GPU Hours: Total","[blackberry] GPU Hours: Total","[blueberry] GPU Hours: Total","[boysenberry] GPU Hours: Total","[bumbleberry] GPU Hours: Total","[butter] GPU Hours: Total","[buttermilk] GPU Hours: Total","[cashew] GPU Hours: Total","[cheese] GPU Hours: Total","[cherry] GPU Hours: Total","[coconut-cream] GPU Hours: Total","[curry] GPU Hours: Total","[derby] GPU Hours: Total","[fish] GPU Hours: Total","[flapper] GPU Hours: Total","[green-grape] GPU Hours: Total"
+"2016 Q4",465.4928,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",41.4200,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000
+---------

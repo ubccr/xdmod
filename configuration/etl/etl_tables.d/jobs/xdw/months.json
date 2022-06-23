@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "months",
         "comment": "autogen - one rec for each month of TG operation.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

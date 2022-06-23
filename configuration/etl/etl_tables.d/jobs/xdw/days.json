@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "days",
         "comment": "autogen - one rec for each day of TG.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "id",

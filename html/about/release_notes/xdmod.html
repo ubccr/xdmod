@@ -2,6 +2,86 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
+<h2>Version 10.0.0 (2022-03-10)</h2>
+<ul>
+<li>Bug Fixes
+<ul>
+<li>ETL
+<ul>
+<li>Fix comment removal in ETL SQL execution</li>
+<li>Fix cloud resource specs and storage database tables date formats</li>
+<li>Add SHOW WARNINGS to StructuredFileIngestor</li>
+<li>Fix quarters start timestamp column type</li>
+<li>Change slurm helper default end time</li>
+<li>Fix resource ingestor default resource type</li>
+<li>Fix shredder empty line checking</li>
+</ul></li>
+<li>General
+<ul>
+<li>Set minimum username length to 2</li>
+<li>Change exceptions.log file permissions</li>
+<li>Restore global exception file name and number, and stack trace logging</li>
+<li>Remove PEAR Log dependencies</li>
+<li>Add exportJson function back.</li>
+</ul></li>
+</ul></li>
+<li>Enhancements
+<ul>
+<li>Internal Dashboard
+<ul>
+<li>Refactor admin dashboard user listing query and add indexes to Users and SessionManager tables</li>
+</ul></li>
+<li>ETL
+<ul>
+<li>Fix warnings seen when ingesting cloud or storage files</li>
+<li>Performance improvements to ETLv2 action that loads queues for jobs realm</li>
+<li>Improve Slurm TRES GRES/GPU parsing</li>
+</ul></li>
+<li>General
+<ul>
+<li>Convert tables in moddb database to the InnoDB table engine</li>
+<li>Convert tables in modw_aggregates to InnoDB and add class to manage aggregate tables</li>
+<li>Add index to mod_logger.log_table for help with better query planning</li>
+<li>InnoDB Performance Improvements for ingestion and aggregation</li>
+<li>Convert tables in mod_logger, mod_hpcdb, and mod_shredder to InnoDB</li>
+<li>Convert tables in modw database to the innodb table engine</li>
+<li>Add support for PHP 7.2 and MariaDB 10.3</li>
+</ul></li>
+<li>Cloud
+<ul>
+<li>Convert modw_cloud tables to InnoDB table engine</li>
+<li>Remove multi column auto-increment key from modw_cloud.cloud_resource_specs</li>
+</ul></li>
+<li>Job Viewer
+<ul>
+<li>Enabled text selection / copying in Job Viewer Accounting Tab</li>
+</ul></li>
+<li>Infrastructure
+<ul>
+<li>Update query filtering to be based on ACLs</li>
+</ul></li>
+</ul></li>
+<li>Uncategorized
+<ul>
+<li>General
+<ul>
+<li>Change SQL connection reuse strategy</li>
+<li>More robustness improvements for webdriverio-based UI tests</li>
+<li>Handle MySQL server has gone away errors</li>
+</ul></li>
+</ul></li>
+<li>New Features
+<ul>
+<li>General
+<ul>
+<li>Add script to help convert to using innodb-file-per-table mysql setting</li>
+<li>Add quality of service group by with Slurm support</li>
+<li>Updated etl_profile.js to add an extra group_by parameter “show_all_dimension_values”.</li>
+<li>Update Metric Explorer Controller to include ability to show all possible dimension values.</li>
+</ul></li>
+</ul></li>
+</ul>
+
 <h2>Version 9.5.0 (2021-05-21)</h2>
 <ul>
 <li>New Features

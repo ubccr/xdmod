@@ -35,12 +35,12 @@
                 "jobs/xdw/processor-buckets.json",
                 "jobs/xdw/quarters.json",
                 "jobs/xdw/queue.json",
+                "jobs/xdw/qos.json",
                 "jobs/xdw/request.json",
                 "jobs/xdw/resource-allocated.json",
                 "jobs/xdw/resource-fact.json",
                 "jobs/xdw/resource-specs.json",
                 "jobs/xdw/resource-type.json",
-                "jobs/xdw/schema-version-history.json",
                 "jobs/xdw/service-provider.json",
                 "jobs/xdw/staging-jobhosts.json",
                 "jobs/xdw/system-account.json",
@@ -144,14 +144,14 @@
             }
         },
         {
-            "name": "schema-version",
-            "definition_file": "jobs/xdw/schema-version-history.json",
-            "description": "resource-type + data",
+            "name": "qos",
+            "definition_file": "jobs/xdw/qos.json",
+            "description": "QOS data",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
-                    "name": "schema version history",
-                    "path": "jobs/xdw/schema-version-history.json"
+                    "name": "unknown qos data",
+                    "path": "jobs/xdw/qos.json"
                 }
             }
         },

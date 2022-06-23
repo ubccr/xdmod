@@ -4,6 +4,16 @@ namespace RegressionTests\Controllers;
 
 class UsageChartsTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * The path relative to this file that contains the expected hashes for this test case.
+     *
+     * @var string
+     */
+    const HASH_DIR_REL_PATH = '/../../../artifacts/xdmod/regression/images';
+
+    /** Hash data JSON file relative to __DIR__ */
+    const HASH_FILE_REL_PATH = '/../../../artifacts/xdmod/regression/images/expected.json';
+
     protected static $helper;
 
     // Used when running in hash-generation mode.
@@ -13,9 +23,19 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     {
         self::$helper->logout();
         if(!empty(self::$imagehashes)) {
-            // print to stdout rather than, e.g., overwriting
-            // the expected results file.
-            print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
+            if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
+                // Overwrite test data.
+                $hashFile = realpath(__DIR__ . self::HASH_FILE_REL_PATH);
+                $expectedHashes = json_decode(file_get_contents($hashFile), true);
+                foreach (self::$imagehashes as $testName => $hash) {
+                    $expectedHashes[$testName] = $hash;
+                }
+                file_put_contents($hashFile, json_encode($expectedHashes, JSON_PRETTY_PRINT) . "\n");
+            } else {
+                // print to stdout rather than, e.g., overwriting
+                // the expected results file.
+                print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
+            }
         }
     }
     /**
@@ -27,15 +47,12 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
-        if ($expectedHash === false) {
+        $actualHash = sha1($imageData);
 
-            self::$imagehashes[$testName] =  sha1($imageData);
-
+        if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
+            self::$imagehashes[$testName] = $actualHash;
             $this->markTestSkipped('Created Expected output for ' . $testName);
-
         } else {
-
-            $actualHash = sha1($imageData);
             $this->assertEquals($expectedHash, $actualHash, $testName);
         }
     }
@@ -62,10 +79,29 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         self::$helper->authenticate('cd');
 
         $expectedHashes = array();
+        $hashFiles = array();
 
-        $hashFile = realpath(__DIR__ . '/../../../artifacts/xdmod') . '/regression/images/expected.json';
-        if (file_exists($hashFile)) {
-            $expectedHashes = json_decode(file_get_contents($hashFile), true);
+        $osInfo = false;
+        try {
+            $osInfo = parse_ini_file('/etc/os-release');
+        } catch (\Exception $e) {
+            // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
+        }
+
+        // If we have OS info available to us then look for an OS specific expected output file based on this info.
+        if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
+            $hashFiles[] = sprintf("expected-%s%s.json", $osInfo['ID'], $osInfo['VERSION_ID']);
+        }
+        // Otherwise try the default expected.json
+        $hashFiles[] = 'expected.json';
+
+        $artifactsDir = realpath(__DIR__ . self::HASH_DIR_REL_PATH);
+        foreach($hashFiles as $hashFile) {
+            $hashFilePath = "$artifactsDir/$hashFile";
+            if (file_exists($hashFilePath)) {
+                $expectedHashes = json_decode(file_get_contents($hashFilePath), true);
+                break;
+            }
         }
 
         // Provide all the different combinations of chart settings except Guide Lines (which do not

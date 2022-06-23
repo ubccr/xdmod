@@ -1,7 +1,7 @@
 {
     "table_definition": {
         "name": "VersionCheck",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "entry_date",

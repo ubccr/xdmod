@@ -1,0 +1,27 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "migration-10_0_0-10_5_0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+         }
+    },
+    "migration-10_0_0-10_5_0": [
+        {
+            "name": "update-mod_shredder-tables",
+            "description": "Update mod_shredder tables",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/shredder/job-sge.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        }
+    ]
+}

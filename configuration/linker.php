@@ -111,7 +111,6 @@ function handle_uncaught_exception($exception)
     $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
     $logConf = array(
-        'mode' => 0644,
         'file' => $logfile,
         'mail' => false,
         'db' => false,
@@ -122,11 +121,11 @@ function handle_uncaught_exception($exception)
 
     $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
     $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
-    $logger->info(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
+    $logger->err(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->info(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
+    $logger->err(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
 
    // If working in a server context, build headers to output.
     $httpCode = 500;

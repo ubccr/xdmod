@@ -1,0 +1,18 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/jobs/xdw/qos.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "j.qos_id",
+            "name": "j.qos_name"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_qos",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "j"
+            }
+        ]
+    }
+}

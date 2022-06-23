@@ -296,6 +296,8 @@ class StructuredFileIngestor extends aIngestor implements iAction
         // Insert each source record. Note that the source record may be an array or an
         // object and must be Traversable.
 
+        $warnings = array();
+
         foreach ( $this->sourceEndpoint as $sourceRecord ) {
 
             // The same source record may be used in multiple tables.
@@ -325,8 +327,18 @@ class StructuredFileIngestor extends aIngestor implements iAction
                         array('exception' => $e, 'endpoint' => $this)
                     );
                 }
+
+                $warning = $this->destinationHandle->query("SHOW WARNINGS");
+
+                if ( count($warning) > 0 ) {
+                    $warnings[$etlTableKey] = array_key_exists($etlTableKey, $warnings) ? array_merge($warnings[$etlTableKey], $warning) : $warning;
+                }
             }
             $numRecords++;
+        }
+
+        foreach ( $warnings as $table => $message) {
+            $this->logSqlWarnings($message, $this->etlDestinationTableList[$table]->getFullName());
         }
 
         return $numRecords;

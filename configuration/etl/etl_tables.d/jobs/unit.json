@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "unit",
         "comment": "Units of countable: GBs, SUs, databases, etc.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "unit_id",

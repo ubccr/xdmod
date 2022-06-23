@@ -5,6 +5,8 @@
 
 namespace Xdmod;
 
+use xd_utilities;
+
 /**
  * Contains functions related to Slurm's TRES data.
  */
@@ -45,7 +47,10 @@ class SlurmResourceParser
     public function getGpuCountFromTres(array $tres)
     {
         foreach ($tres as $resource) {
-            if ($resource[0] === 'gres/gpu' && count($resource) > 1) {
+            if (($resource[0] === 'gres/gpu'
+                || xd_utilities\string_begins_with($resource[0], 'gres/gpu:')
+                ) && count($resource) > 1
+            ) {
                 return (int)$resource[1];
             }
         }

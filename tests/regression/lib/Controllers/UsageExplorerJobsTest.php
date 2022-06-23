@@ -94,7 +94,8 @@ class UsageExplorerJobsTest extends \PHPUnit_Framework_TestCase
             'queue',
             'resource',
             'resource_type',
-            'username'
+            'username',
+            'qos'
         ];
 
         $settings = [

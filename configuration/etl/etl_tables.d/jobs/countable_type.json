@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "countable_type",
         "comment": "Types of things that are countable. Accelerators, databases, storage, etc.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "countable_type_id",

@@ -680,7 +680,19 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     ],
                     view: new Ext.grid.GroupingView({
                         forceFit:true,
-                        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+                        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
+
+                        /* To enable users to be able to copy / paste text from this component we need to override the
+                           template used to render each cell. Specifically we needed to remove the `x-unselectable`
+                           class, the `unselectable="on"` attribute, and to be ensure that we're being explicit in our
+                           intentions for this content, I've added a new css class that specifically enables text
+                           selection.
+                         */
+                        cellTpl: new Ext.Template(
+                            '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
+                            '<div class="x-grid3-cell-inner x-grid3-col-{id} selectable-text" {attr}>{value}</div>',
+                            '</td>'
+                        )
                     })
                 });
                 break;

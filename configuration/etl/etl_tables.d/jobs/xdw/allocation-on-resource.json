@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "allocationonresource",
         "comment": "state of alloc wrt resources.",
-        "engine": "MyISAM",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "allocation_id",

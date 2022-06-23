@@ -10,9 +10,16 @@
         },
         "joins": [
             {
+                "name": "hpcdb_jobs_to_ingest",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ji"
+            },
+            {
                 "name": "hpcdb_jobs",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "j"
+                "alias": "j",
+                "type": "INNER",
+                "on": "ji.job_id = j.job_id"
             }
         ],
         "where": [
