@@ -606,19 +606,19 @@ function verify_captcha(){
  */
 function createTemporaryDirectory($prefix = 'xdmod-tmp-dir-')
 {
-	$tmpDir = tempnam(sys_get_temp_dir(), $prefix);
+    $tmpDir = tempnam(sys_get_temp_dir(), $prefix);
 
-	if ($tmpDir === false) {
-		throw new UnexpectedValueException("Failed to create temporary file");
-	}
+    if ($tmpDir === false) {
+        throw new UnexpectedValueException("Failed to create temporary file");
+    }
 
-	if (!unlink($tmpDir)) {
-		throw new UnexpectedValueException("Failed to remove file '$tmpDir'");
-	}
+    if (!unlink($tmpDir)) {
+        throw new UnexpectedValueException("Failed to remove file '$tmpDir'");
+    }
 
-	if (!mkdir($tmpDir, 0700)) {
-		throw new UnexpectedValueException("Failed to create directory '$tmpDir'");
-	}
+    if (!mkdir($tmpDir, 0700)) {
+        throw new UnexpectedValueException("Failed to create directory '$tmpDir'");
+    }
 
-	return $tmpDir;
+    return $tmpDir;
 }
