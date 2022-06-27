@@ -4,7 +4,6 @@ use CCR\MailWrapper;
 use CCR\DB;
 use CCR\Log;
 use DataWarehouse\Access\Usage;
-use xd_utilities;
 
 /**
  * Used for keeping track of charts a user wishes to add to his / her
