@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2ea6be5f2da98081a49b4f4e324affe",
+    "content-hash": "73469f27035f31f94c05cf69f8b9d92c",
     "packages": [
         {
             "name": "carlo/jquery-base64-file",
@@ -1011,6 +1011,68 @@
                 "MIT"
             ],
             "homepage": "https://momentjs.com"
+        },
+        {
+            "name": "mongodb/mongodb",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mongodb/mongo-php-library.git",
+                "reference": "a307dd60e71e1291c60927ea4f3a1905146063f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/a307dd60e71e1291c60927ea4f3a1905146063f5",
+                "reference": "a307dd60e71e1291c60927ea4f3a1905146063f5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mongodb": "^1.2.0",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "MongoDB\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Mikola",
+                    "email": "jmikola@gmail.com"
+                },
+                {
+                    "name": "Hannes Magnusson",
+                    "email": "bjori@mongodb.com"
+                },
+                {
+                    "name": "Derick Rethans",
+                    "email": "github@derickrethans.nl"
+                }
+            ],
+            "description": "MongoDB driver library",
+            "homepage": "https://jira.mongodb.org/browse/PHPLIB",
+            "keywords": [
+                "database",
+                "driver",
+                "mongodb",
+                "persistence"
+            ],
+            "support": {
+                "issues": "https://github.com/mongodb/mongo-php-library/issues",
+                "source": "https://github.com/mongodb/mongo-php-library/tree/v1.1"
+            },
+            "time": "2017-02-16T18:40:32+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4115,5 +4177,5 @@
     "platform-overrides": {
         "php": "5.4"
     },
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }
