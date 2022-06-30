@@ -86,14 +86,13 @@ jobs:
             equal: [ *centos8-executor, << parameters.os >> ]
           steps:
             - run:
-                name: Update the chromedriver version for Centos8
-                command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
-            - run:
                 name: Install new chromedriver
                 command: |
-                  cd /root/project/tests/ui
+                  pushd /root/project/tests/ui
+                  rm -rf node_modules
+                  rm -f package-lock.json
                   npm install
-                  cd /root/project
+                  popd
       - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
       - run:
           name: 'Run SSO Tests'
