@@ -90,14 +90,10 @@ jobs:
       - run:
           name: Make sure that the Composer Test Depedencies are installed
           command: composer install --no-progress
-      - when:
-          condition:
-            equal: [ *centos7-executor, << parameters.os >> ]
-          steps:
-            - run:
-                name: Setup Environment Variables for centos7
-                command: |
-                  echo "export COMPOSER=composer.json" >> $BASH_ENV
+      - run:
+          name: Make sure that we reset COMPOSER when upgrading.
+          command: |
+            echo "export COMPOSER=composer.json" >> $BASH_ENV
       - run:
           name: Setup & Run QA Tests
           command: |
