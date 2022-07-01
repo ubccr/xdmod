@@ -38,33 +38,43 @@ jobs:
       #- setup_remote_docker:
       #    docker_layer_caching: true
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      - when:
+          condition:
+            equal: [ *centos8-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Setup Environment Variables for centos8
+                command: |
+                  echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
+            - restore_cache:
+                keys:
+                  # "composer.lock" can be used if it is committed to the repo
+                  - v1-el8-dependencies-{{ checksum "composer-el8.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-el8-dependencies-
+            - save_cache:
+                key: v1-el8-dependencies-{{ checksum "composer-el8.json" }}
+                paths:
+                  - ./vendor
+      - when:
+          condition:
+            equal: [ *centos7-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Setup Environment Variables for centos7
+                command: |
+                  echo "export COMPOSER=composer-el7.json" >> $BASH_ENV
+            - restore_cache:
+                keys:
+                  # "composer.lock" can be used if it is committed to the repo
+                  - v1-el7-dependencies-{{ checksum "composer-el7.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-el7-dependencies-
+            - save_cache:
+                key: v1-el7-dependencies-{{ checksum "composer-el7.json" }}
+                paths:
+                  - ./vendor
       - run: composer install --no-progress
-      - when:
-            condition:
-                equal: [ *centos8-executor, << parameters.os >> ]
-            steps:
-                - run:
-                    name: Setup Environment Variables for centos8
-                    command: |
-                        echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
-      - when:
-            condition:
-                equal: [ *centos7-executor, << parameters.os >> ]
-            steps:
-                - run:
-                    name: Setup Environment Variables for centos7
-                    command: |
-                        echo "export COMPOSER=composer-el7.json" >> $BASH_ENV
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
       - run:
           name: Create Test Artifact Directories
           command: |
