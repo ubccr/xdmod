@@ -246,7 +246,7 @@ of composer is 1.3.2 (TravisCI builds use --stable)
   1. Change directory to the root of the Open XDMoD repository.
   2. Install Composer dependencies for Open XDMoD.
     - `export COMPOSER=composer-el[7|8].json`
-      - use `el7` if you are building this on CentOS7 w/ PHP5.4 
+      - use `el7` if you are building this on CentOS7 w/ PHP5.4
       - use `el8` if you are building this on CentOS8 ( or equivalent ) w/ PHP7.2
     - `composer install`
     - Depending on the versions of various software installed on your system,
