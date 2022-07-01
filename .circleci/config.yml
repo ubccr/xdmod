@@ -5,12 +5,12 @@
 version: 2.1
 
 executors:
-  centos7:
+  centos7: &centos7-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
   centos8: &centos8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/centos8-0.3:base
+      - image: tools-ext-01.ccr.xdmod.org/centos8.4:base
 jobs:
   build:
     parameters:
@@ -38,17 +38,43 @@ jobs:
       #- setup_remote_docker:
       #    docker_layer_caching: true
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      - when:
+          condition:
+            equal: [ *centos8-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Setup Environment Variables for centos8
+                command: |
+                  echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
+            - restore_cache:
+                keys:
+                  # "composer.lock" can be used if it is committed to the repo
+                  - v1-el8-dependencies-{{ checksum "composer-el8.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-el8-dependencies-
+            - save_cache:
+                key: v1-el8-dependencies-{{ checksum "composer-el8.json" }}
+                paths:
+                  - ./vendor
+      - when:
+          condition:
+            equal: [ *centos7-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Setup Environment Variables for centos7
+                command: |
+                  echo "export COMPOSER=composer-el7.json" >> $BASH_ENV
+            - restore_cache:
+                keys:
+                  # "composer.lock" can be used if it is committed to the repo
+                  - v1-el7-dependencies-{{ checksum "composer-el7.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-el7-dependencies-
+            - save_cache:
+                key: v1-el7-dependencies-{{ checksum "composer-el7.json" }}
+                paths:
+                  - ./vendor
       - run: composer install --no-progress
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
       - run:
           name: Create Test Artifact Directories
           command: |
@@ -65,11 +91,13 @@ jobs:
           name: Make sure that the Composer Test Depedencies are installed
           command: composer install --no-progress
       - run:
-          name: Setup & Run QA Tests
-          command: ./tests/ci/scripts/qa-test-setup.sh
+          name: Make sure that we reset COMPOSER when upgrading.
+          command: |
+            echo "export COMPOSER=composer.json" >> $BASH_ENV
       - run:
-          name: Make sure that the Composer Test Depedencies are installed
-          command: composer install --no-progress
+          name: Setup & Run QA Tests
+          command: |
+            ./tests/ci/scripts/qa-test-setup.sh
       - run: ./tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
@@ -86,14 +114,13 @@ jobs:
             equal: [ *centos8-executor, << parameters.os >> ]
           steps:
             - run:
-                name: Update the chromedriver version for Centos8
-                command: sed -i 's/91.0.0/92.0.0/' /root/project/tests/ui/package.json
-            - run:
                 name: Install new chromedriver
                 command: |
-                  cd /root/project/tests/ui
+                  pushd /root/project/tests/ui
+                  rm -rf node_modules
+                  rm -f package-lock.json
                   npm install
-                  cd /root/project
+                  popd
       - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
       - run:
           name: 'Run SSO Tests'
