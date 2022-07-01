@@ -5,7 +5,7 @@
 version: 2.1
 
 executors:
-  centos7:
+  centos7: &centos7-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
   centos8: &centos8-executor
@@ -45,6 +45,22 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run: composer install --no-progress
+      - when:
+            condition:
+                equal: [ *centos8-executor, << parameters.os >> ]
+            steps:
+                - run:
+                    name: Setup Environment Variables for centos8
+                    command: |
+                        echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
+      - when:
+            condition:
+                equal: [ *centos7-executor, << parameters.os >> ]
+            steps:
+                - run:
+                    name: Setup Environment Variables for centos7
+                    command: |
+                        echo "export COMPOSER=composer-el7.json" >> $BASH_ENV
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
