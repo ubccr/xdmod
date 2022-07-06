@@ -6,7 +6,7 @@ use CCR\Log;
 use Exception;
 use CCR\DB\MySQLDB;
 use Psr\Log\LoggerInterface;
-use UnexpectedValueException;
+use xd_utilities;
 
 class MySQLHelper
 {
@@ -592,7 +592,7 @@ class MySQLHelper
 
         $output    = array();
         $returnVar = 0;
-        $tmpHome = static::createTemporaryDirectory();
+        $tmpHome = xd_utilities\createTemporaryDirectory('mysql-helper-');
 
         exec(
             sprintf('%s %s 2>&1', 'HOME=' . escapeshellarg($tmpHome), $command),
@@ -656,31 +656,5 @@ class MySQLHelper
     private static function quoteOptionsString($str)
     {
         return '"' . str_replace('"', '""', $str) . '"';
-    }
-
-    /**
-     * Create a temporary directory.
-     *
-     * PHP does not have the equivalent of "mktemp -d".
-     *
-     * @return string The path to the temporary directory.
-     */
-    private static function createTemporaryDirectory()
-    {
-        $tmpDir = tempnam(sys_get_temp_dir(), 'mysql-helper-');
-
-        if ($tmpDir === false) {
-            throw new UnexpectedValueException("Failed to create temporary file");
-        }
-
-        if (!unlink($tmpDir)) {
-            throw new UnexpectedValueException("Failed to remove file '$tmpDir'");
-        }
-
-        if (!mkdir($tmpDir, 0700)) {
-            throw new UnexpectedValueException("Failed to create directory '$tmpDir'");
-        }
-
-        return $tmpDir;
     }
 }
