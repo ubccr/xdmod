@@ -328,6 +328,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $controller
             ->get("$root/plots", "$current::getPlots");
 
+        $controller->post("$root/rawdata", "$current::getRawData");
     }
 
     /**
@@ -2170,6 +2171,63 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 "totalCount" => count($results)
             )
         );
+    }
+
+    /**
+     */
+    public function getRawData(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+
+        $realm = $this->getStringParam($request, 'realm', true);
+        $startDate = $this->getStringParam($request, 'start_date', true);
+        $endDate = $this->getStringParam($request, 'end_date', true);
+        $searchParams = $request->get('params');
+        $stats = $request->get('stats');
+
+        $queryDescripters = Acls::getQueryDescripters($user, $realm);
+        if (empty($queryDescripters)) {
+            throw new BadRequestException('Invalid realm');
+        }
+
+        $params = array_intersect_key($searchParams, $queryDescripters);
+        if (count($params) != count($searchParams)) {
+            throw new BadRequestException('Invalid search parameters specified in params object');
+        }
+
+        $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
+        $query = new $QueryClass($realm, "day", $startDate, $endDate, null, $stats, array());
+
+        $allRoles = $user->getAllRoles();
+        $query->setMultipleRoleParameters($allRoles, $user);
+
+        if (!empty($params)) {
+            $query->setRoleParameters($params);
+        }
+
+        $stmt = $query->getRawStatement();
+
+        $stream = function () use ($stmt, $stats) {
+            print '{"stats":' . json_encode(array_merge(array('job_id'), $stats)) . ',"data":[';
+            $cnt = -1;
+            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+                if ($cnt != -1) {
+                    print ",";
+                }
+                print json_encode($row);
+                $cnt += 1;
+                if ($cnt == 1000) {
+                    ob_flush();
+                    flush();
+                    $cnt = 0;
+                }
+            }
+            print ']}';
+            ob_flush();
+            flush();
+        };
+
+        return $app->stream($stream, 200, array('Content-Type' => 'application/json'));
     }
 
     private function getUserStore(\XDUser $user, $realm)
