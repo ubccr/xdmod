@@ -141,6 +141,13 @@ class XdmodApplicationFactory
 
         }, Application::EARLY_EVENT);
 
+        $app->before(function (Request $request) {
+            if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+                $data = json_decode($request->getContent(), true);
+                $request->request->replace(is_array($data) ? $data : array());
+            }
+        });
+
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
         $app->after(function (Request $request, Response $response, Application $app) {

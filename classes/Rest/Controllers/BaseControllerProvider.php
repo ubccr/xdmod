@@ -430,6 +430,37 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     }
 
     /**
+     * Get a date string parameter in the form Y-m-d from a request object
+     *
+     * @param  Request $request The request to extract the parameter from.
+     * @param  string $name The name of the parameter.
+     * @param  boolean $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param  mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a string. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory.
+     */
+    protected function getDateStringParam(Request $request, $name, $mandatory = false, $default = null)
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_VALIDATE_REGEXP,
+            array('options' => array('regexp' => '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/')),
+            "date string"
+        );
+    }
+
+    /**
      * Attempt to get a string parameter value from a request.
      *
      * @param  Request $request The request to extract the parameter from.

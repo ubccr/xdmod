@@ -95,6 +95,22 @@ class BatchDataset extends Loggable implements Iterator
     }
 
     /**
+     * Limit the fields that will be returned when iterating over the class.
+     * This will only ever reduce the fields; If you pass in extra field names
+     * then they will be ignored.
+     */
+    public function filterFields($permittedFields)
+    {
+        $tmp = array();
+        foreach ($this->fields as $field) {
+            if (array_search($field['display'], $permittedFields) !== false) {
+                $tmp[] = $field;
+            }
+        }
+        $this->fields = $tmp;
+    }
+
+    /**
      * Get the header row.
      *
      * @return string[]
