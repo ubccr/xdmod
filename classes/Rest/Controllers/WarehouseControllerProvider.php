@@ -328,7 +328,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $controller
             ->get("$root/plots", "$current::getPlots");
 
-        $controller->post("$root/rawdata", "$current::getRawData");
+        $controller->post("$root/rawdata_alpha", "$current::getRawData");
+
+        $controller->post("$root/rawdata", "$current::getRawData_via_export_api");
     }
 
     /**
@@ -2228,6 +2230,108 @@ class WarehouseControllerProvider extends BaseControllerProvider
         };
 
         return $app->stream($stream, 200, array('Content-Type' => 'application/json'));
+    }
+
+    public function getRawData_via_export_api(Request $request, Application $app)
+    {
+        set_time_limit(3000);
+
+        $user = $this->authorize($request);
+
+        $realm = $this->getStringParam($request, 'realm', true);
+        $startDate = $this->getDateStringParam($request, 'start_date', true);
+        $endDate = $this->getDateStringParam($request, 'end_date', true);
+        $searchParams = $request->get('params');
+        $stats = $request->get('stats');
+
+        $queryDescripters = Acls::getQueryDescripters($user, $realm);
+        if (empty($queryDescripters)) {
+            throw new BadRequestException('Invalid realm');
+        }
+
+        $params = array_intersect_key($searchParams, $queryDescripters);
+        if (count($params) != count($searchParams)) {
+            throw new BadRequestException('Invalid search parameters specified in params object');
+        }
+
+        $realmManager = new \DataWarehouse\Export\RealmManager();
+        $className = $realmManager->getRawDataQueryClass($realm);
+        $query = new $className(array(
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            ),
+            'batch'
+        );
+
+        if (count($params) > 0) {
+            $f = new \stdClass();
+            $f->{'data'} = array ();
+            foreach ($params as $dimension => $values) {
+                foreach ($values as $value) {
+                    $f->{'data'}[] = (object) array (
+                        'id' => "$dimension=$value",
+                        'value_id' => $value,
+                        'dimension_id' => $dimension,
+                        'checked' => 1,
+                    );
+                }
+            }
+            $query->setFilters($f);
+        }
+
+        if ($realm === "SUPREMM") {
+            // TODO handle seearch Params
+            $query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition('jf.cpu_user', 'IS NOT', 'NULL'));
+        }
+
+        $logger = \CCR\Log::factory(
+            'data-warehouse-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+
+        $dataSet = new \DataWarehouse\Data\BatchDataset($query, $user, $logger);
+        if (count($stats) > 0) {
+            $dataSet->filterFields($stats);
+        }
+
+        $stream = function () use ($dataSet) {
+            echo '{"stats":' . json_encode($dataSet->getHeader()) . ',"data":[';
+            $cnt = -1;
+            foreach ($dataSet as $record) {
+
+                //$skip = false;
+                foreach($record as &$f) {
+                    if ($f === null) {
+                        $f = 'NaN';
+                        //$skip = true;
+                    }
+                }
+                //if ($skip) {
+                //    continue;
+                //}
+
+                if ($cnt != -1) {
+                    echo ",";
+                }
+                echo json_encode($record);
+                $cnt += 1;
+                if ($cnt == 10000) {
+                    error_log('Flush');
+                    ob_flush();
+                    flush();
+                    $cnt = 0;
+                }
+            }
+            echo ']}';
+            ob_flush();
+            flush();
+        };
+
+        return $app->stream($stream, 200, array('Content-Type' => 'text/plain; charset=utf8'));
     }
 
     private function getUserStore(\XDUser $user, $realm)
