@@ -2,14 +2,14 @@ import {test, expect} from '@playwright/test';
 import InternalDashboard from "../lib/internal_dashboard.page";
 import settings from '../config/internal_dashboard/settings.json';
 
-const contextFile = `./data/internal_dashboard-admin-state.json`;
+const contextFile = `./data/admin-state.json`;
 
 test.use({storageState: contextFile});
 
 test.describe('Internal Dashboard Tests', async () => {
     test('Create a new user', async ({page}) => {
         // Make sure that we start at the Internal Dashboard page and that we're logged in per our use of the
-        // storageState above.
+        // storageState above
         await page.goto('/internal_dashboard');
         await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
 

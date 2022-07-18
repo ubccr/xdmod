@@ -11,7 +11,8 @@ const config: PlaywrightTestConfig = {
         screenshot: 'only-on-failure',
         ignoreHTTPSErrors: true,
         viewport: {width: 2560, height: 1600},
-        baseURL: 'https://localhost'
+        baseURL: 'https://172.17.0.3/',
+    	sso: process.env.SSO ? true : false
     },
     projects: [
         {

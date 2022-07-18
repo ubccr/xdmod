@@ -15,7 +15,12 @@ export class BasePage {
 
     public async verifyLocation(url: string, expectedTitle: string) {
         const newUrl = new URL(url, this.baseUrl);
-        await this.page.goto(newUrl.toString());
+        try{
+         await this.page.goto(newUrl.toString());
+        }catch(error){
+          console.log(error);
+          throw new Error(error);
+        }
         const title = await this.page.title();
         expect(title).toEqual(expectedTitle);
     }
