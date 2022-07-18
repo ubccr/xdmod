@@ -9,23 +9,23 @@ async function globalSetup(config: FullConfig) {
     let loginPage: LoginInterface;
     let contextPath: string;
     let baseUrl = globalConfig.use.baseURL;
+    let sso = globalConfig.use.sso;
 
     for (const index in userRoles) {
         const userRole = userRoles[index];
         const page = await browser.newPage({ignoreHTTPSErrors: true});
 
+	contextPath = `./data/${userRole.role}-state.json`;
         switch (userRole.role) {
             case 'admin':
                 loginPage = new InternalDashboard(page, baseUrl);
-                contextPath = `./data/internal_dashboard-${userRole.role}-state.json`;
-                await loginPage.login(userRole.username, userRole.password, userRole.display);
-                await loginPage.page.context().storageState({ path: contextPath});
                 break;
-            default:
-                loginPage = new LoginPage(page, baseUrl);
-                contextPath = `./data/${userRole.role}-state.json`;
+	    default:
+                loginPage = new LoginPage(page, baseUrl, sso);
                 break;
         }
+	await loginPage.login(userRole.username, userRole.password, userRole.display);
+	await loginPage.page.context().storageState({ path: contextPath});
     }
 }
 

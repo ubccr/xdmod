@@ -22,28 +22,31 @@ export class LoginPage extends BasePage implements LoginInterface {
     readonly loginTitle: string;
     readonly adminTitle: string;
 
-    constructor(page: Page, baseUrl: string) {
+    readonly sso:Boolean;
+
+    constructor(page: Page, baseUrl: string, sso:Boolean) {
         super(page, baseUrl);
+      //console.log('loginPageBase: ' + baseUrl);
+        this.sso = sso;
         this.logo = page.locator('#logo');
-        this.loginLink = page.locator('a[href*=actionLogin]');
+        this.loginLink = page.locator("//a[@id='sign_in_link']");
         this.username = page.locator('#txt_login_username');
         this.password = page.locator('#txt_login_password');
-        this.signInButton = page.locator('#btn_sign_in');
+        this.signInButton = page.locator("//table[@id='btn_sign_in']//button");
         this.welcomeMessage = page.locator('#welcome_message');
         this.mainTab = page.locator('#main_tab_panel__about_xdmod');
         this.logoutLink = page.locator('#logout_link');
-
 
         this.loginTitle = 'Open XDMoD';
         this.adminTitle = 'XDMoD Internal Dashboard';
     }
 
     async login(username: string, password: string, display: string) {
+        //false means sign in with a local XDMoD and true means with XSEDE (sso)
         await this.verifyLocation('/', this.loginTitle);
         await expect(this.loginLink).toBeVisible();
         await this.loginLink.click();
-        await expect(this.signInButton).toBeVisible();
-
+	      await expect(this.signInButton).toBeVisible();
         await this.username.fill(username);
         await this.password.fill(password);
         await this.signInButton.click();
