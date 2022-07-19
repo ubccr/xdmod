@@ -27,5 +27,3 @@
       }//getVerboseTrace
       
    }//UniqueException
-   
-?>
