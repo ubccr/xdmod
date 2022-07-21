@@ -110,7 +110,8 @@ class Usage extends BasePage{
         await expect(this.availableForReportCheckboxLocator.isEnabled(), '"Available for Report" checkbox is enabled').toBeTruthy();
         await expect(this.availableForReportCheckboxLocator.isChecked(), '"Available for Report" checkbox is checked').toBeTruthy();
         await this.availableForReportCheckboxLocator.click();
-        await expect(this.availableForReportCheckboxLocator.isChecked(), '"Available for Report" checkbox is not checked').toBeFalsy();
+        const checkbox = await this.page.$eval(usageSelectors.availableForReportCheckbox, node => node.checked);
+        await expect(checkbox, '"Available for Report" checkbox is not checked').toBeFalsy();
     }
 
     /**
@@ -170,7 +171,6 @@ class Usage extends BasePage{
             await this.expandTreeNode(topName);
         }
         await this.page.locator(usageSelectors.treeNodeByPath(topName, childName)).click();
-        // await expect(this.maskLocator).toBeHidden();
     }
 
     /**

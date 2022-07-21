@@ -26,7 +26,6 @@ export class LoginPage extends BasePage implements LoginInterface {
 
     constructor(page: Page, baseUrl: string, sso:Boolean) {
         super(page, baseUrl);
-      //console.log('loginPageBase: ' + baseUrl);
         this.sso = sso;
         this.logo = page.locator('#logo');
         this.loginLink = page.locator("//a[@id='sign_in_link']");

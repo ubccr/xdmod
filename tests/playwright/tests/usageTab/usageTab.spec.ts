@@ -1,7 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {LoginPage} from "../lib/login.page";
 import Usage from "../lib/usageTab.page";
-import XDMoD from "../lib/xdmod.page";
 import artifacts from "./helpers/artifacts";
 var expected = artifacts.getArtifact('usage');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
@@ -21,13 +19,8 @@ test.describe('Usage', async () => {
             await page.goto('/');
             await page.waitForLoadState();
             const usg = new Usage(page, page.baseUrl);
-            const xdmod = new XDMoD(page, page.baseUrl);
 	        await test.step('Select "Usage" tab', async () => {
-                // unhappy when calling usg.selectTab() so resorted to
-                // creating an xdmod instance solely to call selectTab directly
-                // lines following usg.selectTab() after calling xdmod are
-                // copied over
-                await xdmod.selectTab('tg_usage');
+                await usg.selectTab();
                 await expect(page.locator(usg.usageSelectors.chart)).toBeVisible();
                 await expect(page.locator(usg.usageSelectors.mask)).toBeHidden();
             // unsure of source of waitForChart function in webdriver version
@@ -91,12 +84,12 @@ test.describe('Usage', async () => {
             await page.goto('/');
             await page.waitForLoadState();
             const usg = new Usage(page, page.baseUrl);
-            const xdmod = new XDMoD(page, page.baseUrl);
             await page.click('#logout_link');
+            await page.locator('#sign_in_link').waitFor({state:'visible'});
             await test.step('Selected', async () => {
-                await xdmod.selectTab('tg_usage');
-          //      await page.waitForChart();
-                await expect(page.locator(usg.usageSelectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await usg.selectTab();
+                //      await page.waitForChart();
+                await page.locator(usg.usageSelectors.chartByTitle(expected.centerdirector.default_chart_title)).waitFor({state:'visible'});
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.

@@ -3,15 +3,15 @@ import {BasePage} from "./base.page";
 import aboutSelectors from "./about.selectors";
 
 class About extends BasePage{
-    static readonly aboutSelectors = aboutSelectors;
+    readonly aboutSelectors = aboutSelectors;
 
-    readonly tabLocator = this.page.locator(About.aboutSelectors.tab);
-    readonly containerLocator = this.page.locator(About.aboutSelectors.container);
-    readonly centerLocator =  this.page.locator(About.aboutSelectors.center);
-    readonly lastTabLocator = this.page.locator(About.aboutSelectors.last_tab);
+    readonly tabLocator = this.page.locator(aboutSelectors.tab);
+    readonly containerLocator = this.page.locator(aboutSelectors.container);
+    readonly centerLocator =  this.page.locator(aboutSelectors.center);
+    readonly lastTabLocator = this.page.locator(aboutSelectors.last_tab);
 
-    static async navEntry(name){
-       return '//div[@class="x-tree-root-node"]//div[contains(@class,"x-tree-node-el")]//span[contains(text(),"' + String(name) + '")]';
+    async navEntry(name){
+        return '//div[@class="x-tree-root-node"]//div[contains(@class,"x-tree-node-el")]//span[contains(text(),"' + String(name) + '")]';
     }
 
     async checkTab(name){
@@ -40,4 +40,5 @@ class About extends BasePage{
         await expect(this.page.frameLocator('//iframe[@id="about_roadmap"]').locator('//div[contains(@class,"full-bleed-trello-board")]').innerText()).not.toEqual(null);
     }
 }
+
 export default About;

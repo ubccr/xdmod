@@ -1,7 +1,9 @@
 const metricExplorerSelectors ={
     tab: '#main_tab_panel__metric_explorer',
-    startDate: '#metric_explorer input[id^=start_field_ext]',
-    endDate: '#metric_explorer input[id^=end_field_ext]',
+    //startDate: '#metric_explorer input[id^=start_field_ext]',
+    startDate: '//div[@id="metric_explorer"]//input[contains(@id,"start_field")]',
+    endDate: '//div[@id="metric_explorer"]//input[contains(@id,"end_field")]',
+    //endDate: '#metric_explorer input[id^=end_field_ext]',
     toolbar: {
         buttonByName: function (name){
             return '//div[@id="metric_explorer"]//table[@class="x-toolbar-ct"]//button[text()="' + name + '"]/ancestor::node()[5]';

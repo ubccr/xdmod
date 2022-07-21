@@ -23,9 +23,6 @@ const usageTabSelectors ={
     chartByTitle : function (title) {
         return usageTabSelectors.chart + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
     },
-    /*chartXAxisLabelByName : function (name) {
-        return this.chart + '/*[name() = "g" and contains(@class, "highcharts-xaxis-labels")]/*[name() = "text" and text() = "' + name + '"]';
-    },*/
     chartXAxisLabelByName : function (name) {
         return '(' + usageTabSelectors.chart + '/*/*[name() = "tspan"])[2]';
     },
