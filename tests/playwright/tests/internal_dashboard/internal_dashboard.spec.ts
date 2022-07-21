@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
-import InternalDashboard from "../lib/internal_dashboard.page";
-import settings from '../config/internal_dashboard/settings.json';
+import InternalDashboard from "../../lib/internal_dashboard.page";
+import settings from '../../config/internal_dashboard/settings.json';
 
 const contextFile = `./data/admin-state.json`;
 

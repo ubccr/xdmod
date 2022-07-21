@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
-import {LoginPage} from "../lib/login.page";
-import MainToolbar from "../lib/mainToolbar.page";
+import {LoginPage} from "../../lib/login.page";
+import MainToolbar from "../../lib/mainToolbar.page";
 
 var mainTab;
 

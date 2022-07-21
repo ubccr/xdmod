@@ -1,11 +1,11 @@
 import {test, expect} from '@playwright/test';
-import {LoginPage} from "../lib/login.page";
-import MetricExplorer from '../lib/metricExplorer.page';
-import artifacts from "./helpers/artifacts";
+import {LoginPage} from "../../lib/login.page";
+import MetricExplorer from '../../lib/metricExplorer.page';
+import artifacts from "../helpers/artifacts";
 var expected = artifacts.getArtifact('metricExplorer');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
-import globalConfig from '../playwright.config';
-import XDMoD from '../lib/xdmod.page';
+import globalConfig from '../../playwright.config';
+import XDMoD from '../../lib/xdmod.page';
 
 test.describe('Metric Explorer', async () => {
     var baselineDate = {

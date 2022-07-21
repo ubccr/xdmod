@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
-import Usage from '../lib/usageTab.page';
-import XDMoD from '../lib/xdmod.page';
+import Usage from '../../lib/usageTab.page';
+import XDMoD from '../../lib/xdmod.page';
 
 test('Export Dialog', async ({page}) => {
     await page.goto('/');
