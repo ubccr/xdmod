@@ -1,10 +1,10 @@
 import {test, expect} from '@playwright/test';
-import {LoginPage} from "../lib/login.page";
-import myProfile from '../lib/myProfile.page';
+import {LoginPage} from "../../lib/login.page";
+import myProfile from '../../lib/myProfile.page';
 let selectors = myProfile.myProfileSelectors;
-import things from  '../../ci/testing.json';
-import artifacts from "./helpers/artifacts";
-import globalConfig from '../playwright.config';
+import things from  '../../../ci/testing.json';
+import artifacts from "../helpers/artifacts";
+import globalConfig from '../../playwright.config';
 var roles = things.role;
 var expected = artifacts.getArtifact('myProfile');
 

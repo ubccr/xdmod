@@ -1,11 +1,11 @@
 import {test, expect} from '@playwright/test';
-import {LoginPage} from "../lib/login.page";
-import Usage from '../lib/usageTab.page';
-import {MyReportsRow, AvailableChart, IncludedChart, ReportGenerator} from '../lib/reportGenerator.page';
-import artifacts from "./helpers/artifacts";
+import {LoginPage} from "../../lib/login.page";
+import Usage from '../../lib/usageTab.page';
+import {MyReportsRow, AvailableChart, IncludedChart, ReportGenerator} from '../../lib/reportGenerator.page';
+import artifacts from "../helpers/artifacts";
 const expected = artifacts.getArtifact('reportGenerator');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
-import globalConfig from '../playwright.config';
+import globalConfig from '../../playwright.config';
 
 test.describe('Report Generator', async () => {
     // These dates correspond to the dates of the test job data.
@@ -769,7 +769,7 @@ test.describe('Report Generator', async () => {
 
             await test.step('Open the report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
-                const report = rows[reportIndex];
+                const report:MyReportsRow = rows[reportIndex];
                 await report.doubleClick();
             });
             await test.step('Set report name', async () => {
@@ -876,77 +876,74 @@ test.describe('Report Generator', async () => {
                 await tempMaskLocator.waitFor({state:"detached"});
             }
             var report_template_index = 0;
-            var reportIndex;
-            for (const template of centerDirectorReportTemplates){
-                await test.step('Click "New Based On"', async () => {
-                    const first = await reportGeneratorPage.getMyReportsRows();
-                    reportIndex = first.length;
-                    await reportGeneratorPage.clickNewBasedOn();
-                    await page.locator('//div[contains(concat(" ",normalize-space(@class)," ")," x-menu-floating ") and .//img[contains(concat(" ",normalize-space(@class)," ")," btn_selected_report ") or contains(concat(" ",normalize-space(@class)," ")," btn_report_template ")]]').waitFor({state:'visible'});
-                });
-                await test.step(`Select "${template.name}"`, async () => {
-                    await reportGeneratorPage.selectNewBasedOnTemplate(template.name, expected.centerdirector.center);
-                });
-                await test.step('Check list of reports', async () => {
-                    const reportRows = await reportGeneratorPage.getMyReportsRows();
-                    await expect(reportRows.length, 'New report added').toEqual(reportIndex + expected.centerdirector.report_templates[report_template_index].reports_created);
-                    const report:MyReportsRow = reportRows[reportIndex];
-                    const name = await report.getName();
-                    await expect(name, 'Name is correct').toEqual(expected.centerdirector.report_templates[report_template_index].created_name + ' 1');
-                    const derivedFrom = await report.getDerivedFrom();
-                    await expect(derivedFrom, '"Derived From" is correct').toEqual(template.name);
-                    const schedule = await report.getSchedule();
-                    await expect(schedule, 'Schedule is correct').toEqual(template.schedule);
-                    const deliveryform = await report.getDeliveryFormat();
-                    await expect(deliveryform, 'Delivery format is correct').toEqual(expected.centerdirector.report_templates[report_template_index].delivery_format);
-                    const numOfCharts = await report.getNumberOfCharts();
-                    await expect(numOfCharts, 'Number of charts of is correct').toEqual(expected.centerdirector.report_templates[report_template_index].created_reports_count);
-                    const numOfChartsPerPage = await report.getNumberOfChartsPerPage();
-                    await expect(numOfChartsPerPage, 'Number of charts per page is correct').toEqual(template.chartsPerPage);
-                });
-                await test.step('Edit report based on template', async () => {
-                    const rows = await reportGeneratorPage.getMyReportsRows();
-                    const row:MyReportsRow = rows[reportIndex];
-                    await row.doubleClick();
-                });
-                await test.step('Check charts', async () => {
-                    const templateCharts = await reportGeneratorPage.getCharts(
-                        'centerdirector',
-                        report_template_index,
-                        {
-                            startDate: startDate,
-                            endDate: endDate,
-                            previousMonthStartDate: previousMonthStartDate,
-                            previousMonthEndDate: previousMonthEndDate,
-                            previousQuarterStartDate: previousQuarterStartDate,
-                            previousQuarterEndDate: previousQuarterEndDate,
-                            previousYearStartDate: previousYearStartDate,
-                            previousYearEndDate: previousYearEndDate,
-                            yearToDateStartDate: yearToDateStartDate,
-                            yearToDateEndDate: yearToDateEndDate
-                        }
-                    );
-                    const reportCharts = await reportGeneratorPage.getIncludedCharts();
-                    var i = 0;
-                    for (const charts of reportCharts){
-                        const chart:AvailableChart = charts[i];
-                        const templateChart:AvailableChart = templateCharts[i];
-                        const title = await chart.getTitle();
-                        await expect(title, 'Chart title').toEqual(templateChart.title);
-                        const drillDetails = await chart.getDrillDetails();
-                        await expect(drillDetails, 'Drill details').toEqual(templateChart.drillDetails);
-                        const timeframetype = await chart.getTimeframeType();
-                        await expect(timeframetype, 'Timeframe type').toEqual(templateChart.timeframeType);
-                        const dateDescription = await chart.getDateDescription();
-                        await expect(dateDescription, 'Date description').toEqual(templateChart.startDate + ' to ' + templateChart.endDate);
-                        i +=1;
+            var reportIndex = 3;
+            const template = centerDirectorReportTemplates[0];
+            await test.step('Click "New Based On"', async () => {
+                await reportGeneratorPage.clickNewBasedOn();
+                await page.locator('//div[contains(concat(" ",normalize-space(@class)," ")," x-menu-floating ") and .//img[contains(concat(" ",normalize-space(@class)," ")," btn_selected_report ") or contains(concat(" ",normalize-space(@class)," ")," btn_report_template ")]]').waitFor({state:'visible'});
+            });
+            await test.step(`Select "${template.name}"`, async () => {
+                await reportGeneratorPage.selectNewBasedOnTemplate(template.name, expected.centerdirector.center);
+            });
+            await test.step('Check list of reports', async () => {
+                const reportRows = await reportGeneratorPage.getMyReportsRows();
+                await expect(reportRows.length, 'New report added').toEqual(reportIndex + expected.centerdirector.report_templates[report_template_index].reports_created);
+                const report:MyReportsRow = reportRows[reportIndex];
+                const name = await report.getName();
+                await expect(name, 'Name is correct').toEqual(expected.centerdirector.report_templates[report_template_index].created_name + ' 1');
+                const derivedFrom = await report.getDerivedFrom();
+                await expect(derivedFrom, '"Derived From" is correct').toEqual(template.name);
+                const schedule = await report.getSchedule();
+                await expect(schedule, 'Schedule is correct').toEqual(template.schedule);
+                const deliveryform = await report.getDeliveryFormat();
+                await expect(deliveryform, 'Delivery format is correct').toEqual(expected.centerdirector.report_templates[report_template_index].delivery_format);
+                const numOfCharts = await report.getNumberOfCharts();
+                await expect(numOfCharts, 'Number of charts of is correct').toEqual(expected.centerdirector.report_templates[report_template_index].created_reports_count);
+                const numOfChartsPerPage = await report.getNumberOfChartsPerPage();
+                await expect(numOfChartsPerPage, 'Number of charts per page is correct').toEqual(template.chartsPerPage);
+            });
+            await test.step('Edit report based on template', async () => {
+                const rows = await reportGeneratorPage.getMyReportsRows();
+                const row:MyReportsRow = rows[reportIndex];
+                await row.doubleClick();
+            });
+            await test.step('Check charts', async () => {
+                const templateCharts = await reportGeneratorPage.getCharts(
+                    'centerdirector',
+                    report_template_index,
+                    {
+                        startDate: startDate,
+                        endDate: endDate,
+                        previousMonthStartDate: previousMonthStartDate,
+                        previousMonthEndDate: previousMonthEndDate,
+                        previousQuarterStartDate: previousQuarterStartDate,
+                        previousQuarterEndDate: previousQuarterEndDate,
+                        previousYearStartDate: previousYearStartDate,
+                        previousYearEndDate: previousYearEndDate,
+                        yearToDateStartDate: yearToDateStartDate,
+                        yearToDateEndDate: yearToDateEndDate
                     }
-                });
-                await test.step('Return to "My Reports"', async () => {
-                    await reportGeneratorPage.returnToMyReports();
-                });
-                report_template_index += 1;
-            }
+                );
+                const reportCharts = await reportGeneratorPage.getIncludedCharts();
+                var i = 0;
+                for (const charts of reportCharts){
+                    const chart:AvailableChart = charts[i];
+                    const templateChart:AvailableChart = templateCharts[i];
+                    const title = await chart.getTitle();
+                    await expect(title, 'Chart title').toEqual(templateChart.title);
+                    const drillDetails = await chart.getDrillDetails();
+                    await expect(drillDetails, 'Drill details').toEqual(templateChart.drillDetails);
+                    const timeframetype = await chart.getTimeframeType();
+                    await expect(timeframetype, 'Timeframe type').toEqual(templateChart.timeframeType);
+                    const dateDescription = await chart.getDateDescription();
+                    await expect(dateDescription, 'Date description').toEqual(templateChart.startDate + ' to ' + templateChart.endDate);
+                    i +=1;
+                }
+            });
+            await test.step('Return to "My Reports"', async () => {
+                await reportGeneratorPage.returnToMyReports();
+            });
+            report_template_index += 1;
         });
          
         test('Preview report', async ({page}) => {

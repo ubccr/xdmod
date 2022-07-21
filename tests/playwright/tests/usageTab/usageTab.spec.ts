@@ -1,12 +1,10 @@
 import {test, expect} from '@playwright/test';
-import Usage from "../lib/usageTab.page";
-import artifacts from "./helpers/artifacts";
+import Usage from "../../lib/usageTab.page";
+import {LoginPage} from "../../lib/login.page";
+import artifacts from "../helpers/artifacts";
 var expected = artifacts.getArtifact('usage');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
-
-const contextFile = './data/cd-state.json';
-
-test.use({storageState: contextFile});
+import globalConfig from '../../playwright.config';
 
 test.describe('Usage', async () => {
     const baselineDate={
@@ -16,10 +14,11 @@ test.describe('Usage', async () => {
     // TODO: Add tests for storage and cloud realms
     if (XDMOD_REALMS.includes('jobs')){
         test('(Center Director)', async ({page}) => {
-            await page.goto('/');
-            await page.waitForLoadState();
-            const usg = new Usage(page, page.baseUrl);
-	        await test.step('Select "Usage" tab', async () => {
+            let baseUrl = globalConfig.use.baseURL;
+            const usg = new Usage(page, baseUrl);
+            const loginPage = new LoginPage(page, baseUrl, page.sso);
+            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await test.step('Select "Usage" tab', async () => {
                 await usg.selectTab();
                 await expect(page.locator(usg.usageSelectors.chart)).toBeVisible();
                 await expect(page.locator(usg.usageSelectors.mask)).toBeHidden();
@@ -84,7 +83,6 @@ test.describe('Usage', async () => {
             await page.goto('/');
             await page.waitForLoadState();
             const usg = new Usage(page, page.baseUrl);
-            await page.click('#logout_link');
             await page.locator('#sign_in_link').waitFor({state:'visible'});
             await test.step('Selected', async () => {
                 await usg.selectTab();
