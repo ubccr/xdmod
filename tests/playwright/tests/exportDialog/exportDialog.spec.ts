@@ -5,7 +5,6 @@ import XDMoD from '../lib/xdmod.page';
 test('Export Dialog', async ({page}) => {
     await page.goto('/');
     await page.waitForLoadState();
-    await page.screenshot({path:'logged.png'});
     const usage = new Usage(page, page.baseUrl);
     const xdmod = new XDMoD(page, page.baseUrl);
     await test.step('Select "Usage" tab', async () => {

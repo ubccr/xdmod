@@ -18,7 +18,6 @@ test.describe('My Profile Tests', async () => {
                 const loginPage = new LoginPage(page, baseUrl, page.sso);
 		        await loginPage.login(roles[role].username, roles[role].password, (roles[role].givenname + " " + roles[role].surname));
                 await test.step('Click the `My Profile` button', async () => {
-                    //await page.isHidden('.ext-el-mask');
                     await page.isVisible(myProfile.toolbarButton);
                     await page.waitForLoadState()
                     await page.click(myProfile.toolbarButton);
@@ -74,7 +73,6 @@ test.describe('My Profile Tests', async () => {
                         await page.isHidden(myProfile.container);
                     });
                 });
-                //loginPage.logout();
 	    });
         }
     }

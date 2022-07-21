@@ -137,7 +137,7 @@ export class MyReportsRow {
      * Toggle the row selection using Control+Click.
      */
     async toggleSelection() {
-        await this.page.keyboard.press('Control');
+        await this.page.keyboard.down('Control');
         await this.page.click(this.selector);
         await this.page.keyboard.up('Control');
     }
@@ -221,7 +221,8 @@ export class AvailableChart {
      * @return {Boolean}
      */
     async isSelected() {
-        return this.page.getAttribute(this.selector, 'class').match(/(^| )x-grid3-row-selected($| )/) !== null;
+        const att = await this.page.getAttribute(this.selector, 'class');
+        return att.match(/(^| )x-grid3-row-selected($| )/) !== null;
     }
 
     /**
@@ -235,7 +236,7 @@ export class AvailableChart {
      * Toggle the chart selection using Control+Click.
      */
     async toggleSelection() {
-        await this.page.keyboard.press('Control');
+        await this.page.keyboard.down('Control');
         await this.page.click(this.selector);
         await this.page.keyboard.up('Control');
     }
@@ -324,7 +325,8 @@ export class IncludedChart {
      * @return {Boolean}
      */
     async isSelected() {
-        return this.page.getAttribute(this.selector, 'class').match(/(^| )x-grid3-row-selected($| )/) !== null;
+        const att = await this.page.getAttribute(this.selector, 'class');
+        return att.match(/(^| )x-grid3-row-selected($| )/) !== null;
     }
 
     /**
@@ -352,7 +354,7 @@ export class IncludedChart {
      * Toggle the chart selection using Control+Click.
      */
     async toggleSelection() {
-        await this.page.keyboard.press('Control');
+        await this.page.keyboard.down('Control');
         await this.page.click(this.selector);
         await this.page.keyboard.up('Control');
     }
@@ -374,7 +376,7 @@ export class ReportGenerator {
             toolbar: {
                 panel: () => this.selectors.myReports.panel() + `//div[${classContains('x-panel-tbar')}]`,
                 selectButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Select"]',
-                selectMenu: () => `//div[${classContains('x-menu-floating')}]`,
+                selectMenu: () => `//div[${classContains('x-menu-floating')} and contains(@style, "visibility: visible")]`,
                 selectAllReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="All Reports"]/ancestor::a',
                 selectNoReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="No Reports"]/ancestor::a',
                 invertSelectionButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="Invert Selection"]/ancestor::a',
@@ -862,9 +864,7 @@ export class ReportGenerator {
         await this.page.isVisible(this.selectors.myReports.toolbar.selectAllReportsButton());
         await this.page.click(this.selectors.myReports.toolbar.selectAllReportsButton());
         await this.page.isHidden(this.selectors.myReports.toolbar.selectMenu());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -873,16 +873,19 @@ export class ReportGenerator {
      */
     async deselectAllReports() {
         await this.waitForMyReportsPanelVisible();
-        console.log(this.selectors.myReports.toolbar.selectButton());
-        console.log(this.selectors.myReports.toolbar.selectNoReportsButton());
-        console.log('(' + this.selectors.myReports.toolbar.selectMenu() + ')[5]');
-        await this.page.click(this.selectors.myReports.toolbar.selectButton());
-        await this.page.locator(this.selectors.myReports.toolbar.selectNoReportsButton()).waitFor({state:'visible'});
+        const selectButLoc = await this.page.locator(this.selectors.myReports.toolbar.selectButton());
+        await selectButLoc.click();
+        for (let i = 0; i < 100; i++) {
+            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
+            if (boo) {
+                await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
+                break;
+            }
+            await selectButLoc.click();
+        }
         await this.page.click(this.selectors.myReports.toolbar.selectNoReportsButton());
-        await this.page.locator('(' + this.selectors.myReports.toolbar.selectMenu() + ')[5]').waitFor({state:'hidden'});
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        await this.page.locator(this.selectors.myReports.toolbar.selectMenu()).waitFor({state:'hidden'});
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -891,19 +894,22 @@ export class ReportGenerator {
      */
     async invertReportSelection() {
         await this.waitForMyReportsPanelVisible();
-        await this.page.click(this.selectors.myReports.toolbar.selectButton());
+        const selectButLoc = await this.page.locator(this.selectors.myReports.toolbar.selectButton());
+        await selectButLoc.click();
+        for (let i = 0; i < 100; i++) {
+            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
+             if (boo) {
+                 await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
+                 break;
+             }
+            await selectButLoc.click();
+        }
         await this.page.isVisible(this.selectors.myReports.toolbar.invertSelectionButton());
-        // Multiple buttons match the "Invert Selection" selector, but only one should be visible.
-        const buttons = await this.page.$$(this.selectors.myReports.toolbar.invertSelectionButton());
-        const visibleButtons = await Promise.all(buttons.filter((button) => {
-            return button.isVisible();
-        }));
-        await expect(visibleButtons.length, 'One "Invert Selection" button is visible').toEqual(1);
-        await visibleButtons[0].click();
-        await this.page.isHidden(this.selectors.myReports.toolbar.selectMenu());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        // Multiple buttons match the "Invert Selection" selector, but only one should be visible
+        // This is not the case because of the actions called before this method.
+        await this.page.click(this.selectors.myReports.toolbar.invertSelectionButton());
+        await this.page.locator(this.selectors.myReports.toolbar.selectMenu()).waitFor({state:'hidden'});
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -930,9 +936,6 @@ export class ReportGenerator {
         // There are two separate "New Based On" buttons.  Only one should be
         // visible at a time.
         const buttons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`);
-        /*const visibleButtons = await Promise.all(buttons.filter((button) => {
-            return button.isVisible();
-        }));*/
         await expect(buttons.length, 'Two "New Based On" button are present').toEqual(2);
         const button1 = await this.page.locator('(' + this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[1]');
         const button2 = await this.page.locator('(' + this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[2]');
@@ -941,13 +944,11 @@ export class ReportGenerator {
         } else if (await button2.isVisible()){
             await button2.click();
         } else {
-            console.log('There is no button');
+            throw new Error('There is no button');
         }
 
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        // Ext seems to also be "slow" to add events to the button, wait to make sure events get added
-        //await this.page.pause(750);
+        // Ext.Button ignores clicks for 250ms
+        // Ext seems to also be "slow" to add events to the button
     }
 
     /**
@@ -959,11 +960,7 @@ export class ReportGenerator {
      */
     async getReportTemplateNames() {
         await this.page.isVisible(this.selectors.myReports.toolbar.newBasedOnTemplateRows());
-        //const computed = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnTemplateRows());
         const computed = await this.page.locator(this.selectors.myReports.toolbar.newBasedOnTemplateRows() + `//a[./img[${classContains('btn_report_template')}]]//b`);
-        /*const result = await Promise.all(computed.map(async (row) => {
-            return await row.textContent();
-        }));*/
         const result = await computed.allTextContents();
         await expect(computed).toBeVisible();
         return result;
@@ -1177,11 +1174,9 @@ export class ReportGenerator {
                 await expect(reportCount2 !== reportCount).toBeTruthy();
                 break;
             } catch (e) {
-                //console.log(i);
                 await maskLocator.waitFor({state:'detached'});
             }
         }
-        //await this.page.waitForFunction(async () => reportCount !== (await this.getMyReportsRows()).length);
     }
 
     /**
@@ -1280,8 +1275,6 @@ export class ReportGenerator {
         await this.waitForReportEditorPanelVisible();
         await this.page.isVisible(this.selectors.myReports.toolbar.sendNowAsPdfButton());
         await this.page.click(this.selectors.myReports.toolbar.sendNowAsPdfButton());
-        //await this.page.isVisible(this.selectors.reportEditor.toolbar.sendNowAsPdfButton());
-        //await this.page.click(this.selectors.reportEditor.toolbar.sendNowAsPdfButton());
     }
 
     /**
@@ -1292,8 +1285,6 @@ export class ReportGenerator {
         await this.waitForReportEditorPanelVisible();
         await this.page.isVisible(this.selectors.myReports.toolbar.sendNowAsWordDocumentButton());
         await this.page.click(this.selectors.myReports.toolbar.sendNowAsWordDocumentButton());
-        //await this.page.isVisible(this.selectors.reportEditor.toolbar.sendNowAsWordDocumentButton());
-        //await this.page.click(this.selectors.reportEditor.toolbar.sendNowAsWordDocumentButton());
     }
 
     /**
@@ -1314,8 +1305,6 @@ export class ReportGenerator {
     async downloadCurrentlyBeingEditedReportAsPdf() {
         await this.page.isVisible(this.selectors.myReports.toolbar.downloadAsPdfButton());
         await this.page.click(this.selectors.myReports.toolbar.downloadAsPdfButton());
-        //await this.page.isVisible(this.selectors.reportEditor.toolbar.downloadAsPdfButton());
-        //await this.page.click(this.selectors.reportEditor.toolbar.downloadAsPdfButton());
     }
 
     /**
@@ -1325,8 +1314,6 @@ export class ReportGenerator {
     async downloadCurrentlyBeingEditedReportAsWordDocument() {
         await this.page.isVisible(this.selectors.myReports.toolbar.downloadAsWordDocumentButton());
         await this.page.click(this.selectors.myReports.toolbar.downloadAsWordDocumentButton());
-        //await this.page.isVisible(this.selectors.reportEditor.toolbar.downloadAsWordDocumentButton());
-        //await this.page.click(this.selectors.reportEditor.toolbar.downloadAsWordDocumentButton());
     }
 
     /**
@@ -1507,9 +1494,7 @@ export class ReportGenerator {
         await this.page.isVisible(this.selectors.reportEditor.includedCharts.toolbar.selectAllChartsButton());
         await this.page.click(this.selectors.reportEditor.includedCharts.toolbar.selectAllChartsButton());
         await this.page.isHidden(this.selectors.reportEditor.includedCharts.toolbar.selectAllChartsButton());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -1518,13 +1503,19 @@ export class ReportGenerator {
      */
     async deselectAllIncludedCharts() {
         await this.waitForIncludedChartsPanelVisible();
-        await this.page.click(this.selectors.reportEditor.includedCharts.toolbar.selectButton());
-        await this.page.isVisible(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton());
+        const selectButLoc = await this.page.locator(this.selectors.reportEditor.includedCharts.toolbar.selectButton());
+        await selectButLoc.click();
+        for (let i = 0; i < 100; i++) {
+            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
+            if (boo) {
+                expect (this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
+                break;
+            }
+            await selectButLoc.click();
+        }
         await this.page.click(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton());
-        await this.page.isHidden(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+            await this.page.locator(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton()).waitFor({state:'hidden'});
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -1540,9 +1531,7 @@ export class ReportGenerator {
         await expect(visibleButtons.length, 'One "Invert Selection" button is visible').toEqual(1);
         await visibleButtons[0].click();
         await this.page.isHidden(this.selectors.reportEditor.includedCharts.toolbar.invertSelectionButton());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -1633,7 +1622,6 @@ export class ReportGenerator {
     async removeSelectedIncludedCharts() {
         await this.waitForIncludedChartsPanelVisible();
         await this.page.click(this.selectors.myReports.toolbar.deleteButton());
-//        await this.page.click(this.selectors.reportEditor.includedCharts.toolbar.deleteButton());
     }
 
     /**
@@ -1669,9 +1657,7 @@ export class ReportGenerator {
         await this.page.isVisible(this.selectors.availableCharts.toolbar.selectAllChartsButton());
         await this.page.click(this.selectors.availableCharts.toolbar.selectAllChartsButton());
         await this.page.isHidden(this.selectors.availableCharts.toolbar.selectAllChartsButton());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -1680,13 +1666,19 @@ export class ReportGenerator {
      */
     async deselectAllAvailableCharts() {
         await this.waitForAvailableChartsPanelVisible();
-        await this.page.click(this.selectors.availableCharts.toolbar.selectButton());
-        await this.page.isVisible(this.selectors.availableCharts.toolbar.selectNoChartsButton());
+        const selectButLoc = await this.page.locator(this.selectors.availableCharts.toolbar.selectButton());
+        await selectButLoc.click();
+        for (let i = 0; i < 100; i++) {
+            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
+            if (boo) {
+                await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
+                break;
+            }
+            await selectButLoc.click();
+        }
         await this.page.click(this.selectors.availableCharts.toolbar.selectNoChartsButton());
-        await this.page.isHidden(this.selectors.availableCharts.toolbar.selectNoChartsButton());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        await this.page.locator(this.selectors.availableCharts.toolbar.selectNoChartsButton()).waitFor({state:'hidden'});
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -1695,16 +1687,22 @@ export class ReportGenerator {
      */
     async invertAvailableChartsSelection() {
         await this.waitForAvailableChartsPanelVisible();
-        await this.page.click(this.selectors.availableCharts.toolbar.selectButton());
+        const selectButLoc = await this.page.locator(this.selectors.availableCharts.toolbar.selectButton());
+        await selectButLoc.click();
+        for (let i = 0; i < 100; i++) {
+            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
+            if (boo) {
+                await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
+                break;
+            }
+            await selectButLoc.click();
+        }
         await this.page.isVisible(this.selectors.availableCharts.toolbar.invertSelectionButton());
         // Multiple buttons match the "Invert Selection" selector, but only one should be visible.
-        const visibleButtons = this.page.$$(this.selectors.myReports.toolbar.invertSelectionButton()).filter(button => button.isVisible());
-        await expect(visibleButtons.length, 'One "Invert Selection" button is visible').to.be.equal(1);
-        await visibleButtons[0].click();
-        await this.page.isHidden(this.selectors.availableCharts.toolbar.invertSelectionButton());
-        // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
-        // in case the menu is used multiple times in a row.
-        //await this.page.pause(500);
+        // This is not the case anymore because of the actions done before this method.
+        await this.page.click(this.selectors.availableCharts.toolbar.invertSelectionButton());
+        await this.page.locator(this.selectors.availableCharts.toolbar.invertSelectionButton()).waitFor({state:'hidden'});
+        // Ext.Button ignores clicks for 250ms
     }
 
     /**
@@ -1742,12 +1740,9 @@ export class ReportGenerator {
                 await expect(chartCount2 !== chartCount).toBeTruthy();
                 break;
             } catch (e) {
-                //console.log(i);
                 await maskLocator.waitFor({state:'detached'});
             }
         }        
- 
-        //await this.page.waitForFunction(async () => chartCount !== (await this.getAvailableCharts()).length);
     }
 
     /**

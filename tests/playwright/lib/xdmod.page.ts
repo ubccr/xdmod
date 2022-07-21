@@ -16,14 +16,14 @@ class XDMoD extends BasePage{
             await tempMaskLocator.waitFor({state:"detached"});
         }
         for (let i = 0; i < 100; i++){
-                try {
-                    await tab.click();
-                    break;
-                } catch (e) {
-                    await expect(this.maskLocator).toBeHidden();
-                }
+            try {
+                await tab.click();
+                break;
+            } catch (e) {
+                await expect(this.maskLocator).toBeHidden();
+            }
         }
-        await expect(panel).toBeVisible();
+        await panel.waitFor({state:'visible'});
         await expect(this.maskLocator).toBeHidden();
     }
 }

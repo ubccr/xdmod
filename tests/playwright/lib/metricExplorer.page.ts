@@ -1,6 +1,7 @@
 import {expect, Locator, Page} from '@playwright/test';
 import {BasePage} from "./base.page";
-import metricExplorerSelectors from './metricExplorer.selectors'
+import metricExplorerSelectors from './metricExplorer.selectors';
+import {instructions} from '../tests/helpers/instructions';
 
 class MetricExplorer extends BasePage{
     readonly metricExplorerSelectors = metricExplorerSelectors;
@@ -41,10 +42,8 @@ class MetricExplorer extends BasePage{
     readonly newTitle:string = '<em>"& (untitled query) 2 &"</em>';
     readonly possible:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
-    async undo($container){
-        return '#' + $container('button.x-btn-text-icon')
-            .closest('table')
-            .attr('id');
+    async undo(container){
+        return '(//div[@id="metric_explorer"]//button[contains(@class, "x-btn-text-icon")])[1]';
     }
 
     async waitForChart() {
@@ -91,11 +90,7 @@ class MetricExplorer extends BasePage{
     }
     async saveChanges() {
         await this.page.click(this.toolbar.buttonByName('Save'));
-        await this.page.screenshot({path:'chart3.png'});
-        await this.page.screenshot({path:'chart4.png'});
         await this.page.click('//span[@class="x-menu-item-text" and contains(text(),"Save Changes")]');
-        await this.page.screenshot({path:'chart5.png'});
-        await this.page.screenshot({path:'chart6.png'});
     }
     async addFiltersFromToolbar(filter){
         let filterByDialogBox = '//div[contains(@class,"x-panel-header")]/span[@class="x-panel-header-text" and contains(text(),"Filter by")]/ancestor::node()[4]';
@@ -117,10 +112,8 @@ class MetricExplorer extends BasePage{
         let subtitleSelector = this.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
         for (let i = 0; i < 100; i++){
             if (await this.page.isHidden('//div[@id="grid_filters_metric_explorer"]')){
-                console.log(i + ' if');
                 await this.clickSelectorAndWaitForMask(this.toolbar.buttonByName('Filters'));
             } else {
-                console.log(i + ' else');
                 await expect(this.page.locator('//div[@id="grid_filters_metric_explorer"] >> visible=true')).toBeVisible();
                 break;
             }
@@ -138,7 +131,7 @@ class MetricExplorer extends BasePage{
         let checkboxSelector = '//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-check-col-on")]';
         await this.page.click(this.toolbar.buttonByName('Filters'));
         await expect(this.page.locator('(' + checkboxSelector + ')[1]')).toBeVisible();
-        let checkboxes = this.page.locator(checkboxSelector);
+        let checkboxes = await this.page.locator(checkboxSelector);
         if (checkboxes.length !== 0){
             for (let i = 0; i < 2; i++){
                 await checkboxes.nth(i).click();
@@ -158,18 +151,19 @@ class MetricExplorer extends BasePage{
         await this.openDataSeriesDefinitionFromDataPoint();
         await this.page.click(this.dSDef.dialogBox + '//button[contains(@class, "add_filter") and text() = "Add Filter"]');
         await this.page.click(`//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="${filter}"]`);
-        await expect(this.page.locator('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]')).toBeVisible();
-        let checkboxes = this.page.elements('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
-        if (checkboxes.value.length !== 0){
-            for (let i = 0; i < checkboxes.value.length; i++){
-                await this.page.elementIdClick(checkboxes.value[i].ELEMENT);
+        await expect(this.page.locator(`//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[contains(text(), "${name}")]`)).toBeVisible();
+        /* let checkboxes = await this.page.$$('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
+        if (checkboxes.length !== 0){
+            for (let i = 0; i < checkboxes.length; i++){
+                await checkboxes.nth(i).click();
             }
-        }
+        }*/
+        await this.page.click(`//div[contains(@class, "x-menu x-menu-floating") and contains(@style,     "visibility: visible;")]//div[contains(text(),"${name}")]`);
         await this.waitForChartToChange(async () => {
             await this.page.click('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
             await this.page.click(this.dSDef.addButton);
         });
-        await this.page.locator(this.chart.legend() + `//*[contains(text(), "${name}")]`).toBeVisible();
+        await expect(this.page.locator(this.chart.legend() + `//*[contains(text(), "${name}")]`)).toBeVisible();
     }
     async editFiltersFromDataSeriesDefinition(name){
         await this.clickLogoAndWaitForMask();
@@ -184,18 +178,21 @@ class MetricExplorer extends BasePage{
     }
     async cancelFiltersFromDataSeriesDefinition() {
         await this.clickLogoAndWaitForMask();
-        let checkboxSelector = '//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-check-col-on")]';
-        await this.page.click(this.toolbar.buttonByName('Filters'));
-        await expect(this.page.locator(checkboxSelector)).toBeVisible();
-        let checkboxes = this.page.locator(checkboxSelector);
-        if (checkboxes.value.length !== 0) {
-            for (let i = 0; i < 2; i++) {
-                await this.page.elementIdClick(checkboxes.value[i].ELEMENT);
+        let checkboxSelector = '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[contains(@class, "x-grid3-check-col-on")]';
+        await this.openDataSeriesDefinitionFromDataPoint();
+        await this.page.locator((this.dSDef.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]')).waitFor({state:'visible'});
+        await this.page.click(this.dSDef.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]');
+        await this.page.locator(checkboxSelector).waitFor({state:'visible'});
+        let checkboxes = await this.page.locator(checkboxSelector);
+        if (checkboxes.length !== 0) {
+            for (let i = 0; i < checkboxes.length; i++) {
+                await checkboxes.nth(i).click();
             }
         }
-        await this.page.click('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Cancel")]');
-        await expect(this.page.locator(checkboxSelector).value.length).toEqual(checkboxes.value.length);
-        await this.clickLogoAndWaitForMask();
+        await this.page.click('//div[contains(@class, "x-menu x-menu-floating") and contains(@style,"visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Cancel")]');
+        await expect((await this.page.locator(checkboxSelector)).length).toEqual(checkboxes.length);
+        await this.page.click(this.dSDef.dialogBox + '//div[contains(@class, "x-panel-header")]');
+        await this.page.click(this.dSDef.addButton);
     }
     async clear() {
         await this.page.reload();
@@ -240,44 +237,33 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.addDataButton);
         await this.page.click('//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "Jobs")]');
         await this.page.click("//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + n + "')]");
-        await this.page.isVisible(this.dSDef.dialogBox);
+        await expect(this.page.locator(this.dSDef.dialogBox)).toBeVisible();
     }
     async addDataSeriesByDefinition() {
         await this.page.click(this.dSDef.addButton);
-        await this.page.isHidden(this.dSDef.dialogBox);
+        await expect(this.page.locator(this.dSDef.dialogBox)).toBeHidden();
     }
     async loadExistingChartByName(name) {
-        console.log('-----');
-        console.log('collapseButton');
-        console.log(this.collapseButtonLocator);
         await this.collapseButtonLocator.waitFor({state:'visible'});
-        console.log('-----');
-        console.log('Load Chart');
-        console.log(this.toolbar.buttonByName('Load Chart'));
         await this.page.locator(this.toolbar.buttonByName('Load Chart')).waitFor({state:'visible'});
         await this.page.click(this.toolbar.buttonByName('Load Chart'));
-        console.log('-----');
-        console.log('Load Dialog');
-        console.log(this.load.dialog);
         await this.page.locator(this.load.dialog).waitFor({state:'visible'});
         await this.waitForChartToChange(async () => {
             await this.page.click(this.load.chartByName(name));
             await this.page.locator(this.load.dialog).waitFor({state:'hidden'});
         });
-        console.log('-----');
-        console.log('expandButton');
-        console.log(this.catalog.expandButton);
         await this.page.locator(this.catalog.expandButton).waitFor({state:'visible'});
     }
     async checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
-        await this.page.isVisible(this.chart.titleByText(chartTitle));
+        await this.clickLogoAndWaitForMask();
+        await this.page.locator(this.chart.titleByText(chartTitle)).waitFor({state:'visible'});
         var selToCheck;
         if (isValidChart) {
             selToCheck = this.chart.credits();
         } else {
             selToCheck = this.chart.titleByText(chartTitle);
         }
-        await this.page.isVisible(selToCheck);
+        await this.page.locator(selToCheck).waitFor({state:'visible'});
         for (let i = 0; i < 100; i++) {
             try {
                 await this.page.click(selToCheck);
@@ -288,7 +274,7 @@ class MetricExplorer extends BasePage{
         }
 
         if (yAxisLabel) {
-            await this.page.isVisible(this.chart.yAxisTitle());
+            await this.page.locator(this.chart.yAxisTitle()).waitFor({state:'visible'});
             var yAxisElems = await this.page.$$(this.chart.yAxisTitle());
             if (typeof yAxisLabel === 'string') {
                 await expect(yAxisElems.length).toEqual(1);
@@ -305,18 +291,18 @@ class MetricExplorer extends BasePage{
         }
 
         if (legend) {
-            await this.page.locator(this.chart.legend()).isVisible();
-            var legendElems = await this.page.$$(this.chart.legend());
+            await this.page.locator('('+this.chart.legend()+')[1]').waitFor({state:'visible'});
+            var legendElems = await this.page.locator(this.chart.legend());
             if (typeof legend === 'string') {
-                await expect(legendElems.length).toEqual(1);
-                const result = await Promise.all(legendElems.map((elem) => {
-                    return elem.textContent();
-                }));
-                await expect(result[0]).toEqual(legend);
+                await expect(legendElems).toBeVisible();
+                const result = await legendElems.textContent();
+                await expect(result).toEqual(legend);
             } else {
-                await expect(legendElems.length).toEqual(legend.length);
+                const num = await legendElems.count();
+                await expect(num).toEqual(legend.length);
                 for (let i = 0; i < legend.length; i++) {
-                    await expect(legendElems[i]).toEqual(legend[i]);
+                    const computed = await legendElems.nth(i).textContent();
+                    await expect(computed).toContain(legend[i]);
                 }
             }
         }
@@ -328,8 +314,8 @@ class MetricExplorer extends BasePage{
      *
      * @params function() action
      */
-    async waitForChartToChange(action) {
-        var elem = await this.page.locator(this.svg);
+    waitForChartToChange(action) {
+        var elem = this.page.locator(this.svg);
         if (arguments.length > 1) {
             action.apply(this, [].slice.call(arguments, 1));
         } else {
@@ -354,7 +340,7 @@ class MetricExplorer extends BasePage{
         await this.page.fill(this.optionsTitle, title);
     }
     async verifyHighChartsTitle(title) {
-        var execReturn = this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title + '").textContent);');
+        var execReturn = await this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title + '").textContent);');
         await expect(execReturn._status).toEqual(0);
         await expect(typeof(execReturn.value)).toEqual('string');
         await expect(execReturn.value).toEqual(title);
@@ -362,38 +348,39 @@ class MetricExplorer extends BasePage{
     async verifyEditChartTitle() {
         await this.page.click(this.chart.title);
         await expect(this.page.isVisible(this.chart.titleInput));
-        var titleValue = this.page.locator(this.chart.titleInput).value;
+        var titleValue = await this.page.locator(this.chart.titleInput).inputValue();
         await expect(typeof(titleValue)).toEqual('string');
         await expect(titleValue).toEqual(this.newTitle);
         await this.page.click(this.chart.titleOkButton);
         await this.waitForChart();
     }
     async verifyInstructions() {
-        await this.page.waitForVisible('//div[@id="metric_explorer"]//div[@class="x-grid-empty"]//b[text()="No data is available for viewing"]');
-        await testHelpers.instructions(this.page, 'metricExplorer', this.container);
+        await this.page.locator('//div[@id="metric_explorer"]//div[@class="x-grid-empty"]//b[text()="No data is available for viewing"]').waitFor({state:'visible'});
+        const boo = await instructions(this.page, 'metricExplorer', this.container);
+        await expect(boo).toBeTruthy();
     }
     async setChartTitleViaChart(title) {
         await this.waitForChart();
         await this.page.click(this.chart.title);
         await expect(this.page.locator(this.chart.titleInput)).isVisible();
         await this.page.clearElement(this.chart.titleInput);
-        await this.page.setValue(this.chart.titleInput, title);
-        await this.page.pause(500);
+        await this.page.fill(this.chart.titleInput, title);
+        //await this.page.pause(500);
         await this.page.click(this.chart.titleOkButton);
     }
     async setGroupByToResource() {
         await this.page.click(this.dataInput);
-        await this.page.pause(1000);
+        //await this.page.pause(1000);
         await this.page.evaluate("return document.querySelectorAll('div.x-layer.x-combo-list[style*=\"visibility: visible\"] .x-combo-list-item:nth-child(10)')[0];").click();
     }
     async axisSwap() {
         var axisFirstChildText = '';
         var axisSecondChildText = '';
-        axisFirstChildText = this.page.locator(this.chart.axis + ' text').textContent();
+        axisFirstChildText = await this.page.locator(this.chart.axis + ' text').textContent();
         await this.page.click(this.optionsButton);
         await this.page.click(this.optionsSwap);
         // await this.page.pause(1000);
-        axisSecondChildText = this.page.locator(this.chart.axis + ' text').textContent();
+        axisSecondChildText = await this.page.locator(this.chart.axis + ' text').textContent();
         // await this.waitForChart();
         //await this.page.pause(1000);
         await this.page.click(this.optionsButton);
@@ -404,15 +391,15 @@ class MetricExplorer extends BasePage{
     async chartTitleInOptionsUpdated() {
         await this.waitForChart();
         await this.page.click(this.optionsButton);
-        await expect(this.page.isVisible(this.optionsTitle));
-        var res1 = this.page.locator(this.optionsTitle).value;
+        await expect(this.page.locator(this.optionsTitle)).toBeVisible();
+        var res1 = await this.page.locator(this.optionsTitle).textContent();
         await expect(typeof(res1)).toEqual('string');
-        var res2 = this.page.evaluate(function (text) {
+        var res2 = await this.page.evaluate(function (text) {
             // TODO: Fix this withOut having to use EXT if Possible
             // eslint-disable-next-line no-undef
             return Ext.util.Format.htmlDecode(text);
         }, res1);
-        await expect(res2.value).to.equal(this.newTitle);
+        await expect(res2.value).toEqual(this.newTitle);
         await this.waitForChart();
         await this.page.click(this.optionsButton);
     }
@@ -432,7 +419,9 @@ class MetricExplorer extends BasePage{
     }
     async addDataViaToolbar() {
         await this.page.click(this.addDataButton);
+        await this.page.locator('//div[@id="metric-explorer-chartoptions-add-data-menu"]').waitFor({state:'visible'});
         await this.page.click(this.toolbar.addData('Jobs'));
+        await this.page.locator('//div[@class="x-menu x-menu-floating x-layer"]').waitFor({state:'visible'});
         await this.page.click(this.toolbar.addDataGroupBy('CPU Hours: Per Job'));
         await this.addDataSeriesByDefinition();
     }
@@ -447,7 +436,7 @@ class MetricExplorer extends BasePage{
     async confirmChartTitleChange(largeTitle) {
         await this.waitForChart();
         // await this.page.pause(2000);
-        var titleChange = this.page.evaluate('return document.querySelector("' + this.chart.title + '").textContent;');
+        var titleChange = await this.page.evaluate('return document.querySelector("' + this.chart.title + '").textContent;');
         // expect(titleChange.state).to.equal('success');
         await expect(titleChange._status).toEqual(0);
         await expect(typeof(titleChange.value)).toEqual('string');
@@ -462,26 +451,26 @@ class MetricExplorer extends BasePage{
         await expect(this.page.locator('.ext-el-mask')).toBeHidden();
     }
 
-    async undoAggregateOrTrendLine($container) {
-        await this.page.click(this.undo($container));
+    async undoAggregateOrTrendLine(container) {
+        const toClick = await this.undo(container);
+        await this.page.click(toClick);
         // The mouse stays and causes a hover, lets move the mouse somewhere else
         await this.clickLogoAndWaitForMask();
     }
 
     async clickFirstDataPoint() {
-        const tempMaskLocator = this.page.locator('//div[contains(@class, "ext-el-mask-msg") and contains(., "Loading...")]');
+        const tempMaskLocator = await this.page.locator('//div[contains(@class, "ext-el-mask-msg") and contains(., "Loading...")]');
         const maskHolder = await tempMaskLocator.isVisible();
         if (maskHolder){
             await tempMaskLocator.waitFor({state:"detached"});
         }
-        console.log(this.chart.seriesMarkers(0));
         var elems = await this.page.locator(this.chart.seriesMarkers(0));
-        console.log(elems);
         // Data points are returned in reverse order.
         // for some unknown reason the first point click gets intercepted by the series
         // menu.
         await elems.nth(0).click();
-        await elems.value[elems.value.length - 1].click();
+        const num = await elems.count();
+        await elems.nth(num - 1).click();
     }
 
     /**
@@ -502,6 +491,11 @@ class MetricExplorer extends BasePage{
     }
 
     async clickLogoAndWaitForMask() {
+        const tempMaskLocator = await this.page.locator('//div[contains(@class, "ext-el-mask-msg") and contains(., "Loading...")]');
+        const maskHolder = await tempMaskLocator.isVisible();
+        if (maskHolder){
+            await tempMaskLocator.waitFor({state:"detached"});
+        }
         await this.clickSelectorAndWaitForMask('.xtb-text.logo93');
     }
 }

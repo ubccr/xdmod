@@ -1,7 +1,6 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from "../lib/login.page";
 import MetricExplorer from '../lib/metricExplorer.page';
-//import cheerio from '@cheerio';
 import artifacts from "./helpers/artifacts";
 var expected = artifacts.getArtifact('metricExplorer');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
@@ -76,7 +75,6 @@ test.describe('Metric Explorer', async () => {
             await page.click(me.metricExplorerSelectors.tab);
             await page.isVisible(me.metricExplorerSelectors.container);
             await page.isVisible(me.metricExplorerSelectors.catalog.container);
-            //$container = cheerio.load(page.content(me.metricExplorerSelectors.container));
             container = page.content(me.metricExplorerSelectors.container);
             await page.click(me.metricExplorerSelectors.catalog.collapseButton);
         });
@@ -92,21 +90,13 @@ test.describe('Metric Explorer', async () => {
             await xdmod.selectTab('metric_explorer');
             await test.step('Add data via metric catalog', async () => {
                 await me.createNewChart(chartName, 'Timeseries', 'Line');
+                await page.click("(//div[@id='main_tab_panel']//div[@id='metric_explorer']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
+                await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="User Defined"]');
                 await me.setDateRange('2016-12-30', '2017-01-02');
                 await me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
                 await me.checkChart(chartName, 'Node Hours: Total', expected.legend);
-                await page.screenshot({path:'chart.png'});
-                //await page.click(me.toolbar.buttonByName('Save'));
-                await me.saveChanges();/*
-                await page.screenshot({path:'chart2.png'});
-                await page.click('//span[@class="x-menu-item-text" and contains(text(),"Save Changes")]');
-                await page.screenshot({path:'chart3.png'});
-                await page.screenshot({path:'chart4.png'});
+                await me.saveChanges();
                 await me.clear();
-                await page.screenshot({path:'chart5.png'});
-                await page.screenshot({path:'chart6.png'});
-                await me.loadExistingChartByName(chartName);
-                await page.screenshot({path:'chart7.png'});*/
             });
         });
         test('Basic Scenarios', async ({page}) => {
@@ -115,16 +105,20 @@ test.describe('Metric Explorer', async () => {
             const me = new MetricExplorer(page, baseUrl);
             const xdmod = new XDMoD(page, baseUrl);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
-            await xdmod.selectTab('metric_explorer');/*
+            await xdmod.selectTab('metric_explorer');
             await test.step('Add Filters in Toolbar', async () => {
                 await me.loadExistingChartByName(chartName);
-                await page.screenshot({path:'chart2.png'});
+                await expect(page.locator(me.chart.titleByText(chartName))).toBeVisible();
+                const startDate = await page.locator(me.startDate).inputValue();
+                const endDate = await page.locator(me.endDate).inputValue();
+                await expect(startDate).toEqual('2016-12-30');
+                await expect(endDate).toEqual('2017-01-02');
+                await me.checkChart(chartName, 'Node Hours: Total', expected.legend);
                 await me.addFiltersFromToolbar('PI');
                 await me.cancelFiltersFromToolbar();
             });
             await test.step('Edit Filters in Toolbar', async () => {
                 await me.editFiltersFromToolbar('Alpine');
-                await page.screenshot({path:'chart3.png'});
                 await me.clear();
             });
             await test.step('Add/Edit Filters in Data Series Definition', async () => {
@@ -141,15 +135,18 @@ test.describe('Metric Explorer', async () => {
                 await me.verifyInstructions();
             });
             await test.step('Has three toolbars', async () => {
-                const toolbars = await page.locator(container('.x-toolbar'));
+                const toolbars = await page.$$(me.container + ' .x-toolbar');
                 await expect(toolbars.length).toEqual(3);
             });
             await test.step('Has one canned Date Picker', async () => {
                 // TODO: Make Datepicker have a unique name
-                await expect(container('table[id^=canned_dates]').length).toEqual(1);
+                // This check is done by using strict mode
+                await expect(page.locator(me.container + ' table[id^=canned_dates]')).toBeVisible();
             });
 
             await test.step('Set a known start date', async () => {
+                await page.click("(//div[@id='main_tab_panel']//div[@id='metric_explorer']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
+                await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="User Defined"]');
                 await expect(page.locator(me.metricExplorerSelectors.startDate)).toBeVisible();
                 await page.click(me.metricExplorerSelectors.startDate);
                 await page.fill(me.metricExplorerSelectors.startDate, baselineDate.start);
@@ -170,28 +167,30 @@ test.describe('Metric Explorer', async () => {
             });
 
             await test.step("'Add Data' again via toolbar", async () => {
-                await me.waitForChartToChange(me.addDataViaToolbar);
+                await me.addDataViaToolbar();
             });
             await test.step('Chart contains correct information', async () => {
+                await me.saveChanges()
                 await me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
             });
 
             await test.step('Switch to aggregate chart', async () => {
-                await me.waitForChartToChange(me.switchToAggregate);
+                await me.switchToAggregate();
             });
             await test.step('Chart contains correct information', async () => {
                 await me.checkChart('untitled query 1', 'CPU Hour', ['CPU Hours: Total', 'CPU Hours: Per Job']);
             });
             await test.step('Undo Scratch Pad switch to aggregate', async () => {
-                await me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
+                await me.undoAggregateOrTrendLine(me.container);
             });
             await test.step('Check first undo works', async () => {
-                await me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
+                await me.checkChart('untitled query 1', 'CPU Hour', ['CPU Hours: Total', 'CPU Hours: Per Job']);
             });
             await test.step('Undo Scratch Pad second source', async () => {
-                await me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
+                await me.undoAggregateOrTrendLine(me.container);
             });
             await test.step('Check second undo works', async () => {
+                await me.clickLogoAndWaitForMask();
                 await me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
             });
             await test.step('Attempt Delete Scratchpad Chart', async () => {
@@ -208,6 +207,7 @@ test.describe('Metric Explorer', async () => {
             });
             await test.step('Open Chart Options', async () => {
                 await page.click(me.metricExplorerSelectors.options.button);
+                await page.locator('div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"]').waitFor({state:'visible'});
             });
             await test.step('Chart options looks the same as previous run', async () => {
                 // TODO: Determine Pass case for this without using screenshot
@@ -222,14 +222,17 @@ test.describe('Metric Explorer', async () => {
                 });
             });
             await test.step('Trend Line looks the same as previous run', async () => {
+                await me.clickLogoAndWaitForMask();
                 await me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);
             });
             await test.step('Undo Trend Line', async () => {
-                await me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
-                });
+                await me.undoAggregateOrTrendLine(me.container);
+            });
             await test.step('Undo Trend Line looks the same as previous run', async () => {
+                await me.clickLogoAndWaitForMask();
+                await me.clickLogoAndWaitForMask();
                 await me.checkChart(chartName, 'Node Hours: Total', expected.legend);
-                });*/
+            });
         });
         /* The following tests are disabled until such a time as they can be changed to work
          * reliably without browser.pause()

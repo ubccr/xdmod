@@ -1,7 +1,6 @@
 import {expect, Locator, Page} from '@playwright/test';
 import {BasePage} from "./base.page";
 import mTbSelectors from "./mainToolbar.selectors";
-import About from "./about.page";
 
 class MainToolbar extends BasePage{
     readonly mTbSelectors = mTbSelectors;
@@ -19,23 +18,20 @@ class MainToolbar extends BasePage{
     async helpFunc(type, mainTab){
         const helpTypesLoc = this.page.locator(mTbSelectors.helpTypes[type]);
         await this.helpLocator.click();
-        console.log('helplocator click');
+        await this.page.locator(mTbSelectors.floatlayer).waitFor({state:'visible'});
         await expect(this.floatlayerLocator).toBeVisible();
-        console.log('floatlayer visible');
         await expect(helpTypesLoc).toBeVisible();
-        console.log('helpTypesLoc visible');
-        await this.containerLocator.click();
-        console.log('containerLoc click');
-        var ids = this.page.windowHandles().value;
+        let context = this.page.context();
+        const [newPage]:Page = await Promise.all([
+            context.waitForEvent('page'),
+            await helpTypesLoc.click()
+        ]);
+        await newPage.waitForLoadState();
+        var ids = context.pages();
         var id = ids.length;
         await expect(id).toEqual(2);
-        while(id--){
-            if (ids[id] !== mainTab){
-                await this.page.window(ids[id]);
-                await this.page.close();
-            }
-        }
-        this.page.window(mainTab);
+        await newPage.close();
+        await expect(context.pages().length).toEqual(1);
 	}
 
     async contactFunc(type){

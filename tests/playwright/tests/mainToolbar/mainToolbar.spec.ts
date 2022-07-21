@@ -15,7 +15,7 @@ test.describe('Main Toolbar', async () => {
         const mTb = new MainToolbar(page, page.baseUrl);
 
         await test.step('Get Browswer Tab ID', async () => {
-           mainTab = page.context;
+           mainTab = await page.evaluateHandle(() => Promise.resolve(window));
         });
 
 	    await test.step("About should change 'Tabs'", async () =>{
@@ -48,15 +48,12 @@ test.describe('Main Toolbar', async () => {
         await page.goto('/');
         await page.waitForLoadState();
         const mTb = new MainToolbar(page, page.baseUrl);
-        console.log('----mainToolbar.spec.ts----COME BACK TO THIS---');
-	//await mTb.helpFunc('Manual', mainTab);
-	/*for (var type in mTb.mTbSelectors.helpTypes){
+        for (var type in mTb.mTbSelectors.helpTypes){
             if (mTb.mTbSelectors.helpTypes.hasOwnProperty(type)){
                 await test.step(type, async () => {
                     await mTb.helpFunc(type, mainTab);
-                })
+                });
             }
-        }*/
-        //await page.locator(mTb.mTbSelectors.logoutLink).click();
+        }
     });
 });

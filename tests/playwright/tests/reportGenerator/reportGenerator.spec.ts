@@ -1,7 +1,6 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from "../lib/login.page";
 import Usage from '../lib/usageTab.page';
-import XDMoD from '../lib/xdmod.page';
 import {MyReportsRow, AvailableChart, IncludedChart, ReportGenerator} from '../lib/reportGenerator.page';
 import artifacts from "./helpers/artifacts";
 const expected = artifacts.getArtifact('reportGenerator');
@@ -280,8 +279,6 @@ test.describe('Report Generator', async () => {
         });
     });
 
-    //loginPage.logout();
-
     // TODO: Add tests for storage and cloud realms
     if (XDMOD_REALMS.includes('jobs')) {
         // PI
@@ -311,8 +308,6 @@ test.describe('Report Generator', async () => {
                 await expect(bool).toBe(false);
             });
         });
-
-        //loginPage.logout();
     }
 
     // Center staff
@@ -343,8 +338,6 @@ test.describe('Report Generator', async () => {
         });
     });
 
-    //loginPage.logout();
-
     // TODO: Add tests for storage and cloud realms
     if (XDMOD_REALMS.includes('jobs')) {
         // Center director
@@ -362,20 +355,6 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.selectTab();
             });
             
-            //DELETE FOLLOWING CHUNK LATER
-            const rows = await reportGeneratorPage.getMyReportsRows();
-            if (rows != 0){
-                await reportGeneratorPage.selectAllReports();
-                await reportGeneratorPage.deleteSelectedReports();
-                await reportGeneratorPage.confirmDeleteSelectedReports();
-            }            
-            const charts = await reportGeneratorPage.getAvailableCharts();
-            if (charts != 0) {
-                await reportGeneratorPage.selectAllAvailableCharts();
-                await reportGeneratorPage.deleteSelectedAvailableCharts();
-                await reportGeneratorPage.confirmDeleteSelectedAvailableCharts();
-            }
-
             await test.step('No reports listed', async () => {
                 const first = await reportGeneratorPage.getMyReportsRows();
                 await expect(first.length, 'No rows in the list of reports').toEqual(0);
@@ -402,13 +381,12 @@ test.describe('Report Generator', async () => {
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const usagePage = new Usage(page, baseUrl);
-            const xdmod = new XDMoD(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             let index = 0;
             for (const testChart of usageTabCharts){
                 await test.step('Select Usage Tab', async () => {
-                    await xdmod.selectTab('tg_usage');
+                    await usagePage.selectTab();
                 });
                 await test.step(`Select "${testChart.title}" chart`, async () => {
                     const topNodeName = testChart.realm + ' ' + (testChart.drillDetails === '' ? 'Summary' : testChart.drillDetails);
@@ -898,8 +876,8 @@ test.describe('Report Generator', async () => {
                 await tempMaskLocator.waitFor({state:"detached"});
             }
             var report_template_index = 0;
+            var reportIndex;
             for (const template of centerDirectorReportTemplates){
-                let reportIndex;
                 await test.step('Click "New Based On"', async () => {
                     const first = await reportGeneratorPage.getMyReportsRows();
                     reportIndex = first.length;
@@ -990,7 +968,6 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
-                await page.screenshot({path:'check2.png'});
             });
         });
         
@@ -1026,7 +1003,6 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
-                await page.screenshot({path:'check.png'});
             });
         });
         
@@ -1051,7 +1027,8 @@ test.describe('Report Generator', async () => {
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
                 var i = 0;
                 for (const row:MyReportsRow of reportRows){
-                    await expect(row.isSelected(), `Row ${i} is not selected`).toBeFalsy();
+                    const boo = await row.isSelected();
+                    await expect(boo, `Row ${i} is not selected`).toBeFalsy();
                     i+=1;
                 }
             });
@@ -1071,81 +1048,90 @@ test.describe('Report Generator', async () => {
                 }
             });
         });
-        /*
+         
         test('Attempt to edit multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Edit reports (should not be possible)', async () => {
-                await expect(reportGeneratorPage.isEditSelectedReportsEnabled(), '"Edit" button is disabled').toBeFalsy();
+                const boo = await reportGeneratorPage.isEditSelectedReportsEnabled();
+                await expect(boo, '"Edit" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-
+        
         test('Attempt to preview multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Preview reports (should not be possible)', async () => {
-                await expect(reportGeneratorPage.isPreviewSelectedReportsEnabled(), '"Preview" button is disabled').toBeFalsy();
+                const boo = await reportGeneratorPage.isPreviewSelectedReportsEnabled();
+                await expect(boo, '"Preview" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-
+        
         test('Attempt to send multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Send reports (should not be possible)', async () => {
-                await expect(reportGeneratorPage.isSendSelectedReportsEnabled(), '"Send" button is disabled').toBeFalsy();
+                const boo = await reportGeneratorPage.isSendSelectedReportsEnabled();
+                await expect(boo, '"Send" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-
+        
         test('Attempt to download multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Download reports (should not be possible)', async () => {
-                await expect(reportGeneratorPage.isDownloadSelectedReportsEnabled(), '"Download" button is disabled').toBeFalsy();
+                const boo = await reportGeneratorPage.isDownloadSelectedReportsEnabled();
+                await expect(boo, '"Download" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-
+        
         test('Delete report from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             let reportCount;
 
             await test.step('Select report', async () => {
@@ -1175,13 +1161,14 @@ test.describe('Report Generator', async () => {
                 await expect(first.length).toEqual(reportCount);
             });
         });
-
+        
         test('Select charts listed in "Available Charts"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('Select all', async () => {
                 await reportGeneratorPage.selectAllAvailableCharts();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
@@ -1196,25 +1183,28 @@ test.describe('Report Generator', async () => {
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
                 var i = 0;
                 for (const chart:AvailableChart of reportCharts){
-                    await expect(chart.isSelected(), `Chart ${i} is not selected`).toBeFalsy();
+                    const boo = await chart.isSelected();
+                    await expect(boo, `Chart ${i} is not selected`).toBeFalsy();
                     i+=1;
                 }
             });
             await test.step('Invert selection', async () => {
                 // Select one chart then invert selection.
-                await reportGeneratorPage.getAvailableCharts()[1].toggleSelection();
-                const first:[AvailableChart] = await reportGeneratorPage.getAvailableCharts();
-                const selectedStatus = first.map(chart => chart.isSelected());
+                const chart:AvailableChart = (await reportGeneratorPage.getAvailableCharts())[1];
+                await chart.toggleSelection();
+                const first = await reportGeneratorPage.getAvailableCharts();
+                const selectedStatus = await Promise.all(first.map(chart => chart.isSelected()));
                 await reportGeneratorPage.invertAvailableChartsSelection();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
                 var i = 0;
-                for (const chart of reportCharts){
-                    await expect(chart.isSelected(), `Chart ${i} selection has been inverted`).toEqual(!selectedStatus[i]);
+                for (const chart:AvailableChart of reportCharts){
+                    const boo = await chart.isSelected();
+                    await expect(boo, `Chart ${i} selection has been inverted`).toEqual(!selectedStatus[i]);
                     i+=1;
                 }
             });
         });
-
+        
         // Removes all but the first chart.
         test('Remove charts from "Available Charts"', async ({page}) => {
             //Generate pages
@@ -1222,15 +1212,16 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             let chartCount;
-
             await test.step('Select all charts', async () => {
                 const first = await reportGeneratorPage.getAvailableCharts();
                 chartCount = first.length;
                 await reportGeneratorPage.selectAllAvailableCharts();
             });
             await test.step('Deselect first chart', async () => {
-                const chart:AvailableChart = (await reportGeneratorPage.getAvailableCharts())[0];
+                const charts = await reportGeneratorPage.getAvailableCharts();
+                const chart:AvailableChart = charts[0];
                 await chart.toggleSelection();
             });
             await test.step('Click delete button', async () => {
@@ -1254,7 +1245,7 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'All but one chart removed').toEqual(1);
             });
         });
-
+        
         // Removes the first chart.
         test('Remove chart from Report Generator from the Usage tab', async ({page}) => {
             //Generate pages
@@ -1264,11 +1255,11 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await test.step('Click on the "Usage" tab', async () => {
-                const xdmod = new XDMoD(page, page.baseUrl);
-                await xdmod.selectTab('tg_usage');
-                //await usagePage.selectTab();
+                await usagePage.selectTab();
             });
             await test.step('Set date range', async () => {
+                await page.click("(//div[@id='main_tab_panel']//div[@id='tg_usage']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
+                await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="User Defined"]');
                 await usagePage.setStartDate(usageTabCharts[0].startDate);
                 await usagePage.setEndDate(usageTabCharts[0].endDate);
                 await usagePage.refresh();
@@ -1284,13 +1275,14 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'No charts in the list of available charts').toEqual(0);
             });
         });
-
+        
         test('Delete multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
@@ -1310,6 +1302,7 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await reportGeneratorPage.selectTab();
             await test.step('No reports listed', async () => {
                 const first = await reportGeneratorPage.getMyReportsRows();
                 await expect(first.length, 'No rows in the list of reports').toEqual(0);
@@ -1319,6 +1312,5 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'No charts in the list of available charts').toEqual(0);
             });
         });
-        //loginPage.logout();
-        */  }
+     }
 });
