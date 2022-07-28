@@ -1,24 +1,22 @@
 import {expect, Locator, Page} from '@playwright/test';
 import XDMoD from './xdmod.page';
 import {BasePage} from "./base.page";
-import usageSelectors from './usageTab.selectors'
+import selectors from './usageTab.selectors'
 
 class Usage extends BasePage{
-    readonly usageSelectors = usageSelectors;
+    readonly selectors = selectors;
 
-    readonly legendTextLocator = this.page.locator(usageSelectors.legendText);
-    readonly chartLocator = this.page.locator(usageSelectors.chart);
-    readonly maskLocator = this.page.locator(usageSelectors.mask);
-    readonly durationButtonLocator = this.page.locator(usageSelectors.durationButton());
-    readonly durationMenuLocator = this.page.locator(usageSelectors.durationMenu);
-    readonly startFieldLocator = this.page.locator(usageSelectors.startField);
-    readonly endFieldLocator = this.page.locator(usageSelectors.endField);
-    readonly refreshButtonLocator = this.page.locator(usageSelectors.refreshButton);
-    readonly availableForReportCheckboxLocator = this.page.locator(usageSelectors.availableForReportCheckbox);
+    readonly legendTextLocator = this.page.locator(selectors.legendText);
+    readonly chartLocator = this.page.locator(selectors.chart);
+    readonly maskLocator = this.page.locator(selectors.mask);
+    readonly durationButtonLocator = this.page.locator(selectors.durationButton());
+    readonly durationMenuLocator = this.page.locator(selectors.durationMenu);
+    readonly startFieldLocator = this.page.locator(selectors.startField);
+    readonly endFieldLocator = this.page.locator(selectors.endField);
+    readonly refreshButtonLocator = this.page.locator(selectors.refreshButton);
+    readonly availableForReportCheckboxLocator = this.page.locator(selectors.availableForReportCheckbox);
 
     async checkLegendText(text){
-        //unsure of source function waitForChart, so unclear purpose
-        //await this.page.waitForChart();
         await expect(this.legendTextLocator).toBeVisible();
         await expect(this.legendTextLocator).toContainText(text);
     }
@@ -41,7 +39,7 @@ class Usage extends BasePage{
     async selectDuration(name){
         await this.durationButtonLocator.click();
         await expect(this.durationMenuLocator).toBeVisible();
-        await this.page.locator(usageSelectors.durationMenuItem(name)).click();
+        await this.page.locator(selectors.durationMenuItem(name)).click();
         await expect(this.maskLocator).toBeHidden();
 
         // The chart automatically refreshes after a new duration is
@@ -89,7 +87,7 @@ class Usage extends BasePage{
     async makeCurrentChartAvailableForReport(){
         await expect(this.availableForReportCheckboxLocator.isVisible(), '"Available for Report" checkbox is visible').toBeTruthy();
         await expect(this.availableForReportCheckboxLocator.isEnabled(), '"Available for Report" checkbox is enabled').toBeTruthy();
-        const checkbox = await this.page.$eval(usageSelectors.availableForReportCheckbox, node => node.checked);
+        const checkbox = await this.page.$eval(selectors.availableForReportCheckbox, node => node.checked);
         await expect(checkbox, '"Available for Report" checkbox is not checked').toBeFalsy();
         await this.availableForReportCheckboxLocator.click();
         await expect(this.availableForReportCheckboxLocator.isChecked(), '"Available for Report" checkbox is checked').toBeTruthy();
@@ -110,7 +108,7 @@ class Usage extends BasePage{
         await expect(this.availableForReportCheckboxLocator.isEnabled(), '"Available for Report" checkbox is enabled').toBeTruthy();
         await expect(this.availableForReportCheckboxLocator.isChecked(), '"Available for Report" checkbox is checked').toBeTruthy();
         await this.availableForReportCheckboxLocator.click();
-        const checkbox = await this.page.$eval(usageSelectors.availableForReportCheckbox, node => node.checked);
+        const checkbox = await this.page.$eval(selectors.availableForReportCheckbox, node => node.checked);
         await expect(checkbox, '"Available for Report" checkbox is not checked').toBeFalsy();
     }
 
@@ -122,10 +120,9 @@ class Usage extends BasePage{
      * @return {Boolean} True if the node is expanded.
      */
     async isTreeNodeExpanded(name){
-        const item = usageSelectors.unfoldTreeNodeByName(name);
-        const hold = await this.page.getAttribute(item, 'class');
-        const boo = hold.match(/[$ ]x-tree-node-plus[^ ]/);
-        return boo === null;
+        const unfoldTreeSelector = selectors.unfoldTreeNodeByName(name);
+        const unfoldTreeClass = await this.page.getAttribute(unfoldTreeSelector, 'class');
+        return unfoldTreeClass.match(/[$ ]x-tree-node-plus[^ ]/) === null;
     }
 
     /**
@@ -136,7 +133,7 @@ class Usage extends BasePage{
      */
     async expandTreeNode(name){
         await expect(this.isTreeNodeExpanded(name), 'Tree node is collpased').toBeFalsy();
-        await this.page.locator(usageSelectors.unfoldTreeNodeByName(name)).click();
+        await this.page.locator(selectors.unfoldTreeNodeByName(name)).click();
     }
 
     /**
@@ -147,7 +144,7 @@ class Usage extends BasePage{
      */
     async collapseTreeNode(name){
         await expect(this.isTreeNodeExpanded(name), 'Tree node is expanded').toBeTruthy();
-        await this.page.locator(usageSelectors.unfoldTreeNodeByName(name)).click();
+        await this.page.locator(selectors.unfoldTreeNodeByName(name)).click();
     }
 
     /**
@@ -156,7 +153,7 @@ class Usage extends BasePage{
      * @param {String} name The name of the tree node.
      */
     async selectTreeNode(name){
-        await this.page.locator(usageSelectors.topTreeNodeByName(name)).click();
+        await this.page.locator(selectors.topTreeNodeByName(name)).click();
         await expect(this.maskLocator).toBeHidden();
     }
 
@@ -170,7 +167,7 @@ class Usage extends BasePage{
         if (!this.isTreeNodeExpanded(topName)){
             await this.expandTreeNode(topName);
         }
-        await this.page.locator(usageSelectors.treeNodeByPath(topName, childName)).click();
+        await this.page.locator(selectors.treeNodeByPath(topName, childName)).click();
     }
 
     /**
@@ -180,11 +177,11 @@ class Usage extends BasePage{
      * @returns {boolean}
      */
     async toolbarMenuItemIsEnabled(display){
-        var item = usageSelectors.displayMenuItemByText(display);
+        var item = selectors.displayMenuItemByText(display);
         await this.page.locator(item).isVisible();
-        const hold = await this.page.getAttribute(item, 'class');
-        const boo = hold.includes('x-item-disabled');
-        return !(boo);
+        const itemClass = await this.page.getAttribute(item, 'class');
+        const itemIsDisabled = itemClass.includes('x-item-disabled');
+        return !(itemIsDisabled);
     }
 }
 export default Usage;

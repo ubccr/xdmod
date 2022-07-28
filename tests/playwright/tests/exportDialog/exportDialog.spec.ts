@@ -11,14 +11,14 @@ test('Export Dialog', async ({page}) => {
         await usage.selectTab();
     });
     await test.step('Bring up export dialog', async () => {
-        await expect(page.locator(usage.usageSelectors.toolbar.exportButton)).toBeVisible();
-        await page.click(usage.usageSelectors.toolbar.exportButton);
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.window)).toBeVisible();
+        await expect(page.locator(usage.selectors.toolbar.exportButton)).toBeVisible();
+        await page.click(usage.selectors.toolbar.exportButton);
+        await expect(page.locator(xdmod.selectors.exportDialog.window)).toBeVisible();
     });
     await test.step('Check format list', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.formatDropdown())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.formatDropdown());
-        await expect(page.locator('('+ xdmod.xdmodSelectors.exportDialog.comboList + ')[1]')).toBeVisible();
+        await expect(page.locator(xdmod.selectors.exportDialog.formatDropdown())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.formatDropdown());
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeVisible();
         var expected = [
             'PNG - Portable Network Graphics',
             'SVG - Scalable Vector Graphics',
@@ -26,19 +26,19 @@ test('Export Dialog', async ({page}) => {
             'XML - Extensible Markup Language',
             'PDF - Portable Document Format'
         ];
-        const computed = await page.$$(xdmod.xdmodSelectors.exportDialog.comboListItems);
+        const computed = await page.$$(xdmod.selectors.exportDialog.comboListItems);
         const innerTexts = await Promise.all(computed.map(async (ele, i) => {
             return await ele.innerText();
         }));
         await expect(innerTexts).toEqual(expected);
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.formatDropdown())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.formatDropdown());
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[1]')).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.formatDropdown())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.formatDropdown());
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeHidden();
     });
     await test.step('Check Image Sizes', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.imageSizeDropdown())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.imageSizeDropdown());
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[8]')).toBeVisible();
+        await expect(page.locator(xdmod.selectors.exportDialog.imageSizeDropdown())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.imageSizeDropdown());
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(8))).toBeVisible();
         var expected = [
             'Small',
             'Medium',
@@ -46,47 +46,47 @@ test('Export Dialog', async ({page}) => {
             'Poster',
             'Custom'
         ];
-        const computed = await page.$$(xdmod.xdmodSelectors.exportDialog.comboListItems);
+        const computed = await page.$$(xdmod.selectors.exportDialog.comboListItems);
         const innerTexts = await Promise.all(computed.map(async (ele, i) => {
             return await ele.innerText();
         }));
         await expect(innerTexts).toEqual(expected);
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.imageSizeDropdown())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.imageSizeDropdown());
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[8]')).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.imageSizeDropdown())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.imageSizeDropdown());
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(8))).toBeHidden();
     });
     await test.step('Check show chart title exists', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.showTitleCheckbox())).toBeVisible();
+        await expect(page.locator(xdmod.selectors.exportDialog.showTitleCheckbox())).toBeVisible();
     });
     await test.step('Switch to CSV output', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.formatDropdown())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.formatDropdown());
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[1]')).toBeVisible();
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.comboListItemByName('CSV'))).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.comboListItemByName('CSV'));
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[1]')).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.formatDropdown())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.formatDropdown());
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeVisible();
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByName('CSV'))).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.comboListItemByName('CSV'));
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeHidden();
     });
     await test.step('Make sure title and image options are not visible', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.showTitleCheckbox())).toBeHidden();
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.imageSizeDropdown())).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.showTitleCheckbox())).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.imageSizeDropdown())).toBeHidden();
     });
     await test.step('Switch to PDF output', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.formatDropdown())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.formatDropdown());
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[1]')).toBeVisible();
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.comboListItemByName('PDF'))).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.comboListItemByName('PDF'));
-        await expect(page.locator('(' + xdmod.xdmodSelectors.exportDialog.comboList + ')[1]')).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.formatDropdown())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.formatDropdown());
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeVisible();
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByName('PDF'))).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.comboListItemByName('PDF'));
+        await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeHidden();
     });
     await test.step('Make sure title and size options are visible', async () => {
-       await expect(page.locator(xdmod.xdmodSelectors.exportDialog.showTitleCheckbox())).toBeVisible();
-       await expect(page.locator(xdmod.xdmodSelectors.exportDialog.widthInput())).toBeVisible();
-       await expect(page.locator(xdmod.xdmodSelectors.exportDialog.heightInput())).toBeVisible();
-       await expect(page.locator(xdmod.xdmodSelectors.exportDialog.fontInput())).toBeVisible();
+       await expect(page.locator(xdmod.selectors.exportDialog.showTitleCheckbox())).toBeVisible();
+       await expect(page.locator(xdmod.selectors.exportDialog.widthInput())).toBeVisible();
+       await expect(page.locator(xdmod.selectors.exportDialog.heightInput())).toBeVisible();
+       await expect(page.locator(xdmod.selectors.exportDialog.fontInput())).toBeVisible();
     });
     await test.step('Close', async () => {
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.cancelButton())).toBeVisible();
-        await page.click(xdmod.xdmodSelectors.exportDialog.cancelButton());
-        await expect(page.locator(xdmod.xdmodSelectors.exportDialog.window)).toBeHidden();
+        await expect(page.locator(xdmod.selectors.exportDialog.cancelButton())).toBeVisible();
+        await page.click(xdmod.selectors.exportDialog.cancelButton());
+        await expect(page.locator(xdmod.selectors.exportDialog.window)).toBeHidden();
     });
 });

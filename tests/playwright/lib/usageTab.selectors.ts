@@ -1,4 +1,4 @@
-const usageTabSelectors ={
+const selectors ={
     tab : '#main_tab_panel__tg_usage',
     startField : '//div[@id="tg_usage"]//table[@class="x-toolbar-ct"]//input[contains(@id,"start_field_ext")]',
     endField : '//div[@id="tg_usage"]//table[@class="x-toolbar-ct"]//input[contains(@id,"end_field_ext")]',
@@ -14,24 +14,24 @@ const usageTabSelectors ={
         return '//div[@id="tg_usage"]//div[@class="x-tree-root-node"]/li/div[contains(@class,"x-tree-node-el")]//span[text() = "' + name + '"]';
     },
     treeNodeByPath : function (topname, childname) {
-        return usageTabSelectors.topTreeNodeByName(topname) + '/ancestor::node()[3]//span[text() = "' + childname + '"]';
+        return selectors.topTreeNodeByName(topname) + '/ancestor::node()[3]//span[text() = "' + childname + '"]';
     },
     unfoldTreeNodeByName : function (name) {
-        return usageTabSelectors.topTreeNodeByName(name) + '/ancestor::node()[2]/img[contains(@class,"x-tree-ec-icon")]';
+        return selectors.topTreeNodeByName(name) + '/ancestor::node()[2]/img[contains(@class,"x-tree-ec-icon")]';
     },
     chart : '//div[@id="tg_usage"]//div[@class="highcharts-container"]//*[local-name() = "svg"]',
     chartByTitle : function (title) {
-        return usageTabSelectors.chart + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
+        return selectors.chart + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
     },
     chartXAxisLabelByName : function (name) {
-        return '(' + usageTabSelectors.chart + '/*/*[name() = "tspan"])[2]';
+        return '(' + selectors.chart + '/*/*[name() = "tspan"])[2]';
     },
     durationButton : function(){
-        return usageTabSelectors.panel + '//button[contains(@class,"custom_date")]';
+        return selectors.panel + '//button[contains(@class,"custom_date")]';
     },
     durationMenu : '//div[contains(@class,"x-menu-floating")]',
     durationMenuItem : function(name){
-        return `${usageTabSelectors.durationMenu}//li/a[./span[text()="${name}"]]`;
+        return `${selectors.durationMenu}//li/a[./span[text()="${name}"]]`;
     },
     toolbarButtonByText : function (text) {
         return `//div[contains(@class, "x-toolbar")]//button[contains(text(), "${text}")]`;
@@ -39,5 +39,6 @@ const usageTabSelectors ={
     displayMenuItemByText : function (text) {
         return `//div[@id='chart_config_menu_chart_toolbar_tg_usage']//span[contains(text(), '${text}')]//ancestor::li[contains(@class, 'x-menu-list-item')]`;
     },
+    signInLink: '#sign_in_link',
 }
-export default usageTabSelectors;
+export default selectors;

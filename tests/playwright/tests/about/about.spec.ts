@@ -9,19 +9,19 @@ test.describe('About', async () => {
     test('Logged In Test', async ({page}) => {
         await page.goto('/');
         const about = new About(page, page.baseUrl);
-        await page.locator('//button[contains(@class, "x-btn-text user_profile_16")]').click();
-        await expect(page.locator(about.aboutSelectors.role)).toContainText('Center Director');
+        await page.locator(about.selectors.myProfile).click();
+        await expect(page.locator(about.selectors.role)).toContainText('Center Director');
         await page.reload();
 
         await test.step('Verify About is the Last Tab', async () => {
-            await expect(page.locator(about.aboutSelectors.tab)).toBeVisible();
-            await expect(page.locator(about.aboutSelectors.last_tab)).toContainText('About');
+            await expect(page.locator(about.selectors.tab)).toBeVisible();
+            await expect(page.locator(about.selectors.last_tab)).toContainText('About');
         });
 
         await test.step('Select About Tab', async () => {
-            await expect(page.locator(about.aboutSelectors.last_tab)).toBeVisible();
-            await page.locator(about.aboutSelectors.last_tab).click();
-            await expect(page.locator(about.aboutSelectors.container)).toBeVisible();
+            await expect(page.locator(about.selectors.last_tab)).toBeVisible();
+            await page.locator(about.selectors.last_tab).click();
+            await expect(page.locator(about.selectors.container)).toBeVisible();
         });
         await test.step('Check Nav Entries', async () => {
             await test.step('XDMoD', async () => {
@@ -58,26 +58,26 @@ test.describe('About', async () => {
         await page.goto('/');
         const about = new About(page, page.baseUrl);
         await test.step('Click the logout link', async () => {
-            await expect(page.locator(about.aboutSelectors.logoutLink)).toBeVisible();
-            const expired = await page.isVisible('.x-window');
+            await expect(page.locator(about.selectors.logoutLink)).toBeVisible();
+            const expired = await page.isVisible(about.selectors.expiredMessageBox);
             if (expired) {
-                await page.click('.x-window .x-btn');
+                await page.click(about.selectors.continueLogoutButton);
             } else {
-                await page.locator(about.aboutSelectors.logoutLink).click();
+                await page.locator(about.selectors.logoutLink).click();
             }
         });
         await test.step('Display Logged out State', async () => {
-            await page.locator('//a[@id="sign_in_link"]').waitFor({state:'visible'});
+            await page.locator(about.selectors.signInLink).waitFor({state:'visible'});
         });
         await test.step('Verify About is the Last Tab', async () => {
-            await expect(page.locator(about.aboutSelectors.tab)).toBeVisible();
-            await expect(page.locator(about.aboutSelectors.last_tab)).toContainText('About');
+            await expect(page.locator(about.selectors.tab)).toBeVisible();
+            await expect(page.locator(about.selectors.last_tab)).toContainText('About');
         });
 
         await test.step('Select About Tab', async () => {
-            await expect(page.locator(about.aboutSelectors.tab)).toBeVisible();
-            await page.locator(about.aboutSelectors.last_tab).click();
-            await expect(page.locator(about.aboutSelectors.container)).toBeVisible();
+            await expect(page.locator(about.selectors.tab)).toBeVisible();
+            await page.locator(about.selectors.last_tab).click();
+            await expect(page.locator(about.selectors.container)).toBeVisible();
         });
         await test.step('Check Nav Entries', async () => {
             await test.step('XDMoD', async () => {

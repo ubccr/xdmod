@@ -1,11 +1,11 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from "../../lib/login.page";
 import myProfile from '../../lib/myProfile.page';
-let selectors = myProfile.myProfileSelectors;
-import things from  '../../../ci/testing.json';
+let selectors = myProfile.selectors;
+import testing from  '../../../ci/testing.json';
 import artifacts from "../helpers/artifacts";
 import globalConfig from '../../playwright.config';
-var roles = things.role;
+var roles = testing.role;
 var expected = artifacts.getArtifact('myProfile');
 
 test.describe('My Profile Tests', async () => {
@@ -14,20 +14,19 @@ test.describe('My Profile Tests', async () => {
         if (keys.hasOwnProperty(key)) {
             let role = keys[key];
             test(`${role} Tests`, async ({page}) => {
-		        let baseUrl = globalConfig.use.baseURL;
+                let baseUrl = globalConfig.use.baseURL;
                 const loginPage = new LoginPage(page, baseUrl, page.sso);
-		        await loginPage.login(roles[role].username, roles[role].password, (roles[role].givenname + " " + roles[role].surname));
+                await loginPage.login(roles[role].username, roles[role].password, (roles[role].givenname + " " + roles[role].surname));
                 await test.step('Click the `My Profile` button', async () => {
                     await page.isVisible(myProfile.toolbarButton);
-                    await page.waitForLoadState()
                     await page.click(myProfile.toolbarButton);
                     await page.isVisible(myProfile.container);
                 });
-
+                
                 await test.step('Check User Information', async () => {
                     await test.step('First Name', async () => {
                         // the normal user does not have a first name so the value returned from
-                        // the first name field is the default empty text ( 1 min, 50 max ).
+                        // // the first name field is the default empty text ( 1 min, 50 max ).
                         let givenname = role !== 'usr' ? roles[role].givenname : '1 min, 50 max';
                         let firstNameControl = selectors.general.user_information.first_name();
                         

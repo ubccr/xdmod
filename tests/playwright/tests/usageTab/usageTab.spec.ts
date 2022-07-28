@@ -20,60 +20,57 @@ test.describe('Usage', async () => {
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await test.step('Select "Usage" tab', async () => {
                 await usg.selectTab();
-                await expect(page.locator(usg.usageSelectors.chart)).toBeVisible();
-                await expect(page.locator(usg.usageSelectors.mask)).toBeHidden();
-            // unsure of source of waitForChart function in webdriver version
-            // so don't know function purpose
-                //await page.waitForChart();
-                await expect(page.locator(usg.usageSelectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await expect(page.locator(usg.selectors.chart)).toBeVisible();
+                await expect(page.locator(usg.selectors.mask)).toBeHidden();
+                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 await page.reload();
-                await expect(page.locator(usg.usageSelectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
             }); 
             await test.step('Set a known start and end date', async () => {
                 await usg.setStartDate(baselineDate.start);
                 await usg.setEndDate(baselineDate.end);
                 await usg.refresh();
-                await expect(page.locator(usg.usageSelectors.chartXAxisLabelByName(baselineDate.start))).toContainText(baselineDate.end);
+                await expect(page.locator(usg.selectors.chartXAxisLabelByName(baselineDate.start))).toContainText(baselineDate.end);
             });
             await test.step('Select Job Size Min', async () =>{
-                await expect(page.locator(usg.usageSelectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
-                await page.locator(usg.usageSelectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
-                await expect(page.locator(usg.usageSelectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
+                await expect(page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
+                await page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
                 await usg.checkLegendText(expected.centerdirector.legend);
 
                 //Check to make sure that the 'Std Err' display menu items are disabled.
-                await expect(page.locator(usg.usageSelectors.toolbarButtonByText('Display'))).toBeVisible();
-                await page.locator(usg.usageSelectors.toolbarButtonByText('Display')).click();
+                await expect(page.locator(usg.selectors.toolbarButtonByText('Display'))).toBeVisible();
+                await page.locator(usg.selectors.toolbarButtonByText('Display')).click();
                 const menuLabels = ['Std Err Bars', 'Std Err Labels'];
                 for (const menuLabel of menuLabels){
-                    await expect(page.locator(usg.usageSelectors.displayMenuItemByText(menuLabel))).toBeVisible();
+                    await expect(page.locator(usg.selectors.displayMenuItemByText(menuLabel))).toBeVisible();
                     const check = await usg.toolbarMenuItemIsEnabled(menuLabel);
                     await expect(check).toBe(false);
                 }
             });
               await test.step('View CPU Hours by System Username', async () => {
-                await expect(page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs Summary'))).toBeVisible();
-                await page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs Summary')).click();
-                await expect(page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs by System Username'))).toBeVisible();
-                await page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs by System Username')).click();
-                await expect(page.locator(usg.usageSelectors.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job'))).toBeVisible();
-                await page.locator(usg.usageSelectors.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job')).click();
-                await expect(page.locator(usg.usageSelectors.chartByTitle('CPU Hours: Per Job: by System Username'))).toBeVisible();
+                await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary'))).toBeVisible();
+                await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary')).click();
+                await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs by System Username'))).toBeVisible();
+                await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs by System Username')).click();
+                await expect(page.locator(usg.selectors.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job'))).toBeVisible();
+                await page.locator(usg.selectors.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job: by System Username'))).toBeVisible();
             });
             await test.step('View CPU Hours: Per Job', async () => {
-                await expect(page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'))).toBeVisible();
-                await page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job')).click();
-                await expect(page.locator(usg.usageSelectors.chartByTitle('CPU Hours: Per Job'))).toBeVisible();
+                await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'))).toBeVisible();
+                await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job'))).toBeVisible();
 
                 ///Check to make sure that the 'Std Err' display menu items are disabled.
-                await expect(page.locator(usg.usageSelectors.toolbarButtonByText('Display'))).toBeVisible();
-                await page.locator(usg.usageSelectors.toolbarButtonByText('Display')).click();
+                await expect(page.locator(usg.selectors.toolbarButtonByText('Display'))).toBeVisible();
+                await page.locator(usg.selectors.toolbarButtonByText('Display')).click();
                 const menuLabels = ['Std Err Bars', 'Std Err Labels'];
                 for (const menuLabel of menuLabels){
-                    await expect(page.locator(usg.usageSelectors.displayMenuItemByText(menuLabel))).toBeVisible();
+                    await expect(page.locator(usg.selectors.displayMenuItemByText(menuLabel))).toBeVisible();
                     const check = await usg.toolbarMenuItemIsEnabled(menuLabel);
                     await expect(check).toBe(true);
                 }
@@ -83,35 +80,34 @@ test.describe('Usage', async () => {
             await page.goto('/');
             await page.waitForLoadState();
             const usg = new Usage(page, page.baseUrl);
-            await page.locator('#sign_in_link').waitFor({state:'visible'});
+            await page.locator(usg.selectors.signInLink).waitFor({state:'visible'});
             await test.step('Selected', async () => {
                 await usg.selectTab();
-                //      await page.waitForChart();
-                await page.locator(usg.usageSelectors.chartByTitle(expected.centerdirector.default_chart_title)).waitFor({state:'visible'});
+                await page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title)).waitFor({state:'visible'});
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 await page.reload();
-                await expect(page.locator(usg.usageSelectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
             });
             await test.step('Set a known start and end date', async () => {
                 await usg.setStartDate(baselineDate.start);
                 await usg.setEndDate(baselineDate.end);
                 await usg.refresh();
-                await expect(page.locator(usg.usageSelectors.chartXAxisLabelByName(baselineDate.start))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartXAxisLabelByName(baselineDate.start))).toBeVisible();
             });
             await test.step('View Job Size Min', async () => {
-                await expect(page.locator(usg.usageSelectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
-                await page.locator(usg.usageSelectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
-                await expect(page.locator(usg.usageSelectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
+                await expect(page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
+                await page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
                 await usg.checkLegendText(expected.centerdirector.legend);
             });
             await test.step('Confirm System Username is not selectable', async () => {
-                await expect(page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs Summary'))).toBeVisible();
-                await page.locator(usg.usageSelectors.unfoldTreeNodeByName('Jobs Summary')).click();
-                await expect(page.locator(usg.usageSelectors.topTreeNodeByName('Jobs by System Username'))).toBeVisible();
-                await page.locator(usg.usageSelectors.topTreeNodeByName('Jobs by System Username')).click();
-                await expect(page.locator(usg.usageSelectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
+                await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary'))).toBeVisible();
+                await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary')).click();
+                await expect(page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username'))).toBeVisible();
+                await page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
             });
         });
  }

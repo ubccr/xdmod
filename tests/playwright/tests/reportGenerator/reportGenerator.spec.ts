@@ -246,8 +246,8 @@ test.describe('Report Generator', async () => {
         await page.waitForLoadState();
         const reportGeneratorPage = new ReportGenerator(page);
         await test.step('Report Generator is not enabled', async () => {
-            const bool = await reportGeneratorPage.isEnabled();
-            await expect(bool).toBe(false);
+            const isPageEnabled = await reportGeneratorPage.isEnabled();
+            await expect(isPageEnabled).toBe(false);
         });
     });
 
@@ -274,8 +274,8 @@ test.describe('Report Generator', async () => {
             await expect(first.length, 'No charts in the list of available charts').toEqual(0);
         });
         await test.step('No report templates available', async () => {
-            const bool = await reportGeneratorPage.isNewBasedOnEnabled();
-            await expect(bool).toBe(false);
+            const isOptionEnabled = await reportGeneratorPage.isNewBasedOnEnabled();
+            await expect(isOptionEnabled).toBe(false);
         });
     });
 
@@ -304,8 +304,8 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'No charts in the list of available charts').toEqual(0);
             });
             await test.step('No report templates available', async () => {
-                const bool = await reportGeneratorPage.isNewBasedOnEnabled();
-                await expect(bool).toBe(false);
+                const isOptionEnabled = await reportGeneratorPage.isNewBasedOnEnabled();
+                await expect(isOptionEnabled).toBe(false);
             });
         });
     }
@@ -333,15 +333,15 @@ test.describe('Report Generator', async () => {
             await expect(first.length, 'No charts in the list of available charts').toEqual(0);
         });
         await test.step('No report templates available', async () => {
-            const bool = await reportGeneratorPage.isNewBasedOnEnabled();
-            await expect(bool).toEqual(expected.centerstaff.report_templates_available);
+            const isOptionEnabled = await reportGeneratorPage.isNewBasedOnEnabled();
+            await expect(isOptionEnabled).toEqual(expected.centerstaff.report_templates_available);
         });
     });
 
     // TODO: Add tests for storage and cloud realms
     if (XDMOD_REALMS.includes('jobs')) {
         // Center director
-         test('Center director default report generator state', async ({page}) => {
+        test('Center director default report generator state', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
@@ -354,7 +354,7 @@ test.describe('Report Generator', async () => {
             await test.step('Select Report Generator tab', async () => {
                 await reportGeneratorPage.selectTab();
             });
-            
+
             await test.step('No reports listed', async () => {
                 const first = await reportGeneratorPage.getMyReportsRows();
                 await expect(first.length, 'No rows in the list of reports').toEqual(0);
@@ -393,29 +393,23 @@ test.describe('Report Generator', async () => {
                     await usagePage.selectChildTreeNode(topNodeName, testChart.title);
                 });
                 await test.step('Set chart timeframe', async () => {
-                        await page.click("(//div[@id='main_tab_panel']//div[@id='tg_usage']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
-                        await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="' + testChart.timeframeType + '"]');
-                        await usagePage.setStartDate(testChart.startDate);
-                        await usagePage.setEndDate(testChart.endDate);
-                        await usagePage.refresh();
+                    await page.click(reportGeneratorPage.selectors.configureTime.frameButton);
+                    await page.click(reportGeneratorPage.selectors.configureTime.byTimeFrameName(testChart.timeframeType));
+                    await usagePage.setStartDate(testChart.startDate);
+                    await usagePage.setEndDate(testChart.endDate);
+                    await usagePage.refresh();
                 });
                 await test.step(`Make "${testChart.title}" chart available in the Report Generator`, async () => {
-                    const checkbox = await page.$eval(usagePage.usageSelectors.availableForReportCheckbox, node => node.checked);
+                    const checkbox = await page.$eval(usagePage.selectors.availableForReportCheckbox, node => node.checked);
                     if (checkbox == false){
                         await usagePage.makeCurrentChartAvailableForReport();
                     }
                 });
                 await test.step('Check available charts', async () => {
                     await reportGeneratorPage.selectTab();
-                    var charts;
-                    for (let i = 0; i < 100; i++) {
-                        charts = await reportGeneratorPage.getAvailableCharts();
-                        if (charts.length === (index + 1)) {
-                            break;
-                        }
-                    }
+                    const charts = await reportGeneratorPage.getAvailableCharts();
+                    await expect(charts.length === (index + 1)).toBeTruthy();
                     await expect(charts.length, `${index + 1} chart(s) in the list of available charts`).toEqual(index + 1);
-
                     for (let i = 0; i <= index; ++i) {
                         const chart:AvailableChart = charts[i];
                         const title = await chart.getTitle();
@@ -431,7 +425,7 @@ test.describe('Report Generator', async () => {
                 index+=1;
             }
         });
-          test('Create report with default options', async ({page}) => {
+        test('Create report with default options', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
@@ -501,7 +495,7 @@ test.describe('Report Generator', async () => {
                 await expect(numOfChartsPerPage, 'Number of charts per page is correct').toEqual(testReport.chartsPerPage);
             });
         });
-          
+
         test('Create report and change options', async ({page}) => {
             const testReport = {
                 name: 'Test Report 1',
@@ -625,7 +619,7 @@ test.describe('Report Generator', async () => {
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
                 const row = reportRows[1];
                 await row.doubleClick();
-                await page.isVisible('//div[@class="x-panel report_overview x-hide-display"]');
+                await page.isVisible(reportGeneratorPage.selectors.reportDisplay);
                 const name = await reportGeneratorPage.getReportName();
                 await expect(name, 'Report name is correct').toEqual(testReport.name);
                 const title = await reportGeneratorPage.getReportTitle();
@@ -643,8 +637,6 @@ test.describe('Report Generator', async () => {
                 } else {
                     throw new Error('No charts per page option selected');
                 }
-                //const numOfChartsPerPage = await reportGeneratorPage.getNumberOfChartsPerPage();
-                //await expect(numOfChartsPerPage, 'Number of charts per page is correct').toEqual(testReport.chartsPerPage);
                 const schedule = await reportGeneratorPage.getSchedule();
                 await expect(schedule, 'Schedule is correct').toEqual(testReport.schedule);
                 const deliveryform = await reportGeneratorPage.getDeliveryFormat();
@@ -843,7 +835,7 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.returnToMyReports();
             });
         });
-        
+
         test('Create report from template', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -855,7 +847,7 @@ test.describe('Report Generator', async () => {
 
             await test.step('Click "New Based On"', async () => {
                 await reportGeneratorPage.clickNewBasedOn();
-                await page.locator('//div[contains(concat(" ",normalize-space(@class)," ")," x-menu-floating ") and .//img[contains(concat(" ",normalize-space(@class)," ")," btn_selected_report ") or contains(concat(" ",normalize-space(@class)," ")," btn_report_template ")]]').waitFor({state:'visible'});
+                await page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'visible'});
             });
             await test.step('Check list of report templates', async () => {
                 const reportTemplateNames = await reportGeneratorPage.getReportTemplateNames();
@@ -865,22 +857,20 @@ test.describe('Report Generator', async () => {
                 }
             });
             await test.step('Click "New Based On" to close menu', async () => {
-                // Close the menu so that it can be re-opened in the loop below.
+                // Close the menu so that it can be re-opened below.
                 await reportGeneratorPage.clickNewBasedOn();
-                await page.locator('//div[contains(concat(" ",normalize-space(@class)," ")," x-menu-floating ") and .//img[contains(concat(" ",normalize-space(@class)," ")," btn_selected_report ") or contains(concat(" ",normalize-space(@class)," ")," btn_report_template ")]]').waitFor({state:'hidden'});
+                await expect(page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu())).toBeHidden();
+                // mouse is stuck hovering over the "New Based On" button,
+                // so another area on the page, or the "Report Generator"
+                // tab is clicked and the delay is to give the page time
+                await page.click(reportGeneratorPage.selectors.tab(), {delay:250});
             });
-            await page.reload();
-            const tempMaskLocator = page.locator('//div[contains(@class, "ext-el-mask-msg") and contains(., "Loading...")]');
-            const maskHolder = await tempMaskLocator.isVisible();
-            if (maskHolder){
-                await tempMaskLocator.waitFor({state:"detached"});
-            }
             var report_template_index = 0;
             var reportIndex = 3;
             const template = centerDirectorReportTemplates[0];
             await test.step('Click "New Based On"', async () => {
                 await reportGeneratorPage.clickNewBasedOn();
-                await page.locator('//div[contains(concat(" ",normalize-space(@class)," ")," x-menu-floating ") and .//img[contains(concat(" ",normalize-space(@class)," ")," btn_selected_report ") or contains(concat(" ",normalize-space(@class)," ")," btn_report_template ")]]').waitFor({state:'visible'});
+                await page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'visible'});
             });
             await test.step(`Select "${template.name}"`, async () => {
                 await reportGeneratorPage.selectNewBasedOnTemplate(template.name, expected.centerdirector.center);
@@ -928,7 +918,7 @@ test.describe('Report Generator', async () => {
                 var i = 0;
                 for (const charts of reportCharts){
                     const chart:AvailableChart = charts[i];
-                    const templateChart:AvailableChart = templateCharts[i];
+                    const templateChart = templateCharts[i];
                     const title = await chart.getTitle();
                     await expect(title, 'Chart title').toEqual(templateChart.title);
                     const drillDetails = await chart.getDrillDetails();
@@ -945,7 +935,7 @@ test.describe('Report Generator', async () => {
             });
             report_template_index += 1;
         });
-         
+
         test('Preview report', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -967,7 +957,7 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-        
+
         test('Download report', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1002,7 +992,7 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-        
+
         test('Select reports', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1024,8 +1014,8 @@ test.describe('Report Generator', async () => {
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
                 var i = 0;
                 for (const row:MyReportsRow of reportRows){
-                    const boo = await row.isSelected();
-                    await expect(boo, `Row ${i} is not selected`).toBeFalsy();
+                    const isRowSelected = await row.isSelected();
+                    await expect(isRowSelected, `Row ${i} is not selected`).toBeFalsy();
                     i+=1;
                 }
             });
@@ -1039,13 +1029,13 @@ test.describe('Report Generator', async () => {
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
                 var i = 0;
                 for (const row:MyReportsRow of reportRows){
-                    const boo = await row.isSelected();
-                    await expect(boo, `Row ${i} has been inverted`).toEqual(!selectedStatus[i]);
+                    const isRowSelected = await row.isSelected();
+                    await expect(isRowSelected, `Row ${i} has been inverted`).toEqual(!selectedStatus[i]);
                     i +=1;
                 }
             });
         });
-         
+
         test('Attempt to edit multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1057,14 +1047,14 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Edit reports (should not be possible)', async () => {
-                const boo = await reportGeneratorPage.isEditSelectedReportsEnabled();
-                await expect(boo, '"Edit" button is disabled').toBeFalsy();
+                const isReportEnabled = await reportGeneratorPage.isEditSelectedReportsEnabled();
+                await expect(isReportEnabled, '"Edit" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-        
+
         test('Attempt to preview multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1076,14 +1066,14 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Preview reports (should not be possible)', async () => {
-                const boo = await reportGeneratorPage.isPreviewSelectedReportsEnabled();
-                await expect(boo, '"Preview" button is disabled').toBeFalsy();
+                const isReportEnabled = await reportGeneratorPage.isPreviewSelectedReportsEnabled();
+                await expect(isReportEnabled, '"Preview" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-        
+
         test('Attempt to send multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1095,14 +1085,14 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Send reports (should not be possible)', async () => {
-                const boo = await reportGeneratorPage.isSendSelectedReportsEnabled();
-                await expect(boo, '"Send" button is disabled').toBeFalsy();
+                const isReportEnabled = await reportGeneratorPage.isSendSelectedReportsEnabled();
+                await expect(isReportEnabled, '"Send" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-        
+
         test('Attempt to download multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1114,14 +1104,14 @@ test.describe('Report Generator', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Download reports (should not be possible)', async () => {
-                const boo = await reportGeneratorPage.isDownloadSelectedReportsEnabled();
-                await expect(boo, '"Download" button is disabled').toBeFalsy();
+                const isReportEnabled = await reportGeneratorPage.isDownloadSelectedReportsEnabled();
+                await expect(isReportEnabled, '"Download" button is disabled').toBeFalsy();
             });
             await test.step('Deselect reports', async () => {
                 await reportGeneratorPage.deselectAllReports();
             });
         });
-        
+
         test('Delete report from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1158,7 +1148,7 @@ test.describe('Report Generator', async () => {
                 await expect(first.length).toEqual(reportCount);
             });
         });
-        
+
         test('Select charts listed in "Available Charts"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1180,8 +1170,8 @@ test.describe('Report Generator', async () => {
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
                 var i = 0;
                 for (const chart:AvailableChart of reportCharts){
-                    const boo = await chart.isSelected();
-                    await expect(boo, `Chart ${i} is not selected`).toBeFalsy();
+                    const isChartSelected = await chart.isSelected();
+                    await expect(isChartSelected, `Chart ${i} is not selected`).toBeFalsy();
                     i+=1;
                 }
             });
@@ -1195,13 +1185,13 @@ test.describe('Report Generator', async () => {
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
                 var i = 0;
                 for (const chart:AvailableChart of reportCharts){
-                    const boo = await chart.isSelected();
-                    await expect(boo, `Chart ${i} selection has been inverted`).toEqual(!selectedStatus[i]);
+                    const isChartSelected = await chart.isSelected();
+                    await expect(isChartSelected, `Chart ${i} selection has been inverted`).toEqual(!selectedStatus[i]);
                     i+=1;
                 }
             });
         });
-        
+
         // Removes all but the first chart.
         test('Remove charts from "Available Charts"', async ({page}) => {
             //Generate pages
@@ -1242,7 +1232,7 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'All but one chart removed').toEqual(1);
             });
         });
-        
+
         // Removes the first chart.
         test('Remove chart from Report Generator from the Usage tab', async ({page}) => {
             //Generate pages
@@ -1255,8 +1245,8 @@ test.describe('Report Generator', async () => {
                 await usagePage.selectTab();
             });
             await test.step('Set date range', async () => {
-                await page.click("(//div[@id='main_tab_panel']//div[@id='tg_usage']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
-                await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="User Defined"]');
+                await page.click(reportGeneratorPage.selectors.configureTime.frameButton);
+                await page.click(reportGeneratorPage.selectors.configureTime.byTimeFrameName("User Defined"));
                 await usagePage.setStartDate(usageTabCharts[0].startDate);
                 await usagePage.setEndDate(usageTabCharts[0].endDate);
                 await usagePage.refresh();
@@ -1272,7 +1262,7 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'No charts in the list of available charts').toEqual(0);
             });
         });
-        
+
         test('Delete multiple reports from "My Reports"', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
@@ -1309,5 +1299,5 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'No charts in the list of available charts').toEqual(0);
             });
         });
-     }
+    }
 });

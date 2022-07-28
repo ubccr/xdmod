@@ -32,7 +32,7 @@ test.describe('Metric Explorer', async () => {
                 addData: async () => {
                     await test.step('Should Display', async () => {
                         await page.click('#hc-panelmetric_explorer');
-                        await page.click(me.metricExplorerSelectors.chart.contextMenu.addData);
+                        await page.click(me.selectors.chart.contextMenu.addData);
                         await page.isVisible('#metric-explorer-chartoptions-add-data-menu');
                         await page.click('#logo');
                     });
@@ -40,14 +40,14 @@ test.describe('Metric Explorer', async () => {
                 addFilter: async () => {
                     await test.step('Should Display', async () => {
                         await page.click('#hc-panelmetric_explorer');
-                        await page.click(me.metricExplorerSelectors.chart.contextMenu.addFilter);
+                        await page.click(me.selectors.chart.contextMenu.addFilter);
                         await page.isVisible('#metric-explorer-chartoptions-add-filter-menu');
                         await page.click('#logo');
                     });
                 },
                 legend: async () => {
                     await test.step('Click Legend', async () => {
-                        await page.click(me.metricExplorerSelectors.chart.contextMenu.legend);
+                        await page.click(me.selectors.chart.contextMenu.legend);
                     });
                 },
                 setLegendPosition: async (position) => {
@@ -55,28 +55,27 @@ test.describe('Metric Explorer', async () => {
                         await actions.chart.contextMenu.open();
                         await actions.chart.contextMenu.legend();
                         await test.step('Click ' + position, async () => {
-                            var posId = me.metricExplorerSelectors.chart.contextMenu.legend + '-' +
+                            var posId = me.selectors.chart.contextMenu.legend + '-' +
                                 await position.toLowerCase().replace(/ /g, '-');
                             await page.click(posId);
-                            await page.waitForChart();
                         });
                     });
                 }
             }
         }
     };
-    var chartName = 'ME autotest chart ' + Date.now();
+    const chartName = 'ME autotest chart ' + Date.now();
     test('Select Tab', async ({page}) => {
         let baseUrl = globalConfig.use.baseURL;
         const loginPage = new LoginPage(page, baseUrl, page.sso);
         const me = new MetricExplorer(page, baseUrl);
         await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
         await test.step('Selected', async () => {
-            await page.click(me.metricExplorerSelectors.tab);
-            await page.isVisible(me.metricExplorerSelectors.container);
-            await page.isVisible(me.metricExplorerSelectors.catalog.container);
-            container = page.content(me.metricExplorerSelectors.container);
-            await page.click(me.metricExplorerSelectors.catalog.collapseButton);
+            await page.click(me.selectors.tab);
+            await page.isVisible(me.selectors.container);
+            await page.isVisible(me.selectors.catalog.container);
+            container = page.content(me.selectors.container);
+            await page.click(me.selectors.catalog.collapseButton);
         });
     });
     // TODO: Add tests for storage and cloud realms
@@ -90,8 +89,8 @@ test.describe('Metric Explorer', async () => {
             await xdmod.selectTab('metric_explorer');
             await test.step('Add data via metric catalog', async () => {
                 await me.createNewChart(chartName, 'Timeseries', 'Line');
-                await page.click("(//div[@id='main_tab_panel']//div[@id='metric_explorer']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
-                await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="User Defined"]');
+                await page.click(me.selectors.toolbar.configureTime.frameButton);
+                await page.click(me.selectors.toolbar.configureTime.UserDefinedSelect);
                 await me.setDateRange('2016-12-30', '2017-01-02');
                 await me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
                 await me.checkChart(chartName, 'Node Hours: Total', expected.legend);
@@ -122,7 +121,7 @@ test.describe('Metric Explorer', async () => {
                 await me.clear();
             });
             await test.step('Add/Edit Filters in Data Series Definition', async () => {
-                await me.clickLogoAndWaitForMask();
+                await me.clickLogo();
                 await me.loadExistingChartByName(chartName);
                 await me.addFiltersFromDataSeriesDefinition('PI', 'Alpine');
                 await me.cancelFiltersFromDataSeriesDefinition();
@@ -135,27 +134,27 @@ test.describe('Metric Explorer', async () => {
                 await me.verifyInstructions();
             });
             await test.step('Has three toolbars', async () => {
-                const toolbars = await page.$$(me.container + ' .x-toolbar');
+                const toolbars = await page.$$(me.selectors.toolbar.toolbars());
                 await expect(toolbars.length).toEqual(3);
             });
             await test.step('Has one canned Date Picker', async () => {
                 // TODO: Make Datepicker have a unique name
                 // This check is done by using strict mode
-                await expect(page.locator(me.container + ' table[id^=canned_dates]')).toBeVisible();
+                await expect(page.locator(me.selectors.toolbar.cannedDatePicker())).toBeVisible();
             });
 
             await test.step('Set a known start date', async () => {
-                await page.click("(//div[@id='main_tab_panel']//div[@id='metric_explorer']//table[@class='x-toolbar-ct']/tbody/tr/td[@class='x-toolbar-left']/table/tbody/tr[@class='x-toolbar-left-row']//tbody[@class='x-btn-small x-btn-icon-small-left'])[1]");
-                await page.click('//div[@class="x-menu x-menu-floating x-layer x-menu-nosep"]//ul//li//a//span[text()="User Defined"]');
-                await expect(page.locator(me.metricExplorerSelectors.startDate)).toBeVisible();
-                await page.click(me.metricExplorerSelectors.startDate);
-                await page.fill(me.metricExplorerSelectors.startDate, baselineDate.start);
+                await page.click(me.selectors.toolbar.configureTime.frameButton);
+                await page.click(me.selectors.toolbar.configureTime.UserDefinedSelect);
+                await expect(page.locator(me.selectors.startDate)).toBeVisible();
+                await page.click(me.selectors.startDate);
+                await page.fill(me.selectors.startDate, baselineDate.start);
             });
 
             await test.step('Set a known end date', async () => {
-                await expect(page.locator(me.metricExplorerSelectors.endDate)).toBeVisible();
-                await page.click(me.metricExplorerSelectors.endDate);
-                await page.fill(me.metricExplorerSelectors.endDate, baselineDate.end);
+                await expect(page.locator(me.selectors.endDate)).toBeVisible();
+                await page.click(me.selectors.endDate);
+                await page.fill(me.selectors.endDate, baselineDate.end);
             });
             await test.step("'Add Data' via toolbar", async () => {
                 // click on CPU Hours: Total
@@ -190,7 +189,6 @@ test.describe('Metric Explorer', async () => {
                 await me.undoAggregateOrTrendLine(me.container);
             });
             await test.step('Check second undo works', async () => {
-                await me.clickLogoAndWaitForMask();
                 await me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
             });
             await test.step('Attempt Delete Scratchpad Chart', async () => {
@@ -206,8 +204,8 @@ test.describe('Metric Explorer', async () => {
                 await me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
             await test.step('Open Chart Options', async () => {
-                await page.click(me.metricExplorerSelectors.options.button);
-                await page.locator('div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"]').waitFor({state:'visible'});
+                await page.click(me.selectors.options.button);
+                await page.locator(me.selectors.options.menu).waitFor({state:'visible'});
             });
             await test.step('Chart options looks the same as previous run', async () => {
                 // TODO: Determine Pass case for this without using screenshot
@@ -215,22 +213,17 @@ test.describe('Metric Explorer', async () => {
                 // browser.pause(1000);
             });
             await test.step('Show Trend Line via Chart Options', async () => {
-                await me.waitForChartToChange(async () => {
-                    await page.click(me.metricExplorerSelectors.options.trendLine);
-                    await me.clickSelectorAndWaitForMask(me.metricExplorerSelectors.options.button);
-                    await expect(page.locator(me.metricExplorerSelectors.options.trendLine)).toBeHidden();
-                });
+                await page.click(me.selectors.options.trendLine);
+                await me.clickSelector(me.selectors.options.button);
+                await expect(page.locator(me.selectors.options.trendLine)).toBeHidden();
             });
             await test.step('Trend Line looks the same as previous run', async () => {
-                await me.clickLogoAndWaitForMask();
                 await me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);
             });
             await test.step('Undo Trend Line', async () => {
                 await me.undoAggregateOrTrendLine(me.container);
             });
             await test.step('Undo Trend Line looks the same as previous run', async () => {
-                await me.clickLogoAndWaitForMask();
-                await me.clickLogoAndWaitForMask();
                 await me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
         });

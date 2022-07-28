@@ -1,16 +1,22 @@
-const myProfileSelectors ={
+const selectors ={
     container: '//div[@id="xdmod-profile-editor"]',
     genSet : function () {
-        return myProfileSelectors.container + '//div[@id="xdmod-profile-general-settings"]';
+        return selectors.container + '//div[@id="xdmod-profile-general-settings"]';
     },
     userInformation : function () {
-        return myProfileSelectors.genSet() + '//div[contains(@class, "user_profile_section_general")]';
+        return selectors.genSet() + '//div[contains(@class, "user_profile_section_general")]';
     },
     tabs: {
+        byText: function(text) {
+            return selectors.container + '//span[contains(@class, "x-tab-strip-text") and contains(text(),"'+ text + '")]';
+        },
         general: 'General',
         role_delegation: 'Role Delegation'
     },
     general: {
+        generalName: function(name) {
+            return selectors.genSet() + '//button[contains(@class, "' + name + '")]';
+        },
         user_information: {
             top_role: function () {
                 return generalUserInformation('profile_editor_most_privileged_role');
@@ -36,7 +42,8 @@ const myProfileSelectors ={
     },
     buttons: {
         update: 'user_profile_btn_update',
-        close: 'general_btn_close'
+        close: 'general_btn_close',
+        toolbar: '#global-toolbar-profile'
     }
 }
 
@@ -51,10 +58,10 @@ const myProfileSelectors ={
 function generalUserInformation(name) {
     switch (name) {
         case 'profile_editor_most_privileged_role':
-            return myProfileSelectors.userInformation() + '//span[@id="' + name + '"]';
+            return selectors.userInformation() + '//span[@id="' + name + '"]';
         default:
-            return myProfileSelectors.userInformation() + '//input[@name="'+ name + '"]';
+            return selectors.userInformation() + '//input[@name="'+ name + '"]';
     }
 }
 
-export default myProfileSelectors;
+export default selectors;

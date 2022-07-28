@@ -1,5 +1,5 @@
 /**
- * Report generator test classes.
+  Report generator test classes.
  */
 import artifacts from "../tests/helpers/artifacts";
 const expected = artifacts.getArtifact('reportGenerator');
@@ -20,6 +20,7 @@ function classContains(className) {
 
 import XDMoD from './xdmod.page';
 import {expect, Locator, Page} from '@playwright/test';
+import selectors from './reportGenerator.selectors'
 
 /**
  * A single row in the list of reports.
@@ -367,168 +368,7 @@ export class ReportGenerator {
     readonly page:Page;
     readonly xdmod:XDMoD;
     readonly tabName:string;
-    readonly selectors = {
-        tab: () => `//div[${classContains('x-tab-panel-header')}]//span[${classContains('x-tab-strip-text')} and text()="${this.tabName}"]`,
-        panel: () => '//div[@id="report_generator"]',
-        mask: () => `//div[${classContains('ext-el-mask')}]`,
-        myReports: {
-            panel: () => this.selectors.panel() + `//div[${classContains('report_overview')}]`,
-            toolbar: {
-                panel: () => this.selectors.myReports.panel() + `//div[${classContains('x-panel-tbar')}]`,
-                selectButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Select"]',
-                selectMenu: () => `//div[${classContains('x-menu-floating')} and contains(@style, "visibility: visible")]`,
-                selectAllReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="All Reports"]/ancestor::a',
-                selectNoReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="No Reports"]/ancestor::a',
-                invertSelectionButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="Invert Selection"]/ancestor::a',
-                newButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New"]',
-                newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On"]',
-                newBasedOnMenu: () => `//div[${classContains('x-menu-floating')} and .//img[${classContains('btn_selected_report')} or ${classContains('btn_report_template')}]]`,
-                newBasedOnRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[not(${classContains('x-menu-sep-li')})]`,
-                newBasedOnTemplateRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_report_template')}]]`,
-                newBasedOnReportRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_selected_report')}]]`,
-                newBasedOnTemplate: name => this.selectors.myReports.toolbar.newBasedOnTemplateRows() + `//a[.//b[text()="${name}"]]`,
-                newBasedOnTemplateWithCenter: center => `//div[${classContains('x-menu-floating')}]//a[.//img[${classContains('btn_resource_provider')}] and .//span[contains(text(), "${center}")]]`,
-                newBasedOnReport: name => this.selectors.myReports.toolbar.newBasedOnReportRows() + `//a[./img[.//b[text()="${name}"]]`,
-                editButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Edit"]',
-                previewButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Preview"]',
-                sendNowButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Send Now"]',
-                sendNowAsPdfButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As PDF"]/ancestor::a`,
-                sendNowAsWordDocumentButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As Word Document"]/ancestor::a`,
-                downloadButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Download"]',
-                downloadAsPdfButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As PDF"]/ancestor::a`,
-                downloadAsWordDocumentButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As Word Document"]/ancestor::a`,
-                deleteButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Delete"]'
-            },
-            reportList: {
-                panel: () => this.selectors.myReports.panel() + `//div[${classContains('x-panel-body-noheader')}]`,
-                rows: () => this.selectors.myReports.reportList.panel() + `//div[${classContains('x-grid3-row')}]`,
-                rowByIndex: index => this.selectors.myReports.reportList.panel() + `//div[${classContains('x-grid3-row')} and position()=${index}]`
-            }
-        },
-        reportPreview: {
-            panel: () => this.selectors.panel() + `//div[${classContains('report_preview')}]`,
-            toolbar: {
-                panel: () => this.selectors.reportPreview.panel() + `//div[${classContains('x-panel-tbar')}]`,
-                sendNowButton: () => this.selectors.reportPreview.toolbar.panel() + '//button[text()="Send Now"]',
-                downloadButton: () => this.selectors.reportPreview.toolbar.panel() + '//button[text()="Download"]',
-                returnToReportsOverviewButton: () => this.selectors.reportPreview.toolbar.panel() + `//button[${classContains('btn_return_to_previous')}]`
-            }
-        },
-        reportEditor: {
-            panel: () => this.selectors.panel() + `//div[${classContains('report_edit')}]`,
-            toolbar: {
-                panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel-tbar')} and .//button[text()="Save"]]`,
-                saveButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Save"]',
-                saveAsButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Save As"]',
-                previewButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Preview"]',
-                sendNowButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Send Now"]',
-                downloadButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Download"]',
-                returnToMyReportsButton: () => this.selectors.reportEditor.toolbar.panel() + `//button[${classContains('btn_return_to_overview')}]`
-            },
-            generalInformation: {
-                panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="General Information"]]`,
-                reportNameInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_name"]',
-                reportTitleInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_title"]',
-                headerTextInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_header"]',
-                footerTextInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_footer"]'
-            },
-            chartLayout: {
-                panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="Chart Layout"]]`,
-                oneChartPerPageRadioButton: () => this.selectors.reportEditor.chartLayout.panel() + '//input[@value="1_up"]',
-                twoChartsPerPageRadioButton: () => this.selectors.reportEditor.chartLayout.panel() + '//input[@value="2_up"]'
-            },
-            scheduling: {
-                panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="Scheduling"]]`,
-                scheduleInput: () => this.selectors.reportEditor.scheduling.panel() + '//input[@name="report_generator_report_schedule"]',
-                scheduleOption: name => `//div[${classContains('x-combo-list-item')} and text()="${name}"]`,
-                deliveryFormatInput: () => this.selectors.reportEditor.scheduling.panel() + '//div[./label[text()="Delivery Format:"]]//input',
-                deliveryFormatOption: name => `//div[${classContains('x-combo-list-item')} and text()="${name}"]`
-            },
-            includedCharts: {
-                panel: () => this.selectors.reportEditor.panel() + '//div[@id="ReportCreatorGrid"]',
-                toolbar: {
-                    panel: () => this.selectors.reportEditor.includedCharts.panel() + `//div[${classContains('x-panel-tbar')}]`,
-                    selectButton: () => this.selectors.reportEditor.includedCharts.toolbar.panel() + '//button[text()="Select"]',
-                    selectAllChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="All Charts"]/ancestor::a`,
-                    selectNoChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="No Charts"]/ancestor::a`,
-                    invertSelectionButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="Invert Selection"]/ancestor::a`,
-                    editTimeframeButton: () => this.selectors.reportEditor.includedCharts.toolbar.panel() + '//button[text()="Edit Timeframe of Selected Charts"]',
-                    removeButton: () => this.selectors.reportEditor.includedCharts.toolbar.panel() + '//button[text()="Remove"]'
-                },
-                chartList: {
-                    panel: () => this.selectors.reportEditor.includedCharts.panel() + '//div[@class="x-panel-body" and .//div[text()="Chart"]]',
-                    rows: () => this.selectors.reportEditor.includedCharts.chartList.panel() + `//div[${classContains('x-grid3-row')}]`
-                }
-            }
-        },
-        availableCharts: {
-            panel: () => this.selectors.panel() + '//div[@id="chart_pool_panel"]',
-            toolbar: {
-                panel: () => this.selectors.availableCharts.panel() + '//div[@class="x-panel-tbar"]',
-                selectButton: () => this.selectors.availableCharts.toolbar.panel() + '//button[text()="Select"]',
-                selectAllChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="All Charts"]/ancestor::a`,
-                selectNoChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="No Charts"]/ancestor::a`,
-                invertSelectionButton: () => `//div[${classContains('x-menu-floating')}]//a[.//span[text()="Invert Selection"]]`,
-                deleteButton: () => this.selectors.availableCharts.toolbar.panel() + '//button[text()="Delete"]'
-            },
-            chartList: {
-                panel: () => this.selectors.availableCharts.panel() + '//div[@class="x-panel-body" and .//div[text()="Chart"]]',
-                rows: () => this.selectors.availableCharts.chartList.panel() + `//div[${classContains('x-grid3-row')}]`
-            }
-        },
-        message: {
-            window: () => '//div[@id="report_generator_message"]',
-            titleElement: () => this.selectors.message.window() + `//span[${classContains('x-window-header-text')}]`,
-            textElement: () => this.selectors.message.window() + '//b'
-        },
-        deleteSelectedReports: {
-            window: () => `//div[${classContains('x-window')} and .//span[text()="Delete Selected Report" or text()="Delete Selected Reports"]]`,
-            yesButton: () => this.selectors.deleteSelectedReports.window() + '//button[text()="Yes"]',
-            noButton: () => this.selectors.deleteSelectedReports.window() + '//button[text()="No"]'
-        },
-        unsavedChanges: {
-            window: () => `//div[${classContains('x-window')} and .//span[text()="Unsaved Changes"]]`,
-            yesButton: () => this.selectors.unsavedChanges.window() + '//button[text()="Yes"]',
-            noButton: () => this.selectors.unsavedChanges.window() + '//button[text()="No"]',
-            cancelButton: () => this.selectors.unsavedChanges.window() + '//button[text()="Cancel"]'
-        },
-        deleteSelectedCharts: {
-            window: () => `//div[${classContains('x-window')} and .//span[text()="Delete Selected Chart" or text()="Delete Selected Charts"]]`,
-            yesButton: () => this.selectors.deleteSelectedCharts.window() + '//button[text()="Yes"]',
-            noButton: () => this.selectors.deleteSelectedCharts.window() + '//button[text()="No"]'
-        },
-        removeSelectedCharts: {
-            window: () => `//div[${classContains('x-window')} and .//span[text()="Remove Selected Chart" or text()="Remove Selected Charts"]]`,
-            yesButton: () => this.selectors.removeSelectedCharts.window() + '//button[text()="Yes"]',
-            noButton: () => this.selectors.removeSelectedCharts.window() + '//button[text()="No"]'
-        },
-        saveReportAs: {
-            window: () => `//div[${classContains('x-window')} and .//span[text()="Save Report As"]]`,
-            reportNameInput: () => this.selectors.saveReportAs.window() + '//input[@name="report_name"]',
-            saveButton: () => this.selectors.saveReportAs.window() + '//button[text()="Save"]',
-            closeButton: () => this.selectors.saveReportAs.window() + '//button[text()="Close"]',
-            reportNameInputInvalid: () => this.selectors.saveReportAs.window() + `//input[@name="report_name" and ${classContains('x-form-invalid')}]`
-        },
-        reportBuilt: {
-            window: () => `//div[${classContains('x-window')} and .//span[text()="Report Built"]]`,
-            viewReportButton: () => this.selectors.reportBuilt.window() + '//button[text()="View Report"]',
-            closeButton: () => this.selectors.reportBuilt.window() + `//div[${classContains('x-tool-close')}]`
-        },
-        editChartTimeframe: {
-            window: () => `//div[${classContains('chart_date_editor')}]`,
-            specificRadioButton: () => this.selectors.editChartTimeframe.window() + '//input[@name="report_creator_chart_entry" and @value="Specific"]',
-            periodicRadioButton: () => this.selectors.editChartTimeframe.window() + '//input[@name="report_creator_chart_entry" and @value="Periodic"]',
-            periodicInput: () => this.selectors.editChartTimeframe.window() + '//table[contains(@class,"menu")]//button',
-            periodicOption: name => `//div[${classContains('x-menu-floating')}]//a[starts-with(text(),"${name}')]`,
-            startDateInput: () => this.selectors.editChartTimeframe.window() + '//input[@id="report_generator_edit_date_start_date_field"]',
-            endDateInput: () => this.selectors.editChartTimeframe.window() + '//input[@id="report_generator_edit_date_end_date_field"]',
-            updateButton: () => this.selectors.editChartTimeframe.window() + `//button[${classContains('chart_date_editor_update_button')}]`,
-            cancelButton: () => this.selectors.editChartTimeframe.window() + `//button[${classContains('chart_date_editor_cancel_button')}]`,
-            errorMessage: () => this.selectors.editChartTimeframe.window() + `//div[${classContains('overlay_message')}]`
-        },
-        // The mask with the check mark image that is displayed after a report is ready for download or has been emailed.
-        checkmarkMask: () => `//div[${classContains('ext-el-mask-msg')} and .//img[@src="gui/images/checkmark.png"]]`
-    };
+    readonly selectors = selectors;
 
     constructor(page:Page) {
         const xdmod = new XDMoD(page, page.baseUrl);
@@ -560,12 +400,11 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isNewBasedOnEnabled() {
-        const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`);
+        const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnVisibleButton());
         await expect(visibleButtons.length, 'Two "New Based On" button are present').toEqual(2);
-        const first = '(' + this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[1]';
-        const hold = await this.page.getAttribute(first, 'class');
-        const boo = hold.match(/(^| )x-item-disabled($| )/) === null;
-        return boo;
+        const firstButton = this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(1);
+        const firstButtonClass = await this.page.getAttribute(firstButton, 'class');
+        return firstButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -574,9 +413,8 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isEditSelectedReportsEnabled() {
-        const att = await this.page.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class');
-        const result = att.match(/(^| )x-item-disabled($| )/) === null;
-        return result;
+        const editButtonClass = await this.page.getAttribute(this.selectors.myReports.toolbar.editButtonInClass(), 'class');
+        return editButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -585,9 +423,8 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isPreviewSelectedReportsEnabled() {
-        const att = await this.page.getAttribute(this.selectors.myReports.toolbar.previewButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class');
-        const result = att.match(/(^| )x-item-disabled($| )/) === null;
-        return result;
+        const previewButtonClass = await this.page.getAttribute(this.selectors.myReports.toolbar.previewButtonInClass(), 'class');
+        return previewButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -598,11 +435,11 @@ export class ReportGenerator {
     async isSendSelectedReportsEnabled() {
         // There are two separate "Send Now" buttons in the "My Reports" panel.
         // Only one should be visible at a time.
-        const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.sendNowButton() + `/ancestor::table[${classContains('x-btn')}]`);
+        const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.sendNowButtonInClass());
         await expect(visibleButtons.length, 'Two "Send Now" button are present').toEqual(2);
-        const first = '(' + this.selectors.myReports.toolbar.sendNowButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[1]';
-        const hold = await this.page.getAttribute(first, 'class');
-        return hold.match(/(^| )x-item-disabled($| )/) === null;
+        const firstSendButton = this.selectors.myReports.toolbar.firstSendNowButton();
+        const firstSendButtonClass = await this.page.getAttribute(firstSendButton, 'class');
+        return firstSendButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -611,11 +448,11 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isDownloadSelectedReportsEnabled() {
-        const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.downloadButton() + `/ancestor::table[${classContains('x-btn')}]`);
+        const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.downloadButtonInClass());
         await expect(visibleButtons.length, 'Two "New Based On" button are present').toEqual(2);
-        const first = '(' + this.selectors.myReports.toolbar.downloadButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[1]';
-        const hold = await this.page.getAttribute(first, 'class');
-        return hold.match(/(^| )x-item-disabled($| )/) === null;
+        const firstDownloadButton = this.selectors.myReports.toolbar.firstDownloadButton();
+        const firstDownloadButtonClass = await this.page.getAttribute(firstDownloadButton, 'class');
+        return firstDownloadButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -624,9 +461,8 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isDeleteSelectedReportsEnabled() {
-        const att = await this.page.getAttribute(this.selectors.myReports.toolbar.deleteButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class');
-        const result = att.match(/(^| )x-item-disabled($| )/) === null;
-        return result;
+        const deleteButtonClass = await this.page.getAttribute(this.selectors.myReports.toolbar.deleteButtonInClass(), 'class');
+        return deleteButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -662,7 +498,7 @@ export class ReportGenerator {
      * Wait for the "Available Charts" panel to be visible.
      */
     async waitForAvailableChartsPanelVisible() {
-        await this.page.isVisible(this.selectors.availableCharts.panel());
+        await this.page.locator(this.selectors.availableCharts.panel()).waitFor({state:'visible'});
     }
 
     /**
@@ -775,8 +611,7 @@ export class ReportGenerator {
         await this.waitForIncludedChartsPanelVisible();
         const selector = this.selectors.reportEditor.includedCharts.chartList.rows();
         const computed = await this.page.$$(selector);
-        const result = await Promise.all(computed.map((element, i) => new IncludedChart(`(${selector})[${i + 1}]`, this.page)));
-        return result;
+        return await Promise.all(computed.map((element, i) => new IncludedChart(`(${selector})[${i + 1}]`, this.page)));
     }
 
     /**
@@ -798,8 +633,7 @@ export class ReportGenerator {
             elemCount = this.page.$(selector).length;
         }
         const computed = await this.page.$$(selector);
-        const result = await Promise.all(computed.map((element, i) => new AvailableChart(`(${selector})[${i + 1}]`, this.page)));
-        return result;
+        return await Promise.all(computed.map((element, i) => new AvailableChart(`(${selector})[${i + 1}]`, this.page)));
     }
 
     /**
@@ -809,7 +643,6 @@ export class ReportGenerator {
      */
     async getMessageWindowTitle() {
         await this.waitForMessageWindowVisible();
-        const thing = await this.page.locator(this.selectors.message.titleElement()).textContent();
         return this.page.locator(this.selectors.message.titleElement()).textContent();
     }
 
@@ -842,7 +675,7 @@ export class ReportGenerator {
         let foundReport = false;
 
         const rows = await this.getMyReportsRows();
-        for (const row of rows){
+        for (const row:MyReportsRow of rows){
             if (await row.getName() === reportName){
                 await row.click();
                 foundReport = true;
@@ -874,15 +707,8 @@ export class ReportGenerator {
     async deselectAllReports() {
         await this.waitForMyReportsPanelVisible();
         const selectButLoc = await this.page.locator(this.selectors.myReports.toolbar.selectButton());
-        await selectButLoc.click();
-        for (let i = 0; i < 100; i++) {
-            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
-            if (boo) {
-                await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
-                break;
-            }
-            await selectButLoc.click();
-        }
+        await selectButLoc.click({delay:250});
+        await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
         await this.page.click(this.selectors.myReports.toolbar.selectNoReportsButton());
         await this.page.locator(this.selectors.myReports.toolbar.selectMenu()).waitFor({state:'hidden'});
         // Ext.Button ignores clicks for 250ms
@@ -895,15 +721,8 @@ export class ReportGenerator {
     async invertReportSelection() {
         await this.waitForMyReportsPanelVisible();
         const selectButLoc = await this.page.locator(this.selectors.myReports.toolbar.selectButton());
-        await selectButLoc.click();
-        for (let i = 0; i < 100; i++) {
-            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
-             if (boo) {
-                 await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
-                 break;
-             }
-            await selectButLoc.click();
-        }
+        await selectButLoc.click({delay:250});
+        await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
         await this.page.isVisible(this.selectors.myReports.toolbar.invertSelectionButton());
         // Multiple buttons match the "Invert Selection" selector, but only one should be visible
         // This is not the case because of the actions called before this method.
@@ -928,17 +747,12 @@ export class ReportGenerator {
      */
     async clickNewBasedOn() {
         await this.waitForMyReportsPanelVisible();
-        const tempMaskLocator = this.page.locator('//div[contains(@class, "ext-el-mask-msg") and contains(., "Loading...")]');
-        const maskHolder = await tempMaskLocator.isVisible();
-        if (maskHolder){
-            await tempMaskLocator.waitFor({state:"detached"});
-        }
         // There are two separate "New Based On" buttons.  Only one should be
         // visible at a time.
-        const buttons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`);
+        const buttons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnVisibleButton());
         await expect(buttons.length, 'Two "New Based On" button are present').toEqual(2);
-        const button1 = await this.page.locator('(' + this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[1]');
-        const button2 = await this.page.locator('(' + this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]` + ')[2]');
+        const button1 = await this.page.locator(this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(1));
+        const button2 = await this.page.locator(this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(2));
         if (await button1.isVisible()) {
             await button1.click();
         } else if (await button2.isVisible()){
@@ -960,10 +774,9 @@ export class ReportGenerator {
      */
     async getReportTemplateNames() {
         await this.page.isVisible(this.selectors.myReports.toolbar.newBasedOnTemplateRows());
-        const computed = await this.page.locator(this.selectors.myReports.toolbar.newBasedOnTemplateRows() + `//a[./img[${classContains('btn_report_template')}]]//b`);
-        const result = await computed.allTextContents();
+        const computed = await this.page.locator(this.selectors.myReports.toolbar.newBasedOnTemplateRowsButton());
         await expect(computed).toBeVisible();
-        return result;
+        return computed.allTextContents();
     }
 
     /**
@@ -975,10 +788,10 @@ export class ReportGenerator {
      * @param {String} center       The name of the center to select [optional].
      */
     async selectNewBasedOnTemplate(templateName, center) {
-        const menuLoc = await this.page.locator(this.selectors.myReports.toolbar.newBasedOnMenu() + '>> visible=true');
+        const menuLoc = await this.page.locator(this.selectors.myReports.toolbar.newBasedOnMenu());
         await expect(menuLoc).toBeVisible();
-        const first = await this.getMyReportsRows();
-        const reportCount = first.length;
+        const reportRows = await this.getMyReportsRows();
+        const reportCount = reportRows.length;
         if (!center) {
             await this.page.click(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
         } else {
@@ -1073,7 +886,7 @@ export class ReportGenerator {
         await this.waitForMyReportsPanelVisible();
         // There are two separate "Send Now" buttons in the "My Reports" panel.
         // Only one should be visible at a time.
-        const visibleButtons = this.page.$$(this.selectors.myReports.toolbar.sendNowButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
+        const visibleButtons = this.page.$$(this.selectors.myReports.toolbar.sendNowButtonInClass()).filter(button => button.isVisible());
         await expect(visibleButtons.length, 'One "Send Now" button is visible').toEqual(1);
         await visibleButtons[0].click();
     }
@@ -1162,11 +975,6 @@ export class ReportGenerator {
         await this.waitForDeleteSelectedReportsWindowNotVisible();
         // There is no visible indicator that the reports are being
         // updated, so wait for the number of rows to change.
-        const maskLocator = this.page.locator('(//div[@class="x-panel-body"]//div[@class="x-grid3-scroller"])[1]//div[contains(., "Loading...")]');
-        const maskHolder = await maskLocator.isVisible();
-        if (maskHolder){
-            await maskLocator.waitFor({state:'detached'});
-        }   
         for (let i = 0; i < 100; i++){
             try {
                 const second = await this.getMyReportsRows();
@@ -1174,7 +982,7 @@ export class ReportGenerator {
                 await expect(reportCount2 !== reportCount).toBeTruthy();
                 break;
             } catch (e) {
-                await maskLocator.waitFor({state:'detached'});
+                //in loading phase of deleting reports
             }
         }
     }
@@ -1341,7 +1149,7 @@ export class ReportGenerator {
      */
     async setReportName(name) {
         await this.waitForReportEditorPanelVisible();
-        await this.page.locator(this.selectors.reportEditor.generalInformation.reportNameInput()).fill(name); 
+        await this.page.locator(this.selectors.reportEditor.generalInformation.reportNameInput()).fill(name);
     }
 
     /**
@@ -1504,17 +1312,11 @@ export class ReportGenerator {
     async deselectAllIncludedCharts() {
         await this.waitForIncludedChartsPanelVisible();
         const selectButLoc = await this.page.locator(this.selectors.reportEditor.includedCharts.toolbar.selectButton());
-        await selectButLoc.click();
-        for (let i = 0; i < 100; i++) {
-            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
-            if (boo) {
-                expect (this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
-                break;
-            }
-            await selectButLoc.click();
-        }
+        await selectButLoc.click({delay:250});
+        await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
+        await expect (this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
         await this.page.click(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton());
-            await this.page.locator(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton()).waitFor({state:'hidden'});
+        await this.page.locator(this.selectors.reportEditor.includedCharts.toolbar.selectNoChartsButton()).waitFor({state:'hidden'});
         // Ext.Button ignores clicks for 250ms
     }
 
@@ -1667,15 +1469,8 @@ export class ReportGenerator {
     async deselectAllAvailableCharts() {
         await this.waitForAvailableChartsPanelVisible();
         const selectButLoc = await this.page.locator(this.selectors.availableCharts.toolbar.selectButton());
-        await selectButLoc.click();
-        for (let i = 0; i < 100; i++) {
-            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
-            if (boo) {
-                await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
-                break;
-            }
-            await selectButLoc.click();
-        }
+        await selectButLoc.click({delay:250});
+        await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
         await this.page.click(this.selectors.availableCharts.toolbar.selectNoChartsButton());
         await this.page.locator(this.selectors.availableCharts.toolbar.selectNoChartsButton()).waitFor({state:'hidden'});
         // Ext.Button ignores clicks for 250ms
@@ -1688,15 +1483,8 @@ export class ReportGenerator {
     async invertAvailableChartsSelection() {
         await this.waitForAvailableChartsPanelVisible();
         const selectButLoc = await this.page.locator(this.selectors.availableCharts.toolbar.selectButton());
-        await selectButLoc.click();
-        for (let i = 0; i < 100; i++) {
-            const boo = await this.page.isVisible(this.selectors.myReports.toolbar.selectMenu());
-            if (boo) {
-                await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
-                break;
-            }
-            await selectButLoc.click();
-        }
+        await selectButLoc.click({delay:250});
+        await expect(this.page.locator(this.selectors.myReports.toolbar.selectMenu())).toBeVisible();
         await this.page.isVisible(this.selectors.availableCharts.toolbar.invertSelectionButton());
         // Multiple buttons match the "Invert Selection" selector, but only one should be visible.
         // This is not the case anymore because of the actions done before this method.
@@ -1723,16 +1511,11 @@ export class ReportGenerator {
      */
     async confirmDeleteSelectedAvailableCharts() {
         await this.waitForDeleteSelectedChartsWindowVisible();
-        const first = await this.getAvailableCharts();
-        const chartCount = first.length;
+        const availableCharts = await this.getAvailableCharts();
+        const chartCount = availableCharts.length;
         await this.page.click(this.selectors.deleteSelectedCharts.yesButton());
         // There is no visible indicator that the charts are being
         // updated, so wait for the number of rows to change.
-        const maskLocator = this.page.locator('//div[@id="chart_pool_panel"]//div[@class="x-grid3-scroller"]//div[contains(., "Loading...")]');
-        const maskHolder = await maskLocator.isVisible();
-        if (maskHolder){
-            await maskLocator.waitFor({state:'detached'});
-        }
         for (let i = 0; i < 100; i++) {
             try {
                 const second = await this.getAvailableCharts();
@@ -1740,9 +1523,9 @@ export class ReportGenerator {
                 await expect(chartCount2 !== chartCount).toBeTruthy();
                 break;
             } catch (e) {
-                await maskLocator.waitFor({state:'detached'});
+                //in loading phase of deleting reports
             }
-        }        
+        }
     }
 
     /**

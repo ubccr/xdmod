@@ -14,7 +14,7 @@ export class LoginPage extends BasePage implements LoginInterface {
   readonly username: Locator;
   readonly password: Locator;
   readonly signInButton: Locator;
-  readonly ssoButton: Locator;
+  readonly ssoLoginLink: Locator;
   readonly ssoSignInButton: Locator;
   readonly loginLink: Locator;
   readonly localLoginForm: Locator;
@@ -36,7 +36,7 @@ export class LoginPage extends BasePage implements LoginInterface {
     this.username = page.locator('#txt_login_username');
     this.password = page.locator('#txt_login_password');
     this.signInButton = page.locator("//table[@id='btn_sign_in']//button");
-    this.ssoButton = page.locator('//table[@id="SSOLoginLink"]//button');
+    this.ssoLoginLink = page.locator('#SSOLoginLink');
     this.ssoSignInButton = page.locator('//button[@id="btn-sign-in"]');
     this.welcomeMessage = page.locator('#welcome_message');
     this.mainTab = page.locator('#main_tab_panel__about_xdmod');
@@ -52,8 +52,8 @@ export class LoginPage extends BasePage implements LoginInterface {
     await expect(this.loginLink).toBeVisible();
     await this.loginLink.click();
     if (this.sso) {
-      await expect(this.ssoButton).toBeVisible();
-      await this.ssoButton.click();
+      await expect(this.ssoLoginLink).toBeVisible();
+      await this.ssoLoginLink.click();
       await expect(this.ssoSignInButton).toBeVisible();
       await this.ssoSignInButton.click();
     } else {
