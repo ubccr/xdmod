@@ -1,3 +1,0 @@
-in playwright.config.ts
-    - 14: baseURL: 'https://
-        "This should probably be based on an environment variable, something like process.env.BASE_URL or something like that."

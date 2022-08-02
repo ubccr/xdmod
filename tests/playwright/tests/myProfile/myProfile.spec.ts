@@ -72,7 +72,7 @@ test.describe('My Profile Tests', async () => {
                         await page.isHidden(myProfile.container);
                     });
                 });
-	    });
+            });
         }
     }
 });

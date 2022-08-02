@@ -110,5 +110,5 @@ test.describe('Usage', async () => {
                 await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
             });
         });
- }
+    }
 });
