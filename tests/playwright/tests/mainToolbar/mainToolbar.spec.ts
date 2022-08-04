@@ -4,10 +4,6 @@ import MainToolbar from "../../lib/mainToolbar.page";
 
 var mainTab;
 
-const contextFile = './data/cd-state.json';
-
-test.use({storageState: contextFile});
-
 test.describe('Main Toolbar', async () => {
     test('Check Tab', async ({page}) => {
         await page.goto('/');

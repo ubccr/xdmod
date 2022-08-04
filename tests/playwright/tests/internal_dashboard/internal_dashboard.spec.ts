@@ -1,17 +1,16 @@
 import {test, expect} from '@playwright/test';
 import InternalDashboard from "../../lib/internal_dashboard.page";
 import settings from '../../config/internal_dashboard/settings.json';
-
-const contextFile = `./data/admin-state.json`;
-
-test.use({storageState: contextFile});
+import globalConfig from '../../playwright.config';
+import testing from  '../../../ci/testing.json';
+var roles = testing.role;
 
 test.describe('Internal Dashboard Tests', async () => {
+    let baseUrl = globalConfig.use.baseURL;
     test('Create a new user', async ({page}) => {
-        // Make sure that we start at the Internal Dashboard page and that we're logged in per our use of the
-        // storageState above
         await page.goto('/internal_dashboard');
-        await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
+        const internalDash = new InternalDashboard(page, baseUrl, page.sso);
+        await internalDash.login(roles['mgr'].username, roles['mgr'].password, (roles['mgr'].givenname + " " + roles['mgr'].surname));
 
         await test.step('Select User Management tab', async () => {
             await expect(page.locator(InternalDashboard.selectors.header.tabs.user_management())).toBeVisible();
@@ -143,10 +142,9 @@ test.describe('Internal Dashboard Tests', async () => {
     });
 
     test('Test that settings can be discarded.', async ({page}) => {
-        // Make sure that we start at the Internal Dashboard page and that we're logged in per our use of the
-        // storageState above.
         await page.goto('/internal_dashboard');
-        await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
+        const internalDash = new InternalDashboard(page, baseUrl, page.sso);
+        await internalDash.login(roles['mgr'].username, roles['mgr'].password, (roles['mgr'].givenname + " " + roles['mgr'].surname));
 
         await test.step('Select User Management tab', async () => {
             await expect(page.locator(InternalDashboard.selectors.header.tabs.user_management())).toBeVisible();
@@ -260,7 +258,8 @@ test.describe('Internal Dashboard Tests', async () => {
 
     test('Remove the newly created user', async ({page}) => {
         await page.goto('/internal_dashboard');
-        await expect(page.locator(InternalDashboard.selectors.loggedInDisplayName)).toContainText('Admin User');
+        const internalDash = new InternalDashboard(page, baseUrl, page.sso);
+        await internalDash.login(roles['mgr'].username, roles['mgr'].password, (roles['mgr'].givenname + " " + roles['mgr'].surname));
 
         await test.step('Select User Management tab', async () => {
             await expect(page.locator(InternalDashboard.selectors.header.tabs.user_management())).toBeVisible();

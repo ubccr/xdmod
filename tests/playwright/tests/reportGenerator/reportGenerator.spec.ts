@@ -6,6 +6,8 @@ import artifacts from "../helpers/artifacts";
 const expected = artifacts.getArtifact('reportGenerator');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
 import globalConfig from '../../playwright.config';
+import testing from  '../../../ci/testing.json';
+var roles = testing.role;
 
 test.describe('Report Generator', async () => {
     // These dates correspond to the dates of the test job data.
@@ -258,7 +260,7 @@ test.describe('Report Generator', async () => {
         const usagePage = new Usage(page, page.baseUrl);
         let baseUrl = globalConfig.use.baseURL;
         const loginPage = new LoginPage(page, baseUrl, page.sso);
-        await loginPage.login('normaluser', 'normaluser', 'Whimbrel');
+        await loginPage.login(roles['usr'].username, roles['usr'].password, (roles['usr'].givenname + " " + roles['usr'].surname));
         await test.step('Report Generator is enabled', async () => {
             await expect(reportGeneratorPage.isEnabled()).toBeTruthy();
         });
@@ -288,7 +290,7 @@ test.describe('Report Generator', async () => {
             const usagePage = new Usage(page, page.baseUrl);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('principal', 'principal', 'Caspian Tern');
+            await loginPage.login(roles['pi'].username, roles['pi'].password, (roles['pi'].givenname + " " + roles['pi'].surname));
             await test.step('Report Generator is enabled', async () => {
                 await expect(reportGeneratorPage.isEnabled()).toBeTruthy();
             });
@@ -317,7 +319,7 @@ test.describe('Report Generator', async () => {
         const usagePage = new Usage(page, page.baseUrl);
         let baseUrl = globalConfig.use.baseURL;
         const loginPage = new LoginPage(page, baseUrl, page.sso);
-        await loginPage.login('centerstaff', 'centerstaff', 'Turtle Dove');
+        await loginPage.login(roles['cs'].username, roles['cs'].password, (roles['cs'].givenname + " " + roles['cs'].surname));
         await test.step('Report Generator is enabled', async () => {
             await expect(reportGeneratorPage.isEnabled()).toBeTruthy();
         });
@@ -347,7 +349,7 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await test.step('Report Generator is enabled', async () => {
                 await expect(reportGeneratorPage.isEnabled()).toBeTruthy();
             });
@@ -382,7 +384,7 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             let index = 0;
             for (const testChart of usageTabCharts){
                 await test.step('Select Usage Tab', async () => {
@@ -431,7 +433,7 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             // Copy default report data for the report being tested.
             const testReport = Object.assign({}, defaultReport);
             await reportGeneratorPage.selectTab();
@@ -513,7 +515,7 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
 
             await test.step('Create a new report', async () => {
@@ -659,7 +661,7 @@ test.describe('Report Generator', async () => {
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
             await test.step('Store data for report that will be copied', async () => {
                 const selector = await reportGeneratorPage.getMyReportsRows();
@@ -756,7 +758,7 @@ test.describe('Report Generator', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
 
             await test.step('Open the report', async () => {

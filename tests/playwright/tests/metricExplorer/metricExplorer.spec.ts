@@ -6,6 +6,8 @@ var expected = artifacts.getArtifact('metricExplorer');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
 import globalConfig from '../../playwright.config';
 import XDMoD from '../../lib/xdmod.page';
+import testing from  '../../../ci/testing.json';
+var roles = testing.role;
 
 test.describe('Metric Explorer', async () => {
     var baselineDate = {
@@ -69,7 +71,7 @@ test.describe('Metric Explorer', async () => {
         let baseUrl = globalConfig.use.baseURL;
         const loginPage = new LoginPage(page, baseUrl, page.sso);
         const me = new MetricExplorer(page, baseUrl);
-        await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+        await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
         await test.step('Selected', async () => {
             await page.click(me.selectors.tab);
             await page.isVisible(me.selectors.container);
@@ -85,7 +87,7 @@ test.describe('Metric Explorer', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             const me = new MetricExplorer(page, baseUrl);
             const xdmod = new XDMoD(page, baseUrl);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await xdmod.selectTab('metric_explorer');
             await test.step('Add data via metric catalog', async () => {
                 await me.createNewChart(chartName, 'Timeseries', 'Line');
@@ -103,7 +105,7 @@ test.describe('Metric Explorer', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             const me = new MetricExplorer(page, baseUrl);
             const xdmod = new XDMoD(page, baseUrl);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await xdmod.selectTab('metric_explorer');
             await test.step('Add Filters in Toolbar', async () => {
                 await me.loadExistingChartByName(chartName);
@@ -169,7 +171,6 @@ test.describe('Metric Explorer', async () => {
                 await me.addDataViaToolbar();
             });
             await test.step('Chart contains correct information', async () => {
-                await me.saveChanges()
                 await me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
             });
 
@@ -215,7 +216,6 @@ test.describe('Metric Explorer', async () => {
             await test.step('Show Trend Line via Chart Options', async () => {
                 await page.click(me.selectors.options.trendLine);
                 await me.clickSelector(me.selectors.options.button);
-                await expect(page.locator(me.selectors.options.trendLine)).toBeHidden();
             });
             await test.step('Trend Line looks the same as previous run', async () => {
                 await me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);

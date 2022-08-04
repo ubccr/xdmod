@@ -59,7 +59,9 @@ export class LoginPage extends BasePage implements LoginInterface {
     } else {
       await this.localLoginForm.click();
       await expect(this.signInButton).toBeVisible();
+      await this.username.click();  
       await this.username.fill(username);
+      await this.password.click();
       await this.password.fill(password);
       await this.signInButton.click();
       await expect(this.signInButton).toBeHidden();

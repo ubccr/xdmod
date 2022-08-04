@@ -5,6 +5,8 @@ import artifacts from "../helpers/artifacts";
 var expected = artifacts.getArtifact('usage');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
 import globalConfig from '../../playwright.config';
+import testing from  '../../../ci/testing.json';
+var roles = testing.role;
 
 test.describe('Usage', async () => {
     const baselineDate={
@@ -17,7 +19,7 @@ test.describe('Usage', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usg = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await test.step('Select "Usage" tab', async () => {
                 await usg.selectTab();
                 await expect(page.locator(usg.selectors.chart)).toBeVisible();

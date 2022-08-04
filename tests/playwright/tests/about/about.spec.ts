@@ -1,13 +1,15 @@
 import {test, expect, Page} from '@playwright/test';
 import About from "../../lib/about.page";
-
-const contextFile = './data/cd-state.json';
-
-test.use({storageState: contextFile});
+import {LoginPage} from "../../lib/login.page";
+import globalConfig from '../../playwright.config';
+import testing from  '../../../ci/testing.json';
+var roles = testing.role;
 
 test.describe('About', async () => {
-    test('Logged In Test', async ({page}) => {
-        await page.goto('/');
+    let baseUrl = globalConfig.use.baseURL;
+    test('Log In and Log Out Test', async ({page}) => {
+        const loginPage = new LoginPage(page, baseUrl, page.sso);
+        await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
         const about = new About(page, page.baseUrl);
         await page.locator(about.selectors.myProfile).click();
         await expect(page.locator(about.selectors.role)).toContainText('Center Director');
@@ -52,11 +54,6 @@ test.describe('About', async () => {
                 await about.checkTab('Release Notes');
             });
         });
-    });
-
-    test('Logged Out Tests', async ({page}) => {
-        await page.goto('/');
-        const about = new About(page, page.baseUrl);
         await test.step('Click the logout link', async () => {
             await expect(page.locator(about.selectors.logoutLink)).toBeVisible();
             const expired = await page.isVisible(about.selectors.expiredMessageBox);

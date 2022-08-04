@@ -234,7 +234,7 @@ class MetricExplorer extends BasePage{
     async loadExistingChartByName(name) {
         await this.collapseButtonLocator.waitFor({state:'visible'});
         await this.page.locator(this.toolbar.buttonByName('Load Chart')).waitFor({state:'visible'});
-        await this.page.click(this.toolbar.buttonByName('Load Chart'));
+        await this.page.click(this.toolbar.buttonByName('Load Chart'), {delay:250});
         await this.page.locator(this.load.dialog).waitFor({state:'visible'});
         await this.page.click(this.load.chartByName(name));
         await this.page.locator(this.load.dialog).waitFor({state:'hidden'});
@@ -346,12 +346,17 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.optionsButton);
     }
     async attemptDeleteScratchpad() {
+        const title = this.page.locator(this.chart.title).textContent();
         await expect(this.page.locator(this.toolbar.buttonByName('Delete'))).toBeVisible();
         await this.page.click(this.toolbar.buttonByName('Delete'));
         await expect(this.page.locator(this.deleteChart.dialogBox)).toBeVisible();
         await this.page.click(this.deleteChart.buttonByLabel('Yes'));
         await expect(this.page.locator(this.deleteChart.dialogBox)).toBeHidden();
-        await expect(this.page.locator(this.mask)).toBeHidden();
+        await this.collapseButtonLocator.waitFor({state:'visible'});
+        await this.page.locator(this.toolbar.buttonByName('Load Chart')).waitFor({state:'visible'});
+        await this.page.click(this.toolbar.buttonByName('Load Chart'));
+        await this.page.locator(this.load.dialog).waitFor({state:'visible'});
+        await expect(this.page.locator(this.load.chartByName(title)).waitFor({state:'detached'})).toBeTruthy();
     }
     async actionLoadChart(chartNumber) {
         await this.page.click(this.load.button());
@@ -409,7 +414,7 @@ class MetricExplorer extends BasePage{
      */
     async clickSelector(selector) {
         await expect(this.page.locator(selector)).toBeVisible();
-        await this.page.click(selector);
+        await this.page.click(selector, {delay:250});
     }
 
     async clickLogo() {
