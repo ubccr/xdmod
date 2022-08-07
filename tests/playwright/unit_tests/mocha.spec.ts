@@ -2,10 +2,6 @@ import {test, expect, Page} from '@playwright/test';
 import fs from 'fs';
 import selectors from '../lib/mocha.selectors';
 
-test.use({
-    screenshot:'only-on-failure',
-});
-
 test.describe('Mocha Tests', async() => {
     const data = [];
     const fileName = 'stats.md';

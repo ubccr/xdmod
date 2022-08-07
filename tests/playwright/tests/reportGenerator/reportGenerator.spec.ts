@@ -409,8 +409,13 @@ test.describe('Report Generator', async () => {
                 });
                 await test.step('Check available charts', async () => {
                     await reportGeneratorPage.selectTab();
-                    const charts = await reportGeneratorPage.getAvailableCharts();
-                    await expect(charts.length === (index + 1)).toBeTruthy();
+                    var charts;
+                    for (let i = 0; i < 100; i++) {
+                        charts = await reportGeneratorPage.getAvailableCharts();
+                        if (charts.length === (index + 1)) {
+                            break;
+                        }
+                    }
                     await expect(charts.length, `${index + 1} chart(s) in the list of available charts`).toEqual(index + 1);
                     for (let i = 0; i <= index; ++i) {
                         const chart:AvailableChart = charts[i];
@@ -1179,7 +1184,8 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Invert selection', async () => {
                 // Select one chart then invert selection.
-                const chart:AvailableChart = (await reportGeneratorPage.getAvailableCharts())[1];
+                const charts = await reportGeneratorPage.getAvailableCharts();
+                const chart:AvailableChart = charts[1];
                 await chart.toggleSelection();
                 const first = await reportGeneratorPage.getAvailableCharts();
                 const selectedStatus = await Promise.all(first.map(chart => chart.isSelected()));
