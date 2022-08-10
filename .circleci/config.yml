@@ -35,7 +35,7 @@ jobs:
           command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
       # We need to update our acct before we can enable docker layer caching
-      #- setup_remote_docker:
+      # - setup_remote_docker:
       #    docker_layer_caching: true
       # Download and cache dependencies
       - when:
@@ -137,6 +137,9 @@ jobs:
                   ./tests/ci/samlSetup.sh
                   ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
                   ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+            - run:
+                name: Start all services declared in docker-compose.yml
+                command: docker-compose up -d
       - run:
           name: Ensure that no unexpected Apache errors were generated
           command: test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0
