@@ -83,7 +83,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
         }
     },
 
-    // The HighCharts chart instance.
+    // The chart instance.
     chart: null,
 
     /**
@@ -123,6 +123,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
         });
 
         this.displayTimezone = 'UTC';
+
     }, // initComponent
 
     setHighchartTimezone: function() {
@@ -146,7 +147,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             // This is here so that when the chart is / panel is loaded
             // via one of it's child nodes that it triggers a re-load.
             if (reload === true) {
-                this.chart.showLoading();
+                tab.getEl().mask('Loading...');
                 this.store.load();
             }
         }, // activate
@@ -172,18 +173,20 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          * @param rawHeight
          */
         resize: function(panel, adjWidth, adjHeight, rawWidth, rawHeight) {
-            if (this.chart !== null && this.chart !== undefined) {
-                this.chart.setSize(adjWidth, adjHeight);
+            if (panel.chart) {
+                Plotly.relayout(panel.id, {width: adjWidth, height: adjHeight});
             }
             this.options.chart.width = adjWidth;
             this.options.chart.height = adjHeight;
         }, // resize
 
         destroy: function () {
+/*
             if (this.chart) {
                 this.chart.destroy();
                 this.chart = null;
             }
+*/
         },
 
         export_option_selected: function (exportParams) {
@@ -304,12 +307,65 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 }
             }
 
-            if (panel.chart) {
-                panel.chart.destroy();
+            if (record) {
+                let data = [];
+
+                for (let sid = 0; sid < chartOptions.series.length; sid++) {
+                    let x = [];
+                    let y = [];
+                    for(let i=0; i < chartOptions.series[sid].data.length; i++) {
+                        x.push(moment(chartOptions.series[sid].data[i].x).format('Y-MM-DD HH:mm:ss z'));
+                        y.push(chartOptions.series[sid].data[i].y);
+                    }
+                    data.push({x: x, y: y, name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter'});
+                }
+                panel.getEl().unmask();
+                if (panel.chart) {
+                    Plotly.react(this.id, data, {title: record.data.schema.description, hovermode:'closest'}, {displayModeBar: false } );
+                } else {
+                    Plotly.newPlot(this.id, data, {title: record.data.schema.description, hovermode:'closest'}, {displayModeBar: false } );
+                }
+
+            if (!panel.chart) {
+                panel.chart = document.getElementById(this.id);
+                panel.chart.on('plotly_click', function(data){
+                        var pts = '';
+                        for(var i=0; i < data.points.length; i++){
+                           pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
+                        }
+                        console.log('Closest point clicked:\n\n'+pts);
+                        console.log(data);
+
+                        var userOptions = data.points[0].data.chartSeries;
+                        if (!userOptions || !userOptions.dtype) {
+                            return;
+                        }
+
+                        var drilldown;
+                        /*
+                         * The drilldown data are stored on each point for envelope
+                         * plots and for the series for simple plots.
+                         */
+                        if (userOptions.dtype == 'index') {
+                            drilldown = {
+                                dtype: userOptions.index,
+                                value: event.point.options[userOptions.index]
+                            };
+                        } else {
+                            drilldown = {
+                                dtype: userOptions.dtype,
+                                value: userOptions[userOptions.dtype]
+                            };
+                        }
+                        var path = self.path.concat([drilldown]);
+                        var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
+                        Ext.History.add(token);
+                });
             }
-            panel.chart = new Highcharts.Chart(chartOptions);
+            }
+
             if (!record) {
-                panel.chart.showLoading();
+                panel.getEl().mask('Loading...');
             }
             panel.fireEvent('record_loaded');
             if (CCR.isType(panel.layout, CCR.Types.Object) && panel.rendered) panel.doLayout();
@@ -340,7 +396,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Helper function that adds an explicit 'load' listener to the provided
-     * data store. This listener will ensure that each time the store receives
+     * this.series.userOptions;data store. This listener will ensure that each time the store receives
      * a load event, if there is at least one record, then this components
      * 'load_record' event will be fired with a reference to the first record
      * returned.
