@@ -317,13 +317,65 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         x.push(moment(chartOptions.series[sid].data[i].x).format('Y-MM-DD HH:mm:ss z'));
                         y.push(chartOptions.series[sid].data[i].y);
                     }
-                    data.push({x: x, y: y, name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter'});
+                    data.push({
+                        x: x,
+                        y: y,
+                        line: {
+                            color: chartOptions.colors[sid % 10]
+                        },
+                        hovertemplate:
+                        "%{x|%A, %b %e, %H:%M:%S.%L %Z}<br><br>" +
+                         chartOptions.series[sid].name + ": <b>%{y}</b>" +
+                        "<extra></extra>",
+                        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter'});
                 }
                 panel.getEl().unmask();
+
+                let layout = {
+                    hoverlabel: {
+                        bgcolor: 'white'
+                    },
+                    xaxis: {
+                        title: '<b>Time (' + record.data.schema.timezone + ')</b>',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: '12pt',
+                            color: '#5078a0'
+                        },
+                        color: '#606060',
+                        ticks: 'outside',
+                        ticklen: 10,
+                        tickcolor: '#c0cfe0',
+                        linecolor: '#c0cfe0',
+                        showgrid: false
+                    },
+                    yaxis: {
+                        title: '<b>' + record.data.schema.units + '</b>',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: '12pt',
+                            color: '#5078a0'
+                        },
+                        color: '#606060',
+                        rangemode: 'tozero',
+                        linecolor: '#c0cfe0'
+                    },
+                    title: {
+                        text:  record.data.schema.description,
+                        color: '#444a6e',
+                        size: '16pt'
+                    },
+                    hovermode: 'closest',
+                    showlegend: false,
+                    margin: {
+                        t: 50
+                    }
+                };
+
                 if (panel.chart) {
-                    Plotly.react(this.id, data, {title: record.data.schema.description, hovermode:'closest'}, {displayModeBar: false } );
+                    Plotly.react(this.id, data, layout, {displayModeBar: false } );
                 } else {
-                    Plotly.newPlot(this.id, data, {title: record.data.schema.description, hovermode:'closest'}, {displayModeBar: false } );
+                    Plotly.newPlot(this.id, data, layout, {displayModeBar: false } );
                 }
 
             if (!panel.chart) {
