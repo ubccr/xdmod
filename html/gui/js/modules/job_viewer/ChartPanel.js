@@ -339,7 +339,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         title: '<b>Time (' + record.data.schema.timezone + ')</b>',
                         titlefont: {
                             family: 'Arial, sans-serif',
-                            size: '12pt',
+                            size: 12,
                             color: '#5078a0'
                         },
                         color: '#606060',
@@ -353,7 +353,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         title: '<b>' + record.data.schema.units + '</b>',
                         titlefont: {
                             family: 'Arial, sans-serif',
-                            size: '12pt',
+                            size: 12,
                             color: '#5078a0'
                         },
                         color: '#606060',
@@ -362,8 +362,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                     },
                     title: {
                         text:  record.data.schema.description,
-                        color: '#444a6e',
-                        size: '16pt'
+                        font: {
+                            color: '#444b6e',
+                            size: 16
+                        }
                     },
                     hovermode: 'closest',
                     showlegend: false,
