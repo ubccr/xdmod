@@ -27,6 +27,7 @@ services:
                         retries: 3
         playwright:
                 image: mcr.microsoft.com/playwright:v1.22.0-focal
+                hostname: playwright
                 container_name: playwright
                 volumes:
                         - ../xdmod:/xdmod
@@ -42,7 +43,7 @@ services:
                         xdmod10.0:
                                 condition: service_healthy
                 environment:
-                        BASE_URL: https://172.28.0.3
+                        BASE_URL: 'https://172.28.0.3'
                         XDMOD_REALMS: 'jobs,storage,cloud'
                 command: >
                         /bin/bash -c "cd /xdmod/tests/playwright
