@@ -29,7 +29,17 @@ jobs:
       - setup_remote_docker
       #    docker_layer_caching: true
       # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: composer install --no-progress
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose up -d -f tests/ci/Docker/bin/<< parameters.os >>.yml
@@ -54,16 +64,6 @@ jobs:
             docker cp xdmod10.0:/var/log/xdmod /var/log/xdmod
             docker cp playwright:/tests/playwright/test_results.xml ~/phpunit
             docker cp playwright:/tests/playwright/test-results /tmp/screenshots
-      - restore_cache:
-          keys:
-            # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
