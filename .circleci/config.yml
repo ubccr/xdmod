@@ -5,20 +5,17 @@
 version: 2.1
 
 executors:
-  centos7: &centos7-executor
+  default:
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
-  rocky8: &rocky8-executor
-    docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod10.0:rockylinux8.5-0.5
+      - image: cimg/base:2022.08
 jobs:
   build:
     parameters:
       os:
-        type: executor
+        type: string
       install-type:
         type: string
-    executor: << parameters.os >>
+    executor: default
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud'
@@ -27,137 +24,62 @@ jobs:
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
-      - run:
-          name: Generate OpenSSL Key
-          command: openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
-      - run:
-          name: Generate Certificate
-          command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
       # We need to update our acct before we can enable docker layer caching
-      # - setup_remote_docker:
+      - setup_remote_docker
       #    docker_layer_caching: true
       # Download and cache dependencies
-      - when:
-          condition:
-            equal: [ *rocky8-executor, << parameters.os >> ]
-          steps:
-            - run:
-                name: Setup Environment Variables for Rocky8
-                command: |
-                  echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
-            - run:
-                  name: install the composer dependencies
-                  command: composer install
-            - restore_cache:
-                keys:
-                  # "composer.lock" can be used if it is committed to the repo
-                  - v1-el8-dependencies-{{ checksum "composer-el8.json" }}
-                  # fallback to using the latest cache if no exact match is found
-                  - v1-el8-dependencies-
-            - save_cache:
-                key: v1-el8-dependencies-{{ checksum "composer-el8.json" }}
-                paths:
-                  - ./vendor
-      - when:
-          condition:
-            equal: [ *centos7-executor, << parameters.os >> ]
-          steps:
-            - run:
-                name: Setup Environment Variables for centos7
-                command: |
-                  echo "export COMPOSER=composer-el7.json" >> $BASH_ENV
-            - restore_cache:
-                keys:
-                  # "composer.lock" can be used if it is committed to the repo
-                  - v1-el7-dependencies-{{ checksum "composer-el7.json" }}
-                  # fallback to using the latest cache if no exact match is found
-                  - v1-el7-dependencies-
-            - save_cache:
-                key: v1-el7-dependencies-{{ checksum "composer-el7.json" }}
-                paths:
-                  - ./vendor
       - run: composer install --no-progress
       - run:
-          name: Create Test Artifact Directories
+          name: Docker Compose corresponding OS file
+          command: docker compose up -d -f tests/ci/Docker/bin/<< parameters.os >>.yml
+      - run:
+          name: Copy Files for Playwright and XDMoD container
           command: |
-            mkdir ~/phpunit
-            mkdir /tmp/screenshots
-      - run: ~/bin/buildrpm xdmod
+            docker cp ~/project xdmod10.0:/xdmod
+            docker cp ~/project playwright:/xdmod
       - run:
-          name: Install / Upgrade XDMoD from RPM
-          command: ./tests/ci/bootstrap.sh
+          name: Execute Install Script
+          command: docker exec tests/ci/Docker/bin/install.sh
       - run:
-          name: Validate the newly installed / Upgraded XDMoD
-          command: ./tests/ci/validate.sh
+          name: Execute Test Script
+          command: docker exec tests/ci/Docker/bin/test.sh << parameters.os >>
       - run:
-          name: Make sure that the Composer Test Depedencies are installed
-          command: composer install --no-progress
-      - run:
-          name: Make sure that we reset COMPOSER when upgrading.
+          name: Copy Test Results into Unit
           command: |
-            echo "export COMPOSER=composer.json" >> $BASH_ENV
-      - run:
-          name: Setup & Run QA Tests
-          command: |
-            ./tests/ci/scripts/qa-test-setup.sh
-      - run: ./tests/regression/runtests.sh
-      - run:
-          name: Setup Configuration Files for Integration Tests
-          command: |
-            mv ./configuration/organization.json ./configuration/organization.json.old
-            mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
-            cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
-            cp /etc/xdmod/organization.json ./configuration/organization.json
-      - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
-      - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
-      - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
-      - when:
-          condition:
-            equal: [ *centos7-executor, << parameters.os >> ]
-          steps:
-            - run: scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit"
-            - run:
-                name: 'Run SSO Tests'
-                command: |
-                  scl enable rh-nodejs6 "./tests/ci/samlSetup.sh"
-                  scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso"
-                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
-      - when:
-          condition:
-            or:
-              - equal: [ *rocky8-executor, << parameters.os >> ]
-          steps:
-            - run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
-            - run: pushd ./tests/ui && npm install && popd
-            - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
-            - run:
-                name: 'Run SSO Tests'
-                command: |
-                  ./tests/ci/samlSetup.sh
-                  ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
-                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
-            - run:
-                name: Start all services declared in docker-compose.yml
-                command: docker-compose up -d
-      - run:
-          name: Ensure that no unexpected Apache errors were generated
-          command: test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0
+            docker cp xdmod10.0:/test-results ~/phpunit
+            mkdir -p /var/log/xdmod
+            mkdir -p /tmp/screenshots
+            docker cp xdmod10.0:/tmp/screenshots /tmp/screenshots
+            docker cp xdmod10.0:/var/log/xdmod /var/log/xdmod
+            docker cp playwright:/tests/playwright/test_results.xml ~/phpunit
+            docker cp playwright:/tests/playwright/test-results /tmp/screenshots
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
           path: /var/log/xdmod
       - store_test_results:
           path: ~/phpunit
-
 workflows:
   full-build:
     jobs:
       - build:
           matrix:
             parameters:
-              os: [centos7, rocky8]
+              os: ['centos7', 'centos8', 'rocky8']
               install-type: ["fresh_install", "upgrade"]
             exclude:
-              - os: rocky8
+              - os: 'centos8'
+                install-type: "upgrade"
+              - os: 'rocky8'
                 install-type: "upgrade"
