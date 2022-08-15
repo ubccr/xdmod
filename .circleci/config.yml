@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       # We need to update our acct before we can enable docker layer caching
-      - setup_remote_docker:
+      - setup_remote_docker
       #    docker_layer_caching: true
       # Download and cache dependencies
       - restore_cache:
