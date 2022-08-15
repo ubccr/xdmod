@@ -26,7 +26,8 @@ jobs:
     steps:
       - checkout
       # We need to update our acct before we can enable docker layer caching
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.17
       #    docker_layer_caching: true
       # Download and cache dependencies
       - restore_cache:
@@ -35,11 +36,19 @@ jobs:
             - v1-dependencies-{{ checksum "composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: composer install --no-progress
+      - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      #- run: composer install --no-progress
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
+      - run:
+          name: Download and Install Docker
+          command: |
+            apt update && apt install curl
+            curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose
+            chmod +x ~/docker-compose  
+            mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose up -d -f tests/ci/Docker/bin/<< parameters.os >>.yml
