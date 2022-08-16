@@ -50,7 +50,7 @@ jobs:
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: Docker Compose corresponding OS file
-          command: docker compose up -d -f tests/ci/Docker/bin/<< parameters.os >>.yml
+          command: docker compose -f tests/ci/Docker/bin/<< parameters.os >>.yml up -d
       - run:
           name: Copy Files for Playwright and XDMoD container
           command: |
