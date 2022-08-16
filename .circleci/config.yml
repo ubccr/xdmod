@@ -47,7 +47,7 @@ jobs:
             apt update && apt install curl
             curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose
             chmod +x ~/docker-compose  
-            mv ~/docker-compose /usr/local/bin/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose up -d -f tests/ci/Docker/bin/<< parameters.os >>.yml
