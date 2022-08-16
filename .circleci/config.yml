@@ -25,6 +25,7 @@ jobs:
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
+      - run: composer install --no-progress
       # We need to update our acct before we can enable docker layer caching
       - setup_remote_docker
       #    docker_layer_caching: true
@@ -35,7 +36,7 @@ jobs:
             - v1-dependencies-{{ checksum "composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      #- run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
       #- run: composer install --no-progress
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
