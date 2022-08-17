@@ -179,7 +179,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 EOF
 
 CERTCONTENTS=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
-IP_ADDRESS=$(hostname -I | awk '{print $1}')
+IP_ADDRESS=xdmod
 
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
 <?php
@@ -233,5 +233,5 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
 );
 EOF
 
-node app.js  --acs https://"$IP_ADDRESS"/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://"$IP_ADDRESS"/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
+node app.js  --acs https://$IP_ADDRESS/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://$IP_ADDRESS/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start

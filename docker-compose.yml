@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-        xdmod10.0:
+        xdmod:
                 image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.4
-                container_name: xdmod10.0
+                container_name: xdmod
+                hostname: xdmod
                 networks:
-                        testing:
-                                ipv4_address: 172.28.0.3
+                        - testing
                 volumes:
-                        - ../xdmod.conf:/etc/httpd/conf.d/xdmod.conf
+                        - ./xdmod.conf:/etc/httpd/conf.d/xdmod.conf
                         - ../xdmod:/root/src/github.com/ubccr/xdmod
                 shm_size: 2g
                 ports:
@@ -20,6 +20,7 @@ services:
                         /bin/bash -c "cd ~/src/github.com/ubccr/xdmod
                         && ./tests/ci/samlSetup.sh
                         && ~/bin/services nodaemon"
+                #        && tail -F anything"
                 healthcheck:
                         test: curl -k https://localhost || exit 1
                         interval: 10s
@@ -32,18 +33,17 @@ services:
                 volumes:
                         - ../xdmod:/xdmod
                 networks:
-                        testing:
-                                ipv4_address: 172.28.0.4
+                        - testing
                 stdin_open: true
                 tty: true
                 ipc: host
                 links:
-                        - xdmod10.0
+                        - xdmod
                 depends_on:
-                        xdmod10.0:
+                        xdmod:
                                 condition: service_healthy
                 environment:
-                        BASE_URL: 'https://172.28.0.3'
+                        BASE_URL: https://xdmod
                         XDMOD_REALMS: 'jobs,storage,cloud'
                 command: >
                         /bin/bash -c "cd /xdmod/tests/playwright
@@ -54,6 +54,3 @@ services:
 
 networks:
         testing:
-                ipam:
-                        config:
-                                - subnet: 172.28.0.0/16
