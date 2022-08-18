@@ -1178,9 +1178,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 document.location = Ext.decode(response.responseText);
             },
             failure: function (response, opts) {
-                let message = 'Please contact the XDMoD administrator.';
+                var message = 'Please contact the XDMoD administrator.';
                 if (response.responseText) {
-                    let decoded = Ext.decode(response.responseText);
+                    var decoded = Ext.decode(response.responseText);
                     if (decoded.message) {
                         message = decoded.message + '<br />' + message;
                     }
