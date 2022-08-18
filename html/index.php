@@ -329,6 +329,7 @@ JS;
             }
             if ($auth && $auth->isSamlConfigured()) {
                 $ssoShowLocalLogin = false;
+
                 try {
                     $ssoShowLocalLogin = filter_var(
                         xd_utilities\getConfiguration('sso', 'show_local_login'),
@@ -337,9 +338,19 @@ JS;
                 } catch (exception $ex) {
                 }
 
+                $ssoDirectLink = false;
+                try {
+                    $ssoDirectLink = filter_var(
+                        xd_utilities\getConfiguration('sso', 'direct_link'),
+                        FILTER_VALIDATE_BOOLEAN
+                    );
+                } catch (exception $ex) {
+                }
+
                 print "CCR.xdmod.isSSOConfigured = true;\n";
                 print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
-                print "CCR.xdmod.SSOShowLocalLogin = " . json_encode($ssoShowLocalLogin) . "\n";
+                print "CCR.xdmod.SSOShowLocalLogin = " . json_encode($ssoShowLocalLogin) . ";\n";
+                print "CCR.xdmod.SSODirectLink = " . json_encode($ssoDirectLink) . ";\n";
             } else {
                 print "CCR.xdmod.isSSOConfigured = false;\n";
             }
