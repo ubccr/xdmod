@@ -1166,6 +1166,31 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     //reset referer
     XDMoD.referer = document.location.hash;
 
+    // If we're using SSO and not using the login modal then start the auth process.
+    if (CCR.xdmod.SSODirectLink) {
+        Ext.Ajax.request({
+            url: '/rest/auth/idpredirect',
+            method: 'GET',
+            params: {
+                returnTo: '/gui/general/login.php' + document.location.hash
+            },
+            success: function (response) {
+                document.location = Ext.decode(response.responseText);
+            },
+            failure: function (response, opts) {
+                var message = 'Please contact the XDMoD administrator.';
+                if (response.responseText) {
+                    var decoded = Ext.decode(response.responseText);
+                    if (decoded.message) {
+                        message = decoded.message + '<br />' + message;
+                    }
+                }
+                Ext.Msg.alert('Error ' + response.status + ' ' + response.statusText, message);
+            }
+        });
+        return;
+    }
+
     var txtLoginUsername = new Ext.form.TextField({
         width: 184,
         height: 22,
