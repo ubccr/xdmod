@@ -1,15 +1,8 @@
 version: '3'
 
 services:
-  centos7:
-    image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
-    hostname: centos7
-    container_name: centos7
-    networks:
-      - testing-centos7
-    command: /bin/bash
   xdmod-centos7:
-    image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.4
+    image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
     hostname: xdmod-centos7
     container_name: xdmod-centos7
     networks:
@@ -24,13 +17,14 @@ services:
     stdin_open: true
     tty: true
     command: >
-      /bin/bash -c "cd ~/src/github.com/ubccr/xdmod
+      /bin/bash -c "yum install -y sysvinit-tools
+      && cd ~/src/github.com/ubccr/xdmod
       && ./tests/ci/samlSetup.sh
       && ~/bin/services nodaemon"
     healthcheck:
       test: curl -k https://localhost || exit 1
-      interval: 10s
-      timeout: 5s
+      interval: 2m
+      timeout: 1m
       retries: 3
   playwright-centos7:
     image: mcr.microsoft.com/playwright:v1.22.0-focal

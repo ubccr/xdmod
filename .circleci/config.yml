@@ -57,7 +57,7 @@ jobs:
             mkdir -p /tmp/screenshots
             docker cp xdmod10.0:/tmp/screenshots /tmp/screenshots
             docker cp xdmod10.0:/var/log/xdmod /var/log/xdmod
-            docker cp playwright:/tests/playwright/test_results.xml ~/phpunit
+            docker cp playwright:/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/tests/playwright/test-results /tmp/screenshots
       - store_artifacts:
           path: /tmp/screenshots
