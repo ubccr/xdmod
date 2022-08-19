@@ -1,0 +1,112 @@
+<testsuites id="" name="" tests="46" failures="0" skipped="0" errors="0" time="139.539">
+<testsuite name="tests/about/about.spec.ts" timestamp="1660916500819" hostname="" tests="1" failures="0" skipped="0" time="19.853" errors="0">
+<testcase name="About Log In and Log Out Test" classname="[chromium] › tests/about/about.spec.ts:10:5 › About › Log In and Log Out Test" time="19.853">
+</testcase>
+</testsuite>
+<testsuite name="tests/exportDialog/exportDialog.spec.ts" timestamp="1660916500819" hostname="" tests="1" failures="0" skipped="0" time="9.511" errors="0">
+<testcase name="Export Dialog" classname="[chromium] › tests/exportDialog/exportDialog.spec.ts:5:1 › Export Dialog" time="9.511">
+</testcase>
+</testsuite>
+<testsuite name="tests/internal_dashboard/internal_dashboard.spec.ts" timestamp="1660916500819" hostname="" tests="3" failures="0" skipped="0" time="51.699" errors="0">
+<testcase name="Internal Dashboard Tests Create a new user" classname="[chromium] › tests/internal_dashboard/internal_dashboard.spec.ts:10:5 › Internal Dashboard Tests › Create a new user" time="16.751">
+</testcase>
+<testcase name="Internal Dashboard Tests Test that settings can be discarded." classname="[chromium] › tests/internal_dashboard/internal_dashboard.spec.ts:144:5 › Internal Dashboard Tests › Test that settings can be discarded." time="23.976">
+</testcase>
+<testcase name="Internal Dashboard Tests Remove the newly created user" classname="[chromium] › tests/internal_dashboard/internal_dashboard.spec.ts:259:5 › Internal Dashboard Tests › Remove the newly created user" time="10.972">
+</testcase>
+</testsuite>
+<testsuite name="tests/mainToolbar/mainToolbar.spec.ts" timestamp="1660916500819" hostname="" tests="5" failures="0" skipped="0" time="21.932" errors="0">
+<testcase name="Main Toolbar Check Tab" classname="[chromium] › tests/mainToolbar/mainToolbar.spec.ts:8:5 › Main Toolbar › Check Tab" time="5.951">
+</testcase>
+<testcase name="Main Toolbar Contact Us - Send Message" classname="[chromium] › tests/mainToolbar/mainToolbar.spec.ts:22:5 › Main Toolbar › Contact Us - Send Message" time="4.954">
+</testcase>
+<testcase name="Main Toolbar Contact Us - Request Feature" classname="[chromium] › tests/mainToolbar/mainToolbar.spec.ts:29:5 › Main Toolbar › Contact Us - Request Feature" time="3.583">
+</testcase>
+<testcase name="Main Toolbar Contact Us - Submit Support Request" classname="[chromium] › tests/mainToolbar/mainToolbar.spec.ts:36:5 › Main Toolbar › Contact Us - Submit Support Request" time="3.889">
+</testcase>
+<testcase name="Main Toolbar Help" classname="[chromium] › tests/mainToolbar/mainToolbar.spec.ts:43:5 › Main Toolbar › Help" time="3.555">
+</testcase>
+</testsuite>
+<testsuite name="tests/metricExplorer/metricExplorer.spec.ts" timestamp="1660916500819" hostname="" tests="3" failures="0" skipped="0" time="50.33" errors="0">
+<testcase name="Metric Explorer Select Tab" classname="[chromium] › tests/metricExplorer/metricExplorer.spec.ts:70:5 › Metric Explorer › Select Tab" time="11.649">
+</testcase>
+<testcase name="Metric Explorer Create and save a chart" classname="[chromium] › tests/metricExplorer/metricExplorer.spec.ts:85:9 › Metric Explorer › Create and save a chart" time="13.279">
+</testcase>
+<testcase name="Metric Explorer Basic Scenarios" classname="[chromium] › tests/metricExplorer/metricExplorer.spec.ts:103:9 › Metric Explorer › Basic Scenarios" time="25.402">
+</testcase>
+</testsuite>
+<testsuite name="tests/myProfile/myProfile.spec.ts" timestamp="1660916500819" hostname="" tests="5" failures="0" skipped="0" time="31.948" errors="0">
+<testcase name="My Profile Tests cd Tests" classname="[chromium] › tests/myProfile/myProfile.spec.ts:16:13 › My Profile Tests › cd Tests" time="11.365">
+</testcase>
+<testcase name="My Profile Tests cs Tests" classname="[chromium] › tests/myProfile/myProfile.spec.ts:16:13 › My Profile Tests › cs Tests" time="7.458">
+</testcase>
+<testcase name="My Profile Tests pi Tests" classname="[chromium] › tests/myProfile/myProfile.spec.ts:16:13 › My Profile Tests › pi Tests" time="5.202">
+</testcase>
+<testcase name="My Profile Tests usr Tests" classname="[chromium] › tests/myProfile/myProfile.spec.ts:16:13 › My Profile Tests › usr Tests" time="4.078">
+</testcase>
+<testcase name="My Profile Tests mgr Tests" classname="[chromium] › tests/myProfile/myProfile.spec.ts:16:13 › My Profile Tests › mgr Tests" time="3.845">
+</testcase>
+</testsuite>
+<testsuite name="tests/reportGenerator/reportGenerator.spec.ts" timestamp="1660916500819" hostname="" tests="24" failures="0" skipped="0" time="138.316" errors="0">
+<testcase name="Report Generator Public user default report generator state" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:246:5 › Report Generator › Public user default report generator state" time="4.071">
+</testcase>
+<testcase name="Report Generator Normal user default report generator state" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:257:5 › Report Generator › Normal user default report generator state" time="9.539">
+</testcase>
+<testcase name="Report Generator Principal investigator default report generator state" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:287:9 › Report Generator › Principal investigator default report generator state" time="8.373">
+</testcase>
+<testcase name="Report Generator Center staff default report generator state" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:316:5 › Report Generator › Center staff default report generator state" time="4.113">
+</testcase>
+<testcase name="Report Generator Center director default report generator state" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:346:9 › Report Generator › Center director default report generator state" time="3.873">
+</testcase>
+<testcase name="Report Generator Make usage tab charts available in the Report Generator" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:381:9 › Report Generator › Make usage tab charts available in the Report Generator" time="10">
+</testcase>
+<testcase name="Report Generator Create report with default options" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:435:9 › Report Generator › Create report with default options" time="8.782">
+</testcase>
+<testcase name="Report Generator Create report and change options" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:506:9 › Report Generator › Create report and change options" time="13.279">
+</testcase>
+<testcase name="Report Generator Edit report and &quot;Save As&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:655:9 › Report Generator › Edit report and &quot;Save As&quot;" time="12.367">
+</testcase>
+<testcase name="Report Generator Edit report and make changes" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:742:9 › Report Generator › Edit report and make changes" time="4.001">
+</testcase>
+<testcase name="Report Generator Create report from template" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:846:9 › Report Generator › Create report from template" time="4.133">
+</testcase>
+<testcase name="Report Generator Preview report" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:946:9 › Report Generator › Preview report" time="3.663">
+</testcase>
+<testcase name="Report Generator Download report" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:968:9 › Report Generator › Download report" time="13.734">
+</testcase>
+<testcase name="Report Generator Select reports" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1003:9 › Report Generator › Select reports" time="3.734">
+</testcase>
+<testcase name="Report Generator Attempt to edit multiple reports from &quot;My Reports&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1046:9 › Report Generator › Attempt to edit multiple reports from &quot;My Reports&quot;" time="3.435">
+</testcase>
+<testcase name="Report Generator Attempt to preview multiple reports from &quot;My Reports&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1065:9 › Report Generator › Attempt to preview multiple reports from &quot;My Reports&quot;" time="3.281">
+</testcase>
+<testcase name="Report Generator Attempt to send multiple reports from &quot;My Reports&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1084:9 › Report Generator › Attempt to send multiple reports from &quot;My Reports&quot;" time="3.364">
+</testcase>
+<testcase name="Report Generator Attempt to download multiple reports from &quot;My Reports&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1103:9 › Report Generator › Attempt to download multiple reports from &quot;My Reports&quot;" time="3.401">
+</testcase>
+<testcase name="Report Generator Delete report from &quot;My Reports&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1122:9 › Report Generator › Delete report from &quot;My Reports&quot;" time="3.414">
+</testcase>
+<testcase name="Report Generator Select charts listed in &quot;Available Charts&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1159:9 › Report Generator › Select charts listed in &quot;Available Charts&quot;" time="3.717">
+</testcase>
+<testcase name="Report Generator Remove charts from &quot;Available Charts&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1204:9 › Report Generator › Remove charts from &quot;Available Charts&quot;" time="3.48">
+</testcase>
+<testcase name="Report Generator Remove chart from Report Generator from the Usage tab" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1245:9 › Report Generator › Remove chart from Report Generator from the Usage tab" time="4.344">
+</testcase>
+<testcase name="Report Generator Delete multiple reports from &quot;My Reports&quot;" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1274:9 › Report Generator › Delete multiple reports from &quot;My Reports&quot;" time="3.259">
+</testcase>
+<testcase name="Report Generator Confirm that there are no reports or available charts" classname="[chromium] › tests/reportGenerator/reportGenerator.spec.ts:1294:9 › Report Generator › Confirm that there are no reports or available charts" time="2.959">
+</testcase>
+</testsuite>
+<testsuite name="tests/SSOLogin/SSOLogin.spec.ts" timestamp="1660916500819" hostname="" tests="2" failures="0" skipped="0" time="22.348" errors="0">
+<testcase name="Single Sign On Login" classname="[chromium] › tests/SSOLogin/SSOLogin.spec.ts:3:1 › Single Sign On Login" time="13.567">
+</testcase>
+<testcase name="Single Sign On Login w/ deep link" classname="[chromium] › tests/SSOLogin/SSOLogin.spec.ts:39:1 › Single Sign On Login w/ deep link" time="8.781">
+</testcase>
+</testsuite>
+<testsuite name="tests/usageTab/usageTab.spec.ts" timestamp="1660916500819" hostname="" tests="2" failures="0" skipped="0" time="24.595" errors="0">
+<testcase name="Usage (Center Director)" classname="[chromium] › tests/usageTab/usageTab.spec.ts:18:9 › Usage › (Center Director)" time="17.378">
+</testcase>
+<testcase name="Usage (Public User)" classname="[chromium] › tests/usageTab/usageTab.spec.ts:81:9 › Usage › (Public User)" time="7.217">
+</testcase>
+</testsuite>
+</testsuites>

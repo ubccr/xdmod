@@ -20,7 +20,6 @@ services:
                         /bin/bash -c "cd ~/src/github.com/ubccr/xdmod
                         && ./tests/ci/samlSetup.sh
                         && ~/bin/services nodaemon"
-                #        && tail -F anything"
                 healthcheck:
                         test: curl -k https://localhost || exit 1
                         interval: 10s

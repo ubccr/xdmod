@@ -179,7 +179,12 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 EOF
 
 CERTCONTENTS=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
-IP_ADDRESS=xdmod
+#if [ "$#" -eq "0"]
+#then
+#    IP_ADDRESS=$(hostname -I | awk '{print $1}')
+#else
+    IP_ADDRESS=$(hostname)
+#fi
 
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
 <?php
