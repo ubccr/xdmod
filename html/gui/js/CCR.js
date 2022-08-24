@@ -191,7 +191,7 @@ XDMoD.GlobalToolbar.Contact = function () {
             id: 'global-toolbar-contact-us',
             handler: function() {
                 window.location.href = CCR.xdmod.support_url
-            };
+            }
         };
     }
     
