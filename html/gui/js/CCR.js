@@ -189,12 +189,12 @@ XDMoD.GlobalToolbar.Contact = function () {
             scale: 'small',
             iconCls: 'contact_16',
             id: 'global-toolbar-contact-us',
-            handler: function() {
-                window.location.href = CCR.xdmod.support_url
+            handler: function () {
+                window.location.href = CCR.xdmod.support_url;
             }
         };
     }
-    
+
     var contactHandler = function(){
         XDMoD.TrackEvent('Portal', 'Contact Us -> ' + this.text + ' Button Clicked');
         switch(this.text){
