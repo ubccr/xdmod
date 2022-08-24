@@ -190,7 +190,7 @@ XDMoD.GlobalToolbar.Contact = function () {
             iconCls: 'contact_16',
             id: 'global-toolbar-contact-us',
             handler: function () {
-                window.open(CCR.xdmod.support_url, "_blank");
+                window.open(CCR.xdmod.support_url, '_blank');
             }
         };
     }
