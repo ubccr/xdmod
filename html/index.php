@@ -268,7 +268,7 @@ JS;
             $tech_support_url = xd_utilities\getConfiguration('general', 'tech_support_url');
         } catch (exception $ex) {
         }
-        print "CCR.xdmod.support_url = CCR.xdmod.support_url = '$tech_support_url';\n";
+        print 'CCR.xdmod.support_url = ' . json_encode($tech_support_url) . ";\n";
 
         print "CCR.xdmod.version = '" . xd_versioning\getPortalVersion() . "';\n";
         print "CCR.xdmod.short_version = '" . xd_versioning\getPortalVersion(true) . "';\n";
