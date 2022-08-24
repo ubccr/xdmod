@@ -182,6 +182,19 @@ XDMoD.GlobalToolbar.Roadmap = {
 };
 
 XDMoD.GlobalToolbar.Contact = function () {
+    if (CCR.xdmod.support_url) {
+        return {
+            text: 'Contact Us',
+            tooltip: 'Contact Us',
+            scale: 'small',
+            iconCls: 'contact_16',
+            id: 'global-toolbar-contact-us',
+            handler: function() {
+                window.location.href = CCR.xdmod.support_url
+            };
+        };
+    }
+    
     var contactHandler = function(){
         XDMoD.TrackEvent('Portal', 'Contact Us -> ' + this.text + ' Button Clicked');
         switch(this.text){
