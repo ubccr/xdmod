@@ -361,7 +361,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             }]
         });
 
-        let supportTicketText;
+        var supportTicketText;
         if (CCR.xdmod.support_url) {
             supportTicketText = 'submit a ticket to <a href="' + CCR.xdmod.support_url + '" target="_blank" rel="noopener noreferrer">' + CCR.xdmod.support_url + '</a>';
         } else {
