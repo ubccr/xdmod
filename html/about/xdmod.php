@@ -16,7 +16,13 @@
 </tr>
 </table>
 <br>
-<p>Funded by the National Science Foundation, XDMoD (<a href="https://xdmod.ccr.buffalo.edu" target="_blank" rel="noopener noreferrer">https://xdmod.ccr.buffalo.edu/</a>) is designed to audit and facilitate the operation and utilization of XSEDE, the most advanced and robust collection of integrated advanced digital resources and services in the world.  Similarly, Open XDMoD (<a href="http://open.xdmod.org" target="_blank" rel="noopener noreferrer">http://open.xdmod.org</a>), the open source version of XDMoD, is designed to provide similar capability to academic and industrial HPC centers.</p>
+<p>Funded by the National Science Foundation, XDMoD (<a href="https://xdmod.access-ci.org" target="_blank" rel="noopener noreferrer">https://xdmod.access-ci.org/</a>)
+ is designed to audit and facilitate the operation and utilization of advanced
+cyberinfrastructure. This includes data on resources allocated via the
+NSF-funded <a href="https://access-ci.org" target="_blank" rel="noopener noreferrer">ACCESS project</a> and
+historical data on <a href="https://www.xsede.org" target="_blank" rel="noopener noreferrer">XSEDE</a> allocated resources.
+Similarly, Open XDMoD (<a href="https://open.xdmod.org" target="_blank" rel="noopener noreferrer">http://open.xdmod.org</a>),
+ the open source version of XDMoD, is designed to provide similar capability to academic and industrial HPC centers.</p>
 
 <p><strong>
 When referencing XDMoD, please cite the following publication: <br><br>
