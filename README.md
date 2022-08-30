@@ -1,4 +1,4 @@
-# Open XDMoD ( This paranthesis will never be seen ) 
+# Open XDMoD ( This paranthesis will never be seen ) ( or this! ) 
 
 XDMoD (XD Metrics on Demand) is an NSF-funded open source tool designed to audit
 and facilitate the utilization of the XSEDE cyberinfrastructure by providing a
