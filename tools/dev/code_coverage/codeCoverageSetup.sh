@@ -438,16 +438,24 @@ fi
 
 ########################################################################################################################
 # *** Install / Setup XDebug ***
-
+OS_VERSION=$(cat /etc/os-release | grep "VERSION_ID" | cut -d'=' -f 2 | tr -d '"')
+XDEBUG_VERSION=2.4.1
+XDEBUG_MODE=""
 ### Install Pre-Reqs
 yum -y install php-devel php-pear gcc gcc-c++ autoconf automake
 
+case "$OS_VERSION" in
+    8 | 8.5)
+        XDEBUG_VERSION=3.1.2
+        XDEBUG_MODE="xdebug.mode=coverage"
+        ;;
+esac
 ### Install xdebug
-pecl install Xdebug-2.4.1
+pecl install Xdebug-"$XDEBUG_VERSION"
 
 ### Ensure PHP knows about xdebug and enables code coverage
 echo "zend_extension=$(find /usr/lib64/php/modules/ -name xdebug.so)" > /etc/php.d/xdebug.ini
-
+echo "$XDEBUG_MODE" >> /etc/php.d/xdebug.ini
 echo "xdebug.coverage_enable=1" >> /etc/php.d/xdebug.ini
 
 echo "xdebug.profiler_enable=1" >> /etc/php.d/xdebug.ini
