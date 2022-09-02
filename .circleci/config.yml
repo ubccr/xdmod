@@ -62,18 +62,6 @@ jobs:
             mkdir ~/code_coverage_raw
             mkdir ~/code_coverage
       - run: ~/bin/buildrpm xdmod
-      - when:
-            condition:
-                and:
-                    - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
-#                and:
-#                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-#                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-
-            steps:
-                - run:
-                    name: Installing Code Coverage Dependencies
-                    command: ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - run:
           name: Install / Upgrade XDMoD from RPM
           command: ./tests/ci/bootstrap.sh
@@ -89,7 +77,18 @@ jobs:
       - run:
           name: Make sure that the Composer Test Depedencies are installed
           command: composer install --no-progress
+      - when:
+            condition:
+                and:
+                    - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+            #                and:
+            #                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+            #                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
 
+            steps:
+                - run:
+                      name: Installing Code Coverage Dependencies
+                      command: ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - run: ./tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
