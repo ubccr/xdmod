@@ -517,5 +517,5 @@ chmod 777 "${arg_c}"
 chown root:apache "${arg_c}"
 
 ### Make sure to restart the services so that these changes take effect.x
-~/bin/services stop
-~/bin/services start
+#~/bin/services stop
+#~/bin/services start
