@@ -172,5 +172,7 @@ workflows:
             exclude:
               - os: centos8
                 install-type: "upgrade"
+                schedule-name: "xdmod-time-trigger"
               - os: rocky8
                 install-type: "upgrade"
+                schedule-name: "xdmod-time-trigger"
