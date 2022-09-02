@@ -21,6 +21,8 @@ jobs:
         type: executor
       install-type:
         type: string
+      schedule-name:
+        type: string
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
@@ -63,8 +65,11 @@ jobs:
       - when:
             condition:
                 and:
-                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+                    - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+#                and:
+#                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+
             steps:
                 - run:
                     name: Installing Code Coverage Dependencies
@@ -124,8 +129,10 @@ jobs:
       - when:
           condition:
             and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+                - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+#            and:
+#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -146,8 +153,10 @@ jobs:
       - when:
           condition:
             and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+                - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+#            and:
+#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
@@ -159,6 +168,7 @@ workflows:
             parameters:
               os: [centos7, centos8, rocky8]
               install-type: ["fresh_install", "upgrade"]
+              schedule-name: ["xdmod-time-trigger"]
             exclude:
               - os: centos8
                 install-type: "upgrade"
