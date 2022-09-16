@@ -80,5 +80,3 @@
 		}//invoke
 		
 	}//XDController
-	
-?>

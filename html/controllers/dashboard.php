@@ -29,5 +29,3 @@
 	$controller->registerOperation('save_reports');
 	$controller->registerOperation('delete_report');
 	$controller->invoke('REQUEST');
-		
-?>
