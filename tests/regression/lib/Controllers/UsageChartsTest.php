@@ -116,6 +116,10 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         self::$helper = new \TestHarness\XdmodTestHelper();
         self::$helper->authenticate('cd');
 
+        if (null === self::$hashFilePath) {
+            self::setUpBeforeClass();
+        }
+
         $expectedHashes = json_decode(file_get_contents(self::$hashFilePath), true);
 
         // Provide all the different combinations of chart settings except Guide Lines (which do not
