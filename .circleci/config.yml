@@ -8,9 +8,6 @@ executors:
   centos7: &centos7-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
-  centos8: &centos8-executor
-    docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos8.4-0.2
   rocky8: &rocky8-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.4
@@ -43,10 +40,10 @@ jobs:
       # Download and cache dependencies
       - when:
           condition:
-            equal: [ *centos8-executor, << parameters.os >> ]
+            equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
             - run:
-                name: Setup Environment Variables for centos8
+                name: Setup Environment Variables for Rocky8
                 command: |
                   echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
             - restore_cache:
@@ -126,7 +123,6 @@ jobs:
       - when:
           condition:
             or:
-              - equal: [ *centos8-executor, << parameters.os >> ]
               - equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
             - run: pushd ./tests/ui && npm install && popd
@@ -153,10 +149,8 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [centos7, centos8, rocky8]
+              os: [centos7, rocky8]
               install-type: ["fresh_install", "upgrade"]
             exclude:
-              - os: centos8
-                install-type: "upgrade"
               - os: rocky8
                 install-type: "upgrade"
