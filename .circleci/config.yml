@@ -46,6 +46,12 @@ jobs:
                 name: Setup Environment Variables for Rocky8
                 command: |
                   echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
+            - run:
+                  name: blow away the composer.lock file
+                  command: rm -f composer.lock
+            - run:
+                  name: install the composer dependencies
+                  command: composer install
             - restore_cache:
                 keys:
                   # "composer.lock" can be used if it is committed to the repo
