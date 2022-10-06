@@ -10,7 +10,7 @@ executors:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
   rocky8: &rocky8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.4
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0:rockylinux8.5-0.5
 jobs:
   build:
     parameters:
@@ -47,8 +47,11 @@ jobs:
                 command: |
                   echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
             - run:
-                  name: blow away the composer.lock file
-                  command: rm -f composer.lock
+                  name: install deps for new mongodb
+                  command: yum install -y mongodb
+            - run:
+                  name: install pecl mongodb
+                  command: pecl install mongodb
             - run:
                   name: install the composer dependencies
                   command: composer install
