@@ -47,12 +47,6 @@ jobs:
                 command: |
                   echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
             - run:
-                  name: install deps for new mongodb
-                  command: yum install -y mongodb
-            - run:
-                  name: install pecl mongodb
-                  command: pecl install mongodb
-            - run:
                   name: install the composer dependencies
                   command: composer install
             - restore_cache:
