@@ -58,6 +58,26 @@
       "truncate_destination": true
     },
     {
+      "name": "report-template-acls-staging-submodules",
+      "namespace": "ETL\\Ingestor",
+      "class": "StructuredFileIngestor",
+      "options_class": "IngestorOptions",
+      "description": "Ingest the report template ACL settings for optional XDMoD modules",
+      "definition_file": "acls/report-template-acls-staging.json",
+      "endpoints": {
+        "source": {
+          "type": "directoryscanner",
+          "name": "report-template-acls-staging-submodules",
+          "path": "acls/report-template-acls-staging.d",
+          "file_pattern": "/\\.json$/",
+          "handler": {
+            "type": "jsonfile"
+          }
+        }
+      },
+      "truncate_destination": false
+    },
+    {
       "#": "AclStagingTableManagement should always be run after any changes have been made to the files ( tables ) found below.",
       "name": "AclStagingTableManagement",
       "class": "ManageTables",

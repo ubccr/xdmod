@@ -3,12 +3,14 @@
 try {
     $user = \xd_security\getLoggedInUser();
 
-    $templates = XDReportManager::enumerateReportTemplates($user->getRoles());
+    $orig_templates = XDReportManager::enumerateReportTemplates($user->getRoles());
 
-    // We do not want to show the "Dashboard Tab Reports"
-    foreach($templates as $key => $value){
-        if ($value['name'] === 'Dashboard Tab Report') {
-            unset($templates[$key]);
+    // We do not want to show the "Dashboard Tab Reports" - copy to a new array to ensure
+    // continuous indexes so it will be serialized to a json array not a json object.
+    $templates = [];
+    foreach($orig_templates as $key => $value){
+        if ($value['name'] !== 'Dashboard Tab Report') {
+            $templates[] = $value;
         }
     }
 
