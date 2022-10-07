@@ -111,5 +111,3 @@ $filters = array(
       \xd_response\presentError($e->getMessage());
    	    
    }
-   
-?>

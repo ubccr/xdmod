@@ -30,5 +30,3 @@ abstract class XDError
 		return $reflection->getConstants();
 	}
 }
-
-?>

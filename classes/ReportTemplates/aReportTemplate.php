@@ -24,5 +24,3 @@ abstract class aReportTemplate
    }//__construct
 	
 }//aReportTemplate
-
-?>
