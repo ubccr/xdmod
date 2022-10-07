@@ -128,6 +128,7 @@ jobs:
             or:
               - equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
+            - run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
             - run: pushd ./tests/ui && npm install && popd
             - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
             - run:
