@@ -263,6 +263,13 @@ JS;
         $tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
         print "CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '$tech_support_recipient';\n";
 
+        $tech_support_url = false;
+        try {
+            $tech_support_url = xd_utilities\getConfiguration('general', 'tech_support_url');
+        } catch (exception $ex) {
+        }
+        print 'CCR.xdmod.support_url = ' . json_encode($tech_support_url) . ";\n";
+
         print "CCR.xdmod.version = '" . xd_versioning\getPortalVersion() . "';\n";
         print "CCR.xdmod.short_version = '" . xd_versioning\getPortalVersion(true) . "';\n";
 
@@ -329,6 +336,7 @@ JS;
             }
             if ($auth && $auth->isSamlConfigured()) {
                 $ssoShowLocalLogin = false;
+
                 try {
                     $ssoShowLocalLogin = filter_var(
                         xd_utilities\getConfiguration('sso', 'show_local_login'),
@@ -337,9 +345,19 @@ JS;
                 } catch (exception $ex) {
                 }
 
+                $ssoDirectLink = false;
+                try {
+                    $ssoDirectLink = filter_var(
+                        xd_utilities\getConfiguration('sso', 'direct_link'),
+                        FILTER_VALIDATE_BOOLEAN
+                    );
+                } catch (exception $ex) {
+                }
+
                 print "CCR.xdmod.isSSOConfigured = true;\n";
                 print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
-                print "CCR.xdmod.SSOShowLocalLogin = " . json_encode($ssoShowLocalLogin) . "\n";
+                print "CCR.xdmod.SSOShowLocalLogin = " . json_encode($ssoShowLocalLogin) . ";\n";
+                print "CCR.xdmod.SSODirectLink = " . json_encode($ssoDirectLink) . ";\n";
             } else {
                 print "CCR.xdmod.isSSOConfigured = false;\n";
             }
