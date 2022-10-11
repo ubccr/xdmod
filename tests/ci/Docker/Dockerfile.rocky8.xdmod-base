@@ -47,7 +47,14 @@ RUN yum -y install \
     php-mbstring \
     php-mysqlnd \
     php-pecl-apcu \
-    php-pecl-json
+    php-pecl-json \
+    php-devel
+
+# Install the mongodb pecl extension
+RUN pecl install mongodb
+
+# Enable the mongodb php extension
+RUN echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 
 # Make sure to clean the cache and installs.
 RUN yum clean all && rm -rf /var/cache/yum
