@@ -7,13 +7,16 @@ use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * XDMoD Portal User
  *
  * @Class XDUser
  */
-class XDUser extends CCR\Loggable implements JsonSerializable
+class XDUser extends CCR\Loggable implements JsonSerializable, UserInterface, PasswordAuthenticatedUserInterface, LegacyPasswordAuthenticatedUserInterface
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -195,7 +198,8 @@ SQL;
         $person_id = null,
         array $ssoAttrs = array(),
         $sticky = false
-    ) {
+    )
+    {
 
         $this->_pdo = DB::factory('database');
 
@@ -267,7 +271,7 @@ SQL;
                     'db' => false,
                     'mail' => false,
                     'console' => false,
-                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
+                    'file' => LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
                 )
             )
         );
@@ -1506,7 +1510,7 @@ SQL;
                 "A PDOException was thrown in 'XDUser::enumAllAvailableRoles'",
                 array(
                     'exception' => $e,
-                    'sql'=> $query
+                    'sql' => $query
                 )
             );
 
@@ -1994,7 +1998,7 @@ SQL;
      * (determines the formal description of a role based on its abbreviation)
      *
      * @param string $role_abbrev the role abbreviation to use when looking up the formal name.
-     * @param bool   $pubDisplay  Determines whether or not to return the public roles `display`
+     * @param bool $pubDisplay Determines whether or not to return the public roles `display`
      * property or it's `name` property. We default to true ( i.e. `display` ) as that is the
      * behavior that currently exists.
      *
@@ -2128,7 +2132,7 @@ SQL;
      */
     public function addAcl(Acl $acl, $overwrite = false)
     {
-        if ( ( !array_key_exists($acl->getName(), $this->_acls) && !$overwrite ) ||
+        if ((!array_key_exists($acl->getName(), $this->_acls) && !$overwrite) ||
             $overwrite === true
         ) {
             $this->_acls[$acl->getName()] = $acl;
@@ -2234,7 +2238,7 @@ SQL;
      * have the data XDMoD is providing to them filtered by a particular
      * organization.
      *
-     * @param string $aclName        the name of the acl that should have a
+     * @param string $aclName the name of the acl that should have a
      *                               relationship created for it with the
      *                               provided organization.
      * @param string $organizationId the name of the organization
@@ -2255,7 +2259,7 @@ SQL;
 
         $acl = Acls::getAclByName($aclName);
 
-        if ( null == $acl) {
+        if (null == $acl) {
             throw new Exception("Unable to retrieve acl for: $aclName");
         }
 
@@ -2268,7 +2272,7 @@ SQL;
 
         $this->_pdo->execute($cleanUserAclGroupByParameters, array(
             ':user_id' => $this->_id,
-            ':acl_id'  => $acl->getAclId()
+            ':acl_id' => $acl->getAclId()
         ));
 
         $populateUserAclGroupByParameters = <<<SQL
@@ -2293,12 +2297,12 @@ SQL;
 
         $this->_pdo->execute($populateUserAclGroupByParameters, array(
             ':user_id' => $this->_id,
-            ':acl_id'  => $acl->getAclId(),
-            ':value'   => $organizationId
+            ':acl_id' => $acl->getAclId(),
+            ':value' => $organizationId
         ));
     } // addAclOrganization
 
-        /**
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -2308,13 +2312,13 @@ SQL;
     public function jsonSerialize()
     {
         $ignored = array(
-            '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
+            '_pdo', '_primary_role', '_publicUser', '_timeCreated', '_timeUpdated',
             '_timePasswordUpdated', '_token', 'logger'
         );
         $reflection = new ReflectionClass($this);
         $results = array();
         $properties = $reflection->getProperties();
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $name = $property->getName();
             if (!in_array($name, $ignored)) {
                 $property->setAccessible(true);
@@ -2354,7 +2358,7 @@ SQL;
      * authenticating / authorizing a password reset. If an $expiration value is provided, that will
      * be used instead of generating one via the 'email_token_expiration' portal settings value.
      *
-     * @param int|null    $expiration the date after which this rid is considered invalid.
+     * @param int|null $expiration the date after which this rid is considered invalid.
      * @return string in the form "userId|expiration|hash"
      * @throws Exception If there are any missing configuration properties that this function relies
      * on. These include: email_token_expiration and application_secret.
@@ -2428,7 +2432,7 @@ SQL;
         } catch (Exception $e) {
             // If there was an exception then it was because we couldn't find a user by that username
             // so log the error and return the default information.
-            $expirationDate = date('Y-m-d H:i:s', $expiration );
+            $expirationDate = date('Y-m-d H:i:s', $expiration);
             $log->debug("Error occurred while validating RID for User: $userId, Expiration: $expirationDate");
         }
 
@@ -2440,7 +2444,8 @@ SQL;
      *
      * @throws Exception if there is a problem executing any of the required post logged in steps.
      */
-    public function postLogin() {
+    public function postLogin()
+    {
         if (!$this->isSticky()) {
             $this->updatePerson();
             $this->synchronizeOrganization();
@@ -2494,7 +2499,7 @@ SQL;
                 $this->setAcls(array());
 
                 // Update the user w/ their new set of acls.
-                foreach($otherAcls as $aclName) {
+                foreach ($otherAcls as $aclName) {
                     $acl = Acls::getAclByName($aclName);
                     $this->addAcl($acl);
                 }
@@ -2669,4 +2674,70 @@ SQL;
 
         return $db->query($query, $params);
     } // public function getResources($resourceNames = array())
+
+    public function getPassword(): ?string
+    {
+        return $this->_password;
+    }
+
+
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): ?string
+    {
+        return $this->_username;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            $this->_id,
+            $this->_username,
+            $this->_password,
+            $this->_email,
+            $this->_firstName,
+            $this->_middleName,
+            $this->_lastName,
+            $this->_timeCreated,
+            $this->_timeUpdated,
+            $this->_timePasswordUpdated,
+            $this->_roles,
+            $this->_field_of_science,
+            $this->_organizationID,
+            $this->_personID,
+            $this->_user_type,
+            $this->_token
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        [
+            $this->_id,
+            $this->_username,
+            $this->_password,
+            $this->_email,
+            $this->_firstName,
+            $this->_middleName,
+            $this->_lastName,
+            $this->_timeCreated,
+            $this->_timeUpdated,
+            $this->_timePasswordUpdated,
+            $this->_roles,
+            $this->_field_of_science,
+            $this->_organizationID,
+            $this->_personID,
+            $this->_user_type,
+            $this->_token
+        ]  = $data;
+    }
 }//XDUser

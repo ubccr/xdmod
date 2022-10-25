@@ -10,13 +10,14 @@ use ETL\aAction;
 use ETL\EtlOverseer;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
  * Base class for ETL tests providing common functionality.
  */
 
-abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
+abstract class BaseEtlTest extends TestCase
 {
     /**
      * @var LoggerInterface

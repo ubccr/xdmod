@@ -5,10 +5,12 @@
 
 namespace UnitTests\OpenXdmod\Tests\Config;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * JSON config file test class.
  */
-class JsonTest extends \PHPUnit_Framework_TestCase
+class JsonTest extends TestCase
 {
 
     /**

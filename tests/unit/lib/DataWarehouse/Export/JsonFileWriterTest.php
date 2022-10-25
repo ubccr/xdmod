@@ -4,6 +4,7 @@ namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\JsonFileWriter;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
@@ -11,7 +12,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Test data warehouse export JSON file writer.
  */
-class JsonFileWriterTest extends PHPUnit_Framework_TestCase
+class JsonFileWriterTest extends TestCase
 {
     /**
      * Test artifacts path.
@@ -27,7 +28,7 @@ class JsonFileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Create logger.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }

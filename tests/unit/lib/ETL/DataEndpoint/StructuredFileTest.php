@@ -37,9 +37,11 @@ namespace UnitTests\ETL\DataEndpoint;
 use CCR\Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class StructuredFileTest extends \PHPUnit_Framework_TestCase
+class StructuredFileTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
@@ -61,6 +63,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct();
     }  // __construct()
 
     /**
@@ -230,11 +233,12 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test #3: Error reporting when config is not valid.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testInvalidFilterConfig()
     {
+        $this->expectException(Exception::class);
         $path = self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_va_users.json';
         $config = array(
             'name' => 'xdmod_va_users.json',
@@ -257,11 +261,12 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test #4: Error reporting when a filter type is not provided.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testMissingFilterType()
     {
+        $this->expectException(Exception::class);
         $path = self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_va_users.json';
         $config = array(
             'name' => 'xdmod_va_users.json',
@@ -288,11 +293,12 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test #5: Filter syntax error.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testFilterSyntaxError()
     {
+        $this->expectException(Exception::class);
         $path = self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_va_users.json';
         $config = array(
             'name' => 'xdmod_va_users.json',
@@ -318,11 +324,12 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test #6: Unknown filter executable.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testInvalidFilter()
     {
+        $this->expectException(Exception::class);
         $path = self::TEST_ARTIFACT_INPUT_PATH . '/empty.json';
         $config = array(
             'name' => 'empty.json',
@@ -634,11 +641,12 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test #15: Parse JSON 2d array, no header row, no field names (excpect Exception).
      *
-     * @expectedException Exception
+     *
      */
 
     public function testParseJsonArrayNoHeaderNoFieldNames()
     {
+        $this->expectException(Exception::class);
         $path = self::TEST_ARTIFACT_INPUT_PATH . '/event_types_no_header.json';
         $config = array(
             'name' => 'event_types_no_header.json',

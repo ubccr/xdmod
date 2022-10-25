@@ -6,6 +6,7 @@
 namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use OpenXdmod\Shredder;
+use PHPUnit\Framework\Constraint\ArraySubset;
 
 /**
  * PBS shredder test class.
@@ -185,7 +186,7 @@ class SlurmShredderTest extends JobShredderBaseTestCase
         $shredder
             ->expects($this->once())
             ->method('insertRow')
-            ->with(new \PHPUnit_Framework_Constraint_ArraySubset(['job_name' => $jobName]));
+            ->with(new ArraySubset(['job_name' => $jobName]));
         $shredder->setLogger($this->logger);
         $shredder->shredLine($line);
     }

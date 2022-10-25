@@ -2,14 +2,15 @@
 
 namespace RegressionTests\Controllers;
 
-use IntegrationTests\TestHarness\Utilities;
+use PHPUnit\Framework\TestCase;
+use TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
+class MetricExplorerChartsTest extends TestCase
 {
     private static $chartFilterTestData = array();
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // This is used to write expected results file for the
         // testChartFilters test. The output file is just written to

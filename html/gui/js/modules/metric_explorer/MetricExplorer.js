@@ -4597,21 +4597,21 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             proxy: new Ext.data.HttpProxy({
                 api: {
                     read: {
-                        url: 'rest/v1/metrics/explorer/queries',
+                        url: '/metrics/explorer/queries',
                         method: 'GET'
                     },
                     create: {
-                        url: 'rest/v1/metrics/explorer/queries',
+                        url: '/metrics/explorer/queries',
                         method: 'POST'
                     }, // Server MUST return idProperty of new record
 
                     update: {
-                        url: 'rest/v1/metrics/explorer/queries',
+                        url: '/metrics/explorer/queries',
                         method: 'POST'
                     },
 
                     destroy: {
-                        url: 'rest/v1/metrics/explorer/queries',
+                        url: '/metrics/explorer/queries',
                         method: 'DELETE'
                     }
                 }

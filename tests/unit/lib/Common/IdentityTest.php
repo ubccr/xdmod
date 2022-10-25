@@ -10,11 +10,14 @@ namespace UnitTests\Common;
 *
 */
 
-class IdentityTest extends \PHPUnit_Framework_TestCase
+use ArgumentCountError;
+use PHPUnit\Framework\TestCase;
+
+class IdentityTest extends TestCase
 {
     private $_identity;
     private $_identity1;
-    public function setUp()
+    public function setUp(): void
     {
         $this->_identity = new \Common\Identity('identity_name');
         $this->_identity1 = new \Common\Identity('');
@@ -34,18 +37,19 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         restore_error_handler();
         $this->_identity = null;
         $this->_identity1 = null;
     }
 
     /**
-     * @expectedException ArgumentCountError
+     *
      * @requires PHP 7.1
      */
     public function testNoDefaultParameterToConstructor()
     {
+        $this->expectException(ArgumentCountError::class);
         new \Common\Identity(); // this construction should fail since the name parameter is not specified
     }
 

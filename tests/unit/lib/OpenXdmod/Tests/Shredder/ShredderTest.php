@@ -7,25 +7,24 @@ namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
 use OpenXdmod\Shredder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Shredder test class.
  */
-class ShredderTest extends \PHPUnit_Framework_TestCase
+class ShredderTest extends TestCase
 {
 
     protected $db;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = new NullDB();
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testUnknownShredder()
     {
+        $this->expectException(\Exception::class);
         Shredder::factory('unknown', $this->db);
     }
 }

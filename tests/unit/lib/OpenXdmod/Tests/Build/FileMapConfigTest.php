@@ -6,11 +6,12 @@
 namespace UnitTests\OpenXdmod\Tests\Build;
 
 use OpenXdmod\Build\Config;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Build configuration file map test class.
  */
-class FileMapConfigTest extends \PHPUnit_Framework_TestCase
+class FileMapConfigTest extends TestCase
 {
 
     /**

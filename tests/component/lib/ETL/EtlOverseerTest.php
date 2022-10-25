@@ -11,12 +11,13 @@ use CCR\DB;
 use ETL\EtlOverseer;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Various tests for the EtlOverseer class.
  */
 
-class EtlOverseerTest extends \PHPUnit_Framework_TestCase
+class EtlOverseerTest extends TestCase
 {
     private static $etlConfig = null;
     private static $testArtifactInputPath = null;

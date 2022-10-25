@@ -5,17 +5,19 @@
 
 namespace UnitTests\OpenXdmod\Tests;
 
+use Exception;
+use PHPUnit\Framework\TestCase;
 use Xdmod\HostListParser;
 
 /**
  * HostListParser test class.
  */
-class HostListTest extends \PHPUnit_Framework_TestCase
+class HostListTest extends TestCase
 {
 
     private $parser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->parser = new HostListParser();
 
@@ -45,30 +47,24 @@ class HostListTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /^Nested brackets/
-     */
     public function testNestedBracketsException()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches("/^Nested brackets/");
         $this->parser->expandHostList('host[01-10[01-10]]');
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /^Unbalanced brackets/
-     */
     public function testUnbalancedBracketsException()
     {
+        $this->expectExceptionMessageMatches("/^Unbalanced brackets/");
+        $this->expectException(Exception::class);
         $this->parser->expandHostList('host[01-10');
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /^Results too large$/
-     */
     public function testMaxSizeException()
     {
+        $this->expectExceptionMessageMatches("/^Results too large$/");
+        $this->expectException(Exception::class);
         $this->parser->expandHostList('host[000000001-999999999]');
     }
 

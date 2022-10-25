@@ -2,7 +2,9 @@
 
 namespace UnitTests\DataWarehouse;
 
-class ExportBuilderTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ExportBuilderTest extends TestCase
 {
     public function __construct()
     {
@@ -13,6 +15,7 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
             'title2' => array('parameters' => array('param1=value1') ),
             'rows' => array(array('Column1' => 'value1', 'Column2' => 'value2'))
         ));
+        parent::__construct();
     }
 
     private function exportHelper($format, $inline, $filename)
@@ -30,19 +33,20 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
         return $result;
     }
 
+    /**
+     * @return void
+     */
     public function testExportJson() {
-
         $result = $this->exportHelper('json', true, 'filename');
-
         $this->assertEquals('application/json', $result['headers']['Content-type']);
 
         $data = json_decode($result['results'], true);
 
-        foreach($data as $datum)
-        {
+        foreach ($data as $datum) {
             $this->assertArrayHasKey('title', $datum);
         }
     }
+
 
     public function testExportXml() {
 
@@ -105,12 +109,10 @@ EOF;
         $this->assertEquals($expected, $result['results']);
     }
 
-     /**
-      * @expectedException        Exception
-      * @expectedExceptionMessage Unsupported export format bananas
-      */
     public function testExportBananas()
     {
+        $this->expectExceptionMessage("Unsupported export format bananas");
+        $this->expectException(\Exception::class);
         $this->exportHelper('bananas', false, 'yes we have no bananas');
     }
 }

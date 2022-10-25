@@ -2,7 +2,8 @@
 
 namespace UnitTests\OpenXdmod\Tests;
 
-use IntegrationTests\TestHarness\TestFiles;
+use PHPUnit\Framework\TestCase;
+use TestHarness\TestFiles;
 use Xdmod\PbsResourceParser;
 
 /**
@@ -10,7 +11,7 @@ use Xdmod\PbsResourceParser;
  *
  * @coversDefaultClass PbsResourceParser
  */
-class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
+class PbsResourceParserTest extends TestCase
 {
     /** Tests base directory relative to __DIR__ */
     const TESTS_BASE_REL_DIR = '/../../../..';
@@ -19,7 +20,7 @@ class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
 
     private $parser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->parser = new PbsResourceParser();
     }

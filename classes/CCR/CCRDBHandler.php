@@ -71,7 +71,7 @@ class CCRDBHandler extends AbstractProcessingHandler
     /**
      * @see AbstractProcessingHandler::write()
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
 

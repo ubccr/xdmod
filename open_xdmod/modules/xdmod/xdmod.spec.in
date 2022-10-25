@@ -84,6 +84,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
+%{_datadir}/%{name}/db
+%{_datadir}/%{name}/vendor
+%{_datadir}/%{name}/public
+%{_datadir}/%{name}/config
+%{_datadir}/%{name}/var
+
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
 %dir %attr(0770,apache,xdmod) %{_localstatedir}/log/%{name}

@@ -6,6 +6,7 @@
 namespace ComponentTests\ETL;
 
 use CCR\DB;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test various components of the ETLv2 ingestors. All tests in this file run the etl_overseer.php
@@ -21,7 +22,7 @@ use CCR\DB;
  *    data.
  */
 
-class IngestorTest extends \PHPUnit_Framework_TestCase
+class IngestorTest extends TestCase
 {
     const TEST_INPUT_DIR = '/tests/artifacts/xdmod/etlv2/configuration/input';
     const ACTION = 0;   // Run an overseer action

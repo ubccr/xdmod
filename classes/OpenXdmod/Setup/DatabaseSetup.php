@@ -92,13 +92,7 @@ EOT
 
         try {
             $databases = array(
-                'mod_shredder',
-                'mod_hpcdb',
-                'moddb',
-                'modw',
-                'modw_aggregates',
-                'modw_filters',
-                'mod_logger',
+                'mod_shredder', 'mod_hpcdb', 'moddb', 'modw', 'modw_aggregates', 'modw_filters', 'mod_logger',
             );
 
             $this->createDatabases(

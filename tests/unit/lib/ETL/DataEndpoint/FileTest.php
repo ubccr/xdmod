@@ -13,9 +13,10 @@ use Exception;
 use CCR\Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class FileTest extends \PHPUnit_Framework_TestCase
+class FileTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
@@ -37,16 +38,18 @@ class FileTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct();
     }  // __construct()
 
     /**
      * Test trying to read a directory instead of a file.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testNotFile()
     {
+        $this->expectException(Exception::class);
         $config = array(
             'name' => 'Not a file',
             'path' => sys_get_temp_dir(),
@@ -60,11 +63,12 @@ class FileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test trying to open a file with an invalid mode.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testBadFileMode()
     {
+        $this->expectException(Exception::class);
         $path = tempnam(sys_get_temp_dir(), 'xdmod_test');
 
         $config = array(

@@ -28,7 +28,8 @@
             "/html/gui/lib/highcharts/graphics",
             "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
-            "/user_manual_builder"
+            "/user_manual_builder",
+            "/bin/console"
         ],
         "exclude_patterns": [
             "#/\\.#",
@@ -43,12 +44,17 @@
     "file_maps": {
         "data": [
             "classes",
+            "db",
             "etl",
             "html",
             "libraries",
             "templates",
             "tools",
             "vendor",
+            "src",
+            "public",
+            "config",
+            "var",
             { "configuration/constants.php": true },
             { "configuration/linker.php" : true }
         ],

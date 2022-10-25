@@ -8,12 +8,13 @@ namespace ComponentTests\ETL;
 use ETL\Ingestor\CloudStateReconstructorTransformIngestor;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Cloud State FSM
  */
 
-class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudStateReconstructorTransformIngestorTest extends TestCase
 {
     private $event_start_res01 = array(
         "resource_id" => 12,

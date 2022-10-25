@@ -2,10 +2,11 @@
 
 namespace ComponentTests;
 
-use IntegrationTests\TestHarness\TestFiles;
+use PHPUnit\Framework\TestCase;
+use TestHarness\TestFiles;
 use Models\Services\Realms;
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
 

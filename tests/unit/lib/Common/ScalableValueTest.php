@@ -10,15 +10,17 @@ namespace UnitTests\Common;
 *
 */
 
-class ScalableValueTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ScalableValueTest extends TestCase
 {
     private $_scalableValue;
-    public function setUp()
+    public function setUp(): void
     {
         $this->_scalableValue = new \Common\ScalableValue(10, .5, .2);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->_scalableValue = null;
     }

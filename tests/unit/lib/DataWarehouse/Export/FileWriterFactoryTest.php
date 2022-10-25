@@ -3,13 +3,15 @@
 namespace UnitTests\DataWarehouse\Export;
 
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export file.
  */
-class FileWriterTest extends PHPUnit_Framework_TestCase
+class FileWriterTest extends TestCase
 {
     /**
      * Test artifacts path.
@@ -30,7 +32,7 @@ class FileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Create file writer factory.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$fileWriterFactory = new FileWriterFactory();
     }
@@ -61,11 +63,13 @@ class FileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Test creating an invalid file writer format.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /Unsupported format/
+     *
+     *
      */
     public function testFileWriterFactoryException()
     {
+        $this->expectExceptionMessageMatches("/Unsupported format/");
+        $this->expectException(Exception::class);
         self::$fileWriterFactory->createFileWriter('foo', '/dev/null');
     }
 

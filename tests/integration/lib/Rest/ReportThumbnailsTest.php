@@ -2,13 +2,14 @@
 
 namespace IntegrationTests\Rest;
 
+use PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
+class ReportThumbnailsTest extends TestCase
 {
     protected static $helpers = array();
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         foreach (array('cd', 'cs') as $user) {
             self::$helpers[$user] = new XdmodTestHelper();

@@ -2,12 +2,13 @@
 
 namespace RegressionTests\Controllers;
 
+use PHPUnit\Framework\TestCase;
 use RegressionTests\TestHarness\RegressionTestHelper;
 
 /**
  * Test the usage explorer for storage realm regressions.
  */
-class UsageExplorerStorageTest extends \PHPUnit_Framework_TestCase
+class UsageExplorerStorageTest extends TestCase
 {
     /**
      * @var \RegressionTestHelper

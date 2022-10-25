@@ -20,19 +20,20 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()): void
     {
         // This is so that when code calls $logger->log(\CCR\Log::DEBUG, "Message"); it doesn't bork.
         if ($level < \Monolog\Logger::DEBUG) {
             $level = Log::convertToMonologLevel($level);
         }
-        return parent::log($level, $this->extractMessage($message), $context);
+
+        parent::log($level, $this->extractMessage($message), $context);
     }
 
     /**
      * @inheritDoc
      */
-    public function addRecord($level, $message, array $context = array())
+    public function addRecord(int $level, string $message, array $context = array(), \MonoLog\DateTimeImmutable $datetime = null): bool
     {
         return parent::addRecord($level, $this->extractMessage($message), $context);
     }
@@ -64,11 +65,66 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     {
         foreach ($array as $key => $value) {
             if (is_object($value)) {
-                $array[$key] = (string) $value;
+                $array[$key] = (string)$value;
             } elseif (is_array($value)) {
                 $array[$key] = $this->recursivelyStringifyObjects($value);
             }
         }
         return $array;
+    }
+
+    public function emergency($message, array $context = array()): void
+    {
+        parent::emergency($this->extractMessage($message), $context);
+    }
+
+    public function emerg($message, array $context = array()): void
+    {
+        parent::emergency($this->extractMessage($message), $context);
+    }
+
+    public function alert($message, array $context = array()): void
+    {
+        parent::alert($this->extractMessage($message), $context);
+    }
+
+    public function critical($message, array $context = array()): void
+    {
+        parent::critical($this->extractMessage($message), $context);
+    }
+
+    public function crit($message, array $context = array()): void
+    {
+        parent::critical($this->extractMessage($message), $context);
+    }
+
+    public function error($message, array $context = array()): void
+    {
+        parent::error($this->extractMessage($message), $context);
+    }
+
+    public function err($message, array $context = array()): void
+    {
+        parent::error($this->extractMessage($message), $context);
+    }
+
+    public function warning($message, array $context = array()): void
+    {
+        parent::warning($this->extractMessage($message), $context);
+    }
+
+    public function notice($message, array $context = array()): void
+    {
+        parent::notice($this->extractMessage($message), $context);
+    }
+
+    public function info($message, array $context = array()): void
+    {
+        parent::info($this->extractMessage($message), $context);
+    }
+
+    public function debug($message, array $context = array()): void
+    {
+        parent::debug($this->extractMessage($message), $context);
     }
 }

@@ -3,11 +3,12 @@
 namespace RegressionTests\Controllers;
 
 use RegressionTests\TestHarness\RegressionTestHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test the usage explorer for cloud realm regressions.
  */
-class UsageExplorerCloudTest extends \PHPUnit_Framework_TestCase
+class UsageExplorerCloudTest extends TestCase
 {
 
     /**

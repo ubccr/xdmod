@@ -6,6 +6,7 @@
 namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use OpenXdmod\Shredder;
+use PHPUnit\Framework\Constraint\ArraySubset;
 
 /**
  * LSF shredder test class.
@@ -66,7 +67,7 @@ class LsfShredderTest extends JobShredderBaseTestCase
         $shredder
             ->expects($this->once())
             ->method('insertRow')
-            ->with(new \PHPUnit_Framework_Constraint_ArraySubset($job));
+            ->with(new \PHPUnit\Framework\Constraint\ArraySubset($job));
         $shredder
             ->method('getResourceConfig')
             ->willReturn(array());

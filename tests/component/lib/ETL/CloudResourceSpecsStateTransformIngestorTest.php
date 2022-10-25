@@ -8,12 +8,13 @@ namespace ComponentTests\ETL;
 use ETL\Ingestor\CloudResourceSpecsStateTransformIngestor;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Cloud Resource Specifications State FSM
  */
 
-class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudResourceSpecsStateTransformIngestorTest extends TestCase
 {
     private $resource_spec_01 = array(
         "resource_id" => 8,
