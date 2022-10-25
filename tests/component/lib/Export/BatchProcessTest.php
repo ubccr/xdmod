@@ -64,7 +64,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Create test objects and data.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$queryHandler = new QueryHandler();
@@ -105,7 +105,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Remove test data from database and generated files.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Delete any requests that weren't already deleted.
         self::$dbh->execute('DELETE FROM batch_export_requests');

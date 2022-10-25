@@ -2,6 +2,8 @@
 
 namespace CCR;
 
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use Xdmod\EmailTemplate;
 
 class MailWrapper
@@ -9,8 +11,8 @@ class MailWrapper
 
     public static function initPHPMailer($properties)
     {
-        $mail = new \PHPMailer(true);
-        $mail->isSendMail();
+        $mail = new PHPMailer(true);
+        $mail->isSendmail();
         $address = \xd_utilities\getConfiguration('mailer', 'sender_email');
         $mail->Sender = $address;
         $mail->addCustomHeader('Sender', $address);
@@ -33,7 +35,7 @@ class MailWrapper
             throw new \Exception('There is no subject');
         }
 
-        MailWrapper::addAddresses($mail, $properties);
+        (new MailWrapper())->addAddresses($mail, $properties);
 
         if(!empty($properties['fromAddress'])) {
             $address = $properties['fromAddress'];
@@ -58,7 +60,7 @@ class MailWrapper
 
         try {
             $mail->setFrom($address, $name);
-        } catch(phpmailerException $e) {
+        } catch (Exception $e) {
             error_log($e->getMessage());
             throw $e;
         }

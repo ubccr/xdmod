@@ -104,6 +104,7 @@ class CloudStateReconstructorTransformIngestorTest extends TestCase
         $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudStateReconstructorTransformIngestor($options, $conf);
+        parent::__construct();
     }
 
     // happy path

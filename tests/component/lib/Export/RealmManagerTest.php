@@ -46,7 +46,7 @@ class RealmManagerTest extends BaseTest
 
     /**
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 

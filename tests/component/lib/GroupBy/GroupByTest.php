@@ -20,7 +20,7 @@ class GroupByTest extends TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
         $conf = array(

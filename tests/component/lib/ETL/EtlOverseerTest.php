@@ -29,7 +29,7 @@ class EtlOverseerTest extends TestCase
      * @return Nothing
      */
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/');
 
@@ -60,7 +60,7 @@ class EtlOverseerTest extends TestCase
      * Reset values in shared classes.
      */
 
-    public function setUp()
+    public function setUp(): void
     {
         self::$overseerOptions->setIncludeOnlyResourceCodes(null);
         self::$overseerOptions->setIncludeOnlyResourceCodes(null);
@@ -112,6 +112,9 @@ class EtlOverseerTest extends TestCase
         } catch ( Exception $e ) {
             $this->assertTrue(false, $e->getMessage());
         }
+
+        // If we've gotten this far then everything has passed
+        $this->assertTrue(true);
     }
 
     /**
@@ -130,7 +133,7 @@ class EtlOverseerTest extends TestCase
             $overseer->execute(self::$etlConfig);
             $exceptionThrown = false;
         } catch ( Exception $e ) {
-            $this->assertContains($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
+            $this->assertStringContainsString($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
         }
         $this->assertTrue($exceptionThrown, "Expected exception to be thrown for unknown resource code '$unknownCode'");
 
@@ -145,7 +148,7 @@ class EtlOverseerTest extends TestCase
             $overseer->execute(self::$etlConfig);
             $exceptionThrown = false;
         } catch ( Exception $e ) {
-            $this->assertContains($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
+            $this->assertStringContainsString($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
         }
         $this->assertTrue($exceptionThrown, "Expected exception to be thrown for unknown resource code '$unknownCode'");
 
@@ -159,7 +162,7 @@ class EtlOverseerTest extends TestCase
             $overseer->execute(self::$etlConfig);
             $exceptionThrown = false;
         } catch ( Exception $e ) {
-            $this->assertContains($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
+            $this->assertStringContainsString($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
         }
         $this->assertTrue($exceptionThrown, "Expected exception to be thrown for unknown resource code '$unknownCode'");
 
@@ -173,7 +176,7 @@ class EtlOverseerTest extends TestCase
             $overseer->execute(self::$etlConfig);
             $exceptionThrown = false;
         } catch ( Exception $e ) {
-            $this->assertContains($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
+            $this->assertStringContainsString($unknownCode, $e->getMessage(), "Unknown resource code but did not find expected code '$unknownCode'");
         }
         $this->assertTrue($exceptionThrown, "Expected exception to be thrown for unknown resource code '$unknownCode'");
     }

@@ -19,7 +19,7 @@ class AggregateQueryTest extends TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -46,11 +46,12 @@ class AggregateQueryTest extends TestCase
      * Create an aggregate query with no group by or statistic. We will not be able to generate the
      * query string with no fields for the SELECT clause.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testAggregateQueryNoStatisticNoGroupBy()
     {
+        $this->expectException(\Exception::class);
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
             'day',

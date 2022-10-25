@@ -198,6 +198,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends TestCase
         $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudResourceSpecsStateTransformIngestor($options, $conf);
+        parent::__construct();
     }
 
     // Test for when the VCpus change for a host

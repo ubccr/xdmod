@@ -33,7 +33,7 @@ class FileManagerTest extends BaseTest
     /**
      * Create file manager and test data.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$fileManager = new FileManager();

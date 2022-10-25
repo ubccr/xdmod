@@ -196,7 +196,7 @@ class IngestorTest extends TestCase
                 $matches = array();
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
-                    if ( preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
+                    if ( preg_match('/"records_loaded":\s*([0-9]+)/', $line, $matches) ) {
                         $recordsLoaded[$number] = $matches[1];
                     }
                 }
@@ -292,7 +292,7 @@ class IngestorTest extends TestCase
      * @return Nothing
      */
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $dbh = DB::factory('database');
         $dbh->execute('DROP TABLE IF EXISTS `test`.`load_data_infile_test`');

@@ -55,7 +55,7 @@ abstract class BaseTest extends TestCase
 
     private static $ENV;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setupEnvironment();
         self::setupPaths();
