@@ -1,0 +1,53 @@
+.user_profile_section_general,
+.user_profile_section_password {
+    padding-bottom: 6px;
+}
+
+.user_profile_section_password .x-form-check-wrap {
+   padding-left: 1px;
+   padding-bottom: 1px;
+}
+
+.user_profile_btn_rest {
+   height: 18px !important;
+}
+
+.user_profile_option_password_update .x-form-item {
+    overflow: hidden !important;
+}
+
+.user_profile_btn_update_icon {
+    background-image: url('../images/disk.png') !important;
+}
+
+.user_profile_entry_password_requirements {
+	margin-top: -23px;
+	padding-bottom: 12px;
+	margin-left: 237px;
+	color: #999;
+}
+
+.user_profile_invalid_text_entry {
+	padding-left: 19px;
+	background-color: #fdc6c8 !important;
+	background-image: url('../images/exclamation.png');
+	background-repeat:  no-repeat;
+	background-position: 1px 2px;
+}
+
+.user_profile_highlight_entry {
+	background-color: #fbf4a3 !important;
+	background-image: none !important;
+}
+
+.user_profile_password_field {
+   width: 125px !important;
+}
+
+/* ----------------------------- */
+
+.role_manager .lbl_member_status{
+   font-size: 12px;
+   padding-top: 10px;
+   text-align: center;
+}

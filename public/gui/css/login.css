@@ -1,0 +1,157 @@
+body {
+        background: #e6ddcf;
+        font-family: arial;
+}
+
+table {
+	font-family: tahoma;
+	font-size: 12px;
+}
+
+#tab_collection {
+	background-color: #f7e6d9;
+}
+
+.password_reset_link {
+	float: right;
+	padding-right: 12px;
+	padding-top: 13px;
+}
+
+
+li {
+	padding-top: 7px;
+}
+
+.return_to_login_link {
+        float: right;
+        padding-right: 9px;
+}
+
+#panel_about {
+        background: #f7e6d9;
+}
+
+#panel_top_banner, #panel_bottom_banner {
+	background: #809dc4;
+}
+
+.login {
+	/* border: 1px solid #bbb; */
+	background: #f7e6d9;
+}
+
+.login .header {
+	background: #ccf;
+}
+
+.bullet_content {
+	width: 200px;
+	vertical-align:text-top;
+	text-align: justify;
+}
+
+.login .footer {
+	height: 30px;
+}
+
+.login .login_check_fail {
+	background: url(../images/login/warning.png) no-repeat;
+	padding-left: 20px;
+	color: #f00;
+	float: left;
+	opacity: 0.0;
+}
+
+.login .login_check_success {
+	background: url(../images/login/checkmark.png) no-repeat;
+	padding: 2px 0 1px 19px;
+	color: #080;
+	float: left;
+	opacity: 0.0;
+}
+
+.login .login_input {
+	border: 1px solid #bbb;
+	background: #f1d7b1;
+}
+
+a { 
+	text-decoration: none;
+	font-family: arial;	
+	color: #00f;	
+}
+
+a:hover{
+	color: #f00;
+}
+
+.footer_section {
+	border-top: 1px solid #bbb;	
+	background: #efeeb0
+}
+
+.common_panel {
+	width: 360px;
+	height: 400px;
+	background: #e6ddcf;
+	position: relative;
+	top: 6px;	
+}
+
+#panel_login {
+	background: #f7e6d9;
+	height: 175px;
+	width: 380px;
+}
+
+#panel_emailpass {
+	background: #f7e6d9;
+	height: 175px;	
+	width: 380px;
+}
+
+/* ------------------------------------------------ */
+
+.mailer {
+	width: 280px;
+}
+
+.mailer .header {
+	background: #cdf89f;
+}
+
+.mailer .mailer_input {
+	background: #daf9f2;
+	border: 1px solid #bbb;
+}
+
+.mailer .control_layer {
+	padding-top: 5px;
+	height: 30px;
+}
+
+.mailer .control_layer a {
+	text-decoration: underline;
+	color: #f00;
+}
+
+.mailer .email_check_fail {
+        background: url(../images/login/warning.png) no-repeat;
+        padding-left: 20px;
+        color: #f00;
+        float: left;
+        opacity: 0.0;
+	position: relative;
+	top: 5px;
+}
+
+.mailer .email_check_success {
+        background: url(../images/login/checkmark.png) no-repeat;
+        padding: 2px 0 1px 19px;
+        color: #080;
+        float: left;
+        opacity: 0.0;
+	position: relative;
+	top: 5px;
+}

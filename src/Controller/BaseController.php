@@ -1,0 +1,430 @@
+<?php
+
+namespace Access\Controller;
+
+use DateTime;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use XDUser;
+
+/**
+ *
+ */
+class BaseController extends AbstractController
+{
+    private const USER_ATTRIBUTE_KEY = '_request_user';
+    private const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
+
+    /**
+     * @returns XDUser
+     * @throws Exception if any of the values supplied within $requirements are not valid Acls objects or string
+     *                   representations of Acl objects.
+     */
+
+    /**
+     * Will attempt to authorize the provided users' roles against the  provided array of role requirements.
+     *
+     * If the user is not authorized, an exception will be thrown. Otherwise, the function will simply return the
+     * authorized user.
+     *
+     * @param Request $request the current HTTP request object.
+     * @param array $requirements either an array of Acl objects or their equivalent string representations that are
+     *                            required for access to a given feature.
+     *
+     * @return XDUser the currently logged in, authorized user.
+     *
+     * @throws UnauthorizedHttpException if no requirements are provided and there is no currently logged in user or if
+     *                                   requirements are provided but not met by the public user.
+     * @throws AccessDeniedHttpException if the currently logged in user is unable to fulfill the provided requirements.
+     * @throws Exception if any of the values supplied within $requirements are not valid Acls objects or string
+     *                   representations of Acl objects.
+     */
+    public function authorize(Request $request, array $requirements = []): XDUser
+    {
+        $user = $this->getUser();
+        if (null === $user) {
+            $user = $this->getUserFromRequest($request);
+            if (null === $user) {
+                $user = XDUser::getPublicUser();
+            }
+        } else {
+            $user = XDUser::getUserByUserName($user->getUserIdentifier());
+        }
+
+
+        // If role requirements were not given, then the only check to perform
+        // is that the user is not a public user.
+        $isPublicUser = $user->isPublicUser();
+        if (empty($requirements) && $isPublicUser) {
+            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
+        }
+
+        $authorized = $user->hasAcls($requirements);
+        if ($authorized === false && !$isPublicUser) {
+            throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
+        } elseif ($authorized === false && $isPublicUser) {
+            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
+        }
+
+        // Return the successfully-authorized user.
+        return $user;
+    }
+
+    /**
+     * Retrieve the XDMoD user from a request object.
+     *
+     * @param Request $request The request to retrieve a user from.
+     * @return XDUser           The user who made the request.
+     */
+    protected function getUserFromRequest(Request $request)
+    {
+        return $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY);
+    }
+
+
+    /**
+     * Attempt to get a parameter value from a request and filter it.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory If true, an exception will be thrown if
+     *                            the parameter is missing from the request.
+     * @param mixed $default The value to return if the parameter was not
+     *                            specified and the parameter is not mandatory.
+     * @param int $filterId The ID of the filter to use. See filter_var.
+     * @param mixed $filterOptions The options to use with the filter.
+     *                                The filter should be configured so that
+     *                                it returns null if conversion is not
+     *                                successful. See filter_var.
+     * @param string $expectedValueType The expected type for the value.
+     *                                    This is used purely for errors thrown
+     *                                    when the parameter value is invalid.
+     * @return mixed              If available and valid, the parameter value.
+     *                            Otherwise, if it is missing and not mandatory,
+     *                            the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value is not valid
+     *                                 according to the given filter.
+     */
+    private function getParam(
+        Request $request,
+        string  $name,
+        bool    $mandatory,
+                $default,
+        int     $filterId,
+                $filterOptions,
+        string  $expectedValueType)
+    {
+        // Attempt to extract the parameter value from the request.
+        $value = $request->get($name);
+
+        // If the parameter was not present, throw an exception if it was
+        // mandatory and return the default if it was not.
+        if ($value === null) {
+            if ($mandatory) {
+                throw new BadRequestHttpException("$name is a required parameter.");
+            } else {
+                return $default;
+            }
+        }
+
+        // Run the found parameter value through the given filter.
+        $value = filter_var($value, $filterId, $filterOptions);
+
+        // If the value is invalid, throw an exception.
+        if ($value === null) {
+            throw new BadRequestHttpException("Invalid value for $name. Must be a(n) $expectedValueType.");
+        }
+
+        // Return the filtered value.
+        return $value;
+    }
+
+    /**
+     * Attempt to get an integer parameter value from a request.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as an integer. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value could not be
+     *                                 converted to an integer.
+     */
+    protected function getIntParam(
+        Request $request,
+        string  $name,
+        bool    $mandatory = false,
+                $default = null
+    )
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_VALIDATE_INT,
+            [
+                'options' => [
+                    'default' => null,
+                ],
+            ],
+            'integer'
+        );
+    }
+
+    /**
+     * Attempt to get a float parameter value from a request.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a float. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value could not be
+     *                                 converted to a float.
+     */
+    protected function getFloatParam(
+        Request $request,
+        string  $name,
+        bool    $mandatory = false,
+                $default = null
+    )
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_VALIDATE_FLOAT,
+            [
+                'options' => [
+                    'default' => null,
+                ],
+            ],
+            'float'
+        );
+    }
+
+    /**
+     * Attempt to get a string parameter value from a request.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a string. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory.
+     */
+    protected function getStringParam(
+        Request $request,
+        string  $name,
+        bool    $mandatory = false,
+                $default = null
+    )
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_DEFAULT,
+            [],
+            'string'
+        );
+    }
+
+    /**
+     * Attempt to get a boolean parameter value from a request.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a boolean. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value could not be
+     *                                 converted to a boolean.
+     */
+    protected function getBooleanParam(
+        Request $request,
+        string  $name,
+        bool    $mandatory = false,
+                $default = null
+    )
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_CALLBACK,
+            [
+                'options' => function ($value) {
+                    // Run the found parameter value through a boolean filter.
+                    $filteredValue = filter_var(
+                        $value,
+                        FILTER_VALIDATE_BOOLEAN,
+                        [
+                            'flags' => FILTER_NULL_ON_FAILURE,
+                        ]
+                    );
+
+                    // If the filter converted the string, return the boolean.
+                    if ($filteredValue !== null) {
+                        return $filteredValue;
+                    }
+
+                    // Check the value against 'y' for true and 'n' for false.
+                    $lowercaseValue = strtolower($value);
+                    if ($lowercaseValue === 'y') {
+                        return true;
+                    }
+                    if ($lowercaseValue === 'n') {
+                        return false;
+                    }
+
+                    // Return null if all conversion attempts failed.
+                    return null;
+                },
+            ],
+            'boolean'
+        );
+    }
+
+    /**
+     * Attempt to get a date parameter value from a request where it is
+     * submitted as a Unix timestamp.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a DateTime. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value could not be
+     *                                 converted to a DateTime.
+     */
+    protected function getDateTimeFromUnixParam(
+        Request $request,
+        string  $name,
+        bool    $mandatory = false,
+                $default = null
+    )
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_CALLBACK,
+            [
+                'options' => function ($value) {
+                    $value_dt = DateTime::createFromFormat('U', $value);
+                    if ($value_dt === false) {
+                        return null;
+                    }
+                    return $value_dt;
+                },
+            ],
+            'Unix timestamp'
+        );
+    }
+
+    /**
+     * Attempt to get a date parameter value from a request where it is
+     * submitted as a ISO 8601 (YYYY-MM-DD) date.
+     *
+     * @param Request $request The request to extract the parameter from.
+     * @param string $name The name of the parameter.
+     * @param bool $mandatory (Optional) If true, an exception will be
+     *                            thrown if the parameter is missing from the
+     *                            request. (Defaults to false.)
+     * @param mixed $default (Optional) The value to return if the
+     *                            parameter was not specified and the parameter
+     *                            is not mandatory. (Defaults to null.)
+     * @return mixed              If available and valid, the parameter value
+     *                            as a DateTime. Otherwise, if it is missing
+     *                            and not mandatory, the given default.
+     *
+     * @throws BadRequestHttpException If the parameter was not available
+     *                                 and the parameter was deemed mandatory,
+     *                                 or if the parameter value could not be
+     *                                 converted to a DateTime.
+     */
+    protected function getDateFromISO8601Param(
+        Request $request,
+        string  $name,
+        bool    $mandatory = false,
+                $default = null
+    )
+    {
+        return $this->getParam(
+            $request,
+            $name,
+            $mandatory,
+            $default,
+            FILTER_CALLBACK,
+            [
+                'options' => function ($value) {
+                    $value_dt = DateTime::createFromFormat('Y-m-d', $value);
+                    if ($value_dt === false) {
+                        return null;
+                    }
+                    return $value_dt;
+                },
+            ],
+            'ISO 8601 Date'
+        );
+    }
+
+
+}

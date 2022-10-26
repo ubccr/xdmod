@@ -1,0 +1,7 @@
+.available_charts .btn_delete {
+   background-image: url('../images/report_generator/remove_chart.png');
+}
+
+.available_charts .btn_info {
+   background-image: url('../images/report_generator/report_general_info.png');
+}

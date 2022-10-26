@@ -1,0 +1,38 @@
+/* common.css */
+
+/* 
+Modal windows intended to appear over "container masked" components can potentially
+be obstructed by the message associated with the mask.  Adjusting the z-index relieves
+this obstruction.
+*/
+
+.ext-el-mask-msg {
+    z-index: 9001 !important;
+}
+
+/*
+Inside of forms using the no-underline-invalid-fields-form class, remove the
+underline that invalid fields use to display their state. This class should
+only be used in places where an indicator other than the field background color
+exists to display the validity of a field.
+*/
+
+.no-underline-invalid-fields-form .x-form-invalid,
+.no-underline-invalid-fields-form textarea.x-form-invalid,
+.no-underline-invalid-fields-form .x-form-invalid.x-form-composite .x-form-invalid,
+.no-underline-invalid-fields-form .x-form-inner-invalid,
+.no-underline-invalid-fields-form textarea.x-form-inner-invalid {
+    background-image: none;
+}
+
+#raw_data_grid tr:hover {
+    cursor: pointer
+}
+
+/*
+Fix the alignment of checkbox labels inside toolbars in ExtJS 3.4.
+*/
+.x-toolbar-cell .x-form-checkbox {
+    margin-bottom: -1px;
+    margin-top: -4px;
+}

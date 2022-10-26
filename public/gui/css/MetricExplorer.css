@@ -1,0 +1,6 @@
+/* MetricExplorer.css */
+
+.metric-explorer-dirty-chart-record {
+    background: url(/gui/images/exclamation.png) no-repeat 2px 1px;
+    padding-left: 16px;
+}
