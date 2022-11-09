@@ -46,5 +46,3 @@ function parseMicrotime($mtime)
     return $time_frags[0] * 1000;
 
 }//parseMicrotime
-
-?>

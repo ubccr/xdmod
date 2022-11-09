@@ -22,5 +22,3 @@
 	$controller->registerOperation('get_public');
 					
 	$controller->invoke('REQUEST');
-		
-?>

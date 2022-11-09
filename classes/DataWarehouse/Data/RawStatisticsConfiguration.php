@@ -176,8 +176,10 @@ class RawStatisticsConfiguration
         $vs = $this->variableStore;
         return array_map(
             function ($field) use ($vs) {
-                foreach (['name', 'documentation'] as $key) {
-                    $field[$key] = $vs->substitute($field[$key]);
+                foreach (['name', 'documentation', 'alias'] as $key) {
+                    if (array_key_exists($key, $field)) {
+                        $field[$key] = $vs->substitute($field[$key]);
+                    }
                 }
                 return $field;
             },

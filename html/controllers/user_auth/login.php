@@ -29,5 +29,3 @@
 	}
 	
 	xd_controller\returnJSON($returnData);
-
-?>
