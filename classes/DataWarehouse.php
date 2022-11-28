@@ -118,43 +118,41 @@ class DataWarehouse
         $pi = "";
 
         if (isset($config['is_pi_of_allocation'])) {
-             $pi = "and als.principalinvestigator_person_id ".($config['is_pi_of_allocation'] ? "" : "!")."= $person_id";
+            $pi = $config['is_pi_of_allocation'] ? "OR als.principalinvestigator_person_id = $person_id" : '';
         }
 
-
         $query = "SELECT DISTINCT
-				als.allocation_id,
-				als.principalinvestigator_person_id,
-				als.person_id,
-				als.charge_number,
-				als.project_title,
-				t.name as request_type,
-				als.resource_name,
-				als.base_allocation as base,
-				FORMAT(als.base_allocation,2) as base_formatted,
-				als.remaining_allocation as remaining,
-				FORMAT(als.remaining_allocation,2) as remaining_formatted,
-				als.pi_last_name,
-				als.pi_first_name,
-				als.project_title,
-				als.status,
-				als.initial_start_date as start,
-				als.end_date as end
-			FROM modw_aggregates.allocation_summary als, resourcefact re, person pti, allocation a, transactiontype t, request req
-			WHERE als.person_id = $person_id
-				AND als.resource_id = re.id
-				AND als.allocation_id = a.id
-				AND a.request_id = req.id
-				AND t.id = req.request_type_id
-				$pi
-				AND pti.id = als.person_id
-				".($allocation_id > -1 ? " " :" AND als.status = '".($showActive?'active':'expired')."' ")."
-				AND als.allocation_id ".($allocation_id > 0?" = ".$allocation_id:" > -1 ")."
-			GROUP BY
-				als.allocation_id
-			ORDER BY
-				end
-			DESC";
+                                als.allocation_id,
+                                als.principalinvestigator_person_id,
+                                als.person_id,
+                                als.charge_number,
+                                als.project_title,
+                                t.name as request_type,
+                                als.resource_name,
+                                als.base_allocation as base,
+                                FORMAT(als.base_allocation,2) as base_formatted,
+                                als.remaining_allocation as remaining,
+                                FORMAT(als.remaining_allocation,2) as remaining_formatted,
+                                als.pi_last_name,
+                                als.pi_first_name,
+                                als.project_title,
+                                als.status,
+                                als.initial_start_date as start,
+                                als.end_date as end
+                        FROM modw_aggregates.allocation_summary als, resourcefact re, person pti, allocation a, transactiontype t
+                        WHERE als.resource_id = re.id
+                                AND als.allocation_id = a.id
+                                AND (
+                                als.person_id = $person_id  $pi
+                                )
+                                AND pti.id = als.person_id
+                                ".($allocation_id > -1 ? " " :" AND als.status = '".($showActive?'active':'expired')."' ")."
+                                AND als.allocation_id ".($allocation_id > 0?" = ".$allocation_id:" > -1 ")."
+                        GROUP BY
+                                als.allocation_id
+                        ORDER BY
+                                end
+                        DESC";
 
         self::connect();
         $results = self::$db->query($query);
