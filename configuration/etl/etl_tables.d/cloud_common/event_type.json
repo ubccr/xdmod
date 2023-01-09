@@ -29,6 +29,12 @@
                 "type": "varchar(1024)",
                 "nullable": true,
                 "default": null
+            },
+            {
+                "name": "instance_state_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
             }
         ],
         "indexes": [

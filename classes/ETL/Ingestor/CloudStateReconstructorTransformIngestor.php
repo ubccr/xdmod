@@ -51,6 +51,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     const SHELVE = 19;
     const POWER_OFF = 45;
     const PAUSE = 55;
+    const RESIZE = 51;
 
     private $_instance_state;
     private $_end_time;
@@ -89,7 +90,8 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
           self::SUSPEND_START,
           self::UNSHELVE_END,
           self::SHELVE_START,
-          self::STATE_REPORT
+          self::STATE_REPORT,
+          self::RESIZE
         );
 
         $this->_vm_inactive_events = array(self::STOP, self::SUSPEND, self::SHELVE, self::POWER_OFF, self::PAUSE);

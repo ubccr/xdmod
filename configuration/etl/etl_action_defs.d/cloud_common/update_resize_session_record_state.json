@@ -1,0 +1,54 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/cloud_common/session_records.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "session_id": "sr.session_id",
+            "instance_id": "sr.instance_id",
+            "start_time": "sr.start_time",
+            "start_event_type_id": "sr.start_event_type_id",
+            "end_time": "sr.end_time",
+            "end_event_type_id": "sr.end_event_type_id",
+            "resource_id": "sr.resource_id",
+            "instance_type": "sr.instance_type",
+            "instance_type_id": "sr.instance_type_id",
+            "num_cores": "sr.num_cores",
+            "memory_mb": "sr.memory_mb",
+            "processorbucket_id": "sr.processorbucket_id",
+            "memorybucket_id": "sr.memorybucket_id",
+            "disk_gb": "sr.disk_gb",
+            "start_time_ts": "sr.start_time_ts",
+            "end_time_ts": "sr.end_time_ts",
+            "start_day_id": "sr.start_day_id",
+            "end_day_id": "sr.end_day_id",
+            "wallduration": "sr.wallduration",
+            "person_id": "sr.person_id",
+            "systemaccount_id": "sr.systemaccount_id",
+            "submission_venue_id": "sr.submission_venue_id",
+            "domain_id": "sr.domain_id",
+            "service_provider": "sr.service_provider",
+            "account_id": "sr.account_id",
+            "principalinvestigator_person_id": "sr.principalinvestigator_person_id",
+            "fos_id": "sr.fos_id",
+            "host_id": "sr.host_id",
+            "instance_state_id": "sr2.instance_state_id"
+        },
+        "joins": [
+            {
+                "name": "session_records",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "sr"
+            },
+            {
+                "name": "session_records",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "sr2",
+                "on": "sr.instance_id = sr2.instance_id and sr.start_time_ts = sr2.end_time_ts and sr.resource_id = sr2.resource_id"
+            }
+        ],
+        "where": [
+          "sr.start_event_type_id = 51"
+        ]
+    }
+}
