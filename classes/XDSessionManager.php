@@ -88,10 +88,10 @@ class XDSessionManager
             ':last_active'   => $init_time,
         ));
 
-        $_SESSION['xdInit'] = $init_time;
-        $_SESSION['xdUser'] = $user_id;
-
-        $_SESSION['session_token'] = $session_token;
+        $session = \xd_security\SessionSingleton::getSession();
+        $session->set('xdInit', $init_time);
+        $session->set('xdUser', $user_agent);
+        $session->set('session_token', $session_token);
 
         return $session_token;
     }
@@ -107,12 +107,13 @@ class XDSessionManager
             \xd_security\start_session();
         }
 
+        $session = \xd_security\SessionSingleton::getSession();
         // If a session is still active and a token has been specified,
         // attempt to record the logout in the SessionManager table
         // (provided the supplied token is still 'valid' and a
         // corresponding record in SessionManager can be found)
 
-        if (isset($_SESSION['xdInit']) && !empty($token)) {
+        if ($session->get('xdInit') !== null && !empty($token)) {
             $session_id = session_id();
             $ip_address = $_SERVER['REMOTE_ADDR'];
 
@@ -129,7 +130,7 @@ class XDSessionManager
                 ':session_token' => $token,
                 ':session_id' => $session_id,
                 ':ip_address' => $ip_address,
-                ':init_time' => $_SESSION['xdInit'],
+                ':init_time' => $session->get('xdInit'),
             ));
         }
 

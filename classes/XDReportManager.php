@@ -226,7 +226,7 @@ class XDReportManager
                 'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], 16),
                 'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], 12),
                 'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], 14),
-                'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
+                'chart_id_' . $suffix            => '/reports/builder/image?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
 
             if (count($chartSlot) == $charts_per_page) {
@@ -436,7 +436,7 @@ class XDReportManager
             $timeframe_type = urldecode($timeframe_type);
 
             $thumbnail_link
-                = '/report_image_renderer.php?type=chart_pool&ref='
+                = '/reports/builder/image?type=chart_pool&ref='
                 . $entry['user_id']
                 . ';'
                 . $entry['insertion_rank']
@@ -618,7 +618,7 @@ class XDReportManager
             $chart_data['chart_id'] = $entry['chart_id'];
 
             $chart_data['thumbnail_link']
-                = '/report_image_renderer.php?type=report&ref='
+                = '/reports/builder/image?type=report&ref='
                 . $entry['report_id']
                 . ';'
                 . $entry['ordering']
@@ -1499,7 +1499,7 @@ class XDReportManager
         }
 
         if (count($iq) == 0) {
-            throw new \Exception("Unable to target chart entry");
+            throw new \Exception("Unable to target chart entry. Type: $type ");
         }
 
         $chart_id = $iq[0]['chart_id'];

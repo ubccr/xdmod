@@ -263,6 +263,31 @@ class ExportBuilder
     }
 
     /**
+     * Validates that the format requested by the user is located in the set of formats that are supported and either
+     * all formats are allowed ( signified by there being no $allowedFormats ) or the requested format was found in the
+     * set of allowed formats. If valid the requested format is returned. If no requested format is provided then the
+     * default value will be returned.
+     *
+     * @param string $requestedFormat
+     * @param string $default
+     * @param array $allowedFormats
+     * @return string
+     */
+    public static function validateFormat(string $requestedFormat, string $default = 'jsonstore', array $allowedFormats = []): string
+    {
+        if (!isset($requestedFormat)) {
+            return $default;
+        }
+        $requestedFormat = strtolower($requestedFormat);
+        $formatSupported = isset(self::$supported_formats[$requestedFormat]);
+        $noFormatSubset = count($allowedFormats) === 0;
+        $requestedFormatInSubset = in_array($requestedFormat, $allowedFormats);
+
+
+        return $formatSupported && ($noFormatSubset || $requestedFormatInSubset) ? $requestedFormat : $default;
+    }
+
+    /**
      * Export data.
      *
      * @param array $exportedDatas The data to export.

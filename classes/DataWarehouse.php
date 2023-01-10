@@ -121,7 +121,6 @@ class DataWarehouse
              $pi = "and als.principalinvestigator_person_id ".($config['is_pi_of_allocation'] ? "" : "!")."= $person_id";
         }
 
-
         $query = "SELECT DISTINCT
                                 als.allocation_id,
                                 als.principalinvestigator_person_id,

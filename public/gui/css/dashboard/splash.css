@@ -1,0 +1,47 @@
+table {
+
+   font-family: Arial;
+   font-size: 12px;
+   padding: 5px;  
+   background-color: #F5F5F5; 
+   border: 1px solid #E5E5E5;
+
+}
+
+.loginSection {
+   position: relative;
+}
+
+.socialNetworks {
+   text-align: left;
+   font-family: arial;
+   font-size: 12px;
+}
+
+.signupSection {
+   border-color: #d9ffdd !important;
+} 
+
+.signupSection table {
+   background-color: #d9ffdd !important;
+}
+         
+.customInputLogin {
+   border: 1px solid #aaa;
+   width: 140px;
+}
+
+.chartTitle {
+   font-family: arial;
+   font-size: 14px;
+}
+
+.customButton {
+   width: 100px;
+   border: 1px solid #888;
+   background-color: #ccffcc;
+}
+
+.customTextField {
+   border: 1px solid #bbb;
+}

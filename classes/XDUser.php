@@ -1918,13 +1918,14 @@ SQL;
     {
 
         // NOTE: RESTful services do not operate on the concept of a session, so we need to check for $_SESSION[..] entities using isset
-
-        if (isset($_SESSION['xdUser']) && ($_SESSION['xdUser'] == $this->_id) && ($default == FALSE)) {
+        $session = \xd_security\SessionSingleton::getSession();
+        $xdUserId = $session->get('xdUser');
+        if (isset($xdUserId) && ($xdUserId === $this->_id) && ($default == FALSE)) {
 
             // The user object pertains to the user logged in..
-
-            if (isset($_SESSION['assumed_person_id'])) {
-                return $_SESSION['assumed_person_id'];
+            $assumedPersonId = $session->get('assumed_person_id');
+            if (isset($assumedPersonId)) {
+                return $assumedPersonId;
             }
 
         }

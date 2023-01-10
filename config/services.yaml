@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    center_related_acls:
+        - cd
+        - cs
 
 services:
     # default configuration for services in *this* file
@@ -37,9 +40,23 @@ services:
         arguments:
             $options:
                 token_parameter: 'xdmod_token'
+    Access\Security\Authenticators\SessionAuthenticator:
+        arguments:
+            $options:
+                xdmod_session: 'xdUser'
+                dashboard_session: 'xdDashboardUser'
     Access\EventListeners\LogoutListener:
         tags:
             - name: 'kernel.event_listener'
               event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
               dispatcher: security.event_dispatcher.main
               method: onLogout
+    Access\Errors\ErrorController:
+        tags: ['controller.service_arguments']
+        arguments:
+            - '@http_kernel'
+            - 'error_controller'
+            - '@error_renderer'
+
+
+
