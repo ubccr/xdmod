@@ -12,7 +12,8 @@
             "description": "Update mod_shredder tables",
             "class": "ManageTables",
             "definition_file_list": [
-                "jobs/shredder/job-sge.json"
+                "jobs/shredder/job-sge.json",
+                "jobs/shredder/job.json"
             ],
             "endpoints": {
                 "destination": {

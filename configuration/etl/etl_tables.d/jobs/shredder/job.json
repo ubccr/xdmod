@@ -219,6 +219,12 @@
                     "resource_name",
                     "pi_name"
                 ]
+            },
+            {
+                "name": "qos_name",
+                "columns": [
+                    "qos_name"
+                ]
             }
         ]
     }
