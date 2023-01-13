@@ -51,7 +51,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     const SHELVE = 19;
     const POWER_OFF = 45;
     const PAUSE = 55;
-    const RESIZE = 51;
+    const RESIZE = 49;
 
     private $_instance_state;
     private $_end_time;

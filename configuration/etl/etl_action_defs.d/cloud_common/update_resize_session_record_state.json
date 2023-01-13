@@ -48,7 +48,7 @@
             }
         ],
         "where": [
-          "sr.start_event_type_id = 51"
+          "sr.start_event_type_id = 49"
         ]
     }
 }
