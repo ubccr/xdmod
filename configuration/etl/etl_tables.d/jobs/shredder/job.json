@@ -224,7 +224,8 @@
                 "name": "qos_name",
                 "columns": [
                     "qos_name"
-                ]
+                ],
+                "type": "BTREE"
             }
         ]
     }
