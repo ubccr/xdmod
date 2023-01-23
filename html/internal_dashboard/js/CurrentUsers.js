@@ -404,6 +404,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                         text: 'Log In As Selected User',
                         handler: function () {
                             var uid = existingUserGrid.getSelectionModel().getSelected().data.id;
+                            console.log('Logging in as User Id: ' + uid);
                             window.open('controllers/pseudo_login.php?uid=' + uid);
                         }
                     },

@@ -84,7 +84,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
-%{_datadir}/%{name}/db
 %{_datadir}/%{name}/vendor
 %{_datadir}/%{name}/public
 %{_datadir}/%{name}/config

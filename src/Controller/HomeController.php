@@ -16,20 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use xd_security\SessionSingleton;
 use XDUser;
 
-class HomeController extends AbstractController
+class HomeController extends BaseController
 {
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
 
     /**
      * This route serves XDMoD
@@ -43,17 +34,9 @@ class HomeController extends AbstractController
     {
         $session = $request->getSession();
 
-        $user = $this->getUser();
-        if (!isset($user)) {
-            if (!$session->has('public_session_token')) {
-                $session->set('public_session_token', 'public-' . microtime(true) . '-' . uniqid());
-            }
-            $user = XDUser::getPublicUser();
-        } else {
-            // This session parameter is used by legacy XDMoD to determine if a user is logged in or not.
-            $session->set('xdUser', $user->getUserID());
-            $user = XDUser::getUserByUserName($user->getUserIdentifier());
-        }
+        $user = $this->getXDUser($session);
+
+        $session->set('xdUser', $user->getUserID());
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
@@ -61,7 +44,6 @@ class HomeController extends AbstractController
         }, []);
 
         $features = $this->getFeatures();
-
         $params = [
             'user' => $user,
             'title' => \xd_utilities\getConfiguration('general', 'title'),
@@ -84,11 +66,12 @@ class HomeController extends AbstractController
             'ORGANIZATION_NAME' => 'organization_name',
             'ORGANIZATION_NAME_ABBREV' => 'organization_abbrev',
             'captcha_site_key' => $this->getCaptchaSiteKey($user),
-            'xdmod_features' => $features,
+            'xdmod_features' => json_encode($features),
             'timezone' => date_default_timezone_get(),
             'isCenterDirector'=> $user->hasAcl('cd'),
+            'is_logged_in' => !$user->isPublicUser(),
             'is_public_user' => $user->isPublicUser(),
-            'user_dashboard' => isset($features['user_dashboard']) && filter_var($features['user_dashboard']),
+            'user_dashboard' => isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN),
             'all_user_roles' => json_encode($user->enumAllAvailableRoles()),
             'raw_data_realms' => json_encode($this->getRawDataRealms($user)),
             'use_center_logo' => false,
@@ -138,14 +121,6 @@ class HomeController extends AbstractController
         return $result;
     }
 
-    public function getFeatures()
-    {
-        $features = \xd_utilities\getConfigurationSection('features');
-        // Convert array values to boolean
-        return array_walk($features, function (&$v) {
-            $v = ($v == 'on');
-        });
-    }
 
     public function getLogoData()
     {
@@ -185,8 +160,9 @@ class HomeController extends AbstractController
         if ($user->isSSOUser() === true || $usersFirstLogin) {
 
             // NOTE: $_SESSION['suppress_profile_autoload'] will be set only upon update of the user's profile (see respective REST call)
-
-            if ($usersFirstLogin && $userEmailSpecified && (!isset($_SESSION['suppress_profile_autoload']) && $user->getUserType() != 50)) {
+            $session = SessionSingleton::getSession();
+            $suppressProfileAutoload = $session->get('suppress_profile_autoload');
+            if ($usersFirstLogin && $userEmailSpecified && (!isset($suppressProfileAutoload) && $user->getUserType() != 50)) {
                 // If the user is logging in for the first time and does have an e-mail address set
                 // (due to it being specified in the XDcDB), welcome the user and inform them they
                 // have an opportunity to update their e-mail address.
@@ -231,5 +207,7 @@ class HomeController extends AbstractController
 
         return $message;
     }
+
+
 }
 

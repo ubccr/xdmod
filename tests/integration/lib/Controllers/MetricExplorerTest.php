@@ -473,7 +473,7 @@ class MetricExplorerTest extends TokenAuthTest
             'config' => $chartSettings
         );
         $this->helper->authenticate('cd');
-        $response = $this->helper->post('rest/v1/metrics/explorer/queries', null, array('data' => json_encode($settings)));
+        $response = $this->helper->post('/metrics/explorer/queries', null, array('data' => json_encode($settings)));
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
@@ -487,7 +487,7 @@ class MetricExplorerTest extends TokenAuthTest
 
         $recordid = $querydata['data']['recordid'];
 
-        $allcharts = $this->helper->get('rest/v1/metrics/explorer/queries');
+        $allcharts = $this->helper->get('/metrics/explorer/queries');
         $this->assertTrue($allcharts[0]['success']);
 
         $seenchart = false;
@@ -500,11 +500,11 @@ class MetricExplorerTest extends TokenAuthTest
         }
         $this->assertTrue($seenchart);
 
-        $justthischart = $this->helper->get('rest/v1/metrics/explorer/queries/' . $recordid);
+        $justthischart = $this->helper->get('/metrics/explorer/queries/' . $recordid);
         $this->assertTrue($justthischart[0]['success']);
         $this->assertEquals("Test &lt; &lt;img src=&quot;test.gif&quot; onerror=&quot;alert()&quot; /&gt;", $justthischart[0]['data']['name']);
 
-        $cleanup = $this->helper->delete('rest/v1/metrics/explorer/queries/' . $recordid);
+        $cleanup = $this->helper->delete('/metrics/explorer/queries/' . $recordid);
         $this->assertTrue($cleanup[0]['success']);
     }
 
@@ -571,7 +571,7 @@ EOF;
     public function provideCreateQueryParamValidation()
     {
         $validInput = [
-            'path' => 'rest/metrics/explorer/queries',
+            'path' => '/metrics/explorer/queries',
             'method' => 'post',
             'params' => null,
             'data' => ['data' => 'foo']
@@ -626,13 +626,13 @@ EOF;
         ];
         $this->helper->authenticate('usr');
         $response = $this->helper->post(
-            'rest/metrics/explorer/queries',
+            '/metrics/explorer/queries',
             null,
             ['data' => json_encode($settings)]
         );
         $this->helper->logout();
         $id = $response[0]['data']['recordid'];
-        $path = "rest/metrics/explorer/queries/$id";
+        $path = "/metrics/explorer/queries/$id";
         $input['path'] .= $path;
         // Run the test.
         parent::authenticateRequestAndValidateJson(

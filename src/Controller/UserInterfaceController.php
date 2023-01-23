@@ -12,16 +12,42 @@ use Models\Services\Realms;
 use Models\Services\Tabs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/interfaces/user")
+ *
  */
 class UserInterfaceController extends BaseController
 {
 
     /**
-     * @Route("/tabs", methods={"POST"})
+     * @Route(path="/controllers/user_interface.php", name="legacy_user_interface")
+     * @param Request $request
+     * @return Response
+     * @throws Exception
+     */
+    public function index(Request $request): Response
+    {
+        $operation = $this->getStringParam($request, 'operation', true);
+        switch ($operation) {
+            case 'get_charts':
+                return $this->getCharts($request);
+            case 'get_data':
+                return $this->getData($request);
+            case 'get_menus':
+                return $this->getMenus($request);
+            case 'get_param_descriptions':
+                return $this->getParamDescriptions($request);
+            case 'get_tabs':
+                return $this->getTabs($request);
+        }
+
+        throw new NotFoundHttpException();
+    }
+
+    /**
+     * @Route("/interfaces/user/tabs", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -65,7 +91,7 @@ class UserInterfaceController extends BaseController
     }
 
     /**
-     * @Route("/charts", methods={"POST"})
+     * @Route("/interfaces/user/charts", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -86,7 +112,7 @@ class UserInterfaceController extends BaseController
     }
 
     /**
-     * @Route("/data", methods={"POST"})
+     * @Route("/interfaces/user/data", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -97,7 +123,7 @@ class UserInterfaceController extends BaseController
     }
 
     /**
-     * @Route("/menus", methods={"POST"})
+     * @Route("/interfaces/user/menus", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -328,7 +354,7 @@ class UserInterfaceController extends BaseController
     }
 
     /**
-     * @Route("parameters/descriptions", methods={"POST"})
+     * @Route("/interfaces/userparameters/descriptions", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception

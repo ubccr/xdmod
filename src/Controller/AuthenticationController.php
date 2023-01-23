@@ -11,11 +11,15 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use xd_security\SessionSingleton;
 
 
 /**
- *
+ * This controller handles the authentication routes for XDMoD. Please note that it works in conjunction with Symfony's
+ * security framework, our customizations of which reside in `src/Security`. These customizations consist of
+ * UserProviders and Authenticators. Authenticators do what they say on the tin and are responsible for the actual
+ * authentication of users. UserProviders are responsible for identifying which user is logged in after they have been
+ * logged in.
  */
 class AuthenticationController extends AbstractController
 {
@@ -25,22 +29,29 @@ class AuthenticationController extends AbstractController
      */
     private $logger;
 
+    /**
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
     /**
+     * This route is here so that we make sure the XDUser::postLogin function is called and that the users token is set
+     * in the appropriate location for use throughout the users session. The actual "login" process is handled by
+     * `src/Authenticators/FormLoginAuthenticator` with configuration located in `config/packages/security.yaml`.
+     *
      * @Route("/login", methods={"POST"}, name="xdmod_login")
-     * @param Request $request
+     *
      * @return Response
      */
-    public function formLogin(Request $request): Response
+    public function formLogin(): Response
     {
-        // If we've gotten this far than this should give us a user.
         $user = $this->getUser();
 
         if (null === $user) {
+            $this->logger->error('No user found during login.');
             return $this->json([
                 'success' => false,
             ], Response::HTTP_UNAUTHORIZED);
@@ -49,6 +60,7 @@ class AuthenticationController extends AbstractController
         // If for some reason we didn't get an \XDUser then fail fast.
         // ( Honestly this is really here to make sure auto-complete works for $user )
         if (!($user instanceof \XDUser)) {
+            $this->logger->error('User instance type mismatched.');
             return $this->json([
                 'success' => false,
                 'message' => 'User type mismatch'
@@ -58,18 +70,17 @@ class AuthenticationController extends AbstractController
         try {
             $user->postLogin();
         } catch (Exception $e) {
+            $this->logger->error(
+                sprintf(
+                    'An error has occurred during the post-login process for %s',
+                    $user->getUsername()
+                )
+            );
             return $this->json([
                 'success' => false,
                 'message' => 'Error occurred during post login process.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $firewallContextName = $request->attributes->get('_firewall_context');
-        $tokenStorage = $this->container->get('security.token_storage');
-        /*$userToken = new UsernamePasswordToken($user, $firewallContextName);
-
-        $this->logger->debug('Setting user token', [$firewallContextName, $userToken]);
-        $tokenStorage->setToken($userToken);*/
 
         $token = $user->getToken();
         $response = $this->json([
@@ -81,23 +92,38 @@ class AuthenticationController extends AbstractController
         ]);
 
         // This cookie will tell the HomeController that we have a currently logged in user.
-        $response->headers->setCookie(new Cookie('xdmod_token', $token));
+        $response->headers->setCookie(new Cookie('xdmod_token', $token ));
+
+        $this->logger->info(sprintf('Successful login by %s', $user->getUsername()));
 
         return $response;
     }
 
     /**
+     * This route is responsible for any logic that may need to be executed when a user is logged out. Currently, the
+     * actual heavy lifting of logging out is done by the configuration in `config/packages/security.yaml`.
+     *
      * @Route("/logout", methods={"POST"}, name="xdmod_logout")
+     *
      * @return Response
      */
-    public function formLogout(): Response
+    public function formLogout(Request $request): Response
     {
-        return $this->json(['success' => true]);
+        $token = $request->getSession()->get('xdmod_token');
+        \XDSessionManager::logoutUser($token);
+        $response = $this->json(['success' => true]);
+        $response->headers->removeCookie('xdmod_token');
+        return $response;
     }
 
     /**
+     * This route is responsible for logging API users in. The configuration for this route is located in
+     * `config/packages/security.yaml`.
+     *
      * @Route("/api/login", name="api_login", methods={"POST"})
+     *
      * @param Request $request
+     *
      * @return Response
      * @throws Exception
      */
@@ -112,7 +138,9 @@ class AuthenticationController extends AbstractController
         }
 
         $xdUser = \XDUser::getUserByUserName($user->getUserIdentifier());
+
         $xdUser->postLogin();
+
         $request->getSession()->set('xdUser', $xdUser->getUserID());
 
 
@@ -121,7 +149,9 @@ class AuthenticationController extends AbstractController
             'token' => $xdUser->getToken()
         ]);
 
-        // This accounts for the setting of
+
+        // Make sure that we remove any xdmod_token cookie that already exists so that it can be set with the correct
+        // token.
         $cookies = $response->headers->getCookies();
         foreach ($cookies as $cookie) {
             if ($cookie->getName() === 'xdmod_token') {
@@ -135,8 +165,12 @@ class AuthenticationController extends AbstractController
     }
 
     /**
+     * This Route is responsible for logging API Users out.
+     *
      * @Route("/api/logout", name="api_logout", methods={"POST"})
+     *
      * @return Response
+     *
      * @throws Exception since this should never be called.
      */
     public function logout(): Response

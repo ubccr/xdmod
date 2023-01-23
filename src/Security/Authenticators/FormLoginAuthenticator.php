@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Access\Security\Authenticators;
 
-use Access\Entity\User;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
@@ -49,6 +50,12 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     private $options;
 
+    /**
+     * @param LoggerInterface $logger
+     * @param HttpUtils $httpUtils
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param array $options
+     */
     public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, array $options)
     {
         $this->logger = $logger;
@@ -65,36 +72,63 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
 
 
     /**
+     * This method is overwritten because we specifically only want this Authenticator to apply when the request is a
+     * POST with a content-type of application/x-www-form-urlencoded w/ a path that matches our `check_path`.
+     *
      * @param Request $request
      * @return bool
      */
     public function supports(Request $request): bool
     {
         $postOnly = (!$this->options['post_only'] || $request->isMethod('POST'));
-        $requestPath = $this->httpUtils->checkRequestPath($request, $this->options['check_path']);
         $formOnly = (!$this->options['form_only'] || 'form' === $request->getContentType());
+
+        $requestPath = $this->httpUtils->checkRequestPath($request, $this->options['check_path']);
 
         $this->logger->debug('Checking if FormLoginAuthenticator supports request', [$postOnly, $requestPath, $formOnly]);
 
         return $postOnly && $requestPath && $formOnly;
     }
 
-    public function authenticate(Request $request)
+    /**
+     * Create a passport for the current request.
+     *
+     * The passport contains the user, credentials and any additional information
+     * that has to be checked by the Symfony Security system. For example, a login
+     * form authenticator will probably return a passport containing the user, the
+     * presented password and the CSRF token value.
+     *
+     * You may throw any AuthenticationException in this method in case of error (e.g.
+     * a UserNotFoundException when the user cannot be found).
+     *
+     * @param Request $request
+     * @return Passport
+     */
+    public function authenticate(Request $request): Passport
     {
         $this->logger->debug('Initiating Form Login Authentication', [$request]);
 
         $credentials = $this->getCredentials($request);
         $this->logger->debug('Attempting to login user' . $credentials['username'], $credentials);
 
-        $passport = new Passport(
+        return new Passport(
             new UserBadge($credentials['username']),
             new PasswordCredentials($credentials['password']),
             [new RememberMeBadge()]
         );
-
-        return $passport;
     }
 
+    /**
+     * Retrieve user credentials from the provided Request. Validates that the username length is less than or equal to
+     * Security::MAX_USERNAME_LENGTH and if not it throws a BadCredentialsException. If credentials are able to be
+     * successfully retrieved and they are valid than the Security::LAST_USERNAME session variable is set to the
+     * retrieved username.
+     *
+     * @param Request $request
+     * @return array containing the username / password retrieved from the provided Request.
+     * @throws BadRequestHttpException if the username parameter is not a string, or if it's an object that does not provide a __toString method.
+     * @throws BadCredentialsException if the provided username is longer than Security::MAX_USERNAME_LENGTH.
+     */
     private function getCredentials(Request $request): array
     {
         $credentials = [];
@@ -114,7 +148,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         $credentials['username'] = trim($credentials['username']);
 
         if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
-            $this->logger->debug('Username is to long', $credentials);
+            $this->logger->error('Username is to long', $credentials);
             throw new BadCredentialsException('Invalid username.');
         }
 
@@ -123,6 +157,22 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         return $credentials;
     }
 
+    /**
+     * We do the translation from Symfony User to XDUser here by looking for an XDUser that has the same username as
+     * the authenticated Symfony User. When found, we set the `xdUser` session variable equal to the XDUser's user id.
+     *
+     * This should return the Response sent back to the user, like a
+     * RedirectResponse to the last page they visited.
+     *
+     * If you return null, the current request will continue, and the user
+     * will be authenticated. This makes sense, for example, with an API.
+     *
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $firewallName
+     * @return Response
+     * @throws \Exception if unable to find an XDUser that matches the provided Symfony User
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
@@ -130,18 +180,25 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         }
         $user = $token->getUser();
         $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
-
-        return new JsonResponse([
+        $request->getSession()->set('xdUser', $xdUser->getUserID());
+        $response = new JsonResponse([
             'success' => true,
             'results' => [
-                'token'  => $xdUser->getToken(),
+                'token' => $xdUser->getToken(),
                 'name' => $xdUser->getFormalName()
             ]
         ]);
+        $response->headers->setCookie(new Cookie('xdmod_token', $xdUser->getToken()));
+        return $response;
     }
 
+    /**
+     * Return the URL to the login page.
+     * @param Request $request
+     * @return string the login url that this FormLoginAuthenticator supports.
+     */
     protected function getLoginUrl(Request $request): string
     {
-        return '/login';
+        return $this->httpUtils->generateUri($request, $this->options['check_path']);
     }
 }

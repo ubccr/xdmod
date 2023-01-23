@@ -14,9 +14,8 @@
 	$user = XDUser::authenticate($_POST['username'], $_POST['password']);
 	
 	if (XDUser::isAuthenticated($user)) {
-		    
-		$_SESSION['xdUser'] = $user->getUserID();
-	    
+		\xd_security\SessionSingleton::getSession()->set('xdUser', $user->getUserID());
+
 		$returnData['status'] = 'success';
 		$returnData['first_name'] = $user->getFirstName();
 		$returnData['account_is_active'] = ($user->getAccountStatus() == ACTIVE) ? 'true' : 'false';

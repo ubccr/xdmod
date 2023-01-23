@@ -433,7 +433,7 @@ CCR.xdmod.ReportCheckbox = Ext.extend(Ext.form.Checkbox,  {
 
       conn.request({
 
-         url: 'controllers/chart_pool.php',
+         url: 'chart_pool',
          params: objParams,
          method: 'POST',
 

@@ -26,7 +26,7 @@ if ($xdw->resolveName($_POST['person_id']) == NO_MAPPING) {
     xd_controller\returnJSON($returnData);
 }
 
-$_SESSION['assumed_person_id'] = $_POST['person_id'];
+\xd_security\SessionSingleton::getSession()->set('assumed_person_id', $_POST['person_id']);
 
 $returnData = array(
     'success' =>  true,

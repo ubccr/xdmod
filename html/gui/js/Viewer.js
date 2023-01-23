@@ -156,7 +156,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
 
         var viewStore = new Ext.data.JsonStore({
 
-            url: 'controllers/user_interface.php',
+            url: '/interfaces/user/tabs',
             autoDestroy: true,
             autoLoad: false,
             root: 'data',

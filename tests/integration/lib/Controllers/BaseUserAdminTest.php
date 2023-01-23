@@ -51,7 +51,7 @@ abstract class BaseUserAdminTest extends BaseTest
      */
     protected $peopleHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper();
         $this->peopleHelper = new PeopleHelper();
@@ -90,10 +90,10 @@ abstract class BaseUserAdminTest extends BaseTest
     {
         $helper = new XdmodTestHelper();
 
-        $helper->authenticateDashboard('mgr');
+        $helper->authenticate('mgr');
         $data = array(
             'operation' => 'delete_user',
-            'uid' => $userId
+            'uid'       => $userId
         );
 
         $response = $helper->post('controllers/user_admin.php', null, $data);
@@ -173,7 +173,7 @@ abstract class BaseUserAdminTest extends BaseTest
      **/
     protected function createUser(array $options)
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         // retrieve required arguments
         $username = isset($options['username']) ? $options['username'] : null;
@@ -203,18 +203,18 @@ abstract class BaseUserAdminTest extends BaseTest
 
         // construct form params for post request to create new user.
         $data = array(
-            'operation' => 'create_user',
+            'operation'          => 'create_user',
             'account_request_id' => '',
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email_address' => $emailAddress,
-            'username' => $username,
-            'acls' => json_encode(
+            'first_name'         => $firstName,
+            'last_name'          => $lastName,
+            'email_address'      => $emailAddress,
+            'username'           => $username,
+            'acls'               => json_encode(
                 $acls
             ),
-            'assignment' => $person,
-            'institution' => $institution,
-            'user_type' => $userType
+            'assignment'         => $person,
+            'institution'        => $institution,
+            'user_type'          => $userType
         );
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
@@ -236,12 +236,12 @@ abstract class BaseUserAdminTest extends BaseTest
         // expected have keys in common.
         $substitutions = array(
             '$emailAddress' => $emailAddress,
-            '$username' => $username,
-            '$userType' => $userType,
-            '$firstName' => $firstName,
-            '$lastName' => $lastName,
-            '$assignment' => $person,
-            '$institution' => $institution
+            '$username'     => $username,
+            '$userType'     => $userType,
+            '$firstName'    => $firstName,
+            '$lastName'     => $lastName,
+            '$assignment'   => $person,
+            '$institution'  => $institution
         );
 
         // retrieve the keys that the actual / expected have in common.
@@ -264,25 +264,32 @@ abstract class BaseUserAdminTest extends BaseTest
         }
 
         // make sure to logout of the current 'mgr' session.
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
 
         return $userId;
     }
 
-    protected function updateCurrentUser($userId, $password = null, $firstName = null, $lastName = null, $emailAddress = null)
+    protected function updateCurrentUser($username, $password, $firstName = null, $lastName = null, $emailAddress = null)
     {
         $helper = new XdmodTestHelper();
-        $helper->authenticateDashboard('mgr');
+        /*echo "*********************\n";
+        echo "Logging in as Manager!\n";*/
+        $helper->authenticate('mgr');
 
-        $loginAsParams = array(
-            'uid' => $userId
-        );
+        /*$loginAsParams = array(
+            'uid' => $username
+        );*/
 
         // perform the pseudo-login
-        $helper->get('internal_dashboard/controllers/pseudo_login.php', $loginAsParams);
+        /*echo "*********************\n";
+        echo "Attempting to Switch Users\n";*/
+        $response = $helper->get('', ['_switch_user' => $username]);
+        #print_r($response);
 
         // build the update user params
-        $updateUserData = array();
+        $updateUserData = [
+            '_user_switch' => $username
+        ];
 
         if (isset($password)) {
             $updateUserData['password'] = $password;
@@ -299,25 +306,41 @@ abstract class BaseUserAdminTest extends BaseTest
         if (isset($emailAddress)) {
             $updateUserData['email_address'] = $emailAddress;
         }
+        /*echo "Switching to $username\n";
+        $switchResult = $helper->get("?_switch_user=$username");
+        if ($switchResult[1]['http_code'] !== 200) {
+            print_r($switchResult);
+        }
+        echo "Updating User\n";
+        $updateUserResponse = $helper->patch('users/current', $updateUserData);
 
-        $updateUserResponse = $helper->patch(
-            'rest/v0.1/users/current',
-            null,
-            $updateUserData
-        );
+        */
+        /*echo "*********************\n";
+        echo "Attempting to Update User\n";*/
+        $updateUserResponse = $helper->patch('users/current', $updateUserData);
 
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('user_admin', 'test.update_user')
         );
 
+        /*echo "*********************\n";
+        echo "Validating Update User Response\n";*/
         $this->validateResponse($updateUserResponse);
 
         $this->assertEquals(
             $expected,
             $updateUserResponse[0],
-            "Unable to validate update user response. Expected: " . json_encode($expected). " Received: " . json_encode($updateUserResponse[0])
+            "Unable to validate update user response. Expected: " . json_encode($expected) . " Received: " . json_encode($updateUserResponse[0])
         );
 
+        /*echo "*********************\n";
+        echo "Switching back\n";*/
+        $switchBackResult = $helper->get('', ['_switch_user' => '_exit']);
+        if ($switchBackResult[1]['http_code'] !== 200) {
+            #print_r($switchBackResult);
+        }
+        /*echo "*********************\n";
+        echo "Logging Out!\n";*/
         $helper->logout();
     }
 
@@ -326,29 +349,29 @@ abstract class BaseUserAdminTest extends BaseTest
      * arguments. Note that this utilizes the user_admin/update_user operation to do the updating
      * as opposed to the `updateCurrentUser` function that utilizes the `users/current` rest path.
      *
-     * @param int    $userId
+     * @param int $userId
      * @param string $emailAddress
-     * @param array  $acls
-     * @param int    $assignedPerson
-     * @param int    $institution
-     * @param int    $user_type
+     * @param array $acls
+     * @param int $assignedPerson
+     * @param int $institution
+     * @param int $user_type
      * @throws Exception
      */
     protected function updateUser($userId, $emailAddress, $acls, $assignedPerson, $institution, $user_type, $sticky = false)
     {
         $data = array(
-            'operation' => 'update_user',
-            'uid' => $userId,
+            'operation'     => 'update_user',
+            'uid'           => $userId,
             'email_address' => $emailAddress,
-            'acls' => json_encode(
+            'acls'          => json_encode(
                 $acls
             ),
             'assigned_user' => $assignedPerson,
-            'institution' => $institution,
-            'user_type' => $user_type,
-            'sticky' => $sticky
+            'institution'   => $institution,
+            'user_type'     => $user_type,
+            'sticky'        => $sticky
         );
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -380,14 +403,14 @@ abstract class BaseUserAdminTest extends BaseTest
      */
     protected function retrieveUserId($userName, $userGroup = 3)
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $listUsersResponse = $this->helper->post(
             'controllers/user_admin.php',
             null,
             array(
                 'operation' => 'list_users',
-                'group' => $userGroup
+                'group'     => $userGroup
             )
         );
 
@@ -410,7 +433,7 @@ abstract class BaseUserAdminTest extends BaseTest
     }
 
     /**
-     * @param string $userId    the `id` of the user whose properties we are retrieving.
+     * @param string $userId the `id` of the user whose properties we are retrieving.
      * @param array $properties the set of properties that we want to retrieve from the user.
      * @return mixed|array      An empty array if none of the requested properties are found. If
      *                          only one property is requested / found then return the properties
@@ -420,14 +443,14 @@ abstract class BaseUserAdminTest extends BaseTest
      */
     protected function retrieveUserProperties($userId, array $properties)
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $response = $this->helper->post(
             'controllers/user_admin.php',
             null,
             array(
                 'operation' => 'get_user_details',
-                'uid' => $userId
+                'uid'       => $userId
             )
         );
 
@@ -439,7 +462,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
         $this->helper->logoutDashboard();
 
-        return count($results) === 1  && count($properties) === 1 ? array_pop($results) : $results;
+        return count($results) === 1 && count($properties) === 1 ? array_pop($results) : $results;
     }
 
     /**
@@ -447,8 +470,8 @@ abstract class BaseUserAdminTest extends BaseTest
      * response. In particular, it asserts that the http-code and content-type
      * match the provided arguments.
      *
-     * @param mixed $response             to be validated.
-     * @param int $expectedHttpCode       the http-code that the response is
+     * @param mixed $response to be validated.
+     * @param int $expectedHttpCode the http-code that the response is
      *                                    expected to have.
      * @param string $expectedContentType the content-type that the response is
      *                                    expected to have.

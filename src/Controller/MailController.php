@@ -12,12 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use XDUser;
 
 /**
- * @Route("/mailer")
  */
 class MailController extends BaseController
 {
     /**
-     * @Route("/", methods={"POST"})
+     * @Route("/controllers/mailer.php", methods={"POST"}, name="legacy_mailer_index")
      * @param Request $request
      * @return Response
      * @throws Exception

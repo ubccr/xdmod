@@ -7,7 +7,7 @@
 		
 		$user = \xd_security\getLoggedInUser();
 		
-		$parameter_descriptions = \DataWarehouse\QueryBuilder::getInstance()->pullQueryParameterDescriptionsFromRequest($_REQUEST, $user);
+        $parameter_descriptions = \DataWarehouse\QueryBuilder::getInstance()->pullQueryParameterDescriptionsFromRequest($_REQUEST, $user);
 
 		$key_value_param_descriptions = array();
 		foreach($parameter_descriptions as $param_desc)

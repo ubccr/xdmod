@@ -107,7 +107,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         'output' => ['status_code', 'body_validator']
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }

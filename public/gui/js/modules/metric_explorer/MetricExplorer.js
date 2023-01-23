@@ -1004,7 +1004,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             storeId: 'raw_data_store',
                             proxy: new Ext.data.HttpProxy({
                                 method: 'POST',
-                                url: 'controllers/metric_explorer.php',
+                                url: 'metrics/explorer/raw_data',
                                 listeners: {
                                     load: function(o, options) {
                                         if (options.reader.jsonData && options.reader.jsonData.totalAvailable) {
@@ -2732,7 +2732,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         this.dwDescriptionStore = new CCR.xdmod.CustomJsonStore({
 
-            url: 'controllers/metric_explorer.php',
+            url: 'metrics/explorer/get_dw_descripter',
             fields: ['realms'],
             root: 'data',
             totalProperty: 'totalCount',
@@ -4599,7 +4599,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
                     update: {
                         url: '/metrics/explorer/queries',
-                        method: 'POST'
+                        method: 'PUT'
                     },
 
                     destroy: {
@@ -5480,7 +5480,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             },
             proxy: new Ext.data.HttpProxy({
                 method: 'POST',
-                url: 'controllers/metric_explorer.php'
+                url: '/metrics/explorer/data'
             })
         }); //chartStore
 
@@ -6202,7 +6202,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         var viewGrid = new Ext.ux.DynamicGridPanel({
 
             id: 'view_grid_' + this.id,
-            storeUrl: 'controllers/metric_explorer.php',
+            storeUrl: '/metrics/explorer/data',
             autoScroll: true,
             rowNumberer: true,
             region: 'center',
@@ -6282,7 +6282,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 getXTypes: function() {
                     return 'html';
                 },
-                html: '<img src="/controllers/metric_explorer.php?' + params + '" />'
+                html: '<img src="metrics/explorer/data?' + params + '" />'
 
             });
 
@@ -6297,7 +6297,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             Ext.apply(parameters, opts);
 
-            CCR.invokePost("controllers/metric_explorer.php", parameters);
+            CCR.invokePost("metrics/explorer/data", parameters);
 
         }); //self.on('export_option_selected', ...
 

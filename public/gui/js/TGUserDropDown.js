@@ -1,5 +1,5 @@
 CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
-    controllerBase: 'controllers/sab_user.php',
+    controllerBase: '/users',
     triggerAction: 'all',
 
     user_management_mode: false,

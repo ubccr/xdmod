@@ -57,12 +57,15 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     public function loadUserByIdentifier(string $identifier): ?UserInterface
     {
         $this->logger->debug("Loading User By Identifier: $identifier");
-        try {
-            $user = XDUser::getUserByUserName($identifier);
-            return User::fromXDUser($user);
-        } catch (\Exception $e) {
-            return null;
+        $user = XDUser::getUserByUserName($identifier);
+        if (!isset($user)) {
+            // Symfony code expects that an exception is thrown when loadUserByIdentifier fails.
+            throw new UserNotFoundException("Unable to find User identified by $identifier");
         }
+        $this->logger->debug("XDUser found by username: {$user->getUserID()} {$user->getUsername()}");
+        $foundUser = User::fromXDUser($user);
+        $this->logger->debug(sprintf('Final User Found:  %s %s', $foundUser->getUserIdentifier(), $foundUser->getPassword()));
+        return $foundUser;
     }
 
     /**
@@ -74,7 +77,8 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
         return $this->loadUserByIdentifier($username);
     }
 
-    public function upgradePassword(UserInterface $user, string $newHashedPassword): void {
+    public function upgradePassword(UserInterface $user, string $newHashedPassword): void
+    {
         $this->logger->debug('Attempting to upgrade password');
     }
 }

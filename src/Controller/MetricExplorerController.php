@@ -2,22 +2,29 @@
 
 namespace Access\Controller;
 
+use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
+use DataWarehouse\Query\Exceptions\AccessDeniedException;
+use DataWarehouse\Query\Exceptions\UnknownGroupByException;
+use DataWarehouse\Query\TimeAggregationUnit;
 use Exception;
 use Models\Services\Acls;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Models\Services\Realms;
+use SessionExpiredException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 use XDUser;
+use function xd_response\buildError;
 
 /**
- * @Route("/metrics/explorer")
+ *
  */
-class MetricExplorerController extends AbstractController
+class MetricExplorerController extends BaseController
 {
     /**
      * The identifier that is used to store 'queries' in the user profile.
@@ -29,7 +36,40 @@ class MetricExplorerController extends AbstractController
     private const DEFAULT_ERROR_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
     /**
-     * @Route("/queries", methods={"GET"})
+     * @Route("/controllers/metric_explorer.php", methods={"POST"})
+     * @param Request $request
+     * @return Response
+     * @throws AccessDeniedException
+     * @throws SessionExpiredException
+     * @throws UnknownGroupByException
+     * @throws Exception
+     */
+    public function index(Request $request): Response
+    {
+        $operation = $this->getStringParam($request, 'operation', true);
+
+        switch ($operation) {
+            case 'get_data':
+                return $this->getData($request);
+            case 'get_dimension':
+                return $this->getDimensionValues($request);
+            case 'get_dw_descripter':
+                return $this->getDwDescriptors($request);
+            case 'get_filters':
+                return $this->getFilters($request);
+            case 'get_rawdata':
+                return $this->getRawData($request);
+        }
+
+        return $this->json([
+            'success' => false,
+            'message'=> 'Unknown Operation provided.'
+        ]);
+    }
+
+    /**
+     * @Route("/metrics/explorer/queries", methods={"GET"})
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -40,7 +80,7 @@ class MetricExplorerController extends AbstractController
         $action = 'getQueries';
         $payload = [
             'success' => false,
-            'action' => $action
+            'action'  => $action
         ];
         $statusCode = 401;
 
@@ -70,7 +110,8 @@ class MetricExplorerController extends AbstractController
     }
 
     /**
-     * @Route("/queries/{queryId}", methods={"GET"}, requirements={"queryId"="\w+"})
+     * @Route("/metrics/explorer/queries/{queryId}", methods={"GET"}, requirements={"queryId"="\w+"})
+
      * @param Request $request
      * @param string $queryId
      * @return Response
@@ -81,7 +122,7 @@ class MetricExplorerController extends AbstractController
         $action = 'getQueryById';
         $payload = array(
             'success' => false,
-            'action' => $action,
+            'action'  => $action,
         );
         $statusCode = 401;
 
@@ -113,7 +154,8 @@ class MetricExplorerController extends AbstractController
     }
 
     /**
-     * @Route("/queries", methods={"POST"})
+     * @Route("/metrics/explorer/queries", methods={"POST"})
+
      * @param Request $request
      * @return Response
      */
@@ -124,7 +166,7 @@ class MetricExplorerController extends AbstractController
         $action = 'creatQuery';
         $payload = array(
             'success' => false,
-            'action' => $action,
+            'action'  => $action,
         );
         $statusCode = 401;
         try {
@@ -159,7 +201,8 @@ class MetricExplorerController extends AbstractController
     }
 
     /**
-     * @Route("/queries/{queryId}", methods={"PUT"}, requirements={"queryId"="\w+"})
+     * @Route("/metrics/explorer/queries/{queryId}", methods={"PUT"}, requirements={"queryId"="\w+"})
+
      * @param Request $request
      * @param string $queryId
      * @return Response
@@ -171,7 +214,7 @@ class MetricExplorerController extends AbstractController
         $action = 'updateQuery';
         $payload = array(
             'success' => false,
-            'action' => $action,
+            'action'  => $action,
             'message' => 'success'
         );
         $statusCode = 401;
@@ -232,7 +275,8 @@ class MetricExplorerController extends AbstractController
     }
 
     /**
-     * @Route("/queries/{queryId}", methods={"DELETE"}, requirements={"queryId"="\w+"})
+     * @Route("/metrics/explorer/queries/{queryId}", methods={"DELETE"}, requirements={"queryId"="\w+"})
+
      * @param Request $request
      * @param string $queryId
      * @return Response
@@ -244,7 +288,7 @@ class MetricExplorerController extends AbstractController
         $action = 'deleteQueryById';
         $payload = array(
             'success' => false,
-            'action' => $action,
+            'action'  => $action,
             'message' => 'success'
         );
         $statusCode = 401;
@@ -316,5 +360,541 @@ class MetricExplorerController extends AbstractController
 
         // Store the updated config in the query.
         $query['config'] = json_encode($queryConfig);
+    }
+
+    /**
+     * @Route("/metrics/explorer/data", methods={"POST", "GET"})
+
+     * @param Request $request
+     * @return Response
+     * @throws SessionExpiredException if unable to successfully retrieve the currently logged in user.
+     * @throws Exception if there is a problem with the processing of the get_data function.
+     */
+    public function getData(Request $request): Response
+    {
+        $user = \xd_security\detectUser([XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
+
+        $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);
+        $result = $m->get_data($user);
+
+        $format = $this->getStringParam($request, 'format');
+        if ($format === 'png'
+            || $format === 'pdf'
+            || $format === 'svg'
+            || $format === 'png_inline'
+            || $format === 'svg_inline'
+            || $format === '_internal'
+            || $format === 'csv'
+            || $format === 'xml'
+            || $format === 'json') {
+            $response = new Response($result['results']);
+        } else {
+            $response = $this->json(json_decode($result['results']));
+        }
+
+        $response->headers->add($result['headers']);
+
+        return $response;
+    }
+
+
+    /**
+     * @Route("/metrics/explorer/dimension/values", methods={"POST"})
+
+     * @param Request $request
+     * @return Response
+     * @throws SessionExpiredException
+     * @throws AccessDeniedException
+     * @throws UnknownGroupByException
+     */
+    public function getDimensionValues(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = \xd_security\detectUser([\XDUser::PUBLIC_USER]);
+
+        $dimensionId = $this->getStringParam($request, 'dimension_id', true);
+        $offset = $this->getIntParam($request, 'start', true);
+        $limit = $this->getIntParam($request, 'limit', false);
+        $searchText = $this->getStringParam($request, 'search_text');
+
+        $selectedFilterIds = $this->getStringParam($request, 'selectedFilterIds', false, []);
+        if (!is_array($selectedFilterIds)) {
+            $selectedFilterIds = explode(',', $selectedFilterIds);
+        }
+
+        $realms = $this->getStringParam($request, 'realm', false);
+        if ($realms !== null) {
+            $realms = preg_split('/,\s*/', trim($realms), null, PREG_SPLIT_NO_EMPTY);
+        }
+
+        return $this->json(MetricExplorer::getDimensionValues(
+            $user,
+            $dimensionId,
+            $realms,
+            $offset,
+            $limit,
+            $searchText,
+            $selectedFilterIds
+        ));
+    }
+
+    /**
+     * @Route("/metrics/explorer/get_dw_descripter", methods={"POST"})
+
+     * @param Request $request
+     * @return Response
+     * @throws Exception if unable to get the currently logged in user.
+     */
+    public function getDwDescriptors(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = \xd_security\getLoggedInUser();
+
+        $roles = $user->getAllRoles(true);
+
+        $roleDescriptors = array();
+        foreach ($roles as $activeRole) {
+            $shortRole = $activeRole;
+            $us_pos = strpos($shortRole, '_');
+            if ($us_pos > 0) {
+                $shortRole = substr($shortRole, 0, $us_pos);
+            }
+
+            if (array_key_exists($shortRole, $roleDescriptors)) {
+                continue;
+            }
+
+            // If enabled, try to lookup answer in cache first.
+            $cache_enabled = \xd_utilities\getConfiguration('internal', 'dw_desc_cache') === 'on';
+            $cache_data_found = false;
+            if ($cache_enabled) {
+                $db = \CCR\DB::factory('database');
+                $db->execute('create table if not exists dw_desc_cache (role char(5), response mediumtext, index (role) ) ');
+                $cachedResults = $db->query('select response from dw_desc_cache where role=:role', array('role' => $shortRole));
+                if (count($cachedResults) > 0) {
+                    $roleDescriptors[$shortRole] = unserialize($cachedResults[0]['response']);
+                    $cache_data_found = true;
+                }
+            }
+
+            // If the cache was not used or was not useful, get descriptors from code.
+            if (!$cache_data_found) {
+                $realms = [];
+                // NOTE: this variable is never utilized after being updated. can probably be removed.
+                $groupByObjects = [];
+
+                $realmObjects = Realms::getRealmObjectsForUser($user);
+                $query_descriptor_realms = Acls::getQueryDescripters($user);
+
+                foreach ($query_descriptor_realms as $query_descriptor_realm => $query_descriptor_groups) {
+                    $category = DataWarehouse::getCategoryForRealm($query_descriptor_realm);
+                    if ($category === null) {
+                        continue;
+                    }
+                    $seenStats = [];
+
+                    $realmObject = $realmObjects[$query_descriptor_realm];
+                    $realmDisplay = $realmObject->getDisplay();
+                    $realms[$query_descriptor_realm] = [
+                        'text'       => $query_descriptor_realm,
+                        'category'   => $realmDisplay,
+                        'dimensions' => [],
+                        'metrics'    => [],
+                    ];
+                    foreach ($query_descriptor_groups as $query_descriptor_group) {
+                        foreach ($query_descriptor_group as $query_descriptor) {
+                            if ($query_descriptor->getDisableMenu()) {
+                                continue;
+                            }
+
+                            $groupByName = $query_descriptor->getGroupByName();
+                            $group_by_object = $query_descriptor->getGroupByInstance();
+                            $permittedStatistics = $group_by_object->getRealm()->getStatisticIds();
+
+                            $groupByObjects[$query_descriptor_realm . '_' . $groupByName] = [
+                                'object'         => $group_by_object,
+                                'permittedStats' => $permittedStatistics
+                            ];
+                            $realms[$query_descriptor_realm]['dimensions'][$groupByName] = [
+                                'text' => $groupByName == 'none' ? 'None' : $group_by_object->getName(),
+                                'info' => $group_by_object->getHtmlDescription()
+                            ];
+
+                            $stats = array_diff($permittedStatistics, $seenStats);
+                            if (empty($stats)) {
+                                continue;
+                            }
+
+                            $statsObjects = $query_descriptor->getStatisticsClasses($stats);
+                            foreach ($statsObjects as $realm_group_by_statistic => $statistic_object) {
+
+                                if (!$statistic_object->showInMetricCatalog()) {
+                                    continue;
+                                }
+
+                                $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                                    $realm_group_by_statistic
+                                );
+                                $realms[$query_descriptor_realm]['metrics'][$realm_group_by_statistic] =
+                                    [
+                                        'text'    => $statistic_object->getName(),
+                                        'info'    => $statistic_object->getHtmlDescription(),
+                                        'std_err' => in_array($semStatId, $permittedStatistics)
+                                    ];
+                                $seenStats[] = $realm_group_by_statistic;
+                            }
+                        }
+                    }
+                    $texts = [];
+                    foreach ($realms[$query_descriptor_realm]['metrics'] as $key => $row) {
+                        $texts[$key] = $row['text'];
+                    }
+                    array_multisort($texts, SORT_ASC, $realms[$query_descriptor_realm]['metrics']);
+                }
+                $texts = [];
+                foreach ($realms as $key => $row) {
+                    $texts[$key] = $row['text'];
+                }
+                array_multisort($texts, SORT_ASC, $realms);
+
+                $roleDescriptors[$shortRole] = ['totalCount' => 1, 'data' => [['realms' => $realms]]];
+
+                // Cache the results if the cache is enabled.
+                if ($cache_enabled) {
+                    $db->execute('insert into dw_desc_cache (role, response) values (:role, :response)', [
+                        'role'     => $shortRole,
+                        'response' => serialize($roleDescriptors[$shortRole])
+                    ]);
+                }
+            }
+        }
+
+        $combinedRealmDescriptors = [];
+        foreach ($roleDescriptors as $roleDescriptor) {
+            foreach ($roleDescriptor['data'][0]['realms'] as $realm => $realmDescriptor) {
+                if (!isset($combinedRealmDescriptors[$realm])) {
+                    $combinedRealmDescriptors[$realm] = [
+                        'metrics'    => [],
+                        'dimensions' => [],
+                        'text'       => $realmDescriptor['text'],
+                        'category'   => $realmDescriptor['category'],
+                    ];
+                }
+
+                $combinedRealmDescriptors[$realm]['metrics'] += $realmDescriptor['metrics'];
+                $combinedRealmDescriptors[$realm]['dimensions'] += $realmDescriptor['dimensions'];
+            }
+        }
+
+        return $this->json([
+            'totalCount' => 1,
+            'data'       => [
+                [
+                    'realms' => $combinedRealmDescriptors
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @Route("/metrics/explorer/filters", methods={"POST"})
+
+     * @param Request $request
+     * @return Response
+     * @throws Exception if unable to retrieve the currently logged in user.
+     */
+    public function getFilters(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $returnData = [];
+
+        try {
+            $user = \xd_security\getLoggedInUser();
+
+            $userProfile = $user->getProfile();
+            $filters = $userProfile->fetchValue('filters');
+            if ($filters != null) {
+                $filtersArray = json_decode($filters);
+                $returnData = [
+                    'totalCount' => count($filtersArray),
+                    'message'    => 'success',
+                    'data'       => $filtersArray,
+                    'success'    => true
+                ];
+            } else {
+                $returnData = [
+                    'totalCount' => 0,
+                    'message'    => 'success',
+                    'data'       => [],
+                    'success'    => true
+                ];
+            }
+
+        } catch (SessionExpiredException $see) {
+            // TODO: Refactor generic catch block below to handle specific exceptions,
+            //       which would allow this block to be removed.
+            throw $see;
+        } catch (Exception $ex) {
+            $returnData = [
+                'totalCount' => 0,
+                'message'    => $ex->getMessage(),
+                'data'       => [],
+                'success'    => false
+            ];
+        }
+
+        return $this->json($returnData);
+    }
+
+    /**
+     * @Route("/metrics/explorer/raw_data", methods={"POST"})
+
+     * @param Request $request
+     * @return Response
+     * @throws SessionExpiredException|AccessDeniedException
+     */
+    public function getRawData(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $returnData = [];
+        $token = new PostAuthenticationToken();
+        try {
+            #$config = json_decode($this->getStringParam($request, 'config', true), true);
+            $requestedFormat = $this->getStringParam($request, 'format');
+            /*if (isset($_REQUEST['config'])) {
+                $config = json_decode($_REQUEST['config'], true);
+                $_REQUEST = array_merge($config, $_REQUEST);
+            }*/
+
+            /*$format = \DataWarehouse\ExportBuilder::getFormat(
+                $_REQUEST,
+                'jsonstore',
+                array(
+                    'jsonstore'
+                )
+            );*/
+            $format = DataWarehouse\ExportBuilder::validateFormat($requestedFormat, 'jsonstore', ['jsonstore']);
+            $inline = $this->getBooleanParam($request, 'inline', false, true);
+            $dataSetId = $this->getStringParam($request, 'datasetId', true);
+            $datapoint = $this->getStringParam($request, 'datapoint', true);
+            $showContextMenu = $this->getBooleanParam($request, 'showContextMenu', false, false);
+            $requestedStartDate = $this->getDateFromISO8601Param($request, 'start_date', true);
+            $requestedStartDateTs = date_timestamp_get($requestedStartDate);
+
+            $requestedEndDate = $this->getDateFromISO8601Param($request, 'end_date', true);
+            $requestedEndDateTs = date_timestamp_get($requestedEndDate);
+
+
+            if ($requestedStartDateTs > $requestedEndDateTs) {
+                throw new BadRequestHttpException('End date must be greater than or equal to start date');
+            }
+
+            $startDate = $requestedStartDate;
+            $endDate = $requestedEndDate;
+            $isTimeseries = $this->getBooleanParam($request, 'timeseries', false, false);
+            if ($isTimeseries) {
+                // For timeseries data the date range is set to be only the data-point that was
+                // selected. Therefore we adjust the start and end date appropriately
+
+                $time_period = TimeAggregationUnit::deriveAggregationUnitName(getAggregationUnit(), $requestedStartDate, $requestedEndDate);
+                $time_point = $datapoint / 1000;
+
+                list($startDate, $endDate) = TimeAggregationUnit::getRawTimePeriod($time_point, $time_period);
+            }
+
+            $title = $this->getStringParam($request, 'title');
+
+            /*$global_filters = getGlobalFilters();*/
+            $requestedGlobalFilters = $this->getStringParam($request, 'global_filters');
+            $globalFilters = (object)['data' => [], 'total' => 0];
+            if (!empty($requestedGlobalFilters)) {
+                $globalFiltersDecoded = json_decode($requestedGlobalFilters, true);
+                foreach ($globalFiltersDecoded['data'] as $datum) {
+                    $globalFilters->data[] = (object)$datum;
+                    $globalFilters->total++;
+                }
+            }
+
+            $dataset_classname = '\DataWarehouse\Data\SimpleDataset';
+
+
+            $all_data_series = getDataSeries($request);
+
+            $datasetid = $_REQUEST['datasetId'];
+
+            // find requested dataset.
+            $data_description = null;
+            foreach ($all_data_series as $data_description_index => $data_series) {
+                // NOTE: this only works if the id's are not floats.
+                if ("{$data_series->id}" == "$datasetid") {
+                    $data_description = $data_series;
+                    break;
+                }
+            }
+
+            if ($data_description === null) {
+                throw new Exception("Internal error");
+            }
+
+            // Check that the user has at least one role authorized to view this data.
+            MetricExplorer::checkDataAccess(
+                $user,
+                $data_description->realm,
+                'none',
+                $data_description->metric
+            );
+
+            if ($format === 'jsonstore') {
+
+                $query_classname = '\\DataWarehouse\\Query\\' . $data_description->realm . '\\RawData';
+
+                $query = new $query_classname(
+                    $data_description->realm,
+                    'day',
+                    $startDate,
+                    $endDate,
+                    null,
+                    $data_description->metric,
+                    []
+                );
+
+                $groupedRoleParameters = [];
+                foreach ($globalFilters->data as $global_filter) {
+                    if ($global_filter->checked == 1) {
+                        if (
+                            !isset(
+                                $groupedRoleParameters[$global_filter->dimension_id]
+                            )
+                        ) {
+                            $groupedRoleParameters[$global_filter->dimension_id]
+                                = [];
+                        }
+
+                        $groupedRoleParameters[$global_filter->dimension_id][]
+                            = $global_filter->value_id;
+                    }
+                }
+
+                $query->setMultipleRoleParameters($user->getAllRoles(), $user);
+
+                $query->setRoleParameters($groupedRoleParameters);
+
+                $query->setFilters($data_description->filters);
+
+                $dataset = new $dataset_classname($query);
+
+                // DEFINE: that we're going to be sending back json.
+                header('Content-type: application/json');
+
+                $filterOpts = array('options' => array('default' => null, 'min_range' => 0));
+
+                $limit = filter_input(INPUT_POST, 'limit', FILTER_VALIDATE_INT, $filterOpts);
+                $offset = filter_input(INPUT_POST, 'start', FILTER_VALIDATE_INT, $filterOpts);
+
+                $totalCount = $dataset->getTotalPossibleCount();
+
+                $ret = array();
+
+                // As a small optimization only compute the total count the first time (ie when the offset is 0)
+                if ($offset === null or $offset == 0) {
+                    $privquery = new $query_classname(
+                        $data_description->realm,
+                        'day',
+                        $startDate,
+                        $endDate,
+                        null,
+                        $data_description->metric,
+                        array()
+                    );
+                    $privquery->setRoleParameters($groupedRoleParameters);
+                    $privquery->setFilters($data_description->filters);
+                    $privdataset = new $dataset_classname($privquery);
+
+                    $ret['totalAvailable'] = $privdataset->getTotalPossibleCount();
+                }
+
+                $ret['data'] = $dataset->getResults($limit, $offset);
+                $ret['totalCount'] = $totalCount;
+
+                return $this->json($ret);
+                /*print json_encode($ret);*/
+                /*exit(0);*/
+
+            }
+        } catch (SessionExpiredException $see) {
+            // TODO: Refactor generic catch block below to handle specific exceptions,
+            //       which would allow this block to be removed.
+            throw $see;
+        } catch (Exception $ex) {
+            throw $ex;
+            /*\xd_response\presentError($ex);*/
+        }
+
+        return $this->json([
+            'success' => false,
+            'message' => 'An unexpected error has occurred. Please contact support.'
+        ]);
+    }
+
+
+    private function getDataSeries(Request $request): array
+    {
+        $requestedDataSeries = json_decode(
+            $this->getStringParam($request, 'data_series', false, '[]'),
+            true
+        );
+        if (is_array($requestedDataSeries) && is_array($requestedDataSeries['data'])) {
+
+        }
+    }
+
+    private function getDataSeriesFromArray(array $dataSeries): array
+    {
+        $results = [];
+        foreach ($dataSeries['data'] as $datum) {
+            $y = (object)$datum;
+
+            for ($i = 0, $b = count($y->filters['data']); $i < $b; $i++) {
+                $y->filters['data'][$i] = (object)$y->filters['data'][$i];
+            }
+
+            $y->filters = (object)$y->filters;
+
+            // Set values of new attribs for backward compatibility.
+            if (empty($y->line_type)) {
+                $y->line_type = 'Solid';
+            }
+
+            if (
+                empty($y->line_width)
+                || !is_numeric($y->line_width)
+            ) {
+                $y->line_width = 2;
+            }
+
+            if (empty($y->color)) {
+                $y->color = 'auto';
+            }
+
+            if (empty($y->shadow)) {
+                $y->shadow = false;
+            }
+
+            $results[] = $y;
+        }
+        return $results;
+    }
+
+    /**
+     * TODO: Finish this function.
+     * @param string $dataSeries
+     * @return array
+     */
+    private function getDataSeriesFromJsonString(string $dataSeries): array
+    {
+        $results = [];
+
+        return $results;
     }
 }

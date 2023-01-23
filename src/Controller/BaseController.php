@@ -1,18 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Access\Controller;
 
 use DateTime;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Twig\Environment;
 use XDUser;
 
 /**
- *
+ * This controller provides basic functionality for the other Controllers such as authorization and various methods of
+ * retrieving request parameters.
  */
 class BaseController extends AbstractController
 {
@@ -20,10 +28,25 @@ class BaseController extends AbstractController
     private const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
     /**
-     * @returns XDUser
-     * @throws Exception if any of the values supplied within $requirements are not valid Acls objects or string
-     *                   representations of Acl objects.
+     * @var LoggerInterface
      */
+    protected $logger;
+
+    /**
+     * @var Environment
+     */
+    protected $twig;
+
+    /**
+     * @param LoggerInterface $logger
+     * @param Environment $twig
+     */
+    public function __construct(LoggerInterface $logger, Environment $twig)
+    {
+        $this->logger = $logger;
+        $this->twig = $twig;
+    }
+
 
     /**
      * Will attempt to authorize the provided users' roles against the  provided array of role requirements.
@@ -31,9 +54,13 @@ class BaseController extends AbstractController
      * If the user is not authorized, an exception will be thrown. Otherwise, the function will simply return the
      * authorized user.
      *
-     * @param Request $request the current HTTP request object.
-     * @param array $requirements either an array of Acl objects or their equivalent string representations that are
+     * @param Request $request    the current HTTP request object.
+     * @param array $requiredAcls either an array of Acl objects or their equivalent string representations that are
      *                            required for access to a given feature.
+     * @param bool $anyAcl        default false. If true then the requesting user will be considered authorized if there
+     *                            is any overlap in the requirements and the users currently assigned acls. If false,
+     *                            the requesting user will only be considered authorized if they have *all* of the
+     *                            specified $requiredAcls.
      *
      * @return XDUser the currently logged in, authorized user.
      *
@@ -43,27 +70,31 @@ class BaseController extends AbstractController
      * @throws Exception if any of the values supplied within $requirements are not valid Acls objects or string
      *                   representations of Acl objects.
      */
-    public function authorize(Request $request, array $requirements = []): XDUser
+    public function authorize(Request $request, array $requiredAcls = [], bool $anyAcl = false): XDUser
     {
-        $user = $this->getUser();
-        if (null === $user) {
-            $user = $this->getUserFromRequest($request);
-            if (null === $user) {
-                $user = XDUser::getPublicUser();
-            }
-        } else {
-            $user = XDUser::getUserByUserName($user->getUserIdentifier());
-        }
 
-
+        $user = $this->getXDUser($request->getSession());
+        $this->logger->debug(
+            sprintf(
+                'Attempting to authorize user: %s (%s) with requirements: %s',
+                $user->getUsername(),
+                var_export($user->getAclNames(), true),
+                var_export($requiredAcls, true)
+            )
+        );
         // If role requirements were not given, then the only check to perform
         // is that the user is not a public user.
         $isPublicUser = $user->isPublicUser();
-        if (empty($requirements) && $isPublicUser) {
+        if (empty($requiredAcls) && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
-        $authorized = $user->hasAcls($requirements);
+        if ($anyAcl) {
+            $authorized = count(array_intersect($user->getAclNames(), $requiredAcls)) > 0;
+        } else {
+            $authorized = $user->hasAcls($requiredAcls);
+        }
+
         if ($authorized === false && !$isPublicUser) {
             throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
         } elseif ($authorized === false && $isPublicUser) {
@@ -83,6 +114,37 @@ class BaseController extends AbstractController
     protected function getUserFromRequest(Request $request)
     {
         return $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY);
+    }
+
+    /**
+     * @param Session $session
+     * @return XDUser
+     * @throws Exception
+     */
+    protected function getXDUser(Session $session): XDUser
+    {
+        $user = $this->getUser();
+        if (!isset($user)) {
+            if ($session->has('xdUser')) {
+                $user = XDUser::getUserByID($session->get('xdUser'));
+            } elseif ($session->has('xdmod_token')) {
+                $user = XDUser::getUserByToken($session->get('xdmod_token'));
+            } else {
+                if (!$session->has('public_session_token')) {
+                    $session->set('public_session_token', 'public-' . microtime(true) . '-' . uniqid());
+                }
+                $user = XDUser::getPublicUser();
+            }
+
+        } else {
+            $user = XDUser::getUserByUserName($user->getUserIdentifier());
+        }
+        return $user;
+    }
+
+    protected function getDashboardUser(Session $session)
+    {
+
     }
 
 
@@ -119,7 +181,9 @@ class BaseController extends AbstractController
                 $default,
         int     $filterId,
                 $filterOptions,
-        string  $expectedValueType)
+        string  $expectedValueType,
+        bool    $compressWhitespace = true
+    )
     {
         // Attempt to extract the parameter value from the request.
         $value = $request->get($name);
@@ -134,13 +198,23 @@ class BaseController extends AbstractController
             }
         }
 
+        // This is to accommodate the functionality from \xd_security\assertParameterSet that wasn't already provided
+        // by this function.
+        if ($expectedValueType === 'string' && $compressWhitespace) {
+            $value = preg_replace('/\s+/', ' ', $value);
+        }
+
         // Run the found parameter value through the given filter.
         $value = filter_var($value, $filterId, $filterOptions);
 
         // If the value is invalid, throw an exception.
         if ($value === null) {
             throw new BadRequestHttpException("Invalid value for $name. Must be a(n) $expectedValueType.");
+        } elseif ($value === false && $expectedValueType !== 'boolean') {
+            // This happens when filtering a value doesn't match a regexp.
+            throw new BadRequestHttpException("Invalid value for $name. Must conform to expected constraint");
         }
+
 
         // Return the filtered value.
         return $value;
@@ -252,17 +326,53 @@ class BaseController extends AbstractController
         Request $request,
         string  $name,
         bool    $mandatory = false,
-                $default = null
+                $default = null,
+        string  $pattern = null,
+        bool    $compressWhitespace = true
     )
+    {
+        if (!isset($pattern)) {
+            return $this->getParam(
+                $request,
+                $name,
+                $mandatory,
+                $default,
+                FILTER_DEFAULT,
+                [],
+                'string',
+                $compressWhitespace
+            );
+        } else {
+            return $this->getParam(
+                $request,
+                $name,
+                $mandatory,
+                $default,
+                FILTER_VALIDATE_REGEXP,
+                ['options' => ['regexp' => $pattern]],
+                'string',
+                $compressWhitespace
+            );
+        }
+    }
+
+    protected function getEmailParam(Request $request, string $name, bool $mandatory = false, $default = null)
     {
         return $this->getParam(
             $request,
             $name,
             $mandatory,
             $default,
-            FILTER_DEFAULT,
-            [],
-            'string'
+            FILTER_CALLBACK,
+            ['options' => function ($value) {
+                $validator = new EmailValidator();
+                if ($validator->isValid($value, new RFCValidation())) {
+                    return $value;
+                }
+                return null;
+            }],
+            'email',
+            false
         );
     }
 
@@ -424,6 +534,63 @@ class BaseController extends AbstractController
             ],
             'ISO 8601 Date'
         );
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    protected function verifyCaptcha(Request $request)
+    {
+        $captchaSiteKey = '';
+        $captchaSecret = '';
+        try {
+            $captchaSiteKey = \xd_utilities\getConfiguration('mailer', 'captcha_public_key');
+            $captchaSecret = \xd_utilities\getConfiguration('mailer', 'captcha_private_key');
+        } catch (\Exception $e) {
+        }
+
+        $user = $this->getUserFromRequest($request);
+
+        if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($user)) {
+            $gCaptchaResponse = $request->get('g-recaptcha-response');
+            if (!isset($gCaptchaResponse)) {
+                throw new BadRequestHttpException('Recaptcha information not specified');
+            }
+            $recaptcha = new \ReCaptcha\ReCaptcha($captchaSecret);
+            $resp = $recaptcha->verify($gCaptchaResponse, $_SERVER['REMOTE_ADDR']);
+            if (!$resp->isSuccess()) {
+                $errors = $resp->getErrorCodes();
+                throw new BadRequestHttpException(sprintf('You must enter the words in the Recaptcha box properly. %s', print_r($errors, true)));
+            }
+        }
+    }
+
+    /**
+     * @param string $section
+     * @param string $key
+     * @param $default
+     * @return string|null
+     */
+    protected function getConfigValue(string $section, string $key, $default = null): ?string
+    {
+        try {
+            $result = \xd_utilities\getConfiguration($section, $key);
+        } catch (\Exception $e) {
+            $result = $default;
+        }
+        return $result;
+    }
+
+    protected function getFeatures()
+    {
+        $features = \xd_utilities\getConfigurationSection('features');
+
+        // Convert array values to boolean
+        array_walk($features, function (&$v) {
+            $v = ($v == 'on');
+        });
+        return $features;
     }
 
 

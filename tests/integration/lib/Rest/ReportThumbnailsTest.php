@@ -19,7 +19,7 @@ class ReportThumbnailsTest extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$helpers as $helper) {
             $helper->logout();
@@ -28,7 +28,7 @@ class ReportThumbnailsTest extends TestCase
 
     public function testCdReport()
     {
-        $response = self::$helpers['cd']->get('rest/v1/dashboard/rolereport', null);
+        $response = self::$helpers['cd']->get('dashboard/rolereport', null);
         $this->assertEquals(8, sizeof($response[0]['data']['queue']));
 
         // delete report
@@ -42,7 +42,7 @@ class ReportThumbnailsTest extends TestCase
 
     public function testCsReport()
     {
-        $response = self::$helpers['cs']->get('rest/v1/dashboard/rolereport', null);
+        $response = self::$helpers['cs']->get('dashboard/rolereport', null);
         $this->assertEquals(4, sizeof($response[0]['data']['queue']));
 
         // delete report

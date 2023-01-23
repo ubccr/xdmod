@@ -245,7 +245,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $this->helper->authenticateDirect($username, $username);
 
-        $response = $this->helper->get('rest/v0.1/warehouse/quick_filters');
+        $response = $this->helper->get('warehouse/quick_filters');
         $this->validateResponse($response);
 
         $this->assertArrayHasKey('results', $response[0]);
@@ -831,7 +831,7 @@ class UserAdminTest extends BaseUserAdminTest
         $expectedData = $options['expected'];
         $expectedContentType = $expectedData['content_type'];
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array_merge(
             array(

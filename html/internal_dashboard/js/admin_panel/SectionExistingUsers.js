@@ -722,7 +722,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         var cmbUserMapping = new CCR.xdmod.ui.TGUserDropDown({
-            controllerBase: '../controllers/sab_user.php',
             dashboardMode: true,
             user_management_mode: true,
             fieldLabel: 'Map To',

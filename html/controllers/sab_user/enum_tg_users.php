@@ -36,8 +36,9 @@ $user_session_variable
     = (isset($_POST['dashboard_mode']))
     ? 'xdDashboardUser'
     : 'xdUser';
+$session = \xd_security\SessionSingleton::getSession();
 
-$user = \XDUser::getUserByID($_SESSION[$user_session_variable]);
+$user = \XDUser::getUserByID($session->get($user_session_variable));
 
 if (
    $user->hasAcl(ROLE_ID_CAMPUS_CHAMPION)

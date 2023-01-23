@@ -7,9 +7,9 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class JobViewerTest extends BaseTest
 {
-    const ENDPOINT = 'rest/v0.1/warehouse/';
+    const ENDPOINT = '/warehouse/';
 
-    public function setUp()
+    public function setUp(): void
     {
         $xdmodConfig = array( 'decodetextasjson' => true );
         $this->xdmodhelper = new XdmodTestHelper($xdmodConfig);

@@ -11,13 +11,14 @@ use XDChartPool;
 use XDUser;
 
 /**
- * @Route("/controllers/chart_pool.php")
+ *
  */
 class ChartPoolController extends BaseController
 {
 
     /**
-     * @Route("", methods={"POST"})
+     * @Route("/controllers/chart_pool.php", methods={"POST"})
+     * @Route("/chart_pool")
      * @param Request $request
      * @return Response
      * @throws Exception

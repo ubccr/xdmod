@@ -6,7 +6,11 @@ namespace Access\Security\Authenticators;
 
 
 use Access\Security\TokenUserProvider;
+use Models\Services\Users;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -17,15 +21,20 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use XDUser;
 
 /**
  *
  */
 class TokenAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface
 {
+    use TargetPathTrait;
+
     /**
      * @var LoggerInterface
      */
@@ -47,7 +56,7 @@ class TokenAuthenticator extends AbstractAuthenticator implements AuthenticatorI
         $this->httpUtils = $httpUtils;
         $this->options = array_merge([
             'token_parameter' => 'xdmod_token',
-            'check_path' => 'login'
+            'check_path' => '/login'
         ], $options);
     }
 
@@ -57,18 +66,24 @@ class TokenAuthenticator extends AbstractAuthenticator implements AuthenticatorI
      */
     public function supports(Request $request): bool
     {
-        /*$supports = $request->cookies->has($this->options['token_parameter']);
-        $this->logger->warning('Checking that TokenAuthenticator supports a request', [$supports]);*/
-        return false;
+        $hasToken = $request->cookies->has($this->options['token_parameter']);
+
+        $requestPath = $this->httpUtils->checkRequestPath($request, $this->options['check_path']);
+
+        $this->logger->debug('Checking that TokenAuthenticator supports a request', ['has_token' => $hasToken, 'request_path' => $requestPath]);
+
+        return $hasToken;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function authenticate(Request $request): PassportInterface
+    public function authenticate(Request $request): Passport
     {
-        $this->logger->warning('Initiating token authentication');
         $token = $request->cookies->get($this->options['token_parameter']);
+
+        $this->logger->info(sprintf('Initiating token authentication for [%s]', $token));
+
         return new SelfValidatingPassport(new UserBadge($token), [new RememberMeBadge()]);
     }
 
@@ -77,6 +92,9 @@ class TokenAuthenticator extends AbstractAuthenticator implements AuthenticatorI
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $user = $token->getUser();
+        $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
+        $request->getSession()->set('xdUser', $xdUser->getUserID());
         return null;
     }
 

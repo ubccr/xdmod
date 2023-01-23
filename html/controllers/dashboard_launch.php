@@ -10,14 +10,15 @@
    xd_security\enforceUserRequirements(array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE));
    
    $response = array('action' => 'dashboard_launch');
-   
+
+   $session = \xd_security\SessionSingleton::getSession();
    try {
-   
+
       $user = \xd_security\getLoggedInUser();
-      
+
+
       if ( isset($user) && $user->isManager() ) {
-      
-         $_SESSION['xdDashboardUser'] = $user->getUserID();
+         $session->set('xdDashboardUser', $user->getUserID());
          $response['success'] = true;
          
       }
@@ -34,7 +35,7 @@
       throw $see;
    }
    catch(Exception $e) {
-      
+      $session->remove('xdDashboardUser');
       unset($_SESSION['xdDashboardUser']);
       $response['success'] = false;
    

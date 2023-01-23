@@ -3,13 +3,14 @@
 namespace IntegrationTests\Configuration;
 
 use Exception;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use CCR\Json;
 
 /**
  * Test the Open XDMoD version number.
  */
-class VersionNumberTest extends PHPUnit_Framework_TestCase
+class VersionNumberTest extends TestCase
 {
     /**
      * Absolute path to portal_settings.ini of installed Open XDMoD.
@@ -23,7 +24,7 @@ class VersionNumberTest extends PHPUnit_Framework_TestCase
      */
     private $buildJsonPath;
 
-    public function setUp()
+    public function setUp(): void
     {
         $buildJsonPath = __DIR__ . '/../../../../open_xdmod/modules/xdmod/build.json';
         $this->buildJsonPath = realpath($buildJsonPath);

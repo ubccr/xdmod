@@ -376,8 +376,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
     },
 
     myUsage: false,
-    treeDataURL: 'controllers/user_interface.php',
-    chartDataURL: 'controllers/user_interface.php',
+    treeDataURL: '/interfaces/user/menus',
+    chartDataURL: '/interfaces/user/charts',
 
     chartDataFields: [
 
@@ -1311,7 +1311,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 parameters.format = 'jsonstore';
                 parameters.operation = 'get_data';
 
-                viewGrid.store.proxy.setUrl('controllers/user_interface.php', true);
+                viewGrid.store.proxy.setUrl('/interfaces/user/data', true);
                 viewGrid.store.load({
                     params: parameters
                 });
@@ -1856,7 +1856,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                 parameters['operation'] = 'get_data';
 
-                CCR.invokePost("controllers/user_interface.php", parameters);
+                CCR.invokePost("/interfaces/user/data", parameters);
 
             } //if (selectedNode != null)
 
@@ -2342,7 +2342,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             getXTypes: function () {
                                 return 'html';
                             },
-                            html: '<img src="/controllers/user_interface.php?' + params + '" />'
+                            html: '<img src="/interaces/user/data?' + params + '" />'
 
                         });
 

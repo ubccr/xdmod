@@ -44,6 +44,7 @@ class XdmodTestHelper
     {
         // Close existing session to write cookies to file.
         if (isset($this->curl)) {
+            curl_reset($this->curl);
             curl_close($this->curl);
         }
 
@@ -130,16 +131,35 @@ class XdmodTestHelper
         return null;
     }
 
-    public function authenticate($userrole)
+    public function authenticate($userrole, $verbose = false)
     {
         if (! isset($this->config['role'][$userrole])) {
             throw new \Exception("User role $userrole not defined in testing.json file");
         }
         $this->userrole = $userrole;
         $this->setauthvariables(null);
-        $authresult = $this->post("rest/auth/login", null, $this->config['role'][$userrole]);
+        $authresult = $this->post("login", null, $this->config['role'][$userrole]);
+        if ($verbose && (!isset($authresult[0]) || !isset($authresult[0]['results']))) {
+            $exception = new \Exception('Testing');
+            echo "Invalid Login Return Data at\n";
+            echo $exception->getTraceAsString();
+            echo "\n";
+            print_r($authresult[1]);
+            exit;
+        }
+        if ($verbose === true) {
+            $exception = new \Exception('Testing');
+            echo "\n";
+            echo "*******************\n";
+            echo $exception->getTraceAsString();
+            print_r($authresult);
+            echo "*******************\n";
+            echo "\n";
+        }
+
         $authtokens = $authresult[0]['results'];
-        $this->setauthvariables($authtokens['token']);
+        $cookie = isset($authresult[2]['Set-Cookie']) ? $authresult[2]['Set-Cookie'] : null;
+        $this->setauthvariables($authtokens['token'], $cookie);
     }
 
     public function authenticateDirect($username, $password)
@@ -149,7 +169,7 @@ class XdmodTestHelper
             'password' => $password
         );
         $this->setauthvariables(null);
-        $authresult = $this->post("rest/auth/login", null, $data);
+        $authresult = $this->post("login", null, $data);
         $authtokens = $authresult[0]['results'];
         $this->setauthvariables($authtokens['token']);
     }
@@ -190,7 +210,7 @@ class XdmodTestHelper
      */
     public function authenticateSSO($parameters, $includeDefault = true)
     {
-        $result = $this->get('rest/auth/idpredirect', array('returnTo' => '/gui/general/login.php'));
+        $result = $this->get('auth/idpredirect', array('returnTo' => '/gui/general/login.php'));
         $nextlocation = $result[0];
         $result = $this->get($nextlocation, null, true);
 
@@ -239,13 +259,14 @@ class XdmodTestHelper
             'xdmod_password' => $this->config['role'][$userrole]['password']
         );
         $authresult = $this->post("internal_dashboard/user_check.php", null, $data);
+#        print_r($authresult);
         $cookie = isset($authresult[2]['Set-Cookie']) ? $authresult[2]['Set-Cookie'] : null;
         $this->setauthvariables('', $cookie);
     }
 
     public function logout()
     {
-        $this->post("rest/auth/logout", null, null);
+        $this->post("logout", null, null);
         $this->setauthvariables(null);
     }
 

@@ -172,6 +172,12 @@
         CCR.xdmod.captcha_sitekey = '{{ captcha_site_key }}';
         CCR.xdmod.features = {{ xdmod_features | raw}};
         CCR.xdmod.timezone = '{{ timezone }}';
+
+        {% if is_granted('IS_IMPERSONATOR') %}
+        CCR.xdmod.ui.isImpersonating = true;
+        {% else %}
+        CCR.xdmod.ui.isImpersonating = false;
+        {% endif %}
     </script>
 
     {% if user is not null %}
@@ -336,10 +342,9 @@
     {% endif %}
     <script type="text/javascript" src="{{ asset('gui/js/Viewer.js') }}"></script>
 
-    {% for asset_path in asset_paths %}
-        {{ asset_path }}
-    {% endfor %}
-
+    {% if user is not null and not is_public_user %}
+        {{ asset_paths | raw }}
+    {% endif %}
 
 
     <script type="text/javascript">

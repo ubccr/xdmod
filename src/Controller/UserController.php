@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace Access\Controller;
 
+use Exception;
+use Models\Services\Acls;
 use Models\Services\Organizations;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,17 +12,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use xd_security\SessionSingleton;
 use XDUser;
+use XDWarehouse;
 
 /**
- * @Route(path="users")
+ * @Route(path="/users")
  */
-class UserController extends AbstractController
+class UserController extends BaseController
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+
 
     /**
      * The set of profile details that are allowed to be set by users for themselves.
@@ -54,17 +56,87 @@ class UserController extends AbstractController
         ],
     ];
 
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-
     /**
-     * @Route(path="/curent", name="get_current_user")
+     * @Route("", methods={"POST"})
      * @param Request $request
      * @return Response
-     * @throws \Exception
+     * @throws Exception
+     */
+    public function listUsers(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $start = $this->getIntParam($request, 'start', true);
+        $limit = $this->getIntParam($request, 'limit', true);
+        $searchMode = $this->getStringParam($request, 'search_mode', true);
+        $piOnly = $this->getBooleanParam($request, 'pi_only', true);
+        $nameFilter = $this->getStringParam($request, 'query');
+        $userManagement = $this->getBooleanParam($request, 'userManagement');
+
+        $universityId = null;
+        $searchMethod = null;
+        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        if ($user->hasAcl(ROLE_ID_CAMPUS_CHAMPION) && !isset($userManagement)) {
+            $universityId = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'provider');
+        }
+
+        switch ($searchMode) {
+            case 'formal_name':
+                $searchMethod = FORMAL_NAME_SEARCH;
+                break;
+            case 'username':
+                $searchMethod = USERNAME_SEARCH;
+        }
+
+        $dataWarehouse = new XDWarehouse();
+
+        list($userCount, $users) = $dataWarehouse->enumerateGridUsers(
+            $searchMethod,
+            $start,
+            $limit,
+            $nameFilter,
+            $piOnly,
+            $universityId
+        );
+
+        $entryId = 0;
+        $userEntries = [];
+        foreach ($users as $currentUser) {
+            $entryId++;
+
+            $personName = 'Invalid';
+            $personId = -666;
+            switch ($searchMode) {
+                case 'formal_name':
+                    $personName = $currentUser['long_name'];
+                    $personId = $currentUser['id'];
+                    break;
+                case 'username':
+                    $personName = $currentUser['abusername'];
+                    $personId = sprintf('%s;%s', $currentUser['id'], $currentUser['abusername']);
+                    break;
+            }
+            $userEntries[] = [
+                'id' => $entryId,
+                'person_id' => $personId,
+                'person_name' => $personName
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'status' => 'success',
+            'message' => 'success',
+            'total_user_count' => $userCount,
+            'users' => $userEntries
+        ]);
+    }
+
+    /**
+     * @Route(path="/current", methods={"GET"}, name="get_current_user")
+     * @param Request $request
+     * @return Response
+     * @throws Exception
      */
     public function getCurrentUser(Request $request)
     {
@@ -89,7 +161,7 @@ class UserController extends AbstractController
      * @Route(path="/current", methods={"PATCH"}, name="update_current_user")
      * @param Request $request
      * @return Response
-     * @throws \Exception if unable to look up an XDUser by the currently logged in user's id.
+     * @throws Exception if unable to look up an XDUser by the currently logged in user's id.
      */
     public function updateCurrentUser(Request $request)
     {
@@ -115,6 +187,7 @@ class UserController extends AbstractController
         ]);
     }
 
+
     /**
      * Extract information from a user object.
      *
@@ -122,7 +195,7 @@ class UserController extends AbstractController
      *
      * @param XDUser $user The user object to extract data from.
      * @return array        An associative array of data for the user.
-     * @throws \Exception
+     * @throws Exception
      */
     private function extractUserData(XDUser $user)
     {
@@ -144,26 +217,26 @@ class UserController extends AbstractController
             $rawRealmConfig
         );
 
-        return array(
+        return [
             'first_name' => $user->getFirstName(),
             'last_name' => $user->getLastName(),
             'email_address' => $emailAddress,
             'is_sso_user' => $user->isSSOUser(),
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
-            'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
+            'autoload_suppression' => SessionSingleton::getSession()->get('suppress_profile_autoload', false),
             'field_of_science' => $user->getFieldOfScience(),
             'active_role' => $mostPrivilegedFormalName,
             'most_privileged_role' => $mostPrivilegedFormalName,
             'person_id' => $user->getPersonID(true),
             'raw_data_allowed_realms' => $rawDataRealms
-        );
+        ];
     }
 
     /**
      * Extract user profile properties from a request that are allowed to be
      * set by the user.
      *
-     * @param  Request $request The request to extract properties from.
+     * @param Request $request The request to extract properties from.
      * @return array            An array containing properties
      */
     private function extractUserSettableProperties(Request $request)
@@ -183,8 +256,8 @@ class UserController extends AbstractController
     /**
      * Update a user with new details.
      *
-     * @param  XDUser $user              The user to update.
-     * @param  array  $updatedProperties A mapping of properties to update
+     * @param XDUser $user The user to update.
+     * @param array $updatedProperties A mapping of properties to update
      *                                   to their new values.
      *
      * @throws Exception The new property values failed to save.
@@ -200,13 +273,14 @@ class UserController extends AbstractController
                 continue;
             }
             $propertyOptions = self::$propertySettingOptions[$propertyName];
-
+            $this->logger->info("Calling: {$propertyOptions['setter']} with value $propertyValue");
             $user->{$propertyOptions['setter']}($propertyValue);
         }
-
+        $this->logger->info('Saving User!');
         // Attempt to save the user's new details. This will throw an exception
         // if an error occurs.
         $user->saveUser();
+        $this->logger->info('User Saved!');
     }
 
 }

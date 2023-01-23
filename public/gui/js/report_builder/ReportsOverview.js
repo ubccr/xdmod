@@ -66,8 +66,8 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          ],
 
          proxy: new Ext.data.HttpProxy({
-            method: 'POST',
-            url: 'controllers/report_builder.php'
+            method: 'GET',
+            url: 'reports/builder/list'
          })
 
       });//this.reportStore
@@ -358,7 +358,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
                   conn.request({
 
-                     url: 'controllers/report_builder.php',
+                     url: 'reports/builder/remove',
                      params: objParams,
                      method: 'POST',
 
@@ -419,9 +419,9 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          conn.request({
 
-            url: 'controllers/report_builder.php',
+            url: 'reports/builder/' + record.data.report_id,
             params: objParams,
-            method: 'POST',
+            method: 'GET',
 
             callback: function(options, success, response) {
                var reportData;
@@ -481,7 +481,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          conn.request({
 
-            url: 'controllers/report_builder.php',
+            url: 'reports/builder/name',
             params: {operation: 'get_new_report_name'},
             method: 'POST',
 
@@ -554,7 +554,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          conn.request({
 
-            url: 'controllers/report_builder.php',
+            url: 'reports/builder/templates/' + template_id,
             params: objParams,
             method: 'POST',
 
@@ -593,7 +593,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          conn.request({
 
-            url: 'controllers/report_builder.php',
+            url: 'reports/builder/' + queueGrid.getSelectionModel().getSelected().data.report_id,
             params: objParams,
             method: 'POST',
 

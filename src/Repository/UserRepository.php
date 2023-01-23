@@ -5,7 +5,6 @@ namespace Access\Repository;
 
 use Access\Entity\User;
 use CCR\DB;
-use PDO;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 

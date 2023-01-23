@@ -44,9 +44,9 @@ XDMoD.Reporting.ReportCloneMenu = Ext.extend(Ext.Button,  {
 
          conn.request({
 
-            url: 'controllers/report_builder.php',
+            url: 'reports/builder/templates',
             params: {operation: 'enum_templates'},
-            method: 'POST',
+            method: 'GET',
 
             callback: function(options, success, response) {
 

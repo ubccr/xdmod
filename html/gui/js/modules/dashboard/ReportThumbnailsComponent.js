@@ -45,7 +45,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                     name: 'thumbnail_link',
                     convert: function (v, rec) {
                         var params = {};
-                        var v_split = v.split('/report_image_renderer.php?')[1].split('&');
+                        var v_split = v.split('/reports/builder/image')[1].split('&');
                         for (var index = 0; index < v_split.length; index++) {
                             var tmpk = v_split[index].split('=')[0];
                             var tmpv = v_split[index].split('=')[1];
@@ -53,10 +53,10 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                         }
                         var value;
                         if (!(self.timeframe.start_date === null && self.timeframe.end_date === null)) {
-                            value = '/report_image_renderer.php?type=cached&ref=' + params.ref;
+                            value = '/reports/builder/image?type=cached&ref=' + params.ref;
                             value = value + '&start=' + self.timeframe.start_date + '&end=' + self.timeframe.end_date + '&token=';
                         } else {
-                            value = '/report_image_renderer.php?type=report&ref=' + params.ref;
+                            value = '/reports/builder/image?type=report&ref=' + params.ref;
                             value += '&token=';
                         }
                         return value;
@@ -87,7 +87,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
             prepareData: function (data) {
                 data.shortName = Ext.util.Format.ellipsis(data.chart_title, 50);
                 var params = {};
-                var v_split = data.thumbnail_link.split('/report_image_renderer.php?')[1].split('&');
+                var v_split = data.thumbnail_link.split('/reports/builder/image?')[1].split('&');
                 for (var index = 0; index < v_split.length; index++) {
                     var tmpk = v_split[index].split('=')[0];
                     var tmpv = v_split[index].split('=')[1];

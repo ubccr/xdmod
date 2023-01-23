@@ -69,7 +69,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
             $this->helper->authenticate($username);
         }
 
-        $response = $this->helper->get('rest/v0.1/dashboard/statistics', $params);
+        $response = $this->helper->get('dashboard/statistics', $params);
         if ($username !== ROLE_ID_PUBLIC) {
             $this->helper->logout();
         }

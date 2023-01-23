@@ -128,16 +128,16 @@ XDMoD.Module.About = Ext.extend(XDMoD.PortalModule, {
         this.addListener('activate', function() {
             var item = decodeURIComponent(CCR.tokenize(Ext.History.getToken()).params);
             var items = {
-                XDMoD: '/about/xdmod.php',
-                'Open XDMoD': '/about/openxd.html',
-                SUPReMM: '/about/supremm.html',
-                Federated: '/about/federated.php',
-                Roadmap: '/about/roadmap.php',
-                Team: '/about/team.html',
-                Publications: '/about/publications.html',
-                Presentations: '/about/presentations.html',
-                Links: '/about/links.html',
-                'Release Notes': '/about/release_notes/' + (CCR.xdmod.features.xsede ? 'xsede.html' : 'xdmod.html')
+                XDMoD: '/about/xdmod',
+                'Open XDMoD': '/about/open_xdmod',
+                SUPReMM: '/about/supremm',
+                Federated: '/about/federated',
+                Roadmap: '/about/roadmap',
+                Team: '/about/team',
+                Publications: '/about/publications',
+                Presentations: '/about/presentations',
+                Links: '/about/links',
+                'Release Notes': '/about/release_notes/' + (CCR.xdmod.features.xsede ? 'xsede' : 'xdmod')
             };
             if (!item || !items[item]) {
                 item = lastViewed;

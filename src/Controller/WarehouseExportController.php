@@ -32,10 +32,7 @@ class WarehouseExportController extends BaseController
      */
     private const LOG_MODULE = 'data-warehouse-export';
 
-    /**
-     * @var Logger
-     */
-    private $logger;
+
 
     /**
      * @var RealmManager
@@ -50,18 +47,20 @@ class WarehouseExportController extends BaseController
     /**
      * @throws Exception if unable to instantiate the logger.
      */
-    public function __construct()
+    public function __construct(LoggerInterface $logger)
     {
-        $this->logger = Log::factory(
+        parent::__construct($logger);
+        /*$this->logger = Log::factory(
             'data-warehouse-export-rest',
             [
                 'console' => false,
                 'file' => false,
                 'mail' => false
             ]
-        );
+        );*/
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);
+
     }
 
 

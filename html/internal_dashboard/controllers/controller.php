@@ -12,7 +12,8 @@ $response = array();
 $operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : '';
 
 if ($operation == 'logout') {
-
+    $session = \xd_security\SessionSingleton::getSession();
+    $session->remove('xdDashboardUser');
     unset($_SESSION['xdDashboardUser']);
     $response['success'] = true;
 

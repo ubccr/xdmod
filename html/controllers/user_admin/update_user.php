@@ -49,8 +49,9 @@ if ($qualifyingParams == 0) {
 }
 
 // -----------------------------
+$session = \xd_security\SessionSingleton::getSession();
 
-$me = XDUser::getUserByID($_SESSION['xdDashboardUser']);
+$me = XDUser::getUserByID($session->get('xdDashboardUser'));
 
 if ($me->getUserID() == $user_to_update->getUserID()) {
 

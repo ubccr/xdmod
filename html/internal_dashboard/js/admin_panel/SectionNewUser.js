@@ -40,7 +40,6 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             cls: 'new_user_map_to',
             dashboardMode: true,
             user_management_mode: true,
-            controllerBase: '../controllers/sab_user.php',
             fieldLabel: 'Map To',
             emptyText: 'User not mapped',
             hiddenName: 'nm_new_user_mapping',

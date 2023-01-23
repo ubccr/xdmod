@@ -1080,13 +1080,28 @@ var logoutCallback = function () {
 };
 
 CCR.xdmod.ui.actionLogout = function () {
-    XDMoD.TrackEvent("Portal", "logout link clicked");
-    XDMoD.REST.Call({
-        action: './../logout',
-        method: 'POST',
-        callback: logoutCallback
-    });
+    if (CCR.xdmod.ui.isImpersonating) {
+        CCR.xdmod.ui.stopImpersonation();
+    } else {
+        XDMoD.TrackEvent("Portal", "logout link clicked");
+        XDMoD.REST.Call({
+            action: './../logout',
+            method: 'POST',
+            callback: logoutCallback
+        });
+    }
 }; //actionLogout
+
+CCR.xdmod.ui.stopImpersonation = function() {
+    XDMoD.TrackEvent('Portal', 'Exiting Impersonation');
+    Ext.Ajax.request({
+        url: '/' + '?_switch_user=_exit&token=' + XDMoD.REST.token,
+        method: 'GET',
+        success: function () {
+            location.reload();
+        }
+    });
+}
 
 
 // Used in html/gui/general/login.php

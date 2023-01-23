@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use UserStorage;
@@ -267,9 +266,12 @@ class WarehouseController extends BaseController
      */
     public function getRealms(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $user = $this->authorize($request);
+        $user = $this->getUser();
+        if (null === $user) {
+            $user = XDUser::getPublicUser();
+        } else {
+            $user = XDUser::getUserByUserName($user->getUserIdentifier());
+        }
 
         // Get the realms for the query group and the user's active role.
         $realms = Realms::getRealmsForUser($user);
@@ -287,8 +289,12 @@ class WarehouseController extends BaseController
      */
     public function getDimensions(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = $this->authorize($request);
+        $user = $this->getUser();
+        if (null === $user) {
+            $user = XDUser::getPublicUser();
+        } else {
+            $user = XDUser::getUserByUserName($user->getUserIdentifier());
+        }
 
         $realm = $this->getStringParam($request, 'realm');
 
@@ -336,9 +342,12 @@ class WarehouseController extends BaseController
      */
     public function getDimensionValues(Request $request, string $dimension): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $user = $this->authorize($request);
+        $user = $this->getUser();
+        if (null === $user) {
+            $user = XDUser::getPublicUser();
+        } else {
+            $user = XDUser::getUserByUserName($user->getUserIdentifier());
+        }
 
         // Get Parameter values for feeding to MetricExplorer::getDimensionValues
         $offset = $this->getIntParam($request, 'offset', false, 0);
@@ -1065,9 +1074,9 @@ class WarehouseController extends BaseController
         XDUser  $user,
         string  $realm,
         int     $jobId,
-        string  $tsId,
-        int     $nodeId,
-        int     $cpuId
+        ?string  $tsId,
+        ?int     $nodeId,
+        ?int     $cpuId
     ): Response
     {
         $infoClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";

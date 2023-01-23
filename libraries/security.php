@@ -5,6 +5,7 @@
 
 namespace xd_security;
 
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
 use SessionExpiredException;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -97,13 +98,13 @@ function detectUser($failover_methods = array())
         switch ($failover_methods[0]) {
             case XDUser::PUBLIC_USER:
                 if (
-                    ( isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
+                    (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
                     ($session->has('public_session_token'))
                 ) {
                     return XDUser::getPublicUser();
                 } else {
                     // Previously: Exception with 'Session Expired', No Public User code
-                    throw new \SessionExpiredException();
+                    throw new \SessionExpiredException($e->getMessage());
                 }
                 break;
             case XDUser::INTERNAL_USER:
@@ -204,11 +205,11 @@ function getDashboardUser()
 function getLoggedInUser()
 {
     $session = SessionSingleton::getSession();
+    // This is where the
     $sessionUserId = $session->get('xdUser');
     if (!isset($sessionUserId)) {
-        throw new \SessionExpiredException();
+        throw new \SessionExpiredException("SessionUserId: $sessionUserId");
     }
-
     $user = XDUser::getUserByID($sessionUserId);
 
     if ($user == NULL) {
@@ -470,5 +471,5 @@ function assertEmailParameterSet($param_name)
 function isEmailValid($email)
 {
     $validator = new \Egulias\EmailValidator\EmailValidator();
-    return $validator->isValid($email);
+    return $validator->isValid($email, new RFCValidation());
 }

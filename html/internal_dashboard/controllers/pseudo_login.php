@@ -21,21 +21,35 @@ function getAbsoluteURL()
    // ======================================================================
       
    if (isset($_REQUEST['uid'])) {
+       $logger = \CCR\Log::factory('pseudo-login', [
+           'console' => false,
+           'fileLogLevel' => \CCR\Log::INFO,
+           'db' => false,
+           'mail' => false
+       ]);
 
       $user_to_login_as = $_REQUEST['uid'];
-
+       $logger->info("Logging In as User: $user_to_login_as");
       $user = XDUser::getUserById($user_to_login_as);
 
       if (!XDUser::isAuthenticated($user)) {
          print "Unknown user id specified in the REQUEST['uid'] parameter";
          exit;
       }
+       $logger->info('Performing post login!');
 
       $user->postLogin();
 
       $redirect_url = str_replace('internal_dashboard/controllers/pseudo_login.php', '', getAbsoluteURL());
-   
-      header("Location: $redirect_url");
+      if (substr($redirect_url, strlen($redirect_url) - 1) === '/' ){
+          $redirect_url = substr($redirect_url, 0, strlen($redirect_url) - 1);
+      }
+       $logger->info("Redirecting to url: $redirect_url");
+       $session = \xd_security\SessionSingleton::getSession();
+       $session->set('xdUser', $user->getUserID());
+       $session->set('xdmod_token', $user->getToken());
+
+      header("Location: {$redirect_url}/?_switch_user={$user->getUsername()}");
 
       exit;
 

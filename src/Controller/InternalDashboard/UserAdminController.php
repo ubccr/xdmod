@@ -13,6 +13,7 @@ use Models\Services\Acls;
 use Models\Services\Users;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -24,12 +25,55 @@ use function xd_response\buildError;
 
 
 /**
- * @Route("/internal_dashboard/users")
+ *
  */
 class UserAdminController extends BaseController
 {
     /**
-     * @Route("", methods={"POST"})
+     * @Route("/controllers/user_admin.php")
+     * @param Request $request
+     * @return Response
+     * @throws Exception
+     */
+    public function index(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->authorize($request, ['mgr']);
+
+        $operation = $this->getStringParam($request, 'operation', true);
+        switch ($operation) {
+            case 'create_user':
+                return $this->createUser($request);
+            case 'delete_user':
+                return $this->deleteUser($request);
+            case 'empty_report_image_cache':
+                return $this->emptyReportImageCache($request);
+            case 'enum_institutions':
+                return $this->enumInstitutions($request);
+            case 'enum_exception_email_addresses':
+                return $this->enumExceptionEmailAddresses($request);
+            case 'enum_resource_providers':
+                return $this->enumResourceProviders($request);
+            case 'enum_roles':
+                break;
+            case 'get_user_details':
+                $userId = $this->getStringParam($request, 'uid', true, null, RESTRICTION_UID);
+                return $this->getUserDetails($request, $userId);
+            case 'list_users':
+                return $this->listUsers($request);
+            case 'pass_reset':
+                return $this->passwordReset($request);
+            case 'search_users':
+                return $this->searchForUsers($request);
+            case 'update_user':
+                return $this->updateUser($request);
+        }
+        throw new BadRequestHttpException('invalid operation specified');
+    }
+
+    /**
+     * @Route("/internal_dashboard/users", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -69,7 +113,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/metadata", methods={"GET"})
+     * @Route("/internal_dashboard/users/metadata", methods={"GET"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -92,15 +137,18 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/create", methods={"POST"})
+     * @Route("/internal_dashboard/users/create", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
      */
     public function createUser(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
+        $this->logger->warning('[start] Creating User');
+
+        /*$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->authorize($request, ['mgr']);*/
 
         $userName = $this->getStringParam($request, 'username', true, null, RESTRICTION_USERNAME);
         $firstName = $this->getStringParam($request, 'first_name', true, null, RESTRICTION_FIRST_NAME);
@@ -174,7 +222,7 @@ class UserAdminController extends BaseController
             'subject'   => $subject,
             'toAddress' => $emailAddress
         ]);
-
+        $this->logger->warning('[done] Creating User');
         return $this->json([
             'success' => true,
             'user_type' => $userType,
@@ -183,7 +231,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/update", methods={"POST"})
+     * @Route("/internal_dashboard/users/update", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -359,7 +408,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/search", methods={"POST"})
+     * @Route("/internal_dashboard/users/search", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -382,7 +432,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/password", methods={"POST"})
+     * @Route("/internal_dashboard/users/password", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -413,7 +464,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/institutions", methods={"POST"})
+     * @Route("/internal_dashboard/users/institutions", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -444,7 +496,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/roles", methods={"POST"})
+     * @Route("/internal_dashboard/users/roles", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -480,7 +533,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/types", methods={"POST"})
+     * @Route("/internal_dashboard/users/types", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -509,7 +563,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/providers", methods={"POST"})
+     * @Route("/internal_dashboard/users/providers", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -539,7 +594,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/emails/exceptions", methods={"POST"})
+     * @Route("/internal_dashboard/users/emails/exceptions", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -560,7 +616,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/reports/images/cache", methods={"POST"})
+     * @Route("/internal_dashboard/users/reports/images/cache", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -593,7 +650,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/delete", methods={"POST"})
+     * @Route("/internal_dashboard/users/delete", methods={"POST"}) 
+
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -633,7 +691,8 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/{userId}", methods={"POST"}, requirements={"userId": "\d+"})
+     * @Route("/internal_dashboard/users/{userId}", methods={"POST"}, requirements={"userId": "\d+"}) 
+
      * @param Request $request
      * @param int $userId
      * @return Response
@@ -718,7 +777,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/existing", methods={"POST"})
+     * @Route("/internal_dashboard/users/existing", methods={"POST"}) 
      * @param Request $request
      * @return Response
      * @throws Exception
