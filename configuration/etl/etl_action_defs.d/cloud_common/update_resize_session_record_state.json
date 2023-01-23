@@ -1,4 +1,5 @@
 {
+    "#": "This action sets the value of the instance_state_id field for any row that has a RESIZE event as its start event.",
     "table_definition": {
         "$ref": "${table_definition_dir}/cloud_common/session_records.json#/table_definition"
     },
