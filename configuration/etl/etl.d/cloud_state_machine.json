@@ -52,6 +52,7 @@
         {
             "name": "update-resize-session-record-state",
             "class": "DatabaseIngestor",
+            "description": "Sets value for state column for resize events.",
             "definition_file": "cloud_common/update_resize_session_record_state.json",
             "description": "Update the instance_state_id value of any row in the session_records table that whose start event type is RESIZE"
         },
