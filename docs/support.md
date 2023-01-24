@@ -49,4 +49,4 @@ Mailing List
 Subscribe to our [mailing list][listserv] to stay up to date with the
 latest Open XDMoD release.
 
-[listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
+[listserv]: https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1
