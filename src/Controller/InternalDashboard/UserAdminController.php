@@ -54,8 +54,10 @@ class UserAdminController extends BaseController
                 return $this->enumExceptionEmailAddresses($request);
             case 'enum_resource_providers':
                 return $this->enumResourceProviders($request);
+            case 'enum_user_types':
+                return $this->enumUserTypes($request);
             case 'enum_roles':
-                break;
+                return $this->enumRoles($request);
             case 'get_user_details':
                 $userId = $this->getStringParam($request, 'uid', true, null, RESTRICTION_UID);
                 return $this->getUserDetails($request, $userId);
@@ -72,7 +74,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users", methods={"POST"}) 
+     * @Route("/internal_dashboard/users", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -113,7 +115,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/metadata", methods={"GET"}) 
+     * @Route("/internal_dashboard/users/metadata", methods={"GET"})
 
      * @param Request $request
      * @return Response
@@ -137,7 +139,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/create", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/create", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -231,7 +233,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/update", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/update", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -408,7 +410,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/search", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/search", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -432,7 +434,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/password", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/password", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -464,7 +466,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/institutions", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/institutions", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -496,7 +498,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/roles", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/roles", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -533,7 +535,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/types", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/types", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -554,16 +556,16 @@ class UserAdminController extends BaseController
                 'type' => $type['type'],
             ];
         }
-
-        return $this->json([
+        $data = [
             'success'    => true,
             'status'     => 'success',
             'user_types' => $userTypeEntries
-        ]);
+        ];
+        return $this->json($data);
     }
 
     /**
-     * @Route("/internal_dashboard/users/providers", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/providers", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -594,7 +596,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/emails/exceptions", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/emails/exceptions", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -616,7 +618,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/reports/images/cache", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/reports/images/cache", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -650,7 +652,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/delete", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/delete", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -691,7 +693,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/{userId}", methods={"POST"}, requirements={"userId": "\d+"}) 
+     * @Route("/internal_dashboard/users/{userId}", methods={"POST"}, requirements={"userId": "\d+"})
 
      * @param Request $request
      * @param int $userId
@@ -777,7 +779,7 @@ class UserAdminController extends BaseController
     }
 
     /**
-     * @Route("/internal_dashboard/users/existing", methods={"POST"}) 
+     * @Route("/internal_dashboard/users/existing", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception

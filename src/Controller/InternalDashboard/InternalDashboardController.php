@@ -9,12 +9,10 @@ use CCR\DB;
 use Exception;
 use Models\Services\Users;
 use OpenXdmod\Assets;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -137,7 +135,7 @@ class InternalDashboardController extends BaseController
     }
 
     /**
-     * @Route(path="controllers/controller.php", name="legacy_internal_dashboard_controllers")
+     * @Route(path="/controllers/controller.php", name="legacy_internal_dashboard_controllers")
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -155,7 +153,7 @@ class InternalDashboardController extends BaseController
                 return $this->updateRequest($request);
             case 'delete_request':
                 return $this->deleteRequest($request);
-            case 'enum_existing_user':
+            case 'enum_existing_users':
                 return $this->enumExistingUsers($request);
             case 'enum_user_types_and_roles':
                 return $this->enumUserTypesAndRoles($request);
@@ -187,17 +185,17 @@ class InternalDashboardController extends BaseController
 
         $pdo = DB::factory('database');
         $sql = <<<SQL
-        SELECT 
-            id, 
-            first_name, 
-            last_name, 
-            organization, 
-            title, email_address, 
+        SELECT
+            id,
+            first_name,
+            last_name,
+            organization,
+            title, email_address,
             field_of_science,
             additional_information,
             time_submitted,
             status,
-            comments 
+            comments
         FROM AccountRequests
 SQL;
 
@@ -288,13 +286,18 @@ SQL;
                 $filtered[] = $user;
             }
         }
-
-        return $this->json([
+        $data = [
+            'success'  => true,
+            'count'    => count($filtered),
+            'response' => $filtered
+        ];
+        /*return $this->json([
             'success'  => true,
             'count'    => count($filtered),
             'response' => $filtered
 
-        ]);
+        ]);*/
+        return new Response(json_encode($data));
     }
 
     /**
@@ -316,8 +319,9 @@ SQL;
         $query = "SELECT display AS description, acl_id AS role_id FROM moddb.acls WHERE name != 'pub' ORDER BY description";
         $userRoles = $pdo->query($query);
         $data['user_roles'] = $userRoles;
-
-        return $this->json($data);
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'text/html; charset=UTF-8');
+        return $response;
     }
 
     /**
@@ -383,7 +387,7 @@ SQL;
             return $response;
         }
 
-        return $this->json($data);
+        return new Response(json_encode($data));
     }
 
     /**
