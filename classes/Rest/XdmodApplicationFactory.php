@@ -81,7 +81,7 @@ class XdmodApplicationFactory
         });
 
         $app->before(function (Request $request, Application $app) {
-            $request->attributes->set('start', microtime(true));
+            $request->attributes->set('timing.start', microtime(true));
             return $app;
         }, Application::EARLY_EVENT);
 
@@ -112,7 +112,7 @@ class XdmodApplicationFactory
             }
 
             // Calculate the amount of time that has elapsed serving this request.
-            $start = $request->attributes->get('start');
+            $start = $request->attributes->get('timing.start');
             $end = microtime(true);
             $elapsed = $end - $start;
 

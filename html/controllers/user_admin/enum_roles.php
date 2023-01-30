@@ -28,5 +28,3 @@ foreach($roles as $currentRole) {
    $returnData['acls'] = $roleEntries;
 
    xd_controller\returnJSON($returnData);
-
-?>

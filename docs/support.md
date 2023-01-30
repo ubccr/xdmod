@@ -22,8 +22,12 @@ are using a different operating system and encounter an issue, install Open
 XDMoD on CentOS 7 and reproduce the issue in that environment before requesting
 support.
 
+Open XDMoD 10.0 also has a [beta release](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8) version that is compatible with Rocky Linux 8
+
 Requesting Support
 ------------------
+
+Before contacting us please see the list of [Frequently Asked Questions](faq.html).
 
 Email `ccr-xdmod-help` at `buffalo.edu` for support.  Please include the following in your support request. Failure to include this information may delay support.
 
@@ -45,4 +49,4 @@ Mailing List
 Subscribe to our [mailing list][listserv] to stay up to date with the
 latest Open XDMoD release.
 
-[listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
+[listserv]: https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1

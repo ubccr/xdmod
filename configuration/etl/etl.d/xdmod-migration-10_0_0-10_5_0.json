@@ -22,6 +22,22 @@
                     "schema": "mod_shredder"
                 }
             }
+        },
+        {
+            "name": "update-report-template-tables",
+            "description": "Update report template tables",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "xdb/report-template-charts.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ]
 }

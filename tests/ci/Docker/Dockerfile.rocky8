@@ -1,4 +1,4 @@
-FROM tools-int-01.ccr.xdmod.org/rockylinux8.5:xdmod-base
+FROM tools-ext-01.ccr.xdmod.org/rockylinux8.5:xdmod-base-0.1
 
 ENV BRANCH=xdmod10.0
 ENV REL=10.0
@@ -30,7 +30,7 @@ RUN mkdir -p /root/rpmbuild/RPMS/noarch
 RUN git clone --single-branch https://github.com/ubccr/xdmod/ --branch $BRANCH /root/xdmod
 
 WORKDIR /root/xdmod
-RUN composer install
+RUN COMPOSER=composer-el8.json composer install
 RUN /root/bin/buildrpm xdmod
 
 WORKDIR /root
