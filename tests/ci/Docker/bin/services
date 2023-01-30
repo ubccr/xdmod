@@ -3,7 +3,7 @@
 OS_VERSION=$(cat /etc/os-release | grep "VERSION_ID" | cut -d'=' -f 2 | tr -d '"')
 
 function start_services() {
-    /usr/libexec/mariadb-prepare-db-dir
+    /usr/libexec/mysql-prepare-db-dir
     /usr/bin/mysqld_safe --basedir=/usr &
     /usr/libexec/mariadb-wait-ready $!
     httpd -k start

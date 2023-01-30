@@ -23,5 +23,3 @@
 	$controller->registerOperation('remove_from_queue');
 			
 	$controller->invoke('POST');
-		
-?>
