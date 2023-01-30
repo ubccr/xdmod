@@ -9,6 +9,7 @@
 namespace xd_utilities;
 
 use Exception;
+use UnexpectedValueException;
 
 /**
  * Global INI data.
@@ -592,4 +593,32 @@ function verify_captcha(){
             \xd_response\presentError('You must enter the words in the Recaptcha box properly.' . print_r($errors, 1));
         }
     }
+}
+
+/**
+ * Create a temporary directory.
+ *
+ * PHP does not have the equivalent of "mktemp -d".
+ *
+ * @param $prefix string The prefix of the generated directory.
+ *
+ * @return string The path to the temporary directory.
+ */
+function createTemporaryDirectory($prefix = 'xdmod-tmp-dir-')
+{
+    $tmpDir = tempnam(sys_get_temp_dir(), $prefix);
+
+    if ($tmpDir === false) {
+        throw new UnexpectedValueException("Failed to create temporary file");
+    }
+
+    if (!unlink($tmpDir)) {
+        throw new UnexpectedValueException("Failed to remove file '$tmpDir'");
+    }
+
+    if (!mkdir($tmpDir, 0700)) {
+        throw new UnexpectedValueException("Failed to create directory '$tmpDir'");
+    }
+
+    return $tmpDir;
 }

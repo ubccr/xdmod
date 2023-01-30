@@ -24,4 +24,3 @@ xd_controller\returnJSON(MetricExplorer::getDimensionValues(
     getSearchText(),
     getSelectedFilterIds()
 ));
-?>

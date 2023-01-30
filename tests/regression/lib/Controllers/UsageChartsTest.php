@@ -11,13 +11,52 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
      */
     const HASH_DIR_REL_PATH = '/../../../artifacts/xdmod/regression/images';
 
-    /** Hash data JSON file relative to __DIR__ */
-    const HASH_FILE_REL_PATH = '/../../../artifacts/xdmod/regression/images/expected.json';
+    /**
+     * Hash data JSON file absolute path or null.
+     *
+     * @var string|null
+     */
+    private static $hashFilePath = null;
 
     protected static $helper;
 
     // Used when running in hash-generation mode.
     protected static $imagehashes = array();
+
+    /**
+     * Determine which JSON file to use for expected hash data.
+     */
+    public static function setUpBeforeClass()
+    {
+        $osInfo = false;
+        try {
+            $osInfo = parse_ini_file('/etc/os-release');
+        } catch (\Exception $e) {
+            // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
+        }
+
+        $hashFiles = [];
+
+        // If we have OS info available to us then look for an OS specific expected output file based on this info.
+        if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
+            $hashFiles[] = sprintf("expected-%s%s.json", $osInfo['ID'], $osInfo['VERSION_ID']);
+        }
+        // Otherwise try the default expected.json
+        $hashFiles[] = 'expected.json';
+
+        $artifactsDir = realpath(__DIR__ . self::HASH_DIR_REL_PATH);
+        foreach($hashFiles as $hashFile) {
+            $hashFilePath = "$artifactsDir/$hashFile";
+            if (file_exists($hashFilePath)) {
+                self::$hashFilePath = $hashFilePath;
+                break;
+            }
+        }
+
+        if (self::$hashFilePath === null) {
+            throw new \Exception('Failed to find expected data file.');
+        }
+    }
 
     public static function tearDownAfterClass()
     {
@@ -25,12 +64,11 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         if(!empty(self::$imagehashes)) {
             if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
                 // Overwrite test data.
-                $hashFile = realpath(__DIR__ . self::HASH_FILE_REL_PATH);
-                $expectedHashes = json_decode(file_get_contents($hashFile), true);
+                $expectedHashes = json_decode(file_get_contents(self::$hashFilePath), true);
                 foreach (self::$imagehashes as $testName => $hash) {
                     $expectedHashes[$testName] = $hash;
                 }
-                file_put_contents($hashFile, json_encode($expectedHashes, JSON_PRETTY_PRINT) . "\n");
+                file_put_contents(self::$hashFilePath, json_encode($expectedHashes, JSON_PRETTY_PRINT) . "\n");
             } else {
                 // print to stdout rather than, e.g., overwriting
                 // the expected results file.
@@ -78,31 +116,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         self::$helper = new \TestHarness\XdmodTestHelper();
         self::$helper->authenticate('cd');
 
-        $expectedHashes = array();
-        $hashFiles = array();
-
-        $osInfo = false;
-        try {
-            $osInfo = parse_ini_file('/etc/os-release');
-        } catch (\Exception $e) {
-            // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
-        }
-
-        // If we have OS info available to us then look for an OS specific expected output file based on this info.
-        if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
-            $hashFiles[] = sprintf("expected-%s%s.json", $osInfo['ID'], $osInfo['VERSION_ID']);
-        }
-        // Otherwise try the default expected.json
-        $hashFiles[] = 'expected.json';
-
-        $artifactsDir = realpath(__DIR__ . self::HASH_DIR_REL_PATH);
-        foreach($hashFiles as $hashFile) {
-            $hashFilePath = "$artifactsDir/$hashFile";
-            if (file_exists($hashFilePath)) {
-                $expectedHashes = json_decode(file_get_contents($hashFilePath), true);
-                break;
-            }
-        }
+        $expectedHashes = json_decode(file_get_contents(self::$hashFilePath), true);
 
         // Provide all the different combinations of chart settings except Guide Lines (which do not
         // work at all) and Hide Tooltip (which is an interactive-only setting)..
