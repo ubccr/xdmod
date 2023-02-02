@@ -18,7 +18,7 @@ toc:
   - title: Download
     subfolderitems:
       - page: Latest Release
-        url: https://github.com/ubccr/xdmod/releases/latest
+        url: /10.0/latest-releases.html
       - page: GitHub Project Page
         url: https://github.com/ubccr/xdmod/
   - title: Installing
