@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_common/instance_type.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/instance_type_union.json#/table_definition"
         }
     ],
 
@@ -15,15 +15,17 @@
             "num_cores": "it.num_cores",
             "memory_mb": "it.memory_mb",
             "disk_gb": "it.disk_gb",
-            "start_time": "it.start_time",
-            "end_time": "it.end_time"
+            "start_time": "it.start_time"
         },
         "joins": [
             {
-                "name": "instance_type_staging",
+                "name": "instance_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "it"
             }
+        ],
+        "where": [
+            "display != 'Unknown' AND display != ''"
         ]
     }
 }
