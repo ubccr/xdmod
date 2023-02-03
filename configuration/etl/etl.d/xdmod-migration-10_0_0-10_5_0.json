@@ -4,10 +4,30 @@
         "migration-10_0_0-10_5_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
-         }
+         },
+         "cloud-migration-10-0-0_10-5-0": {
+             "namespace": "ETL\\Ingestor",
+             "options_class": "IngestorOptions",
+             "endpoints": {
+                 "source": {
+                     "type" : "mysql",
+                     "name" : "Cloud DB",
+                     "config" : "datawarehouse",
+                     "schema": "modw_cloud",
+                     "create_schema_if_not_exists": "true"
+                 },
+                 "destination": {
+                     "type" : "mysql",
+                     "name" : "Cloud DB",
+                     "config" : "datawarehouse",
+                     "schema": "modw_cloud",
+                     "create_schema_if_not_exists": "true"
+                 }
+             }
+          }
     },
     "migration-10_0_0-10_5_0": [
-        {
+      {
             "name": "update-mod_shredder-tables",
             "description": "Update mod_shredder tables",
             "class": "ManageTables",
@@ -39,6 +59,26 @@
                     "schema": "moddb"
                 }
             }
+        }
+    ],
+    "cloud-migration-10-0-0_10-5-0": [
+        {
+            "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
+            "description": "Open Stack cloud instance type data for existing instance types",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/staging_existing_instance_type.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeStagingIngestor",
+            "description": "Sets end times for instance type configurations",
+            "class": "CloudInstanceTypeStateIngestor",
+            "definition_file": "cloud_openstack/instance_type_staging.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeEndTimeIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/instance_type.json"
         }
     ]
 }
