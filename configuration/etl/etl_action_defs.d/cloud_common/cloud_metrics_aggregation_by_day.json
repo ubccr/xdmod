@@ -39,15 +39,16 @@
                 "rv_storage_reserved": "COALESCE(SUM((sr.disk_gb * POW(1024, 3)) * ${wallduration_case_statement}), 0)",
                 "memory_mb": "SUM(sr.memory_mb)",
                 "disk_gb": "SUM(sr.disk_gb)",
-                "num_sessions_started": "SUM(IF(sr.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
-                "num_sessions_ended": "SUM(IF(sr.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
-                "num_sessions_running": "SUM(1)",
+                "num_sessions_started": "SUM(IF((sr.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}) AND sr.instance_state_id = 1 AND sr.start_event_type_id != 49, 1, 0))",
+                "num_sessions_ended": "SUM(IF((sr.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}) AND sr.instance_state_id = 1 AND sr.end_event_type_id != 49, 1, 0))",
+                "num_sessions_running": "SUM(IF(sr.instance_state_id = 1 AND sr.start_event_type_id != 49, 1, 0))",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
                 "submission_venue_id": "sr.submission_venue_id",
                 "domain_id": "sr.domain_id",
                 "service_provider": "sr.service_provider",
                 "principalinvestigator_person_id": "sr.principalinvestigator_person_id",
                 "fos_id": "sr.fos_id",
+                "instance_state_id": "sr.instance_state_id",
                 "session_id_list": "GROUP_CONCAT(sr.session_id)"
             },
             "groupby": [
@@ -66,7 +67,8 @@
               "service_provider",
               "principalinvestigator_person_id",
               "fos_id",
-              "person_id"
+              "person_id",
+              "instance_state_id"
             ],
             "joins":[
               {
@@ -82,15 +84,18 @@
                   "schema": "${UTILITY_SCHEMA}",
                   "alias": "task_resource",
                   "on": "task_resource.id = sr.resource_id"
+              },{
+                  "name": "instance_states",
+                  "schema": "${SOURCE_SCHEMA}",
+                  "alias": "inst_state",
+                  "on": "inst_state.instance_state_id = sr.instance_state_id AND inst_state.include_in_aggregation = 1"
               }
             ],
-            "#": "The start_event_type_ids correlate to the following events, START = 2, RESUME = 8, STATE_REPORT = 16, const UNSHELVE = 20, const UNSUSPEND = 61, POWER_ON = 59, UNPAUSE_END = 57",
             "where": [
               "sr.start_day_id <= ${:PERIOD_END_DAY_ID} AND sr.end_day_id >= ${:PERIOD_START_DAY_ID}",
               "sr.instance_type != \"Unknown\"",
               "sr.instance_id !=\"1\"",
-              "sr.num_cores != 0",
-              "sr.start_event_type_id IN (2,8,16,20,57,59,61)"
+              "sr.num_cores != 0"
           ],
             "macros": [{
                 "name": "wallduration_case_statement",
