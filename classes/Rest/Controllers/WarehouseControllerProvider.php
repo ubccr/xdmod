@@ -2049,6 +2049,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
             )
         );
 
+        if (strpos($data['schema']['units'], '%') !== false) {
+            $chartConfig['yAxis']['max'] = 100.0;
+        }
+
         $globalConfig = array(
             'timezone' => $data['schema']['timezone']
         );

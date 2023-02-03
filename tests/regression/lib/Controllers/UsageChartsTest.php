@@ -26,8 +26,12 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     /**
      * Determine which JSON file to use for expected hash data.
      */
-    public static function setUpBeforeClass()
+    private static function getHashPath()
     {
+        if (self::$hashFilePath !== null) {
+            return self::$hashFilePath;
+        }
+
         $osInfo = false;
         try {
             $osInfo = parse_ini_file('/etc/os-release');
@@ -56,6 +60,8 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         if (self::$hashFilePath === null) {
             throw new \Exception('Failed to find expected data file.');
         }
+
+        return self::$hashFilePath;
     }
 
     public static function tearDownAfterClass()
@@ -64,11 +70,11 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         if(!empty(self::$imagehashes)) {
             if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
                 // Overwrite test data.
-                $expectedHashes = json_decode(file_get_contents(self::$hashFilePath), true);
+                $expectedHashes = json_decode(file_get_contents(self::getHashPath()), true);
                 foreach (self::$imagehashes as $testName => $hash) {
                     $expectedHashes[$testName] = $hash;
                 }
-                file_put_contents(self::$hashFilePath, json_encode($expectedHashes, JSON_PRETTY_PRINT) . "\n");
+                file_put_contents(self::getHashPath(), json_encode($expectedHashes, JSON_PRETTY_PRINT) . "\n");
             } else {
                 // print to stdout rather than, e.g., overwriting
                 // the expected results file.
@@ -116,7 +122,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         self::$helper = new \TestHarness\XdmodTestHelper();
         self::$helper->authenticate('cd');
 
-        $expectedHashes = json_decode(file_get_contents(self::$hashFilePath), true);
+        $expectedHashes = json_decode(file_get_contents(self::getHashPath()), true);
 
         // Provide all the different combinations of chart settings except Guide Lines (which do not
         // work at all) and Hide Tooltip (which is an interactive-only setting)..
