@@ -4,7 +4,7 @@
     "description": "take old slurm logs and make them compat with new XDMoD",
     "main": "parse.js",
     "dependencies": {
-        "moment-timezone": "^0.5.21",
+        "moment-timezone": "^0.5.35",
         "pcre-to-regexp": "^0.0.4"
     },
     "devDependencies": {},

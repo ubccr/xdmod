@@ -130,13 +130,22 @@ function getSvgFromChromium($html, $width, $height){
 
     @unlink($tmpHtmlFile);
 
-    $result = json_decode(substr($out, 4, -6), true);
+    $jsondata = json_decode(substr($out, 4, -6), true);
 
-    if ($result === null || !isset($result['result']) || !isset($result['result']['value'])) {
+    $chartSvg = null;
+    if (isset($jsondata['result']) && isset($jsondata['result']['value'])) {
+        // chrome headless 99
+        $chartSvg = $jsondata['result']['value'];
+    } elseif (isset($jsondata['result']) && isset($jsondata['result']['result']) && isset($jsondata['result']['result']['value'])) {
+        // chrome headless 109
+        $chartSvg = $jsondata['result']['result']['value'];
+    }
+
+    if ($chartSvg === null) {
         throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
     }
 
-    return $result['result']['value'];
+    return $chartSvg;
 }
 
 /**
