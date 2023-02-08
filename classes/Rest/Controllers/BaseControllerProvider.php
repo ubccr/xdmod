@@ -3,6 +3,8 @@
 namespace Rest\Controllers;
 
 use DateTime;
+use Exception;
+use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
+use XDUser;
 
 /**
  * Class BaseControllerProvider
@@ -177,7 +180,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                        defaults to true.
      * @return array of all of the required params and their values as supplied
      *                         by the Request object.
-     * @throws \Exception if not all of the $requiredParams were found.
+     * @throws Exception if not all of the $requiredParams were found.
      */
     protected function parseRestArguments(Request $request, $requiredParams = array(), $strict = true, $alternative_source = null)
     {
@@ -799,5 +802,38 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         return $date;
+    }
+
+    /**
+     * @param Request $request
+     * @return XDUser
+     * @throws Exception if the provided token is empty.
+     * @throws Exception if the token is not in a valid format.
+     * @throws Exception if the user's token from the db does not validate against the provided token.
+     */
+    protected function authenticateToken($request)
+    {
+        // NOTE: header keys cannot contain '_' characters.
+        $rawToken = $request->headers->get('apitoken');
+
+        // if we weren't able to find a header called api_token then try getting it from one of the query parameters.
+        if (empty($rawToken)) {
+            $rawToken = $request->get('apitoken');
+            if (empty($rawToken)) {
+                throw new UnauthorizedHttpException(
+                    'Basic realm="Access to Data Analytics endpoints", charset="UTF-8"',
+                    'An API token must be supplied to use this endpoint.'
+                );
+            }
+        }
+
+        try {
+            list($userId, $token) = Tokens::parseToken($rawToken);
+        } catch (Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+
+        return Tokens::authenticate($userId, $token);
     }
 }

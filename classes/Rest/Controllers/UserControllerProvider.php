@@ -2,10 +2,14 @@
 
 namespace Rest\Controllers;
 
+use CCR\DB;
+use Configuration\Configuration;
 use Models\Services\Organizations;
+use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\HttpFoundation\Response;
 use XDUser;
 
 /**
@@ -59,13 +63,16 @@ class UserControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/current", '\Rest\Controllers\UserControllerProvider::getCurrentUser');
         $controller->patch("$root/current", '\Rest\Controllers\UserControllerProvider::updateCurrentUser');
+        $controller->get("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::getCurrentAPIToken');
+        $controller->post("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::createAPIToken');
+        $controller->delete("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::revokeAPIToken');
     }
 
     /**
      * Get details for the current user.
      *
-     * @param  Request     $request The request used to make this call.
-     * @param  Application $app     The router application.
+     * @param Request $request The request used to make this call.
+     * @param Application $app The router application.
      * @return array                Response data containing the following info:
      *                              success: A boolean indicating if the call was successful.
      *                              results: An object containing data about
@@ -86,8 +93,8 @@ class UserControllerProvider extends BaseControllerProvider
     /**
      * Update details about the current user.
      *
-     * @param  Request     $request The request used to make this call.
-     * @param  Application $app     The router application.
+     * @param Request $request The request used to make this call.
+     * @param Application $app The router application.
      * @return array                Response data containing the following info:
      *                              success: A boolean indicating if the call was successful.
      *                              message
@@ -114,11 +121,118 @@ class UserControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getCurrentAPIToken(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        try {
+
+            if ($this->canCreateToken($user)) {
+                return $app->json(array(
+                    'success' => false,
+                    'message' => 'Unable to retrieve current API token.'
+                ));
+            }
+
+            $tokenData = $this->getCurrentAPITokenData($user);
+
+            return $app->json(array(
+                    'success' => true,
+                    'data' => $tokenData
+                )
+            );
+        } catch (\Exception $e) {
+            return $app->json(array(
+                'success' => false,
+                'message' => $e->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * This endpoint will attempt to create a new API token for the requesting user.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return Response
+     * @throws \Exception if there is a problem retrieving a database connection.
+     */
+    public function createAPIToken(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+
+        try {
+            if (!$this->canCreateToken($user)) {
+                return $app->json(array(
+                    'success' => false,
+                    'message' => 'Unable to create a new token at this time.'
+                ));
+            }
+
+            return $app->json(array(
+                'success' => true,
+                'data' => $this->createToken($user)
+            ));
+        } catch (\Exception $e) {
+            return $app->json(array(
+                'success' => false,
+                'message'=> $e->getMessage()
+            ));
+        }
+    }
+
+
+    /**
+     * This endpoint will attempt to revoke the currently active api token for the requesting user.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return Response
+     * @throws \Exception
+     */
+    public function revokeAPIToken(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        try {
+            // If we can create a token then we can't really revoke it can we.
+            if ($this->canCreateToken($user)) {
+                return $app->json([
+                    'success' => false,
+                    'message' => 'No token to revoke.'
+                ]);
+            }
+
+            // Attempt to revoke the requesting users token.
+            if ($this->revokeToken($user)) {
+                return $app->json(array(
+                    'success' => true,
+                    'message' => 'Token successfully revoked.'
+                ));
+            }
+
+            // If the `revokeToken` failed for some reason then we let the user know.
+            return $app->json(array(
+                'success' => false,
+                'message' => 'Unable to revoke API token.'
+            ));
+        } catch (\Exception $e) {
+            return $app->json(array(
+                'success' => false,
+                'message' => $e->getMessage()
+            ));
+        }
+    }
+
+    /**
      * Extract information from a user object.
      *
      * Ported from: classes/REST/Portal/Profile.php
      *
-     * @param  XDUser $user The user object to extract data from.
+     * @param XDUser $user The user object to extract data from.
      * @return array        An associative array of data for the user.
      */
     private function extractUserData(XDUser $user)
@@ -160,7 +274,7 @@ class UserControllerProvider extends BaseControllerProvider
      * Extract user profile properties from a request that are allowed to be
      * set by the user.
      *
-     * @param  Request $request The request to extract properties from.
+     * @param Request $request The request to extract properties from.
      * @return array            An array containing properties
      */
     private function extractUserSettableProperties(Request $request)
@@ -180,8 +294,8 @@ class UserControllerProvider extends BaseControllerProvider
     /**
      * Update a user with new details.
      *
-     * @param  XDUser $user              The user to update.
-     * @param  array  $updatedProperties A mapping of properties to update
+     * @param XDUser $user The user to update.
+     * @param array $updatedProperties A mapping of properties to update
      *                                   to their new values.
      *
      * @throws Exception The new property values failed to save.
@@ -204,5 +318,141 @@ class UserControllerProvider extends BaseControllerProvider
         // Attempt to save the user's new details. This will throw an exception
         // if an error occurs.
         $user->saveUser();
+    }
+
+    /**
+     * This function will determine whether or not the provided $user should be allowed to create a new API token. A
+     * user will only be allowed to create a new API token if they do not currently have an active API token.
+     *
+     * @param XDUser $user
+     * @return bool true if the user does not already have a valid API token.
+     * @throws \Exception if there is a problem retrieving a database connection.
+     */
+    private function canCreateToken(XDUser $user)
+    {
+        $db = DB::factory('database');
+
+        $query = <<<SQL
+SELECT 1
+FROM moddb.Users u
+    LEFT JOIN moddb.user_tokens AS ut
+        ON ut.user_id = u.id
+WHERE    u.id = :user_id
+     AND ut.user_token_id IS NOT NULL
+SQL;
+
+        $rows = $db->query($query, array(':user_id' => $user->getUserID()));
+
+        return empty($rows);
+    }
+
+    /**
+     * A helper function that will retrieve the created_on and expires_on information for the provided $user's currently
+     * active token.
+     *
+     * @param XDUser $user whose token data should be retrieved.
+     * @return array in the format array('created_on' => createdOn, 'expiration_date' => expirationDate)
+     * @throws \Exception if there is a problem retrieving a db connection.
+     * @throws \Exception if there is a problem executing the SELECT statement.
+     */
+    private function getCurrentAPITokenData(XDUser $user)
+    {
+        $db = DB::factory('database');
+        $query = <<<SQL
+SELECT created_on,
+       expires_on
+FROM moddb.user_tokens as at
+WHERE at.user_id = :user_id;
+SQL;
+        $rows = $db->query($query, array(':user_id' => $user->getUserID()));
+
+        if (count($rows) !== 1) {
+            throw new \Exception('Invalid token data returned.');
+        }
+
+        return array(
+            'created_on' => $rows[0]['created_on'],
+            'expiration_date' => $rows[0]['expires_on']
+        );
+    }
+
+    /**
+     * Creates a new API token for the provided $user. Note, the results of a successful creation is the only time that
+     * the token will be visible to the user. No other function will return this value.
+     *
+     * @param XDUser $user
+     *
+     * @return array in the format ('token' => newToken, 'expiration_date' => tokenExpirationDate)
+     *
+     * @throws \Exception if unable to retrieve a database connection or if there is a problem generating a random token.
+     * @throws \Exception if the api_token.expiration_interval configuration value ( in portal_settings.ini ) is not set.
+     * @throws \Exception if inserting the newly generated token is unsuccessful. i.e. the number of rows inserted is < 1.
+     */
+    private function createToken(XDUser $user)
+    {
+        $query = <<<SQL
+INSERT INTO moddb.user_tokens (user_id, token, created_on, expires_on)
+VALUES(:user_id, :token, :created_on, :expires_on);
+SQL;
+        $db = DB::factory('database');
+
+        // We need to, when presented with a token know which user it is for. To allow for this the tokens stored in the
+        // db will encode the Users.id value along with the hashed token value. This will mean that some pre-processing
+        // will need to occur when attempting to validate the token, but it alleviates the problem of having to attempt
+        // to match every token in the db to find which user it's meant to authenticate.
+        $password = bin2hex(random_bytes(32));
+        $encodedUserId = base64_encode($user->getUserID());
+        $hash = password_hash($password, PASSWORD_DEFAULT, array('cost' => 12));
+
+        // This token will be stored in the db and will be what's used to verify against $password for authentication / authorization.
+        $storedToken = sprintf('%s.%s', $encodedUserId, $hash);
+
+        // This token will be what's returned to the user.
+        $userToken = sprintf('%s.%s', $encodedUserId, $password);
+
+        $createdOn = date_create()->format('Y-m-d H:m:s');
+        $expirationInterval = \xd_utilities\getConfiguration('api_token', 'expiration_interval');
+        if (empty($expirationInterval)) {
+            throw new \Exception('Expiration Interval not provided.');
+        }
+        $dateInterval = date_interval_create_from_date_string($expirationInterval);
+        $expirationDate = date_add(date_create(), $dateInterval)->format('Y-m-d H:m:s');
+
+        $result = $db->execute(
+            $query,
+            array(
+                ':user_id' => $user->getUserID(),
+                ':token' => $storedToken,
+                ':created_on' => $createdOn,
+                ':expires_on' => $expirationDate
+            )
+        );
+
+        if (count($result) != 1) {
+            throw new \Exception('Unable to create a new API token.');
+        }
+
+        return array(
+            'token' => $userToken,
+            'expiration_date' => $expirationDate,
+        );
+    }
+
+    /**
+     * Attempts to revoke the currently active token for the provided $user.
+     *
+     * @param XDUser $user whose active token will be revoked.
+     * @return bool true if 1 row was deleted else false.
+     * @throws \Exception if there was a problem retrieving a database connection.
+     * @throws \Exception if there was an error while executing the DELETE statement.
+     */
+    private function revokeToken(XDUser $user)
+    {
+        $query = 'DELETE FROM moddb.user_tokens WHERE user_id = :user_id';
+        $db = DB::factory('database');
+
+        $rows = $db->execute($query, array(':user_id' => $user->getUserID()));
+
+        return $rows === 1;
     }
 }

@@ -1678,6 +1678,247 @@
                 }
             }
         },
+        "/users/current/api/token": {
+            "get": {
+                "tags": [
+                    "Data Analytics Framework",
+                    "Authentication",
+                    "Authorization"
+                ],
+                "summary": "Retrieves the API token of the currently logged in user.",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unable to retrieve current API token.",
+                                                "Invalid token data returned."
+                                            ]
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "created_on": {
+                                                    "type": "string"
+                                                },
+                                                "expires_on": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An unauthorized request to this endpoint.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "enum": [false]
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "totalCount": {
+                                            "type": "integer"
+                                        },
+                                        "results": {
+                                            "type": "array"
+                                        },
+                                        "data": {
+                                            "type": "array"
+                                        },
+                                        "message": {
+                                            "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
+                                        },
+                                        "code": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Data Analytics Framework",
+                    "Authentication",
+                    "Authorization"
+                ],
+                "summary": "Creates a new API token for the currently logged in user.",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "enum": [
+                                                "Unable to create a new token at this time.",
+                                                "Unable to create a new API token."
+                                            ]
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                },
+                                                "expiration_date": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An unauthorized request to this endpoint.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "enum": [false]
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "totalCount": {
+                                            "type": "integer"
+                                        },
+                                        "results": {
+                                            "type": "array"
+                                        },
+                                        "data": {
+                                            "type": "array"
+                                        },
+                                        "message": {
+                                            "enum": [
+                                                "An error was encountered while attempting to process the requested authorization procedure."
+                                            ]
+                                        },
+                                        "code": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Data Analytics Framework",
+                    "Authentication",
+                    "Authorization"
+                ],
+                "summary": "Revoke the API token for the currently logged in user.",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Token successfully revoked.",
+                                                "No token to revoke.",
+                                                "Unable to revoke API token."
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An unauthorized request to this endpoint.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "enum": [
+                                                false
+                                            ]
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "totalCount": {
+                                            "type": "integer"
+                                        },
+                                        "results": {
+                                            "type": "array"
+                                        },
+                                        "data": {
+                                            "type": "array"
+                                        },
+                                        "message": {
+                                            "enum": [
+                                                "An error was encountered while attempting to process the requested authorization procedure."
+                                            ]
+                                        },
+                                        "code": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/warehouse/search/history": {
             "get": {
                 "tags": [
