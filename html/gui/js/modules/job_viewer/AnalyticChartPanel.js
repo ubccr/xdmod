@@ -84,11 +84,41 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 value: 1,
                 color: '#50B432'
             }
-        ]
-    },
+        ],
+    
+          layout: {
+            autosize: true,
+            yaxis: {
+                range: [0, 1],
+                lineColor: '#c0c0c0',
+                title: '',
+                titlefont: {
+                    color: '#5078a0'
+                }
+            },
+            xAxis: {
+                ticklen: 1,
+                showticklabels: {
+                    enabled: false
+                }
+            },
+            showlegend: false,
+            margin: {
+                l: 1,
+                r: 1,
+                b: 1,
+                t: 1,
+                pad: 5
+            }
+           },
+
+        traces: [],
+
+       },
 
     // The instance of Highcharts used as this components primary display.
     chart: null,
+
 
     // private member that stores the error message object
     errorMsg: null,
@@ -120,12 +150,13 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 
             Ext.apply(this.chartOptions, this._DEFAULT_CONFIG.chartOptions);
 
-            this.chartOptions.chart.renderTo = this.id;
+            //this.chartOptions.chart.renderTo = this.id;
 
-            if (this.chart) {
+            /*if (this.chart) {
                 this.chart.destroy();
-            }
-            this.chart = new Highcharts.Chart(this.chartOptions);
+            }*/
+            Plotly.newPlot(this.id, [], this.layout, {displayModeBar: false} );
+
 
         }, // render
 
@@ -138,7 +169,8 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         update_data: function(data) {
             this._updateData(data);
-            this.chart.redraw(true);
+            var test = this.traces;
+            Plotly.update(this.id, this.traces, this.layout, {displayModeBar: false} );
         }, // update_data
 
         /**
@@ -147,10 +179,8 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         reset: function() {
             if (this.chart) {
-                while (this.chart.series.length > 0) {
-                    this.chart.series[0].remove(false);
-                }
-                this.chart.redraw();
+                this.traces = [];
+                Plotly.update(this.id, [], this.layout, {displayModeBar: false} );
             }
         }, // reset
 
@@ -160,6 +190,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 this.chart = null;
             }
         },
+
 
         /**
          * Attempt to resize this components HighCharts instance such that it
@@ -173,7 +204,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
-                this.chart.reflow();
+                this.layout['width'] = adjWidth;
+                this.layout['height'] = adjHeight;
+                Plotly.update(this.id, this.traces, this.layout, {displayModeBar: false, responsive: true});
                 if (this.errorMsg) {
                     this.updateErrorMessage(this.errorMsg.text.textStr);
                 }
@@ -195,11 +228,12 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             this.errorMsg = null;
         }
         if (errorStr) {
-            this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
+            this.layout['images'] = [{source: '/gui/images/about_16.png'}]
+            /*this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
                 .css({ width: this.chart.chartWidth - this.chart.plotLeft - 23 })
                 .add() };
             var box = this.errorMsg.text.getBBox();
-            this.errorMsg.image = this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();
+            this.errorMsg.image = this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();*/
         }
     },
 
@@ -215,29 +249,34 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         var brightFactor = 0.4;
         var color, nColor;
 
-        while (this.chart.series.length > 0) {
-            this.chart.series[0].remove(true);
-        }
+        this.traces = [];
 
-        this.chart.plotBackground = null;
-        this.chart.chartBackground = null;
+        //this.chart.layout.push();
+        //this.chart.chartBackground = null;
 
         if (data.error == '') { 
 
             color = this._getDataColor(data.value);
-            nColor = new Highcharts.Color(color).brighten(brightFactor);
-            this.chart.options.chart.plotBackgroundColor = 'rgba(' + nColor.rgba + ')';
-
-            this.chart.addSeries({
-                name: data.name ? data.name : '',
-                data: [data.value],
-                color: color
-            }, true, true);
+            //nColor = new Highcharts.Color(color).brighten(brightFactor);
+            //this.layout.push({plot_bgcolor: 'rgba(' + nColor.rgba + ')'});
+            this.traces.push(
+                {
+                    name: data.name ? data.name : '',
+                    data: [data.value],
+                    marker:{ 
+                        color: color
+                    },
+                    type: 'bar'
+                }
+            );
+            //this.layout.push({title: data.name ? data.name : ''});
+            //data.push({x: [data.value], type: 'bar', color: color});
         }
         this.updateErrorMessage(data.error);
-
+        console.log(this.traces);
         this._updateTitle(data);
         this.ownerCt.doLayout(false, true);
+        
 
     }, // _updateData
 
