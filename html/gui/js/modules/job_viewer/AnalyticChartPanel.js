@@ -22,7 +22,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             },
             chart: {
                 type: 'bar',
-                height: 65,
                 options: {
                 },
                 reflow: false
@@ -87,20 +86,31 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         ],
     
           layout: {
-            autosize: true,
+            autosize: false,
+            height: 64,
             yaxis: {
-                range: [0, 1],
                 lineColor: '#c0c0c0',
                 title: '',
+                fixedrange: true,
                 titlefont: {
                     color: '#5078a0'
                 }
             },
-            xAxis: {
-                ticklen: 1,
+            xaxis: {
+                range: [0, 1],
+                //rangebreaks: 0.2,
+                //dtick: 0.2,
+                //domain: [0, 1],
+                lineColor: '#c0c0c0',
+                 titlefont: {
+                    color: '#5078a0'
+                },
+                ticklen: 0.2,
+                fixedrange:true,
                 showticklabels: {
-                    enabled: false
+                    enabled: true
                 }
+                //type: 'linear'
             },
             showlegend: false,
             margin: {
@@ -108,7 +118,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 r: 1,
                 b: 1,
                 t: 1,
-                pad: 5
+                pad: 1
             }
            },
 
@@ -155,7 +165,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             /*if (this.chart) {
                 this.chart.destroy();
             }*/
-            Plotly.newPlot(this.id, [], this.layout, {displayModeBar: false} );
+            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
 
 
         }, // render
@@ -170,7 +180,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         update_data: function(data) {
             this._updateData(data);
             var test = this.traces;
-            Plotly.update(this.id, this.traces, this.layout, {displayModeBar: false} );
+            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
         }, // update_data
 
         /**
@@ -180,7 +190,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         reset: function() {
             if (this.chart) {
                 this.traces = [];
-                Plotly.update(this.id, [], this.layout, {displayModeBar: false} );
+                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
             }
         }, // reset
 
@@ -204,12 +214,13 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
-                this.layout['width'] = adjWidth;
-                this.layout['height'] = adjHeight;
-                Plotly.update(this.id, this.traces, this.layout, {displayModeBar: false, responsive: true});
+                this._DEFAULT_CONFIG.layout['width'] = adjWidth;
+                this._DEFAULT_CONFIG.layout['height'] = adjHeight;
+                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this.layout, {displayModeBar: false, responsive: true});
                 if (this.errorMsg) {
                     this.updateErrorMessage(this.errorMsg.text.textStr);
                 }
+                console.log(this.layout);
             }
         } // resize
 
@@ -228,7 +239,17 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             this.errorMsg = null;
         }
         if (errorStr) {
-            this.layout['images'] = [{source: '/gui/images/about_16.png'}]
+            this._DEFAULT_CONFIG.layout['images'] = [
+                {
+                    "source": '/gui/images/about_16.png',
+                    "xref": "paper",
+                    "yref": "paper",
+                    "sizex": 1,
+                    "sizey": 1,
+                    "x": 0,
+                    "y": 1
+                }
+            ]
             /*this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
                 .css({ width: this.chart.chartWidth - this.chart.plotLeft - 23 })
                 .add() };
@@ -249,7 +270,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         var brightFactor = 0.4;
         var color, nColor;
 
-        this.traces = [];
+        this._DEFAULT_CONFIG.traces = [];
 
         //this.chart.layout.push();
         //this.chart.chartBackground = null;
@@ -259,22 +280,25 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             color = this._getDataColor(data.value);
             //nColor = new Highcharts.Color(color).brighten(brightFactor);
             //this.layout.push({plot_bgcolor: 'rgba(' + nColor.rgba + ')'});
-            this.traces.push(
+            this._DEFAULT_CONFIG.traces.push(
                 {
+                    x: [data.value],
                     name: data.name ? data.name : '',
-                    data: [data.value],
+                    //width: 1,
                     marker:{ 
                         color: color
                     },
-                    type: 'bar'
+                    type: 'bar',
+                    orientation: 'h'
                 }
             );
             //this.layout.push({title: data.name ? data.name : ''});
             //data.push({x: [data.value], type: 'bar', color: color});
         }
         this.updateErrorMessage(data.error);
-        console.log(this.traces);
+        console.log(this._DEFAULT_CONFIG.traces);
         this._updateTitle(data);
+        console.log(this._DEFAULT_CONFIG.layout);
         this.ownerCt.doLayout(false, true);
         
 
