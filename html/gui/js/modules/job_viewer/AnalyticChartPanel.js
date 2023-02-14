@@ -22,6 +22,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             },
             chart: {
                 type: 'bar',
+                height: 65,
                 options: {
                 },
                 reflow: false
@@ -69,58 +70,154 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         colorSteps: [
             {
                 value: .25,
-                color: '#FF0000'
+                color: 'rgb(255,0,0)'
             },
             {
                 value: .50,
-                color: '#FFB336'
+                color: 'rgb(255,179,54)'
             },
             {
                 value: .75,
-                color: '#DDDF00'
+                color: '#rgb(221,223,0)'
             },
             {
                 value: 1,
-                color: '#50B432'
+                color: 'rgb(80,180,50)'
             }
         ],
     
-          layout: {
-            autosize: false,
-            height: 64,
-            yaxis: {
-                lineColor: '#c0c0c0',
-                title: '',
-                fixedrange: true,
-                titlefont: {
-                    color: '#5078a0'
-                }
+           
+       layout: {
+        'hoverlabel': {
+            'bgcolor': 'white'
+        },
+        'paper_bgcolor': 'white',
+        'plot_bgcolor': 'white',
+        'height': 60,
+        
+        'colorway': ["#1199FF",
+                     "#DB4230",
+                     "#4E665D",
+                     "#F4A221",
+                     "#66FF00",
+                     "#33ABAB",
+                     "#A88D95",
+                     "#789ABC",
+                     "#FF99CC",
+                     "#00CCFF",
+                     "#FFBC71",
+                     "#A57E81",
+                     "#8D4DFF",
+                     "#FF6666",
+                     "#CC99FF",
+                     "#2F7ED8",
+                     "#0D233A",
+                     "#8BBC21",
+                     "#910000",
+                     "#1AADCE",
+                     "#492970",
+                     "#F28F43",
+                     "#77A1E5",
+                     "#3366FF",
+                     "#FF6600",
+                     "#808000",
+                     "#CC99FF",
+                     "#008080",
+                     "#CC6600",
+                     "#9999FF",
+                     "#99FF99",
+                     "#969696",
+                     "#FF00FF",
+                     "#FFCC00",
+                     "#666699",
+                     "#00FFFF",
+                     "#00CCFF",
+                     "#993366",
+                     "#3AAAAA",
+                     "#C0C0C0",
+                     "#FF99CC",
+                     "#FFCC99",
+                     "#CCFFCC",
+                     "#CCFFFF",
+                     "#99CCFF",
+                     "#339966",
+                     "#FF9966",
+                     "#69BBED",
+                     "#33FF33",
+                     "#6666FF",
+                     "#FF66FF",
+                     "#99ABAB",
+                     "#AB8722",
+                     "#AB6565",
+                     "#990099",
+                     "#999900",
+                     "#CC3300",
+                     "#669999",
+                     "#993333",
+                     "#339966",
+                     "#C42525",
+                     "#A6C96A",
+                     "#111111"],
+        'xaxis': {
+            'showticklabels': false,
+            'range': [0,1],
+            'titlefont': {
+                'family': 'Arial, sans-serif',
+                'size': 12,
+                'color': '#5078a0'
             },
-            xaxis: {
-                range: [0, 1],
-                //rangebreaks: 0.2,
-                //dtick: 0.2,
-                //domain: [0, 1],
-                lineColor: '#c0c0c0',
-                 titlefont: {
-                    color: '#5078a0'
-                },
-                ticklen: 0.2,
-                fixedrange:true,
-                showticklabels: {
-                    enabled: true
-                }
-                //type: 'linear'
+            'color': '#606060',
+            'ticks': 'inside',
+            'tick0': 0.0,
+            'dtick': 0.2,
+            'ticklen': 2,
+            'tickcolor': 'white',
+            'gridcolor': '#c0c0c0',
+            'linecolor': 'white',
+            'zeroline' : false,
+            'showgrid': true,
+            'zerolinecolor': 'black',
+            'showline': false,
+            'zerolinewidth': 0,
+            'tickformat': "%Y-%m-%d"
+        },
+        'yaxis': {
+            'showticklabels': false,
+            'titlefont': {
+                'family': 'Arial, sans-serif',
+                'size': 12,
+                'color': '#1199FF'
             },
-            showlegend: false,
-            margin: {
-                l: 1,
-                r: 1,
-                b: 1,
-                t: 1,
-                pad: 1
+            'color': '#606060',
+            'showgrid' : false,
+            'gridcolor': 'white',
+            'linecolor': 'white',
+            'zeroline': false,
+            'zerolinecolor': 'white',
+            'showline': false,
+            'rangemode': 'tozero',
+            'zerolinewidth': 0
+        },
+        'title': {
+            'font': {
+                'color': '#444b6e',
+                'size': 16
             }
-           },
+        },
+        'hovermode': 'closest',
+        'showlegend': false,
+        'legend': {
+            'orientation': 'h',
+            'y': -0.2
+        },
+        'margin': {
+            't': 10,
+            'l': 7.5,
+            'r': 7.5,
+            'b': 10,
+            'pad': 0
+        }
+    },
 
         traces: [],
 
@@ -256,6 +353,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             var box = this.errorMsg.text.getBBox();
             this.errorMsg.image = this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();*/
         }
+        else {
+            this._DEFAULT_CONFIG.layout['images'] = [];
+        }
     },
 
     /**
@@ -274,19 +374,28 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 
         //this.chart.layout.push();
         //this.chart.chartBackground = null;
+        this._DEFAULT_CONFIG.layout['plot_bgcolor'] = 'white';
+
 
         if (data.error == '') { 
 
             color = this._getDataColor(data.value);
+            bg_color = color.substring(0,3) + 'a' + color.substring(3, color.length-1) + ',0.4)';
+            this._DEFAULT_CONFIG.layout['plot_bgcolor'] = bg_color;
+            
             //nColor = new Highcharts.Color(color).brighten(brightFactor);
             //this.layout.push({plot_bgcolor: 'rgba(' + nColor.rgba + ')'});
             this._DEFAULT_CONFIG.traces.push(
                 {
                     x: [data.value],
                     name: data.name ? data.name : '',
-                    //width: 1,
+                    width: [0.5],
                     marker:{ 
-                        color: color
+                        color: color,
+                        line:{
+                            color: 'white',
+                            width: 1.5
+                        }
                     },
                     type: 'bar',
                     orientation: 'h'
