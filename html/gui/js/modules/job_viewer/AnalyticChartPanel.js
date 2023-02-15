@@ -87,141 +87,77 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         ],
     
            
-       layout: {
-        'hoverlabel': {
-            'bgcolor': 'white'
-        },
-        'paper_bgcolor': 'white',
-        'plot_bgcolor': 'white',
-        'height': 60,
-        
-        'colorway': ["#1199FF",
-                     "#DB4230",
-                     "#4E665D",
-                     "#F4A221",
-                     "#66FF00",
-                     "#33ABAB",
-                     "#A88D95",
-                     "#789ABC",
-                     "#FF99CC",
-                     "#00CCFF",
-                     "#FFBC71",
-                     "#A57E81",
-                     "#8D4DFF",
-                     "#FF6666",
-                     "#CC99FF",
-                     "#2F7ED8",
-                     "#0D233A",
-                     "#8BBC21",
-                     "#910000",
-                     "#1AADCE",
-                     "#492970",
-                     "#F28F43",
-                     "#77A1E5",
-                     "#3366FF",
-                     "#FF6600",
-                     "#808000",
-                     "#CC99FF",
-                     "#008080",
-                     "#CC6600",
-                     "#9999FF",
-                     "#99FF99",
-                     "#969696",
-                     "#FF00FF",
-                     "#FFCC00",
-                     "#666699",
-                     "#00FFFF",
-                     "#00CCFF",
-                     "#993366",
-                     "#3AAAAA",
-                     "#C0C0C0",
-                     "#FF99CC",
-                     "#FFCC99",
-                     "#CCFFCC",
-                     "#CCFFFF",
-                     "#99CCFF",
-                     "#339966",
-                     "#FF9966",
-                     "#69BBED",
-                     "#33FF33",
-                     "#6666FF",
-                     "#FF66FF",
-                     "#99ABAB",
-                     "#AB8722",
-                     "#AB6565",
-                     "#990099",
-                     "#999900",
-                     "#CC3300",
-                     "#669999",
-                     "#993333",
-                     "#339966",
-                     "#C42525",
-                     "#A6C96A",
-                     "#111111"],
-        'xaxis': {
-            'showticklabels': false,
-            'range': [0,1],
-            'titlefont': {
-                'family': 'Arial, sans-serif',
-                'size': 12,
-                'color': '#5078a0'
+        layout: {
+            'hoverlabel': {
+                'bgcolor': 'white'
             },
-            'color': '#606060',
-            'ticks': 'inside',
-            'tick0': 0.0,
-            'dtick': 0.2,
-            'ticklen': 2,
-            'tickcolor': 'white',
-            'gridcolor': '#c0c0c0',
-            'linecolor': 'white',
-            'zeroline' : false,
-            'showgrid': true,
-            'zerolinecolor': 'black',
-            'showline': false,
-            'zerolinewidth': 0,
-            'tickformat': "%Y-%m-%d"
-        },
-        'yaxis': {
-            'showticklabels': false,
-            'titlefont': {
-                'family': 'Arial, sans-serif',
-                'size': 12,
-                'color': '#1199FF'
+            'paper_bgcolor': 'white',
+            'plot_bgcolor': 'white',
+            'height': 60,
+            'xaxis': {
+                'showticklabels': false,
+                'range': [0,1],
+                'titlefont': {
+                    'family': 'Arial, sans-serif',
+                    'size': 12,
+                    'color': '#5078a0'
+                },
+                'color': '#606060',
+                'ticks': 'inside',
+                'tick0': 0.0,
+                'dtick': 0.2,
+                'ticklen': 2,
+                'tickcolor': 'white',
+                'gridcolor': '#c0c0c0',
+                'linecolor': 'white',
+                'zeroline' : false,
+                'showgrid': true,
+                'zerolinecolor': 'black',
+                'showline': false,
+                'zerolinewidth': 0,
+                'tickformat': "%Y-%m-%d"
             },
-            'color': '#606060',
-            'showgrid' : false,
-            'gridcolor': 'white',
-            'linecolor': 'white',
-            'zeroline': false,
-            'zerolinecolor': 'white',
-            'showline': false,
-            'rangemode': 'tozero',
-            'zerolinewidth': 0
-        },
-        'title': {
-            'font': {
-                'color': '#444b6e',
-                'size': 16
+            'yaxis': {
+                'showticklabels': false,
+                'titlefont': {
+                    'family': 'Arial, sans-serif',
+                    'size': 12,
+                    'color': '#1199FF'
+                },
+                'color': '#606060',
+                'showgrid' : false,
+                'gridcolor': 'white',
+                'linecolor': 'white',
+                'zeroline': false,
+                'zerolinecolor': 'white',
+                'showline': false,
+                'rangemode': 'tozero',
+                'zerolinewidth': 0
+            },
+            'title': {
+                'font': {
+                    'color': '#444b6e',
+                    'size': 16
+                }
+            },
+            'hovermode': 'closest',
+            'showlegend': false,
+            'legend': {
+                'orientation': 'h',
+                'y': -0.2
+            },
+            'margin': {
+                't': 10,
+                'l': 7.5,
+                'r': 7.5,
+                'b': 10,
+                'pad': 0
             }
         },
-        'hovermode': 'closest',
-        'showlegend': false,
-        'legend': {
-            'orientation': 'h',
-            'y': -0.2
-        },
-        'margin': {
-            't': 10,
-            'l': 7.5,
-            'r': 7.5,
-            'b': 10,
-            'pad': 0
-        }
-    },
 
         traces: [],
 
-       },
+        },
 
     // The instance of Highcharts used as this components primary display.
     chart: null,
@@ -256,12 +192,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         render: function() {
 
             Ext.apply(this.chartOptions, this._DEFAULT_CONFIG.chartOptions);
-
-            //this.chartOptions.chart.renderTo = this.id;
-
-            /*if (this.chart) {
-                this.chart.destroy();
-            }*/
             Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
 
 
@@ -276,7 +206,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         update_data: function(data) {
             this._updateData(data);
-            var test = this.traces;
             Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
         }, // update_data
 
@@ -317,7 +246,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 if (this.errorMsg) {
                     this.updateErrorMessage(this.errorMsg.text.textStr);
                 }
-                console.log(this.layout);
             }
         } // resize
 
@@ -341,12 +269,30 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     "source": '/gui/images/about_16.png',
                     "xref": "paper",
                     "yref": "paper",
-                    "sizex": 1,
-                    "sizey": 1,
+                    "sizex": 0.5,
+                    "sizey": 0.5,
                     "x": 0,
-                    "y": 1
+                    "y": 1.2
                 }
             ]
+            this._DEFAULT_CONFIG.layout['annotations'] = [
+                {       
+                    "text": errorStr,
+                    "align": "left",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "sizex": 1,
+                    "sizey": 1,
+                    "x" : 0.5,
+                    "y" : 0.5,
+                    "showarrow": false
+                    
+
+
+                }
+            ]
+            this._DEFAULT_CONFIG.layout['xaxis']['showgrid'] = false;
+
             /*this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
                 .css({ width: this.chart.chartWidth - this.chart.plotLeft - 23 })
                 .add() };
@@ -355,6 +301,8 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         }
         else {
             this._DEFAULT_CONFIG.layout['images'] = [];
+            this._DEFAULT_CONFIG.layout['annotations'] = [];
+            this._DEFAULT_CONFIG.layout['xaxis']['showgrid'] = true;
         }
     },
 
