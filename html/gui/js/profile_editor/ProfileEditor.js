@@ -33,6 +33,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
 
     init: function () {
         this.general_settings.init();
+        this.api_token.init();
     },
 
     handleProfileClose: function () {
@@ -75,6 +76,10 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
         var self = this;
 
         this.general_settings = new XDMoD.ProfileGeneralSettings({
+            parentWindow: self
+        });
+
+        this.api_token = new XDMoD.ProfileApiToken({
             parentWindow: self
         });
 
@@ -136,6 +141,8 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
                 }
             });
         }
+
+        tabItems.push(this.api_token);
 
         var tabPanel = new Ext.TabPanel({
             frame: false,
