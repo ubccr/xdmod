@@ -36,11 +36,8 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
     },
 
     handleProfileClose: function () {
-
         if (XDMoD.Profile.logoutOnClose) {
-
             Ext.Msg.show({
-
                 maxWidth: 800,
                 minWidth: 400,
                 title: 'Close profile and logout?',
@@ -56,19 +53,15 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
                 }, // fn
 
                 icon: Ext.MessageBox.QUESTION
-
             }); // Ext.Msg.show
 
             return false;
-
         } // if (XDMoD.Profile.logoutOnClose)
 
         return true;
-
     },
 
     getCloseButton: function () {
-
         var self = this;
 
         return new Ext.Button({
@@ -78,11 +71,9 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
                 self.close();
             }
         });
-
     },
 
     initComponent: function () {
-
         var self = this;
 
         this.general_settings = new XDMoD.ProfileGeneralSettings({
@@ -149,7 +140,6 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
         }
 
         var tabPanel = new Ext.TabPanel({
-
             frame: false,
             border: false,
             activeTab: 0,
@@ -180,17 +170,14 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
                     });
                 }
             }
-
         }); // tabPanel
 
         // ------------------------------------------------
 
         Ext.apply(this, {
-
             items: [
                 tabPanel
             ]
-
         });
 
         XDMoD.ProfileEditor.superclass.initComponent.call(this);
