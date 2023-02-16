@@ -4,7 +4,7 @@ XDMoD.Profile = {
 
 XDMoD.ProfileEditorConstants = {
 
-    PASSWORD:             0,
+    PASSWORD: 0,
     WELCOME_EMAIL_CHANGE: 1, // designates if we're displaying first time login prompt to validate email
     SSO_USER: 5 // designates whether or not this is a Single Sign On user
 
@@ -14,20 +14,20 @@ XDMoD.ProfileEditorConstants = {
 
 XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
     id: 'xdmod-profile-editor',
-    width:375,
+    width: 375,
 
-    border:false,
+    border: false,
     frame: true,
 
     iconCls: 'user_profile_16',
 
-    modal:true,
-    closable:true,
+    modal: true,
+    closable: true,
 
-    closeAction:'close',
-    resizable:false,
+    closeAction: 'close',
+    resizable: false,
 
-    title:'My Profile',
+    title: 'My Profile',
 
     tooltip: 'Profile Editor',
 
@@ -111,7 +111,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
                     items: [{
                         title: 'User Interface',
                         xtype: 'form',
-                        bodyStyle: 'padding:5px',
+                        bodyStyle: 'padding: 5px',
                         labelWidth: 230,
                         frame: true,
                         items: [{
@@ -182,7 +182,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
 
         Ext.apply(this, {
 
-            items:[
+            items: [
                 tabPanel
             ]
 
