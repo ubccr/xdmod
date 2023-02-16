@@ -1,10 +1,10 @@
 XDMoD.Profile = {
-   logoutOnClose: false
+    logoutOnClose: false
 };
 
 XDMoD.ProfileEditorConstants = {
 
-   PASSWORD:             0,
+    PASSWORD:             0,
     WELCOME_EMAIL_CHANGE: 1, // designates if we're displaying first time login prompt to validate email
     SSO_USER: 5 // designates whether or not this is a Single Sign On user
 
@@ -14,81 +14,81 @@ XDMoD.ProfileEditorConstants = {
 
 XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
     id: 'xdmod-profile-editor',
-   width:375,
+    width:375,
 
-   border:false,
-   frame: true,
+    border:false,
+    frame: true,
 
-   iconCls: 'user_profile_16',
+    iconCls: 'user_profile_16',
 
-   modal:true,
-   closable:true,
+    modal:true,
+    closable:true,
 
-   closeAction:'close',
-   resizable:false,
+    closeAction:'close',
+    resizable:false,
 
-   title:'My Profile',
+    title:'My Profile',
 
-   tooltip: 'Profile Editor',
+    tooltip: 'Profile Editor',
 
-   init: function() {
-      this.general_settings.init();
-   },
+    init: function() {
+        this.general_settings.init();
+    },
 
-   handleProfileClose: function() {
+    handleProfileClose: function() {
 
-      if (XDMoD.Profile.logoutOnClose == true) {
+        if (XDMoD.Profile.logoutOnClose == true) {
 
-         Ext.Msg.show({
+            Ext.Msg.show({
 
-            maxWidth: 800,
-            minWidth: 400,
-            title: 'Close profile and logout?',
-            msg: 'If you do not supply an e-mail address, you will be logged out of XDMoD.<br/><br/>Are you sure you want to do this?',
-            buttons: Ext.Msg.YESNO,
+                maxWidth: 800,
+                minWidth: 400,
+                title: 'Close profile and logout?',
+                msg: 'If you do not supply an e-mail address, you will be logged out of XDMoD.<br/><br/>Are you sure you want to do this?',
+                buttons: Ext.Msg.YESNO,
 
-            fn: function(resp) {
+                fn: function(resp) {
 
-               if (resp == 'yes')
-                  CCR.xdmod.ui.actionLogout();
+                    if (resp == 'yes')
+                        CCR.xdmod.ui.actionLogout();
 
-            },//fn
+                },//fn
 
-            icon: Ext.MessageBox.QUESTION
+                icon: Ext.MessageBox.QUESTION
 
-         });//Ext.Msg.show
+            });//Ext.Msg.show
 
-         return false;
+            return false;
 
-      }//if (XDMoD.Profile.logoutOnClose == true)
+        }//if (XDMoD.Profile.logoutOnClose == true)
 
-      return true;
+        return true;
 
-   },
+    },
 
-   getCloseButton: function() {
+    getCloseButton: function() {
 
-      var self = this;
+        var self = this;
 
-      return new Ext.Button({
-         text: 'Close',
-         iconCls: 'general_btn_close',
-         handler: function(){ self.close(); }
-      });
+        return new Ext.Button({
+            text: 'Close',
+            iconCls: 'general_btn_close',
+            handler: function(){ self.close(); }
+        });
 
-   },
+    },
 
-   initComponent: function(){
+    initComponent: function(){
 
-      var self = this;
+        var self = this;
 
-      this.general_settings = new XDMoD.ProfileGeneralSettings({parentWindow: self});
+        this.general_settings = new XDMoD.ProfileGeneralSettings({parentWindow: self});
 
-      // ------------------------------------------------
+        // ------------------------------------------------
 
-      this.on('beforeclose', self.handleProfileClose);
+        this.on('beforeclose', self.handleProfileClose);
 
-      // ------------------------------------------------
+        // ------------------------------------------------
 
         var tabItems = [
             this.general_settings
@@ -143,53 +143,53 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
             });
         }
 
-      var tabPanel = new Ext.TabPanel({
+        var tabPanel = new Ext.TabPanel({
 
-         frame: false,
-         border: false,
-         activeTab: 0,
+            frame: false,
+            border: false,
+            activeTab: 0,
 
-         defaults: {
-            tabCls: 'tab-strip'
-         },
+            defaults: {
+                tabCls: 'tab-strip'
+            },
 
-         items: tabItems,
+            items: tabItems,
 
-         listeners: {
-            tabchange: function (thisTabPanel, tab) {
-               XDMoD.utils.syncWindowShadow(thisTabPanel);
+            listeners: {
+                tabchange: function (thisTabPanel, tab) {
+                    XDMoD.utils.syncWindowShadow(thisTabPanel);
 
-               // Fix a bug where invalid field errors are displayed poorly
-               // after a tab switch by forcing form validation.
-               if (tab !== self.general_settings) {
-                  return;
-               }
+                    // Fix a bug where invalid field errors are displayed poorly
+                    // after a tab switch by forcing form validation.
+                    if (tab !== self.general_settings) {
+                        return;
+                    }
 
-               tab.cascade(function (currentComponent) {
-                  if (currentComponent instanceof Ext.form.FormPanel) {
-                     currentComponent.getForm().isValid();
-                     return false;
-                  }
+                    tab.cascade(function (currentComponent) {
+                        if (currentComponent instanceof Ext.form.FormPanel) {
+                            currentComponent.getForm().isValid();
+                            return false;
+                        }
 
-                  return true;
-               });
+                        return true;
+                    });
+                }
             }
-         }
 
-      });//tabPanel
+        });//tabPanel
 
-      // ------------------------------------------------
+        // ------------------------------------------------
 
-      Ext.apply(this, {
+        Ext.apply(this, {
 
-         items:[
-            tabPanel
-         ]
+            items:[
+                tabPanel
+            ]
 
-      });
+        });
 
-      XDMoD.ProfileEditor.superclass.initComponent.call(this);
+        XDMoD.ProfileEditor.superclass.initComponent.call(this);
 
-   }//initComponent
+    }//initComponent
 
 });//XDMoD.ProfileEditor
