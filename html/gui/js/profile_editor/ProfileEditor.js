@@ -8,11 +8,11 @@ XDMoD.ProfileEditorConstants = {
     WELCOME_EMAIL_CHANGE: 1, // designates if we're displaying first time login prompt to validate email
     SSO_USER: 5 // designates whether or not this is a Single Sign On user
 
-};//XDMoD.ProfileEditorConstants
+}; // XDMoD.ProfileEditorConstants
 
 // --------------------------------------------
 
-XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
+XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
     id: 'xdmod-profile-editor',
     width: 375,
 
@@ -31,13 +31,13 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
 
     tooltip: 'Profile Editor',
 
-    init: function() {
+    init: function () {
         this.general_settings.init();
     },
 
-    handleProfileClose: function() {
+    handleProfileClose: function () {
 
-        if (XDMoD.Profile.logoutOnClose == true) {
+        if (XDMoD.Profile.logoutOnClose) {
 
             Ext.Msg.show({
 
@@ -47,42 +47,47 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
                 msg: 'If you do not supply an e-mail address, you will be logged out of XDMoD.<br/><br/>Are you sure you want to do this?',
                 buttons: Ext.Msg.YESNO,
 
-                fn: function(resp) {
+                fn: function (resp) {
 
-                    if (resp == 'yes')
+                    if (resp === 'yes') {
                         CCR.xdmod.ui.actionLogout();
+                    }
 
-                },//fn
+                }, // fn
 
                 icon: Ext.MessageBox.QUESTION
 
-            });//Ext.Msg.show
+            }); // Ext.Msg.show
 
             return false;
 
-        }//if (XDMoD.Profile.logoutOnClose == true)
+        } // if (XDMoD.Profile.logoutOnClose)
 
         return true;
 
     },
 
-    getCloseButton: function() {
+    getCloseButton: function () {
 
         var self = this;
 
         return new Ext.Button({
             text: 'Close',
             iconCls: 'general_btn_close',
-            handler: function(){ self.close(); }
+            handler: function () {
+                self.close();
+            }
         });
 
     },
 
-    initComponent: function(){
+    initComponent: function () {
 
         var self = this;
 
-        this.general_settings = new XDMoD.ProfileGeneralSettings({parentWindow: self});
+        this.general_settings = new XDMoD.ProfileGeneralSettings({
+            parentWindow: self
+        });
 
         // ------------------------------------------------
 
@@ -176,7 +181,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
                 }
             }
 
-        });//tabPanel
+        }); // tabPanel
 
         // ------------------------------------------------
 
@@ -190,6 +195,6 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
 
         XDMoD.ProfileEditor.superclass.initComponent.call(this);
 
-    }//initComponent
+    } // initComponent
 
-});//XDMoD.ProfileEditor
+}); // XDMoD.ProfileEditor
