@@ -45,11 +45,9 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
                 buttons: Ext.Msg.YESNO,
 
                 fn: function (resp) {
-
                     if (resp === 'yes') {
                         CCR.xdmod.ui.actionLogout();
                     }
-
                 }, // fn
 
                 icon: Ext.MessageBox.QUESTION
@@ -181,7 +179,5 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
         });
 
         XDMoD.ProfileEditor.superclass.initComponent.call(this);
-
     } // initComponent
-
 }); // XDMoD.ProfileEditor
