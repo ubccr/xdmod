@@ -43,14 +43,14 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
 
         // ----- DECLARE UTILITY FUNCTIONS ----- //
 
-        var getServerFailureMsg = function (actionText) {
-            return 'Server failure ' + actionText + '. Please try again.';
+        var getServerErrorMsg = function (actionText) {
+            return 'Server error ' + actionText + '. Please try again.';
         };
 
-        var showServerFailureMsg = function (actionText) {
+        var showServerErrorMsg = function (actionText) {
             Ext.Msg.show({
-                title: 'Server Failure',
-                msg: getServerFailureMsg(actionText),
+                title: 'Server Error',
+                msg: getServerErrorMsg(actionText),
                 icon: Ext.MessageBox.ERROR,
                 buttons: Ext.Msg.OK,
                 minWidth: EXT_MSG_MIN_WIDTH,
@@ -71,12 +71,12 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
                         } else if (params.onFailure) {
                             params.onFailure();
                         } else {
-                            showServerFailureMsg(params.actionText);
+                            showServerErrorMsg(params.actionText);
                         }
-                    } else if (params.onServerFailure) {
-                        params.onServerFailure();
+                    } else if (params.onServerError) {
+                        params.onServerError();
                     } else {
-                        showServerFailureMsg(params.actionText);
+                        showServerErrorMsg(params.actionText);
                     }
                 } // function callback [XDMoD.REST.connection.request]
             }); // XDMoD.REST.connection.request
@@ -151,8 +151,8 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
                 btnGenerate.show();
                 XDMoD.utils.syncWindowShadow(self);
             },
-            onServerFailure: function () {
-                updateHtml(panelMsg, getServerFailureMsg(actionTextGetToken));
+            onServerError: function () {
+                updateHtml(panelMsg, getServerErrorMsg(actionTextGetToken));
                 btnRetry.show();
                 XDMoD.utils.syncWindowShadow(self);
             }
