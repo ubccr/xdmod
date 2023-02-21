@@ -13,15 +13,13 @@
                      "type" : "mysql",
                      "name" : "Cloud DB",
                      "config" : "datawarehouse",
-                     "schema": "modw_cloud",
-                     "create_schema_if_not_exists": "true"
+                     "schema": "modw_cloud"
                  },
                  "destination": {
                      "type" : "mysql",
                      "name" : "Cloud DB",
                      "config" : "datawarehouse",
-                     "schema": "modw_cloud",
-                     "create_schema_if_not_exists": "true"
+                     "schema": "modw_cloud"
                  }
              }
           }
@@ -62,23 +60,69 @@
         }
     ],
     "cloud-migration-10-0-0_10-5-0": [
-        {
-            "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
-            "description": "Open Stack cloud instance type data for existing instance types",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/staging_existing_instance_type.json"
-        },
-        {
-            "name": "OpenStackCloudInstanceTypeStagingIngestor",
-            "description": "Sets end times for instance type configurations",
-            "class": "CloudInstanceTypeStateIngestor",
-            "definition_file": "cloud_openstack/instance_type_staging.json"
-        },
-        {
-            "name": "OpenStackCloudInstanceTypeEndTimeIngestor",
-            "description": "Open Stack cloud instance type data",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/instance_type.json"
-        }
+      {
+          "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
+          "description": "Open Stack cloud instance type data for existing instance types",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/staging_existing_instance_type.json",
+          "create_schema_if_not_exists": "true"
+      },
+      {
+          "name": "OpenStackCloudInstanceTypeStagingIngestor",
+          "description": "Sets end times for instance type configurations",
+          "class": "CloudInstanceTypeStateIngestor",
+          "definition_file": "cloud_openstack/instance_type_staging.json",
+          "create_schema_if_not_exists": "true"
+      },
+      {
+          "name": "OpenStackCloudInstanceTypeEndTimeIngestor",
+          "description": "Open Stack cloud instance type data",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/instance_type.json"
+      },
+      {
+          "name": "add-instance-state-table",
+          "description": "Update mod_shredder tables",
+          "class": "ManageTables",
+          "namespace": "ETL\\Maintenance",
+          "options_class": "MaintenanceOptions",
+          "definition_file_list": [
+              "cloud_common/instance_states.json"
+          ],
+          "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "Database",
+                  "config": "database",
+                  "schema": "modw_cloud"
+              }
+          }
+      },
+      {
+          "name": "populate-instance-state-table",
+          "description": "Initialize cloud event types including unknown",
+          "class": "StructuredFileIngestor",
+          "definition_file": "cloud_common/instance_states.json",
+          "endpoints": {
+              "source": {
+                  "type": "jsonfile",
+                  "name": "Cloud event types",
+                  "path": "cloud_common/instance_states.json"
+              }
+          }
+      },
+      {
+          "name": "update-event-types-table",
+          "description": "Initialize cloud event types including unknown",
+          "class": "StructuredFileIngestor",
+          "definition_file": "cloud_common/event_type.json",
+          "endpoints": {
+              "source": {
+                  "type": "jsonfile",
+                  "name": "Cloud event types",
+                  "path": "cloud_common/event_type.json"
+              }
+          }
+      }
     ]
 }
