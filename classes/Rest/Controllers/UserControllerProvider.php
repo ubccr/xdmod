@@ -121,6 +121,12 @@ class UserControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * This endpoint is meant to return the metadata about a users API Token. The actual API token hash will never be
+     * included in the data returned. To receive a successful response from this endpoint a user must fulfill the
+     * following conditions:
+     *   - They just have authenticated to XDMoD via one of the supported methods.
+     *   - THey must have an active API Token.
+     *
      * @param Request $request
      * @param Application $app
      * @return mixed
@@ -138,7 +144,7 @@ class UserControllerProvider extends BaseControllerProvider
                 ));
             }
 
-            $tokenData = $this->getCurrentAPITokenData($user);
+            $tokenData = $this->getCurrentAPITokenMetaData($user);
 
             return $app->json(array(
                     'success' => true,
@@ -154,7 +160,10 @@ class UserControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * This endpoint will attempt to create a new API token for the requesting user.
+     * This endpoint will attempt to create a new API token for the requesting user. To successfully call this endpoint
+     * a user must fulfill the following requirements:
+     *   - They just have authenticated to XDMoD via one of the supported methods.
+     *   - They must not have an existing API Token.
      *
      * @param Request $request
      * @param Application $app
@@ -187,7 +196,10 @@ class UserControllerProvider extends BaseControllerProvider
 
 
     /**
-     * This endpoint will attempt to revoke the currently active api token for the requesting user.
+     * This endpoint will attempt to revoke the currently active api token for the requesting user. To successfully call
+     * this endpoint a user must fulfill the following requirements:
+     *   - They must have authenticated to XDMoD via one of the supported methods.
+     *   - They must have an active API Token
      *
      * @param Request $request
      * @param Application $app
@@ -355,7 +367,7 @@ SQL;
      * @throws \Exception if there is a problem retrieving a db connection.
      * @throws \Exception if there is a problem executing the SELECT statement.
      */
-    private function getCurrentAPITokenData(XDUser $user)
+    private function getCurrentAPITokenMetaData(XDUser $user)
     {
         $db = DB::factory('database');
         $query = <<<SQL
