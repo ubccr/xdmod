@@ -413,14 +413,7 @@ SQL;
         // will need to occur when attempting to validate the token, but it alleviates the problem of having to attempt
         // to match every token in the db to find which user it's meant to authenticate.
         $password = bin2hex(random_bytes(32));
-        $encodedUserId = base64_encode($user->getUserID());
         $hash = password_hash($password, PASSWORD_DEFAULT, array('cost' => 12));
-
-        // This token will be stored in the db and will be what's used to verify against $password for authentication / authorization.
-        $storedToken = sprintf('%s.%s', $encodedUserId, $hash);
-
-        // This token will be what's returned to the user.
-        $userToken = sprintf('%s.%s', $encodedUserId, $password);
 
         $createdOn = date_create()->format('Y-m-d H:m:s');
         $expirationInterval = \xd_utilities\getConfiguration('api_token', 'expiration_interval');
@@ -434,7 +427,7 @@ SQL;
             $query,
             array(
                 ':user_id' => $user->getUserID(),
-                ':token' => $storedToken,
+                ':token' => $hash,
                 ':created_on' => $createdOn,
                 ':expires_on' => $expirationDate
             )
@@ -445,7 +438,7 @@ SQL;
         }
 
         return array(
-            'token' => $userToken,
+            'token' => $password,
             'expiration_date' => $expirationDate,
         );
     }

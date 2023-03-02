@@ -820,10 +820,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         if (empty($rawToken)) {
             $rawToken = $request->get('apitoken');
             if (empty($rawToken)) {
-                throw new UnauthorizedHttpException(
-                    'Basic realm="Access to Data Analytics endpoints", charset="UTF-8"',
-                    'An API token must be supplied to use this endpoint.'
-                );
+                throw new BadRequestHttpException('No token provided');
             }
         }
 
