@@ -135,28 +135,21 @@ class UserControllerProvider extends BaseControllerProvider
     public function getCurrentAPIToken(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        try {
 
-            if ($this->canCreateToken($user)) {
-                return $app->json(array(
-                    'success' => false,
-                    'message' => 'Unable to retrieve current API token.'
-                ));
-            }
-
-            $tokenData = $this->getCurrentAPITokenMetaData($user);
-
-            return $app->json(array(
-                    'success' => true,
-                    'data' => $tokenData
-                )
-            );
-        } catch (\Exception $e) {
+        if ($this->canCreateToken($user)) {
             return $app->json(array(
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Unable to retrieve current API token.'
             ));
         }
+
+        $tokenData = $this->getCurrentAPITokenMetaData($user);
+
+        return $app->json(array(
+                'success' => true,
+                'data' => $tokenData
+            )
+        );
     }
 
     /**
@@ -174,24 +167,17 @@ class UserControllerProvider extends BaseControllerProvider
     {
         $user = $this->authorize($request);
 
-        try {
-            if (!$this->canCreateToken($user)) {
-                return $app->json(array(
-                    'success' => false,
-                    'message' => 'Unable to create a new token at this time.'
-                ));
-            }
-
-            return $app->json(array(
-                'success' => true,
-                'data' => $this->createToken($user)
-            ));
-        } catch (\Exception $e) {
+        if (!$this->canCreateToken($user)) {
             return $app->json(array(
                 'success' => false,
-                'message'=> $e->getMessage()
+                'message' => 'Unable to create a new token at this time.'
             ));
         }
+
+        return $app->json(array(
+            'success' => true,
+            'data' => $this->createToken($user)
+        ));
     }
 
 
@@ -209,34 +195,28 @@ class UserControllerProvider extends BaseControllerProvider
     public function revokeAPIToken(Request $request, Application $app)
     {
         $user = $this->authorize($request);
-        try {
-            // If we can create a token then we can't really revoke it can we.
-            if ($this->canCreateToken($user)) {
-                return $app->json([
-                    'success' => false,
-                    'message' => 'No token to revoke.'
-                ]);
-            }
 
-            // Attempt to revoke the requesting users token.
-            if ($this->revokeToken($user)) {
-                return $app->json(array(
-                    'success' => true,
-                    'message' => 'Token successfully revoked.'
-                ));
-            }
+        // If we can create a token then we can't really revoke it can we.
+        if ($this->canCreateToken($user)) {
+            return $app->json([
+                'success' => false,
+                'message' => 'No token to revoke.'
+            ]);
+        }
 
-            // If the `revokeToken` failed for some reason then we let the user know.
+        // Attempt to revoke the requesting users token.
+        if ($this->revokeToken($user)) {
             return $app->json(array(
-                'success' => false,
-                'message' => 'Unable to revoke API token.'
-            ));
-        } catch (\Exception $e) {
-            return $app->json(array(
-                'success' => false,
-                'message' => $e->getMessage()
+                'success' => true,
+                'message' => 'Token successfully revoked.'
             ));
         }
+
+        // If the `revokeToken` failed for some reason then we let the user know.
+        return $app->json(array(
+            'success' => false,
+            'message' => 'Unable to revoke API token.'
+        ));
     }
 
     /**
