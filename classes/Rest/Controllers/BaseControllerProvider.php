@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use Exception;
 use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
@@ -16,8 +15,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
-use XDUser;
 
 /**
  * Class BaseControllerProvider
@@ -163,65 +160,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     {
         // NO-OP UNLESS OVERRIDDEN
     } // setupAssertions
-
-
-    /**
-     * This function takes in a Request object and an array of required
-     * parameter keys. It then determines if all of the parameters are
-     * present in the provided Request object. If they are, an array
-     * of the parameters and their values are returned. If they are not
-     * all found then an Exception is raised.
-     *
-     * @param Request $request to be used in
-     *                         retrieving the the required params.
-     * @param array $requiredParams an array of strings that defines the
-     *                         parameters that are required to continue.
-     * @param boolean $strict if set to true, then it will throw an exception if not all of the provided params are found.
-     *                        defaults to true.
-     * @return array of all of the required params and their values as supplied
-     *                         by the Request object.
-     * @throws Exception if not all of the $requiredParams were found.
-     */
-    protected function parseRestArguments(Request $request, $requiredParams = array(), $strict = true, $alternative_source = null)
-    {
-        if (!isset($request)) {
-            return array();
-        }
-
-        $found = 0;
-        $results = array();
-        $length = count($requiredParams);
-        foreach ($requiredParams as $requiredParam) {
-
-            $value = $request->get($requiredParam);
-
-            if (!isset($value) && is_string($alternative_source)) {
-
-                $source = $request->get($alternative_source);
-                $needsDecoding = is_string($source);
-
-                if ($needsDecoding) {
-                    $source = json_decode($source, true);
-                }
-
-                $found = isset($source[$requiredParam]);
-                $value = $found ? $source[$requiredParam] : null;
-            }
-
-            $mod = is_string($requiredParam) && isset($value) ? 1 : 0;
-
-            if ($mod > 0) {
-                $results[$requiredParam] = $value;
-            }
-            $found += $mod;
-        }
-
-        if ($found !== $length && $strict) {
-            throw new MissingMandatoryParametersException('Not all parameters were supplied');
-        }
-
-        return $results;
-    }//parseRestArguments
 
     /**
      * A simple piece of Middleware that ensures that the user making the current
@@ -806,10 +744,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     /**
      * @param Request $request
-     * @return XDUser
-     * @throws Exception if the provided token is empty.
-     * @throws Exception if the token is not in a valid format.
-     * @throws Exception if the user's token from the db does not validate against the provided token.
+     * @return \XDUser
+     * @throws BadRequestHttpException if the provided token is empty.
+     * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
     protected function authenticateToken($request)
     {
@@ -826,7 +763,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         try {
             list($userId, $token) = Tokens::parseToken($rawToken);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 

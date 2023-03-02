@@ -32,11 +32,11 @@ class Tokens
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
         SELECT
-            token,
-            expires_on
+            ut.token,
+            ut.expires_on
         FROM moddb.user_tokens AS ut
             JOIN moddb.Users u ON u.id = ut.user_id
-        WHERE u.id = :user_id and u.is_active = 1
+        WHERE u.id = :user_id and u.account_is_active = 1
 SQL;
 
         $row = $db->query($query, array(':user_id' => $userId));
