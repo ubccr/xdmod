@@ -79,7 +79,7 @@ SQL;
         }
 
         // Check that the token is in a valid form
-        $userId = substr($rawToken,0, $delimPosition);
+        $userId = substr($rawToken, 0, $delimPosition);
         $token = substr($rawToken, $delimPosition + 1);
 
         return array($userId, $token);
