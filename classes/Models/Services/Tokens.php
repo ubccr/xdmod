@@ -12,6 +12,15 @@ use XDUser;
  */
 class Tokens
 {
+    /**
+     * This is the key that will be used when adding an API Token to a request's headers.
+     */
+    const HEADER_KEY = 'Bearer';
+
+    /**
+     * This is the delimiter that's used when returning a newly created API token to the user.
+     */
+    const DELIMITER = '.';
 
     /**
      * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
@@ -65,23 +74,48 @@ SQL;
     }
 
     /**
-     * A helper function that takes a raw API token and deconstructs it into user_id, api_token.
+     * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
+     * the new REST stack.
      *
-     * @param string $rawToken
-     * @return array in the form array(user_id, token)
-     * @throws Exception if the provided $rawToken is in an invalid format.
+     * @return \XDUser|null if the authentication is successful then an \XDUser instance for the authenticated user will
+     * be returned, if the authentication is not successful then null will be returned.
+     * @throws Exception
      */
-    public static function parseToken($rawToken)
+    public static function authenticateToken()
     {
-        $delimPosition = strpos($rawToken, '.');
-        if ($delimPosition === false) {
-            throw new Exception('Invalid token format.');
+        $headers = getallheaders();
+
+        if (empty($headers['Authorization'])) {
+            return null;
         }
 
-        // Check that the token is in a valid form
+        $authorizationHeader = $headers['Authorization'];
+        $rawToken = substr(
+            $authorizationHeader,
+            strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1
+        );
+
+        if (empty($rawToken)) {
+            // we want to the token authentication to be optional so instead of throwing an exception we return null.
+            // This allows us to provide token authentication to existing endpoints without impeding their normal use.
+            return null;
+        }
+
+        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
+        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
+        if ($delimPosition === false) {
+            // Same as above, token authentication is optional so we return null instead of throwing an exception.
+            return null;
+        }
+
         $userId = substr($rawToken, 0, $delimPosition);
         $token = substr($rawToken, $delimPosition + 1);
 
-        return array($userId, $token);
+        try {
+            return Tokens::authenticate($userId, $token);
+        } catch (Exception $e) {
+            // and again, same as above.
+            return null;
+        }
     }
 }

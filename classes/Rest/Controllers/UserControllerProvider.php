@@ -331,6 +331,7 @@ FROM moddb.Users u
         ON ut.user_id = u.id
 WHERE    u.id = :user_id
      AND ut.user_token_id IS NOT NULL
+     AND u.account_is_active = 1
 SQL;
 
         $rows = $db->query($query, array(':user_id' => $user->getUserID()));
@@ -406,8 +407,8 @@ SQL;
         $result = $db->execute(
             $query,
             array(
-                ':user_id' => $user->getUserID(),
-                ':token' => $hash,
+                ':user_id'    => $user->getUserID(),
+                ':token'      => $hash,
                 ':created_on' => $createdOn,
                 ':expires_on' => $expirationDate
             )
@@ -418,7 +419,7 @@ SQL;
         }
 
         return array(
-            'token' => $password,
+            'token'           => sprintf('%s.%s', $user->getUserID(), $password),
             'expiration_date' => $expirationDate,
         );
     }

@@ -745,28 +745,26 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     /**
      * @param Request $request
      * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty.
+     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
      * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
     protected function authenticateToken($request)
     {
         // NOTE: header keys cannot contain '_' characters.
-        $rawToken = $request->headers->get('apitoken');
+        $authorizationHeader = $request->headers->get('Authorization');
+        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
+            throw new BadRequestHttpException('No token provided.');
+        }
+        $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1 );
 
-        // if we weren't able to find a header called api_token then try getting it from one of the query parameters.
-        if (empty($rawToken)) {
-            $rawToken = $request->get('apitoken');
-            if (empty($rawToken)) {
-                throw new BadRequestHttpException('No token provided');
-            }
+        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
+        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
+        if ($delimPosition === false) {
+            throw new BadRequestHttpException('Invalid token format');
         }
 
-        try {
-            list($userId, $token) = Tokens::parseToken($rawToken);
-        } catch (\Exception $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
-
+        $userId = substr($rawToken, 0, $delimPosition);
+        $token = substr($rawToken, $delimPosition + 1);
 
         return Tokens::authenticate($userId, $token);
     }
