@@ -5,6 +5,7 @@ namespace Models\Services;
 use Exception;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Twig\Token;
 use XDUser;
 
 /**
@@ -85,18 +86,8 @@ SQL;
      */
     public static function authenticateToken()
     {
-        $headers = getallheaders();
 
-        if (empty($headers['Authorization'])) {
-            return null;
-        }
-
-        $authorizationHeader = $headers['Authorization'];
-        $rawToken = substr(
-            $authorizationHeader,
-            strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1
-        );
-
+        $rawToken = self::getRawToken();
         if (empty($rawToken)) {
             // we want to the token authentication to be optional so instead of throwing an exception we return null.
             // This allows us to provide token authentication to existing endpoints without impeding their normal use.
@@ -119,5 +110,39 @@ SQL;
             // and again, same as above.
             return null;
         }
+    }
+
+    /**
+     * Attempt to retrieve
+     * @return null|string
+     */
+    private static function getRawToken()
+    {
+        // Try to find the token in the `Authorization` header.
+        $headers = getallheaders();
+        if (!empty($headers['Authorization'])) {
+            $authorizationHeader = $headers['Authorization'];
+            if (is_string($authorizationHeader) && strpos($authorizationHeader, Tokens::HEADER_KEY) !== false) {
+                // The format for including the token in the header is slightly different then when included as a get or
+                // post parameter. Here the value will be in the form: `Bearer: <token>`
+                return substr(
+                    $authorizationHeader,
+                    strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1
+                );
+            }
+
+        }
+
+        // If it's not in the headers, try $_GET
+        if (isset($_GET[Tokens::HEADER_KEY]) && is_string($_GET[Tokens::HEADER_KEY])) {
+            return $_GET[Tokens::HEADER_KEY];
+        }
+
+        // And finally try $_POST
+        if (isset($_POST[Tokens::HEADER_KEY]) && is_string($_POST[Tokens::HEADER_KEY])) {
+            return $_POST[Tokens::HEADER_KEY];
+        }
+
+        return null;
     }
 }
