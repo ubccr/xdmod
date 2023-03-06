@@ -142,7 +142,7 @@ SQL;
             return $_GET[Tokens::HEADER_KEY];
         }
 
-        // And finally try $_POST
+        // And lastly $_POST
         if (isset($_POST[Tokens::HEADER_KEY]) && is_string($_POST[Tokens::HEADER_KEY])) {
             return $_POST[Tokens::HEADER_KEY];
         }
