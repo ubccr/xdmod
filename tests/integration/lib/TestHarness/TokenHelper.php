@@ -163,14 +163,16 @@ class TokenHelper
             // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
             // 401.
             if (is_numeric($expectedHttpCode) && $expectedHttpCode !== $actualHttpCode ||
-                is_array($expectedHttpCode) && !in_array($actualHttpCode, $expectedHttpCode))
-            throw new Exception(
-                sprintf(
-                    'HTTP Code does not match. Expected: %s Received: %s',
-                    json_encode($expectedHttpCode),
-                    $actualHttpCode
-                )
-            );
+                is_array($expectedHttpCode) && !in_array($actualHttpCode, $expectedHttpCode)
+            ) {
+                throw new Exception(
+                    sprintf(
+                        'HTTP Code does not match. Expected: %s Received: %s',
+                        json_encode($expectedHttpCode),
+                        $actualHttpCode
+                    )
+                );
+            }
         }
         if (isset($expectedContentType) && $expectedContentType !== $actualContentType) {
             print_r($response);
