@@ -754,12 +754,12 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // to the request's query params.
         $authorizationHeader = $request->headers->get('Authorization');
         if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
-           $rawToken = $request->get(Tokens::HEADER_KEY);
-           if (empty($rawToken)) {
-               throw new BadRequestHttpException('No Token Provided.');
-           }
+            $rawToken = $request->get(Tokens::HEADER_KEY);
+            if (empty($rawToken)) {
+                throw new BadRequestHttpException('No Token Provided.');
+            }
         } else {
-            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1 );
+            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
         }
 
 
