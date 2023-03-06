@@ -113,8 +113,12 @@ SQL;
     }
 
     /**
-     * Attempt to retrieve
-     * @return null|string
+     * Attempt to retrieve the raw API Token from one of the following sources:
+     *   - Headers
+     *   - GET Parameters
+     *   - POST Parameters
+     *
+     * @return null|string returns the api token if found else it returns null.
      */
     private static function getRawToken()
     {
