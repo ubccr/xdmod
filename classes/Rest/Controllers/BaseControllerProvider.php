@@ -750,12 +750,18 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     protected function authenticateToken($request)
     {
-        // NOTE: header keys cannot contain '_' characters.
+        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
+        // to the request's query params.
         $authorizationHeader = $request->headers->get('Authorization');
         if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
-            throw new BadRequestHttpException('No token provided.');
+           $rawToken = $request->get(Tokens::HEADER_KEY);
+           if (empty($rawToken)) {
+               throw new BadRequestHttpException('No Token Provided.');
+           }
+        } else {
+            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1 );
         }
-        $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1 );
+
 
         // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
         $delimPosition = strpos($rawToken, Tokens::DELIMITER);

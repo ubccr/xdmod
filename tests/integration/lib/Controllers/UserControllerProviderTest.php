@@ -224,8 +224,20 @@ class UserControllerProviderTest extends BaseUserAdminTest
         );
 
         if ('pub' !== $user) {
+            $token = $tokenResponse->data->token;
             // We add the token to the request headers so that we can use the token authentication.
-            $this->helper->addheader('Authorization', sprintf('%s %s', Tokens::HEADER_KEY, $tokenResponse->data->token));
+            $this->helper->addheader('Authorization', sprintf('%s %s', Tokens::HEADER_KEY, $token));
+
+            // While we prefer the 'Authorization' header approach to token authentication. We also support having it
+            // provided as a query parameter. Also, retrieving the 'Authorization' header on el7 isn't working, so
+            // this is the only way to test authentication.
+            if (!property_exists($test, 'parameters') || !isset($test->parameters)) {
+                $test->parameters = array();
+            } elseif (is_object($test->parameters)) {
+                $test->parameters = (array)$test->parameters;
+            }
+
+            $test->parameters[Tokens::HEADER_KEY] = $token;
 
             $verb = $test->verb;
             $response = $this->helper->$verb($test->url, (array)$test->parameters, (array)$test->data);

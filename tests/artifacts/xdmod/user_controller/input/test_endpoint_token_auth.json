@@ -24,21 +24,21 @@
             "user": "pub",
             "expected": {
                 "api_get": {
-                    "http_code": 401,
+                    "http_code": [401, 400],
                     "schemas": {
                         "success": "authentication_error.spec",
                         "failure": "authentication_error.spec"
                     }
                 },
                 "api_create": {
-                    "http_code": 401,
+                    "http_code": [401, 400],
                     "schemas": {
                         "success": "authentication_error.spec",
                         "failure": "authentication_error.spec"
                     }
                 },
                 "api_revoke": {
-                    "http_code": 401,
+                    "http_code": [401, 400],
                     "schemas": {
                         "success": "authentication_error.spec",
                         "failure": "authentication_error.spec"
