@@ -41,6 +41,7 @@ class Tokens
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
         SELECT
+            ut.user_id,
             ut.token,
             ut.expires_on
         FROM moddb.user_tokens AS ut
@@ -56,6 +57,7 @@ SQL;
 
         $expectedToken = $row[0]['token'];
         $expiresOn = $row[0]['expires_on'];
+        $dbUserId = $row[0]['user_id'];
 
         // Check that expected token isn't expired.
         $now = new \DateTime();
@@ -70,7 +72,7 @@ SQL;
         }
 
         // and if we've made it this far we can safely return the requested Users data.
-        return XDUser::getUserByID($userId);
+        return XDUser::getUserByID($dbUserId);
     }
 
     /**
