@@ -3,13 +3,13 @@
 namespace Models\Services;
 
 use Exception;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Twig\Token;
 use XDUser;
 
 /**
- *
+ * A static helper function for authenticating using API Tokens. REST endpoints are meant to use the `authenticate`
+ * function while controller functions should use `authenticateToken`.
  */
 class Tokens
 {
@@ -27,15 +27,15 @@ class Tokens
      * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
      * XDUser object will be returned for the provided $userId. If not, an exception will be thrown.
      *
-     * @param int|string $userId        The id used to look up the the users hashed token.
+     * @param int|string $userId   The id used to look up the the users hashed token.
      * @param string     $password The value to be checked against the retrieved hashed token.
      *
      * @return XDUser for the provided $userId, if the authentication is successful else an exception will be thrown.
      *
-     * @throws Exception if unable to retrieve a database connection.
-     * @throws Exception if no token can be found for the provided $userId
-     * @throws Exception if the stored token for $userId has expired.
-     * @throws Exception if the provided $token doesn't match the stored hash.
+     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws BadRequestHttpException   if no token can be found for the provided $userId
+     * @throws BadRequestHttpException   if the stored token for $userId has expired.
+     * @throws AccessDeniedHttpException if the provided $token doesn't match the stored hash.
      */
     public static function authenticate($userId, $password)
     {
@@ -69,7 +69,7 @@ SQL;
 
         // finally check that the provided token matches it's stored hash.
         if (!password_verify($password, $expectedToken)) {
-            throw new AccessDeniedException('Invalid API token.');
+            throw new AccessDeniedHttpException('Invalid API token.');
         }
 
         // and if we've made it this far we can safely return the requested Users data.
@@ -80,9 +80,8 @@ SQL;
      * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
      * the new REST stack.
      *
-     * @return \XDUser|null if the authentication is successful then an \XDUser instance for the authenticated user will
+     * @return XDUser|null if the authentication is successful then an XDUser instance for the authenticated user will
      * be returned, if the authentication is not successful then null will be returned.
-     * @throws Exception
      */
     public static function authenticateToken()
     {
