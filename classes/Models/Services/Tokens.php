@@ -127,7 +127,7 @@ SQL;
             $authorizationHeader = $headers['Authorization'];
             if (is_string($authorizationHeader) && strpos($authorizationHeader, Tokens::HEADER_KEY) !== false) {
                 // The format for including the token in the header is slightly different then when included as a get or
-                // post parameter. Here the value will be in the form: `Bearer: <token>`
+                // post parameter. Here the value will be in the form: `Bearer <token>`
                 return substr(
                     $authorizationHeader,
                     strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1
