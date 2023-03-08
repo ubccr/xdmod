@@ -161,3 +161,6 @@ export_directory = "[:data_warehouse_export_export_directory:]"
 retention_duration_days = "[:data_warehouse_export_retention_duration_days:]"
 ; Salt used during deidentification.
 hash_salt = "[:data_warehouse_export_hash_salt:]"
+
+[api_token]
+expiration_interval = "6 months"

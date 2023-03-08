@@ -5,7 +5,14 @@ use Models\Services\Realms;
 
 @require_once('common.php');
 
-$user = \xd_security\getLoggedInUser();
+// To enable API Token
+$user = \Models\Services\Tokens::authenticateToken();
+
+// If token authentication failed then fallback to the standard session based authentication method.
+if ($user === null) {
+    $user = \xd_security\getLoggedInUser();
+}
+
 $roles = $user->getAllRoles(true);
 
 $roleDescriptors = array();

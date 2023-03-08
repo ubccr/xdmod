@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "authentication_error",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean",
+            "enum": [
+                false
+            ]
+        },
+        "count": {
+            "type": "integer",
+            "const": 0
+        },
+        "total": {
+            "type": "integer",
+            "const": 0
+        },
+        "totalCount": {
+            "type": "integer",
+            "const": 0
+        },
+        "results": {
+            "type": "array"
+        },
+        "data": {
+            "type": "array"
+        },
+        "message": {
+            "const": "Session Expired"
+        },
+        "code": {
+            "type": "integer",
+            "enum": [2]
+        }
+    }
+}
