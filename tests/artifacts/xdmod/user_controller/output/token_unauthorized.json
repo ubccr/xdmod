@@ -1,0 +1,4 @@
+{
+    "success": false,
+    "message": "An API token must be supplied to use this endpoint."
+}

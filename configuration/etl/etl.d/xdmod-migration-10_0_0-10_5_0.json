@@ -57,6 +57,22 @@
                     "schema": "moddb"
                 }
             }
+        },
+        {
+            "name": "add_user_tokens_table",
+            "description": "Creates the new moddb.user_tokens table",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "acls/user_tokens.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ],
     "cloud-migration-10-0-0_10-5-0": [
