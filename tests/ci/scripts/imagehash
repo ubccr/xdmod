@@ -11,5 +11,5 @@ def usage():
 
 data = sys.stdin.buffer.read()
 stream = io.BytesIO(data)
-hval = imagehash.average_hash(Image.open(stream))
+hval = imagehash.average_hash(Image.open(stream), hash_size=24)
 print(hval)
