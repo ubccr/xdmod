@@ -26,6 +26,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
 
     closeAction: 'close',
     resizable: false,
+    stateful: false,
 
     title: 'My Profile',
 
