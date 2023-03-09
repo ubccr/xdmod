@@ -570,7 +570,7 @@ XDMoD.utils.trimOnBlur = function (thisField) {
  */
 XDMoD.utils.syncWindowShadow = function (thisComponent) {
     thisComponent.bubble(function (currentComponent) {
-        if (currentComponent instanceof Ext.Window && currentComponent.el) {
+        if (currentComponent instanceof Ext.Window) {
             currentComponent.syncShadow();
             return false;
         }
