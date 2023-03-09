@@ -101,3 +101,5 @@ toc:
         url: /dev-code-organization.html
       - page: User Dashboard Components
         url: /dashboard-devel.html
+      - page: Rest API
+        url: /rest.html
