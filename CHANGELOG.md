@@ -1,5 +1,14 @@
 # Open XDMoD Change Log
 
+## 2023-03-10 v10.0.1
+
+- Bug Fixes
+    - General
+        - Update image export to support headless chromium 109 or later ([\#1688](https://github.com/ubccr/xdmod/pull/1688))
+- Uncategorized
+    - General
+        - Merge code updates to support Rocky 8 into single branch that supports both Centos 7 and Rocky 8 builds.
+
 ## 2022-03-10 v10.0.0
 
 - Bug Fixes
