@@ -82,6 +82,44 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             }
         }
     }
+
+    private function phash($type, $imageData)
+    {
+        $out = "";
+
+        if ($type === 'png' || $type === 'svg') {
+            $command = '/root/bin/imagehash';
+            if ($type == 'svg') {
+                $command = 'rsvg-convert -f png | /root/bin/imagehash';
+            }
+            $pipes = array();
+            $descriptor_spec = array(
+                    0 => array('pipe', 'r'),
+                    1 => array('pipe', 'w'),
+                    2 => array('pipe', 'w'),
+                    );
+            $process = proc_open($command, $descriptor_spec, $pipes);
+            if (!is_resource($process)) {
+                throw new \Exception('Unable execute command Details: ' . print_r(error_get_last(), true));
+            }
+            fwrite($pipes[0], $imageData);
+            fclose($pipes[0]);
+
+            $out = stream_get_contents($pipes[1]);
+            $err = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $retval = proc_close($process);
+            if (strlen($err) > 0 || $retval !== 0) {
+                throw new Exception("imagehash returned $retval stderr='$err'");
+            }
+        } else {
+            $out = sha1($imageData);
+        }
+
+        return $out;
+    }
+
     /**
      * @dataProvider chartSettingsProvider
      */
@@ -91,7 +129,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
-        $actualHash = sha1($imageData);
+        $actualHash = $this->phash($input['format'], $imageData);
 
         if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
             self::$imagehashes[$testName] = $actualHash;
