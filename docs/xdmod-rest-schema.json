@@ -71,8 +71,7 @@
                 "properties": {
                   "operation": {
                     "type": "string",
-                    "enum": [ "get_data" ],
-                    "description": "`get_data`"
+                    "enum": [ "get_data" ]
                   },
                   "aggregation_unit": {
                     "type": "string",
@@ -80,8 +79,7 @@
                   },
                   "controller_module": {
                     "type": "string",
-                    "enum": [ "metric_explorer" ],
-                    "description": "`metric_explorer`"
+                    "enum": [ "metric_explorer" ]
                   },
                   "data_series": {
                     "type": "string"
@@ -207,13 +205,11 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "enum": [ "get_charts" ],
-                        "description": "`get_charts`"
+                        "enum": [ "get_charts" ]
                     },
                     "controller_module": {
                         "type": "string",
-                        "enum": [ "user_interface" ],
-                        "description": "`user_interface`"
+                        "enum": [ "user_interface" ]
                     },
                     "public_user": {
                         "type": "string",
@@ -355,8 +351,7 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "enum": [ "get_menus" ],
-                        "description": "`get_menus`"
+                        "enum": [ "get_menus" ]
                     },
                     "node": {
                         "type": "string",
@@ -390,8 +385,7 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "enum": [ "get_tabs" ],
-                        "description": "`get_tabs`"
+                        "enum": [ "get_tabs" ]
                     },
                     "public_user": {
                         "type": "boolean",
@@ -572,8 +566,7 @@
                                         "properties": {
                                             "operation": {
                                                 "type": "string",
-                                                "enum": [ "get_dw_descripter" ],
-                                                "description": "`get_dw_descripter`"
+                                                "enum": [ "get_dw_descripter" ]
                                             }
                                         },
                                         "required": ["operation"],
