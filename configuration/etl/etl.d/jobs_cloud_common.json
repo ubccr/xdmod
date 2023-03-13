@@ -48,6 +48,7 @@
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
                 "cloud_common/account.json",
+                "cloud_common/instance_states.json",
                 "cloud_common/event.json",
                 "cloud_common/asset.json",
                 "cloud_common/host.json",
@@ -136,6 +137,21 @@
                     "type": "jsonfile",
                     "name": "Cloud record types",
                     "path": "cloud_common/account.json"
+                }
+            }
+        },
+        {
+            "#": "Note that any actions run after this cannot truncate the tables set here",
+
+            "name": "CloudInstanceStates",
+            "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/instance_states.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/instance_states.json"
                 }
             }
         },

@@ -1,0 +1,40 @@
+{
+    "table_definition": {
+        "name": "instance_states",
+        "engine": "InnoDB",
+        "comment": "The possible states a VM can be in.",
+        "columns": [
+            {
+                "name": "instance_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "display",
+                "type": "varchar(64)",
+                "nullable": false
+            },
+            {
+                "name": "include_in_aggregation",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "instance_state_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "include_in_aggregation_idx",
+                "columns": [
+                    "include_in_aggregation"
+                ]
+            }
+        ]
+    }
+}

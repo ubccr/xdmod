@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "get_user_token_failure",
+    "type": "object",
+    "properties": {
+        "success": {
+            "enum": [false]
+        },
+        "message": {
+            "const": "Unable to retrieve current API token."
+        }
+    }
+}
