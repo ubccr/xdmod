@@ -1748,10 +1748,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
@@ -1829,10 +1831,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": [
@@ -1904,10 +1908,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": [
