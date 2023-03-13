@@ -70,12 +70,35 @@ class BatchDataset extends Loggable implements Iterator
     private $hashCache = [];
 
     /**
-     * @param mixed $name Description.
-     * @param \XDUser $user
-     * @param LoggerInterface $logger
+     * Maximum number of rows to return.
+     *
+     * @var int
      */
-    public function __construct(RawQuery $query, XDUser $user, LoggerInterface $logger = null)
-    {
+    private $limit;
+
+    /**
+     * Starting row index.
+     *
+     * @var int
+     */
+    private $offset;
+
+    /**
+     * @param RawQuery $query
+     * @param XDUser $user
+     * @param LoggerInterface $logger
+     * @param array $fields
+     * @param int $limit
+     * @param int $offset
+     */
+    public function __construct(
+        RawQuery $query,
+        XDUser $user,
+        LoggerInterface $logger = null,
+        $fields = null,
+        $limit = null,
+        $offset = 0
+    ) {
         parent::__construct($logger);
 
         $this->query = $query;
@@ -92,6 +115,21 @@ class BatchDataset extends Loggable implements Iterator
 
         $rawStatsConfig = RawStatisticsConfiguration::factory();
         $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions($query->getRealmName());
+        if ($fields !== null) {
+            foreach ($this->fields as $index => $field) {
+                if (!in_array($field['alias'], $fields)) {
+                    unset($this->fields[$index]);
+                }
+            }
+            $this->fields = array_values($this->fields);
+            if (count($fields) !== count($this->fields)) {
+                throw new Exception(
+                    get_class($this) . ': invalid fields specified.'
+                );
+            }
+        }
+        $this->limit = $limit;
+        $this->offset = $offset;
     }
 
     /**
@@ -148,7 +186,7 @@ class BatchDataset extends Loggable implements Iterator
     public function rewind()
     {
         $this->logger->debug('Executing query');
-        $this->sth = $this->query->getRawStatement();
+        $this->sth = $this->query->getRawStatement($this->limit, $this->offset);
         $this->logger->debug(sprintf(
             'Raw query string: %s',
             $this->sth->queryString

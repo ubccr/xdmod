@@ -2,10 +2,14 @@
 
 namespace Rest\Controllers;
 
+use CCR\Log;
 use Configuration\XdmodConfiguration;
+use DataWarehouse\Data\BatchDataset;
+use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
+use DataWarehouse\Query\Model\WhereCondition;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
@@ -19,6 +23,7 @@ use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use XDUser;
 use DataWarehouse\Access\MetricExplorer;
 use DataWarehouse\Access\Usage;
+use stdClass;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -328,6 +333,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $controller
             ->get("$root/plots", "$current::getPlots");
 
+        $controller
+            ->get("$root/raw-data", "$current::getRawData");
+
+        $controller
+            ->get("$root/raw-data/limit", "$current::getRawDataLimit");
     }
 
     /**
@@ -2180,5 +2190,169 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $container = implode('-', array_filter(array(self::_HISTORY_STORE, strtoupper($realm))));
         return new \UserStorage($user, $container);
+    }
+
+    public function getRawData(Request $request, Application $app) {
+        $user = $this->authorize($request);
+        $params = $this->validateRawDataParams($request, $user);
+        $query = $this->getRawDataQuery($params);
+        $logger = $this->getRawDataLogger();
+        $limit = intval(\xd_utilities\getConfiguration(
+            'datawarehouse', 'rest_raw_row_limit'
+        ));
+        try {
+            $dataset = new BatchDataset(
+                $query, $user, $logger, $params['fields'], $limit,
+                $params['offset']
+            );
+        } catch (\Exception $e) {
+            if (preg_match('/fields/', $e->getMessage())) {
+                throw new BadRequestException('Invalid fields.');
+            } else {
+                throw $e;
+            }
+        }
+        $data = $this->parseRawDataBatchDataset($dataset);
+        return $app->json(array(
+            'success' => true,
+            'limit' => $limit,
+            'fields' => $dataset->getHeader(),
+            'data' => $data
+        ));
+    }
+
+    public function getRawDataLimit(Request $request, Application $app) {
+        $user = $this->authorize($request);
+        $limit = intval(\xd_utilities\getConfiguration(
+            'datawarehouse', 'rest_raw_row_limit'
+        ));
+        return $app->json(array(
+            'success' => true,
+            'data' => $limit
+        ));
+    }
+
+    private function validateRawDataParams($request, $user) {
+        $params = array();
+        $params['start_date'] = $this->validateRawDataDateParam(
+            $request, 'start_date'
+        );
+        $params['end_date'] = $this->validateRawDataDateParam(
+            $request, 'end_date'
+        );
+        $params['realm'] = $this->getStringParam($request, 'realm', true);
+        $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
+        if (empty($queryDescripters)) {
+            throw new BadRequestException('Invalid realm.');
+        }
+        $params['fields'] = $this->validateRawDataFieldsParam($request);
+        $params['filters'] = $this->validateRawDataFiltersParams(
+            $request, $queryDescripters
+        );
+        $params['offset'] = $this->getIntParam($request, 'offset', false);
+        // TODO: Make sure offset is >= 0
+        // TODO: Validate unknown parameters, or just ignore?
+        return $params;
+    }
+
+    private function getRawDataQuery($params) {
+        $realmManager = new RealmManager();
+        $className = $realmManager->getRawDataQueryClass($params['realm']);
+        $query = new $className(
+            array(
+                'start_date' => $params['start_date'],
+                'end_date' => $params['end_date']
+            ),
+            'batch'
+        );
+        $query = $this->setRawDataQueryFilters($query, $params);
+        if ($params['realm'] === "SUPREMM") {
+            $query->addWhereCondition(
+                new WhereCondition('jf.cpu_user', 'IS NOT', 'NULL')
+            );
+        }
+        return $query;
+    }
+
+    private function getRawDataLogger() {
+        // TODO — where to actually log?
+        return Log::factory(
+            'data-warehouse-raw-data',
+            array(
+                'console' => false,
+                'db' => false,
+                'file' => false,
+                'mail' => false
+            )
+        );
+    }
+
+    private function parseRawDataBatchDataset($dataset) {
+        $data = array();
+        foreach ($dataset as $record) {
+            $data[] = $record;
+        }
+        return $data;
+    }
+
+    private function validateRawDataDateParam($request, $param) {
+        return $this->getDateFromISO8601Param($request, $param, true)->format(
+            'Y-m-d'
+        );
+    }
+
+    private function validateRawDataFieldsParam($request) {
+        $fields = null;
+        $fieldsStr = $this->getStringParam($request, 'fields', false);
+        if ($fieldsStr !== null) {
+            $fields = explode(',', $fieldsStr);
+        }
+        return $fields;
+    }
+
+    private function validateRawDataFiltersParams($request, $queryDescripters) {
+        $filters = null;
+        $filtersParam = $request->get('filters');
+        if ($filtersParam !== null) {
+            $filters = array();
+            foreach ($filtersParam as $filterKey => $filterValuesStr) {
+                $filters[$filterKey] = $this->validateRawDataFilterParam(
+                    $queryDescripters, $filterKey, $filterValuesStr
+                );
+            }
+        }
+        return $filters;
+    }
+
+    private function setRawDataQueryFilters($query, $params) {
+        if (count($params['filters']) > 0) {
+            $f = new stdClass();
+            $f->{'data'} = array();
+            foreach ($params['filters'] as $dimension => $values) {
+                foreach ($values as $value) {
+                    $f->{'data'}[] = (object) array(
+                        'id' => "$dimension=$value",
+                        'value_id' => $value,
+                        'dimension_id' => $dimension,
+                        'checked' => 1,
+                    );
+                }
+            }
+            $query->setFilters($f);
+        }
+        return $query;
+    }
+
+    private function validateRawDataFilterParam(
+        $queryDescripters, $filterKey, $filterValuesStr
+    ) {
+        if (!in_array($filterKey, array_keys($queryDescripters))) {
+            throw new BadRequestException(
+                'Invalid filter key \'' . $filterKey . '\'.'
+            );
+        }
+        $filterValuesArray = explode(',', $filterValuesStr);
+        // TODO: Any kind of validation need to be done on filter values?
+        return $filterValuesArray;
     }
 }
