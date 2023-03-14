@@ -2352,7 +2352,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             );
         }
         $filterValuesArray = explode(',', $filterValuesStr);
-        // TODO: Any kind of validation need to be done on filter values?
         return $filterValuesArray;
     }
 }
