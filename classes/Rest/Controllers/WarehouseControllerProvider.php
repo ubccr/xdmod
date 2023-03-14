@@ -2193,7 +2193,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     public function getRawData(Request $request, Application $app) {
-        $user = $this->authorize($request);
+        $user = $this->authenticateToken($request);
         $params = $this->validateRawDataParams($request, $user);
         $query = $this->getRawDataQuery($params);
         $logger = $this->getRawDataLogger();
@@ -2215,7 +2215,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $data = $this->parseRawDataBatchDataset($dataset);
         return $app->json(array(
             'success' => true,
-            'limit' => $limit,
             'fields' => $dataset->getHeader(),
             'data' => $data
         ));
@@ -2250,8 +2249,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $request, $queryDescripters
         );
         $params['offset'] = $this->getIntParam($request, 'offset', false);
-        // TODO: Make sure offset is >= 0
-        // TODO: Validate unknown parameters, or just ignore?
+        if ($params['offset'] < 0) {
+            throw new BadRequestException('Offset must be non-negative.');
+        }
         return $params;
     }
 

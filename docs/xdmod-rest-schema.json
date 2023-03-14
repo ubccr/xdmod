@@ -538,7 +538,7 @@
                 "type": "apiKey",
                 "in": "query",
                 "name": "Bearer",
-                "description": "API token via a query parameter"
+                "description": "API token via a query parameter or POST field"
             }
         },
         "examples": {
@@ -2790,6 +2790,7 @@
                                     "oneOf": [
                                         {
                                             "type": "object",
+                                            "title": "success",
                                             "properties": {
                                                 "success":  {
                                                     "type": "boolean",
@@ -2824,8 +2825,28 @@
                                     ]
                                 },
                                 "examples": {
+                                    "success": {
+                                        "description": "Parameters: `start_date=2022-01-01&end_date=2022-01-01&realm=SUPREMM&fields=nodes,cores`",
+                                        "value": {
+                                            "success": true,
+                                            "fields": [ "Cores", "Nodes" ],
+                                            "data": [ ["1", "1"], ["5", "1"], ["2304", "24"] ]
+                                        }
+                                    },
                                     "no-token-provided": {
                                         "$ref": "#/components/examples/no-token-provided"
+                                    },
+                                    "missing-parameter": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "start_date is a required parameter",
+                                            "code": 0
+                                        }
                                     }
                                 }
                             }
@@ -2840,7 +2861,8 @@
                     "Data Warehouse",
                     "Data Analytics Framework"
                 ],
-                "summary": "Get the maximum number of rows of raw data that will be returned in a single response",
+                "summary": "Get the raw data response limit",
+                "description": "This gets the maximum number of rows that will be returned in a single response from `GET /warehouse/raw-data`.",
                 "operationId": "get-warehouse-raw-data-limit",
                 "security": [
                     "http_bearer": [],
@@ -2853,7 +2875,6 @@
                             "application/json": {
                                 "schema": {
                                     "oneOf": [
-                                        { "$ref": "#/components/schemas/warehouse-error" },
                                         {
                                             "type": "object",
                                             "title": "success",
@@ -2871,7 +2892,8 @@
                                                 "success",
                                                 "data"
                                             ]
-                                        }
+                                        },
+                                        { "$ref": "#/components/schemas/warehouse-error" }
                                     ]
                                 },
                                 "examples": {
