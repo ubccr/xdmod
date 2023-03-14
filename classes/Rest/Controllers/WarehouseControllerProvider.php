@@ -2222,7 +2222,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     public function getRawDataLimit(Request $request, Application $app) {
-        $user = $this->authorize($request);
+        $user = $this->authenticateToken($request);
         $limit = intval(\xd_utilities\getConfiguration(
             'datawarehouse', 'rest_raw_row_limit'
         ));

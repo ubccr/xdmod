@@ -464,16 +464,66 @@
                     "success",
                     "message"
                 ]
+            },
+            "warehouse-error": {
+                "type": "object",
+                "title": "error",
+                "properties": {
+                    "success":  {
+                        "type": "boolean",
+                        "enum": [ false ]
+                    },
+                    "count": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    }
+                },
+                "required": [
+                    "success",
+                    "count",
+                    "total",
+                    "totalCount",
+                    "results",
+                    "data",
+                    "message",
+                    "code"
+                ]
             }
         },
         "securitySchemes": {
-            "cookie": {
+            "cookie_xdmod_token": {
                 "type": "apiKey",
                 "description": "API token via a cookie",
                 "name": "xdmod_token",
                 "in": "cookie"
             },
-            "query_param": {
+            "query_param_token": {
                 "type": "apiKey",
                 "description": "API token via a query parameter",
                 "name": "token",
@@ -483,12 +533,32 @@
                 "type": "http",
                 "scheme": "bearer",
                 "description": "API token via HTTP header `Authorization: Bearer <token>`"
+            },
+            "query_param_bearer": {
+                "type": "apiKey",
+                "in": "query",
+                "name": "Bearer",
+                "description": "API token via a query parameter"
+            }
+        },
+        "examples": {
+            "no-token-provided": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "No Token Provided.",
+                    "code": 0
+                }
             }
         }
     },
     "security": [
-        { "cookie": [] },
-        { "query_param": [] }
+        { "cookie_xdmod_token": [] },
+        { "query_param_token": [] }
     ],
     "paths": {
         "/controllers/user_interface.php": {
@@ -508,7 +578,7 @@
                                 "oneOf": [
                                     { "$ref": "#/components/schemas/get_charts" },
                                     { "$ref": "#/components/schemas/get_menus" },
-                                    {"$ref": "#/components/schemas/get_tabs" }
+                                    { "$ref": "#/components/schemas/get_tabs" }
                                 ]
                             },
                             "examples": {
@@ -2658,7 +2728,10 @@
                 "summary": "Get raw data from the data warehouse",
                 "description": "The maximum number of rows that will be returned can be obtained via `GET /warehouse/raw-data/limit`.",
                 "operationId": "get-warehouse-raw-data",
-                "security": [ "http_bearer": [] ],
+                "security": [
+                    "http_bearer": [],
+                    "query_param_bearer": []
+                ],
                 "parameters": [
                     { "$ref": "#/components/parameters/start_date" },
                     { "$ref": "#/components/parameters/end_date" },
@@ -2731,6 +2804,7 @@
                                                 },
                                                 "data": {
                                                     "type": "array",
+                                                    "description": "Rows of raw data",
                                                     "items": {
                                                         "type": "array",
                                                         "items": {
@@ -2746,55 +2820,13 @@
                                                 "data"
                                             ]
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "success":  {
-                                                    "type": "boolean",
-                                                    "enum": [ false ]
-                                                },
-                                                "count": {
-                                                    "type": "integer",
-                                                    "enum": [ 0 ]
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "enum": [ 0 ]
-                                                },
-                                                "totalCount": {
-                                                    "type": "integer",
-                                                    "enum": [ 0 ]
-                                                },
-                                                "results": {
-                                                    "type": "array",
-                                                    "items": {},
-                                                    "maxItems": 0
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {},
-                                                    "maxItems": 0
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "Error message"
-                                                },
-                                                "code": {
-                                                    "type": "integer"
-                                                }
-                                            },
-                                            "required": [
-                                                "success",
-                                                "count",
-                                                "total",
-                                                "totalCount",
-                                                "results",
-                                                "data",
-                                                "message",
-                                                "code"
-                                            ]
-                                        }
+                                        { "$ref": "#/components/schemas/warehouse-error" }
                                     ]
+                                },
+                                "examples": {
+                                    "no-token-provided": {
+                                        "$ref": "#/components/examples/no-token-provided"
+                                    }
                                 }
                             }
                         }
@@ -2810,10 +2842,63 @@
                 ],
                 "summary": "Get the maximum number of rows of raw data that will be returned in a single response",
                 "operationId": "get-warehouse-raw-data-limit",
-                "security": [ "http_bearer": [] ],
+                "security": [
+                    "http_bearer": [],
+                    "query_param_bearer": []
+                ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "type": "object",
+                                            "title": "success",
+                                            "properties": {
+                                                "success":  {
+                                                    "type": "boolean",
+                                                    "enum": [ true ]
+                                                },
+                                                "data": {
+                                                    "type": "integer",
+                                                    "minimum": 0
+                                                }
+                                            },
+                                            "required": [
+                                                "success",
+                                                "data"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "success": {
+                                        "value": {
+                                            "success": true,
+                                            "data": 10000
+                                        }
+                                    },
+                                    "no-token-provided": {
+                                        "$ref": "#/components/examples/no-token-provided"
+                                    },
+                                    "portal-not-configured": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Option 'rest_raw_row_limit' does not exist in section 'datawarehouse'",
+                                            "code": 0
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
