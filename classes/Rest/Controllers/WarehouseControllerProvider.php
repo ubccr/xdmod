@@ -2233,12 +2233,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function validateRawDataParams($request, $user) {
         $params = array();
-        $params['start_date'] = $this->validateRawDataDateParam(
-            $request, 'start_date'
-        );
-        $params['end_date'] = $this->validateRawDataDateParam(
-            $request, 'end_date'
-        );
+        list(
+            $params['start_date'], $params['end_date']
+        ) = $this->validateRawDataDateParams($request);
         $params['realm'] = $this->getStringParam($request, 'realm', true);
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {
@@ -2295,10 +2292,19 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $data;
     }
 
-    private function validateRawDataDateParam($request, $param) {
-        return $this->getDateFromISO8601Param($request, $param, true)->format(
-            'Y-m-d'
+    private function validateRawDataDateParams($request) {
+        $startDate = $this->getDateFromISO8601Param(
+            $request, 'start_date', true
         );
+        $endDate = $this->getDateFromISO8601Param(
+            $request, 'end_date', true
+        );
+        if ($endDate < $startDate) {
+            throw new BadRequestException(
+                'End date cannot be less than start date.'
+            );
+        }
+        return array($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
     }
 
     private function validateRawDataFieldsParam($request) {
