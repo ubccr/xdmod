@@ -26,65 +26,6 @@
         }
     ],
     "components": {
-        "parameters": {
-            "offset": {
-                "name": "offset",
-                "in": "query",
-                "description": "The starting offset for the data in the result set",
-                "schema": {
-                    "type": "integer",
-                    "format": "int32"
-                }
-            },
-            "limit": {
-                "name": "limit",
-                "in": "query",
-                "description": "The maximum number of results to return.",
-                "schema": {
-                    "type": "integer",
-                    "format": "int32"
-                }
-            },
-            "realm": {
-                "name": "realm",
-                "in": "query",
-                "required": true,
-                "description": "The data realm to query",
-                "schema": {
-                    "type": "string"
-                },
-                "example": "Jobs"
-            },
-            "dimension": {
-                "name": "dimension",
-                "in": "path",
-                "required": true,
-                "description": "The dimension to query",
-                "schema": {
-                    "type": "string"
-                }
-            },
-            "start_date": {
-                "name": "start_date",
-                "in": "query",
-                "required": true,
-                "description": "Start date of requested data",
-                "schema": {
-                    "type": "string",
-                    "format": "date"
-                }
-            },
-            "end_date": {
-                "name": "end_date",
-                "in": "query",
-                "required": true,
-                "description": "End date of requested data",
-                "schema": {
-                    "type": "string",
-                    "format": "date"
-                }
-            }
-        },
         "schemas": {
             "get_data": {
              "type": "object",
@@ -514,6 +455,65 @@
                     "message",
                     "code"
                 ]
+            }
+        },
+        "parameters": {
+            "offset": {
+                "name": "offset",
+                "in": "query",
+                "description": "The starting offset for the data in the result set",
+                "schema": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "limit": {
+                "name": "limit",
+                "in": "query",
+                "description": "The maximum number of results to return.",
+                "schema": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "realm": {
+                "name": "realm",
+                "in": "query",
+                "required": true,
+                "description": "The data realm to query",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "Jobs"
+            },
+            "dimension": {
+                "name": "dimension",
+                "in": "path",
+                "required": true,
+                "description": "The dimension to query",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "start_date": {
+                "name": "start_date",
+                "in": "query",
+                "required": true,
+                "description": "Start date of requested data",
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            },
+            "end_date": {
+                "name": "end_date",
+                "in": "query",
+                "required": true,
+                "description": "End date of requested data",
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
             }
         },
         "securitySchemes": {
@@ -2726,7 +2726,7 @@
                     "Data Analytics Framework"
                 ],
                 "summary": "Get raw data from the data warehouse",
-                "description": "The maximum number of rows that will be returned can be obtained via `GET /warehouse/raw-data/limit`.",
+                "description": "This will return rows of raw data up to a maximum number of rows. The limit on number of rows can be obtained via `GET /warehouse/raw-data/limit`.",
                 "operationId": "get-warehouse-raw-data",
                 "security": [
                     "http_bearer": [],
@@ -2783,45 +2783,40 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "type": "object",
-                                            "title": "success",
-                                            "properties": {
-                                                "success":  {
-                                                    "type": "boolean",
-                                                    "enum": [ true ]
-                                                },
-                                                "fields": {
-                                                    "type": "array",
-                                                    "description": "Labels of fields returned",
-                                                    "items": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "description": "Rows of raw data",
-                                                    "items": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "string",
-                                                            "nullable": true
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            "required": [
-                                                "success",
-                                                "fields",
-                                                "data"
-                                            ]
+                                    "type": "object",
+                                    "title": "success",
+                                    "properties": {
+                                        "success":  {
+                                            "type": "boolean",
+                                            "enum": [ true ]
                                         },
-                                        { "$ref": "#/components/schemas/warehouse-error" }
+                                        "fields": {
+                                            "type": "array",
+                                            "description": "Labels of fields returned",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "description": "Rows of raw data",
+                                            "items": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "fields",
+                                        "data"
                                     ]
                                 },
                                 "examples": {
@@ -2832,7 +2827,19 @@
                                             "fields": [ "Cores", "Nodes" ],
                                             "data": [ ["1", "1"], ["5", "1"], ["2304", "24"] ]
                                         }
-                                    },
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
                                     "no-token-provided": {
                                         "$ref": "#/components/examples/no-token-provided"
                                     },
@@ -2870,54 +2877,65 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "type": "object",
-                                            "title": "success",
-                                            "properties": {
-                                                "success":  {
-                                                    "type": "boolean",
-                                                    "enum": [ true ]
-                                                },
-                                                "data": {
-                                                    "type": "integer",
-                                                    "minimum": 0
-                                                }
-                                            },
-                                            "required": [
-                                                "success",
-                                                "data"
-                                            ]
+                                    "type": "object",
+                                    "title": "success",
+                                    "properties": {
+                                        "success":  {
+                                            "type": "boolean",
+                                            "enum": [ true ]
                                         },
-                                        { "$ref": "#/components/schemas/warehouse-error" }
+                                        "data": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "data"
                                     ]
                                 },
+                                "example": {
+                                    "success": true,
+                                    "data": 10000
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
                                 "examples": {
-                                    "success": {
-                                        "value": {
-                                            "success": true,
-                                            "data": 10000
-                                        }
-                                    },
                                     "no-token-provided": {
                                         "$ref": "#/components/examples/no-token-provided"
-                                    },
-                                    "portal-not-configured": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Option 'rest_raw_row_limit' does not exist in section 'datawarehouse'",
-                                            "code": 0
-                                        }
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "count": 0,
+                                    "total": 0,
+                                    "totalCount": 0,
+                                    "results": [],
+                                    "data": [],
+                                    "message": "Option 'rest_raw_row_limit' does not exist in section 'datawarehouse'",
+                                    "code": 0
                                 }
                             }
                         }
