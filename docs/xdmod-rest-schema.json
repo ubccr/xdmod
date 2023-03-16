@@ -2879,29 +2879,12 @@
                     "200": {
                         "description": "OK",
                         "content": {
-                            "application/json": {
+                            "text/plain": {
                                 "schema": {
-                                    "type": "object",
-                                    "title": "success",
-                                    "properties": {
-                                        "success":  {
-                                            "type": "boolean",
-                                            "enum": [ true ]
-                                        },
-                                        "data": {
-                                            "type": "integer",
-                                            "minimum": 0
-                                        }
-                                    },
-                                    "required": [
-                                        "success",
-                                        "data"
-                                    ]
+                                    "type": "integer",
+                                    "minimum": 0
                                 },
-                                "example": {
-                                    "success": true,
-                                    "data": 10000
-                                }
+                                "example": 10000
                             }
                         }
                     },
