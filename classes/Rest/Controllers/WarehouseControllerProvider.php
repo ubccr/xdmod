@@ -2225,10 +2225,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $limit = intval(\xd_utilities\getConfiguration(
             'datawarehouse', 'rest_raw_row_limit'
         ));
-        return $app->json(array(
-            'success' => true,
-            'data' => $limit
-        ));
+        return $limit;
     }
 
     private function validateRawDataParams($request, $user) {
