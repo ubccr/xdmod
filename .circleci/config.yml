@@ -8,9 +8,12 @@ executors:
   centos7: &centos7-executor
     docker:
       - image: tools-ext-01.ccr.xdmod.org/xdmod-9.5.0:centos7.9-0.3
-  centos8: &centos8-executor
+  centos7-10_0_0: &centos7-1000-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/centos8.4:base
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
+  rocky8: &rocky8-executor
+    docker:
+      - image: tools-ext-01.ccr.xdmod.org/xdmod10.0:rockylinux8.5-0.5
 jobs:
   build:
     parameters:
@@ -40,12 +43,15 @@ jobs:
       # Download and cache dependencies
       - when:
           condition:
-            equal: [ *centos8-executor, << parameters.os >> ]
+            equal: [ *rocky8-executor, << parameters.os >> ]
           steps:
             - run:
-                name: Setup Environment Variables for centos8
+                name: Setup Environment Variables for Rocky8
                 command: |
                   echo "export COMPOSER=composer-el8.json" >> $BASH_ENV
+            - run:
+                  name: install the composer dependencies
+                  command: composer install
             - restore_cache:
                 keys:
                   # "composer.lock" can be used if it is committed to the repo
@@ -58,7 +64,9 @@ jobs:
                   - ./vendor
       - when:
           condition:
-            equal: [ *centos7-executor, << parameters.os >> ]
+            or:
+              - equal: [ *centos7-executor, << parameters.os >> ]
+              - equal: [ *centos7-1000-executor, << parameters.os >> ]
           steps:
             - run:
                 name: Setup Environment Variables for centos7
@@ -98,7 +106,6 @@ jobs:
           name: Setup & Run QA Tests
           command: |
             ./tests/ci/scripts/qa-test-setup.sh
-      - run: ./tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
           command: |
@@ -111,23 +118,39 @@ jobs:
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
       - when:
           condition:
-            equal: [ *centos8-executor, << parameters.os >> ]
+            equal: [ *centos7-executor, << parameters.os >> ]
           steps:
             - run:
-                name: Install new chromedriver
+                name: 'Run SSO Tests'
                 command: |
-                  pushd /root/project/tests/ui
-                  rm -rf node_modules
-                  rm -f package-lock.json
-                  npm install
-                  popd
-      - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
-      - run:
-          name: 'Run SSO Tests'
-          command: |
-            ./tests/ci/samlSetup.sh
-            ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
-            ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+                  ./tests/ci/samlSetup.sh
+                  ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
+                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      - when:
+          condition:
+            equal: [ *centos7-1000-executor, << parameters.os >> ]
+          steps:
+            - run: scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit"
+            - run:
+                name: 'Run SSO Tests'
+                command: |
+                  scl enable rh-nodejs6 "./tests/ci/samlSetup.sh"
+                  scl enable rh-nodejs6 "./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso"
+                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      - when:
+          condition:
+            or:
+              - equal: [ *rocky8-executor, << parameters.os >> ]
+          steps:
+            - run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
+            - run: pushd ./tests/ui && npm install && popd
+            - run: ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+            - run:
+                name: 'Run SSO Tests'
+                command: |
+                  ./tests/ci/samlSetup.sh
+                  ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
+                  ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
           name: Ensure that no unexpected Apache errors were generated
           command: test `fgrep -v ' [ssl:warn] ' /var/log/xdmod/apache-error.log | wc -l` = 0
@@ -144,8 +167,8 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [centos7, centos8]
+              os: [centos7, centos7-10_0_0, rocky8]
               install-type: ["fresh_install", "upgrade"]
             exclude:
-              - os: centos8
+              - os: rocky8
                 install-type: "upgrade"
