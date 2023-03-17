@@ -34,11 +34,13 @@ A version of Open XDMoD, namely [XDMoD](https://xdmod.ccr.buffalo.edu/),
 was developed to monitor the NSF supported portfolio of supercomputers
 that fall under the [XSEDE](https://www.xsede.org/) program.
 
-This work was sponsored by NSF under grant numbers
+This material is based upon work supported by the National Science Foundation
+under Grant Numbers [OAC 2137603][nsf-2137603],
 [ACI 1025159][nsf-1025159] and [ACI 1445806][nsf-1445806].
 
-[nsf-1025159]: http://nsf.gov/awardsearch/showAward?AWD_ID=1025159
-[nsf-1445806]: http://nsf.gov/awardsearch/showAward?AWD_ID=1445806
+[nsf-2137603]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=2137603
+[nsf-1025159]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=1025159
+[nsf-1445806]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=1445806
 
 For more information, questions, or feedback send email to
 `ccr-xdmod-help` at `buffalo.edu`.
