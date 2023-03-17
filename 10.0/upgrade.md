@@ -136,5 +136,13 @@ Notes](resource-manager-slurm.html#input-format) for the example `sacct`
 command.  If you are using the `xdmod-slurm-helper` command then no changes are
 necessary.
 
+10.0.1 Upgrade Notes
+-------------------
+
+Open XDMoD 10.0.1 is a bug fix release that fixes a compatibility issue with
+headless chromium (used for image export and report generation).
+
+You may upgrade directly from 9.5.0 or 10.0.0
+
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
