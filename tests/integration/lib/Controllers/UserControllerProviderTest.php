@@ -13,23 +13,6 @@ use TestHarness\XdmodTestHelper;
 class UserControllerProviderTest extends BaseUserAdminTest
 {
     /**
-     * @var TokenHelper
-     */
-    private $tokenHelper;
-
-    /**
-     * @throws Exception
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->tokenHelper = new TokenHelper(
-            new XdmodTestHelper(),
-            parent::getTestFiles()
-        );
-    }
-
-    /**
      * Tests the UserControllerProvider route: GET /users/current
      *
      * @dataProvider provideGetCurrentUser
@@ -81,60 +64,68 @@ class UserControllerProviderTest extends BaseUserAdminTest
         $expected = $hydratedOptions->expected;
 
         if ('pub' !== $user) {
-            $this->tokenHelper->authenticate($user);
+            $this->helper->authenticate($user);
         }
+        TokenHelper::revokeAPIToken($this->helper);
 
         // Attempt to get the current API token, this should fail.
-        $this->tokenHelper->getAPIToken(
+        TokenHelper::getAPIToken(
+            $this->helper,
             $expected->api_get->http_code,
             $expected->api_get->content_type,
             $expected->api_get->schemas->failure
         );
 
         // Attempt to create an API token.
-        $this->tokenHelper->createAPIToken(
+        TokenHelper::createAPIToken(
+            $this->helper,
             $expected->api_create->http_code,
             $expected->api_create->content_type,
             $expected->api_create->schemas->success
         );
 
         // Now test that we can't create a token when we already have a valid token.
-        $this->tokenHelper->createAPIToken(
+        TokenHelper::createAPIToken(
+            $this->helper,
             $expected->api_create->http_code,
             $expected->api_create->content_type,
             $expected->api_create->schemas->failure
         );
 
         // Now test if we can get the newly created token, this should succeed.
-        $this->tokenHelper->getAPIToken(
+        TokenHelper::getAPIToken(
+            $this->helper,
             $expected->api_get->http_code,
             $expected->api_get->content_type,
             $expected->api_get->schemas->success
         );
 
         // Now we can revoke the token we just created.
-        $this->tokenHelper->revokeAPIToken(
+        TokenHelper::revokeAPIToken(
+            $this->helper,
             $expected->api_revoke->http_code,
             $expected->api_revoke->content_type,
             $expected->api_revoke->schemas->success
         );
 
         // We cannot revoke a token if we don't have one.
-        $this->tokenHelper->revokeAPIToken(
+        TokenHelper::revokeAPIToken(
+            $this->helper,
             $expected->api_revoke->http_code,
             $expected->api_revoke->content_type,
             $expected->api_revoke->schemas->failure
         );
 
         // We still can't get a token if we don't have one.
-        $this->tokenHelper->getAPIToken(
+        TokenHelper::getAPIToken(
+            $this->helper,
             $expected->api_get->http_code,
             $expected->api_get->content_type,
             $expected->api_get->schemas->failure
         );
 
         if ('pub' !== $user) {
-            $this->tokenHelper->logout();
+            $this->helper->logout();
         }
     }
 
@@ -203,8 +194,9 @@ class UserControllerProviderTest extends BaseUserAdminTest
         // Attempt to make a request to the controller endpoint unauthenticated in any way.
         // This should fail. ( We use the tokenHelper so that we can specify a schema that the response should be
         // validated against. )
-        $this->tokenHelper->makeRequest(
+        TokenHelper::makeRequest(
             $test->description,
+            $this->helper,
             $test->url,
             $test->verb,
             $test->parameters,
@@ -216,11 +208,12 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Now go ahead and authenticate the test user so we can create / use their API Token.
         if ('pub' !== $user) {
-            $this->tokenHelper->authenticate($user);
+            $this->helper->authenticate($user);
         }
 
         // Attempt to create an API token.
-        $tokenResponse = $this->tokenHelper->createAPIToken(
+        $tokenResponse = TokenHelper::createAPIToken(
+            $this->helper,
             $expected->api_create->http_code,
             $expected->api_create->content_type,
             $expected->api_create->schemas->success
@@ -269,7 +262,8 @@ class UserControllerProviderTest extends BaseUserAdminTest
         }
 
         // Make sure to revoke the token so that we leave the user in the same state as we found it.
-        $this->tokenHelper->revokeAPIToken(
+        TokenHelper::revokeAPIToken(
+            $this->helper,
             $expected->api_revoke->http_code,
             $expected->api_revoke->content_type,
             $expected->api_revoke->schemas->success
@@ -277,7 +271,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // And finally make sure that we log out.
         if ('pub' !== $user) {
-            $this->tokenHelper->logout();
+            $this->helper->logout();
         }
     }
 

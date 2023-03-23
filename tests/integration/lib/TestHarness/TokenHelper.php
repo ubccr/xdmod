@@ -5,55 +5,33 @@ namespace TestHarness;
 use CCR\DB;
 use CCR\Json;
 use Exception;
+use IntegrationTests\BaseTest;
 
 /**
  *
  */
-class TokenHelper
+abstract class TokenHelper
 {
-
-    /**
-     * @var XdmodTestHelper
-     */
-    private $helper;
-
-    /**
-     * @var TestFiles
-     */
-    private $testFiles;
-
-
-    /**
-     *
-     * @param XdmodTestHelper $helper
-     * @param TestFiles $testFiles
-     * @throws Exception
-     */
-    public function __construct($helper = null, $testFiles = null)
-    {
-        // if we aren't passed an XdmodTestHelper instance then create one ourselves.
-        if (!isset($helper)) {
-            $helper = new XdmodTestHelper();
-        }
-
-        $this->helper = $helper;
-        $this->testFiles = $testFiles;
-    }
-
     /**
      * Attempt to retrieve the metadata about the currently logged in users API Token. If any of the $expected* arguments
      * are provided then the function will attempt to validate that they match what is returned by the endpoint.
      *
+     * @param XdmodTestHelper $testHelper
      * @param int $expectedHttpCode
      * @param string $expectedContentType
      * @param string $expectedSchemaFileName
      * @return mixed
      * @throws Exception
      */
-    public function getAPIToken($expectedHttpCode = null, $expectedContentType = null, $expectedSchemaFileName = null)
-    {
-        return $this->makeRequest(
+    public static function getAPIToken(
+        $testHelper,
+        $expectedHttpCode = null,
+        $expectedContentType = null,
+        $expectedSchemaFileName = null
+    ) {
+        return self::makeRequest(
             'Get API Token',
+            $testHelper,
             'rest/users/current/api/token',
             'get',
             null,
@@ -70,23 +48,29 @@ class TokenHelper
      * If any of the $expected* arguments are included than they will be used to validate the information returned from
      * the endpoint.
      *
+     * @param XdmodTestHelper $testHelper
      * @param $expectedHttpCode
      * @param $expectedContentType
-     * @param $expectedSchemaName
+     * @param $expectedSchemaFileName
      * @return object containing the api token value
      * @throws Exception
      */
-    public function createAPIToken($expectedHttpCode = null, $expectedContentType = null, $expectedSchemaName = null)
-    {
-        return $this->makeRequest(
+    public static function createAPIToken(
+        $testHelper,
+        $expectedHttpCode = null,
+        $expectedContentType = null,
+        $expectedSchemaFileName = null
+    ) {
+        return self::makeRequest(
             'Create API Token',
+            $testHelper,
             'rest/users/current/api/token',
             'post',
             null,
             null,
             $expectedHttpCode,
             $expectedContentType,
-            $expectedSchemaName
+            $expectedSchemaFileName
         );
     }
 
@@ -98,16 +82,22 @@ class TokenHelper
      * the endpoint.
      *
      *
+     * @param XdmodTestHelper $testHelper
      * @param int $expectedHttpCode
      * @param string $expectedContentType
      * @param string $expectedSchemaFileName
      * @return mixed the response body
      * @throws Exception
      */
-    public function revokeAPIToken($expectedHttpCode = null, $expectedContentType = null, $expectedSchemaFileName = null)
-    {
-        return $this->makeRequest(
+    public static function revokeAPIToken(
+        $testHelper,
+        $expectedHttpCode = null,
+        $expectedContentType = null,
+        $expectedSchemaFileName = null
+    ) {
+        return self::makeRequest(
             'Revoke API Token',
+            $testHelper,
             'rest/users/current/api/token',
             'delete',
             null,
@@ -120,6 +110,7 @@ class TokenHelper
 
     /**
      * @param string $endPointDescription
+     * @param XdmodTestHelper $testHelper
      * @param string $url
      * @param string $verb
      * @param array|null $params
@@ -130,8 +121,9 @@ class TokenHelper
      * @return mixed
      * @throws Exception
      */
-    public function makeRequest(
+    public static function makeRequest(
         $endPointDescription,
+        $testHelper,
         $url,
         $verb,
         $params = null,
@@ -144,11 +136,11 @@ class TokenHelper
         switch ($verb) {
             case 'get':
             case 'put':
-                $response = $this->helper->$verb($url, $params);
+                $response = $testHelper->$verb($url, $params);
                 break;
             case 'post':
             case 'delete':
-                $response = $this->helper->$verb($url, $params, $data);
+                $response = $testHelper->$verb($url, $params, $data);
                 break;
         }
         $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
@@ -186,7 +178,7 @@ class TokenHelper
         if (isset($expectedSchemaFileName)) {
             $validator = new \JsonSchema\Validator();
             $expectedSchema = Json::loadFile(
-                $this->testFiles->getFile('schema/integration', $expectedSchemaFileName, ''),
+                BaseTest::getTestFiles()->getFile('schema/integration', $expectedSchemaFileName, ''),
                 false
             );
 
@@ -218,42 +210,11 @@ class TokenHelper
      * @throws Exception if there is a problem parsing the the provided $rawToken.
      * @throws Exception if there is a problem connecting to or executing the update statement against the database.
      */
-    public function expireToken($userId)
+    public static function expireToken($userId)
     {
         $db = DB::factory('database');
         $query = 'UPDATE moddb.user_tokens SET expires_on = NOW() WHERE user_id = :user_id';
         $params = array(':user_id' => $userId);
         return $db->execute($query, $params) === 1;
-    }
-
-
-    /**
-     * Calls `authenticate($user)` on this TokenHelper instances XdmodTestHelper.
-     *
-     * @param string $user
-     * @return void
-     * @throws Exception
-     */
-    public function authenticate($user)
-    {
-        $this->helper->authenticate($user);
-    }
-
-    /**
-     * Calls `logout` on this TokenHelper instances XdmodTestHelper.
-     * @return void
-     */
-    public function logout()
-    {
-        $this->helper->logout();
-    }
-
-    /**
-     * Retrieve the XdmodTestHelper used by the TokenHelper.
-     * @return XdmodTestHelper
-     */
-    public function getHelper()
-    {
-        return $this->helper;
     }
 }
