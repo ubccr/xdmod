@@ -310,13 +310,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        # Check spec file
-        $schemaObject = JSON::loadFile(
-            parent::getTestFiles()->getFile('schema', 'get-menus.spec', ''),
-            false
-        );
-
-        $this->validateJson($actual, $schemaObject);
+        $this->validateJson($actual, 'schema', 'get-menus.spec', '');
 
         # Check expected file
         $expected = array();
@@ -462,11 +456,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
         $actual = $response[0];
-        $schemaObject = JSON::loadFile(
-            parent::getTestFiles()->getFile('schema', 'dw_descripter.spec', ''),
-            false
-        );
-        $this->validateJson($actual, $schemaObject);
+        $this->validateJson($actual, 'schema', 'dw_descripter.spec', '');
         $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();

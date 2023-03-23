@@ -51,13 +51,12 @@ abstract class BaseDatabaseTest extends BaseTest
     ) {
         $actual = $this->db->query($actualSQLQuery);
 
-        # Check spec file
-        $schemaObject = Json::loadFile(
-            parent::getTestFiles()->getFile($schemaTestGroup, $actualSchemaFileName, ''),
-            false
+        $this->validateJson(
+            $actual,
+            $schemaTestGroup,
+            $actualSchemaFileName,
+            ''
         );
-
-        $this->validateJson($actual, $schemaObject);
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {

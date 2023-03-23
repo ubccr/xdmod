@@ -54,12 +54,7 @@ class UserInterfaceTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        # Check spec file
-        $schemaObject = JSON::loadFile(
-            $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
-            false
-        );
-        $this->validateJson($actual, $schemaObject);
+        $this->validateJson($actual, 'schema', 'get-menus.spec', '');
 
         # Check expected file
         $expected = array();

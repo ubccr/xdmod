@@ -24,13 +24,12 @@ class ResourceNamesTest extends BaseTest
     {
         $actual = $this->db->query('SELECT code, name FROM modw.resourcefact ORDER BY code');
 
-        # Check spec file
-        $schemaObject = Json::loadFile(
-            parent::getTestFiles()->getFile('schema/integration', 'resource_names.spec', ''),
-            false
+        $this->validateJson(
+            $actual,
+            'schema/integration',
+            'resource_names.spec',
+            ''
         );
-
-        $this->validateJson($actual, $schemaObject);
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {
