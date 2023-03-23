@@ -740,7 +740,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
 
         // Get parameters.
-        $queryGroup = $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
+        $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
 
         // Get the realms for the query group and the user's active role.
         $realms = Realms::getRealmsForUser($user);
@@ -897,8 +897,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     public function getDimensionValues(Request $request, Application $app, $dimension)
     {
         $user = $this->authorize($request);
-
-        $action = 'dimensionValues';
 
         // Get parameters.
         $offset = $this->getIntParam($request, 'offset', false, 0);
@@ -2198,11 +2196,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $query = $this->getRawDataQuery($params);
         $logger = $this->getRawDataLogger();
         $limit = intval(\xd_utilities\getConfiguration(
-            'datawarehouse', 'rest_raw_row_limit'
+            'datawarehouse',
+            'rest_raw_row_limit'
         ));
         try {
             $dataset = new BatchDataset(
-                $query, $user, $logger, $params['fields'], $limit,
+                $query,
+                $user,
+                $logger,
+                $params['fields'],
+                $limit,
                 $params['offset']
             );
         } catch (\Exception $e) {
@@ -2221,9 +2224,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     public function getRawDataLimit(Request $request, Application $app) {
-        $user = $this->authenticateToken($request);
+        $this->authenticateToken($request);
         $limit = intval(\xd_utilities\getConfiguration(
-            'datawarehouse', 'rest_raw_row_limit'
+            'datawarehouse',
+            'rest_raw_row_limit'
         ));
         return $app->json(array(
             'success' => true,
@@ -2243,7 +2247,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
         $params['fields'] = $this->validateRawDataFieldsParam($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
-            $request, $queryDescripters
+            $request,
+            $queryDescripters
         );
         $params['offset'] = $this->getIntParam($request, 'offset', false);
         if ($params['offset'] < 0) {
@@ -2294,10 +2299,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function validateRawDataDateParams($request) {
         $startDate = $this->getDateFromISO8601Param(
-            $request, 'start_date', true
+            $request,
+            'start_date',
+            true
         );
         $endDate = $this->getDateFromISO8601Param(
-            $request, 'end_date', true
+            $request,
+            'end_date',
+            true
         );
         if ($endDate < $startDate) {
             throw new BadRequestException(
@@ -2323,7 +2332,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $filters = array();
             foreach ($filtersParam as $filterKey => $filterValuesStr) {
                 $filters[$filterKey] = $this->validateRawDataFilterParam(
-                    $queryDescripters, $filterKey, $filterValuesStr
+                    $queryDescripters,
+                    $filterKey,
+                    $filterValuesStr
                 );
             }
         }
@@ -2350,7 +2361,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     private function validateRawDataFilterParam(
-        $queryDescripters, $filterKey, $filterValuesStr
+        $queryDescripters,
+        $filterKey,
+        $filterValuesStr
     ) {
         if (!in_array($filterKey, array_keys($queryDescripters))) {
             throw new BadRequestException(
