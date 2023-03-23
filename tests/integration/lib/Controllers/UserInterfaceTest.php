@@ -99,7 +99,7 @@ class UserInterfaceTest extends BaseUserAdminTest
 
         $this->assertEquals($expected, $actual);
 
-    } // public function testGetMenus(array $options)
+    }
 
     /**
      * Provides test data to `testGetMenus`.
@@ -112,5 +112,5 @@ class UserInterfaceTest extends BaseUserAdminTest
         return JSON::loadFile(
             $this->getTestFiles()->getFile('user_interface', 'get_menus', 'input')
         );
-    } // public function provideTestGetMenus()
+    }
 }
