@@ -106,11 +106,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $response = null;
         switch ($verb) {
             case 'get':
-            case 'put':
                 $response = $testHelper->$verb($url, $params);
                 break;
             case 'post':
             case 'delete':
+            case 'patch':
                 $response = $testHelper->$verb($url, $params, $data);
                 break;
         }
