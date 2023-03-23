@@ -16,6 +16,7 @@ abstract class TokenHelper
      * Attempt to retrieve the metadata about the currently logged in users API Token. If any of the $expected* arguments
      * are provided then the function will attempt to validate that they match what is returned by the endpoint.
      *
+     * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param int $expectedHttpCode
      * @param string $expectedContentType
@@ -24,13 +25,14 @@ abstract class TokenHelper
      * @throws Exception
      */
     public static function getAPIToken(
+        $testInstance,
         $testHelper,
         $expectedHttpCode = null,
         $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
         return self::makeRequest(
-            'Get API Token',
+            $testInstance,
             $testHelper,
             'rest/users/current/api/token',
             'get',
@@ -48,6 +50,7 @@ abstract class TokenHelper
      * If any of the $expected* arguments are included than they will be used to validate the information returned from
      * the endpoint.
      *
+     * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param $expectedHttpCode
      * @param $expectedContentType
@@ -56,13 +59,14 @@ abstract class TokenHelper
      * @throws Exception
      */
     public static function createAPIToken(
+        $testInstance,
         $testHelper,
         $expectedHttpCode = null,
         $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
         return self::makeRequest(
-            'Create API Token',
+            $testInstance,
             $testHelper,
             'rest/users/current/api/token',
             'post',
@@ -82,6 +86,7 @@ abstract class TokenHelper
      * the endpoint.
      *
      *
+     * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param int $expectedHttpCode
      * @param string $expectedContentType
@@ -90,13 +95,14 @@ abstract class TokenHelper
      * @throws Exception
      */
     public static function revokeAPIToken(
+        $testInstance,
         $testHelper,
         $expectedHttpCode = null,
         $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
         return self::makeRequest(
-            'Revoke API Token',
+            $testInstance,
             $testHelper,
             'rest/users/current/api/token',
             'delete',
@@ -109,7 +115,7 @@ abstract class TokenHelper
     }
 
     /**
-     * @param string $endPointDescription
+     * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param string $url
      * @param string $verb
@@ -122,7 +128,7 @@ abstract class TokenHelper
      * @throws Exception
      */
     public static function makeRequest(
-        $endPointDescription,
+        $testInstance,
         $testHelper,
         $url,
         $verb,
@@ -147,51 +153,34 @@ abstract class TokenHelper
         $actualContentType = isset($response) ? $response[1]['content_type'] : null;
         $actualResponseBody = isset($response) ? $response[0] : array();
 
-        if (isset($expectedHttpCode) ) {
+        if (isset($expectedHttpCode)) {
             // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
             // 401.
-            if (is_numeric($expectedHttpCode) && $expectedHttpCode !== $actualHttpCode ||
-                is_array($expectedHttpCode) && !in_array($actualHttpCode, $expectedHttpCode)
-            ) {
-                throw new Exception(
-                    sprintf(
-                        'HTTP Code does not match. Expected: %s Received: %s',
-                        json_encode($expectedHttpCode),
-                        $actualHttpCode
-                    )
+            if (is_numeric($expectedHttpCode)) {
+                $testInstance->assertSame($actualHttpCode, $expectedHttpCode);
+            } elseif (is_array($expectedHttpCode)) {
+                $testInstance->assertContains(
+                    $actualHttpCode,
+                    $expectedHttpCode
                 );
             }
         }
-        if (isset($expectedContentType) && $expectedContentType !== $actualContentType) {
-            print_r($response);
-            throw new Exception(
-                sprintf(
-                    'HTTP Content Type does not match. Expected: %s Received: %s',
-                    $expectedContentType,
-                    $actualContentType
-                )
+        if (isset($expectedContentType)) {
+            $testInstance->assertSame(
+                $actualContentType,
+                $expectedContentType
             );
         }
 
         $actual = json_decode(json_encode($actualResponseBody));
 
         if (isset($expectedSchemaFileName)) {
-            $validator = new \JsonSchema\Validator();
-            $expectedSchema = Json::loadFile(
-                BaseTest::getTestFiles()->getFile('schema/integration', $expectedSchemaFileName, ''),
-                false
+            $testInstance->validateJson(
+                $actual,
+                'schema/integration',
+                $expectedSchemaFileName,
+                ''
             );
-
-            $validator->validate($actual, $expectedSchema);
-
-            if (!$validator->isValid()) {
-                throw new Exception(sprintf(
-                    "%s response is in an invalid format.\nExpected:%s\nReceived %s",
-                    $endPointDescription,
-                    json_encode($expectedSchema, JSON_PRETTY_PRINT),
-                    var_export($actual, true)
-                ));
-            }
         }
 
         return $actual;

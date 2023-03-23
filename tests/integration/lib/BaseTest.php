@@ -45,7 +45,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $extension
      * @return mixed the decoded, valid json structure.
      */
-    protected function validateJson(
+    public function validateJson(
         $json,
         $testGroup,
         $fileName,

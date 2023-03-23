@@ -66,10 +66,11 @@ class UserControllerProviderTest extends BaseUserAdminTest
         if ('pub' !== $user) {
             $this->helper->authenticate($user);
         }
-        TokenHelper::revokeAPIToken($this->helper);
+        TokenHelper::revokeAPIToken($this, $this->helper);
 
         // Attempt to get the current API token, this should fail.
         TokenHelper::getAPIToken(
+            $this,
             $this->helper,
             $expected->api_get->http_code,
             $expected->api_get->content_type,
@@ -78,6 +79,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Attempt to create an API token.
         TokenHelper::createAPIToken(
+            $this,
             $this->helper,
             $expected->api_create->http_code,
             $expected->api_create->content_type,
@@ -86,6 +88,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Now test that we can't create a token when we already have a valid token.
         TokenHelper::createAPIToken(
+            $this,
             $this->helper,
             $expected->api_create->http_code,
             $expected->api_create->content_type,
@@ -94,6 +97,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Now test if we can get the newly created token, this should succeed.
         TokenHelper::getAPIToken(
+            $this,
             $this->helper,
             $expected->api_get->http_code,
             $expected->api_get->content_type,
@@ -102,6 +106,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Now we can revoke the token we just created.
         TokenHelper::revokeAPIToken(
+            $this,
             $this->helper,
             $expected->api_revoke->http_code,
             $expected->api_revoke->content_type,
@@ -110,6 +115,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // We cannot revoke a token if we don't have one.
         TokenHelper::revokeAPIToken(
+            $this,
             $this->helper,
             $expected->api_revoke->http_code,
             $expected->api_revoke->content_type,
@@ -118,6 +124,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // We still can't get a token if we don't have one.
         TokenHelper::getAPIToken(
+            $this,
             $this->helper,
             $expected->api_get->http_code,
             $expected->api_get->content_type,
@@ -195,7 +202,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
         // This should fail. ( We use the tokenHelper so that we can specify a schema that the response should be
         // validated against. )
         TokenHelper::makeRequest(
-            $test->description,
+            $this,
             $this->helper,
             $test->url,
             $test->verb,
@@ -213,6 +220,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Attempt to create an API token.
         $tokenResponse = TokenHelper::createAPIToken(
+            $this,
             $this->helper,
             $expected->api_create->http_code,
             $expected->api_create->content_type,
@@ -263,6 +271,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
         // Make sure to revoke the token so that we leave the user in the same state as we found it.
         TokenHelper::revokeAPIToken(
+            $this,
             $this->helper,
             $expected->api_revoke->http_code,
             $expected->api_revoke->content_type,
