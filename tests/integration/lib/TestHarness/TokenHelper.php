@@ -31,8 +31,7 @@ abstract class TokenHelper
         $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
-        return self::makeRequest(
-            $testInstance,
+        return $testInstance->makeRequest(
             $testHelper,
             'rest/users/current/api/token',
             'get',
@@ -65,8 +64,7 @@ abstract class TokenHelper
         $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
-        return self::makeRequest(
-            $testInstance,
+        return $testInstance->makeRequest(
             $testHelper,
             'rest/users/current/api/token',
             'post',
@@ -101,8 +99,7 @@ abstract class TokenHelper
         $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
-        return self::makeRequest(
-            $testInstance,
+        return $testInstance->makeRequest(
             $testHelper,
             'rest/users/current/api/token',
             'delete',
@@ -112,78 +109,6 @@ abstract class TokenHelper
             $expectedContentType,
             $expectedSchemaFileName
         );
-    }
-
-    /**
-     * @param BaseTest $testInstance
-     * @param XdmodTestHelper $testHelper
-     * @param string $url
-     * @param string $verb
-     * @param array|null $params
-     * @param array|null $data
-     * @param int|null $expectedHttpCode
-     * @param string|null $expectedContentType
-     * @param string|null $expectedSchemaFileName
-     * @return mixed
-     * @throws Exception
-     */
-    public static function makeRequest(
-        $testInstance,
-        $testHelper,
-        $url,
-        $verb,
-        $params = null,
-        $data = null,
-        $expectedHttpCode = null,
-        $expectedContentType = null,
-        $expectedSchemaFileName = null
-    ) {
-        $response = null;
-        switch ($verb) {
-            case 'get':
-            case 'put':
-                $response = $testHelper->$verb($url, $params);
-                break;
-            case 'post':
-            case 'delete':
-                $response = $testHelper->$verb($url, $params, $data);
-                break;
-        }
-        $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
-        $actualContentType = isset($response) ? $response[1]['content_type'] : null;
-        $actualResponseBody = isset($response) ? $response[0] : array();
-
-        if (isset($expectedHttpCode)) {
-            // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
-            // 401.
-            if (is_numeric($expectedHttpCode)) {
-                $testInstance->assertSame($actualHttpCode, $expectedHttpCode);
-            } elseif (is_array($expectedHttpCode)) {
-                $testInstance->assertContains(
-                    $actualHttpCode,
-                    $expectedHttpCode
-                );
-            }
-        }
-        if (isset($expectedContentType)) {
-            $testInstance->assertSame(
-                $actualContentType,
-                $expectedContentType
-            );
-        }
-
-        $actual = json_decode(json_encode($actualResponseBody));
-
-        if (isset($expectedSchemaFileName)) {
-            $testInstance->validateJson(
-                $actual,
-                'schema/integration',
-                $expectedSchemaFileName,
-                ''
-            );
-        }
-
-        return $actual;
     }
 
     /**

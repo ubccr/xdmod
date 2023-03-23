@@ -199,10 +199,8 @@ class UserControllerProviderTest extends BaseUserAdminTest
         $test = $hydratedOptions->test;
 
         // Attempt to make a request to the controller endpoint unauthenticated in any way.
-        // This should fail. ( We use the tokenHelper so that we can specify a schema that the response should be
-        // validated against. )
-        TokenHelper::makeRequest(
-            $this,
+        // This should fail.
+        $this->makeRequest(
             $this->helper,
             $test->url,
             $test->verb,

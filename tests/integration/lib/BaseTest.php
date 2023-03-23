@@ -80,4 +80,68 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         );
         return $actualDecoded;
     }
+
+    /**
+     * @param XdmodTestHelper $testHelper
+     * @param string $url
+     * @param string $verb
+     * @param array|null $params
+     * @param array|null $data
+     * @param int|null $expectedHttpCode
+     * @param string|null $expectedContentType
+     * @param string|null $expectedSchemaFileName
+     * @return mixed
+     * @throws Exception
+     */
+    public function makeRequest(
+        $testHelper,
+        $url,
+        $verb,
+        $params = null,
+        $data = null,
+        $expectedHttpCode = null,
+        $expectedContentType = null,
+        $expectedSchemaFileName = null
+    ) {
+        $response = null;
+        switch ($verb) {
+            case 'get':
+            case 'put':
+                $response = $testHelper->$verb($url, $params);
+                break;
+            case 'post':
+            case 'delete':
+                $response = $testHelper->$verb($url, $params, $data);
+                break;
+        }
+        $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
+        $actualContentType = isset($response) ? $response[1]['content_type'] : null;
+        $actualResponseBody = isset($response) ? $response[0] : array();
+
+        if (isset($expectedHttpCode)) {
+            // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
+            // 401.
+            if (is_numeric($expectedHttpCode)) {
+                $this->assertSame($actualHttpCode, $expectedHttpCode);
+            } elseif (is_array($expectedHttpCode)) {
+                $this->assertContains($actualHttpCode, $expectedHttpCode);
+            }
+        }
+        if (isset($expectedContentType)) {
+            $this->assertSame($actualContentType, $expectedContentType);
+        }
+
+        $actual = json_decode(json_encode($actualResponseBody));
+
+        if (isset($expectedSchemaFileName)) {
+            $this->validateJson(
+                $actual,
+                'schema/integration',
+                $expectedSchemaFileName,
+                ''
+            );
+        }
+
+        return $actual;
+    }
 }
