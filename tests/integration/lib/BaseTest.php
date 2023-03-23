@@ -14,7 +14,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
 
-    public static function getRealms()
+    protected static function getRealms()
     {
         return Utilities::getRealmsToTest();
     }

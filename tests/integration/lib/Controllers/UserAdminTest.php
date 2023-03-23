@@ -283,7 +283,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         # Handle special case where there's no PI data (Cloud Realm enabled only)
-        if (self::getRealms() == array("cloud")) {
+        if (parent::getRealms() == array("cloud")) {
             return Json::loadFile(
                 $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
             );
