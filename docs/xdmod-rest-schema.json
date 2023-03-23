@@ -2729,8 +2729,8 @@
                 "description": "This will return rows of raw data up to a maximum number of rows. The limit on number of rows can be obtained via `GET /warehouse/raw-data/limit`.",
                 "operationId": "get-warehouse-raw-data",
                 "security": [
-                    "http_bearer": [],
-                    "query_param_bearer": []
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
                 ],
                 "parameters": [
                     { "$ref": "#/components/parameters/start_date" },
@@ -2872,8 +2872,8 @@
                 "description": "This gets the maximum number of rows that will be returned in a single response from `GET /warehouse/raw-data`.",
                 "operationId": "get-warehouse-raw-data-limit",
                 "security": [
-                    "http_bearer": [],
-                    "query_param_bearer": []
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
                 ],
                 "responses": {
                     "200": {
