@@ -89,9 +89,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param array|null $data
      * @param int|null $expectedHttpCode
      * @param string|null $expectedContentType
+     * @param string|null $expectedSchemaFileGroup
      * @param string|null $expectedSchemaFileName
+     * @param string|null $expectedSchemaFileType
      * @return mixed
-     * @throws Exception
      */
     public function makeRequest(
         $testHelper,
@@ -101,7 +102,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $data = null,
         $expectedHttpCode = null,
         $expectedContentType = null,
-        $expectedSchemaFileName = null
+        $expectedSchemaFileGroup = null,
+        $expectedSchemaFileName = null,
+        $expectedSchemaFileType = null
     ) {
         $response = null;
         switch ($verb) {
@@ -136,9 +139,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         if (isset($expectedSchemaFileName)) {
             $this->validateJson(
                 $actual,
-                'schema/integration',
+                $expectedSchemaFileGroup,
                 $expectedSchemaFileName,
-                ''
+                $expectedSchemaFileType
             );
         }
 

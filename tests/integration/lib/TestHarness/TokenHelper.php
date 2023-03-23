@@ -18,11 +18,10 @@ abstract class TokenHelper
      *
      * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
-     * @param int $expectedHttpCode
-     * @param string $expectedContentType
-     * @param string $expectedSchemaFileName
-     * @return mixed
-     * @throws Exception
+     * @param int|null $expectedHttpCode
+     * @param string|null $expectedContentType
+     * @param string|null $expectedSchemaFileName
+     * @return mixed the response body
      */
     public static function getAPIToken(
         $testInstance,
@@ -39,7 +38,9 @@ abstract class TokenHelper
             null,
             $expectedHttpCode,
             $expectedContentType,
-            $expectedSchemaFileName
+            'schema/integration',
+            $expectedSchemaFileName,
+            ''
         );
     }
 
@@ -51,11 +52,10 @@ abstract class TokenHelper
      *
      * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
-     * @param $expectedHttpCode
-     * @param $expectedContentType
-     * @param $expectedSchemaFileName
-     * @return object containing the api token value
-     * @throws Exception
+     * @param int|null $expectedHttpCode
+     * @param string|null $expectedContentType
+     * @param string|null $expectedSchemaFileName
+     * @return mixed the response body
      */
     public static function createAPIToken(
         $testInstance,
@@ -72,7 +72,9 @@ abstract class TokenHelper
             null,
             $expectedHttpCode,
             $expectedContentType,
-            $expectedSchemaFileName
+            'schema/integration',
+            $expectedSchemaFileName,
+            ''
         );
     }
 
@@ -86,11 +88,10 @@ abstract class TokenHelper
      *
      * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
-     * @param int $expectedHttpCode
-     * @param string $expectedContentType
-     * @param string $expectedSchemaFileName
+     * @param int|null $expectedHttpCode
+     * @param string|null $expectedContentType
+     * @param string|null $expectedSchemaFileName
      * @return mixed the response body
-     * @throws Exception
      */
     public static function revokeAPIToken(
         $testInstance,
@@ -107,7 +108,9 @@ abstract class TokenHelper
             null,
             $expectedHttpCode,
             $expectedContentType,
-            $expectedSchemaFileName
+            'schema/integration',
+            $expectedSchemaFileName,
+            ''
         );
     }
 

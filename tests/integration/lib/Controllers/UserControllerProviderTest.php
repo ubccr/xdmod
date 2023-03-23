@@ -208,7 +208,9 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $test->data,
             $expected->test->failure->http_code,
             $expected->test->failure->content_type,
-            $expected->test->failure->schema
+            'schema/integration',
+            $expected->test->failure->schema,
+            ''
         );
 
         // Now go ahead and authenticate the test user so we can create / use their API Token.
@@ -240,28 +242,18 @@ class UserControllerProviderTest extends BaseUserAdminTest
             }
 
             $test->parameters[Tokens::HEADER_KEY] = $token;
-
-            $verb = $test->verb;
-            $response = $this->helper->$verb($test->url, (array)$test->parameters, (array)$test->data);
-
-            $this->assertEquals($expected->test->success->http_code, $response[1]['http_code']);
-            $this->assertEquals($expected->test->success->content_type, $response[1]['content_type']);
-
-            $expectedOutput = file_get_contents(
-                $this->getTestFiles()->getFile(
-                    $expected->test->success->file_group,
-                    $expected->test->success->file_name,
-                    'output',
-                    $expected->test->success->file_ext
-                )
+            $this->makeRequest(
+                $this->helper,
+                $test->url,
+                $test->verb,
+                $test->parameters,
+                $test->data,
+                $expected->test->success->http_code,
+                $expected->test->success->content_type,
+                $expected->test->success->file_group,
+                $expected->test->success->file_name,
+                'output'
             );
-
-            // need to make sure that we format the expected output to match the actual output.
-            if ($expected->test->success->file_ext === '.json') {
-                $expectedOutput = json_decode($expectedOutput, true);
-            }
-
-            $this->assertEquals($expectedOutput, $response[0]);
 
             // clean up the helper's headers.
             $this->helper->addheader('Authorization', null);
