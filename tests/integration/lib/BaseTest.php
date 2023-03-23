@@ -4,10 +4,12 @@ namespace IntegrationTests;
 
 use JsonSchema\Validator;
 use \TestHarness\Utilities;
+use \TestHarness\TestFiles;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     protected static $XDMOD_REALMS;
+    protected static $testFiles;
 
     public static function setUpBeforeClass()
     {
@@ -17,6 +19,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected static function getRealms()
     {
         return Utilities::getRealmsToTest();
+    }
+
+    public static function getTestFiles()
+    {
+        if (!isset(self::$testFiles)) {
+            self::$testFiles = new TestFiles(__DIR__ . '/../../');
+        }
+        return self::$testFiles;
     }
 
     /**

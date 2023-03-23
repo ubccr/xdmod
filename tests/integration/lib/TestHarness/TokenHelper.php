@@ -37,10 +37,6 @@ class TokenHelper
         }
 
         $this->helper = $helper;
-
-        if (!isset($testFiles)) {
-            $testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
         $this->testFiles = $testFiles;
     }
 

@@ -5,7 +5,6 @@ namespace IntegrationTests\Database;
 use CCR\DB;
 use CCR\Json;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TestFiles;
 use JsonSchema\Validator;
 use IntegrationTests\BaseTest;
 use Configuration\XdmodConfiguration;

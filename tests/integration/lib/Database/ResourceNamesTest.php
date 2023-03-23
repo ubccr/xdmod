@@ -6,7 +6,6 @@ use IntegrationTests\BaseTest;
 use CCR\DB;
 use CCR\Json;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TestFiles;
 use Configuration\XdmodConfiguration;
 
 /**
@@ -16,12 +15,9 @@ class ResourceNamesTest extends BaseTest
 {
     private $db;
 
-    private $testFiles;
-
     public function setUp()
     {
         $this->db = DB::factory('datawarehouse');
-        $this->testFiles = new TestFiles(__DIR__ . '/../../../');
     }
 
     public function testResourcesNamesValues()
@@ -30,7 +26,7 @@ class ResourceNamesTest extends BaseTest
 
         # Check spec file
         $schemaObject = Json::loadFile(
-            $this->testFiles->getFile('schema/integration', 'resource_names.spec', ''),
+            parent::getTestFiles()->getFile('schema/integration', 'resource_names.spec', ''),
             false
         );
 
@@ -38,7 +34,7 @@ class ResourceNamesTest extends BaseTest
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->testFiles->getFile('integration/database', 'resource_names', "output/" . strtolower($realm));
+            $expectedOutputFile = parent::getTestFiles()->getFile('integration/database', 'resource_names', "output/" . strtolower($realm));
 
             # Create missing files/directories
             if(!is_file($expectedOutputFile)) {

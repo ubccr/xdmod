@@ -23,7 +23,10 @@ class UserControllerProviderTest extends BaseUserAdminTest
     protected function setUp()
     {
         parent::setUp();
-        $this->tokenHelper = new TokenHelper(new XdmodTestHelper());
+        $this->tokenHelper = new TokenHelper(
+            new XdmodTestHelper(),
+            parent::getTestFiles()
+        );
     }
 
     /**

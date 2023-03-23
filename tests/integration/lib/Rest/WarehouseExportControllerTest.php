@@ -5,10 +5,10 @@ namespace IntegrationTests\Rest;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
+use IntegrationTests\BaseTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -17,7 +17,7 @@ use XDUser;
  *
  * @coversDefaultClass \Rest\Controllers\WarehouseExportControllerProvider
  */
-class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
+class WarehouseExportControllerTest extends BaseTest
 {
     /**
      * Test files base path.
@@ -80,23 +80,6 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     private static $schemaCache = [];
 
     /**
-     * @var TestFiles
-     */
-    private static $testFiles;
-
-    /**
-     * @return TestFiles
-     */
-    private static function getTestFiles()
-    {
-        if (!isset(self::$testFiles)) {
-            self::$testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
-
-        return self::$testFiles;
-    }
-
-    /**
      * Instantiate fixtures and authenticate helpers.
      */
     public static function setUpBeforeClass()
@@ -150,7 +133,7 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     private static function getSchema($schema)
     {
         if (!array_key_exists($schema, self::$schemaCache)) {
-            static::$schemaCache[$schema] = self::getTestFiles()->loadJsonFile(
+            static::$schemaCache[$schema] = parent::getTestFiles()->loadJsonFile(
                 'schema',
                 $schema . '.schema',
                 'warehouse-export',
@@ -411,31 +394,31 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
 
     public function getRealmsProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-realms', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-realms', 'input');
     }
 
     public function createRequestProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'create-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'create-request', 'input');
     }
 
     public function getRequestsProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-requests', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-requests', 'input');
     }
 
     public function getRequestProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-request', 'input');
     }
 
     public function deleteRequestProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-request', 'input');
     }
 
     public function deleteRequestsProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-requests', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-requests', 'input');
     }
 }

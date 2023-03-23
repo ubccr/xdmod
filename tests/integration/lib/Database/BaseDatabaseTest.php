@@ -7,13 +7,10 @@ use CCR\Json;
 use Configuration\XdmodConfiguration;
 use Exception;
 use IntegrationTests\BaseTest;
-use TestHarness\TestFiles;
 
 abstract class BaseDatabaseTest extends BaseTest
 {
     protected $db;
-
-    protected $testFiles;
 
     /**
      * @throws Exception
@@ -21,7 +18,6 @@ abstract class BaseDatabaseTest extends BaseTest
     public function setUp()
     {
         $this->db = DB::factory('datawarehouse');
-        $this->testFiles = new TestFiles(__DIR__ . '/../../../');
     }
 
     /**
@@ -57,7 +53,7 @@ abstract class BaseDatabaseTest extends BaseTest
 
         # Check spec file
         $schemaObject = Json::loadFile(
-            $this->testFiles->getFile($schemaTestGroup, $actualSchemaFileName, ''),
+            parent::getTestFiles()->getFile($schemaTestGroup, $actualSchemaFileName, ''),
             false
         );
 
@@ -65,7 +61,7 @@ abstract class BaseDatabaseTest extends BaseTest
 
         # Check expected file
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->testFiles->getFile($expectedTestGroup, $expectedFileName, "output/" . strtolower($realm));
+            $expectedOutputFile = parent::getTestFiles()->getFile($expectedTestGroup, $expectedFileName, "output/" . strtolower($realm));
 
             # Create missing files/directories
             if(!is_file($expectedOutputFile)) {
