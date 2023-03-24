@@ -19,7 +19,6 @@ abstract class TokenHelper
      * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param int|null $expectedHttpCode
-     * @param string|null $expectedContentType
      * @param string|null $expectedSchemaFileName
      * @return mixed the response body
      */
@@ -27,7 +26,6 @@ abstract class TokenHelper
         $testInstance,
         $testHelper,
         $expectedHttpCode = null,
-        $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
         return $testInstance->makeRequest(
@@ -37,7 +35,7 @@ abstract class TokenHelper
             null,
             null,
             $expectedHttpCode,
-            $expectedContentType,
+            'application/json',
             'integration/rest/user/api_token',
             $expectedSchemaFileName,
             'schema'
@@ -53,7 +51,6 @@ abstract class TokenHelper
      * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param int|null $expectedHttpCode
-     * @param string|null $expectedContentType
      * @param string|null $expectedSchemaFileName
      * @return mixed the response body
      */
@@ -61,7 +58,6 @@ abstract class TokenHelper
         $testInstance,
         $testHelper,
         $expectedHttpCode = null,
-        $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
         return $testInstance->makeRequest(
@@ -71,7 +67,7 @@ abstract class TokenHelper
             null,
             null,
             $expectedHttpCode,
-            $expectedContentType,
+            'application/json',
             'integration/rest/user/api_token',
             $expectedSchemaFileName,
             'schema'
@@ -89,7 +85,6 @@ abstract class TokenHelper
      * @param BaseTest $testInstance
      * @param XdmodTestHelper $testHelper
      * @param int|null $expectedHttpCode
-     * @param string|null $expectedContentType
      * @param string|null $expectedSchemaFileName
      * @return mixed the response body
      */
@@ -97,7 +92,6 @@ abstract class TokenHelper
         $testInstance,
         $testHelper,
         $expectedHttpCode = null,
-        $expectedContentType = null,
         $expectedSchemaFileName = null
     ) {
         return $testInstance->makeRequest(
@@ -107,7 +101,7 @@ abstract class TokenHelper
             null,
             null,
             $expectedHttpCode,
-            $expectedContentType,
+            'application/json',
             'integration/rest/user/api_token',
             $expectedSchemaFileName,
             'schema'

@@ -73,7 +73,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_get->http_code,
-            $expected->api_get->content_type,
             $expected->api_get->schemas->failure
         );
 
@@ -82,7 +81,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_create->http_code,
-            $expected->api_create->content_type,
             $expected->api_create->schemas->success
         );
 
@@ -91,7 +89,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_create->http_code,
-            $expected->api_create->content_type,
             $expected->api_create->schemas->failure
         );
 
@@ -100,7 +97,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_get->http_code,
-            $expected->api_get->content_type,
             $expected->api_get->schemas->success
         );
 
@@ -109,7 +105,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_revoke->http_code,
-            $expected->api_revoke->content_type,
             $expected->api_revoke->schemas->success
         );
 
@@ -118,7 +113,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_revoke->http_code,
-            $expected->api_revoke->content_type,
             $expected->api_revoke->schemas->failure
         );
 
@@ -127,7 +121,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_get->http_code,
-            $expected->api_get->content_type,
             $expected->api_get->schemas->failure
         );
 
@@ -223,7 +216,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_create->http_code,
-            $expected->api_create->content_type,
             $expected->api_create->schemas->success
         );
 
@@ -264,7 +256,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this,
             $this->helper,
             $expected->api_revoke->http_code,
-            $expected->api_revoke->content_type,
             $expected->api_revoke->schemas->success
         );
 
