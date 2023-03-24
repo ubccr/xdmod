@@ -209,7 +209,8 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $expected->test->failure->http_code,
             $expected->test->failure->content_type,
             'integration/rest/user/api_token',
-            $expected->test->failure->schema
+            $expected->test->failure->schema,
+            'schema'
         );
 
         // Now go ahead and authenticate the test user so we can create / use their API Token.
@@ -250,7 +251,8 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 $expected->test->success->http_code,
                 $expected->test->success->content_type,
                 $expected->test->success->file_group,
-                $expected->test->success->file_name
+                $expected->test->success->file_name,
+                'exact'
             );
 
             // clean up the helper's headers.

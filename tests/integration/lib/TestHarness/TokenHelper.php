@@ -39,7 +39,8 @@ abstract class TokenHelper
             $expectedHttpCode,
             $expectedContentType,
             'integration/rest/user/api_token',
-            $expectedSchemaFileName
+            $expectedSchemaFileName,
+            'schema'
         );
     }
 
@@ -72,7 +73,8 @@ abstract class TokenHelper
             $expectedHttpCode,
             $expectedContentType,
             'integration/rest/user/api_token',
-            $expectedSchemaFileName
+            $expectedSchemaFileName,
+            'schema'
         );
     }
 
@@ -107,7 +109,8 @@ abstract class TokenHelper
             $expectedHttpCode,
             $expectedContentType,
             'integration/rest/user/api_token',
-            $expectedSchemaFileName
+            $expectedSchemaFileName,
+            'schema'
         );
     }
 

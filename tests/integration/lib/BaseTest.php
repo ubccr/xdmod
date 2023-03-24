@@ -49,36 +49,44 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $json,
         $testGroup,
         $fileName,
-        $type = 'output',
-        $extension = '.json'
+        $fileType = 'output',
+        $extension = '.json',
+        $validationType = 'schema'
     ) {
-        $schemaFile = self::getTestFiles()->getFile(
+        $expectedFile = self::getTestFiles()->getFile(
             $testGroup,
             $fileName,
-            $type,
+            $fileType,
             $extension
         );
-        $validator = new Validator();
-        $schemaObject = Json::loadFile($schemaFile, false);
-        $schemaStorage = new SchemaStorage();
-        $schemaStorage->addSchema($schemaFile, $schemaObject);
-        $validator = new Validator(new Factory($schemaStorage));
-        $actualDecoded = json_decode(json_encode($json));
-        $validator->validate($actualDecoded, $schemaObject);
-        $errors = array();
-        foreach ($validator->getErrors() as $err) {
-            $errors[] = sprintf(
-                "[%s] %s\n",
-                $err['property'],
-                $err['message']
+        $expectedObject = Json::loadFile($expectedFile, false);
+        $actualObject = json_decode(json_encode($json), false);
+        if ($validationType === 'exact') {
+            $this->assertSame(
+                json_encode($actualObject),
+                json_encode($expectedObject)
+            );
+        } elseif ($validationType === 'schema') {
+            $validator = new Validator();
+            $schemaStorage = new SchemaStorage();
+            $schemaStorage->addSchema($expectedFile, $expectedObject);
+            $validator = new Validator(new Factory($schemaStorage));
+            $validator->validate($actualObject, $expectedObject);
+            $errors = array();
+            foreach ($validator->getErrors() as $err) {
+                $errors[] = sprintf(
+                    "[%s] %s\n",
+                    $err['property'],
+                    $err['message']
+                );
+            }
+            $this->assertEmpty(
+                $errors,
+                implode("\n", $errors) . "\n"
+                . json_encode($json, JSON_PRETTY_PRINT)
             );
         }
-        $this->assertEmpty(
-            $errors,
-            implode("\n", $errors) . "\n"
-            . json_encode($json, JSON_PRETTY_PRINT)
-        );
-        return $actualDecoded;
+        return $actualObject;
     }
 
     /**
@@ -89,8 +97,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param array|null $data
      * @param int|null $expectedHttpCode
      * @param string|null $expectedContentType
-     * @param string|null $expectedSchemaFileGroup
-     * @param string|null $expectedSchemaFileName
+     * @param string|null $expectedFileGroup
+     * @param string|null $expectedFileName
+     * @param string|null $validationType
      * @return mixed
      */
     public function makeRequest(
@@ -101,8 +110,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $data = null,
         $expectedHttpCode = null,
         $expectedContentType = null,
-        $expectedSchemaFileGroup = null,
-        $expectedSchemaFileName = null
+        $expectedFileGroup = null,
+        $expectedFileName = null,
+        $validationType = null
     ) {
         $response = null;
         switch ($verb) {
@@ -134,12 +144,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
         $actual = json_decode(json_encode($actualResponseBody));
 
-        if (isset($expectedSchemaFileName)) {
+        if (isset($expectedFileName)) {
             $this->validateJson(
                 $actual,
-                $expectedSchemaFileGroup,
-                $expectedSchemaFileName,
-                'output'
+                $expectedFileGroup,
+                $expectedFileName,
+                'output',
+                '.json',
+                $validationType
             );
         }
 
