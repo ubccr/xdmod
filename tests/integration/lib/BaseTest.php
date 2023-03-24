@@ -91,7 +91,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string|null $expectedContentType
      * @param string|null $expectedSchemaFileGroup
      * @param string|null $expectedSchemaFileName
-     * @param string|null $expectedSchemaFileType
      * @return mixed
      */
     public function makeRequest(
@@ -103,8 +102,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $expectedHttpCode = null,
         $expectedContentType = null,
         $expectedSchemaFileGroup = null,
-        $expectedSchemaFileName = null,
-        $expectedSchemaFileType = null
+        $expectedSchemaFileName = null
     ) {
         $response = null;
         switch ($verb) {
@@ -141,7 +139,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $actual,
                 $expectedSchemaFileGroup,
                 $expectedSchemaFileName,
-                $expectedSchemaFileType
+                'output'
             );
         }
 
