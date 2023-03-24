@@ -51,80 +51,90 @@ class UserControllerProviderTest extends BaseUserAdminTest
     }
 
     /**
-     * @dataProvider provideTestAPITokens
-     * @param array $options
-     * @return void
-     * @throws Exception
+     * @dataProvider provideBaseRoles
      */
-    public function testAPITokensCRD(array $options)
+    public function testAPITokensCRD($role)
     {
-        $hydratedOptions = $this->hydrateOptions($options, 'create_api_tokens');
+        if ('pub' === $role) {
+            TokenHelper::getAPIToken(
+                $this,
+                $this->helper,
+                401,
+                'authentication_error.spec'
+            );
+            TokenHelper::createAPIToken(
+                $this,
+                $this->helper,
+                401,
+                'authentication_error.spec'
+            );
+            TokenHelper::revokeAPIToken(
+                $this,
+                $this->helper,
+                401,
+                'authentication_error.spec'
+            );
+        } else {
+            $this->helper->authenticate($role);
 
-        $user = $hydratedOptions->user;
-        $expected = $hydratedOptions->expected;
+            TokenHelper::revokeAPIToken($this, $this->helper);
 
-        if ('pub' !== $user) {
-            $this->helper->authenticate($user);
-        }
-        TokenHelper::revokeAPIToken($this, $this->helper);
+            // Attempt to get the current API token, this should fail.
+            TokenHelper::getAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'get_user_token_failure.spec'
+            );
 
-        // Attempt to get the current API token, this should fail.
-        TokenHelper::getAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_get->http_code,
-            $expected->api_get->schemas->failure
-        );
+            // Attempt to create an API token.
+            TokenHelper::createAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'create_user_token_success.spec'
+            );
 
-        // Attempt to create an API token.
-        TokenHelper::createAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_create->http_code,
-            $expected->api_create->schemas->success
-        );
+            // Now test that we can't create a token when we already have a valid token.
+            TokenHelper::createAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'create_user_token_failure.spec'
+            );
 
-        // Now test that we can't create a token when we already have a valid token.
-        TokenHelper::createAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_create->http_code,
-            $expected->api_create->schemas->failure
-        );
+            // Now test if we can get the newly created token, this should succeed.
+            TokenHelper::getAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'get_user_token_success.spec'
+            );
 
-        // Now test if we can get the newly created token, this should succeed.
-        TokenHelper::getAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_get->http_code,
-            $expected->api_get->schemas->success
-        );
+            // Now we can revoke the token we just created.
+            TokenHelper::revokeAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'revoke_user_token_success.spec'
+            );
 
-        // Now we can revoke the token we just created.
-        TokenHelper::revokeAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_revoke->http_code,
-            $expected->api_revoke->schemas->success
-        );
+            // We cannot revoke a token if we don't have one.
+            TokenHelper::revokeAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'revoke_user_token_failure.spec'
+            );
 
-        // We cannot revoke a token if we don't have one.
-        TokenHelper::revokeAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_revoke->http_code,
-            $expected->api_revoke->schemas->failure
-        );
+            // We still can't get a token if we don't have one.
+            TokenHelper::getAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'get_user_token_failure.spec'
+            );
 
-        // We still can't get a token if we don't have one.
-        TokenHelper::getAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_get->http_code,
-            $expected->api_get->schemas->failure
-        );
-
-        if ('pub' !== $user) {
             $this->helper->logout();
         }
     }
@@ -133,29 +143,29 @@ class UserControllerProviderTest extends BaseUserAdminTest
      * This tests that API Token authentication is working for the controller operation:
      * `html/controllers/metric_explorer.php?operation=get_dw_descripter`.
      *
-     * @dataProvider provideTestControllerTokenAuthentication
-     * @param array $options
+     * @dataProvider provideControllerTokenTest
+     * @param stdClass $options
      * @return void
      * @throws Exception
      */
-    public function testControllerTokenAuthentication(array $options)
+    public function testControllerTokenAuthentication($role, stdClass $options)
     {
-        $this->endpointTokenAuthenticationTest($options, 'test_endpoint_token_auth');
+        $this->endpointTokenAuthenticationTest($role, $options);
     }
 
     /**
      * This tests that API Token authentication is working for the Warehouse Export REST Controllers getRealms endpoint:
      * `rest/warehouse/export/realms`.
      *
-     * @dataProvider provideTestRestTokenAuthentication
+     * @dataProvider provideRestTokenTest
      *
-     * @param array $options
+     * @param stdClass $options
      * @return void
      * @throws Exception
      */
-    public function testRestTokenAuthentication(array $options)
+    public function testRestTokenAuthentication($role, stdClass $options)
     {
-        $this->endpointTokenAuthenticationTest($options, 'test_rest_token_auth');
+        $this->endpointTokenAuthenticationTest($role, $options);
     }
 
     /**
@@ -176,20 +186,27 @@ class UserControllerProviderTest extends BaseUserAdminTest
      *   - Revoke the previously created API Token.
      *   - and finally, if the test user is not the public user then log them out.
      *
-     * @param array $options
-     * @param string $testId
+     * @param string $role
+     * @param stdclass $options
      *
      * @return void
      *
      * @throws Exception
      */
-    private function endpointTokenAuthenticationTest(array $options, $testId)
+    private function endpointTokenAuthenticationTest($role, stdclass $options)
     {
-        $hydratedOptions = $this->hydrateOptions($options, $testId);
+        $expected = $options->expected;
+        $test = $options->test;
 
-        $user = $hydratedOptions->user;
-        $expected = $hydratedOptions->expected;
-        $test = $hydratedOptions->test;
+        if ('pub' === $role) {
+            $failureHttpCode = array(401, 400);
+            $failureContentType = 'application/json';
+            $failureSchema = 'authentication_error.spec';
+        } else {
+            $failureHttpCode = $expected->test->failure->http_code;
+            $failureContentType = $expected->test->failure->content_type;
+            $failureSchema = $expected->test->failure->schema;
+        }
 
         // Attempt to make a request to the controller endpoint unauthenticated in any way.
         // This should fail.
@@ -199,27 +216,27 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $test->verb,
             $test->parameters,
             $test->data,
-            $expected->test->failure->http_code,
-            $expected->test->failure->content_type,
+            $failureHttpCode,
+            $failureContentType,
             'integration/rest/user/api_token',
-            $expected->test->failure->schema,
+            $failureSchema,
             'schema'
         );
 
         // Now go ahead and authenticate the test user so we can create / use their API Token.
-        if ('pub' !== $user) {
-            $this->helper->authenticate($user);
-        }
+        if ('pub' !== $role) {
+            $this->helper->authenticate($role);
 
-        // Attempt to create an API token.
-        $tokenResponse = TokenHelper::createAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_create->http_code,
-            $expected->api_create->schemas->success
-        );
+            TokenHelper::revokeAPIToken($this, $this->helper);
 
-        if ('pub' !== $user) {
+            // Attempt to create an API token.
+            $tokenResponse = TokenHelper::createAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'create_user_token_success.spec'
+            );
+
             $token = $tokenResponse->data->token;
             // We add the token to the request headers so that we can use the token authentication.
             $this->helper->addheader('Authorization', sprintf('%s %s', Tokens::HEADER_KEY, $token));
@@ -249,35 +266,18 @@ class UserControllerProviderTest extends BaseUserAdminTest
 
             // clean up the helper's headers.
             $this->helper->addheader('Authorization', null);
-        }
 
-        // Make sure to revoke the token so that we leave the user in the same state as we found it.
-        TokenHelper::revokeAPIToken(
-            $this,
-            $this->helper,
-            $expected->api_revoke->http_code,
-            $expected->api_revoke->schemas->success
-        );
+            // Make sure to revoke the token so that we leave the user in the same state as we found it.
+            TokenHelper::revokeAPIToken(
+                $this,
+                $this->helper,
+                200,
+                'revoke_user_token_success.spec'
+            );
 
-        // And finally make sure that we log out.
-        if ('pub' !== $user) {
+            // And finally make sure that we log out.
             $this->helper->logout();
         }
-    }
-
-    /**
-     * @param array $options
-     * @param string $testId the id of the test calling this function, will be used to retrieve the default test options
-     * @return stdClass containing the provided options merged w/ token_auth_defaults and the defaults for $testId.
-     * @throws Exception
-     */
-    protected function hydrateOptions(array $options, $testId)
-    {
-        $tokenAuthDefaults = Json::loadFile($this->getTestFiles()->getFile('user_controller', 'token_auth_defaults', 'input'), false);
-        $testDefaults = Json::loadFile($this->getTestFiles()->getFile('user_controller', sprintf('%s_defaults', $testId), 'input'), false);
-
-        $authedOptions = Utilities::applyDefaults(json_decode(json_encode($options)), $tokenAuthDefaults);
-        return Utilities::applyDefaults($authedOptions, $testDefaults);
     }
 
     /**
@@ -291,24 +291,31 @@ class UserControllerProviderTest extends BaseUserAdminTest
         );
     }
 
-    public function provideTestAPITokens()
+    public function provideControllerTokenTest()
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_controller', 'create_api_tokens', 'input')
-        );
+        return $this->provideTokenTest('test_controller_token_auth');
     }
 
-    public function provideTestControllerTokenAuthentication()
+    public function provideRestTokenTest()
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_controller', 'test_endpoint_token_auth', 'input')
-        );
+        return $this->provideTokenTest('test_rest_token_auth');
     }
 
-    public function provideTestRestTokenAuthentication()
+    private function provideTokenTest($fileName)
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_controller', 'test_endpoint_token_auth', 'input')
+        $json = Json::loadFile(
+            $this->getTestFiles()->getFile(
+                'integration/rest/user',
+                $fileName,
+                'input'
+            ),
+            false
+        );
+        return array_map(
+            function ($roleArray) use ($json) {
+                return array($roleArray[0], $json);
+            },
+            $this->provideBaseRoles()
         );
     }
 }

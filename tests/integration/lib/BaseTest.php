@@ -32,6 +32,17 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return self::$testFiles;
     }
 
+    public function provideBaseRoles()
+    {
+        return array(
+            array('pub'),
+            array('cd'),
+            array('cs'),
+            array('pi'),
+            array('usr')
+        );
+    }
+
     /**
      * Validate the provided $json w/ provided Json Schema file (specified by
      * its group, name, type, and extension) and asserting that there were no
