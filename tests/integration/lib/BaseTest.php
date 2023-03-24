@@ -44,63 +44,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Validate the provided $json w/ provided Json Schema file (specified by
-     * its group, name, type, and extension) and asserting that there were no
-     * errors. If the validation is successful then the decoded value is
-     * returned.
-     *
-     * @param mixed $json the JSON structure to be validated.
-     * @param string $testGroup
-     * @param string $fileName
-     * @param string $type
-     * @param string $extension
-     * @return mixed the decoded, valid json structure.
-     */
-    public function validateJson(
-        $json,
-        $testGroup,
-        $fileName,
-        $fileType = 'output',
-        $extension = '.json',
-        $validationType = 'schema'
-    ) {
-        $expectedFile = self::getTestFiles()->getFile(
-            $testGroup,
-            $fileName,
-            $fileType,
-            $extension
-        );
-        $expectedObject = Json::loadFile($expectedFile, false);
-        $actualObject = json_decode(json_encode($json), false);
-        if ($validationType === 'exact') {
-            $this->assertSame(
-                json_encode($actualObject),
-                json_encode($expectedObject)
-            );
-        } elseif ($validationType === 'schema') {
-            $validator = new Validator();
-            $schemaStorage = new SchemaStorage();
-            $schemaStorage->addSchema($expectedFile, $expectedObject);
-            $validator = new Validator(new Factory($schemaStorage));
-            $validator->validate($actualObject, $expectedObject);
-            $errors = array();
-            foreach ($validator->getErrors() as $err) {
-                $errors[] = sprintf(
-                    "[%s] %s\n",
-                    $err['property'],
-                    $err['message']
-                );
-            }
-            $this->assertEmpty(
-                $errors,
-                implode("\n", $errors) . "\n"
-                . json_encode($json, JSON_PRETTY_PRINT)
-            );
-        }
-        return $actualObject;
-    }
-
-    /**
      * @param XdmodTestHelper $testHelper
      * @param string $url
      * @param string $verb
@@ -167,5 +110,62 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
 
         return $actual;
+    }
+
+    /**
+     * Validate the provided $json w/ provided Json Schema file (specified by
+     * its group, name, type, and extension) and asserting that there were no
+     * errors. If the validation is successful then the decoded value is
+     * returned.
+     *
+     * @param mixed $json the JSON structure to be validated.
+     * @param string $testGroup
+     * @param string $fileName
+     * @param string $type
+     * @param string $extension
+     * @return mixed the decoded, valid json structure.
+     */
+    public function validateJson(
+        $json,
+        $testGroup,
+        $fileName,
+        $fileType = 'output',
+        $extension = '.json',
+        $validationType = 'schema'
+    ) {
+        $expectedFile = self::getTestFiles()->getFile(
+            $testGroup,
+            $fileName,
+            $fileType,
+            $extension
+        );
+        $expectedObject = Json::loadFile($expectedFile, false);
+        $actualObject = json_decode(json_encode($json), false);
+        if ($validationType === 'exact') {
+            $this->assertSame(
+                json_encode($actualObject),
+                json_encode($expectedObject)
+            );
+        } elseif ($validationType === 'schema') {
+            $validator = new Validator();
+            $schemaStorage = new SchemaStorage();
+            $schemaStorage->addSchema($expectedFile, $expectedObject);
+            $validator = new Validator(new Factory($schemaStorage));
+            $validator->validate($actualObject, $expectedObject);
+            $errors = array();
+            foreach ($validator->getErrors() as $err) {
+                $errors[] = sprintf(
+                    "[%s] %s\n",
+                    $err['property'],
+                    $err['message']
+                );
+            }
+            $this->assertEmpty(
+                $errors,
+                implode("\n", $errors) . "\n"
+                . json_encode($json, JSON_PRETTY_PRINT)
+            );
+        }
+        return $actualObject;
     }
 }
