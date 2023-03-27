@@ -20,7 +20,7 @@
             "failure": {
                 "http_code": 401,
                 "content_type": "application/json",
-                "schema": "session_expired.spec"
+                "file_name": "session_expired"
             }
         }
     }

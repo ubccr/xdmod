@@ -18,7 +18,7 @@
             "failure": {
                 "http_code": [401, 400],
                 "content_type": "application/json",
-                "schema": "authentication_error.spec"
+                "file_name": "authentication_error"
             }
         }
     }
