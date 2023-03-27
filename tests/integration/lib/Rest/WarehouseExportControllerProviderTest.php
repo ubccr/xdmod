@@ -22,7 +22,7 @@ class WarehouseExportControllerProviderTest extends BaseTest
     /**
      * Test files base path.
      */
-    const TEST_GROUP = 'integration/rest/warehouse_export';
+    const TEST_GROUP = 'integration/rest/warehouse/export';
 
     /**
      * User roles and usernames.
@@ -136,7 +136,7 @@ class WarehouseExportControllerProviderTest extends BaseTest
             static::$schemaCache[$schema] = parent::getTestFiles()->loadJsonFile(
                 'schema',
                 $schema . '.schema',
-                'warehouse_export',
+                'warehouse/export',
                 false
             );
         }
