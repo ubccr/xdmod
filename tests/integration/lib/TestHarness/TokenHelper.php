@@ -3,111 +3,12 @@
 namespace TestHarness;
 
 use CCR\DB;
-use CCR\Json;
-use Exception;
-use IntegrationTests\BaseTest;
 
 /**
  *
  */
 abstract class TokenHelper
 {
-    /**
-     * Attempt to retrieve the metadata about the currently logged in users API Token. If any of the $expected* arguments
-     * are provided then the function will attempt to validate that they match what is returned by the endpoint.
-     *
-     * @param BaseTest $testInstance
-     * @param XdmodTestHelper $testHelper
-     * @param int|null $expectedHttpCode
-     * @param string|null $expectedSchemaFileName
-     * @return mixed the response body
-     */
-    public static function getAPIToken(
-        $testInstance,
-        $testHelper,
-        $expectedHttpCode = null,
-        $expectedSchemaFileName = null
-    ) {
-        return $testInstance->makeRequest(
-            $testHelper,
-            'rest/users/current/api/token',
-            'get',
-            null,
-            null,
-            $expectedHttpCode,
-            'application/json',
-            'integration/rest/user/api_token',
-            $expectedSchemaFileName,
-            'schema'
-        );
-    }
-
-    /**
-     * Attempt to create a new API Token for the currently logged in user.
-     *
-     * If any of the $expected* arguments are included than they will be used to validate the information returned from
-     * the endpoint.
-     *
-     * @param BaseTest $testInstance
-     * @param XdmodTestHelper $testHelper
-     * @param int|null $expectedHttpCode
-     * @param string|null $expectedSchemaFileName
-     * @return mixed the response body
-     */
-    public static function createAPIToken(
-        $testInstance,
-        $testHelper,
-        $expectedHttpCode = null,
-        $expectedSchemaFileName = null
-    ) {
-        return $testInstance->makeRequest(
-            $testHelper,
-            'rest/users/current/api/token',
-            'post',
-            null,
-            null,
-            $expectedHttpCode,
-            'application/json',
-            'integration/rest/user/api_token',
-            $expectedSchemaFileName,
-            'schema'
-        );
-    }
-
-
-    /**
-     * Attempt to revoke the API token for the currently logged in user.
-     *
-     * If any of the $expected* arguments are included than they will be used to validate the information returned from
-     * the endpoint.
-     *
-     *
-     * @param BaseTest $testInstance
-     * @param XdmodTestHelper $testHelper
-     * @param int|null $expectedHttpCode
-     * @param string|null $expectedSchemaFileName
-     * @return mixed the response body
-     */
-    public static function revokeAPIToken(
-        $testInstance,
-        $testHelper,
-        $expectedHttpCode = null,
-        $expectedSchemaFileName = null
-    ) {
-        return $testInstance->makeRequest(
-            $testHelper,
-            'rest/users/current/api/token',
-            'delete',
-            null,
-            null,
-            $expectedHttpCode,
-            'application/json',
-            'integration/rest/user/api_token',
-            $expectedSchemaFileName,
-            'schema'
-        );
-    }
-
     /**
      * A helper function that will allow us to test the expiration of a token.
      *

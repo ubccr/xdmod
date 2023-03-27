@@ -56,85 +56,47 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function testAPITokensCRD($role)
     {
         if ('pub' === $role) {
-            TokenHelper::getAPIToken(
-                $this,
-                $this->helper,
-                401,
-                'authentication_error.spec'
-            );
-            TokenHelper::createAPIToken(
-                $this,
-                $this->helper,
-                401,
-                'authentication_error.spec'
-            );
-            TokenHelper::revokeAPIToken(
-                $this,
-                $this->helper,
-                401,
-                'authentication_error.spec'
-            );
+            foreach (array('get', 'create', 'revoke') as $action) {
+                $this->makeTokenRequest(
+                    $action,
+                    401,
+                    'authentication_error.spec'
+                );
+            }
         } else {
             $this->helper->authenticate($role);
-
-            TokenHelper::revokeAPIToken($this, $this->helper);
-
-            // Attempt to get the current API token, this should fail.
-            TokenHelper::getAPIToken(
-                $this,
-                $this->helper,
+            $this->helper->delete('rest/users/current/api/token');
+            $this->makeTokenRequest(
+                'get',
                 200,
                 'get_user_token_failure.spec'
             );
-
-            // Attempt to create an API token.
-            TokenHelper::createAPIToken(
-                $this,
-                $this->helper,
+            $this->makeTokenRequest(
+                'create',
                 200,
                 'create_user_token_success.spec'
             );
-
-            // Now test that we can't create a token when we already have a valid token.
-            TokenHelper::createAPIToken(
-                $this,
-                $this->helper,
+            $this->makeTokenRequest(
+                'create',
                 200,
                 'create_user_token_failure.spec'
             );
-
-            // Now test if we can get the newly created token, this should succeed.
-            TokenHelper::getAPIToken(
-                $this,
-                $this->helper,
+            $this->makeTokenRequest(
+                'get',
                 200,
-                'get_user_token_success.spec'
+                'get_user_token_success.spec',
+                'schema'
             );
-
-            // Now we can revoke the token we just created.
-            TokenHelper::revokeAPIToken(
-                $this,
-                $this->helper,
+            $this->makeTokenRequest(
+                'revoke',
                 200,
                 'revoke_user_token_success.spec'
             );
-
-            // We cannot revoke a token if we don't have one.
-            TokenHelper::revokeAPIToken(
-                $this,
-                $this->helper,
+            $this->makeTokenRequest(
+                'revoke',
                 200,
                 'revoke_user_token_failure.spec'
             );
-
-            // We still can't get a token if we don't have one.
-            TokenHelper::getAPIToken(
-                $this,
-                $this->helper,
-                200,
-                'get_user_token_failure.spec'
-            );
-
             $this->helper->logout();
         }
     }
@@ -227,12 +189,10 @@ class UserControllerProviderTest extends BaseUserAdminTest
         if ('pub' !== $role) {
             $this->helper->authenticate($role);
 
-            TokenHelper::revokeAPIToken($this, $this->helper);
+            $this->helper->delete('rest/users/current/api/token');
 
-            // Attempt to create an API token.
-            $tokenResponse = TokenHelper::createAPIToken(
-                $this,
-                $this->helper,
+            $tokenResponse = $this->makeTokenRequest(
+                'create',
                 200,
                 'create_user_token_success.spec'
             );
@@ -267,10 +227,8 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // clean up the helper's headers.
             $this->helper->addheader('Authorization', null);
 
-            // Make sure to revoke the token so that we leave the user in the same state as we found it.
-            TokenHelper::revokeAPIToken(
-                $this,
-                $this->helper,
+            $this->makeTokenRequest(
+                'revoke',
                 200,
                 'revoke_user_token_success.spec'
             );
@@ -316,6 +274,33 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 return array($roleArray[0], $json);
             },
             $this->provideBaseRoles()
+        );
+    }
+
+    private function makeTokenRequest(
+        $action,
+        $httpCode,
+        $outputFileName,
+        $validationType = 'schema'
+    ) {
+        if ('get' === $action) {
+            $verb = 'get';
+        } elseif ('create' === $action) {
+            $verb = 'post';
+        } else {
+            $verb = 'delete';
+        }
+        return $this->makeRequest(
+            $this->helper,
+            'rest/users/current/api/token',
+            $verb,
+            null,
+            null,
+            $httpCode,
+            'application/json',
+            'integration/rest/user/api_token',
+            $outputFileName,
+            $validationType
         );
     }
 }
