@@ -87,13 +87,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
             // 401.
             if (is_numeric($expectedHttpCode)) {
-                $this->assertSame($actualHttpCode, $expectedHttpCode);
+                $this->assertSame($expectedHttpCode, $actualHttpCode);
             } elseif (is_array($expectedHttpCode)) {
                 $this->assertContains($actualHttpCode, $expectedHttpCode);
             }
         }
         if (isset($expectedContentType)) {
-            $this->assertSame($actualContentType, $expectedContentType);
+            $this->assertSame($expectedContentType, $actualContentType);
         }
 
         $actual = json_decode(json_encode($actualResponseBody));
@@ -143,8 +143,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualObject = json_decode(json_encode($json), false);
         if ($validationType === 'exact') {
             $this->assertSame(
-                json_encode($actualObject),
-                json_encode($expectedObject)
+                json_encode($expectedObject),
+                json_encode($actualObject)
             );
         } elseif ($validationType === 'schema') {
             $validator = new Validator();
