@@ -82,18 +82,32 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
         $actualContentType = isset($response) ? $response[1]['content_type'] : null;
         $actualResponseBody = isset($response) ? $response[0] : array();
-
+        $message = "PATH: $url\nVERB: $verb\nPARAMS: "
+            . json_encode($params, JSON_PRETTY_PRINT) . "\nDATA: "
+            . json_encode($data, JSON_PRETTY_PRINT) . "\n";
         if (isset($expectedHttpCode)) {
             // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
             // 401.
             if (is_numeric($expectedHttpCode)) {
-                $this->assertSame($expectedHttpCode, $actualHttpCode);
+                $this->assertSame(
+                    $expectedHttpCode,
+                    $actualHttpCode,
+                    $message
+                );
             } elseif (is_array($expectedHttpCode)) {
-                $this->assertContains($actualHttpCode, $expectedHttpCode);
+                $this->assertContains(
+                    $actualHttpCode,
+                    $expectedHttpCode,
+                    $message
+                );
             }
         }
         if (isset($expectedContentType)) {
-            $this->assertSame($expectedContentType, $actualContentType);
+            $this->assertSame(
+                $expectedContentType,
+                $actualContentType,
+                $message
+            );
         }
 
         $actual = json_decode(json_encode($actualResponseBody));
