@@ -17,7 +17,7 @@ use XDUser;
  *
  * @coversDefaultClass \Rest\Controllers\WarehouseExportControllerProvider
  */
-class WarehouseExportControllerTest extends BaseTest
+class WarehouseExportControllerProviderTest extends BaseTest
 {
     /**
      * Test files base path.
