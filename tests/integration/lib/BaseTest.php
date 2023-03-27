@@ -45,7 +45,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param XdmodTestHelper $testHelper
-     * @param string $url
+     * @param string $path
      * @param string $verb
      * @param array|null $params
      * @param array|null $data
@@ -58,7 +58,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     public function makeRequest(
         $testHelper,
-        $url,
+        $path,
         $verb,
         $params = null,
         $data = null,
@@ -71,18 +71,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $response = null;
         switch ($verb) {
             case 'get':
-                $response = $testHelper->$verb($url, $params);
+                $response = $testHelper->$verb($path, $params);
                 break;
             case 'post':
             case 'delete':
             case 'patch':
-                $response = $testHelper->$verb($url, $params, $data);
+                $response = $testHelper->$verb($path, $params, $data);
                 break;
         }
         $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
         $actualContentType = isset($response) ? $response[1]['content_type'] : null;
         $actualResponseBody = isset($response) ? $response[0] : array();
-        $message = "PATH: $url\nVERB: $verb\nPARAMS: "
+        $message = "PATH: $path\nVERB: $verb\nPARAMS: "
             . json_encode($params, JSON_PRETTY_PRINT) . "\nDATA: "
             . json_encode($data, JSON_PRETTY_PRINT) . "\n";
         if (isset($expectedHttpCode)) {
