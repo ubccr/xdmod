@@ -199,7 +199,7 @@ class WarehouseExportControllerProviderTest extends BaseTest
             'get',
             null,
             null,
-            array(401, 400),
+            401,
             'authentication_error'
         );
         $tokenHelper->runEndpointTests(

@@ -86,21 +86,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             . json_encode($params, JSON_PRETTY_PRINT) . "\nDATA: "
             . json_encode($data, JSON_PRETTY_PRINT) . "\n";
         if (isset($expectedHttpCode)) {
-            // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
-            // 401.
-            if (is_numeric($expectedHttpCode)) {
-                $this->assertSame(
-                    $expectedHttpCode,
-                    $actualHttpCode,
-                    $message
-                );
-            } elseif (is_array($expectedHttpCode)) {
-                $this->assertContains(
-                    $actualHttpCode,
-                    $expectedHttpCode,
-                    $message
-                );
-            }
+            $this->assertSame(
+                $expectedHttpCode,
+                $actualHttpCode,
+                $message
+            );
         }
         if (isset($expectedContentType)) {
             $this->assertSame(
