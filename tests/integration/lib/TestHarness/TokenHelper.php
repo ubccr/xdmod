@@ -73,7 +73,8 @@ class TokenHelper
         $token,
         $httpCode = null,
         $outputTestGroup = 'integration/rest/user/api_token',
-        $outputFileName = null
+        $outputFileName = null,
+        $validationType = 'exact'
     ) {
         if (null === $httpCode) {
             $httpCode = $this->errorHttpCode;
@@ -100,7 +101,7 @@ class TokenHelper
             'application/json',
             $outputTestGroup,
             $outputFileName,
-            'exact'
+            $validationType
         );
         unset($this->params[Tokens::HEADER_KEY]);
         $this->testHelper->addheader('Authorization', $authHeader);

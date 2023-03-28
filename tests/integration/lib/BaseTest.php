@@ -3,9 +3,8 @@
 namespace IntegrationTests;
 
 use CCR\Json;
-use JsonSchema\Constraints\Factory;
-use JsonSchema\SchemaStorage;
-use JsonSchema\Validator;
+use Exception;
+use Swaggest\JsonSchema\Schema;
 use TestHarness\Utilities;
 use TestHarness\TestFiles;
 
@@ -161,25 +160,33 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 json_encode($actualObject)
             );
         } elseif ($validationType === 'schema') {
-            $validator = new Validator();
-            $schemaStorage = new SchemaStorage();
-            $schemaStorage->addSchema($expectedFile, $expectedObject);
-            $validator = new Validator(new Factory($schemaStorage));
-            $validator->validate($actualObject, $expectedObject);
-            $errors = array();
-            foreach ($validator->getErrors() as $err) {
-                $errors[] = sprintf(
-                    "[%s] %s\n",
-                    $err['property'],
-                    $err['message']
+            $expectedObject = $this->resolveRemoteSchemaRefs(
+                $expectedObject,
+                dirname($expectedFile)
+            );
+            $schema = Schema::import($expectedObject);
+            try {
+                $schema->in($actualObject);
+            } catch (Exception $e) {
+                $this->fail(
+                    $e->getMessage() . "\nEXPECTED SCHEMA: $expectedFile"
+                    . "\nACTUAL OBJECT:" . json_encode($actualObject)
                 );
             }
-            $this->assertEmpty(
-                $errors,
-                implode("\n", $errors) . "\n"
-                . json_encode($json, JSON_PRETTY_PRINT)
-            );
         }
         return $actualObject;
+    }
+
+    private function resolveRemoteSchemaRefs($obj, $schemaDir)
+    {
+        foreach ($obj as $key => $value) {
+            if ('$ref' === $key && '#' !== $value[0]) {
+                $obj->$key = $schemaDir . '/' . $value;
+            } elseif ('object' === gettype($value)
+                    || 'array' === gettype($value)) {
+                $value = $this->resolveRemoteSchemaRefs($value, $schemaDir);
+            }
+        }
+        return $obj;
     }
 }

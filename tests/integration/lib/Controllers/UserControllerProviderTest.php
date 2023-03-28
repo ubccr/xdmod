@@ -73,60 +73,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
     }
 
     /**
-     * This tests that API Token authentication is working for the controller operation:
-     * `html/controllers/metric_explorer.php?operation=get_dw_descripter`.
-     *
-     * @dataProvider provideControllerTokenTest
-     * @param array $options
-     * @return void
-     * @throws Exception
-     */
-    public function testControllerTokenAuthentication($role, array $options)
-    {
-        $this->endpointTokenAuthenticationTest($role, $options);
-    }
-
-    /**
-     * This tests that API Token authentication is working for the Warehouse Export REST Controllers getRealms endpoint:
-     * `rest/warehouse/export/realms`.
-     *
-     * @dataProvider provideRestTokenTest
-     *
-     * @param array $options
-     * @return void
-     * @throws Exception
-     */
-    public function testRestTokenAuthentication($role, array $options)
-    {
-        $this->endpointTokenAuthenticationTest($role, $options);
-    }
-
-    private function endpointTokenAuthenticationTest($role, array $options)
-    {
-        $tokenHelper = new TokenHelper(
-            $this,
-            $this->helper,
-            $role,
-            $options['test']['url'],
-            $options['test']['verb'],
-            $options['test']['parameters'],
-            $options['test']['data'],
-            $options['expected']['test']['failure']['http_code'],
-            $options['expected']['test']['failure']['file_name']
-        );
-        $tokenHelper->runEndpointTests(
-            function ($token) use ($tokenHelper, $options) {
-                $tokenHelper->runEndpointTest(
-                    $token,
-                    $options['expected']['test']['success']['http_code'],
-                    $options['expected']['test']['success']['file_group'],
-                    $options['expected']['test']['success']['file_name']
-                );
-            }
-        );
-    }
-
-    /**
      * @return array|object
      * @throws Exception
      */
@@ -134,34 +80,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
     {
         return JSON::loadFile(
             $this->getTestFiles()->getFile('user_controller', 'get_current_user-8.0.0', 'input')
-        );
-    }
-
-    public function provideControllerTokenTest()
-    {
-        return $this->provideTokenTest('test_controller_token_auth');
-    }
-
-    public function provideRestTokenTest()
-    {
-        return $this->provideTokenTest('test_rest_token_auth');
-    }
-
-    private function provideTokenTest($fileName)
-    {
-        $json = Json::loadFile(
-            $this->getTestFiles()->getFile(
-                'integration/rest/user',
-                $fileName,
-                'input'
-            ),
-            true
-        );
-        return array_map(
-            function ($roleArray) use ($json) {
-                return array($roleArray[0], $json);
-            },
-            $this->provideBaseRoles()
         );
     }
 

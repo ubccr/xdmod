@@ -9,6 +9,7 @@ use IntegrationTests\BaseTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 use PHPUnit_Framework_TestCase;
+use TestHarness\TokenHelper;
 use TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -185,35 +186,35 @@ class WarehouseExportControllerProviderTest extends BaseTest
     }
 
     /**
-     * Test getting the list of exportable realms.
-     *
-     * @param string $role Role to use during test.
-     * @param int $httpCode Expected HTTP response code.
-     * @param string $schema Name of JSON schema file that will be used
-     *   to validate returned data.
-     * @param array $realms The name of the realms that are expected to
-     *   be in the returned data.
      * @covers ::getRealms
-     * @dataProvider getRealmsProvider
+     * @dataProvider provideBaseRoles
      */
-    public function testGetRealms($role, $httpCode, $schema, array $realms)
+    public function testGetRealms($role)
     {
-        list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/realms');
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
-        $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
-        $this->validateAgainstSchema($content, $schema);
-
-        // Only check data for successful requests.
-        if ($httpCode == 200) {
-            // Testing each realm individually to avoid putting field
-            // definitions in test artifacts.
-            $this->assertTrue(is_array($content), 'Content is an array');
-            $this->assertArrayHasKey('data', $content, 'Content has a "data" key');
-            $this->assertTrue(is_array($content['data']), 'Data is an array');
-            $this->assertCount(count($realms), $content['data'], 'Data contains correct number of realms');
-            foreach ($content['data'] as $i => $realm) {
-                $this->assertArraySubset($realms[$i], $realm, sprintf('Realm %d contains the expected subset', $i + 1));
+        $tokenHelper = new TokenHelper(
+            $this,
+            self::$helpers[$role],
+            $role,
+            'rest/warehouse/export/realms',
+            'get',
+            null,
+            null,
+            array(401, 400),
+            'authentication_error'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenHelper) {
+                $tokenHelper->runEndpointTest(
+                    $token,
+                    200,
+                    'integration/rest/warehouse/export',
+                    'get_realms.spec',
+                    'schema'
+                );
             }
+        );
+        if ('pub' !== $role) {
+            self::$helpers[$role]->authenticate($role);
         }
     }
 
@@ -390,11 +391,6 @@ class WarehouseExportControllerProviderTest extends BaseTest
         // Get list of requests after deletion
         list($afterContent) = self::$helpers[$role]->get('rest/warehouse/export/requests');
         $this->assertEquals([], $afterContent['data'], 'Data after deletion is empty.');
-    }
-
-    public function getRealmsProvider()
-    {
-        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-realms', 'input');
     }
 
     public function createRequestProvider()
