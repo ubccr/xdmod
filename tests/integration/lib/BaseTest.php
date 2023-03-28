@@ -38,7 +38,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             array('cd'),
             array('cs'),
             array('pi'),
-            array('usr')
+            array('usr'),
+            array('mgr')
         );
     }
 
