@@ -3,7 +3,6 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
-use JsonSchema\Validator;
 use Models\Services\Realms;
 
 class UserAdminTest extends BaseUserAdminTest
