@@ -25,6 +25,7 @@ jobs:
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
+      - setup_remote_docker
       # We need to update our acct before we can enable docker layer caching
       #    docker_layer_caching: true
       - run:
@@ -34,7 +35,9 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose
             chmod +x ~/docker-compose  
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker
+      - run:
+            name: check contents
+            command: ls -alh /home/circleci/project/
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f tests/ci/Docker/bin/<< parameters.os >>.yml up -d
