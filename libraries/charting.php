@@ -114,7 +114,7 @@ function getSvgFromChromium($html, $width, $height){
         1 => array('pipe', 'w'),
         2 => array('pipe', 'w'),
     );
-    $process = proc_open($command, $descriptor_spec, $pipes);
+    $process = proc_open('ls', $descriptor_spec, $pipes);
     if (!is_resource($process)) {
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
