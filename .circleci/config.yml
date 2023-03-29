@@ -26,7 +26,6 @@ jobs:
     steps:
       - checkout
       # We need to update our acct before we can enable docker layer caching
-      - setup_remote_docker
       #    docker_layer_caching: true
       - run:
           name: Download and Install Docker
@@ -35,6 +34,7 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose
             chmod +x ~/docker-compose  
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - setup_remote_docker
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f tests/ci/Docker/bin/<< parameters.os >>.yml up -d
@@ -71,10 +71,8 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: ['centos7', 'centos8', 'rocky8']
+              os: ['centos7', 'rocky8']
               install-type: ["fresh_install", "upgrade"]
             exclude:
-              - os: 'centos8'
-                install-type: "upgrade"
               - os: 'rocky8'
                 install-type: "upgrade"
