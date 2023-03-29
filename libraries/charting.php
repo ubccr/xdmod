@@ -107,7 +107,7 @@ function getSvgFromChromium($html, $width, $height){
         '-repl',
         $tmpHtmlFile
     );
-    $command = "echo 'chart.getSVG(inputChartOptions);' | " . $chromiumPath . ' ' . implode(' ', $chromiumOptions);
+    $command = $chromiumPath . ' ' . implode(' ', $chromiumOptions);
     $pipes = array();
     $descriptor_spec = array(
         0 => array('pipe', 'r'),
@@ -119,6 +119,7 @@ function getSvgFromChromium($html, $width, $height){
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
+    fwrite($pipes[0], 'location.href');
     fclose($pipes[0]);
 
     $out = stream_get_contents($pipes[1]);
