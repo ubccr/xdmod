@@ -91,7 +91,9 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
-        var_dump($imageData);
+        if ('array' === gettype($imageData)) {
+            var_dump($imageData);
+        }
         $actualHash = sha1($imageData);
 
         if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
