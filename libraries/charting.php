@@ -142,7 +142,7 @@ function getSvgFromChromium($html, $width, $height){
     }
 
     if ($chartSvg === null) {
-        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
+        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err . ' JSON data: ' . json_encode($jsondata));
     }
 
     return $chartSvg;
