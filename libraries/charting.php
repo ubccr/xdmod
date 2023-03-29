@@ -114,12 +114,12 @@ function getSvgFromChromium($html, $width, $height){
         1 => array('pipe', 'w'),
         2 => array('pipe', 'w'),
     );
-    $process = proc_open($command, $descriptor_spec, $pipes);
+    $process = proc_open("echo 'chart.getSVG(inputChartOptions);' | " . $command, $descriptor_spec, $pipes);
     if (!is_resource($process)) {
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-    fwrite($pipes[0], 'chart.getSVG(inputChartOptions);');
+    //fwrite($pipes[0], 'chart.getSVG(inputChartOptions);');
     fclose($pipes[0]);
 
     $out = stream_get_contents($pipes[1]);
@@ -142,7 +142,7 @@ function getSvgFromChromium($html, $width, $height){
     }
 
     if ($chartSvg === null) {
-        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err . ' JSON data: ' . json_encode($jsondata));
+        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
     }
 
     return $chartSvg;
