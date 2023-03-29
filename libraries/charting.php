@@ -119,7 +119,6 @@ function getSvgFromChromium($html, $width, $height){
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-    //fwrite($pipes[0], 'chart.getSVG(inputChartOptions);');
     fclose($pipes[0]);
 
     $out = stream_get_contents($pipes[1]);
