@@ -119,7 +119,7 @@ function getSvgFromChromium($html, $width, $height){
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-    fwrite($pipes[0], 'location.href');
+    fwrite($pipes[0], 'window');
     fclose($pipes[0]);
 
     $out = stream_get_contents($pipes[1]);
@@ -142,7 +142,7 @@ function getSvgFromChromium($html, $width, $height){
     }
 
     if ($chartSvg === null) {
-        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err . ' HTML: ' . $html);
+        throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
     }
 
     return $chartSvg;
