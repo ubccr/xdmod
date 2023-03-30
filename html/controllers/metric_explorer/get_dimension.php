@@ -3,7 +3,13 @@
 
 use DataWarehouse\Access\MetricExplorer;
 
-$user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+// To enable API Token
+$user = \Models\Services\Tokens::authenticateToken();
+
+// If token authentication failed then fallback to the standard session based authentication method.
+if ($user === null) {
+    $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+}
 
 $realmParameter = null;
 try {
