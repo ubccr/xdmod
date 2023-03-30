@@ -128,7 +128,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             );
             $this->assertSame(
                 json_encode($expectedObject),
-                $json
+                json_encode($actualObject)
             );
         } elseif ('schema' === $validationType) {
             $expectedObject = Json::loadFile($expectedFile, false);
@@ -164,7 +164,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                     $fileType,
                     '.json'
                 );
-                $parentObject = self::loadJsonFile(
+                $parentObject = self::loadRawJsonFile(
                     $parentFile,
                     $testGroup,
                     $object['$extends'],
