@@ -7,9 +7,6 @@ services:
         hostname: xdmod-rocky8
         networks:
             - testing-rocky8
-        volumes:
-            - ../../../../xdmod.conf:/etc/httpd/conf.d/xdmod.conf
-            - ../../../../../xdmod:/root/src/github.com/ubccr/xdmod
         shm_size: 2g
         ports:
             - 9006:443
@@ -29,8 +26,6 @@ services:
         image: mcr.microsoft.com/playwright:v1.22.0-focal
         hostname: playwright-rocky8
         container_name: playwright-rocky8
-        volumes:
-            - ../../../../../xdmod:/xdmod
         networks:
             - testing-rocky8
         stdin_open: true

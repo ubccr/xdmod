@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Copy Files for Playwright and XDMoD container
           command: |
-            docker cp ~/project xdmod10.0:/xdmod
+            docker cp ~/project xdmod:/xdmod
             docker cp ~/project playwright:/xdmod
       - run:
           name: Execute Install Script
