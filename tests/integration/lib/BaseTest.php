@@ -71,7 +71,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualResponseBody = isset($response) ? $response[0] : array();
         $message = "PATH: $path\nVERB: $verb\nPARAMS: "
             . json_encode($params, JSON_PRETTY_PRINT) . "\nDATA: "
-            . json_encode($data, JSON_PRETTY_PRINT) . "\n";
+            . json_encode($data, JSON_PRETTY_PRINT) . "\nEXPECTED HTTP CODE: "
+            . "$expectedHttpCode\nACTUAL HTTP CODE: $actualHttpCode\n"
+            . "EXPECTED CONTENT TYPE: $expectedContentType\n"
+            . "ACTUAL CONTENT TYPE: $actualContentType\n";
         if (isset($expectedHttpCode)) {
             $this->assertSame(
                 $expectedHttpCode,
