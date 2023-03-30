@@ -33,6 +33,7 @@ class UsageExplorerTest extends BaseTest
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         self::$publicView = array(
             "public_user" => "true",
             "realm" => "Jobs",
@@ -835,7 +836,7 @@ EOF;
         //TODO: Needs further integration for storage realm
         $realmData = array();
 
-        if (in_array("cloud", self::getRealms())) {
+        if (in_array("cloud", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
@@ -883,7 +884,7 @@ EOF;
             );
         };
 
-        if (in_array("jobs", self::getRealms())) {
+        if (in_array("jobs", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Jobs, single value filter tests

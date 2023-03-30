@@ -3,27 +3,10 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
-use JsonSchema\Validator;
 use Models\Services\Realms;
-use TestHarness\TestFiles;
 
 class UserAdminTest extends BaseUserAdminTest
 {
-
-    protected $testFiles;
-
-    /**
-     * @return TestFiles
-     * @throws \Exception
-     */
-    public function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
-        return $this->testFiles;
-    }
-
     /**
      * Tests all of the situations in which user creation can fail ( i.e. throw an exception ).
      *
@@ -189,7 +172,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideCreateUsersSuccess()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'create_users', 'input')
+            parent::getTestFiles()->getFile('user_admin', 'create_users', 'input')
         );
     }
 
@@ -219,7 +202,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideThatExistingUsersCanBeRetrieved()
     {
         return Json::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'existing_users', 'input')
+            parent::getTestFiles()->getFile('user_admin', 'existing_users', 'input')
         );
     }
 
@@ -283,13 +266,13 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         # Handle special case where there's no PI data (Cloud Realm enabled only)
-        if (self::getRealms() == array("cloud")) {
+        if (parent::getRealms() == array("cloud")) {
             return Json::loadFile(
-                $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
+                parent::getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
             );
         } else {
             return Json::loadFile(
-                $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
+                parent::getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
             );
         }
     }
@@ -326,18 +309,12 @@ class UserAdminTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        # Check spec file
-        $schemaObject = JSON::loadFile(
-            $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
-            false
-        );
-
-        $this->validateJson($actual, $schemaObject);
+        $this->validateJson($actual, 'schema', 'get-menus.spec', '');
 
         # Check expected file
         $expected = array();
         foreach(self::$XDMOD_REALMS as $realm) {
-            $expectedOutputFile = $this->getTestFiles()->getFile('user_admin', $output, "output/$realm");
+            $expectedOutputFile = parent::getTestFiles()->getFile('user_admin', $output, "output/$realm");
 
             if(!is_file($expectedOutputFile)) {
                 $newFile = array();
@@ -384,7 +361,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetMenus()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_menus-1', 'input')
+            parent::getTestFiles()->getFile('user_admin', 'get_menus-1', 'input')
         );
     }
 
@@ -428,9 +405,9 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertArrayHasKey('tabs', $actual['data'][0], '"data" has one element with "tabs"');
 
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
-            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output');
+            $expectedFileName = parent::getTestFiles()->getFile('user_admin', $user['output'], 'output');
         } else {
-            $expectedFileName = $this->getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
+            $expectedFileName = parent::getTestFiles()->getFile('user_admin', $user['output'], 'output/jobs');
         }
 
         if (!is_file($expectedFileName)) {
@@ -452,7 +429,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetTabs()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_tabs', 'input')
+            parent::getTestFiles()->getFile('user_admin', 'get_tabs', 'input')
         );
     }
 
@@ -478,11 +455,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
         $actual = $response[0];
-        $schemaObject = JSON::loadFile(
-            $this->getTestFiles()->getFile('schema', 'dw_descripter.spec', ''),
-            false
-        );
-        $this->validateJson($actual, $schemaObject);
+        $this->validateJson($actual, 'schema', 'dw_descripter.spec', '');
         $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();
@@ -545,7 +518,7 @@ class UserAdminTest extends BaseUserAdminTest
         $actual = json_decode($response[0], true);
 
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', $expectedOutput, 'output')
+            parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output')
         );
 
 
@@ -658,7 +631,7 @@ class UserAdminTest extends BaseUserAdminTest
         }
 
         $fileType = $expectedSuccess ? '.csv' : '.json';
-        $expectedFileName = $this->getTestFiles()->getFile('user_admin', $expectedOutput, 'output', $fileType);
+        $expectedFileName = parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output', $fileType);
 
         $rows = 0;
         $length = 1;
@@ -764,7 +737,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetUserVisits()
     {
         $data = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
+            parent::getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
         );
 
         $helper = new \TestHarness\XdmodTestHelper();
@@ -825,7 +798,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetUserVisitsIncrements()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_user_visits_increment', 'input')
+            parent::getTestFiles()->getFile('user_admin', 'get_user_visits_increment', 'input')
         );
     }
 

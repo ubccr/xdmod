@@ -1,0 +1,5 @@
+{
+    "$extends": "error",
+    "message": "Session Expired",
+    "code": 2
+}
