@@ -103,7 +103,7 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 Open XDMoD 10.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 10.0.0.
+You may upgrade directly from 10.0.0 or 10.0.1.
 
 ### Configuration File Changes
 
