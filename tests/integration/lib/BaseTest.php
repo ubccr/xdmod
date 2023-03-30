@@ -116,19 +116,20 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             $fileType,
             '.json'
         );
-        $expectedObject = self::loadJsonFile(
-            $expectedFile,
-            $testGroup,
-            $fileType,
-            $validationType
-        );
-        $actualObject = json_decode(json_encode($json), true);
+        $actualObject = json_decode(json_encode($json), false);
         if ('exact' === $validationType) {
+            $expectedObject = self::loadRawJsonFile(
+                $expectedFile,
+                $testGroup,
+                $fileType,
+                $validationType
+            );
             $this->assertSame(
                 json_encode($expectedObject),
-                json_encode($actualObject)
+                $json
             );
         } elseif ('schema' === $validationType) {
+            $expectedObject = Json::loadFile($expectedFile, false);
             $expectedObject = $this->resolveRemoteSchemaRefs(
                 $expectedObject,
                 dirname($expectedFile)
@@ -146,7 +147,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $actualObject;
     }
 
-    private function loadJsonFile(
+    private function loadRawJsonFile(
         $file,
         $testGroup,
         $fileType,
@@ -179,8 +180,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($obj as $key => $value) {
             if ('$ref' === $key && '#' !== $value[0]) {
-                $obj[$key] = $schemaDir . '/' . $value;
-            } elseif ('array' === gettype($value)) {
+                $obj->$key = $schemaDir . '/' . $value;
+            } elseif ('object' === gettype($value)
+                    || 'array' === gettype($value)) {
                 $value = $this->resolveRemoteSchemaRefs($value, $schemaDir);
             }
         }
