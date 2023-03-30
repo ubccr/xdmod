@@ -91,7 +91,7 @@ class TokenHelper
             $this->params = array();
         }
         $this->params[Tokens::HEADER_KEY] = $token;
-        $this->testInstance->makeRequest(
+        $responseBody = $this->testInstance->makeRequest(
             $this->testHelper,
             $this->path,
             $this->verb,
@@ -105,6 +105,7 @@ class TokenHelper
         );
         unset($this->params[Tokens::HEADER_KEY]);
         $this->testHelper->addheader('Authorization', $authHeader);
+        return $responseBody;
     }
 
     /**
