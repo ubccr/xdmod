@@ -98,7 +98,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $expectedFileGroup,
                 $expectedFileName,
                 'output',
-                '.json',
                 $validationType
             );
         }
