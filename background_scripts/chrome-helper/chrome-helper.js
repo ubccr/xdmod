@@ -20,9 +20,9 @@ const args = require('yargs').argv;
 
     await page.goto('file://' + args['input-file']);
 
-    const innerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
+    const chartSvg = await page.evaluate(() => chart.getSVG(inputChartOptions));
 
-    console.log(JSON.stringify(innerHtml));
+    console.log(JSON.stringify(chartSvg));
 
     await browser.close();
 })();

@@ -9,6 +9,8 @@
       "no-console": "off"
   },
   "globals": {
-      "document": "readonly"
+      "document": "readonly",
+      "chart": "readonly",
+      "inputChartOptions": "readonly"
   }
 }
