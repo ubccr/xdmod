@@ -179,9 +179,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($obj as $key => $value) {
             if ('$ref' === $key && '#' !== $value[0]) {
-                $obj->$key = $schemaDir . '/' . $value;
-            } elseif ('object' === gettype($value)
-                    || 'array' === gettype($value)) {
+                $obj[$key] = $schemaDir . '/' . $value;
+            } elseif ('array' === gettype($value)) {
                 $value = $this->resolveRemoteSchemaRefs($value, $schemaDir);
             }
         }
