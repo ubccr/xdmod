@@ -13,10 +13,7 @@ services:
             - 7000:7000
         stdin_open: true
         tty: true
-        command: >
-            /bin/bash -c "cd ~/src/github.com/ubccr/xdmod
-            && ./tests/ci/samlSetup.sh xdmod-rocky8
-            && ~/bin/services nodaemon"
+        command: ~/bin/services nodaemon
         healthcheck:
             test: curl -k https://localhost || exit 1
             interval: 10s
