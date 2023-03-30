@@ -43,19 +43,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @param XdmodTestHelper $testHelper
-     * @param string $path
-     * @param string $verb
-     * @param array|null $params
-     * @param array|null $data
-     * @param int|null $expectedHttpCode
-     * @param string|null $expectedContentType
-     * @param string|null $expectedFileGroup
-     * @param string|null $expectedFileName
-     * @param string|null $validationType
-     * @return mixed
-     */
     public function makeRequest(
         $testHelper,
         $path,
@@ -116,41 +103,32 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $actual;
     }
 
-    /**
-     * Validate the provided $json w/ provided Json Schema file (specified by
-     * its group, name, type, and extension) and asserting that there were no
-     * errors. If the validation is successful then the decoded value is
-     * returned.
-     *
-     * @param mixed $json the JSON structure to be validated.
-     * @param string $testGroup
-     * @param string $fileName
-     * @param string $type
-     * @param string $extension
-     * @return mixed the decoded, valid json structure.
-     */
     public function validateJson(
         $json,
         $testGroup,
         $fileName,
         $fileType = 'output',
-        $extension = '.json',
         $validationType = 'schema'
     ) {
         $expectedFile = self::getTestFiles()->getFile(
             $testGroup,
             $fileName,
             $fileType,
-            $extension
+            '.json'
         );
-        $expectedObject = Json::loadFile($expectedFile, false);
-        $actualObject = json_decode(json_encode($json), false);
-        if ($validationType === 'exact') {
+        $expectedObject = self::loadJsonFile(
+            $expectedFile,
+            $testGroup,
+            $fileType,
+            $validationType
+        );
+        $actualObject = json_decode(json_encode($json), true);
+        if ('exact' === $validationType) {
             $this->assertSame(
                 json_encode($expectedObject),
                 json_encode($actualObject)
             );
-        } elseif ($validationType === 'schema') {
+        } elseif ('schema' === $validationType) {
             $expectedObject = $this->resolveRemoteSchemaRefs(
                 $expectedObject,
                 dirname($expectedFile)
@@ -166,6 +144,35 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             }
         }
         return $actualObject;
+    }
+
+    private function loadJsonFile(
+        $file,
+        $testGroup,
+        $fileType,
+        $validationType
+    ) {
+        $object = Json::loadFile($file, true);
+        if ('exact' === $validationType) {
+            if (isset($object['$extends'])) {
+                $parentFile = self::getTestFiles()->getFile(
+                    $testGroup,
+                    $object['$extends'],
+                    $fileType,
+                    '.json'
+                );
+                $parentObject = self::loadJsonFile(
+                    $parentFile,
+                    $testGroup,
+                    $object['$extends'],
+                    $fileType,
+                    $validationType
+                );
+                $object = array_replace_recursive($parentObject, $object);
+                unset($object['$extends']);
+            }
+        }
+        return $object;
     }
 
     private function resolveRemoteSchemaRefs($obj, $schemaDir)

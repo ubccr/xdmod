@@ -1,10 +1,5 @@
 {
-    "success": false,
-    "count": 0,
-    "total": 0,
-    "totalCount": 0,
-    "results": [],
-    "data": [],
+    "$extends": "error",
     "message": "Session Expired",
     "code": 2
 }
