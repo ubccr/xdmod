@@ -2,6 +2,7 @@
 
 namespace IntegrationTests\Controllers;
 
+use TestHarness\TokenHelper;
 use TestHarness\XdmodTestHelper;
 use IntegrationTests\BaseTest;
 
@@ -1084,5 +1085,36 @@ EOF;
 
 
         return $results;
+    }
+
+    /**
+     * @dataProvider provideBaseRoles
+     */
+    public function testTokenAuthentication($role)
+    {
+        $tokenHelper = new TokenHelper(
+            $this,
+            $this->helper,
+            $role,
+            'controllers/user_interface.php',
+            'post',
+            null,
+            array(
+                "operation" => "get_data"
+            ),
+            401,
+            'session_expired'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenHelper) {
+                $tokenHelper->runEndpointTest(
+                    $token,
+                    500,
+                    'integration/controllers/user_interface',
+                    'get_data_no_realm',
+                    'exact'
+                );
+            }
+        );
     }
 }

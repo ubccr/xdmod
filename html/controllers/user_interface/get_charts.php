@@ -2,8 +2,13 @@
 
 use DataWarehouse\Access\Usage;
 
-// Get the user making the request.
-$user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
+// To enable API Token
+$user = \Models\Services\Tokens::authenticateToken();
+
+// If token authentication failed then fallback to the standard session based authentication method.
+if ($user === null) {
+    $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+}
 
 // Send the request and user to the Usage-to-Metric Explorer adapter.
 $usageAdapter = new Usage($_REQUEST);

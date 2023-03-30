@@ -1,0 +1,4 @@
+{
+    "$extends": "../../../base/error",
+    "message": "One or more realms must be specified."
+}
