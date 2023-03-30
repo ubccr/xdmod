@@ -19,12 +19,13 @@ Requires:      httpd mod_ssl
 %{?el7:Requires: php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring}
 %{?el7:Requires: php-pecl-apcu}
 Requires:      libreoffice-writer
-Requires:      chromium-headless
+Requires:      chromium-headless >= 111
 Requires:      librsvg2-tools
 Requires:      crontabs
 Requires:      logrotate
 Requires:      perl-Image-ExifTool
 Requires:      jq
+Requires:      nodejs(engine) >= 16.18.1
 
 %description
 XDMoD is a data warehouse and web portal for mining statistical data
