@@ -3,26 +3,16 @@
 namespace IntegrationTests\Rest;
 
 use IntegrationTests\BaseTest;
+use TestHarness\TokenHelper;
+use TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends BaseTest
 {
-    protected static $helpers = array();
+    private static $helper;
 
     public static function setUpBeforeClass()
     {
-        foreach (array('pub', 'cd') as $user) {
-            self::$helpers[$user] = new \TestHarness\XdmodTestHelper();
-            if ($user != 'pub') {
-                self::$helpers[$user]->authenticate($user);
-            }
-        }
-    }
-
-    public static function tearDownAfterClass()
-    {
-        foreach (self::$helpers as $helper) {
-            $helper->logout();
-        }
+        self::$helper = new XdmodTestHelper();
     }
 
     /**
@@ -85,7 +75,8 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateDataMalformedRequests($user, $params)
     {
-        $response = self::$helpers[$user]->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate($user);
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals(400, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
@@ -96,7 +87,8 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateDataAccessControls($user, $http_code, $params)
     {
-        $response = self::$helpers[$user]->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate($user);
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals($http_code, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
@@ -111,7 +103,8 @@ class WarehouseControllerProviderTest extends BaseTest
 
         $params = $this->getAggDataParameterGenerator();
 
-        $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate('cd');
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);
@@ -130,11 +123,41 @@ class WarehouseControllerProviderTest extends BaseTest
 
         $params = $this->getAggDataParameterGenerator(array('filters' => array('jobsize' => 1)));
 
-        $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate('cd');
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(23, $response[0]['total']);
+    }
+
+    /**
+     * @dataProvider provideBaseRoles
+     */
+    public function testGetRawDataLimit($role)
+    {
+        $tokenHelper = new TokenHelper(
+            $this,
+            self::$helper,
+            $role,
+            'rest/warehouse/raw-data/limit',
+            'get',
+            null,
+            null,
+            'rest',
+            'token_required'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenHelper) {
+                $tokenHelper->runEndpointTest(
+                    $token,
+                    'get_raw_data_limit_success',
+                    200,
+                    'integration/rest/warehouse',
+                    'exact'
+                );
+            }
+        );
     }
 }
