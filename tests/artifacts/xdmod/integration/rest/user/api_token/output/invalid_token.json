@@ -1,0 +1,4 @@
+{
+    "$extends": "error",
+    "message": "Invalid API token."
+}

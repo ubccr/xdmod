@@ -199,16 +199,16 @@ class WarehouseExportControllerProviderTest extends BaseTest
             'get',
             null,
             null,
-            401,
-            'authentication_error'
+            'rest',
+            'token_optional'
         );
         $tokenHelper->runEndpointTests(
             function ($token) use ($tokenHelper) {
                 $tokenHelper->runEndpointTest(
                     $token,
+                    'get_realms.spec',
                     200,
                     'integration/rest/warehouse/export',
-                    'get_realms.spec',
                     'schema'
                 );
             }

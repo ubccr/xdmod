@@ -27,16 +27,16 @@ class MetricExplorerTest extends BaseTest
             array(
                 'operation' => 'get_dw_descripter'
             ),
-            401,
-            'session_expired'
+            'controller',
+            'token_optional'
         );
         $tokenHelper->runEndpointTests(
             function ($token) use ($tokenHelper) {
                 $tokenHelper->runEndpointTest(
                     $token,
+                    'get_dw_descripter.spec',
                     200,
                     'integration/controllers/metric_explorer',
-                    'get_dw_descripter.spec',
                     'schema'
                 );
             }
