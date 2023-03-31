@@ -1,43 +1,38 @@
 version: '3'
 
 services:
-    xdmod-rocky8:
-        image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:rockylinux8.5-0.4
-        container_name: xdmod-rocky8
-        hostname: xdmod-rocky8
+    xdmod:
+        image: tools-ext-01.ccr.xdmod.org/xdmod10.0:rockylinux8.5-0.5
+        container_name: xdmod
+        hostname: xdmod
         networks:
             - testing-rocky8
         shm_size: 2g
         ports:
             - 9006:443
             - 7000:7000
+        environment:
+            - COMPOSER=composer-el8.json
+            - XDMOD_REALMS=jobs,storage,cloud
         stdin_open: true
         tty: true
-        command: ~/bin/services nodaemon
-        healthcheck:
-            test: curl -k https://localhost || exit 1
-            interval: 10s
-            timeout: 5s
-            retries: 3
-    playwright-rocky8:
+        command: sleep infinity
+    playwright:
         image: mcr.microsoft.com/playwright:v1.22.0-focal
-        hostname: playwright-rocky8
-        container_name: playwright-rocky8
+        hostname: playwright
+        container_name: playwright
         networks:
             - testing-rocky8
         stdin_open: true
         tty: true
         ipc: host
         links:
-            - xdmod-rocky8
+            - xdmod
         depends_on:
-            xdmod-rocky8:
-                condition: service_healthy
+            - xdmod
         environment:
-            BASE_URL: https://xdmod-rocky8
+            BASE_URL: https://xdmod
             XDMOD_REALMS: 'jobs,storage,cloud'
-        command: >
-            /bin/bash -c "cd /xdmod/tests/playwright
-            && ./runtests.sh -j test_results-rocky8.xml"
+        command: sleep infinity
 networks:
     testing-rocky8:

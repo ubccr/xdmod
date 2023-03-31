@@ -1,53 +1,35 @@
 version: '3'
 
 services:
-    xdmod-centos7:
+    xdmod:
         image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
-        hostname: xdmod-centos7
-        container_name: xdmod-centos7
+        hostname: xdmod
+        container_name: xdmod
         networks:
             - testing-centos7
-        volumes:
-            - ../../../../xdmod.conf:/etc/httpd/conf.d/xdmod.conf
-            - ../../../../../xdmod:/root/src/github.com/ubccr/xdmod
         shm_size: 2g
         ports:
             - 9006:443
             - 7000:7000
         stdin_open: true
         tty: true
-        command: >
-            /bin/bash -c "yum install -y sysvinit-tools
-            && cd ~/src/github.com/ubccr/xdmod
-            && ./tests/ci/samlSetup.sh
-            && ~/bin/services nodaemon"
-        healthcheck:
-            test: curl -k https://localhost || exit 1
-            interval: 2m
-            timeout: 1m
-            retries: 3
-    playwright-centos7:
+        command: sleep infinity
+    playwright:
         image: mcr.microsoft.com/playwright:v1.22.0-focal
-        hostname: playwright-centos7
-        container_name: playwright-centos7
-        volumes:
-            - ../../../../../xdmod:/xdmod
+        hostname: playwright
+        container_name: playwright
         networks:
             - testing-centos7
         stdin_open: true
         tty: true
         ipc: host
         links:
-            - xdmod-centos7
+            - xdmod
         depends_on:
-            xdmod-centos7:
-                condition: service_healthy
+            - xdmod
         environment:
-            BASE_URL: https://xdmod-centos7
+            BASE_URL: https://xdmod
             XDMOD_REALMS: 'jobs,storage,cloud'
-        command: >
-            /bin/bash -c "cd /xdmod/tests/playwright
-            && ./runtests.sh -j test_results-centos7.xml"
-
+        command: sleep infinity
 networks:
     testing-centos7:

@@ -3,50 +3,33 @@ version: '3'
 services:
     xdmod-centos8:
         image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos8.4-0.2
-        hostname: xdmod-centos8
-        container_name: xdmod-centos8
+        hostname: xdmod
+        container_name: xdmod
         networks:
             - testing-centos8
-        volumes:
-            - ../../../../xdmod.conf:/etc/httpd/conf.d/xdmod.conf
-            - ../../../../../xdmod:/root/src/github.com/ubccr/xdmod
         shm_size: 2g
         ports:
             - 9006:443
             - 7000:7000
         stdin_open: true
         tty: true
-        command: >
-            /bin/bash -c "cd ~/src/github.com/ubccr/xdmod
-            && ./tests/ci/samlSetup.sh
-            && ~/bin/services nodaemon"
-        healthcheck:
-            test: curl -k https://localhost || exit 1
-            interval: 10s
-            timeout: 5s
-            retries: 3
+        command: sleep infinity
     playwright-centos8:
         image: mcr.microsoft.com/playwright:v1.22.0-focal
-        hostname: playwright-centos8
-        container_name: playwright-centos8
-        volumes:
-            - ../../../../../xdmod:/xdmod
+        hostname: playwright
+        container_name: playwright
         networks:
             - testing-centos8
         stdin_open: true
         tty: true
         ipc: host
         links:
-            - xdmod-centos8
+            - xdmod
         depends_on:
-            xdmod-centos8:
-                condition: service_healthy
+            - xdmod-centos8
         environment:
             BASE_URL: https://xdmod-centos8
             XDMOD_REALMS: 'jobs,storage,cloud'
-        command: >
-            /bin/bash -c "cd /xdmod/tests/playwright
-            && ./runtests.sh -j test_results-centos8.xml"
-
+        command: sleep infinity
 networks:
     testing-centos8:

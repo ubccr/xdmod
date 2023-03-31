@@ -48,18 +48,30 @@ jobs:
             docker cp ~/project playwright:/xdmod
       - run:
           name: Execute Install Script
-          command: docker exec default tests/ci/Docker/bin/install.sh
+          command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
       - run:
-          name: Execute Test Script
-          command: docker exec default tests/ci/Docker/bin/test.sh << parameters.os >>
+          name: Make sure that procps-ng is installed
+          command: docker exec xdmod yum install -y procps-ng
+      - run:
+          name: Put the updated httpd conf file in place
+          command: docker cp ~/project/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
+      - run:
+          name: Restart XDMoD's services
+          command: docker exec xdmod /root/bin/services restart
+      - run:
+          name: Run everything but the playwright tests.
+          command: docker exec xdmod /xdmod/tests/ci/Docker/bin/test.sh << parameters.os >>
+      - run:
+          name: Run Playwright Tests
+          command: docker exec playwright -w /xdmod/tests/playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
       - run:
           name: Copy Test Results into Unit
           command: |
-            docker cp xdmod10.0:/test-results ~/phpunit
+            docker cp xdmod:/root/phpunit ~/phpunit
             mkdir -p /var/log/xdmod
             mkdir -p /tmp/screenshots
-            docker cp xdmod10.0:/tmp/screenshots /tmp/screenshots
-            docker cp xdmod10.0:/var/log/xdmod /var/log/xdmod
+            docker cp xdmod:/tmp/screenshots /tmp/screenshots
+            docker cp xdmod:/var/log/xdmod /var/log/xdmod
             docker cp playwright:/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/tests/playwright/test-results /tmp/screenshots
       - store_artifacts:

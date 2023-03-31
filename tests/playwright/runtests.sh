@@ -23,7 +23,7 @@ done
 
 if [ -n ${log_junit} ];
 then
-    PLAYWRIGHT_JUNIT_OUTPUT_NAME=${log_junit} npx playwright test --reporter=junit tests/*
+    PLAYWRIGHT_JUNIT_OUTPUT_NAME=test_results-${log_junit}.xml npx playwright test --reporter=junit tests/*
 else
     npx playwright test tests/*
 fi

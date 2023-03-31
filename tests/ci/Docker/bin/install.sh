@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 #Generate OpenSSL Key
 openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
@@ -10,13 +10,21 @@ openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:
 mkdir ~/phpunit
 mkdir /tmp/screenshots
 
-~/bin/buildrpm xdmod
+# make sure that we're in the right directory.
+pushd /xdmod || exit
+    # build the XDMoD rpm so that it can be installed.
+    ~/bin/buildrpm xdmod
 
-#Install / Upgrade XDMoD from RPM
-./tests/ci/bootstrap.sh
+    #Install / Upgrade XDMoD from RPM
+    ./tests/ci/bootstrap.sh
 
-#Validate the newly installed / Upgraded XDMoD
-./tests/ci/validate.sh
+    #Validate the newly installed / Upgraded XDMoD
+    ./tests/ci/validate.sh
 
-#Make sure that the Compose Test Dependencies are installed
-composer intall --no-progress
+    #Make sure that the Compose Test Dependencies are installed
+    composer install --no-progress
+
+    # Setup SimpleSAML for testing purposes.
+    ./tests/ci/samlSetup.sh
+
+popd || exit
