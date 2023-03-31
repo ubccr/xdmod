@@ -2250,7 +2250,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $request,
             $queryDescripters
         );
-        $params['offset'] = $this->getIntParam($request, 'offset', false);
+        $params['offset'] = $this->getIntParam($request, 'offset', false, 0);
         if ($params['offset'] < 0) {
             throw new BadRequestException('Offset must be non-negative.');
         }
