@@ -40,8 +40,8 @@ class MetricExplorerTest extends BaseTest
             'post',
             null,
             $data,
-            401,
-            'session_expired'
+            'controller',
+            'token_optional'
         );
         $tokenHelper->runEndpointTests(
             function ($token) use (
@@ -51,9 +51,9 @@ class MetricExplorerTest extends BaseTest
             ) {
                 $responseBody = $tokenHelper->runEndpointTest(
                     $token,
+                    $schemaFile,
                     200,
                     'integration/controllers/metric_explorer',
-                    $schemaFile,
                     'schema'
                 );
                 if (isset($additionalTests)) {

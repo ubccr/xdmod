@@ -1,0 +1,4 @@
+{
+    "$extends": "../../../../base/error",
+    "message": "The API Token has expired."
+}

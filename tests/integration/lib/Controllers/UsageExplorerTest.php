@@ -1102,16 +1102,16 @@ EOF;
             array(
                 "operation" => "get_data"
             ),
-            401,
-            'session_expired'
+            'controller',
+            'token_optional'
         );
         $tokenHelper->runEndpointTests(
             function ($token) use ($tokenHelper) {
                 $tokenHelper->runEndpointTest(
                     $token,
+                    'get_data_no_realm',
                     500,
                     'integration/controllers/user_interface',
-                    'get_data_no_realm',
                     'exact'
                 );
             }

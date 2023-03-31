@@ -1,0 +1,4 @@
+{
+    "$extends": "../../../../base/error",
+    "message": "No Token Provided."
+}

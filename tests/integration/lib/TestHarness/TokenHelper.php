@@ -10,6 +10,7 @@ use Models\Services\Tokens;
  */
 class TokenHelper
 {
+    private static $ENDPOINT = 'rest/users/current/api/token';
     private $testInstance;
     private $testHelper;
     private $role;
@@ -17,8 +18,13 @@ class TokenHelper
     private $verb;
     private $params;
     private $data;
-    private $errorHttpCode;
-    private $errorOutputFileName;
+    private $expectedOutputs = array(
+        'empty_token' => array(),
+        'malformed_token' => array(),
+        'invalid_token' => array(),
+        'expired_token' => array(),
+        'deleted_token' => array()
+    );
 
     public function __construct(
         $testInstance,
@@ -28,8 +34,8 @@ class TokenHelper
         $verb,
         $params,
         $data,
-        $errorHttpCode,
-        $errorOutputFileName
+        $endpointType,
+        $authenticationType
     ) {
         $this->testInstance = $testInstance;
         $this->testHelper = $testHelper;
@@ -38,49 +44,63 @@ class TokenHelper
         $this->verb = $verb;
         $this->params = $params;
         $this->data = $data;
-        $this->errorHttpCode = $errorHttpCode;
-        $this->errorOutputFileName = $errorOutputFileName;
+        if ('token_optional' === $authenticationType) {
+            foreach (array_keys($this->expectedOutputs) as $type) {
+                if ('controller' === $endpointType) {
+                    $fileName = 'session_expired';
+                } elseif ('rest' === $endpointType) {
+                    $fileName = 'authentication_error';
+                }
+                $this->setExpectedErrorOutput($type, 401, $fileName);
+            }
+        } elseif ('token_required' === $authenticationType) {
+            $this->setExpectedErrorOutput('empty_token', 400);
+            $this->setExpectedErrorOutput('malformed_token', 400);
+            $this->setExpectedErrorOutput('invalid_token', 403);
+            $this->setExpectedErrorOutput('expired_token', 400);
+            $this->setExpectedErrorOutput('deleted_token', 400);
+        }
     }
 
     public function runEndpointTests($callback)
     {
         if ('pub' === $this->role) {
-            self::runEndpointTest('');
-            self::runEndpointTest('asdf');
+            self::runStandardEndpointTest('', 'empty_token');
+            self::runStandardEndpointTest('asdf', 'malformed_token');
         } else {
             $this->testHelper->authenticate($this->role);
-            $this->testHelper->delete('rest/users/current/api/token');
-            $response = $this->testHelper->post(
-                'rest/users/current/api/token',
-                null,
-                null
-            );
+            $this->testHelper->delete(self::$ENDPOINT);
+            $response = $this->testHelper->post(self::$ENDPOINT, null, null);
             $token = $response[0]['data']['token'];
             $userId = substr($token, 0, strpos($token, Tokens::DELIMITER));
             $this->testHelper->logout();
-            self::runEndpointTest($userId . Tokens::DELIMITER . 'asdf');
+            self::runStandardEndpointTest(
+                $userId . Tokens::DELIMITER . 'asdf',
+                'invalid_token'
+            );
             $callback($token);
             self::expireToken($userId);
-            self::runEndpointTest($token);
+            self::runStandardEndpointTest($token, 'expired_token');
             $this->testHelper->authenticate($this->role);
-            $this->testHelper->delete('rest/users/current/api/token');
+            $this->testHelper->delete(self::$ENDPOINT);
             $this->testHelper->logout();
-            self::runEndpointTest($token);
+            self::runStandardEndpointTest($token, 'deleted_token');
         }
     }
 
     public function runEndpointTest(
         $token,
+        $outputFileName = null,
         $httpCode = null,
         $outputTestGroup = 'integration/rest/user/api_token',
-        $outputFileName = null,
         $validationType = 'exact'
     ) {
-        if (null === $httpCode) {
-            $httpCode = $this->errorHttpCode;
-        }
+        $defaultOutput = $this->expectedOutputs['empty_token'];
         if (null === $outputFileName) {
-            $outputFileName = $this->errorOutputFileName;
+            $outputFileName = $defaultOutput['file_name'];
+        }
+        if (null === $httpCode) {
+            $httpCode = $defaultOutput['http_code'];
         }
         $authHeader = $this->testHelper->getheader('Authorization');
         $this->testHelper->addheader(
@@ -130,5 +150,25 @@ class TokenHelper
             . ' WHERE user_id = :user_id';
         $params = array(':user_id' => $userId);
         return $db->execute($query, $params) === 1;
+    }
+
+    private function setExpectedErrorOutput($type, $httpCode, $fileName = null)
+    {
+        if (null === $fileName) {
+            $fileName = $type;
+        }
+        $this->expectedOutputs[$type] = array(
+            'http_code' => $httpCode,
+            'file_name' => $fileName
+        );
+    }
+
+    private function runStandardEndpointTest($token, $type)
+    {
+        $this->runEndpointTest(
+            $token,
+            $this->expectedOutputs[$type]['file_name'],
+            $this->expectedOutputs[$type]['http_code']
+        );
     }
 }

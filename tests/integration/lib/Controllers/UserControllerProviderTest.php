@@ -6,7 +6,6 @@ use CCR\Json;
 use Exception;
 use Models\Services\Tokens;
 use stdClass;
-use TestHarness\TokenHelper;
 use TestHarness\Utilities;
 use TestHarness\XdmodTestHelper;
 
