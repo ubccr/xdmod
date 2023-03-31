@@ -47,11 +47,11 @@ jobs:
             docker cp ~/project xdmod:/xdmod
             docker cp ~/project playwright:/xdmod
       - run:
+         name: Make sure that procps-ng is installed
+         command: docker exec xdmod yum install -y procps-ng
+      - run:
           name: Execute Install Script
           command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
-      - run:
-          name: Make sure that procps-ng is installed
-          command: docker exec xdmod yum install -y procps-ng
       - run:
           name: Put the updated httpd conf file in place
           command: docker cp ~/project/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
@@ -63,7 +63,7 @@ jobs:
           command: docker exec xdmod /xdmod/tests/ci/Docker/bin/test.sh << parameters.os >>
       - run:
           name: Run Playwright Tests
-          command: docker exec -w /xdmod/tests/playwright playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
+          command: docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
       - run:
           name: Copy Test Results into Unit
           command: |
