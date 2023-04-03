@@ -64,8 +64,8 @@ class TokenHelper
     public function runEndpointTests($callback)
     {
         if ('pub' === $this->role) {
-            $expectedHeaders = array(                                                          
-                'WWW-Authenticate' => Tokens::HEADER_KEY                    
+            $expectedHeaders = array(
+                'WWW-Authenticate' => Tokens::HEADER_KEY
             );
             self::runStandardEndpointTest(
                 '',
