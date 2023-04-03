@@ -57,7 +57,7 @@ class TokenHelper
             $this->setExpectedErrorOutput('empty_token', 400);
             $this->setExpectedErrorOutput('malformed_token', 400);
             $this->setExpectedErrorOutput('invalid_token', 403);
-            $this->setExpectedErrorOutput('expired_token', 400);
+            $this->setExpectedErrorOutput('expired_token', 403);
             $this->setExpectedErrorOutput('deleted_token', 400);
         }
     }

@@ -64,7 +64,7 @@ SQL;
         $now = new \DateTime();
         $expires = new \DateTime($expiresOn);
         if ($expires < $now) {
-            throw new BadRequestHttpException('The API Token has expired.');
+            throw new AccessDeniedHttpException('The API Token has expired.');
         }
 
         // finally check that the provided token matches it's stored hash.
