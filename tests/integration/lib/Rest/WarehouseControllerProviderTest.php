@@ -12,6 +12,7 @@ class WarehouseControllerProviderTest extends BaseTest
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         self::$helper = new XdmodTestHelper();
     }
 
@@ -80,6 +81,7 @@ class WarehouseControllerProviderTest extends BaseTest
 
         $this->assertEquals(400, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
+        self::$helper->logout();
     }
 
     /**
@@ -87,17 +89,20 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateDataAccessControls($user, $http_code, $params)
     {
-        self::$helper->authenticate($user);
+        if ('pub' !== $user) {
+            self::$helper->authenticate($user);
+        }
         $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals($http_code, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
+        self::$helper->logout();
     }
 
     public function testGetAggregateData()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", parent::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -110,6 +115,7 @@ class WarehouseControllerProviderTest extends BaseTest
         $this->assertTrue($response[0]['success']);
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(66, $response[0]['total']);
+        self::$helper->logout();
     }
 
     /**
@@ -117,7 +123,7 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateWithFilters()
     {
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", parent::$XDMOD_REALMS)) {
             $this->markTestSkipped('This test requires the Jobs realm');
         }
 
@@ -130,6 +136,7 @@ class WarehouseControllerProviderTest extends BaseTest
         $this->assertTrue($response[0]['success']);
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(23, $response[0]['total']);
+        self::$helper->logout();
     }
 
     /**
