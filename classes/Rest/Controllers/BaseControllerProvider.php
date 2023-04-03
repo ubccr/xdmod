@@ -766,7 +766,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
         $delimPosition = strpos($rawToken, Tokens::DELIMITER);
         if ($delimPosition === false) {
-            throw new BadRequestHttpException('Invalid token format');
+            throw new BadRequestHttpException('Invalid token format.');
         }
 
         $userId = substr($rawToken, 0, $delimPosition);
