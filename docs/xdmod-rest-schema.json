@@ -451,6 +451,27 @@
                 ]
             }
         },
+        "responses": {
+            "api-token-404": {
+                "description": "Not Found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                { "$ref": "#/components/schemas/warehouse-error" },
+                                {
+                                    "properties": {
+                                        "message": {
+                                            "enum": [ "API token not found." ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "parameters": {
             "offset": {
                 "name": "offset",
@@ -536,7 +557,7 @@
             }
         },
         "examples": {
-            "no-token-provided": {
+            "empty-token": {
                 "value": {
                     "success": false,
                     "count": 0,
@@ -545,6 +566,42 @@
                     "results": [],
                     "data": [],
                     "message": "No Token Provided.",
+                    "code": 0
+                }
+            },
+            "malformed-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid token format.",
+                    "code": 0
+                }
+            },
+            "invalid-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid API token.",
+                    "code": 0
+                }
+            },
+            "expired-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "The API Token has expired.",
                     "code": 0
                 }
             }
@@ -1809,7 +1866,6 @@
                                         "message": {
                                             "type": "string",
                                             "enum": [
-                                                "Unable to retrieve current API token.",
                                                 "Invalid token data returned."
                                             ]
                                         },
@@ -1867,7 +1923,8 @@
                             }
 
                         }
-                    }
+                    },
+                    "404": { "$ref": "api-token-404" }
                 }
             },
             "post": {
@@ -1892,7 +1949,6 @@
                                         },
                                         "message": {
                                             "enum": [
-                                                "Unable to create a new token at this time.",
                                                 "Unable to create a new API token."
                                             ]
                                         },
@@ -1951,6 +2007,25 @@
                                 }
                             }
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Token already exists." ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -1977,9 +2052,7 @@
                                         "message": {
                                             "type": "string",
                                             "enum": [
-                                                "Token successfully revoked.",
-                                                "No token to revoke.",
-                                                "Unable to revoke API token."
+                                                "Token successfully revoked."
                                             ]
                                         }
                                     }
@@ -2025,6 +2098,26 @@
                                             "type": "integer"
                                         }
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "404": { "$ref": "api-token-404" },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Unable to revoke API token." ]
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -2869,10 +2962,7 @@
                                     "$ref": "#/components/schemas/warehouse-error"
                                 },
                                 "examples": {
-                                    "no-token-provided": {
-                                        "$ref": "#/components/examples/no-token-provided"
-                                    },
-                                    "missing-parameter": {
+                                    "no-start-date": {
                                         "value": {
                                             "success": false,
                                             "count": 0,
@@ -2883,6 +2973,138 @@
                                             "message": "start_date is a required parameter",
                                             "code": 0
                                         }
+                                    },
+                                    "no-end-date": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "end_date is a required parameter",
+                                            "code": 0
+                                        }
+                                    },
+                                    "start-date-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for start_date. Must be a(n) ISO 8601 Date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "no-realm": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "realm is a required parameter.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "end-date-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for end_date. Must be a(n) ISO 8601 Date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "end-before-start": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "End date cannot be less than start date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "invalid-realm": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid realm.",
+                                            "code": 104
+                                        }
+                                    },
+                                    "invalid-fields": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid fields.",
+                                            "code": 104
+                                        }
+                                    },
+                                    "invalid-filter-key": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid filter key 'foo'.",
+                                            "code": 104
+                                        }
+                                    },
+                                    "negative-offset": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Offset must be non-negative.",
+                                            "code": 104
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "empty-token": {
+                                        "$ref": "#/components/examples/empty-token"
+                                    },
+                                    "malformed-token": {
+                                        "$ref": "#/components/examples/malformed-token"
+                                    },
+                                    "invalid-token": {
+                                        "$ref": "#/components/examples/invalid-token"
+                                    },
+                                    "expired-token": {
+                                        "$ref": "#/components/examples/expired-token"
                                     }
                                 }
                             }
@@ -2934,16 +3156,25 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/warehouse-error"
                                 },
                                 "examples": {
-                                    "no-token-provided": {
-                                        "$ref": "#/components/examples/no-token-provided"
+                                    "empty-token": {
+                                        "$ref": "#/components/examples/empty-token"
+                                    },
+                                    "malformed-token": {
+                                        "$ref": "#/components/examples/malformed-token"
+                                    },
+                                    "invalid-token": {
+                                        "$ref": "#/components/examples/invalid-token"
+                                    },
+                                    "expired-token": {
+                                        "$ref": "#/components/examples/expired-token"
                                     }
                                 }
                             }
