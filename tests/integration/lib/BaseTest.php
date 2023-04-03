@@ -140,9 +140,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             try {
                 $schema->in($actualObject);
             } catch (Exception $e) {
+                $a = json_encode($actualObject);
                 $this->fail(
                     $e->getMessage() . "\nEXPECTED SCHEMA: $expectedFile"
-                    . "\nACTUAL OBJECT:" . json_encode($actualObject)
+                    . "\nACTUAL OBJECT: "
+                    . (strlen($a) > 1000 ? substr($a, 0, 1000) . '...' : $a)
                 );
             }
         }
