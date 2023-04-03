@@ -53,7 +53,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $expectedContentType = null,
         $expectedFileGroup = null,
         $expectedFileName = null,
-        $validationType = null
+        $validationType = null,
+        $expectedHeaders = null
     ) {
         $response = null;
         switch ($verb) {
@@ -98,8 +99,19 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $expectedFileGroup,
                 $expectedFileName,
                 'output',
-                $validationType
+                $validationType,
+                $message
             );
+        }
+
+        if (isset($expectedHeaders)) {
+            foreach ($expectedHeaders as $key => $value) {
+                $this->assertSame(
+                    $value,
+                    trim($response[2][$key]),
+                    $message
+                );
+            }
         }
 
         return $actual;
@@ -110,7 +122,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $testGroup,
         $fileName,
         $fileType = 'output',
-        $validationType = 'schema'
+        $validationType = 'schema',
+        $message = ''
     ) {
         $expectedFile = self::getTestFiles()->getFile(
             $testGroup,
@@ -126,7 +139,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             );
             $this->assertSame(
                 json_encode($expectedObject),
-                json_encode($actualObject)
+                json_encode($actualObject),
+                $message . "\nEXPECTED OUTPUT FILE: $expectedFile"
             );
         } elseif ('schema' === $validationType) {
             $expectedObject = Json::loadFile($expectedFile, false);

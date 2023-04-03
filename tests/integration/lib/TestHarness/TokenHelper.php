@@ -11,6 +11,7 @@ use Models\Services\Tokens;
 class TokenHelper
 {
     private static $ENDPOINT = 'rest/users/current/api/token';
+    private static $TEST_GROUP = 'integration/rest/user/api_token';
     private $testInstance;
     private $testHelper;
     private $role;
@@ -22,8 +23,7 @@ class TokenHelper
         'empty_token' => array(),
         'malformed_token' => array(),
         'invalid_token' => array(),
-        'expired_token' => array(),
-        'deleted_token' => array()
+        'expired_token' => array()
     );
 
     public function __construct(
@@ -54,19 +54,29 @@ class TokenHelper
                 $this->setExpectedErrorOutput($type, 401, $fileName);
             }
         } elseif ('token_required' === $authenticationType) {
-            $this->setExpectedErrorOutput('empty_token', 400);
-            $this->setExpectedErrorOutput('malformed_token', 400);
-            $this->setExpectedErrorOutput('invalid_token', 403);
-            $this->setExpectedErrorOutput('expired_token', 403);
-            $this->setExpectedErrorOutput('deleted_token', 400);
+            $this->setExpectedErrorOutput('empty_token', 401);
+            $this->setExpectedErrorOutput('malformed_token', 401);
+            $this->setExpectedErrorOutput('invalid_token', 401);
+            $this->setExpectedErrorOutput('expired_token', 401);
         }
     }
 
     public function runEndpointTests($callback)
     {
         if ('pub' === $this->role) {
-            self::runStandardEndpointTest('', 'empty_token');
-            self::runStandardEndpointTest('asdf', 'malformed_token');
+            $expectedHeaders = array(                                                          
+                'WWW-Authenticate' => Tokens::HEADER_KEY                    
+            );
+            self::runStandardEndpointTest(
+                '',
+                'empty_token',
+                $expectedHeaders
+            );
+            self::runStandardEndpointTest(
+                'asdf',
+                'malformed_token',
+                $expectedHeaders
+            );
         } else {
             $this->testHelper->authenticate($this->role);
             $this->testHelper->delete(self::$ENDPOINT);
@@ -84,7 +94,7 @@ class TokenHelper
             $this->testHelper->authenticate($this->role);
             $this->testHelper->delete(self::$ENDPOINT);
             $this->testHelper->logout();
-            self::runStandardEndpointTest($token, 'deleted_token');
+            self::runStandardEndpointTest($token, 'invalid_token');
         }
     }
 
@@ -92,9 +102,13 @@ class TokenHelper
         $token,
         $outputFileName = null,
         $httpCode = null,
-        $outputTestGroup = 'integration/rest/user/api_token',
-        $validationType = 'exact'
+        $outputTestGroup = null,
+        $validationType = 'exact',
+        $expectedHeaders = null
     ) {
+        if (null === $outputTestGroup) {
+            $outputTestGroup = self::$TEST_GROUP;
+        }
         $defaultOutput = $this->expectedOutputs['empty_token'];
         if (null === $outputFileName) {
             $outputFileName = $defaultOutput['file_name'];
@@ -121,7 +135,8 @@ class TokenHelper
             'application/json',
             $outputTestGroup,
             $outputFileName,
-            $validationType
+            $validationType,
+            $expectedHeaders
         );
         unset($this->params[Tokens::HEADER_KEY]);
         $this->testHelper->addheader('Authorization', $authHeader);
@@ -168,12 +183,18 @@ class TokenHelper
         );
     }
 
-    private function runStandardEndpointTest($token, $type)
-    {
+    private function runStandardEndpointTest(
+        $token,
+        $type,
+        $expectedHeaders = null
+    ) {
         $this->runEndpointTest(
             $token,
             $this->expectedOutputs[$type]['file_name'],
-            $this->expectedOutputs[$type]['http_code']
+            $this->expectedOutputs[$type]['http_code'],
+            $outputTestGroup = self::$TEST_GROUP,
+            $validationType = 'exact',
+            $expectedHeaders
         );
     }
 }
