@@ -1,4 +1,4 @@
 {
-    "$extends": "error",
+    "$extends": "../../../../base/error",
     "message": "An error was encountered while attempting to process the requested authorization procedure."
 }

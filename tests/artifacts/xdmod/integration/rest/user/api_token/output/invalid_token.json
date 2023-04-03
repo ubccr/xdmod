@@ -1,4 +1,4 @@
 {
-    "$extends": "error",
+    "$extends": "../../../../base/error",
     "message": "Invalid API token."
 }

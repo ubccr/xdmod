@@ -1,5 +1,5 @@
 {
-    "$extends": "error",
+    "$extends": "../../../../base/error",
     "message": "Session Expired",
     "code": 2
 }
