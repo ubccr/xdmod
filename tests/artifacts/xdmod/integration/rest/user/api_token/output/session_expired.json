@@ -1,5 +1,5 @@
 {
-    "$extends": "../../../../base/error",
+    "$extends": "${INTEGRATION_ROOT}/base/error.json",
     "message": "Session Expired",
     "code": 2
 }

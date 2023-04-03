@@ -122,8 +122,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         if ('exact' === $validationType) {
             $expectedObject = self::loadRawJsonFile(
                 $expectedFile,
-                $testGroup,
-                $fileType,
                 $validationType
             );
             $this->assertSame(
@@ -132,7 +130,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             );
         } elseif ('schema' === $validationType) {
             $expectedObject = Json::loadFile($expectedFile, false);
-            $expectedObject = $this->resolveRemoteSchemaRefs(
+            $expectedObject = self::resolveRemoteSchemaRefs(
                 $expectedObject,
                 dirname($expectedFile)
             );
@@ -151,26 +149,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $actualObject;
     }
 
-    private function loadRawJsonFile(
-        $file,
-        $testGroup,
-        $fileType,
-        $validationType
-    ) {
+    private function loadRawJsonFile($file, $validationType) {
         $object = Json::loadFile($file, true);
         if ('exact' === $validationType) {
             if (isset($object['$extends'])) {
-                $parentFile = self::getTestFiles()->getFile(
-                    $testGroup,
-                    $object['$extends'],
-                    $fileType,
-                    '.json'
-                );
                 $parentObject = self::loadRawJsonFile(
-                    $parentFile,
-                    $testGroup,
-                    $object['$extends'],
-                    $fileType,
+                    self::resolveExternalFilePath(
+                        dirname($file),
+                        $object['$extends']
+                    ),
                     $validationType
                 );
                 $object = array_replace_recursive($parentObject, $object);
@@ -180,16 +167,34 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $object;
     }
 
-    private function resolveRemoteSchemaRefs($obj, $schemaDir)
+    private static function resolveRemoteSchemaRefs($obj, $schemaDir)
     {
         foreach ($obj as $key => $value) {
             if ('$ref' === $key && '#' !== $value[0]) {
-                $obj->$key = $schemaDir . '/' . $value;
+                $obj->$key = self::resolveExternalFilePath($schemaDir, $value);
             } elseif ('object' === gettype($value)
                     || 'array' === gettype($value)) {
-                $value = $this->resolveRemoteSchemaRefs($value, $schemaDir);
+                $value = self::resolveRemoteSchemaRefs($value, $schemaDir);
             }
         }
         return $obj;
+    }
+
+    private static function resolveExternalFilePath($parentPath, $path)
+    {
+        if (false !== strpos($path, '${INTEGRATION_ROOT}')) {
+            return self::getTestFiles()->getFile(
+                'integration',
+                str_replace(
+                    '${INTEGRATION_ROOT}/',
+                    '',
+                    $path
+                ),
+                '',
+                ''
+            );
+        } else {
+            return $parentPath . '/' . $path;
+        }
     }
 }

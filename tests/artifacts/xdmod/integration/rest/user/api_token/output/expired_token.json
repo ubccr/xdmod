@@ -1,4 +1,4 @@
 {
-    "$extends": "../../../../base/error",
+    "$extends": "${INTEGRATION_ROOT}/base/error.json",
     "message": "The API Token has expired."
 }
