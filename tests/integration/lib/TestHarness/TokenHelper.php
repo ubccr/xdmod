@@ -51,32 +51,31 @@ class TokenHelper
                 } elseif ('rest' === $endpointType) {
                     $fileName = 'authentication_error';
                 }
-                $this->setExpectedErrorOutput($type, 401, $fileName);
+                $this->setExpectedErrorOutput($type, $fileName);
             }
         } elseif ('token_required' === $authenticationType) {
-            $this->setExpectedErrorOutput('empty_token', 401);
-            $this->setExpectedErrorOutput('malformed_token', 401);
-            $this->setExpectedErrorOutput('invalid_token', 401);
-            $this->setExpectedErrorOutput('expired_token', 401);
+            foreach (array(
+                'empty_token',
+                'malformed_token',
+                'invalid_token',
+                'expired_token'
+            ) as $type) {
+                $this->setExpectedErrorOutput(
+                    $type,
+                    $type,
+                    array(
+                        'WWW-Authenticate' => Tokens::HEADER_KEY
+                    )
+                );
+            }
         }
     }
 
     public function runEndpointTests($callback)
     {
         if ('pub' === $this->role) {
-            $expectedHeaders = array(
-                'WWW-Authenticate' => Tokens::HEADER_KEY
-            );
-            self::runStandardEndpointTest(
-                '',
-                'empty_token',
-                $expectedHeaders
-            );
-            self::runStandardEndpointTest(
-                'asdf',
-                'malformed_token',
-                $expectedHeaders
-            );
+            self::runStandardEndpointTest('', 'empty_token');
+            self::runStandardEndpointTest('asdf', 'malformed_token');
         } else {
             $this->testHelper->authenticate($this->role);
             $this->testHelper->delete(self::$ENDPOINT);
@@ -115,6 +114,9 @@ class TokenHelper
         }
         if (null === $httpCode) {
             $httpCode = $defaultOutput['http_code'];
+        }
+        if (null === $expectedHeaders) {
+            $expectedHeaders = $defaultOutput['expected_headers'];
         }
         $authHeader = $this->testHelper->getheader('Authorization');
         $this->testHelper->addheader(
@@ -172,14 +174,18 @@ class TokenHelper
         $this->params = $params;
     }
 
-    private function setExpectedErrorOutput($type, $httpCode, $fileName = null)
-    {
+    private function setExpectedErrorOutput(
+        $type,
+        $fileName = null,
+        $expectedHeaders = null
+    ) {
         if (null === $fileName) {
             $fileName = $type;
         }
         $this->expectedOutputs[$type] = array(
-            'http_code' => $httpCode,
-            'file_name' => $fileName
+            'http_code' => 401,
+            'file_name' => $fileName,
+            'expected_headers' => $expectedHeaders
         );
     }
 
@@ -192,8 +198,8 @@ class TokenHelper
             $token,
             $this->expectedOutputs[$type]['file_name'],
             $this->expectedOutputs[$type]['http_code'],
-            $outputTestGroup = self::$TEST_GROUP,
-            $validationType = 'exact',
+            self::$TEST_GROUP,
+            'exact',
             $expectedHeaders
         );
     }
