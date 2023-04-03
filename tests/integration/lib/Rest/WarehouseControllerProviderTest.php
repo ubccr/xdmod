@@ -140,6 +140,44 @@ class WarehouseControllerProviderTest extends BaseTest
     }
 
     /**
+     * @dataProvider provideGetRawDataRoles
+     */
+    public function testGetRawData($role, $tokenTests)
+    {
+        $tokenHelper = new TokenHelper(
+            $this,
+            self::$helper,
+            $role,
+            'rest/warehouse/raw-data',
+            'get',
+            null,
+            null,
+            'rest',
+            'token_required'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenTests, $tokenHelper) {
+                foreach ($tokenTests as $values) {
+                    list(
+                        $params,
+                        $httpCode,
+                        $fileName,
+                        $validationType
+                    ) = $values;
+                    $tokenHelper->setParams($params);
+                    $tokenHelper->runEndpointTest(
+                        $token,
+                        $fileName,
+                        $httpCode,
+                        'integration/rest/warehouse',
+                        $validationType
+                    );
+                }
+            }
+        );
+    }
+
+    /**
      * @dataProvider provideBaseRoles
      */
     public function testGetRawDataLimit($role)
@@ -159,12 +197,140 @@ class WarehouseControllerProviderTest extends BaseTest
             function ($token) use ($tokenHelper) {
                 $tokenHelper->runEndpointTest(
                     $token,
-                    'get_raw_data_limit_success',
+                    'get_raw_data/limit_success',
                     200,
                     'integration/rest/warehouse',
                     'exact'
                 );
             }
+        );
+    }
+
+    public function provideGetRawDataRoles()
+    {
+        $tokenTests = array(
+            array(null, 400, 'get_raw_data/no_start_date', 'exact'),
+            array(
+                array('start_date' => '2017-01-01'),
+                400,
+                'get_raw_data/no_end_date',
+                'exact'
+            ),
+            array(
+                array('start_date' => '2017'),
+                400,
+                'get_raw_data/start_date_malformed',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01'
+                ),
+                400,
+                'get_raw_data/no_realm',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017'
+                ),
+                400,
+                'get_raw_data/end_date_malformed',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2016-01-01'
+                ),
+                400,
+                'get_raw_data/end_before_start',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'asdf'
+                ),
+                400,
+                'get_raw_data/invalid_realm',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'Jobs',
+                    'fields' => 'asdf'
+                ),
+                400,
+                'get_raw_data/invalid_fields',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'Jobs',
+                    'fields' => 'Nodes',
+                    'filters[asdf]' => 177
+                ),
+                400,
+                'get_raw_data/invalid_filter_key',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'Jobs',
+                    'offset' => '-1'
+                ),
+                400,
+                'get_raw_data/negative_offset',
+                'exact'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'Jobs'
+                ),
+                200,
+                'get_raw_data/success_0.spec',
+                'schema'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'Jobs',
+                    'offset' => '16500'
+                ),
+                200,
+                'get_raw_data/success_16500.spec',
+                'schema'
+            ),
+            array(
+                array(
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2017-01-01',
+                    'realm' => 'Jobs',
+                    'fields' => 'Nodes,Wall Time',
+                    'filters[resource]' => '1,2',
+                    'filters[fieldofscience]' => '10,91'
+                ),
+                200,
+                'get_raw_data/success_fields_and_filters.spec',
+                'schema'
+            )
+        );
+        return array(
+            array('pub', $tokenTests),
+            array('usr', $tokenTests)
         );
     }
 }

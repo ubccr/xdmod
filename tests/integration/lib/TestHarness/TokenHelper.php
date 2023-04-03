@@ -152,6 +152,11 @@ class TokenHelper
         return $db->execute($query, $params) === 1;
     }
 
+    public function setParams($params)
+    {
+        $this->params = $params;
+    }
+
     private function setExpectedErrorOutput($type, $httpCode, $fileName = null)
     {
         if (null === $fileName) {

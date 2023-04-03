@@ -1,0 +1,4 @@
+{
+    "$extends": "${INTEGRATION_ROOT}/base/error.json",
+    "message": "Invalid value for start_date. Must be a(n) ISO 8601 Date."
+}

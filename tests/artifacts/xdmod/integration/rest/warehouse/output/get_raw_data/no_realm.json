@@ -1,4 +1,4 @@
 {
     "$extends": "${INTEGRATION_ROOT}/base/error.json",
-    "message": "One or more realms must be specified."
+    "message": "realm is a required parameter."
 }

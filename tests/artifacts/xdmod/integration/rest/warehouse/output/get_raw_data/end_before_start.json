@@ -1,0 +1,4 @@
+{
+    "$extends": "${INTEGRATION_ROOT}/base/error104.json",
+    "message": "End date cannot be less than start date."
+}
