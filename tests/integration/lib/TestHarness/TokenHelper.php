@@ -115,9 +115,6 @@ class TokenHelper
         if (null === $httpCode) {
             $httpCode = $defaultOutput['http_code'];
         }
-        if (null === $expectedHeaders) {
-            $expectedHeaders = $defaultOutput['expected_headers'];
-        }
         $authHeader = $this->testHelper->getheader('Authorization');
         $this->testHelper->addheader(
             'Authorization',
@@ -189,18 +186,14 @@ class TokenHelper
         );
     }
 
-    private function runStandardEndpointTest(
-        $token,
-        $type,
-        $expectedHeaders = null
-    ) {
+    private function runStandardEndpointTest($token, $type) {
         $this->runEndpointTest(
             $token,
             $this->expectedOutputs[$type]['file_name'],
             $this->expectedOutputs[$type]['http_code'],
             self::$TEST_GROUP,
             'exact',
-            $expectedHeaders
+            $this->expectedOutputs[$type]['expected_headers']
         );
     }
 }
