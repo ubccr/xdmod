@@ -106,6 +106,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
         if (isset($expectedHeaders)) {
             foreach ($expectedHeaders as $key => $value) {
+                $this->assertArrayHasKey($key, $response[2], $message);
                 $this->assertSame(
                     $value,
                     trim($response[2][$key]),
