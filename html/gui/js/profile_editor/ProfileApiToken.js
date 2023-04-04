@@ -181,7 +181,9 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
             url: '/users/current/api/token',
             method: params.method,
             callback: function (options, success, response) {
-                self.processResponse(params, success, response);
+                if (self.parentWindow.isVisible()) {
+                    self.processResponse(params, success, response);
+                }
             }
         });
     },
