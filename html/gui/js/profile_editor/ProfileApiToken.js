@@ -193,8 +193,7 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
             method: 'GET',
             actionText: this.ACTION_TEXT_FOR_GET,
             onSuccess: this.processSuccessfulGetRequest,
-            onFailure: this.processFailedGetRequest,
-            onServerError: this.processGetRequestServerError
+            onFailure: this.processFailedGetRequest
         };
     },
 
@@ -246,8 +245,8 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     processResponse: function (params, success, response) {
         if (success) {
             this.processSuccessfulResponse(params, response);
-        } else if (params.onServerError) {
-            params.onServerError(this);
+        } else if (params.onFailure) {
+            params.onFailure(this, response.status);
         } else {
             this.showServerErrorMsg(params.actionText);
         }
@@ -259,19 +258,17 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
         self.showReceivedToken();
     },
 
-    processFailedGetRequest: function (self) {
-        self.showMsg('You currently have no API token.');
-        self.panelCopyDelete.hide();
-        self.btnRetry.hide();
-        self.btnDeleteOld.hide();
-        self.btnGenerate.show();
-        XDMoD.utils.syncWindowShadow(self);
-    },
-
-    processGetRequestServerError: function (self) {
-        self.showMsg(self.getServerErrorMsg(self.ACTION_TEXT_FOR_GET));
-        self.btnRetry.show();
-        XDMoD.utils.syncWindowShadow(self);
+    processFailedGetRequest: function (self, status) {
+        if (status === 404) {
+            self.showMsg('You currently have no API token.');
+            self.panelCopyDelete.hide();
+            self.btnRetry.hide();
+            self.btnDeleteOld.hide();
+            self.btnGenerate.show();
+            XDMoD.utils.syncWindowShadow(self);
+        } else {
+            self.processGetRequestServerError(self);
+        }
     },
 
     clickRequestBtn: function (params) {
@@ -304,7 +301,7 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
         if (CCR.checkDecodedJSONResponseSuccess(data)) {
             params.onSuccess(this, data);
         } else if (params.onFailure) {
-            params.onFailure(this);
+            params.onFailure(this, response.status);
         } else {
             this.showServerErrorMsg(params.actionText);
         }
@@ -338,8 +335,10 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
         this.updateHtml(this.panelMsg, msg);
     },
 
-    getServerErrorMsg: function (actionText) {
-        return 'Server error ' + actionText + '. Please try again.';
+    processGetRequestServerError: function (self) {
+        self.showMsg(self.getServerErrorMsg(self.ACTION_TEXT_FOR_GET));
+        self.btnRetry.show();
+        XDMoD.utils.syncWindowShadow(self);
     },
 
     confirmRequest: function (params) {
@@ -378,6 +377,10 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
                 single: true
             }
         );
+    },
+
+    getServerErrorMsg: function (actionText) {
+        return 'Server error ' + actionText + '. Please try again.';
     },
 
     getExpiredTokenMsg: function () {
