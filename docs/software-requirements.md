@@ -88,8 +88,8 @@ start after a reboot unless you have configured them to do so.
 
 ### Rocky 8+
 
-**NOTE**: as of XDMoD 10.0.2 there are some additional software requirements for EL8 systems. Specifically, we are 
-utilizing dnf modules to ensure that we can provide specific versions of our requirements. You will need to run the 
+**NOTE**: as of XDMoD 10.0.2 there are some additional software requirements for EL8 systems. Specifically, we are
+utilizing dnf modules to ensure that we can provide specific versions of our requirements. You will need to run the
 following before installing or upgrading to 10.0.2.
 
 ```shell
