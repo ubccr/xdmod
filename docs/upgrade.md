@@ -144,5 +144,13 @@ headless chromium (used for image export and report generation).
 
 You may upgrade directly from 9.5.0 or 10.0.0
 
+10.0.2 Upgrade Notes
+-------------------
+
+Open XDMoD 10.0.2 is a bug fix release that fixes a compatibility issue with
+headless chromium ( use for image export and report generation).
+
+You may upgrade directly from 9.5.0, 10.0.0, or 10.0.1
+
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
