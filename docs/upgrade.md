@@ -155,7 +155,7 @@ You may upgrade directly from 9.5.0, 10.0.0, or 10.0.1
 The 10.0.2 release has a dependency on nodejs 16. If upgrading
 Open XDMoD by rpm on Centos 7 then the nodejs package will be installed automatically.
 If upgrading Open XDMoD by rpm on Rocky 8 then then nodejs 16 module
-stream must be enabled following the directions on the [software requirements page](software-requirements.md#Rocky-8+).
+stream must be enabled following the directions on the [software requirements page](software-requirements.md#Rocky-8).
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
