@@ -7,7 +7,7 @@ Below you will find links to our latest releases by supported OS.
 # CentOS7
 You can find the latest CentOS7 build here: [CentOS7 Latest](https://github.com/ubccr/xdmod/releases/latest)
 
-# CentOS|Rocky 8
-You can find the latest CentOS 8 / Rocky 8 build here: [CentOS 8 |Rocky 8 Latest](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8)
+# Rocky 8
+You can find the latest Rocky 8 build here: [Rocky 8 Latest](https://github.com/ubccr/xdmod/releases/tag/v10.0.2-beta1-el8)
 
-**Note:CentOS8 / Rocky8 support is still in beta. Full support is slated for Open XDMoD 10.5**
+**Note: Rocky8 support is still in beta. Full support is slated for Open XDMoD 10.5**
