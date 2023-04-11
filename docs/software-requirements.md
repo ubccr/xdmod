@@ -18,6 +18,7 @@ Open XDMoD requires the following software:
     - [XMLWriter][php-xmlwriter]
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
+- [nodejs][] 16
 - [libreoffice][]
     - Only the libreoffice-writer component of libreoffice is used.
 - [Chromium][]
@@ -36,6 +37,7 @@ Open XDMoD requires the following software:
 [mod_headers]:     https://httpd.apache.org/docs/current/mod/mod_headers.html
 [mariadb]:         https://mariadb.org/
 [mysql]:           https://mysql.com/
+[nodejs]:          https://nodejs.org/
 [php]:             https://secure.php.net/
 [pdo]:             https://secure.php.net/manual/en/book.pdo.php
 [pdo-mysql]:       https://secure.php.net/manual/en/ref.pdo-mysql.php
@@ -76,6 +78,7 @@ added with this command for CentOS 7:
 
     # yum install httpd php php-cli php-mysql php-gd php-pdo php-xml \
                   libreoffice \
+                  nodejs \
                   mariadb-server mariadb cronie logrotate \
                   perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
                   chromium-headless librsvg2-tools
@@ -88,9 +91,9 @@ start after a reboot unless you have configured them to do so.
 
 ### Rocky 8+
 
-**NOTE**: as of XDMoD 10.0.2 there are some additional software requirements for EL8 systems. Specifically, we are
-utilizing dnf modules to ensure that we can provide specific versions of our requirements. You will need to run the
-following before installing or upgrading to 10.0.2.
+**NOTE**: The nodejs version that is enabled by default in Rocky 8 is nodejs 10. Open
+XDMoD requires nodejs 16 which can be installed on Rocky 8 using the  nodejs 16 module
+stream as follows:
 
 ```shell
 dnf module -y reset nodejs
@@ -102,9 +105,9 @@ Additional Notes
 
 ### PHP
 
-Open XDMoD is tested to work with PHP 5.4.16 and may be compatible with more
-recent releases of PHP 5.  Open XDMoD is not compatible with PHP 7 at this
-time.
+Open XDMoD is tested to work with the versions of PHP that is supplied with
+Centos 7 (PHP 5.4.16) and Rocky 8 (PHP 7.2).  Open XDMoD is not compatible
+with PHP 8 at this time.
 
 Some Linux distributions (including CentOS) do not set the timezone used
 by PHP in their default configuration.  This will result in many warning
