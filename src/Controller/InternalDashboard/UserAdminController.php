@@ -400,7 +400,7 @@ class UserAdminController extends BaseController
         return $this->json([
             'success'   => true,
             'status'    => sprintf(
-                '%s User <b>%s</b> updated successfully',
+                '%sUser <b>%s</b> updated successfully',
                 $userToUpdate->isSSOUser() ? 'Single Sine On' : '',
                 $userName
             ),
