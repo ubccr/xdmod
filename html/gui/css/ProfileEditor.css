@@ -54,6 +54,15 @@
 
 /* ----------------------------- */
 
+.user_profile_api_token .token_text {
+    display: inline-block;
+    margin: 5px 0;
+    border: 1px solid lightgray;
+    padding: 5px;
+    background-color: white;
+    font-weight: bold;
+}
+
 .user_profile_api_token .btn_copy_icon {
     background-image: url('../images/save_as.png');
 }

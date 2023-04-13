@@ -166,7 +166,7 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     initPanelOtherBtns: function () {
         this.panelOtherBtns = new Ext.Panel({
             padding: '0 0 ' + this.SUB_COMPONENT_PADDING + 'px '
-                            + this.SUB_COMPONENT_PADDING + 'px',
+                + this.SUB_COMPONENT_PADDING + 'px',
             items: [
                 this.btnRetry,
                 this.btnGenerate,
@@ -284,12 +284,15 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     },
 
     showNewToken: function () {
-        this.showMsg('Your API token is:<br/><b>' + this.tokenText
-                     + '</b><br/>It will not be obtainable later,'
-                     + ' so please copy it now before clicking away.'
-                     + '<br/>(You can generate a new one if you lose this'
-                     + ' one.).<br/>Your API token will expire on'
-                     + ' <b>' + this.expirationDate + '</b>');
+        this.showMsg(
+            '<div>Your API token is:</div>'
+            + '<div class="token_text">' + this.tokenText + '</div>'
+            + '<div>It will not be obtainable later,'
+            + ' so please copy it now before clicking away.'
+            + '<br/>(You can generate a new one if you lose this'
+            + ' one.).<br/>Your API token will expire on'
+            + ' <b>' + this.expirationDate + '</b></div>'
+        );
         this.btnGenerate.hide();
         this.panelCopyDelete.show();
         this.prepareToSyncWindowShadow();
@@ -319,8 +322,10 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     },
 
     showReceivedToken: function () {
-        var isTokenExpired = new Date(this.creationDate)
-                          >= new Date(this.expirationDate);
+        var isTokenExpired = (
+            new Date(this.creationDate)
+            >= new Date(this.expirationDate)
+        );
         if (isTokenExpired) {
             this.showMsg(this.getExpiredTokenMsg());
         } else {
@@ -384,17 +389,20 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     },
 
     getExpiredTokenMsg: function () {
-        return 'Your API token expired on'
-               + ' <b>' + this.expirationDate + '</b>'
-               + '<br/>Please delete it and generate a new one.';
+        return (
+            'Your API token expired on <b>' + this.expirationDate + '</b>'
+            + '<br/>Please delete it and generate a new one.'
+        );
     },
 
     getUnexpiredTokenMsg: function () {
-        return 'Your API token was generated on'
-               + ' <b>' + this.creationDate + '</b>'
-               + '<br/>and expires on'
-               + ' <b>' + this.expirationDate + '</b>'
-               + '<br/>If you have lost your API token,'
-               + ' please delete it and generate a new one.';
+        return (
+            'Your API token was generated on'
+            + ' <b>' + this.creationDate + '</b>'
+            + '<br/>and expires on'
+            + ' <b>' + this.expirationDate + '</b>'
+            + '<br/>If you have lost your API token,'
+            + ' please delete it and generate a new one.'
+        );
     }
 });
