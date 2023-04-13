@@ -97,6 +97,13 @@ jobs:
           name: Make sure that we reset COMPOSER when upgrading.
           command: |
             echo "export COMPOSER=composer.json" >> $BASH_ENV
+      - when:
+          condition:
+            equal: [ *rocky8-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Downgrade chromium version (until the chrome 111 fix is merged)
+                command: dnf install -y https://dl.fedoraproject.org/pub/archive/epel/8.5.2022-05-10/Everything/x86_64/Packages/c/chromium-headless-99.0.4844.84-1.el8.x86_64.rpm https://dl.fedoraproject.org/pub/archive/epel/8.5.2022-05-10/Everything/x86_64/Packages/c/chromium-common-99.0.4844.84-1.el8.x86_64.rpm
       - run:
           name: Setup & Run QA Tests
           command: |
