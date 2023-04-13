@@ -288,12 +288,13 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
 
     showNewToken: function () {
         this.showMsg(
-            'Your API token is:<br/><b>' + this.tokenText
-            + '</b><br/>It will not be obtainable later,'
+            '<div>Your API token is:</div>'
+            + '<div class="token_text">' + this.tokenText + '</div>'
+            + '<div>It will not be obtainable later,'
             + ' so please copy it now before clicking away.'
             + '<br/>(You can generate a new one if you lose this'
             + ' one.).<br/>Your API token will expire on'
-            + ' <b>' + this.expirationDate + '</b>'
+            + ' <b>' + this.expirationDate + '</b></div>'
         );
         this.btnGenerate.hide();
         this.panelCopyDelete.show();
