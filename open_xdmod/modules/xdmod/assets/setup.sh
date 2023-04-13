@@ -13,3 +13,4 @@ composer install --no-dev
 
 echo Installing npm managed dependencies
 npm install --production --prefix etl/js
+npm install --production --prefix background_scripts/chrome-helper
