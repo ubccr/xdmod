@@ -512,8 +512,10 @@ class TimeseriesDataset
         }
 
         // Build header
-        foreach ($dimensions as $dimension) {
-            $exportData['headers'][] = "[{$dimensionNames[$dimension]}] $seriesName";
+        if (!empty($dimensionNames)) {
+            foreach ($dimensions as $dimension) {
+                $exportData['headers'][] = "[{$dimensionNames[$dimension]}] $seriesName";
+            }
         }
 
         // Data are returned in time order, but every dimension may not have all timestamps
