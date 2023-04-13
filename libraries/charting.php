@@ -59,7 +59,7 @@ function exportHighchart(
     }
     $template = str_replace('_globalChartOptions_', json_encode($globalChartOptions), $template);
     $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
-    $svg = getSvgFromChromium($template, $effectiveWidth, $effectiveHeight);
+    $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight);
     switch($format){
         case 'png':
             return convertSvg($svg, 'png', $effectiveWidth, $effectiveHeight, $fileMetadata);
@@ -73,7 +73,7 @@ function exportHighchart(
 }
 
 /**
- * Use Chromium to generate svg.
+ * Use Chromium to generate svg via puppeteer script
  *
  * @param string $html html that should be used by chromium
  * @param int $width desired width of output
@@ -83,7 +83,7 @@ function exportHighchart(
  *
  * @throws \Exception on invalid format, command execution failure, or non zero exit status
  */
-function getSvgFromChromium($html, $width, $height){
+function getSvgViaChromiumHelper($html, $width, $height){
 
     // Chromium requires the file to have a .html extension
     // cant use datauri as it will not execute embdeeded javascript
@@ -96,21 +96,14 @@ function getSvgFromChromium($html, $width, $height){
     file_put_contents($tmpHtmlFile, $html);
 
     $chromiumPath = \xd_utilities\getConfiguration('reporting', 'chromium_path');
-    $chromiumOptions = array (
-        '--headless',
-        '--no-sandbox',
-        '--disable-gpu',
-        '--disable-software-rasterizer',
-        '--window-size=' . $width . ',' . $height,
-        '--disable-extensions',
-        '--incognito',
-        '-repl',
-        $tmpHtmlFile
-    );
-    $command = $chromiumPath . ' ' . implode(' ', $chromiumOptions);
+
+    $command = LIB_DIR . '/chrome-helper/chrome-helper.js' .
+        ' --window-size=' . $width . ',' . $height .
+        ' --path-to-chrome=' . $chromiumPath .
+        ' --input-file=' . $tmpHtmlFile;
+
     $pipes = array();
     $descriptor_spec = array(
-        0 => array('pipe', 'r'),
         1 => array('pipe', 'w'),
         2 => array('pipe', 'w'),
     );
@@ -119,8 +112,6 @@ function getSvgFromChromium($html, $width, $height){
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-    fwrite($pipes[0], 'chart.getSVG(inputChartOptions);');
-    fclose($pipes[0]);
 
     $out = stream_get_contents($pipes[1]);
     $err = stream_get_contents($pipes[2]);
@@ -130,16 +121,7 @@ function getSvgFromChromium($html, $width, $height){
 
     @unlink($tmpHtmlFile);
 
-    $jsondata = json_decode(substr($out, 4, -6), true);
-
-    $chartSvg = null;
-    if (isset($jsondata['result']) && isset($jsondata['result']['value'])) {
-        // chrome headless 99
-        $chartSvg = $jsondata['result']['value'];
-    } elseif (isset($jsondata['result']) && isset($jsondata['result']['result']) && isset($jsondata['result']['result']['value'])) {
-        // chrome headless 109
-        $chartSvg = $jsondata['result']['result']['value'];
-    }
+    $chartSvg = json_decode($out);
 
     if ($chartSvg === null) {
         throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
