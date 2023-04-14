@@ -69,12 +69,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
         $actualContentType = isset($response) ? $response[1]['content_type'] : null;
         $actualResponseBody = isset($response) ? $response[0] : array();
-        $message = "PATH: $path\nVERB: $verb\nPARAMS: "
-            . json_encode($params, JSON_PRETTY_PRINT) . "\nDATA: "
-            . json_encode($data, JSON_PRETTY_PRINT) . "\nEXPECTED HTTP CODE: "
-            . "$expectedHttpCode\nACTUAL HTTP CODE: $actualHttpCode\n"
-            . "EXPECTED CONTENT TYPE: $expectedContentType\n"
-            . "ACTUAL CONTENT TYPE: $actualContentType\n";
+        $message = "PATH: $path\nVERB: $verb\nHEADERS: "
+            . json_encode($testHelper->getheaders(), JSON_PRETTY_PRINT)
+            . "\nPARAMS: " . json_encode($params, JSON_PRETTY_PRINT)
+            . "\nDATA: " . json_encode($data, JSON_PRETTY_PRINT)
+            . "\nEXPECTED HTTP CODE: $expectedHttpCode"
+            . "\nACTUAL HTTP CODE: $actualHttpCode"
+            . "\nEXPECTED CONTENT TYPE: $expectedContentType"
+            . "\nACTUAL CONTENT TYPE: $actualContentType";
         if (isset($expectedHttpCode)) {
             $this->assertSame(
                 $expectedHttpCode,
@@ -98,7 +100,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $expectedFileGroup,
                 $expectedFileName,
                 'output',
-                $validationType
+                $validationType,
+                $message
             );
         }
 
@@ -110,7 +113,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $testGroup,
         $fileName,
         $fileType = 'output',
-        $validationType = 'schema'
+        $validationType = 'schema',
+        $message = ''
     ) {
         $expectedFile = self::getTestFiles()->getFile(
             $testGroup,
@@ -126,7 +130,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             );
             $this->assertSame(
                 json_encode($expectedObject),
-                json_encode($actualObject)
+                json_encode($actualObject),
+                $message . "\nEXPECTED OUTPUT FILE: $expectedFile"
             );
         } elseif ('schema' === $validationType) {
             $expectedObject = Json::loadFile($expectedFile, false);
