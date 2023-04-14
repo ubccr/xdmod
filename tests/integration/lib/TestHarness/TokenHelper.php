@@ -115,31 +115,46 @@ class TokenHelper
         if (null === $httpCode) {
             $httpCode = $defaultOutput['http_code'];
         }
-        $authHeader = $this->testHelper->getheader('Authorization');
-        $this->testHelper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
-        if (null === $this->params) {
-            $this->params = array();
+        $responseBodies = array();
+        foreach (array('header', 'params') as $tokenLocation) {
+            if ('header' === $tokenLocation) {
+                $authHeader = $this->testHelper->getheader('Authorization');
+                $this->testHelper->addheader(
+                    'Authorization',
+                    Tokens::HEADER_KEY . ' ' . $token
+                );
+            } elseif ('params' === $tokenLocation) {
+                if (null === $this->params) {
+                    $this->params = array();
+                }
+                $this->params[Tokens::HEADER_KEY] = $token;
+            }
+            $responseBodies[$tokenLocation] = $this->testInstance->makeRequest(
+                $this->testHelper,
+                $this->path,
+                $this->verb,
+                $this->params,
+                $this->data,
+                $httpCode,
+                'application/json',
+                $outputTestGroup,
+                $outputFileName,
+                $validationType,
+                $expectedHeaders
+            );
+            if ('header' === $tokenLocation) {
+                $this->testHelper->addheader('Authorization', $authHeader);
+            } elseif ('params' === $tokenLocation) {
+                unset($this->params[Tokens::HEADER_KEY]);
+            }
         }
-        $this->params[Tokens::HEADER_KEY] = $token;
-        $responseBody = $this->testInstance->makeRequest(
-            $this->testHelper,
-            $this->path,
-            $this->verb,
-            $this->params,
-            $this->data,
-            $httpCode,
-            'application/json',
-            $outputTestGroup,
-            $outputFileName,
-            $validationType,
-            $expectedHeaders
+        $this->testInstance->assertSame(
+            json_encode($responseBodies['header']),
+            json_encode($responseBodies['params']),
+            json_encode($responseBodies['header'], JSON_PRETTY_PRINT) . "\n"
+            . json_encode($responseBodies['params'], JSON_PRETTY_PRINT)
         );
-        unset($this->params[Tokens::HEADER_KEY]);
-        $this->testHelper->addheader('Authorization', $authHeader);
-        return $responseBody;
+        return $responseBodies['header'];
     }
 
     /**
