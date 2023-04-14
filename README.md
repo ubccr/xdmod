@@ -241,7 +241,7 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 This process has been tested on CentOS 7. Known issues are documented in the
 [Building FAQ](#building-faq) below. If you run into any issues not listed
 below on these or any other platforms, please let us know. The tested version
-of composer is 1.3.2 (TravisCI builds use `--stable`).
+of composer is 1.10.25 on CentOS 7 and 2.4.2 on Rocky 8.
 
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
