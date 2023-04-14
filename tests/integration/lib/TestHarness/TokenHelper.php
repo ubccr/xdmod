@@ -116,20 +116,19 @@ class TokenHelper
             $httpCode = $defaultOutput['http_code'];
         }
         $responseBodies = array();
-        foreach (array('header', 'params') as $tokenLocation) {
-            if ('header' === $tokenLocation) {
+        foreach (array('token_in_header', 'token_not_in_header') as $mode) {
+            if ('token_in_header' === $mode) {
                 $authHeader = $this->testHelper->getheader('Authorization');
                 $this->testHelper->addheader(
                     'Authorization',
                     Tokens::HEADER_KEY . ' ' . $token
                 );
-            } elseif ('params' === $tokenLocation) {
-                if (null === $this->params) {
-                    $this->params = array();
-                }
-                $this->params[Tokens::HEADER_KEY] = $token;
             }
-            $responseBodies[$tokenLocation] = $this->testInstance->makeRequest(
+            if (null === $this->params) {
+                $this->params = array();
+            }
+            $this->params[Tokens::HEADER_KEY] = $token;
+            $responseBodies[$mode] = $this->testInstance->makeRequest(
                 $this->testHelper,
                 $this->path,
                 $this->verb,
@@ -142,19 +141,25 @@ class TokenHelper
                 $validationType,
                 $expectedHeaders
             );
-            if ('header' === $tokenLocation) {
+            if ('token_in_header' === $mode) {
                 $this->testHelper->addheader('Authorization', $authHeader);
-            } elseif ('params' === $tokenLocation) {
-                unset($this->params[Tokens::HEADER_KEY]);
             }
+            unset($this->params[Tokens::HEADER_KEY]);
         }
         $this->testInstance->assertSame(
-            json_encode($responseBodies['header']),
-            json_encode($responseBodies['params']),
-            json_encode($responseBodies['header'], JSON_PRETTY_PRINT) . "\n"
-            . json_encode($responseBodies['params'], JSON_PRETTY_PRINT)
+            json_encode($responseBodies['token_in_header']),
+            json_encode($responseBodies['token_not_in_header']),
+            json_encode(
+                $responseBodies['token_in_header'],
+                JSON_PRETTY_PRINT
+            )
+            . "\n"
+            . json_encode(
+                $responseBodies['token_not_in_header'],
+                JSON_PRETTY_PRINT
+            )
         );
-        return $responseBodies['header'];
+        return $responseBodies['token_in_header'];
     }
 
     /**
