@@ -268,7 +268,7 @@ class JobViewerTest extends BaseTest
 
     public function missingParamsProvider() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::getRealms())) {
+        if (!in_array("jobs", parent::getRealms())) {
             $this->markTestSkipped('Needs realm integration.');
         }
 

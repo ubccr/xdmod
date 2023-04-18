@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "allOf": [
+        { "$ref": "${INTEGRATION_ROOT}/base/success.spec.json" },
+        {
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "token": {
+                            "type": "string",
+                            "pattern": "^[0-9]+\\.[0-9a-f]{64}$"
+                        },
+                        "expiration_date": {
+                            "$ref": "${INTEGRATION_ROOT}/base/date.spec.json"
+                        }
+                    },
+                    "required": [ "token", "expiration_date" ]
+                }
+            },
+            "required": [ "data" ]
+        }
+    ]
+}

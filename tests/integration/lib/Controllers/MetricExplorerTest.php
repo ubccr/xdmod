@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use IntegrationTests\BaseTest;
+use TestHarness\TokenHelper;
 
 class MetricExplorerTest extends BaseTest
 {
@@ -12,46 +13,34 @@ class MetricExplorerTest extends BaseTest
     }
 
     /**
-     * Checks the structure of the DwDescripter response.
+     * @dataProvider provideBaseRoles
      */
-    public function testGetDwDescripter()
+    public function testGetDwDescripter($role)
     {
-        $this->helper->authenticate('cd');
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-
-
-        $dwdata = $response[0];
-
-        $this->assertArrayHasKey('totalCount', $dwdata);
-        $this->assertArrayHasKey('data', $dwdata);
-        $this->assertEquals($dwdata['totalCount'], count($dwdata['data']));
-
-        foreach($dwdata['data'] as $entry)
-        {
-            $this->assertArrayHasKey('realms', $entry);
-            foreach($entry['realms'] as $realm)
-            {
-                $this->assertArrayHasKey('dimensions', $realm);
-                $this->assertArrayHasKey('metrics', $realm);
+        $tokenHelper = new TokenHelper(
+            $this,
+            $this->helper,
+            $role,
+            'controllers/metric_explorer.php',
+            'post',
+            null,
+            array(
+                'operation' => 'get_dw_descripter'
+            ),
+            'controller',
+            'token_optional'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenHelper) {
+                $tokenHelper->runEndpointTest(
+                    $token,
+                    'get_dw_descripter.spec',
+                    200,
+                    'integration/controllers/metric_explorer',
+                    'schema'
+                );
             }
-        }
-    }
-
-    /**
-     * checks that you need to be authenticated to get_dw_descripter
-     */
-    public function testGetDwDescripterNoAuth()
-    {
-        // note - not authenticated
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
-
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 401);
+        );
     }
 
     /**
