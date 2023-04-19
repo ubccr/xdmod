@@ -2,6 +2,7 @@
 
 namespace IntegrationTests\Controllers;
 
+use TestHarness\TokenHelper;
 use TestHarness\XdmodTestHelper;
 use IntegrationTests\BaseTest;
 
@@ -1197,5 +1198,36 @@ END;
             }
         }
         return $arrays;
+    }
+
+    /**
+     * @dataProvider provideBaseRoles
+     */
+    public function testTokenAuthorization($role)
+    {
+        $tokenHelper = new TokenHelper(
+            $this,
+            $this->helper,
+            $role,
+            'controllers/user_interface.php',
+            'post',
+            null,
+            array(
+                "operation" => "get_data"
+            ),
+            'controller',
+            'token_optional'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenHelper) {
+                $tokenHelper->runEndpointTest(
+                    $token,
+                    'get_data_no_realm',
+                    500,
+                    'integration/controllers/user_interface',
+                    'exact'
+                );
+            }
+        );
     }
 }
