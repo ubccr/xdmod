@@ -5,10 +5,11 @@ namespace IntegrationTests\Rest;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
+use IntegrationTests\BaseTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TestFiles;
+use TestHarness\TokenHelper;
 use TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -17,12 +18,12 @@ use XDUser;
  *
  * @coversDefaultClass \Rest\Controllers\WarehouseExportControllerProvider
  */
-class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
+class WarehouseExportControllerProviderTest extends BaseTest
 {
     /**
      * Test files base path.
      */
-    const TEST_GROUP = 'integration/rest/warehouse-export';
+    const TEST_GROUP = 'integration/rest/warehouse/export';
 
     /**
      * User roles and usernames.
@@ -80,23 +81,6 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     private static $schemaCache = [];
 
     /**
-     * @var TestFiles
-     */
-    private static $testFiles;
-
-    /**
-     * @return TestFiles
-     */
-    private static function getTestFiles()
-    {
-        if (!isset(self::$testFiles)) {
-            self::$testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
-
-        return self::$testFiles;
-    }
-
-    /**
      * Instantiate fixtures and authenticate helpers.
      */
     public static function setUpBeforeClass()
@@ -150,10 +134,10 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     private static function getSchema($schema)
     {
         if (!array_key_exists($schema, self::$schemaCache)) {
-            static::$schemaCache[$schema] = self::getTestFiles()->loadJsonFile(
+            static::$schemaCache[$schema] = parent::getTestFiles()->loadJsonFile(
                 'schema',
                 $schema . '.schema',
-                'warehouse-export',
+                'warehouse/export',
                 false
             );
         }
@@ -202,35 +186,35 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getting the list of exportable realms.
-     *
-     * @param string $role Role to use during test.
-     * @param int $httpCode Expected HTTP response code.
-     * @param string $schema Name of JSON schema file that will be used
-     *   to validate returned data.
-     * @param array $realms The name of the realms that are expected to
-     *   be in the returned data.
      * @covers ::getRealms
-     * @dataProvider getRealmsProvider
+     * @dataProvider provideBaseRoles
      */
-    public function testGetRealms($role, $httpCode, $schema, array $realms)
+    public function testGetRealms($role)
     {
-        list($content, $info, $headers) = self::$helpers[$role]->get('rest/warehouse/export/realms');
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
-        $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
-        $this->validateAgainstSchema($content, $schema);
-
-        // Only check data for successful requests.
-        if ($httpCode == 200) {
-            // Testing each realm individually to avoid putting field
-            // definitions in test artifacts.
-            $this->assertTrue(is_array($content), 'Content is an array');
-            $this->assertArrayHasKey('data', $content, 'Content has a "data" key');
-            $this->assertTrue(is_array($content['data']), 'Data is an array');
-            $this->assertCount(count($realms), $content['data'], 'Data contains correct number of realms');
-            foreach ($content['data'] as $i => $realm) {
-                $this->assertArraySubset($realms[$i], $realm, sprintf('Realm %d contains the expected subset', $i + 1));
+        $tokenHelper = new TokenHelper(
+            $this,
+            self::$helpers[$role],
+            $role,
+            'rest/warehouse/export/realms',
+            'get',
+            null,
+            null,
+            'rest',
+            'token_optional'
+        );
+        $tokenHelper->runEndpointTests(
+            function ($token) use ($tokenHelper) {
+                $tokenHelper->runEndpointTest(
+                    $token,
+                    'get_realms.spec',
+                    200,
+                    'integration/rest/warehouse/export',
+                    'schema'
+                );
             }
+        );
+        if ('pub' !== $role) {
+            self::$helpers[$role]->authenticate($role);
         }
     }
 
@@ -409,33 +393,28 @@ class WarehouseExportControllerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([], $afterContent['data'], 'Data after deletion is empty.');
     }
 
-    public function getRealmsProvider()
-    {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-realms', 'input');
-    }
-
     public function createRequestProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'create-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'create-request', 'input');
     }
 
     public function getRequestsProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-requests', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-requests', 'input');
     }
 
     public function getRequestProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-request', 'input');
     }
 
     public function deleteRequestProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-request', 'input');
     }
 
     public function deleteRequestsProvider()
     {
-        return self::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-requests', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-requests', 'input');
     }
 }
