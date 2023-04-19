@@ -3,7 +3,10 @@
 
 use DataWarehouse\Access\MetricExplorer;
 
-$user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+$user = \Models\Services\Tokens::authenticateToken();
+if ($user === null) {
+    $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+}
 
 $realmParameter = null;
 try {

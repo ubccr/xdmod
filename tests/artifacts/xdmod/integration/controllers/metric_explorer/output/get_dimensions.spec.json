@@ -1,0 +1,36 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "totalCount": { "$ref": "#/$defs/totalCount" },
+        "data": { "$ref": "#/$defs/data" }
+    },
+    "required": [ "totalCount", "data" ],
+    "additionalProperties": false,
+    "$defs": {
+        "totalCount": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "data": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/data_item" },
+            "minItems": 0,
+            "uniqueItems": true
+        },
+        "data_item": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "short_name": { "type": "string" },
+                "checked": {
+                    "type": "boolean",
+                    "enum": [ false ]
+                }
+            },
+            "required": [ "id", "name", "short_name", "checked" ],
+            "additionalProperties": false
+        }
+    }
+}

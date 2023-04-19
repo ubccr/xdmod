@@ -566,7 +566,10 @@
                 "deprecated": true,
                 "description": "The metric explorer tab uses a controller style API for some operation. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
                 "security": [
-                    {}
+                    { "cookie_xdmod_token": [] },
+                    { "query_param_token": [] },
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
                 ],
                 "requestBody": {
                     "required": true,
