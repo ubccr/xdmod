@@ -446,25 +446,35 @@
             }
         },
         "securitySchemes": {
-            "cookie": {
+            "cookie_xdmod_token": {
                 "type": "apiKey",
                 "description": "API token via a cookie",
                 "name": "xdmod_token",
                 "in": "cookie"
             },
-            "token": {
+            "query_param_token": {
                 "type": "apiKey",
                 "description": "API token via a query parameter",
                 "name": "token",
                 "in": "query"
+            },
+            "http_bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "API token via HTTP header `Authorization: Bearer <token>`"
+            },
+            "query_param_bearer": {
+                "type": "apiKey",
+                "in": "query",
+                "name": "Bearer",
+                "description": "API token via a query parameter or POST field"
             }
         }
     },
-    "security": [{
-        "cookie": []
-    }, {
-        "token": []
-    }],
+    "security": [
+        { "cookie_xdmod_token": [] },
+        { "query_param_token": [] }
+    ],
     "paths": {
         "/controllers/user_interface.php": {
             "post": {
