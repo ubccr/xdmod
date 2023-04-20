@@ -1,0 +1,4 @@
+{
+    "$extends": "${INTEGRATION_ROOT}/base/error.json",
+    "message": "An error was encountered while attempting to process the requested authorization procedure."
+}

@@ -4,7 +4,7 @@ namespace IntegrationTests\Rest;
 
 use IntegrationTests\BaseTest;
 
-class WarehouseControllerTest extends BaseTest
+class WarehouseControllerProviderTest extends BaseTest
 {
     protected static $helpers = array();
 

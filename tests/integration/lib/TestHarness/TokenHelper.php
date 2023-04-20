@@ -3,261 +3,213 @@
 namespace TestHarness;
 
 use CCR\DB;
-use CCR\Json;
-use Exception;
+use Models\Services\Tokens;
 
 /**
  *
  */
 class TokenHelper
 {
+    private static $ENDPOINT = 'rest/users/current/api/token';
+    private static $TEST_GROUP = 'integration/rest/user/api_token';
+    private $testInstance;
+    private $testHelper;
+    private $role;
+    private $path;
+    private $verb;
+    private $params;
+    private $data;
+    private $expectedOutputs = array(
+        'empty_token' => array(),
+        'malformed_token' => array(),
+        'invalid_token' => array(),
+        'expired_token' => array()
+    );
 
-    /**
-     * @var XdmodTestHelper
-     */
-    private $helper;
-
-    /**
-     * @var TestFiles
-     */
-    private $testFiles;
-
-
-    /**
-     *
-     * @param XdmodTestHelper $helper
-     * @param TestFiles $testFiles
-     * @throws Exception
-     */
-    public function __construct($helper = null, $testFiles = null)
-    {
-        // if we aren't passed an XdmodTestHelper instance then create one ourselves.
-        if (!isset($helper)) {
-            $helper = new XdmodTestHelper();
-        }
-
-        $this->helper = $helper;
-
-        if (!isset($testFiles)) {
-            $testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
-        $this->testFiles = $testFiles;
-    }
-
-    /**
-     * Attempt to retrieve the metadata about the currently logged in users API Token. If any of the $expected* arguments
-     * are provided then the function will attempt to validate that they match what is returned by the endpoint.
-     *
-     * @param int $expectedHttpCode
-     * @param string $expectedContentType
-     * @param string $expectedSchemaFileName
-     * @return mixed
-     * @throws Exception
-     */
-    public function getAPIToken($expectedHttpCode = null, $expectedContentType = null, $expectedSchemaFileName = null)
-    {
-        return $this->makeRequest(
-            'Get API Token',
-            'rest/users/current/api/token',
-            'get',
-            null,
-            null,
-            $expectedHttpCode,
-            $expectedContentType,
-            $expectedSchemaFileName
-        );
-    }
-
-    /**
-     * Attempt to create a new API Token for the currently logged in user.
-     *
-     * If any of the $expected* arguments are included than they will be used to validate the information returned from
-     * the endpoint.
-     *
-     * @param $expectedHttpCode
-     * @param $expectedContentType
-     * @param $expectedSchemaName
-     * @return object containing the api token value
-     * @throws Exception
-     */
-    public function createAPIToken($expectedHttpCode = null, $expectedContentType = null, $expectedSchemaName = null)
-    {
-        return $this->makeRequest(
-            'Create API Token',
-            'rest/users/current/api/token',
-            'post',
-            null,
-            null,
-            $expectedHttpCode,
-            $expectedContentType,
-            $expectedSchemaName
-        );
-    }
-
-
-    /**
-     * Attempt to revoke the API token for the currently logged in user.
-     *
-     * If any of the $expected* arguments are included than they will be used to validate the information returned from
-     * the endpoint.
-     *
-     *
-     * @param int $expectedHttpCode
-     * @param string $expectedContentType
-     * @param string $expectedSchemaFileName
-     * @return mixed the response body
-     * @throws Exception
-     */
-    public function revokeAPIToken($expectedHttpCode = null, $expectedContentType = null, $expectedSchemaFileName = null)
-    {
-        return $this->makeRequest(
-            'Revoke API Token',
-            'rest/users/current/api/token',
-            'delete',
-            null,
-            null,
-            $expectedHttpCode,
-            $expectedContentType,
-            $expectedSchemaFileName
-        );
-    }
-
-    /**
-     * @param string $endPointDescription
-     * @param string $url
-     * @param string $verb
-     * @param array|null $params
-     * @param array|null $data
-     * @param int|null $expectedHttpCode
-     * @param string|null $expectedContentType
-     * @param string|null $expectedSchemaFileName
-     * @return mixed
-     * @throws Exception
-     */
-    public function makeRequest(
-        $endPointDescription,
-        $url,
+    public function __construct(
+        $testInstance,
+        $testHelper,
+        $role,
+        $path,
         $verb,
-        $params = null,
-        $data = null,
-        $expectedHttpCode = null,
-        $expectedContentType = null,
-        $expectedSchemaFileName = null
+        $params,
+        $data,
+        $endpointType,
+        $authenticationType
     ) {
-        $response = null;
-        switch ($verb) {
-            case 'get':
-            case 'put':
-                $response = $this->helper->$verb($url, $params);
-                break;
-            case 'post':
-            case 'delete':
-                $response = $this->helper->$verb($url, $params, $data);
-                break;
-        }
-        $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
-        $actualContentType = isset($response) ? $response[1]['content_type'] : null;
-        $actualResponseBody = isset($response) ? $response[0] : array();
-
-        if (isset($expectedHttpCode) ) {
-            // Note $expectedHttpCode was changed to support being an array due to el7 returning 400 where el8 returns
-            // 401.
-            if (is_numeric($expectedHttpCode) && $expectedHttpCode !== $actualHttpCode ||
-                is_array($expectedHttpCode) && !in_array($actualHttpCode, $expectedHttpCode)
-            ) {
-                throw new Exception(
-                    sprintf(
-                        'HTTP Code does not match. Expected: %s Received: %s',
-                        json_encode($expectedHttpCode),
-                        $actualHttpCode
+        $this->testInstance = $testInstance;
+        $this->testHelper = $testHelper;
+        $this->role = $role;
+        $this->path = $path;
+        $this->verb = $verb;
+        $this->params = $params;
+        $this->data = $data;
+        if ('token_optional' === $authenticationType) {
+            foreach (array_keys($this->expectedOutputs) as $type) {
+                if ('controller' === $endpointType) {
+                    $fileName = 'session_expired';
+                } elseif ('rest' === $endpointType) {
+                    $fileName = 'authentication_error';
+                }
+                $this->setExpectedErrorOutput($type, $fileName);
+            }
+        } elseif ('token_required' === $authenticationType) {
+            foreach (array(
+                'empty_token',
+                'malformed_token',
+                'invalid_token',
+                'expired_token'
+            ) as $type) {
+                $this->setExpectedErrorOutput(
+                    $type,
+                    $type,
+                    array(
+                        'WWW-Authenticate' => Tokens::HEADER_KEY
                     )
                 );
             }
         }
-        if (isset($expectedContentType) && $expectedContentType !== $actualContentType) {
-            print_r($response);
-            throw new Exception(
-                sprintf(
-                    'HTTP Content Type does not match. Expected: %s Received: %s',
-                    $expectedContentType,
-                    $actualContentType
-                )
+    }
+
+    public function runEndpointTests($callback)
+    {
+        if ('pub' === $this->role) {
+            self::runStandardEndpointTest('', 'empty_token');
+            self::runStandardEndpointTest('asdf', 'malformed_token');
+        } else {
+            $this->testHelper->authenticate($this->role);
+            $this->testHelper->delete(self::$ENDPOINT);
+            $response = $this->testHelper->post(self::$ENDPOINT, null, null);
+            $token = $response[0]['data']['token'];
+            $userId = substr($token, 0, strpos($token, Tokens::DELIMITER));
+            $this->testHelper->logout();
+            self::runStandardEndpointTest(
+                $userId . Tokens::DELIMITER . 'asdf',
+                'invalid_token'
             );
+            $callback($token);
+            self::expireToken($userId);
+            self::runStandardEndpointTest($token, 'expired_token');
+            $this->testHelper->authenticate($this->role);
+            $this->testHelper->delete(self::$ENDPOINT);
+            $this->testHelper->logout();
+            self::runStandardEndpointTest($token, 'invalid_token');
         }
+    }
 
-        $actual = json_decode(json_encode($actualResponseBody));
-
-        if (isset($expectedSchemaFileName)) {
-            $validator = new \JsonSchema\Validator();
-            $expectedSchema = Json::loadFile(
-                $this->testFiles->getFile('schema/integration', $expectedSchemaFileName, ''),
-                false
-            );
-
-            $validator->validate($actual, $expectedSchema);
-
-            if (!$validator->isValid()) {
-                throw new Exception(sprintf(
-                    "%s response is in an invalid format.\nExpected:%s\nReceived %s",
-                    $endPointDescription,
-                    json_encode($expectedSchema, JSON_PRETTY_PRINT),
-                    var_export($actual, true)
-                ));
+    public function runEndpointTest(
+        $token,
+        $outputFileName = null,
+        $httpCode = null,
+        $outputTestGroup = null,
+        $validationType = 'exact',
+        $expectedHeaders = null
+    ) {
+        if (null === $outputTestGroup) {
+            $outputTestGroup = self::$TEST_GROUP;
+        }
+        $defaultOutput = $this->expectedOutputs['empty_token'];
+        if (null === $outputFileName) {
+            $outputFileName = $defaultOutput['file_name'];
+        }
+        if (null === $httpCode) {
+            $httpCode = $defaultOutput['http_code'];
+        }
+        $responseBodies = array();
+        foreach (array('token_in_header', 'token_not_in_header') as $mode) {
+            if ('token_in_header' === $mode) {
+                $authHeader = $this->testHelper->getheader('Authorization');
+                $this->testHelper->addheader(
+                    'Authorization',
+                    Tokens::HEADER_KEY . ' ' . $token
+                );
             }
+            if (null === $this->params) {
+                $this->params = array();
+            }
+            $this->params[Tokens::HEADER_KEY] = $token;
+            $responseBodies[$mode] = $this->testInstance->makeRequest(
+                $this->testHelper,
+                $this->path,
+                $this->verb,
+                $this->params,
+                $this->data,
+                $httpCode,
+                'application/json',
+                $outputTestGroup,
+                $outputFileName,
+                $validationType,
+                $expectedHeaders
+            );
+            if ('token_in_header' === $mode) {
+                $this->testHelper->addheader('Authorization', $authHeader);
+            }
+            unset($this->params[Tokens::HEADER_KEY]);
         }
-
-        return $actual;
+        $this->testInstance->assertSame(
+            json_encode($responseBodies['token_in_header']),
+            json_encode($responseBodies['token_not_in_header']),
+            json_encode(
+                $responseBodies['token_in_header'],
+                JSON_PRETTY_PRINT
+            )
+            . "\n"
+            . json_encode(
+                $responseBodies['token_not_in_header'],
+                JSON_PRETTY_PRINT
+            )
+        );
+        return $responseBodies['token_in_header'];
     }
 
     /**
      * A helper function that will allow us to test the expiration of a token.
      *
-     * Note: We need to directly access the database as we do not have an endpoint for expiring
-     * a token.
+     * Note: We need to directly access the database as we do not have an
+     * endpoint for expiring a token.
      *
      * @param string $userId the userId whose token should be expired.
      *
      * @return bool true if the token was successfully expired.
      *
-     * @throws Exception if there is a problem parsing the the provided $rawToken.
-     * @throws Exception if there is a problem connecting to or executing the update statement against the database.
+     * @throws Exception if there is a problem parsing the the provided
+     *                   $rawToken.
+     * @throws Exception if there is a problem connecting to or executing the
+     *                   update statement against the database.
      */
-    public function expireToken($userId)
+    public static function expireToken($userId)
     {
         $db = DB::factory('database');
-        $query = 'UPDATE moddb.user_tokens SET expires_on = NOW() WHERE user_id = :user_id';
+        $query = 'UPDATE moddb.user_tokens SET expires_on = SUBDATE(NOW(), 1)'
+            . ' WHERE user_id = :user_id';
         $params = array(':user_id' => $userId);
         return $db->execute($query, $params) === 1;
     }
 
-
-    /**
-     * Calls `authenticate($user)` on this TokenHelper instances XdmodTestHelper.
-     *
-     * @param string $user
-     * @return void
-     * @throws Exception
-     */
-    public function authenticate($user)
-    {
-        $this->helper->authenticate($user);
+    private function setExpectedErrorOutput(
+        $type,
+        $fileName = null,
+        $expectedHeaders = null
+    ) {
+        if (null === $fileName) {
+            $fileName = $type;
+        }
+        $this->expectedOutputs[$type] = array(
+            'http_code' => 401,
+            'file_name' => $fileName,
+            'expected_headers' => $expectedHeaders
+        );
     }
 
-    /**
-     * Calls `logout` on this TokenHelper instances XdmodTestHelper.
-     * @return void
-     */
-    public function logout()
+    private function runStandardEndpointTest($token, $type)
     {
-        $this->helper->logout();
-    }
-
-    /**
-     * Retrieve the XdmodTestHelper used by the TokenHelper.
-     * @return XdmodTestHelper
-     */
-    public function getHelper()
-    {
-        return $this->helper;
+        $this->runEndpointTest(
+            $token,
+            $this->expectedOutputs[$type]['file_name'],
+            $this->expectedOutputs[$type]['http_code'],
+            self::$TEST_GROUP,
+            'exact',
+            $this->expectedOutputs[$type]['expected_headers']
+        );
     }
 }

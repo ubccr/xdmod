@@ -692,7 +692,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         return $retval;
 
-    }  // formatLogMessage()
+    }
 
     /**
      * Checks that the `$[start|end]Date` values are valid ( `Y-m-d` ) dates and that `$startDate`
@@ -755,18 +755,24 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         $authorizationHeader = $request->headers->get('Authorization');
         if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
             $rawToken = $request->get(Tokens::HEADER_KEY);
-            if (empty($rawToken)) {
-                throw new BadRequestHttpException('No Token Provided.');
-            }
         } else {
             $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
+        }
+        if (empty($rawToken)) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'No Token Provided.'
+            );
         }
 
 
         // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
         $delimPosition = strpos($rawToken, Tokens::DELIMITER);
         if ($delimPosition === false) {
-            throw new BadRequestHttpException('Invalid token format');
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'Invalid token format.'
+            );
         }
 
         $userId = substr($rawToken, 0, $delimPosition);
