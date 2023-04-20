@@ -1,10 +1,10 @@
 title
-"Core Hours: Total"
+"CPU Hours: Total"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Summary,"Core Hours: Total"
+Summary,"CPU Hours: Total"
 Screwdriver,1754.1433
 ---------
