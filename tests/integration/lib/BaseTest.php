@@ -53,7 +53,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $expectedContentType = null,
         $expectedFileGroup = null,
         $expectedFileName = null,
-        $validationType = null
+        $validationType = null,
+        $expectedHeaders = null
     ) {
         $response = null;
         switch ($verb) {
@@ -103,6 +104,17 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $validationType,
                 $message
             );
+        }
+
+        if (isset($expectedHeaders)) {
+            foreach ($expectedHeaders as $key => $value) {
+                $this->assertArrayHasKey($key, $response[2], $message);
+                $this->assertSame(
+                    $value,
+                    trim($response[2][$key]),
+                    $message
+                );
+            }
         }
 
         return $actual;

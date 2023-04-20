@@ -11,6 +11,7 @@ use Models\Services\Tokens;
 class TokenHelper
 {
     private static $ENDPOINT = 'rest/users/current/api/token';
+    private static $TEST_GROUP = 'integration/rest/user/api_token';
     private $testInstance;
     private $testHelper;
     private $role;
@@ -22,8 +23,7 @@ class TokenHelper
         'empty_token' => array(),
         'malformed_token' => array(),
         'invalid_token' => array(),
-        'expired_token' => array(),
-        'deleted_token' => array()
+        'expired_token' => array()
     );
 
     public function __construct(
@@ -51,14 +51,23 @@ class TokenHelper
                 } elseif ('rest' === $endpointType) {
                     $fileName = 'authentication_error';
                 }
-                $this->setExpectedErrorOutput($type, 401, $fileName);
+                $this->setExpectedErrorOutput($type, $fileName);
             }
         } elseif ('token_required' === $authenticationType) {
-            $this->setExpectedErrorOutput('empty_token', 400);
-            $this->setExpectedErrorOutput('malformed_token', 400);
-            $this->setExpectedErrorOutput('invalid_token', 403);
-            $this->setExpectedErrorOutput('expired_token', 400);
-            $this->setExpectedErrorOutput('deleted_token', 400);
+            foreach (array(
+                'empty_token',
+                'malformed_token',
+                'invalid_token',
+                'expired_token'
+            ) as $type) {
+                $this->setExpectedErrorOutput(
+                    $type,
+                    $type,
+                    array(
+                        'WWW-Authenticate' => Tokens::HEADER_KEY
+                    )
+                );
+            }
         }
     }
 
@@ -84,7 +93,7 @@ class TokenHelper
             $this->testHelper->authenticate($this->role);
             $this->testHelper->delete(self::$ENDPOINT);
             $this->testHelper->logout();
-            self::runStandardEndpointTest($token, 'deleted_token');
+            self::runStandardEndpointTest($token, 'invalid_token');
         }
     }
 
@@ -92,9 +101,13 @@ class TokenHelper
         $token,
         $outputFileName = null,
         $httpCode = null,
-        $outputTestGroup = 'integration/rest/user/api_token',
-        $validationType = 'exact'
+        $outputTestGroup = null,
+        $validationType = 'exact',
+        $expectedHeaders = null
     ) {
+        if (null === $outputTestGroup) {
+            $outputTestGroup = self::$TEST_GROUP;
+        }
         $defaultOutput = $this->expectedOutputs['empty_token'];
         if (null === $outputFileName) {
             $outputFileName = $defaultOutput['file_name'];
@@ -121,7 +134,8 @@ class TokenHelper
             'application/json',
             $outputTestGroup,
             $outputFileName,
-            $validationType
+            $validationType,
+            $expectedHeaders
         );
         unset($this->params[Tokens::HEADER_KEY]);
         $this->testHelper->addheader('Authorization', $authHeader);
@@ -152,14 +166,18 @@ class TokenHelper
         return $db->execute($query, $params) === 1;
     }
 
-    private function setExpectedErrorOutput($type, $httpCode, $fileName = null)
-    {
+    private function setExpectedErrorOutput(
+        $type,
+        $fileName = null,
+        $expectedHeaders = null
+    ) {
         if (null === $fileName) {
             $fileName = $type;
         }
         $this->expectedOutputs[$type] = array(
-            'http_code' => $httpCode,
-            'file_name' => $fileName
+            'http_code' => 401,
+            'file_name' => $fileName,
+            'expected_headers' => $expectedHeaders
         );
     }
 
@@ -168,7 +186,10 @@ class TokenHelper
         $this->runEndpointTest(
             $token,
             $this->expectedOutputs[$type]['file_name'],
-            $this->expectedOutputs[$type]['http_code']
+            $this->expectedOutputs[$type]['http_code'],
+            self::$TEST_GROUP,
+            'exact',
+            $this->expectedOutputs[$type]['expected_headers']
         );
     }
 }
