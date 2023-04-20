@@ -61,12 +61,12 @@ class UserControllerProviderTest extends BaseUserAdminTest
         } else {
             $this->helper->authenticate($role);
             $this->helper->delete('rest/users/current/api/token');
-            $this->makeTokenRequest('get', 200, 'get_failure');
+            $this->makeTokenRequest('get', 404, 'not_found');
             $this->makeTokenRequest('create', 200, 'create_success', 'schema');
-            $this->makeTokenRequest('create', 200, 'create_failure');
+            $this->makeTokenRequest('create', 409, 'create_failure');
             $this->makeTokenRequest('get', 200, 'get_success', 'schema');
             $this->makeTokenRequest('revoke', 200, 'revoke_success');
-            $this->makeTokenRequest('revoke', 200, 'revoke_failure');
+            $this->makeTokenRequest('revoke', 404, 'not_found');
             $this->helper->logout();
         }
     }

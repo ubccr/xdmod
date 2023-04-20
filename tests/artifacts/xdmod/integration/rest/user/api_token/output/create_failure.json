@@ -1,4 +1,4 @@
 {
-    "success": false,
-    "message": "Unable to create a new token at this time."
+    "$extends": "${INTEGRATION_ROOT}/base/error.json",
+    "message": "Token already exists."
 }
