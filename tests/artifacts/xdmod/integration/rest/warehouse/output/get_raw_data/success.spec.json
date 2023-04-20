@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "success": { "$ref": "#/$defs/success" },
+        "fields": { "$ref": "#/$defs/fields" },
+        "data": { "$ref": "#/$defs/data" }
+    },
+    "required": [ "success", "fields", "data" ],
+    "additionalProperties": false,
+    "$defs": {
+        "success": {
+            "type": "boolean",
+            "enum": [ true ]
+        },
+        "fields": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true
+        },
+        "data": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/data_row" }
+        },
+        "data_row": {
+            "type": "array",
+            "items": { "type": "string" }
+        }
+    }
+}

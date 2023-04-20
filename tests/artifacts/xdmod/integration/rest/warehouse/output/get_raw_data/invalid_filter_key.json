@@ -1,0 +1,4 @@
+{
+    "$extends": "${INTEGRATION_ROOT}/base/error104.json",
+    "message": "Invalid filter key 'asdf'."
+}

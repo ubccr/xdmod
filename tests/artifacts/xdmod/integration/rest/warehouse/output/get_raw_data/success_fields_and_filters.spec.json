@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "allOf": [
+        { "$ref": "success.spec.json" },
+        {
+            "properties": {
+                "fields": {
+                    "items": {
+                        "enum": [ "Nodes", "Wall Time" ]
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "data": {
+                    "items": {
+                        "minItems": 2,
+                        "maxItems": 2
+                    },
+                    "minItems": 29,
+                    "maxItems": 29
+                }
+            }
+        }
+    ]
+}
