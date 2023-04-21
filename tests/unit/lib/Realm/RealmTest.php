@@ -134,7 +134,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->getStatisticNames(); // Default sort order is SORT_ON_ORDER
         $expected = array(
             'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
-            'core_time' => 'Core Hours: Total',
+            'core_time' => 'CPU Hours: Total',
             'alternate_statistic_class' => 'Alternate Statistic Class Example'
         );
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_ORDER)");
@@ -142,7 +142,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $generated = $realm->getStatisticNames(Realm::SORT_ON_SHORT_ID);
         $expected = array(
             'alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'core_time' => 'Core Hours: Total',
+            'core_time' => 'CPU Hours: Total',
             'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
         );
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_SHORT_ID)");
@@ -151,7 +151,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
             'alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'core_time' => 'Core Hours: Total'
+            'core_time' => 'CPU Hours: Total'
         );
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_NAME)");
     }
