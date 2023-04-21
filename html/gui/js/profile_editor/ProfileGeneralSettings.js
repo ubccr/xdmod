@@ -302,7 +302,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             frame: true,
             title: 'User Information',
             bodyStyle: 'padding:5px 5px 0',
-            width: 350,
             defaults: {
                 width: 200
             },
@@ -330,7 +329,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             frame: true,
             title: 'Update Password',
             bodyStyle: 'padding:5px 5px 0',
-            width: 350,
             defaults: {
                 width: 200
             },
@@ -353,7 +351,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             labelWidth: 95,
             frame: false,
             bodyStyle: 'padding:0px 5px',
-            width: 350,
             layout: 'form',
             items: [{
                 xtype: 'tbtext',
@@ -372,7 +369,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             labelWidth: 95,
             frame: false,
             bodyStyle: 'padding:0px 5px',
-            width: 350,
             layout: 'form',
             items: [{
                 xtype: 'tbtext',
