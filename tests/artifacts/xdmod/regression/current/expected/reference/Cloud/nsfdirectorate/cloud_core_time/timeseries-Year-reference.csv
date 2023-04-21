@@ -1,10 +1,10 @@
 title
-"Core Hours: Total: by Decanal Unit"
+"CPU Hours: Total: by Decanal Unit"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Year,"[Engineering] Core Hours: Total"
+Year,"[Engineering] CPU Hours: Total"
 2018,1754.1433
 ---------

@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by PI Group"
+"CPU Hours: Total: by PI Group"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Mechanics and Materials] Core Hours: Total"
+Day,"[Mechanics and Materials] CPU Hours: Total"
 2018-04-18,52.1172
 2018-04-19,138.1142
 2018-04-20,97.0664

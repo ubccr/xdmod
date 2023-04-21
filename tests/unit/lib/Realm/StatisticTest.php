@@ -93,7 +93,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
         }
         $expected = array(
             'alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'core_time' => 'Core Hours: Total',
+            'core_time' => 'CPU Hours: Total',
             'cloud_num_sessions_running' => sprintf('%s Number of Active Sessions', ORGANIZATION_NAME)
         );
         $this->assertEquals($expected, $generated, "getStatisticObjects('Cloud'), SORT_ON_SHORT_ID");
