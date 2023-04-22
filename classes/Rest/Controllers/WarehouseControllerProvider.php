@@ -1844,7 +1844,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 
-    private function encodeFloatArray(array $in) {
+    private function encodeFloatArray(array $in)
+    {
         $out = array();
         foreach ($in as $key => $value) {
             if (is_float($value) && is_nan($value)) {
@@ -2190,7 +2191,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return new \UserStorage($user, $container);
     }
 
-    public function getRawData(Request $request, Application $app) {
+    public function getRawData(Request $request, Application $app)
+    {
         $user = $this->authenticateToken($request);
         $params = $this->validateRawDataParams($request, $user);
         $query = $this->getRawDataQuery($params);
@@ -2220,7 +2222,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         ));
     }
 
-    public function getRawDataLimit(Request $request, Application $app) {
+    public function getRawDataLimit(Request $request, Application $app)
+    {
         $this->authenticateToken($request);
         $limit = $this->getConfiguredRawDataLimit();
         return $app->json(array(
@@ -2229,7 +2232,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         ));
     }
 
-    private function validateRawDataParams($request, $user) {
+    private function validateRawDataParams($request, $user)
+    {
         $params = array();
         list(
             $params['start_date'], $params['end_date']
@@ -2251,7 +2255,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $params;
     }
 
-    private function getRawDataQuery($params) {
+    private function getRawDataQuery($params)
+    {
         $realmManager = new RealmManager();
         $className = $realmManager->getRawDataQueryClass($params['realm']);
         $query = new $className(
@@ -2270,7 +2275,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $query;
     }
 
-    private function getRawDataLogger() {
+    private function getRawDataLogger()
+    {
         // TODO — where to actually log?
         return Log::factory(
             'data-warehouse-raw-data',
@@ -2283,14 +2289,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 
-    private function getConfiguredRawDataLimit() {
+    private function getConfiguredRawDataLimit()
+    {
         return intval(\xd_utilities\getConfiguration(
             'datawarehouse',
             'rest_raw_row_limit'
         ));
     }
 
-    private function parseRawDataBatchDataset($dataset) {
+    private function parseRawDataBatchDataset($dataset)
+    {
         $data = array();
         foreach ($dataset as $record) {
             $data[] = $record;
@@ -2298,7 +2306,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $data;
     }
 
-    private function validateRawDataDateParams($request) {
+    private function validateRawDataDateParams($request)
+    {
         $startDate = $this->getDateFromISO8601Param(
             $request,
             'start_date',
@@ -2317,7 +2326,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return array($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
     }
 
-    private function validateRawDataFieldsParam($request) {
+    private function validateRawDataFieldsParam($request)
+    {
         $fields = null;
         $fieldsStr = $this->getStringParam($request, 'fields', false);
         if (!is_null($fieldsStr)) {
@@ -2326,7 +2336,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $fields;
     }
 
-    private function validateRawDataFiltersParams($request, $queryDescripters) {
+    private function validateRawDataFiltersParams($request, $queryDescripters)
+    {
         $filters = null;
         $filtersParam = $request->get('filters');
         if (!is_null($filtersParam)) {
@@ -2342,7 +2353,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $filters;
     }
 
-    private function setRawDataQueryFilters($query, $params) {
+    private function setRawDataQueryFilters($query, $params)
+    {
         if (count($params['filters']) > 0) {
             $f = new stdClass();
             $f->{'data'} = array();
