@@ -2195,10 +2195,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $params = $this->validateRawDataParams($request, $user);
         $query = $this->getRawDataQuery($params);
         $logger = $this->getRawDataLogger();
-        $limit = intval(\xd_utilities\getConfiguration(
-            'datawarehouse',
-            'rest_raw_row_limit'
-        ));
+        $limit = $this->getConfiguredRawDataLimit();
         try {
             $dataset = new BatchDataset(
                 $query,
@@ -2225,10 +2222,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     public function getRawDataLimit(Request $request, Application $app) {
         $this->authenticateToken($request);
-        $limit = intval(\xd_utilities\getConfiguration(
-            'datawarehouse',
-            'rest_raw_row_limit'
-        ));
+        $limit = $this->getConfiguredRawDataLimit();
         return $app->json(array(
             'success' => true,
             'data' => $limit
@@ -2287,6 +2281,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 'mail' => false
             )
         );
+    }
+
+    private function getConfiguredRawDataLimit() {
+        return intval(\xd_utilities\getConfiguration(
+            'datawarehouse',
+            'rest_raw_row_limit'
+        ));
     }
 
     private function parseRawDataBatchDataset($dataset) {
