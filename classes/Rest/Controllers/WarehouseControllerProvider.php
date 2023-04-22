@@ -2319,7 +2319,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     private function validateRawDataFieldsParam($request) {
         $fields = null;
         $fieldsStr = $this->getStringParam($request, 'fields', false);
-        if ($fieldsStr !== null) {
+        if (!is_null($fieldsStr)) {
             $fields = explode(',', $fieldsStr);
         }
         return $fields;
@@ -2328,7 +2328,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     private function validateRawDataFiltersParams($request, $queryDescripters) {
         $filters = null;
         $filtersParam = $request->get('filters');
-        if ($filtersParam !== null) {
+        if (!is_null($filtersParam)) {
             $filters = array();
             foreach ($filtersParam as $filterKey => $filterValuesStr) {
                 $filters[$filterKey] = $this->validateRawDataFilterParam(
