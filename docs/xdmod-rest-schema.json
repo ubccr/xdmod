@@ -472,7 +472,10 @@
     "paths": {
         "/controllers/user_interface.php": {
             "post": {
-                "tags": [ "Usage Explorer" ],
+                "tags": [
+                    "Usage Explorer",
+                    "Data Analytics Framework"
+                ],
                 "summary": "Usage Tab Controller",
                 "deprecated": true,
                 "description": "The usage tab uses a controller style API. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
@@ -560,7 +563,10 @@
         },
         "/controllers/metric_explorer.php": {
             "post": {
-                "tags": [ "Metric Explorer" ],
+                "tags": [
+                    "Metric Explorer",
+                    "Data Analytics Framework"
+                ],
                 "summary": "Metric Explorer Tab Controller",
                 "deprecated": true,
                 "description": "The metric explorer tab uses a controller style API for some operation. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
