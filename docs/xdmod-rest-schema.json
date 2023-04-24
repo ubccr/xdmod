@@ -92,8 +92,7 @@
                 "properties": {
                   "operation": {
                     "type": "string",
-                    "const": "get_data",
-                    "description": "`get_data`"
+                    "enum": [ "get_data" ]
                   },
                   "aggregation_unit": {
                     "type": "string",
@@ -101,8 +100,7 @@
                   },
                   "controller_module": {
                     "type": "string",
-                    "const": "metric_explorer",
-                    "description": "`metric_explorer`"
+                    "enum": [ "metric_explorer" ]
                   },
                   "data_series": {
                     "type": "string"
@@ -228,13 +226,11 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "const": "get_charts",
-                        "description": "`get_charts`"
+                        "enum": [ "get_charts" ]
                     },
                     "controller_module": {
                         "type": "string",
-                        "const": "user_interface",
-                        "description": "`user_interface`"
+                        "enum": [ "user_interface" ]
                     },
                     "public_user": {
                         "type": "string",
@@ -376,8 +372,7 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "const": "get_menus",
-                        "description": "`get_menus`"
+                        "enum": [ "get_menus" ]
                     },
                     "node": {
                         "type": "string",
@@ -411,8 +406,7 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "const": "get_tabs",
-                        "description": "`get_tabs`"
+                        "enum": [ "get_tabs" ]
                     },
                     "public_user": {
                         "type": "boolean",
@@ -695,6 +689,11 @@
                             }
                         }
                     }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -719,8 +718,7 @@
                                         "properties": {
                                             "operation": {
                                                 "type": "string",
-                                                "const": "get_dw_descripter",
-                                                "description": "`get_dw_descripter`"
+                                                "enum": [ "get_dw_descripter" ]
                                             }
                                         },
                                         "required": ["operation"],
@@ -739,6 +737,11 @@
                                 }
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
                     }
                 }
             }
@@ -1141,7 +1144,7 @@
                     "required": true,
                     "description": "The username of the local XDMoD user account.",
                     "schema": {
-                        "type": "text"
+                        "type": "string"
                     }
                 }, {
                     "name": "password",
@@ -1149,7 +1152,7 @@
                     "required": true,
                     "description": "The password for the local XDMoD user account.",
                     "schema": {
-                        "type": "text"
+                        "type": "string"
                     }
                 }],
                 "responses": {
@@ -1236,7 +1239,10 @@
                     "name": "returnTo",
                     "description": "The location to redirect to after authentication is completed.",
                     "in": "query",
-                    "required": true
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
                 }],
                 "responses": {
                     "200": {
@@ -1723,7 +1729,7 @@
                     "required": true,
                     "description": "The identifier for the resource that has job performance data.",
                     "schema": {
-                        "type": "int"
+                        "type": "integer"
                     }
                 }, {
                     "name": "db_id",
@@ -1893,10 +1899,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
@@ -1974,10 +1982,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": [
@@ -2066,10 +2076,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": [
@@ -2190,7 +2202,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }],
                 "responses": {
                     "200": {
@@ -2222,7 +2234,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }, {
                     "name": "data",
                     "in": "query",
@@ -2262,7 +2274,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }, {
                     "name": "data",
                     "in": "query",
@@ -2302,7 +2314,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }],
                 "responses": {
                     "200": {
@@ -2541,7 +2553,7 @@
                 "description": "",
                 "operationId": "get-warehouse-dimensions-{dimension}-name",
                 "parameters": [{
-                    "$ref": "#components/parameters/dimension"
+                    "$ref": "#/components/parameters/dimension"
                 }],
                 "responses": {
                     "200": {
@@ -2565,9 +2577,20 @@
                 "summary": "",
                 "description": "",
                 "operationId": "get-warehouse-dimensions-{dimension}-values-{valueId}-name",
-                "parameters": [{
-                    "$ref": "#components/parameters/dimension"
-                }],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/dimension"
+                    },
+                    {
+                        "name": "valueId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The value of the corresponding dimension",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -3192,7 +3215,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "data": {
                                             "type": "array",
@@ -3297,7 +3320,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "message": {
                                             "type": "string"
@@ -3364,7 +3387,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "data": {
                                             "type": "array",
@@ -3389,17 +3412,11 @@
                                                     },
                                                     "export_succeeded": {
                                                         "description": "Did the export succeed?",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "integer",
-                                                                "format": "int32",
-                                                                "minimum": 0,
-                                                                "maximum": 1
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "minimum": 0,
+                                                        "maximum": 1
                                                     },
                                                     "export_expired": {
                                                         "description": "Is the export expired?",
@@ -3410,27 +3427,15 @@
                                                     },
                                                     "export_expires_datetime": {
                                                         "description": "Data export expiration date",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "string",
-                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                                                     },
                                                     "export_created_datetime": {
                                                         "description": "Data export creation date",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "string",
-                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                                                     },
                                                     "export_file_format": {
                                                         "description": "Data export file type",
@@ -3446,15 +3451,9 @@
                                                     },
                                                     "downloaded_datetime": {
                                                         "description": "Data export (first) download date",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "string",
-                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                                                     },
                                                     "state": {
                                                         "description": "Data export state",
@@ -3523,7 +3522,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "message": {
                                             "type": "string"
@@ -3664,7 +3663,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "message": {
                                             "type": "string"
