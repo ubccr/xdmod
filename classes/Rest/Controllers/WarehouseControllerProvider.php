@@ -2277,12 +2277,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function getRawDataLogger()
     {
-        // TODO — where to actually log?
         return Log::factory(
-            'data-warehouse-raw-data',
+            'data-warehouse-raw-data-rest',
             array(
                 'console' => false,
-                'db' => false,
                 'file' => false,
                 'mail' => false
             )
