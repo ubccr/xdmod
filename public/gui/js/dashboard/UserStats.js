@@ -78,15 +78,15 @@ XDMoD.UVGrid = Ext.extend(Ext.grid.GridPanel,  {
       // ---------------------------------
 
       self.prepCSV = function() {
-
-         CCR.invokePost('/internal_dashboard/users/visits/export', {
-            operation: 'enum_user_visits_export',
-            timeframe: activeTimeframe,
-            user_types: activeUserTypes.join(',')
-         }, {
-            checkDashboardUser: true
-         });
-
+          CCR.submitHiddenFormImmediately(
+              '/internal_dashboard/users/visits/export',
+              'POST',
+              {
+                  operation: 'enum_user_visits_export',
+                  timeframe: activeTimeframe,
+                  user_types: activeUserTypes.join(',')
+              }
+          );
       };//self.prepCSV
 
       // ---------------------------------
