@@ -1,8 +1,13 @@
 <?php
 
-namespace Models\Services;
+namespace Access\Security\Helpers;
 
+use CCR\DB;
+use DateTime;
 use Exception;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
@@ -24,6 +29,16 @@ class Tokens
     const DELIMITER = '.';
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
      * XDUser object will be returned for the provided $userId. If not, an exception will be thrown.
      *
@@ -37,9 +52,11 @@ class Tokens
      *                                   if the stored token for $userId has expired, or
      *                                   if the provided $token doesn't match the stored hash.
      */
-    public static function authenticate($userId, $password)
+    public function authenticate($userId, string $password): ?XDUser
     {
-        $db = \CCR\DB::factory('database');
+        $this->logger->info(sprintf('Beginning Authentication for %s', $userId));
+
+        $db = DB::factory('database');
         $query = <<<SQL
         SELECT
             ut.user_id,
@@ -53,7 +70,8 @@ SQL;
         $row = $db->query($query, array(':user_id' => $userId));
 
         if (count($row) === 0) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
+            $this->logger->debug('User (%s) does not have an active token.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.')
         }
 
         $expectedToken = $row[0]['token'];
@@ -61,14 +79,16 @@ SQL;
         $dbUserId = $row[0]['user_id'];
 
         // Check that expected token isn't expired.
-        $now = new \DateTime();
-        $expires = new \DateTime($expiresOn);
+        $now = new DateTime();
+        $expires = new DateTime($expiresOn);
         if ($expires < $now) {
+            $this->logger->debug(sprintf('User\'s (%s) token is expired.'));
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The API Token has expired.');
         }
 
         // finally check that the provided token matches it's stored hash.
         if (!password_verify($password, $expectedToken)) {
+            $this->logger->debug(sprintf('User\'s (%s) token is invalid.', $userId));
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
 
@@ -83,8 +103,9 @@ SQL;
      * @return XDUser|null if the authentication is successful then an XDUser instance for the authenticated user will
      * be returned, if the authentication is not successful then null will be returned.
      */
-    public static function authenticateToken()
+    public function authenticateToken(Request $request): ?XDUser
     {
+        $this->logger->info('Beginning Token Authentication');
 
         $rawToken = self::getRawToken();
         if (empty($rawToken)) {
@@ -119,13 +140,14 @@ SQL;
      *
      * @return null|string returns the api token if found else it returns null.
      */
-    private static function getRawToken()
+    private function getRawToken(Request $request): ?string
     {
         // Try to find the token in the `Authorization` header.
         $headers = getallheaders();
         if (!empty($headers['Authorization'])) {
             $authorizationHeader = $headers['Authorization'];
             if (is_string($authorizationHeader) && strpos($authorizationHeader, Tokens::HEADER_KEY) !== false) {
+                $this->logger->info('Valid token found in Header');
                 // The format for including the token in the header is slightly different then when included as a get or
                 // post parameter. Here the value will be in the form: `Bearer <token>`
                 return substr(

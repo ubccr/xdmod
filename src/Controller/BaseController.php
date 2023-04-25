@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Access\Controller;
 
-use DateTime;
+use Access\Security\Helpers\Tokens;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+
 use Twig\Environment;
 use XDUser;
 
@@ -38,13 +39,20 @@ class BaseController extends AbstractController
     protected $twig;
 
     /**
+     * @var Tokens
+     */
+    protected $tokenHelper;
+
+    /**
      * @param LoggerInterface $logger
      * @param Environment $twig
+     * @param Tokens $tokenHelper
      */
-    public function __construct(LoggerInterface $logger, Environment $twig)
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper)
     {
         $this->logger = $logger;
         $this->twig = $twig;
+        $this->tokenHelper = $tokenHelper;
     }
 
 
@@ -478,7 +486,7 @@ class BaseController extends AbstractController
             FILTER_CALLBACK,
             [
                 'options' => function ($value) {
-                    $value_dt = DateTime::createFromFormat('U', $value);
+                    $value_dt = \DateTime::createFromFormat('U', $value);
                     if ($value_dt === false) {
                         return null;
                     }
@@ -525,7 +533,7 @@ class BaseController extends AbstractController
             FILTER_CALLBACK,
             [
                 'options' => function ($value) {
-                    $value_dt = DateTime::createFromFormat('Y-m-d', $value);
+                    $value_dt = \DateTime::createFromFormat('Y-m-d', $value);
                     if ($value_dt === false) {
                         return null;
                     }
