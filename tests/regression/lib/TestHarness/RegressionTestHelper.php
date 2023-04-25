@@ -207,7 +207,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * @see XdmodTestHelper::authenticate()
      * @param string $userrole The user's role.
      */
-    public function authenticate($userrole = null)
+    public function authenticate($userrole = null, $verbose = false)
     {
         if ($userrole === null) {
             $userrole = self::getEnvUserrole();
@@ -215,7 +215,7 @@ class RegressionTestHelper extends XdmodTestHelper
 
         // The public user cannot authenticate.
         if ($userrole !== 'public') {
-            parent::authenticate($userrole);
+            parent::authenticate($userrole, $verbose);
         }
     }
 
