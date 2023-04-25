@@ -27,6 +27,7 @@ security:
             switch_user: true
             logout:
                 path: xdmod_logout
+            access_denied_handler: Access\Security\AccessDeniedHandler
         api:
             lazy: true
             provider: all_users

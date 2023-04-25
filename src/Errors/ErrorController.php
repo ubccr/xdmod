@@ -5,6 +5,7 @@ namespace Access\Errors;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
+use function xd_response\buildError;
 
 /**
  * This controller will turn all unhandled exceptions into json responses that follow the XDMoD format.
@@ -26,10 +27,7 @@ class ErrorController extends \Symfony\Component\HttpKernel\Controller\ErrorCont
             $headers = $exception->getHeaders();
         }
 
-        return new JsonResponse([
-            'success' => false,
-            'message' => $exception->getMessage()
-        ], 200, $headers);
+        return new JsonResponse(buildError($exception), 200, $headers);
     }
 
 }
