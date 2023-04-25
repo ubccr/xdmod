@@ -8,12 +8,13 @@ namespace ComponentTests\ETL;
 use ETL\Ingestor\CloudInstanceTypeStateIngestor;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Cloud Resource Specifications State FSM
  */
 
-class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudInstanceTypeStateIngestorTest extends TestCase
 {
     private $instance_type_state_first_record = array(
         "resource_id" => 8,
@@ -222,8 +223,9 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
 
     private $fsm;
 
-    public function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
+        parent::__construct($name, $data, $dataName);
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
         // This needs to be explicitly defined here so PHP 5.4 doesn't complain
@@ -231,7 +233,6 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit_Framework_TestCase
 
         $options = new IngestorOptions($this->options_array);
         $conf = EtlConfiguration::factory($configFile);
-
         $this->fsm = new CloudInstanceTypeStateIngestor($options, $conf);
     }
 
