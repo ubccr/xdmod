@@ -410,7 +410,10 @@ class MetricExplorerController extends BaseController
         $this->logger->warning('User retrieved ', [$user->getUserIdentifier()]);
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
-        $offset = $this->getIntParam($request, 'start', false, 0);
+        $offset = $this->getStringParam($request ,'start');
+        if (empty($offset)) {
+            $offset = 0;
+        }
         $limit = $this->getIntParam($request, 'limit');
         $searchText = $this->getStringParam($request, 'search_text');
 
