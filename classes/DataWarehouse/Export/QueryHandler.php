@@ -127,9 +127,8 @@ class QueryHandler extends Loggable
                 'export_file_format' => $format
             );
 
-            $this->logger->info([
+            $this->logger->info('Creating data warehouse export record', [
                 'module' => self::LOG_MODULE,
-                'message' => 'Creating data warehouse export record',
                 'event' => 'INSERT',
                 'table' => 'moddb.batch_export_requests',
                 'user_id' => $userId,
@@ -144,9 +143,8 @@ class QueryHandler extends Loggable
             return $id;
         } catch (Exception $e) {
             $this->dbh->rollBack();
-            $this->logger->err([
+            $this->logger->err('Record creation failed: ' . $e->getMessage(), [
                 'module' => self::LOG_MODULE,
-                'message' => 'Record creation failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
             ]);
             throw $e;
@@ -192,9 +190,8 @@ class QueryHandler extends Loggable
                 SET export_succeeded = 0 " .
                 $this->whereSubmitted .
                 "AND id = :id";
-        $this->logger->info([
+        $this->logger->info('Transitioning data warehouse export record to failed state', [
             'module' => self::LOG_MODULE,
-            'message' => 'Transitioning data warehouse export record to failed state',
             'event' => 'UPDATE_STATE_TO_FAILED',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
@@ -231,9 +228,8 @@ class QueryHandler extends Loggable
             'id' => $id
         );
 
-        $this->logger->info([
+        $this->logger->info('Transitioning data warehouse export record to available state', [
             'module' => self::LOG_MODULE,
-            'message' => 'Transitioning data warehouse export record to available state',
             'event' => 'UPDATE_STATE_TO_AVAILABLE',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
@@ -252,9 +248,8 @@ class QueryHandler extends Loggable
     {
         $sql = "UPDATE batch_export_requests SET export_expired = 1 " .
                 $this->whereAvailable . 'AND id = :id';
-        $this->logger->info([
+        $this->logger->info('Transitioning data warehouse export record to expired state',[
             'module' => self::LOG_MODULE,
-            'message' => 'Transitioning data warehouse export record to expired state',
             'event' => 'UPDATE_STATE_TO_EXPIRED',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
@@ -402,9 +397,8 @@ class QueryHandler extends Loggable
     public function deleteRequest($id, $userId)
     {
         $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
-        $this->logger->info([
+        $this->logger->info( 'Deleting data warehouse export record',[
             'module' => self::LOG_MODULE,
-            'message' => 'Deleting data warehouse export record',
             'event' => 'UPDATE_STATE_TO_DELETED',
             'table' => 'moddb.batch_export_requests',
             'id' => $id,
@@ -422,9 +416,8 @@ class QueryHandler extends Loggable
     public function updateDownloadedDatetime($id)
     {
         $sql = 'UPDATE batch_export_requests SET downloaded_datetime = NOW() WHERE id = :request_id';
-        $this->logger->info([
+        $this->logger->info('Updating data warehouse export record downloaded datetime', [
             'module' => self::LOG_MODULE,
-            'message' => 'Updating data warehouse export record downloaded datetime',
             'event' => 'UPDATE_DOWNLOADED_DATETIME',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
