@@ -3,7 +3,7 @@
   "http_code": 200,
   "response": {
     "success": false,
-    "message": "A chart identifier must be specified",
+    "message": "Invalid value specified for 'chart_id'.",
     "count": 0,
     "total": 0,
     "totalCount": 0,
