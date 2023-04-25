@@ -72,7 +72,7 @@ class ReportBuilderTest extends BaseTest
         );
         $response =  array(
             'success' => false,
-            'message' => 'Invalid filename'
+            'message' => 'Invalid value for report_loc. Must conform to expected constraint'
         );
 
         $tests[] = array($params, $response);
@@ -82,7 +82,10 @@ class ReportBuilderTest extends BaseTest
             'report_loc' => '3-1614908275-PVe1U',
             'format' => 'rar'
         );
-        $response = 'Invalid format specified';
+        $response = array(
+            'success' => false,
+            'message' => 'Invalid value for format. Must conform to expected constraint'
+        );
 
         $tests[] = array($params, $response);
 
@@ -91,7 +94,7 @@ class ReportBuilderTest extends BaseTest
         );
         $response = array(
             'success' => false,
-            'message' => '\'report_loc\' not specified.'
+            'message' => 'report_loc is a required parameter.'
         );
 
         $tests[] = array($params, $response);
@@ -102,7 +105,7 @@ class ReportBuilderTest extends BaseTest
         );
         $response = array(
             'success' => false,
-            'message' => '\'format\' not specified.'
+            'message' => 'format is a required parameter.'
         );
 
         $tests[] = array($params, $response);

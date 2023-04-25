@@ -63,64 +63,65 @@ class UserAdminTest extends BaseUserAdminTest
             "totalCount" => 0,
             "results" => [],
             "data" => [],
-            "message" => ''
+            "message" => '',
+            "code" => 0
         );
 
         return array(
             // Username not provided
             array(
                 $this->copyAndRemove($params, array('username')),
-                $this->copyAndReplace($expected, array('message' => "'username' not specified."))
+                $this->copyAndReplace($expected, array('message' => "username is a required parameter."))
             ),
             // Username empty
             array(
                 $this->copyAndReplace($params, array('username' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'username'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for username. Must conform to expected constraint"))
             ),
             // first_name not provided
             array(
                 $this->copyAndRemove($params, array('first_name')),
-                $this->copyAndReplace($expected, array('message' => "'first_name' not specified."))
+                $this->copyAndReplace($expected, array('message' => "first_name is a required parameter."))
             ),
             // first_name empty
             array(
                 $this->copyAndReplace($params, array('first_name' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'first_name'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for first_name. Must conform to expected constraint"))
             ),
             // last_name not provided
             array(
                 $this->copyAndRemove($params, array('last_name')),
-                $this->copyAndReplace($expected, array('message' => "'last_name' not specified."))
+                $this->copyAndReplace($expected, array('message' => "last_name is a required parameter."))
             ),
             // last_name empty
             array(
                 $this->copyAndReplace($params, array('last_name' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'last_name'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for last_name. Must conform to expected constraint"))
             ),
             // user_type not provided
             array(
                 $this->copyAndRemove($params, array('user_type')),
-                $this->copyAndReplace($expected, array('message' => "'user_type' not specified."))
+                $this->copyAndReplace($expected, array('message' => "user_type is a required parameter."))
             ),
             // user_type empty
             array(
                 $this->copyAndReplace($params, array('user_type' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'user_type'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for user_type. Must conform to expected constraint"))
             ),
             // email_address not provided
             array(
                 $this->copyAndRemove($params, array('email_address')),
-                $this->copyAndReplace($expected, array('message' => "'email_address' not specified."))
+                $this->copyAndReplace($expected, array('message' => "email_address is a required parameter."))
             ),
             // email_address empty
             array(
                 $this->copyAndReplace($params, array('email_address' => '')),
-                $this->copyAndReplace($expected, array('message' => "Failed to assert 'email_address'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for email_address. Must be a(n) email."))
             ),
             // acls not provided
             array(
                 $this->copyAndRemove($params, array('acls')),
-                $this->copyAndReplace($expected, array('message' => "Acl information is required"))
+                $this->copyAndReplace($expected, array('message' => "acls is a required parameter."))
             ),
             // acls empty
             array(
