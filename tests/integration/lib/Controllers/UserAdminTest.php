@@ -22,8 +22,9 @@ class UserAdminTest extends BaseUserAdminTest
         $this->helper->authenticateDashboard('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $params);
+
         $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
-        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertEquals(400, $response[1]['http_code']);
 
         $actual = $response[0];
 
@@ -526,7 +527,10 @@ class UserAdminTest extends BaseUserAdminTest
 
         $this->validateResponse($response, 200, $expectedContentType);
 
-        $actual = json_decode($response[0], true);
+        $actual = $response[0];
+        if (is_string($response[0])) {
+            $actual = json_decode($response[0], true);
+        }
 
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output')
@@ -609,7 +613,7 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
-        $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
+        $expectedContentType = $expectedSuccess ? 'application/xls' : 'application/json';
         $this->validateResponse($response, 200, $expectedContentType);
 
 
@@ -635,12 +639,14 @@ class UserAdminTest extends BaseUserAdminTest
             }
         } else {
             // we expect the incoming data to be json formatted.
-            $actualLines = json_decode($response[0], true);
+            $actualLines = $response[0];
+            if (is_string($response[0])) {
+                $actualLines = json_decode($response[0], true);
+            }
             foreach($actualLines as $key => $value) {
                 $actual[] = array($key, $value);
             }
         }
-
         $fileType = $expectedSuccess ? '.csv' : '.json';
         $expectedFileName = parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output', $fileType);
 

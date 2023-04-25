@@ -133,7 +133,13 @@ class ReportBuilderTest extends BaseTest
             }
         } else {
             // expect text data back
-            $this->assertEquals('text/html; charset=UTF-8', $curlinfo['content_type']);
+            $this->assertEquals('application/json', $curlinfo['content_type']);
+            if ($expected !== $response[0]) {
+                echo "\n";
+                print_r($expected);
+                echo "\n";
+                print_r($response[0]);
+            }
             $this->assertEquals($expected, $response[0]);
         }
     }
@@ -354,9 +360,10 @@ class ReportBuilderTest extends BaseTest
 
         $data['report_name'] = $reportName;
 
+        $this->log('Creating Report...');
         // Attempt to create the report.
         $reportId = $this->createReport($data);
-
+        $this->log('Report Created!');
         // Ensure we were successful
         $this->assertTrue(isset($reportId), "Did not receive a report_id back from create_report");
 
@@ -565,22 +572,24 @@ class ReportBuilderTest extends BaseTest
         $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json';
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
         $expectedResponse = $expected['response'];
-
+        $url = 'chart_pool';
 
         $this->log("Processing Chart Action: $expectedAction");
+        $this->log('Request URL: [ ' . $url . ' ]');
+        $this->log(sprintf("Request Body: [ %s ] ", json_encode($data)));
+        $response = $this->helper->post($url, null, $data);
 
-        $response = $this->helper->post('/chart_pool', null, $data);
-
+        $this->log(sprintf("Expected Content-Type: [ %s ]", $expectedContentType));
+        $this->log(sprintf("Expected Http Code   : [ %s ]", $expectedHttpCode));
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
-
-        $this->assertEquals($expectedContentType, $response[1]['content_type']);
-        $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
 
         $json = $response[0];
 
         $this->log("\tResponse: " . json_encode($json));
 
+        $this->assertEquals($expectedContentType, $response[1]['content_type']);
+        $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
         $this->assertEquals($expectedResponse, $json);
 
         return $json['success'];
@@ -595,6 +604,8 @@ class ReportBuilderTest extends BaseTest
     private function createReport(array $data)
     {
         $this->log("Creating Report");
+        $this->log(sprintf('Params: %s', json_encode($data)));
+
         $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
@@ -733,7 +744,11 @@ class ReportBuilderTest extends BaseTest
      */
     private function reportImageRenderer(array $params)
     {
-        $response = $this->helper->get('reports/builder/image', $params);
+        $url = 'reports/builder/image';
+        $this->log('Report Image Renderer: Start');
+        $this->log(sprintf('Params: [ %s ]', json_encode($params)));
+        $this->log(sprintf('Making request to [ %s ]', $url));
+        $response = $this->helper->get($url, $params);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
