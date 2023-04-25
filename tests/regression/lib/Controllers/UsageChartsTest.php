@@ -30,7 +30,7 @@ class UsageChartsTest extends TestCase
     /**
      * Determine which JSON file to use for expected hash data.
      */
-    public static function setUpBeforeClass(): void
+    public static function getHashPath(): string
     {
         if (self::$hashFilePath !== null) {
             return self::$hashFilePath;
