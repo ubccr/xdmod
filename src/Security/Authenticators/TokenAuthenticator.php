@@ -94,6 +94,7 @@ class TokenAuthenticator extends AbstractAuthenticator implements AuthenticatorI
     {
         $user = $token->getUser();
         $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
+        $xdUser->postLogin();
         $request->getSession()->set('xdUser', $xdUser->getUserID());
         return null;
     }
