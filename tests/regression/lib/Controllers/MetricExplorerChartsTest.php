@@ -122,7 +122,7 @@ class MetricExplorerChartsTest extends TestCase
             'selectedFilterIds' => ''
         );
 
-        $response = $helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $helper->post('controllers/metric_explorer.php', null, $params);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);

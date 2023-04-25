@@ -118,9 +118,7 @@ class ReportBuilderTest extends BaseTest
     public function testDownloadReportInputValidation($params, $expected)
     {
         $this->helper->authenticate('usr');
-        $data = $this->helper->get('/controllers/report_builder.php', $params);
-
-        $response = $this->helper->get('/controllers/report_builder.php', $params);
+        $response = $this->helper->get('controllers/report_builder.php', $params);
         $data = $response[0];
         $curlinfo = $response[1];
 
@@ -227,7 +225,7 @@ class ReportBuilderTest extends BaseTest
             'operation' => $operation
         );
 
-        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
+        $response = $this->helper->post("controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
@@ -457,7 +455,7 @@ class ReportBuilderTest extends BaseTest
         }
 
         $response = $this->helper->post(
-            '/controllers/report_builder.php',
+            'controllers/report_builder.php',
             null,
             array('operation' => 'enum_templates')
         );
@@ -633,7 +631,7 @@ class ReportBuilderTest extends BaseTest
             'selected_report' => $reportId
         );
 
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
@@ -665,7 +663,7 @@ class ReportBuilderTest extends BaseTest
             'operation' => 'get_new_report_name'
         );
 
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
@@ -710,7 +708,7 @@ class ReportBuilderTest extends BaseTest
         $data = array(
             'operation' => 'enum_available_charts'
         );
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
