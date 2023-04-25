@@ -191,7 +191,7 @@ class MetricExplorerChartsTest extends TestCase
 
         foreach ($series as $s) {
             $this->assertEquals($sdata['name'], $s->name);
-            $this->assertEquals($sdata['y'], $s->data[0]->y, '', 1.0E-6);
+            $this->assertEqualsWithDelta($sdata['y'], $s->data[0]->y,  1.0E-6, '');
             $this->assertEquals($sdata['percentage'], $s->data[0]->percentage);
             $sdata = next($expected['series_data']);
         }

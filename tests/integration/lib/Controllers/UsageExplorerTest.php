@@ -399,7 +399,7 @@ EOF
         $this->assertCount(1, $dataseries[0]['data']);
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
-        $this->assertEquals($expected, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $this->assertEqualsWithDelta($expected, $dataseries[0]['data'][0]['y'], 1.0e-6, '');
     }
 
     /**
