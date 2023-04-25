@@ -20,10 +20,12 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use UserStorage;
 use XDUser;
+use function xd_response\buildError;
 
 /**
  *
@@ -344,6 +346,7 @@ class WarehouseController extends BaseController
     {
         $user = $this->getUser();
         if (null === $user) {
+            throw new UnauthorizedHttpException('');
             $user = XDUser::getPublicUser();
         } else {
             $user = XDUser::getUserByUserName($user->getUserIdentifier());
@@ -888,6 +891,87 @@ class WarehouseController extends BaseController
         $jobId = $this->getIntParam($request, 'jobid');
 
         return $this->processJobSearchByAction($request, $user, $action, $realm, $jobId, $actionName);
+    }
+
+    /**
+     * @Route("/aggregatedata", methods={"GET"})
+     * @param Request $request
+     * @return Response
+     * @throws AccessDeniedException
+     */
+    public function getAggregateData(Request $request): Response
+    {
+        $user = $this->authorize($request);
+
+        $json_config = $this->getStringParam($request, 'config', true);
+        $start = $this->getIntParam($request, 'start', true);
+        $limit = $this->getIntParam($request, 'limit', true);
+
+        $config = json_decode($json_config);
+
+        if ($config === null) {
+            throw new BadRequestHttpException('syntax error in config parameter');
+        }
+
+        $mandatory = array('realm', 'group_by', 'statistics', 'aggregation_unit', 'start_date', 'end_date', 'order_by');
+        foreach ($mandatory as $required_property) {
+            if (!property_exists($config, $required_property)) {
+                throw new BadRequestHttpException('Missing mandatory config property ' . $required_property);
+            }
+        }
+
+        $permittedStats = Acls::getPermittedStatistics($user, $config->realm, $config->group_by);
+        $forbiddenStats = array_diff($config->statistics, $permittedStats);
+
+        if (!empty($forbiddenStats) ) {
+            throw new AccessDeniedHttpException('access denied to ' . json_encode($forbiddenStats));
+        }
+
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            $config->realm,
+            $config->aggregation_unit,
+            $config->start_date,
+            $config->end_date,
+            $config->group_by
+        );
+
+        $allRoles = $user->getAllRoles();
+        $query->setMultipleRoleParameters($allRoles, $user);
+
+        foreach ($config->statistics as $stat) {
+            $query->addStat($stat);
+        }
+
+        if (property_exists($config, 'filters')) {
+            $query->setRoleParameters($config->filters);
+        }
+
+        if (!property_exists($config->order_by, 'field') || !property_exists($config->order_by, 'dirn')) {
+            throw new BadRequestHttpException('Malformed config property order_by');
+        }
+        $dirn = $config->order_by->dirn === 'asc' ? 'ASC' : 'DESC';
+
+        $query->addOrderBy($config->order_by->field, $dirn);
+
+        $dataset = new \DataWarehouse\Data\SimpleDataset($query);
+        $results = $dataset->getResults($limit, $start);
+        foreach($results as &$val){
+            $val['name'] = $val[$config->group_by . '_name'];
+            $val['id'] = $val[$config->group_by . '_id'];
+            $val['short_name'] = $val[$config->group_by . '_short_name'];
+            $val['order_id'] = $val[$config->group_by . '_order_id'];
+            unset($val[$config->group_by . '_id']);
+            unset($val[$config->group_by . '_name']);
+            unset($val[$config->group_by . '_short_name']);
+            unset($val[$config->group_by . '_order_id']);
+        }
+        return $this->json(
+            [
+                'results' => $results,
+                'total' => $dataset->getTotalPossibleCount(),
+                'success' => true
+            ]
+        );
     }
 
     /**
@@ -1698,4 +1782,5 @@ class WarehouseController extends BaseController
 
         return $decoded;
     }
+
 }

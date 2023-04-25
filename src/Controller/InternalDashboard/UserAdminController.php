@@ -149,9 +149,6 @@ class UserAdminController extends BaseController
     {
         $this->logger->warning('[start] Creating User');
 
-        /*$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);*/
-
         $userName = $this->getStringParam($request, 'username', true, null, RESTRICTION_USERNAME);
         $firstName = $this->getStringParam($request, 'first_name', true, null, RESTRICTION_FIRST_NAME);
         $lastName = $this->getStringParam($request, 'last_name', true, null, RESTRICTION_LAST_NAME);
@@ -163,14 +160,14 @@ class UserAdminController extends BaseController
         $acls = json_decode($this->getStringParam($request, 'acls', true), true);
 
         // Ensure that we have at least on acl for the new user.
-        if (count($acls) < 1) {
-            $this->json(buildError('Acl information is required'));
+        if (empty($acls)) {
+            return $this->json(buildError(new Exception('Acl information is required')), 400);
         }
         // Checking for an acl set that only contains feature acls.
         // Feature acls are acls that only provide access to an XDMoD feature and
         // are not used for data access.
         if (!$this->hasDataAcls($acls)) {
-            return $this->json(buildError('Please include a non-feature acl ( i.e. User, PI etc. )'));
+            return $this->json(buildError(new Exception('Please include a non-feature acl ( i.e. User, PI etc. )')), 400);
         }
 
         $tempPassword = $this->generateTempPassword();
@@ -696,11 +693,11 @@ class UserAdminController extends BaseController
      * @Route("/internal_dashboard/users/{userId}", methods={"POST"}, requirements={"userId": "\d+"})
 
      * @param Request $request
-     * @param int $userId
+     * @param int|string $userId
      * @return Response
      * @throws Exception
      */
-    public function getUserDetails(Request $request, int $userId): Response
+    public function getUserDetails(Request $request, $userId): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->authorize($request, ['mgr']);

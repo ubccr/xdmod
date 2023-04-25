@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use function xd_response\buildError;
 
 /**
  *
@@ -98,15 +99,48 @@ class UserInterfaceController extends BaseController
      */
     public function getCharts(Request $request): Response
     {
+        $this->logger->error('Calling Get Charts');
+
         $user = $this->getXDUser($request->getSession());
         // Send the request and user to the Usage-to-Metric Explorer adapter.
+        $this->logger->error('Instantiating Usage Object');
         $usageAdapter = new Usage($request->request->all());
-        $chartResponse = $usageAdapter->getCharts($user);
+
+        $this->logger->error('Calling Usage->getCharts');
+
+        try {
+            $chartResponse = $usageAdapter->getCharts($user);
+        } catch (Exception $e) {
+            return $this->json(buildError($e), 400);
+        }
 
         $newHeaders = [];
         foreach ($chartResponse['headers'] as $headerName => $headerValue) {
             $newHeaders [] = sprintf('%s: %s', $headerName, $headerValue);
         }
+
+        $format = $this->getStringParam($request, 'format');
+        $this->logger->error(sprintf('Requested Format %s', var_export($format, true)));
+        if (isset($format)) {
+            switch($format) {
+                case 'pdf':
+                    $newHeaders['Content-Type'] = 'application/pdf';
+                    break;
+                case 'png':
+                    $newHeaders['Content-Type'] = 'image/png';
+                    break;
+                case 'csv':
+                    $newHeaders['Content-Type'] = 'application/xls';
+                    break;
+                case 'svg':
+                    $newHeaders['Content-Type'] = 'image/svg+xml';
+                    break;
+                case 'xml':
+                    $newHeaders['Content-Type'] = 'text/xml;charset=UTF-8';
+                    break;
+            }
+        }
+        $this->logger->error(sprintf('Adding Headers: %s', var_export($newHeaders, true)));
 
         return new Response($chartResponse['results'], 200, $newHeaders);
     }
@@ -119,6 +153,7 @@ class UserInterfaceController extends BaseController
      */
     public function getData(Request $request): Response
     {
+        $this->logger->error('GetData Called');
         return $this->getCharts($request);
     }
 

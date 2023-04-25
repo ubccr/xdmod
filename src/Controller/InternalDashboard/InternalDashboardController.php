@@ -353,9 +353,19 @@ SQL;
             $response = new StreamedResponse(function () use ($data, $logger) {
                 $outputStream = fopen('php://output', 'wb');
 
+                $content = array_map(
+                    function($item) {
+                        return implode(',', $item);
+                    },
+                    $data['stats']
+                );
+
+                // Add the header row.
+                array_unshift($content, implode(',', UserVisitController::$columns));
+
                 $written = fwrite(
                     $outputStream,
-                    sprintf("%s\n", implode(',', array_keys($data['stats'][0])))
+                    sprintf("%s\n", implode("\n", $content))
                 );
                 if ($written === false) {
                     $logger->error('Unable to write bytes to output stream');

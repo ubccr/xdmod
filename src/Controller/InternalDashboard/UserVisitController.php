@@ -16,6 +16,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserVisitController extends BaseController
 {
+    public static $columns = [
+        "Last Name",
+        "First Name",
+        "E-Mail",
+        "Roles",
+        "Visit Frequency",
+        "User Type",
+        "Date",
+        "Count"
+    ];
 
     /**
      * @Route("", methods={"POST"})
@@ -41,9 +51,16 @@ class UserVisitController extends BaseController
     public function exportUserVisits(Request $request): Response
     {
         list($data, list($timeframe,)) = $this->getUserVisitData($request);
-        $content = sprintf("%s\n", implode(',', array_keys($data['stats'][0])));
+
+        $data = array_map(function($row) {
+            return implode(',', $row);
+        }, $data);
+        array_unshift($data, implode(',', self::$columns));
+
+        $content = sprintf("%s\n", implode("\n", $data));
+        $this->logger->debug(sprintf("Export User Visits: Content: %s", $content));
         return new Response($content, 200, [
-            'Content-Type' => 'application/xls',
+            'Content-Type' => 'text/csv',
             'Content-Disposition' => sprintf('attachment;filename="xdmod_visitation_stats_by_%s.csv"', $timeframe)
         ]);
     }
@@ -59,6 +76,7 @@ class UserVisitController extends BaseController
         if (strtolower($timeframe) !== 'year' && strtolower($timeframe) !== 'month') {
             throw new BadRequestHttpException('Invalid value specified for the timeframe');
         }
-        return [\XDStatistics::getUserVisitStats($timeframe, $userTypes), [$timeframe, $userTypes]];
+        $results = \XDStatistics::getUserVisitStats($timeframe, $userTypes);
+        return [$results, [$timeframe, $userTypes]];
     }
 }

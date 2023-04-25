@@ -8,6 +8,7 @@ use Exception;
 use Models\Services\Centers;
 use Models\Services\Users;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,7 @@ class OrganizationController extends BaseController
     /**
      * Retrieve the other members associated with the requesting user's organization.
      *
-     * @Route("/organizations/members", methods={"POST"}) 
+     * @Route("/organizations/members", methods={"POST"})
 
      * @param Request $request
      * @return Response
@@ -67,16 +68,21 @@ class OrganizationController extends BaseController
     }
 
     /**
-     * @Route("/organizations/members/{memberId}/status", methods={"POST"}) 
+     * @Route("/organizations/members/{memberId}/status", methods={"POST"})
 
      * @param Request $request
-     * @param string $memberId
+     * @param ?string $memberId
      * @return Response
      * @throws Exception
      */
-    public function getMemberStatus(Request $request, string $memberId): Response
+    public function getMemberStatus(Request $request, ?string $memberId): Response
     {
         $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+
+        if (empty($memberId)) {
+            return $this->json(buildError("Invalid value specified for 'member_id'."));
+        }
+
         $member = XDUser::getUserByID($memberId);
         if ($member === null) {
             return $this->json(\xd_response\buildError('user_does_not_exist'));
@@ -119,16 +125,42 @@ class OrganizationController extends BaseController
     }
 
     /**
-     * @Route("/organizations/members/{memberId}/upgrade", methods={"POST"}) 
+     * @Route("/organizations/members/{memberId}/upgrade", methods={"POST"})
 
      * @param Request $request
-     * @param string $memberId
+     * @param ?string $memberId
      * @return Response
      * @throws Exception
      */
-    public function upgradeMember(Request $request, string $memberId): Response
+    public function upgradeMember(Request $request, ?string $memberId): Response
     {
-        $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+        $this->logger->warning('Upgrading Member Id: ' . var_export($memberId, true));
+        try {
+            $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
+            $this->logger->warning('Successfully Authenticated requesting user has CD');
+        } catch (Exception $e) {
+            return $this->json(
+                [
+                    "status" => "not_a_center_director",
+                    "success" => false,
+                    "totalCount" => 0,
+                    "message" => "not_a_center_director",
+                    "data" => []
+                ]
+            );
+        }
+        $this->logger->warning('Checking member id next.');
+        if (empty($memberId)) {
+            return $this->json(buildError("Invalid value specified for 'member_id'."));
+        }
+
+        try {
+            $memberId = $this->getStringParam($request, 'member_id', false, null, RESTRICTION_UID);
+        } catch (Exception $e) {
+            return $this->json(buildError("Invalid value specified for 'member_id'."));
+        }
+
+
         $member = XDUser::getUserByID($memberId);
         if ($member === null) {
             return $this->json(\xd_response\buildError('user_does_not_exist'));
@@ -173,16 +205,39 @@ class OrganizationController extends BaseController
     }
 
     /**
-     * @Route("/organizations/members/{memberId}/downgrade", methods={"POST"}) 
+     * @Route("/organizations/members/{memberId}/downgrade", methods={"POST"})
 
      * @param Request $request
-     * @param string $memberId
+     * @param ?string $memberId
      * @return Response
      * @throws Exception
      */
-    public function downgradeMember(Request $request, string $memberId): Response
+    public function downgradeMember(Request $request, ?string $memberId): Response
     {
-        $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+        try {
+            $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
+        } catch (Exception $e) {
+            return $this->json(
+                [
+                    "status" => "not_a_center_director",
+                    "success" => false,
+                    "totalCount" => 0,
+                    "message" => "not_a_center_director",
+                    "data" => []
+                ]
+            );
+        }
+
+        if (empty($memberId)) {
+            return $this->json(buildError("Invalid value specified for 'member_id'."));
+        }
+
+        try {
+            $memberId = $this->getStringParam($request, 'member_id', false, null, RESTRICTION_UID);
+        } catch (Exception $e) {
+            return $this->json(buildError("Invalid value specified for 'member_id'."));
+        }
+
         $member = XDUser::getUserByID($memberId);
         if ($member === null) {
             return $this->json(\xd_response\buildError('user_does_not_exist'));

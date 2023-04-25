@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use XDUser;
+use function xd_response\buildError;
 
 /**
  * @Route("/dashboard")
@@ -350,12 +351,15 @@ class DashboardController extends BaseController
      * @Route("/statistics", methods={"GET"})
      * @param Request $request
      * @return Response
+     * @throws Exception
      */
     public function getStatistics(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $user = $this->getUserFromRequest($request);
+        try {
+            $user = $this->authorize($request);
+        } catch (Exception $e) {
+            $user = XDUser::getPublicUser();
+        }
 
         $aggregationUnit = $request->get('aggregation_unit', 'auto');
 
@@ -364,11 +368,13 @@ class DashboardController extends BaseController
 
         $this->checkDateRange($startDate, $endDate);
 
+        $this->logger->debug('Date Range is Copacetic!');
         // This try/catch block is intended to replace the "Base table or
         // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
         try {
+            $this->logger->debug('Running Aggregate Query!');
             $query = new \DataWarehouse\Query\AggregateQuery(
                 'Jobs',
                 $aggregationUnit,
@@ -380,6 +386,7 @@ class DashboardController extends BaseController
 
             $result = $query->execute();
         } catch (PDOException $e) {
+            $this->logger->debug('Exception while running query: %s', buildError($e));
             if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
                 $msg = 'Aggregate table not found, have you ingested your data?';
                 throw new Exception($msg);
@@ -387,14 +394,17 @@ class DashboardController extends BaseController
                 throw $e;
             }
         } catch (Exception $e) {
+            $this->logger->debug('Exception while running query: %s', buildError($e));
             throw new BadRequestHttpException($e->getMessage());
         }
 
+        $this->logger->debug('Successfully ran query!');
         $rawRoles = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
 
         $mostPrivileged = $user->getMostPrivilegedRole()->getName();
         $formats = $rawRoles['roles'][$mostPrivileged]['statistics_formats'];
 
+        $this->logger->debug('Returning Data');
         return $this->json(
             [
                 'totalCount' => 1,
@@ -443,8 +453,12 @@ class DashboardController extends BaseController
      */
     protected function checkDateRange($startDate, $endDate)
     {
+        $this->logger->debug('Checking Date Rage');
         $startTimestamp = $this->getTimestamp($startDate, 'start_date');
         $endTimestamp = $this->getTimestamp($endDate, 'end_date');
+
+        $this->logger->debug(sprintf('Start Timestamp: %s', $startTimestamp));
+        $this->logger->debug(sprintf('End Timestamp: %s', $endTimestamp));
 
         if ($startTimestamp > $endTimestamp) {
             throw new BadRequestHttpException('Start Date must not be after End Date');
@@ -463,20 +477,29 @@ class DashboardController extends BaseController
      */
     protected function getTimestamp($date, $paramName = 'date', $format = 'Y-m-d')
     {
+        $this->logger->debug(sprintf('Getting Timestamp for %s %s', $date, $format));
+
         $parsed = date_parse_from_format($format, $date);
+        $this->logger->debug(sprintf('Parsed: %s', var_export($parsed, true)));
+        if ($parsed['year'] === false || $parsed['month'] === false || $parsed['day'] === false) {
+            $this->logger->debug(sprintf('Unable to parse %s', $paramName));
+            throw new BadRequestHttpException("Unable to parse $paramName");
+        }
         $date = mktime(
-            $parsed['hour'],
-            $parsed['minute'],
-            $parsed['second'],
+            $parsed['hour'] !== false ? $parsed['hour'] : 0,
+            $parsed['minute'] !== false ? $parsed['minute'] : 0,
+            $parsed['second'] !== false ? $parsed['second' ] : 0,
             $parsed['month'],
             $parsed['day'],
             $parsed['year']
         );
-
+        $this->logger->debug(sprintf('Date: %s', var_export($date, true)));
         if ($date === false || $parsed['error_count'] > 0) {
+            $this->logger->debug('Unable to get timestamp!');
             throw new BadRequestHttpException("Unable to parse $paramName");
         }
 
+        $this->logger->debug('Successfully made timestamp!');
         return $date;
     }
 

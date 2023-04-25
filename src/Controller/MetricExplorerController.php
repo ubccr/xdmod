@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 use XDUser;
 use function xd_response\buildError;
 
@@ -36,7 +35,7 @@ class MetricExplorerController extends BaseController
     private const DEFAULT_ERROR_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
     /**
-     * @Route("/controllers/metric_explorer.php", methods={"POST"})
+     * @Route("/controllers/metric_explorer.php", methods={"POST", "GET"})
      * @param Request $request
      * @return Response
      * @throws AccessDeniedException
@@ -63,13 +62,12 @@ class MetricExplorerController extends BaseController
 
         return $this->json([
             'success' => false,
-            'message'=> 'Unknown Operation provided.'
+            'message' => 'Unknown Operation provided.'
         ]);
     }
 
     /**
      * @Route("/metrics/explorer/queries", methods={"GET"})
-
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -80,7 +78,7 @@ class MetricExplorerController extends BaseController
         $action = 'getQueries';
         $payload = [
             'success' => false,
-            'action'  => $action
+            'action' => $action
         ];
         $statusCode = 401;
 
@@ -111,7 +109,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/queries/{queryId}", methods={"GET"}, requirements={"queryId"="\w+"})
-
      * @param Request $request
      * @param string $queryId
      * @return Response
@@ -122,7 +119,7 @@ class MetricExplorerController extends BaseController
         $action = 'getQueryById';
         $payload = array(
             'success' => false,
-            'action'  => $action,
+            'action' => $action,
         );
         $statusCode = 401;
 
@@ -155,7 +152,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/queries", methods={"POST"})
-
      * @param Request $request
      * @return Response
      */
@@ -166,7 +162,7 @@ class MetricExplorerController extends BaseController
         $action = 'creatQuery';
         $payload = array(
             'success' => false,
-            'action'  => $action,
+            'action' => $action,
         );
         $statusCode = 401;
         try {
@@ -202,7 +198,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/queries/{queryId}", methods={"PUT"}, requirements={"queryId"="\w+"})
-
      * @param Request $request
      * @param string $queryId
      * @return Response
@@ -214,7 +209,7 @@ class MetricExplorerController extends BaseController
         $action = 'updateQuery';
         $payload = array(
             'success' => false,
-            'action'  => $action,
+            'action' => $action,
             'message' => 'success'
         );
         $statusCode = 401;
@@ -276,7 +271,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/queries/{queryId}", methods={"DELETE"}, requirements={"queryId"="\w+"})
-
      * @param Request $request
      * @param string $queryId
      * @return Response
@@ -288,7 +282,7 @@ class MetricExplorerController extends BaseController
         $action = 'deleteQueryById';
         $payload = array(
             'success' => false,
-            'action'  => $action,
+            'action' => $action,
             'message' => 'success'
         );
         $statusCode = 401;
@@ -364,7 +358,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/data", methods={"POST", "GET"})
-
      * @param Request $request
      * @return Response
      * @throws SessionExpiredException if unable to successfully retrieve the currently logged in user.
@@ -400,7 +393,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/dimension/values", methods={"POST"})
-
      * @param Request $request
      * @return Response
      * @throws SessionExpiredException
@@ -409,12 +401,17 @@ class MetricExplorerController extends BaseController
      */
     public function getDimensionValues(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = \xd_security\detectUser([\XDUser::PUBLIC_USER]);
+        try {
+            $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+        } catch (SessionExpiredException $e) {
+            return $this->json(buildError($e), $e->httpCode, $e->headers);
+        }
+
+        $this->logger->warning('User retrieved ', [$user->getUserIdentifier()]);
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
-        $offset = $this->getIntParam($request, 'start', true);
-        $limit = $this->getIntParam($request, 'limit', false);
+        $offset = $this->getIntParam($request, 'start', false, 0);
+        $limit = $this->getIntParam($request, 'limit');
         $searchText = $this->getStringParam($request, 'search_text');
 
         $selectedFilterIds = $this->getStringParam($request, 'selectedFilterIds', false, []);
@@ -440,15 +437,26 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/get_dw_descripter", methods={"POST"})
-
      * @param Request $request
      * @return Response
      * @throws Exception if unable to get the currently logged in user.
      */
     public function getDwDescriptors(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = \xd_security\getLoggedInUser();
+        try {
+            $user = $this->tokenHelper->authenticateToken($request);
+
+            // If token authentication failed then fallback to the standard session based authentication method.
+            if ($user === null) {
+                $user = \xd_security\getLoggedInUser();
+            }
+        } catch (Exception $e) {
+            return $this->json(
+                buildError('An error was encountered while attempting to process the requested authorization procedure.'),
+                401
+            );
+        }
+
 
         $roles = $user->getAllRoles(true);
 
@@ -496,10 +504,10 @@ class MetricExplorerController extends BaseController
                     $realmObject = $realmObjects[$query_descriptor_realm];
                     $realmDisplay = $realmObject->getDisplay();
                     $realms[$query_descriptor_realm] = [
-                        'text'       => $query_descriptor_realm,
-                        'category'   => $realmDisplay,
+                        'text' => $query_descriptor_realm,
+                        'category' => $realmDisplay,
                         'dimensions' => [],
-                        'metrics'    => [],
+                        'metrics' => [],
                     ];
                     foreach ($query_descriptor_groups as $query_descriptor_group) {
                         foreach ($query_descriptor_group as $query_descriptor) {
@@ -512,7 +520,7 @@ class MetricExplorerController extends BaseController
                             $permittedStatistics = $group_by_object->getRealm()->getStatisticIds();
 
                             $groupByObjects[$query_descriptor_realm . '_' . $groupByName] = [
-                                'object'         => $group_by_object,
+                                'object' => $group_by_object,
                                 'permittedStats' => $permittedStatistics
                             ];
                             $realms[$query_descriptor_realm]['dimensions'][$groupByName] = [
@@ -537,8 +545,8 @@ class MetricExplorerController extends BaseController
                                 );
                                 $realms[$query_descriptor_realm]['metrics'][$realm_group_by_statistic] =
                                     [
-                                        'text'    => $statistic_object->getName(),
-                                        'info'    => $statistic_object->getHtmlDescription(),
+                                        'text' => $statistic_object->getName(),
+                                        'info' => $statistic_object->getHtmlDescription(),
                                         'std_err' => in_array($semStatId, $permittedStatistics)
                                     ];
                                 $seenStats[] = $realm_group_by_statistic;
@@ -562,7 +570,7 @@ class MetricExplorerController extends BaseController
                 // Cache the results if the cache is enabled.
                 if ($cache_enabled) {
                     $db->execute('insert into dw_desc_cache (role, response) values (:role, :response)', [
-                        'role'     => $shortRole,
+                        'role' => $shortRole,
                         'response' => serialize($roleDescriptors[$shortRole])
                     ]);
                 }
@@ -574,10 +582,10 @@ class MetricExplorerController extends BaseController
             foreach ($roleDescriptor['data'][0]['realms'] as $realm => $realmDescriptor) {
                 if (!isset($combinedRealmDescriptors[$realm])) {
                     $combinedRealmDescriptors[$realm] = [
-                        'metrics'    => [],
+                        'metrics' => [],
                         'dimensions' => [],
-                        'text'       => $realmDescriptor['text'],
-                        'category'   => $realmDescriptor['category'],
+                        'text' => $realmDescriptor['text'],
+                        'category' => $realmDescriptor['category'],
                     ];
                 }
 
@@ -588,7 +596,7 @@ class MetricExplorerController extends BaseController
 
         return $this->json([
             'totalCount' => 1,
-            'data'       => [
+            'data' => [
                 [
                     'realms' => $combinedRealmDescriptors
                 ]
@@ -598,7 +606,6 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/filters", methods={"POST"})
-
      * @param Request $request
      * @return Response
      * @throws Exception if unable to retrieve the currently logged in user.
@@ -617,16 +624,16 @@ class MetricExplorerController extends BaseController
                 $filtersArray = json_decode($filters);
                 $returnData = [
                     'totalCount' => count($filtersArray),
-                    'message'    => 'success',
-                    'data'       => $filtersArray,
-                    'success'    => true
+                    'message' => 'success',
+                    'data' => $filtersArray,
+                    'success' => true
                 ];
             } else {
                 $returnData = [
                     'totalCount' => 0,
-                    'message'    => 'success',
-                    'data'       => [],
-                    'success'    => true
+                    'message' => 'success',
+                    'data' => [],
+                    'success' => true
                 ];
             }
 
@@ -637,9 +644,9 @@ class MetricExplorerController extends BaseController
         } catch (Exception $ex) {
             $returnData = [
                 'totalCount' => 0,
-                'message'    => $ex->getMessage(),
-                'data'       => [],
-                'success'    => false
+                'message' => $ex->getMessage(),
+                'data' => [],
+                'success' => false
             ];
         }
 
@@ -648,32 +655,27 @@ class MetricExplorerController extends BaseController
 
     /**
      * @Route("/metrics/explorer/raw_data", methods={"POST"})
-
      * @param Request $request
      * @return Response
      * @throws SessionExpiredException|AccessDeniedException
      */
     public function getRawData(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-        $returnData = [];
-        $token = new PostAuthenticationToken();
-        try {
-            #$config = json_decode($this->getStringParam($request, 'config', true), true);
-            $requestedFormat = $this->getStringParam($request, 'format');
-            /*if (isset($_REQUEST['config'])) {
-                $config = json_decode($_REQUEST['config'], true);
-                $_REQUEST = array_merge($config, $_REQUEST);
-            }*/
+        $user = \xd_security\detectUser(array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));
 
-            /*$format = \DataWarehouse\ExportBuilder::getFormat(
-                $_REQUEST,
-                'jsonstore',
-                array(
-                    'jsonstore'
-                )
-            );*/
+        try {
+            $config = [];
+            foreach ($request->request->all() as $key => $value) {
+                $config[$key] = $value;
+            }
+
+            $configParam = $this->getStringParam($request, 'config');
+            if (!empty($configParam)) {
+                $configJson = json_decode($configParam, true);
+                $config = array_merge($config, $configJson);
+            }
+
+            $requestedFormat = $this->getStringParam($request, 'format');
             $format = DataWarehouse\ExportBuilder::validateFormat($requestedFormat, 'jsonstore', ['jsonstore']);
             $inline = $this->getBooleanParam($request, 'inline', false, true);
             $dataSetId = $this->getStringParam($request, 'datasetId', true);
@@ -690,14 +692,15 @@ class MetricExplorerController extends BaseController
                 throw new BadRequestHttpException('End date must be greater than or equal to start date');
             }
 
-            $startDate = $requestedStartDate;
-            $endDate = $requestedEndDate;
+            $startDate = $requestedStartDate->format('Y-m-d');
+            $endDate = $requestedEndDate->format('Y-m-d');
             $isTimeseries = $this->getBooleanParam($request, 'timeseries', false, false);
+
             if ($isTimeseries) {
                 // For timeseries data the date range is set to be only the data-point that was
                 // selected. Therefore we adjust the start and end date appropriately
-
-                $time_period = TimeAggregationUnit::deriveAggregationUnitName(getAggregationUnit(), $requestedStartDate, $requestedEndDate);
+                $aggregationUnit = $this->getStringParam($request, 'aggregation_unit', false, 'auto');
+                $time_period = TimeAggregationUnit::deriveAggregationUnitName($aggregationUnit, $startDate, $endDate);
                 $time_point = $datapoint / 1000;
 
                 list($startDate, $endDate) = TimeAggregationUnit::getRawTimePeriod($time_point, $time_period);
@@ -705,36 +708,47 @@ class MetricExplorerController extends BaseController
 
             $title = $this->getStringParam($request, 'title');
 
-            /*$global_filters = getGlobalFilters();*/
             $requestedGlobalFilters = $this->getStringParam($request, 'global_filters');
+            $this->logger->warning('Requested Global Filters', [var_export($requestedGlobalFilters, true)]);
             $globalFilters = (object)['data' => [], 'total' => 0];
             if (!empty($requestedGlobalFilters)) {
-                $globalFiltersDecoded = json_decode($requestedGlobalFilters, true);
-                foreach ($globalFiltersDecoded['data'] as $datum) {
-                    $globalFilters->data[] = (object)$datum;
-                    $globalFilters->total++;
+                $globalFiltersDecoded = urldecode($requestedGlobalFilters);
+                $globalFiltersJson = json_decode($globalFiltersDecoded, true);
+                $this->logger->warning('Global Filters Decoded', [var_export($globalFiltersDecoded, true)]);
+                $this->logger->warning('Global FIlters Json', [json_encode($globalFiltersJson)]);
+
+                if (!empty($globalFiltersJson) && isset($globalFiltersJson['data']) && is_array($globalFiltersJson['data'])) {
+                    foreach ($globalFiltersJson['data'] as $datum) {
+                        $globalFilters->data[] = (object)$datum;
+                        $globalFilters->total++;
+                    }
                 }
             }
+            $this->logger->warning('Global FIlters', [var_export($globalFilters, true)]);
 
             $dataset_classname = '\DataWarehouse\Data\SimpleDataset';
 
-
-            $all_data_series = getDataSeries($request);
-
-            $datasetid = $_REQUEST['datasetId'];
+            // TODO: start here.
+            $all_data_series = $this->getDataSeries($request);
 
             // find requested dataset.
             $data_description = null;
             foreach ($all_data_series as $data_description_index => $data_series) {
                 // NOTE: this only works if the id's are not floats.
-                if ("{$data_series->id}" == "$datasetid") {
+                if ("{$data_series->id}" == "$dataSetId") {
                     $data_description = $data_series;
                     break;
                 }
             }
 
             if ($data_description === null) {
-                throw new Exception("Internal error");
+                return $this->json(
+                    [
+                        'success'=> false,
+                        'message' => 'Invalid data_series provided.'
+                    ],
+                    400
+                );
             }
 
             // Check that the user has at least one role authorized to view this data.
@@ -760,7 +774,9 @@ class MetricExplorerController extends BaseController
                 );
 
                 $groupedRoleParameters = [];
+                $this->logger->warning('Iterating over globalFilters data...');
                 foreach ($globalFilters->data as $global_filter) {
+                    $this->logger->warning('global filter', [var_export($global_filter, true)]);
                     if ($global_filter->checked == 1) {
                         if (
                             !isset(
@@ -784,16 +800,40 @@ class MetricExplorerController extends BaseController
 
                 $dataset = new $dataset_classname($query);
 
-                // DEFINE: that we're going to be sending back json.
-                header('Content-type: application/json');
-
                 $filterOpts = array('options' => array('default' => null, 'min_range' => 0));
 
-                $limit = filter_input(INPUT_POST, 'limit', FILTER_VALIDATE_INT, $filterOpts);
-                $offset = filter_input(INPUT_POST, 'start', FILTER_VALIDATE_INT, $filterOpts);
+                $limit = null;
+                $limitParam = $this->getStringParam($request, 'limit');
+                $this->logger->warning('Limit Param', [$limitParam]);
+                if (!empty($limitParam)) {
+                    try {
+                        $limit = $this->getIntParam($request, 'limit');
+                        if ($limit < 0) {
+                            $limit = null;
+                        }
+                    } catch (Exception $e) {
+                        // NOOP
+                    }
+                }
 
+                $this->logger->warning('Limit', [$limit]);
+                $offset = 0;
+                $offsetParam = $this->getStringParam($request, 'start');
+                if (!empty($offsetParam)) {
+                    try {
+                        $offset = intval($offsetParam);
+                    } catch (Exception $e) {
+                        // NOOP
+                    }
+                }
+                $offset = max($offset, 0);
+                $this->logger->warning('Offset', [$offset]);
                 $totalCount = $dataset->getTotalPossibleCount();
 
+                // This is so that the behavior of this endpoint matches get_rawdata.php
+                if ($offsetParam === null && !empty($limit) && $offset === 0) {
+                    $offset = null;
+                }
                 $ret = array();
 
                 // As a small optimization only compute the total count the first time (ie when the offset is 0)
@@ -809,26 +849,31 @@ class MetricExplorerController extends BaseController
                     );
                     $privquery->setRoleParameters($groupedRoleParameters);
                     $privquery->setFilters($data_description->filters);
+
+                    $query = $privquery->getQueryString();
+
                     $privdataset = new $dataset_classname($privquery);
 
                     $ret['totalAvailable'] = $privdataset->getTotalPossibleCount();
+                    $this->logger->warning(sprintf('SQL: %s', $query));
+                    $this->logger->warning(sprintf("\nData Description: %s\nRole Paramters: %s\n",
+                        var_export($data_description, true),
+                        var_export($groupedRoleParameters, true)
+                    ));
+                    $this->logger->warning(sprintf('Total Available (Priv Query) [%s]', $ret['totalAvailable']));
                 }
 
                 $ret['data'] = $dataset->getResults($limit, $offset);
                 $ret['totalCount'] = $totalCount;
 
                 return $this->json($ret);
-                /*print json_encode($ret);*/
-                /*exit(0);*/
-
             }
         } catch (SessionExpiredException $see) {
             // TODO: Refactor generic catch block below to handle specific exceptions,
             //       which would allow this block to be removed.
-            throw $see;
+            return $this->json(buildError($see));
         } catch (Exception $ex) {
-            throw $ex;
-            /*\xd_response\presentError($ex);*/
+            return $this->json(buildError($ex));
         }
 
         return $this->json([
@@ -840,12 +885,21 @@ class MetricExplorerController extends BaseController
 
     private function getDataSeries(Request $request): array
     {
-        $requestedDataSeries = json_decode(
-            $this->getStringParam($request, 'data_series', false, '[]'),
-            true
-        );
-        if (is_array($requestedDataSeries) && is_array($requestedDataSeries['data'])) {
-
+        $requestedDataSeries = null;
+        try {
+            $dataSeriesParam = $this->getStringParam($request, 'data_series', false, '[]');
+            $this->logger->warning('Data Series Param', [var_export($dataSeriesParam, true)]);
+            $requestedDataSeries = json_decode(urldecode($dataSeriesParam), true);
+        } catch (Exception $e) {
+            // NOOP
+        }
+        $this->logger->warning('Requested Data Series', [json_encode($requestedDataSeries)]);
+        if (is_array($requestedDataSeries) && isset($requestedDataSeries['data']) && is_array($requestedDataSeries['data'])) {
+            $this->logger->warning('Getting Data Series From Array');
+            return $this->getDataSeriesFromArray($requestedDataSeries);
+        } else {
+            $this->logger->warning('Getting Data series from JSON string.');
+            return $this->getDataSeriesFromJsonString($this->getStringParam($request, 'data_series'));
         }
     }
 
@@ -887,14 +941,34 @@ class MetricExplorerController extends BaseController
     }
 
     /**
-     * TODO: Finish this function.
+     *
      * @param string $dataSeries
      * @return array
      */
     private function getDataSeriesFromJsonString(string $dataSeries): array
     {
-        $results = [];
+        $jsonDataSeries = json_decode(urldecode($dataSeries));
+        $this->logger->warning('Json Data Series', [json_encode($jsonDataSeries)]);
 
-        return $results;
+        foreach ($jsonDataSeries as &$y) {
+            // Set values of new attribs for backward compatibility.
+            if (empty($y->line_type)) {
+                $y->line_type = 'Solid';
+            }
+
+            if (empty($y->line_width) || !is_numeric($y->line_width)) {
+                $y->line_width = 2;
+            }
+
+            if (empty($y->color)) {
+                $y->color = 'auto';
+            }
+
+            if (empty($y->shadow)) {
+                $y->shadow = false;
+            }
+        }
+
+        return $jsonDataSeries;
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use XDChartPool;
 use XDUser;
+use function xd_response\buildError;
 
 /**
  *
@@ -25,8 +26,11 @@ class ChartPoolController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = $this->authorize($request);
+        try {
+            $user = $this->authorize($request);
+        } catch (Exception $e) {
+            return $this->json(buildError(new \SessionExpiredException()), 401);
+        }
 
         $operation = $this->getStringParam($request, 'operation', true);
         switch ($operation) {
@@ -48,8 +52,11 @@ class ChartPoolController extends BaseController
     private function addToQueue(Request $request, XDUser $user): Response
     {
         $chartTitle = $this->getStringParam($request, 'chart_title', false, 'Untitled Chart');
-        $chartId = $this->getStringParam($request, 'chart_id', true);
-        $chartDrillDetails = $this->getStringParam($request, 'chart_drill_details', true);
+        $chartId = $this->getStringParam($request, 'chart_id');
+        if (empty($chartId)) {
+            return $this->json(buildError("Invalid value specified for 'chart_id'."));
+        }
+        $chartDrillDetails = $this->getStringParam($request, 'chart_drill_details');
         $chartDateDesc = $this->getStringParam($request, 'chart_date_desc');
 
         $chart_pool = new XDChartPool($user);
