@@ -11,6 +11,9 @@ use Models\Services\Tokens;
  */
 class TokenHelper
 {
+    /**
+     * Endpoint used for creating and revoking API tokens.
+     */
     private static $ENDPOINT = 'rest/users/current/api/token';
     private $testInstance;
     private $testHelper;
