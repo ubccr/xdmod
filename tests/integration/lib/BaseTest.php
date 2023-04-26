@@ -31,6 +31,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return self::$testFiles;
     }
 
+    /**
+     * A dataProvider for tests that use each of the base roles.
+     */
     public function provideBaseRoles()
     {
         return array(
@@ -43,6 +46,52 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Perform an HTTP request and possibly make assertions about the
+     * response's status code, content type, and/or body.
+     *
+     * @param \TestHarness\XdmodTestHelper $testHelper performs the HTTP
+     *                                                 request.
+     * @param string $path the path of the request, e.g.,
+     *                     '/rest/warehouse/export/realms'.
+     * @param string $verb the method of the request, i.e.,
+     *                     'get', 'post', 'delete', or 'patch'.
+     * @param array|object|null $params the query parameters of the request.
+     * @param array|object|null $data the body data of the request.
+     * @param int|null $expectedHttpCode if provided, the test will assert
+     *                                   the response status code is the
+     *                                   same as this.
+     * @param string|null $expectedContentType if provided, the test will
+     *                                         assert the content type of the
+     *                                         response is the same as this.
+     * @param string|null $expectedFileGroup if provided along with
+     *                                       $expectedFileName and
+     *                                       $validationType, the test will
+     *                                       open a JSON output file in this
+     *                                       directory (relative to the test
+     *                                       artifacts directory) against
+     *                                       which to validate the response
+     *                                       body.
+     * @param string|null $expectedFileName if provided along with
+     *                                      $expectedFileGroup and
+     *                                      $validationType, the test will
+     *                                      open a JSON file with this name in
+     *                                      the 'output' directory of the
+     *                                      $expectedFileGroup directory and
+     *                                      validate the response body against
+     *                                      it.
+     * @param string|null $validationType the method by which to validate the
+     *                                    response body against the provided
+     *                                    JSON output file, i.e., 'schema',
+     *                                    which will validate it against a JSON
+     *                                    Schema, or 'exact', which will do an
+     *                                    exact comparison of the JSON object
+     *                                    in the file.
+     * @return mixed the decoded JSON response body.
+     * @throws \Exception if there is an error making the request, loading
+     *                    the JSON output file, or running the validation of
+     *                    it.
+     */
     public function makeRequest(
         $testHelper,
         $path,
@@ -66,9 +115,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $response = $testHelper->$verb($path, $params, $data);
                 break;
         }
-        $actualHttpCode = isset($response) ? $response[1]['http_code'] : null;
-        $actualContentType = isset($response) ? $response[1]['content_type'] : null;
-        $actualResponseBody = isset($response) ? $response[0] : array();
+        if (isset($response)) {
+            $actualHttpCode = $response[1]['http_code'];
+            $actualContentType = $response[1]['content_type'];
+            $actualResponseBody = $response[0];
+        } else {
+            $actualHttpCode = null;
+            $actualContentType = null;
+            $actualResponseBody = [];
+        }
         $message = "PATH: $path\nVERB: $verb\nHEADERS: "
             . json_encode($testHelper->getheaders(), JSON_PRETTY_PRINT)
             . "\nPARAMS: " . json_encode($params, JSON_PRETTY_PRINT)
@@ -91,10 +146,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $message
             );
         }
-
         $actual = json_decode(json_encode($actualResponseBody));
-
-        if (isset($expectedFileName)) {
+        if (
+            isset($expectedFileGroup)
+            && isset($expectedFileName)
+            && isset($validationType)
+        ) {
             $this->validateJson(
                 $actual,
                 $expectedFileGroup,
@@ -104,7 +161,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $message
             );
         }
-
         return $actual;
     }
 
