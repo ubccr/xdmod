@@ -47,11 +47,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Perform an HTTP request and optionally make assertions about the
+     * Make an HTTP request and optionally make assertions about the
      * response's status code, content type, and/or body.
      *
-     * @param \TestHarness\XdmodTestHelper $testHelper performs the HTTP
-     *                                                 request.
+     * @param \TestHarness\XdmodTestHelper $testHelper the test helper making
+     *                                                 the HTTP request.
      * @param string $path the path of the request, e.g.,
      *                     '/rest/warehouse/export/realms'.
      * @param string $verb the method of the request, i.e.,
@@ -166,7 +166,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Assert that a given JSON object validates against a provided file.
-     * 
+     *
      * @param object $json the JSON object to validate.
      * @param string $testGroup the directory (relative to the test artifacts
      *                          directory) containing the file against which
@@ -258,7 +258,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                         $object['$extends'],
                         dirname($path)
                     ),
-                    $allowInheritance 
+                    $allowInheritance
                 );
                 $object = array_replace_recursive($parentObject, $object);
                 unset($object['$extends']);
