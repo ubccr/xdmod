@@ -27,7 +27,7 @@ class TokenHelper
         'malformed_token' => array(),
         'invalid_token' => array(),
         'expired_token' => array(),
-        'deleted_token' => array()
+        'revoked_token' => array()
     );
 
     /**
@@ -63,7 +63,7 @@ class TokenHelper
      *                                   file used for validation depends on
      *                                   the type of failure: 'empty_token',
      *                                   'malformed_token', 'expired_token', or
-     *                                   'deleted_token', and the expected
+     *                                   'revoked_token', and the expected
      *                                   status code for each of these is 400,
      *                                   except 'invalid_token', which is 403.
      */
@@ -99,7 +99,7 @@ class TokenHelper
             $this->setExpectedErrorOutput('malformed_token', 400);
             $this->setExpectedErrorOutput('invalid_token', 403);
             $this->setExpectedErrorOutput('expired_token', 400);
-            $this->setExpectedErrorOutput('deleted_token', 400);
+            $this->setExpectedErrorOutput('revoked_token', 400);
         }
     }
 
@@ -126,26 +126,25 @@ class TokenHelper
     public function runEndpointTests($callback)
     {
         if ('pub' === $this->role) {
-            self::runExpectedErrorTest('', 'empty_token');
-            self::runExpectedErrorTest('asdf', 'malformed_token');
+            $this->runExpectedErrorTest('', 'empty_token');
+            $this->runExpectedErrorTest('asdf', 'malformed_token');
         } else {
-            $this->testHelper->authenticate($this->role);
-            $this->testHelper->delete(self::$ENDPOINT);
-            $response = $this->testHelper->post(self::$ENDPOINT, null, null);
-            $token = $response[0]['data']['token'];
+            $this->login();
+            $this->revokeToken();
+            $token = $this->generateToken();
             $userId = substr($token, 0, strpos($token, Tokens::DELIMITER));
-            $this->testHelper->logout();
-            self::runExpectedErrorTest(
+            $this->logout();
+            $this->runExpectedErrorTest(
                 $userId . Tokens::DELIMITER . 'asdf',
                 'invalid_token'
             );
             $callback($token);
             self::expireToken($userId);
-            self::runExpectedErrorTest($token, 'expired_token');
-            $this->testHelper->authenticate($this->role);
-            $this->testHelper->delete(self::$ENDPOINT);
-            $this->testHelper->logout();
-            self::runExpectedErrorTest($token, 'deleted_token');
+            $this->runExpectedErrorTest($token, 'expired_token');
+            $this->login();
+            $this->revokeToken();
+            $this->logout();
+            $this->runExpectedErrorTest($token, 'revoked_token');
         }
     }
 
@@ -225,14 +224,10 @@ class TokenHelper
      * Note: We need to directly access the database as we do not have an
      * endpoint for expiring a token.
      *
-     * @param string $userId the userId whose token should be expired.
-     *
+     * @param string $userId the ID of the user whose token should be expired.
      * @return bool true if the token was successfully expired.
-     *
-     * @throws Exception if there is a problem parsing the the provided
-     *                   $rawToken.
-     * @throws Exception if there is a problem connecting to or executing the
-     *                   update statement against the database.
+     * @throws \Exception if there is an error parsing the user's token or
+     *                    connecting to or querying the database.
      */
     public static function expireToken($userId)
     {
@@ -292,5 +287,50 @@ class TokenHelper
             $this->expectedErrorOutputs[$type]['file_name'],
             $this->expectedErrorOutputs[$type]['status_code']
         );
+    }
+
+    /**
+     * Authenticate this helper's user by logging in.
+     *
+     * @return null
+     * @throws \Exception if this helper's user role is unrecognized.
+     */
+    private function login()
+    {
+        $this->testHelper->authenticate($this->role);
+    }
+
+    /**
+     * Revoke the token for this helper's user.
+     *
+     * @return null
+     * @throws \Exception if there is an error making the HTTP request.
+     */
+    private function revokeToken()
+    {
+        $this->testHelper->delete(self::$ENDPOINT);
+    }
+
+    /**
+     * Generate a new token for this helper's user.
+     *
+     * @return string the new token.
+     * @throws \Exception if there is an error making the HTTP request.
+     */
+    private function generateToken()
+    {
+        $response = $this->testHelper->post(self::$ENDPOINT, null, null);
+        return $response[0]['data']['token'];
+    }
+
+    /**
+     * De-authenticate this helper's user by logging out.
+     *
+     * @return null
+     * @throws \Exception if there is an error making the HTTP request.
+     */
+    private function logout()
+    {
+        $this->testHelper->logout();
     }
 }
