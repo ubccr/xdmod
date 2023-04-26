@@ -47,7 +47,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Perform an HTTP request and possibly make assertions about the
+     * Perform an HTTP request and optionally make assertions about the
      * response's status code, content type, and/or body.
      *
      * @param \TestHarness\XdmodTestHelper $testHelper performs the HTTP
@@ -67,7 +67,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string|null $expectedFileGroup if provided along with
      *                                       $expectedFileName and
      *                                       $validationType, the test will
-     *                                       open a JSON output file in this
+     *                                       read a JSON output file in this
      *                                       directory (relative to the test
      *                                       artifacts directory) against
      *                                       which to validate the response
@@ -75,7 +75,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string|null $expectedFileName if provided along with
      *                                      $expectedFileGroup and
      *                                      $validationType, the test will
-     *                                      open a JSON file with this name in
+     *                                      read a JSON file with this name in
      *                                      the 'output' directory of the
      *                                      $expectedFileGroup directory and
      *                                      validate the response body against
@@ -85,7 +85,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                                    JSON output file, i.e., 'schema',
      *                                    which will validate it against a JSON
      *                                    Schema, or 'exact', which will do an
-     *                                    exact comparison of the JSON object
+     *                                    exact comparison to the JSON object
      *                                    in the file.
      * @return mixed the decoded JSON response body.
      * @throws \Exception if there is an error making the request, loading
@@ -164,6 +164,30 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $actual;
     }
 
+    /**
+     * Assert that a given JSON object validates against a provided file.
+     * 
+     * @param object $json the JSON object to validate.
+     * @param string $testGroup the directory (relative to the test artifacts
+     *                          directory) containing the file against which
+     *                          to validate.
+     * @param string $fileName the name of the file against which to validate.
+     * @param string $fileType the type of file, i.e., the subdirectory in
+     *                         which the file is located against which to
+     *                         validate, defaults to 'output'.
+     * @param string $validationType the method by which to validate the
+     *                               JSON object against the provided file,
+     *                               i.e., 'schema' (the default), which will
+     *                               validate it against a JSON Schema, or
+     *                               'exact', which will do an exact comparison
+     *                               to the JSON object in the file.
+     * @param string $message the prefix of an error message to be shown when a
+     *                        test assertion fails.
+     * @return object the $json object provided after having been JSON encoded
+     *                and decoded.
+     * @throws \Exception if there is an error loading the file or running the
+     *                    validation.
+     */
     public function validateJson(
         $json,
         $testGroup,
@@ -172,7 +196,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $validationType = 'schema',
         $message = ''
     ) {
-        $expectedFile = self::getTestFiles()->getFile(
+        $expectedFilePath = self::getTestFiles()->getFile(
             $testGroup,
             $fileName,
             $fileType,
@@ -181,19 +205,19 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualObject = json_decode(json_encode($json), false);
         if ('exact' === $validationType) {
             $expectedObject = self::loadRawJsonFile(
-                $expectedFile,
-                $validationType
+                $expectedFilePath,
+                'allow_inheritance'
             );
             $this->assertSame(
                 json_encode($expectedObject),
                 json_encode($actualObject),
-                $message . "\nEXPECTED OUTPUT FILE: $expectedFile"
+                $message . "\nEXPECTED OUTPUT FILE: $expectedFilePath"
             );
         } elseif ('schema' === $validationType) {
-            $expectedObject = Json::loadFile($expectedFile, false);
+            $expectedObject = Json::loadFile($expectedFilePath, false);
             $expectedObject = self::resolveRemoteSchemaRefs(
                 $expectedObject,
-                dirname($expectedFile)
+                dirname($expectedFilePath)
             );
             $schema = Schema::import($expectedObject);
             try {
@@ -201,7 +225,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             } catch (Exception $e) {
                 $a = json_encode($actualObject);
                 $this->fail(
-                    $e->getMessage() . "\nEXPECTED SCHEMA: $expectedFile"
+                    $e->getMessage() . "\nEXPECTED SCHEMA: $expectedFilePath"
                     . "\nACTUAL OBJECT: "
                     . (strlen($a) > 1000 ? substr($a, 0, 1000) . '...' : $a)
                 );
@@ -210,16 +234,31 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $actualObject;
     }
 
-    private function loadRawJsonFile($file, $validationType) {
-        $object = Json::loadFile($file, true);
-        if ('exact' === $validationType) {
+    /**
+     * Load a JSON object from a file.
+     *
+     * @param string $path the path to the file.
+     * @param string $allowInheritance if this value is 'allow_inheritance',
+     *                                 the object in the file can inherit
+     *                                 properties from an object in another
+     *                                 file by specifying an '$extends'
+     *                                 property whose value is the path to
+     *                                 the file containing that other object.
+     *                                 This is recursive to allow for arbitrary
+     *                                 depths of inheritance.
+     * @return object the JSON object.
+     * @throws \Exception if there is an error loading the file.
+     */
+    private function loadRawJsonFile($path, $allowInheritance) {
+        $object = Json::loadFile($path, true);
+        if ('allow_inheritance' === $allowInheritance) {
             if (isset($object['$extends'])) {
                 $parentObject = self::loadRawJsonFile(
                     self::resolveExternalFilePath(
-                        dirname($file),
-                        $object['$extends']
+                        $object['$extends'],
+                        dirname($path)
                     ),
-                    $validationType
+                    $allowInheritance 
                 );
                 $object = array_replace_recursive($parentObject, $object);
                 unset($object['$extends']);
@@ -228,11 +267,25 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $object;
     }
 
+    /**
+     * Given a JSON schema object loaded from a file, recursively replace the
+     * values of any '$ref' properties with the path to the other schema file
+     * being referenced (unless the value starts with a '#', which indicates a
+     * reference that is local to the object and not a reference to an external
+     * file).
+     *
+     * @param object $obj the JSON object.
+     * @param string $schemaDir the path to the directory containing the file
+     *                          from which the object was loaded.
+     * @return object the JSON object with the values of the '$ref' properties
+     *                replaced.
+     * @throws \Exception if there are any errors resolving paths to files.
+     */
     private static function resolveRemoteSchemaRefs($obj, $schemaDir)
     {
         foreach ($obj as $key => $value) {
             if ('$ref' === $key && '#' !== $value[0]) {
-                $obj->$key = self::resolveExternalFilePath($schemaDir, $value);
+                $obj->$key = self::resolveExternalFilePath($value, $schemaDir);
             } elseif ('object' === gettype($value)
                     || 'array' === gettype($value)) {
                 $value = self::resolveRemoteSchemaRefs($value, $schemaDir);
@@ -241,7 +294,19 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return $obj;
     }
 
-    private static function resolveExternalFilePath($parentPath, $path)
+    /**
+     * Given the path to a file and its parent directory's path, return the
+     * full path to the file. If the path contains the string
+     * '${INTEGRATION_ROOT}', the string is replaced with the path to the
+     * integration test artifacts directory.
+     *
+     * @param string $path the path.
+     * @param string $parentPath the parent directory's path.
+     * @return string the full path to the file.
+     * @throws \Exception if there are any errors resolving the path to the
+     *                    integration test artifacts directory.
+     */
+    private static function resolveExternalFilePath($path, $parentPath)
     {
         if (false !== strpos($path, '${INTEGRATION_ROOT}')) {
             return self::getTestFiles()->getFile(
