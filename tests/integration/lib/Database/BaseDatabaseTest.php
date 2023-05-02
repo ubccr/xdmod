@@ -51,11 +51,10 @@ abstract class BaseDatabaseTest extends BaseTest
     ) {
         $actual = $this->db->query($actualSQLQuery);
 
-        $this->validateJson(
+        $this->validateJsonAgainstFile(
             $actual,
             $schemaTestGroup,
-            $actualSchemaFileName,
-            ''
+            $actualSchemaFileName
         );
 
         # Check expected file
