@@ -455,7 +455,12 @@ class UserAdminTest extends BaseUserAdminTest
 
         $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
         $actual = $response[0];
-        $this->validateJsonAgainstFile($actual, 'schema', 'dw_descripter.spec');
+        $this->validateJsonAgainstFile(
+            $actual,
+            'integration/controllers/metric_explorer',
+            'get_dw_descripter',
+            'output'
+        );
         $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();
