@@ -100,6 +100,20 @@ dnf module -y reset nodejs
 dnf module -y install nodejs:16
 ```
 
+**NOTE**: The way that the system level mongodb drivers has changed with Rocky 8. To account
+for this change you will need to run the following: 
+```shell
+dnf install -y php-devel
+pecl install mongodb
+echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
+```
+
+You can double check that the installation was successful by running the following and confirming that
+there is output: 
+```shell
+php -i | grep mongo
+```
+
 Additional Notes
 ----------------
 
