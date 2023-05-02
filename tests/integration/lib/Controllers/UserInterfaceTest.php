@@ -54,7 +54,7 @@ class UserInterfaceTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        $this->validateJson($actual, 'schema', 'get-menus.spec', '');
+        $this->validateJsonAgainstFile($actual, 'schema', 'get-menus.spec');
 
         # Check expected file
         $expected = array();
