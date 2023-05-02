@@ -109,7 +109,7 @@ echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 ```
 
 You can double check that the installation was successful by running the following and confirming that
-there is output: 
+there is output:
 ```shell
 php -i | grep mongo
 ```
