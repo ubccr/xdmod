@@ -64,7 +64,7 @@ class IntegrationTestConfiguration extends Configuration
      * @param TestFiles $testFiles used to get the path to the integration test
      *                             artifacts root directory.
      */
-    public function defaultAssocArrayFactory($filename, $testFiles)
+    public static function defaultAssocArrayFactory($filename, $testFiles)
     {
         return parent::assocArrayFactory(
             $filename,

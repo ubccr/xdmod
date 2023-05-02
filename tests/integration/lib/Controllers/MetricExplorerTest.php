@@ -10,7 +10,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * Directory containing test artifact files.
      */
-    private const TEST_GROUP = 'integration/controllers/metric_explorer';
+    private static $TEST_GROUP = 'integration/controllers/metric_explorer';
 
     protected function setUp()
     {
@@ -24,7 +24,7 @@ class MetricExplorerTest extends TokenAuthTest
     {
         parent::runTokenAuthTests(
             $role,
-            self::TEST_GROUP,
+            self::$TEST_GROUP,
             'get_dw_descripter'
         );
     }

@@ -16,7 +16,7 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * HTTP path for endpoint that creates, reads, and deletes API tokens.
      */
-    private const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
+    private static $TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
 
     /**
      * Make an HTTP request to an endpoint multiple times, testing a variety of
@@ -105,11 +105,11 @@ abstract class TokenAuthTest extends BaseTest
             // User tokens cannot be obtained after they have been created,
             // so if the user already has a token, we don't know what it is and
             // need to revoke it and create a new one.
-            $testHelper->delete(self::TOKEN_CRD_ENDPOINT);
+            $testHelper->delete(self::$TOKEN_CRD_ENDPOINT);
 
             // Create a new token for the user.
             $response = $testHelper->post(
-                self::TOKEN_CRD_ENDPOINT,
+                self::$TOKEN_CRD_ENDPOINT,
                 null,
                 null
             );
@@ -152,7 +152,7 @@ abstract class TokenAuthTest extends BaseTest
 
             // Log the user in and revoke their token.
             $testHelper->authenticate($role);
-            $testHelper->delete(self::TOKEN_CRD_ENDPOINT);
+            $testHelper->delete(self::$TOKEN_CRD_ENDPOINT);
 
             // Log the user back out and make a request with the revoked token.
             $testHelper->logout();
