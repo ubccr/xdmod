@@ -33,10 +33,10 @@ abstract class TokenAuthTest extends BaseTest
      * A JSON object is loaded from the provided input test artifact file to
      * specify how to make the HTTP request. This file needs to have the
      * required keys (@see TokenAuthTest::runErrorTest()).  For the error
-     * tests, the expected response status codes and bodies are defined in the
-     * test artifact file integration/token_auth/output/errors.json. For the
-     * successful authentication test, the expected response status code is 200
-     * and the body is defined in the provided output test artifact file.
+     * tests, the expected response status code is 401, and bodies are defined
+     * in the test artifact file integration/token_auth/output/errors.json. For
+     * the successful authentication test, the expected response status code is
+     * 200, and the body is defined in the provided output test artifact file.
      *
      * @param string $role the user role to use when authenticating.
      * @param string $inputTestGroup the directory containing the JSON test
@@ -159,7 +159,7 @@ abstract class TokenAuthTest extends BaseTest
             $this->runErrorTest(
                 $input,
                 $token,
-                'revoked_token'
+                'invalid_token'
             );
         }
     }
@@ -177,8 +177,8 @@ abstract class TokenAuthTest extends BaseTest
      *                     'token_required'.
      * @param string $token the API token to use for authentication.
      * @param string $type the type of expected error ('empty_token',
-     *                     'malformed_token', 'invalid_token', 'expired_token',
-     *                     or 'revoked_token').
+     *                     'malformed_token', 'invalid_token', or
+     *                     'expired_token').
      * @return mixed the decoded JSON response body.
      * @throws Exception if an unknown value of 'endpoint_type' or
      *                   'authentication_type' is provided or there is an error
@@ -226,8 +226,11 @@ abstract class TokenAuthTest extends BaseTest
         return $this->runTokenAuthTest(
             $input,
             $token,
-            $output[$type]['status_code'],
-            $output[$type]['body']
+            401,
+            $output[$type],
+            [
+                'WWW-Authenticate' => Tokens::HEADER_KEY
+            ]
         );
     }
 
@@ -242,6 +245,11 @@ abstract class TokenAuthTest extends BaseTest
      * @param int $expectedStatusCode the expected HTTP response status code.
      * @param array $expectedBody associative array representing the expected
      *                            JSON response body.
+     * @param array|null $expectedHeaders if not null, associative array
+     *                                    containing header keys and values
+     *                                    that are expected to be present in
+     *                                    the response (not necessarily the
+     *                                    full set of these).
      * @return mixed the decoded JSON response body.
      * @throws Exception if the input object does not contain all of the
      *                   required keys or if there is an error making the
@@ -251,33 +259,58 @@ abstract class TokenAuthTest extends BaseTest
         $input,
         $token,
         $expectedStatusCode,
-        $expectedBody
+        $expectedBody,
+        $expectedHeaders = null
     ) {
-        // Construct a test helper for making the request.
-        $testHelper = new XdmodTestHelper();
-        // Add the token to both the header and query parameters since the
-        // Apache server eats the 'Authorization' header on EL7.
-        $testHelper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
-        if (!array_key_exists('params', $input)) {
-            throw new Exception(
-                "input object is missing key 'params':\n"
-                . var_export($input, true)
+        // Do one request with the token in both the header and the query
+        // parameters (because the Apache server eats the 'Authorization'
+        // header on EL7) and one request with the token only in the query
+        // parameters to make sure the result is the same.
+        $actualBodies = [];
+        foreach (['token_in_header', 'token_not_in_header'] as $mode) {
+            // Construct a test helper for making the request.
+            $testHelper = new XdmodTestHelper();
+            // Add the token to the header.
+            if ('token_in_header' === $mode) {
+                $testHelper->addheader(
+                    'Authorization',
+                    Tokens::HEADER_KEY . ' ' . $token
+                );
+            }
+            // Add the token to the query parameters.
+            if (!array_key_exists('params', $input)) {
+                throw new Exception(
+                    "input object is missing key 'params':\n"
+                    . var_export($input, true)
+                );
+            }
+            if (is_null($input['params'])) {
+                $input['params'] = [];
+            }
+            $input['params'][Tokens::HEADER_KEY] = $token;
+            // Make the request and validate the response.
+            $actualBodies[$mode] = parent::requestAndValidateJson(
+                $testHelper,
+                $input,
+                $expectedStatusCode,
+                $expectedBody,
+                $expectedHeaders
             );
         }
-        if (is_null($input['params'])) {
-            $input['params'] = [];
-        }
-        $input['params'][Tokens::HEADER_KEY] = $token;
-        $actualBody = parent::requestAndValidateJson(
-            $testHelper,
-            $input,
-            $expectedStatusCode,
-            $expectedBody
+        $this->assertSame(
+            json_encode($actualBodies['token_in_header']),
+            json_encode($actualBodies['token_not_in_header']),
+            json_encode(
+                $actualBodies['token_in_header'],
+                JSON_PRETTY_PRINT
+            )
+            . "\n"
+            . json_encode(
+                $actualBodies['token_not_in_header'],
+                JSON_PRETTY_PRINT
+            )
         );
-        return $actualBody;
+        return $actualBodies['token_in_header'];
     }
 
     /**

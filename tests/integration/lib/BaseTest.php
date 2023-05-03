@@ -80,7 +80,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Make an HTTP request and make assertions about the JSON response's
-     * status code, content type, and body.
+     * status code, content type, body, and possibly headers.
      *
      * @param \TestHarness\XdmodTestHelper $testHelper the test helper making
      *                                                 the HTTP request.
@@ -95,6 +95,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $expectedStatusCode the expected status code.
      * @param array $expectedBody associative array representing the expected
      *                            JSON response body.
+     * @param array|null $expectedHeaders if not null, associative array
+     *                                    containing header keys and values
+     *                                    that are expected to be present in
+     *                                    the response (not necessarily the
+     *                                    full set of these).
      * @return mixed the actual decoded JSON response body.
      * @throws Exception if the input object does not contain all of the
      *                   required keys or if there is an error making the
@@ -105,7 +110,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $testHelper,
         $input,
         $expectedStatusCode,
-        $expectedBody
+        $expectedBody,
+        $expectedHeaders = null
     ) {
         // Make sure the input object has all the required keys.
         foreach (['path', 'method', 'params', 'data'] as $requiredKey) {
@@ -122,6 +128,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualStatusCode = null;
         $actualContentType = null;
         $actualBody = [];
+        $actualHeaders = [];
 
         // Make HTTP request.
         $method = $input['method'];
@@ -148,6 +155,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             $actualStatusCode = $response[1]['http_code'];
             $actualContentType = $response[1]['content_type'];
             $actualBody = $response[0];
+            $actualHeaders = $response[2];
         }
 
         // If the expected body has a path defined, extract it in preparation
@@ -186,6 +194,16 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('application/json', $actualContentType, $message);
         $actualBody = json_decode(json_encode($actualBody));
         $this->validateJson($expectedBody, $actualBody, $message);
+        if (!is_null($expectedHeaders)) {
+            foreach ($expectedHeaders as $key => $value) {
+                $this->assertArrayHasKey($key, $actualHeaders, $message);
+                $this->assertSame(
+                    $value,
+                    trim($actualHeaders[$key]),
+                    $message
+                );
+            }
+        }
         return $actualBody;
     }
 
