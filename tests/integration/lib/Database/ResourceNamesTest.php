@@ -24,11 +24,10 @@ class ResourceNamesTest extends BaseTest
     {
         $actual = $this->db->query('SELECT code, name FROM modw.resourcefact ORDER BY code');
 
-        $this->validateJson(
+        $this->validateJsonAgainstFile(
             $actual,
             'schema/integration',
-            'resource_names.spec',
-            ''
+            'resource_names.spec'
         );
 
         # Check expected file

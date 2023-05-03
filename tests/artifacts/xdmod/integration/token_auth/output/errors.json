@@ -1,0 +1,53 @@
+{
+    "authentication_error": {
+        "$ref": "${INTEGRATION_ROOT}/base/authentication_error.json"
+    },
+    "session_expired": {
+        "$ref": "${INTEGRATION_ROOT}/base/session_expired.json"
+    },
+    "empty_token": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "No Token Provided."
+            }
+        }
+    },
+    "malformed_token": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid token format"
+            }
+        }
+    },
+    "invalid_token": {
+        "status_code": 403,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid API token."
+            }
+        }
+    },
+    "expired_token": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "The API Token has expired."
+            }
+        }
+    },
+    "revoked_token": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Malformed token."
+            }
+        }
+    }
+}

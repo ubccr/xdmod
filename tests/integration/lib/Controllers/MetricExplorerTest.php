@@ -2,111 +2,89 @@
 
 namespace IntegrationTests\Controllers;
 
-use IntegrationTests\BaseTest;
-use TestHarness\TokenHelper;
+use TestHarness\TokenAuthTest;
+use TestHarness\XdmodTestHelper;
 
-class MetricExplorerTest extends BaseTest
+class MetricExplorerTest extends TokenAuthTest
 {
+    /**
+     * Directory containing test artifact files.
+     */
+    private static $TEST_GROUP = 'integration/controllers/metric_explorer';
+
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
      * @dataProvider provideBaseRoles
      */
-    public function testGetDwDescripter($role)
+    public function testGetDwDescripterTokenAuth($role)
     {
-        $this->runTokenTests(
+        parent::runTokenAuthTests(
             $role,
-            array(
-                'operation' => 'get_dw_descripter'
-            ),
-            'get_dw_descripter.spec'
-        );
-    }
-
-    private function runTokenTests(
-        $role,
-        $data,
-        $schemaFile,
-        $additionalTests = null
-    ) {
-        $tokenHelper = new TokenHelper(
-            $this,
-            $this->helper,
-            $role,
-            'controllers/metric_explorer.php',
-            'post',
-            null,
-            $data,
-            'controller',
-            'token_optional'
-        );
-        $tokenHelper->runEndpointTests(
-            function ($token) use (
-                $tokenHelper,
-                $schemaFile,
-                $additionalTests
-            ) {
-                $responseBody = $tokenHelper->runEndpointTest(
-                    $token,
-                    $schemaFile,
-                    200,
-                    'integration/controllers/metric_explorer',
-                    'schema'
-                );
-                if (isset($additionalTests)) {
-                    $additionalTests($responseBody);
-                }
-            }
+            self::$TEST_GROUP,
+            'get_dw_descripter'
         );
     }
 
     /**
-     * @dataProvider getDimensionFiltersProvider
+     * Checks that the filters work correctly
      */
-    public function testGetDimensionFilters($role, $schemaFile, $expectedCount)
+    public function testGetDimensionFilters()
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        $additionalTest = null;
-        if (isset($expectedCount)) {
-            $additionalTest = function ($responseBody) use ($expectedCount) {
-                $this->assertSame(
-                    $expectedCount,
-                    $responseBody->totalCount
-                );
-            };
-        }
-        $this->runTokenTests(
-            $role,
-            array(
-                'operation' => 'get_dimension',
-                'dimension_id' => 'username',
-                'realm' => 'Jobs',
-                'public_user' => false,
-                'start' => '',
-                'limit' => '10',
-                'selectedFilterIds' => ''
-            ),
-            $schemaFile,
-            $additionalTest
-        );
-    }
 
-    public function getDimensionFiltersProvider()
-    {
-        return array(
-            array('pub', null, null),
-            array('cd', 'get_dimensions.spec', 66),
-            array('cs', 'get_dimensions.spec', 66),
-            array('usr', 'get_dimensions.spec', 1),
-            array('pi', 'get_dimensions.spec', 6),
-            array('mgr', 'get_dimensions.spec', 0)
+        $this->helper->authenticate('usr');
+
+        $params = array(
+            'operation' => 'get_dimension',
+            'dimension_id' => 'username',
+            'realm' => 'Jobs',
+            'public_user' => false,
+            'start' => '',
+            'limit' => '10',
+            'selectedFilterIds' => ''
         );
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertEquals(1, $response[0]['totalCount']);
+
+        $this->helper->logout();
+
+        $this->helper->authenticate('cd');
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertGreaterThan(1, $response[0]['totalCount']);
+        $totalUsers = $response[0]['totalCount'];
+
+        $this->helper->logout();
+
+        $this->helper->authenticate('pi');
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertGreaterThan(1, $response[0]['totalCount']);
+        $this->assertLessThan($totalUsers, $response[0]['totalCount']);
+
+        $this->helper->logout();
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(401, $response[1]['http_code']);
     }
 
     public function rawDataProvider()

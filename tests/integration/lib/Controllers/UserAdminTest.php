@@ -309,7 +309,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        $this->validateJson($actual, 'schema', 'get-menus.spec', '');
+        $this->validateJsonAgainstFile($actual, 'schema', 'get-menus.spec');
 
         # Check expected file
         $expected = array();
@@ -455,7 +455,12 @@ class UserAdminTest extends BaseUserAdminTest
 
         $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
         $actual = $response[0];
-        $this->validateJson($actual, 'schema', 'dw_descripter.spec', '');
+        $this->validateJsonAgainstFile(
+            $actual,
+            'integration/controllers/metric_explorer',
+            'get_dw_descripter',
+            'output'
+        );
         $this->validateResponse($response);
         if (!$isPublicUser) {
             $this->helper->logout();

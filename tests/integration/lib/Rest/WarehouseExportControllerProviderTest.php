@@ -5,11 +5,10 @@ namespace IntegrationTests\Rest;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
-use IntegrationTests\BaseTest;
+use TestHarness\TokenAuthTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TokenHelper;
 use TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -18,10 +17,10 @@ use XDUser;
  *
  * @coversDefaultClass \Rest\Controllers\WarehouseExportControllerProvider
  */
-class WarehouseExportControllerProviderTest extends BaseTest
+class WarehouseExportControllerProviderTest extends TokenAuthTest
 {
     /**
-     * Test files base path.
+     * Directory containing test artifact files.
      */
     const TEST_GROUP = 'integration/rest/warehouse/export';
 
@@ -189,33 +188,13 @@ class WarehouseExportControllerProviderTest extends BaseTest
      * @covers ::getRealms
      * @dataProvider provideBaseRoles
      */
-    public function testGetRealms($role)
+    public function testGetRealmsTokenAuth($role)
     {
-        $tokenHelper = new TokenHelper(
-            $this,
-            self::$helpers[$role],
+        parent::runTokenAuthTests(
             $role,
-            'rest/warehouse/export/realms',
-            'get',
-            null,
-            null,
-            'rest',
-            'token_optional'
+            self::TEST_GROUP,
+            'get_realms'
         );
-        $tokenHelper->runEndpointTests(
-            function ($token) use ($tokenHelper) {
-                $tokenHelper->runEndpointTest(
-                    $token,
-                    'get_realms.spec',
-                    200,
-                    'integration/rest/warehouse/export',
-                    'schema'
-                );
-            }
-        );
-        if ('pub' !== $role) {
-            self::$helpers[$role]->authenticate($role);
-        }
     }
 
     /**
