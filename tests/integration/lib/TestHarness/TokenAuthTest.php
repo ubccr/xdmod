@@ -195,6 +195,7 @@ abstract class TokenAuthTest extends BaseTest
                 );
             }
         }
+        $expectedHeaders = null;
         // If the endpoint can authenticate via a method other than API token
         // (i.e., its 'authentication_type' is 'token_optional'), the response
         // on authentication failure will be different depending on whether the
@@ -212,7 +213,11 @@ abstract class TokenAuthTest extends BaseTest
                     . " '$input[endpoint_type]'."
                 );
             }
-        } elseif ('token_required' !== $input['authentication_type']) {
+        } elseif ('token_required' === $input['authentication_type']) {
+            $expectedHeaders = [
+                'WWW-Authenticate' => Tokens::HEADER_KEY
+            ];
+        } else {
             throw new Exception(
                 'Unknown value for authentication_type:'
                 . " '$input[authentication_type]'."
@@ -226,11 +231,9 @@ abstract class TokenAuthTest extends BaseTest
         return $this->runTokenAuthTest(
             $input,
             $token,
-            401,
-            $output[$type],
-            [
-                'WWW-Authenticate' => Tokens::HEADER_KEY
-            ]
+            $output[$type]['status_code'],
+            $output[$type]['body'],
+            $expectedHeaders
         );
     }
 
