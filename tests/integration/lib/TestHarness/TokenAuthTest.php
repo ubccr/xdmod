@@ -30,13 +30,13 @@ abstract class TokenAuthTest extends BaseTest
      * end of the method call.  The user is also logged out at the end of the
      * method call.
      *
-     * A JSON object is loaded from the provided input test artifact file to
+     * A JSON object is loaded from the provided test input artifact file to
      * specify how to make the HTTP request. This file needs to have the
      * required keys (@see TokenAuthTest::runErrorTest()).  For the error
      * tests, the expected response status codes and bodies are defined in the
      * test artifact file integration/token_auth/output/errors.json. For the
-     * successful authentication test, the expected response status code is 200
-     * and the body is defined in the provided output test artifact file.
+     * successful authentication test, the expected response status code and
+     * body are defined in the provided test output artifact file.
      *
      * @param string $role the user role to use when authenticating.
      * @param string $inputTestGroup the directory containing the JSON test
@@ -58,7 +58,9 @@ abstract class TokenAuthTest extends BaseTest
      *                                    when authentication is successful.
      *                                    If null, set to be equal to
      *                                    $inputFileName.
-     * @return null
+     * @return mixed|null the decoded JSON response body of the request
+     *                    involving successful authentication, or null if there
+     *                    was no successful authentication.
      * @throws Exception if the role is unrecognized or there is an error
      *                   parsing the input or output files, making any of the
      *                   requests, or validating any of the responses.
@@ -81,6 +83,12 @@ abstract class TokenAuthTest extends BaseTest
             $inputFileName,
             'input'
         );
+        $output = parent::loadJsonTestArtifact(
+            $outputTestGroup,
+            $outputFileName,
+            'output'
+        );
+        $successBody = null;
         if ('pub' === $role) {
             // Make a request with an empty token.
             $this->runErrorTest(
@@ -131,16 +139,7 @@ abstract class TokenAuthTest extends BaseTest
             );
 
             // Make a request with the valid token.
-            $this->runTokenAuthTest(
-                $input,
-                $token,
-                200,
-                parent::loadJsonTestArtifact(
-                    $outputTestGroup,
-                    $outputFileName,
-                    'output'
-                )
-            );
+            $successBody = $this->runTokenAuthTest($input, $token, $output);
 
             // Expire the token and make a request with it.
             self::expireToken($userId);
@@ -162,6 +161,7 @@ abstract class TokenAuthTest extends BaseTest
                 'revoked_token'
             );
         }
+        return $successBody;
     }
 
     /**
@@ -170,8 +170,8 @@ abstract class TokenAuthTest extends BaseTest
      *
      * @param array $input associative array describing the HTTP request to be
      *                     made. Needs to have the required keys
-     *                     (@see BaseTest::requestAndValidateJson()) as well as
-     *                     an 'endpoint_type' key whose value is either
+     *                     (@see BaseTest::REQUIRED_ENDPOINT_TEST_KEYS) as well
+     *                     as an 'endpoint_type' key whose value is either
      *                     'controller' or 'rest' and an 'authentication_type'
      *                     key whose value is either 'token_optional' or
      *                     'token_required'.
@@ -187,14 +187,11 @@ abstract class TokenAuthTest extends BaseTest
     private function runErrorTest($input, $token, $type)
     {
         // Make sure the input object has the additional required keys.
-        foreach (['endpoint_type', 'authentication_type'] as $requiredKey) {
-            if (!array_key_exists($requiredKey, $input)) {
-                throw new Exception(
-                    "input object is missing key '$requiredKey':\n"
-                    . var_export($input, true)
-                );
-            }
-        }
+        parent::assertRequiredKeys(
+            ['endpoint_type', 'authentication_type'],
+            $input,
+            '$input'
+        );
         // If the endpoint can authenticate via a method other than API token
         // (i.e., its 'authentication_type' is 'token_optional'), the response
         // on authentication failure will be different depending on whether the
@@ -223,12 +220,7 @@ abstract class TokenAuthTest extends BaseTest
             'errors',
             'output'
         );
-        return $this->runTokenAuthTest(
-            $input,
-            $token,
-            $output[$type]['status_code'],
-            $output[$type]['body']
-        );
+        return $this->runTokenAuthTest($input, $token, $output[$type]);
     }
 
     /**
@@ -237,22 +229,19 @@ abstract class TokenAuthTest extends BaseTest
      *
      * @param array $input associative array describing the HTTP request to be
      *                     made. Needs to have the required keys
-     *                     (@see BaseTest::requestAndValidateJson()).
+     *                     (@see BaseTest::REQUIRED_ENDPOINT_TEST_KEYS).
      * @param string $token the API token to use for authentication.
-     * @param int $expectedStatusCode the expected HTTP response status code.
-     * @param array $expectedBody associative array representing the expected
-     *                            JSON response body.
+     * @param array $output associative array describing the expected HTTP
+     *                      response status code and JSON body. Needs to have
+     *                      the required keys
+     *                      (@see BaseTest::REQUIRED_ENDPOINT_TEST_KEYS).
      * @return mixed the decoded JSON response body.
      * @throws Exception if the input object does not contain all of the
      *                   required keys or if there is an error making the
      *                   request or validating the response.
      */
-    private function runTokenAuthTest(
-        $input,
-        $token,
-        $expectedStatusCode,
-        $expectedBody
-    ) {
+    private function runTokenAuthTest($input, $token, $output)
+    {
         // Construct a test helper for making the request.
         $testHelper = new XdmodTestHelper();
         // Add the token to both the header and query parameters since the
@@ -261,12 +250,7 @@ abstract class TokenAuthTest extends BaseTest
             'Authorization',
             Tokens::HEADER_KEY . ' ' . $token
         );
-        if (!array_key_exists('params', $input)) {
-            throw new Exception(
-                "input object is missing key 'params':\n"
-                . var_export($input, true)
-            );
-        }
+        parent::assertRequiredKeys(['params'], $input, '$input');
         if (is_null($input['params'])) {
             $input['params'] = [];
         }
@@ -274,8 +258,7 @@ abstract class TokenAuthTest extends BaseTest
         $actualBody = parent::requestAndValidateJson(
             $testHelper,
             $input,
-            $expectedStatusCode,
-            $expectedBody
+            $output
         );
         return $actualBody;
     }
