@@ -11,54 +11,17 @@ use TestHarness\TestFiles;
 /**
  * Read and parse a JSON configuration file, replacing the string
  * "${INTEGRATION_ROOT}" with the path to the integration test artifacts root
- * directory (e.g., tests/artifacts/xdmod/integration), and properly
- * transforming "$ref" pointers whose values are fragments only (i.e., that
- * start with "#", i.e., that refer to a section within the configuration file
- * itself) to prepend the name of the configuration file, since the default
- * JsonReferenceTransformer would otherwise fail to parse such a value because
- * it has an empty URL path.
- *
- * For example, given the two files below:
- *
- * tests/artifacts/xdmod/integration/a.json: {
- *     "b": "c"
- * }
- *
- * d.json: {
- *     "e": {
- *         "$ref": "${INTEGRATION_ROOT}/a.json"
- *     },
- *     "f": {
- *         "$ref": "#/g/h"
- *     },
- *     "g": {
- *         "h": {
- *             "i": "j"
- *         }
- *     }
- * }
- *
- * The JSON object parsed from d.json would be:
- * {
- *     "e": {
- *         "b": "c"
- *     },
- *     "f": {
- *         "i": "j"
- *     },
- *     "g": {
- *         "h": {
- *             "i": "j"
- *         }
- *     }
- * }
+ * directory (e.g., tests/artifacts/xdmod/integration), and using
+ * @see JsonSchemaAnchorReferenceTransformer.
  */
 class IntegrationTestConfiguration extends Configuration
 {
+    private $numSchemasSeen = 0;
+
     /**
      * Load a JSON configuration file into an associative array, replacing the
      * string "${INTEGRATION_ROOT}" with the path to the integration test
-     * artifacts root directory and properly parsing fragment-only references.
+     * artifacts root directory.
      *
      * @param string $filename the base configuration file to be processed.
      * @param TestFiles $testFiles used to get the path to the integration test
@@ -85,17 +48,44 @@ class IntegrationTestConfiguration extends Configuration
     }
 
     /**
-     * Add a transformer that will prepend the name of the configuration file
-     * to references that contain only a fragment (e.g., "#/foo" becomes
-     * "bar#/foo") before the JsonReferenceTransformer gets to them so it does
-     * cause an error due to the URL paths being empty.
+     * @return bool true if we are currently inside a schema while running
+     * @see processKeyTransformers().
+     */
+    public function inSchema()
+    {
+        return $this->numSchemasSeen > 0;
+    }
+
+    /**
+     * Add the @see JsonSchemaAnchorReferenceTransformer.
      */
     protected function preTransformTasks()
     {
         $this->addKeyTransformer(
-            new JsonFragmentOnlyReferenceTransformer($this->logger)
+            new JsonSchemaAnchorReferenceTransformer($this->logger)
         );
         parent::preTransformTasks();
         return $this;
+    }
+
+    /**
+     * If the given object has a '$schema' property, increment the number of
+     * schemas seen before transforming it, so that the
+     * @see JsonSchemaAnchorReferenceTransformer can do its transformations,
+     * and then decrement the number of schemas seen after transforming it.
+     *
+     * @param stdClass $obj the object to transform.
+     * @return stdClass the transformed object.
+     */
+    protected function processKeyTransformers(stdClass $obj)
+    {
+        if (property_exists($obj, '$schema')) {
+            $this->numSchemasSeen++;
+        }
+        $obj = parent::processKeyTransformers($obj);
+        if (property_exists($obj, '$schema')) {
+            $this->numSchemasSeen--;
+        }
+        return $obj;
     }
 }
