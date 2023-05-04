@@ -41,8 +41,10 @@
     "create_failure": {
         "status_code": 409,
         "body": {
-            "success": false,
-            "message": "Token already exists."
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Token already exists."
+            }
         }
     },
     "get_success": {

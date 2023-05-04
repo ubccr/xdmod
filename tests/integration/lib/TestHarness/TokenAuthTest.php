@@ -192,6 +192,11 @@ abstract class TokenAuthTest extends BaseTest
             $input,
             '$input'
         );
+        $output = parent::loadJsonTestArtifact(
+            'integration/token_auth',
+            'errors',
+            'output'
+        );
         // If the endpoint can authenticate via a method other than API token
         // (i.e., its 'authentication_type' is 'token_optional'), the response
         // on authentication failure will be different depending on whether the
@@ -210,7 +215,7 @@ abstract class TokenAuthTest extends BaseTest
                 );
             }
         } elseif ('token_required' === $input['authentication_type']) {
-            $expectedHeaders = [
+            $output['headers'] = [
                 'WWW-Authenticate' => Tokens::HEADER_KEY
             ];
         } else {
@@ -219,11 +224,6 @@ abstract class TokenAuthTest extends BaseTest
                 . " '$input[authentication_type]'."
             );
         }
-        $output = parent::loadJsonTestArtifact(
-            'integration/token_auth',
-            'errors',
-            'output'
-        );
         return $this->runTokenAuthTest($input, $token, $output[$type]);
     }
 
@@ -244,23 +244,46 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function runTokenAuthTest($input, $token, $output)
     {
-        // Construct a test helper for making the request.
-        $testHelper = new XdmodTestHelper();
-        // Add the token to both the header and query parameters since the
-        // Apache server eats the 'Authorization' header on EL7.
-        $testHelper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
-        parent::assertRequiredKeys(['params'], $input, '$input');
-        if (is_null($input['params'])) {
-            $input['params'] = [];
+        // Do one request with the token in both the header and the query
+        // parameters (because the Apache server eats the 'Authorization'
+        // header on EL7) and one request with the token only in the query
+        // parameters to make sure the result is the same.
+        $actualBodies = [];
+        foreach (['token_in_header', 'token_not_in_header'] as $mode) {
+            // Construct a test helper for making the request.
+            $testHelper = new XdmodTestHelper();
+            // Add the token to the header.
+            if ('token_in_header' === $mode) {
+                $testHelper->addheader(
+                    'Authorization',
+                    Tokens::HEADER_KEY . ' ' . $token
+                );
+            }
+            // Add the token to the query parameters.
+            parent::assertRequiredKeys(['params'], $input, '$input');
+            if (is_null($input['params'])) {
+                $input['params'] = [];
+            }
+            $input['params'][Tokens::HEADER_KEY] = $token;
+            // Make the request and validate the response.
+            $actualBodies[$mode] = parent::requestAndValidateJson(
+                $testHelper,
+                $input,
+                $output
+            );
         }
-        $input['params'][Tokens::HEADER_KEY] = $token;
-        $actualBody = parent::requestAndValidateJson(
-            $testHelper,
-            $input,
-            $output
+        $this->assertSame(
+            json_encode($actualBodies['token_in_header']),
+            json_encode($actualBodies['token_not_in_header']),
+            json_encode(
+                $actualBodies['token_in_header'],
+                JSON_PRETTY_PRINT
+            )
+            . "\n"
+            . json_encode(
+                $actualBodies['token_not_in_header'],
+                JSON_PRETTY_PRINT
+            )
         );
         return $actualBodies['token_in_header'];
     }
