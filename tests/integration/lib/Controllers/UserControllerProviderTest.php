@@ -126,8 +126,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $fileName,
             'output'
         );
-        // Add the file path so it can be included in error messages for tests
-        // that fail.
         return parent::requestAndValidateJson(
             $this->helper,
             $input,
