@@ -30,61 +30,37 @@ class MetricExplorerTest extends TokenAuthTest
     }
 
     /**
-     * Checks that the filters work correctly
+     * @dataProvider getDimensionFiltersProvider
      */
-    public function testGetDimensionFilters()
+    public function testGetDimensionFilters($role, $expectedCount)
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-
-        $this->helper->authenticate('usr');
-
-        $params = array(
-            'operation' => 'get_dimension',
-            'dimension_id' => 'username',
-            'realm' => 'Jobs',
-            'public_user' => false,
-            'start' => '',
-            'limit' => '10',
-            'selectedFilterIds' => ''
+        $responseBody = parent::runTokenAuthTests(
+            $role,
+            self::$TEST_GROUP,
+            'get_dimensions'
         );
+        if (!is_null($expectedCount)) {
+            $this->assertSame(
+                $expectedCount,
+                $responseBody->totalCount
+            );
+        }
+    }
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-        $this->assertEquals(1, $response[0]['totalCount']);
-
-        $this->helper->logout();
-
-        $this->helper->authenticate('cd');
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-        $this->assertGreaterThan(1, $response[0]['totalCount']);
-        $totalUsers = $response[0]['totalCount'];
-
-        $this->helper->logout();
-
-        $this->helper->authenticate('pi');
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-        $this->assertGreaterThan(1, $response[0]['totalCount']);
-        $this->assertLessThan($totalUsers, $response[0]['totalCount']);
-
-        $this->helper->logout();
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(401, $response[1]['http_code']);
+    public function getDimensionFiltersProvider()
+    {
+        return [
+            ['pub', null],
+            ['cd', 66],
+            ['cs', 66],
+            ['usr', 1],
+            ['pi', 6],
+            ['mgr', 0]
+        ];
     }
 
     public function rawDataProvider()
