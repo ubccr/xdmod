@@ -1,152 +1,155 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "properties": {
-        "totalCount": {
-            "type": "number",
-            "enum": [ 1 ]
-        },
-        "data": {
-            "type": "array",
-            "items": { "$ref": "#/$defs/data_item" },
-            "minItems": 1,
-            "maxItems": 1,
-            "uniqueItems": true
-        }
-    },
-    "required": [ "totalCount", "data" ],
-    "additionalProperties": false,
-    "$defs": {
-        "data_item": {
-            "type": "object",
-            "properties": {
-                "realms": { "$ref": "#/$defs/realms" }
+    "status_code": 200,
+    "body": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+            "totalCount": {
+                "type": "number",
+                "enum": [ 1 ]
             },
-            "required": [ "realms" ],
-            "additionalProperties": false
-        },
-        "realms": {
-            "type": "object",
-            "properties": {
-                "Cloud": {
-                    "allOf": [
-                        { "$ref": "#/$defs/realm" },
-                        { "$ref": "#/$defs/cloud_realm" }
-                     ]
-                },
-                "Jobs": {
-                    "allOf" : [
-                        { "$ref": "#/$defs/realm" },
-                        { "$ref": "#/$defs/jobs_realm" }
-                    ]
-                },
-                "Storage": {
-                    "allOf" : [
-                        { "$ref": "#/$defs/realm" },
-                        { "$ref": "#/$defs/storage_realm" }
-                    ]
-                }
-            },
-            "required": [ "Cloud", "Jobs", "Storage" ],
-            "additionalProperties": false
-        },
-        "realm": {
-            "type": "object",
-            "properties": {
-                "metrics": { "$ref": "#/$defs/metrics" },
-                "dimensions": { "$ref": "#/$defs/dimensions" },
-                "text": { "type": "string" },
-                "category": { "type": "string" }
-            },
-            "required": [ "metrics", "dimensions", "text", "category" ],
-            "additionalProperties": false
-        },
-        "cloud_realm": {
-            "properties": {
-                "metrics": {
-                    "minProperties": 10,
-                    "maxProperties": 10
-                },
-                "dimensions": {
-                    "minProperties": 14,
-                    "maxProperties": 14
-                },
-                "text": {
-                    "enum": [ "Cloud" ]
-                },
-                "category": {
-                    "enum": [ "Cloud" ]
-                }
+            "data": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/data_item" },
+                "minItems": 1,
+                "maxItems": 1,
+                "uniqueItems": true
             }
         },
-        "jobs_realm": {
-            "properties": {
-                "metrics": {
-                    "minProperties": 26,
-                    "maxProperties": 26
+        "required": [ "totalCount", "data" ],
+        "additionalProperties": false,
+        "$defs": {
+            "data_item": {
+                "type": "object",
+                "properties": {
+                    "realms": { "$ref": "#/$defs/realms" }
                 },
-                "dimensions": {
-                    "minProperties": 16,
-                    "maxProperties": 16
+                "required": [ "realms" ],
+                "additionalProperties": false
+            },
+            "realms": {
+                "type": "object",
+                "properties": {
+                    "Cloud": {
+                        "allOf": [
+                            { "$ref": "#/$defs/realm" },
+                            { "$ref": "#/$defs/cloud_realm" }
+                         ]
+                    },
+                    "Jobs": {
+                        "allOf" : [
+                            { "$ref": "#/$defs/realm" },
+                            { "$ref": "#/$defs/jobs_realm" }
+                        ]
+                    },
+                    "Storage": {
+                        "allOf" : [
+                            { "$ref": "#/$defs/realm" },
+                            { "$ref": "#/$defs/storage_realm" }
+                        ]
+                    }
                 },
-                "text": {
-                    "enum": [ "Jobs" ]
+                "required": [ "Cloud", "Jobs", "Storage" ],
+                "additionalProperties": false
+            },
+            "realm": {
+                "type": "object",
+                "properties": {
+                    "metrics": { "$ref": "#/$defs/metrics" },
+                    "dimensions": { "$ref": "#/$defs/dimensions" },
+                    "text": { "type": "string" },
+                    "category": { "type": "string" }
                 },
-                "category": {
-                    "enum": [ "Jobs" ]
+                "required": [ "metrics", "dimensions", "text", "category" ],
+                "additionalProperties": false
+            },
+            "cloud_realm": {
+                "properties": {
+                    "metrics": {
+                        "minProperties": 10,
+                        "maxProperties": 10
+                    },
+                    "dimensions": {
+                        "minProperties": 14,
+                        "maxProperties": 14
+                    },
+                    "text": {
+                        "enum": [ "Cloud" ]
+                    },
+                    "category": {
+                        "enum": [ "Cloud" ]
+                    }
                 }
-            }
-        },
-        "storage_realm": {
-            "properties": {
-                "metrics": {
-                    "minProperties": 7,
-                    "maxProperties": 7
-                },
-                "dimensions": {
-                    "minProperties": 10,
-                    "maxProperties": 10
-                },
-                "text": {
-                    "enum": [ "Storage" ]
-                },
-                "category": {
-                    "enum": [ "Storage" ]
+            },
+            "jobs_realm": {
+                "properties": {
+                    "metrics": {
+                        "minProperties": 26,
+                        "maxProperties": 26
+                    },
+                    "dimensions": {
+                        "minProperties": 16,
+                        "maxProperties": 16
+                    },
+                    "text": {
+                        "enum": [ "Jobs" ]
+                    },
+                    "category": {
+                        "enum": [ "Jobs" ]
+                    }
                 }
-            }
-        },
-        "metrics": {
-            "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "allOf": [
-                        { "$ref": "#/$defs/metric_or_dimension" },
-                        {
-                            "properties": {
-                                "std_err": { "type": "boolean" }
+            },
+            "storage_realm": {
+                "properties": {
+                    "metrics": {
+                        "minProperties": 7,
+                        "maxProperties": 7
+                    },
+                    "dimensions": {
+                        "minProperties": 10,
+                        "maxProperties": 10
+                    },
+                    "text": {
+                        "enum": [ "Storage" ]
+                    },
+                    "category": {
+                        "enum": [ "Storage" ]
+                    }
+                }
+            },
+            "metrics": {
+                "type": "object",
+                "patternProperties": {
+                    "^.*$": {
+                        "allOf": [
+                            { "$ref": "#/$defs/metric_or_dimension" },
+                            {
+                                "properties": {
+                                    "std_err": { "type": "boolean" }
+                                }
                             }
-                        }
-                    ]
-                }
-            }
-        },
-        "dimensions": {
-            "type": "object",
-            "patternProperties": {
-                "^.*$": { "$ref": "#/$defs/metric_or_dimension" }
-            }
-        },
-        "metric_or_dimension": {
-            "type": "object",
-            "properties": {
-                "text": {
-                    "type": "string"
-                },
-                "info": {
-                    "type": "string"
+                        ]
+                    }
                 }
             },
-            "required": [ "text", "info" ]
+            "dimensions": {
+                "type": "object",
+                "patternProperties": {
+                    "^.*$": { "$ref": "#/$defs/metric_or_dimension" }
+                }
+            },
+            "metric_or_dimension": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string"
+                    },
+                    "info": {
+                        "type": "string"
+                    }
+                },
+                "required": [ "text", "info" ]
+            }
         }
     }
 }
