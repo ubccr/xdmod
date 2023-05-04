@@ -20,16 +20,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * responses, these are the required keys.
      */
     protected static $REQUIRED_ENDPOINT_TEST_KEYS = [
-        'input' => [
-            'path', // string, e.g., 'rest/warehouse/export/realms'.
-            'method', // string, e.g., 'get', 'post', 'delete', 'patch'.
-            'params', // object containing query parameters of the request.
-            'data' // object containing request body data.
-        ],
-        'output' => [
-            'status_code', // int, e.g., 200, 404.
-            'body' // json object.
-        ]
+        'input' => ['path', 'method', 'params', 'data'],
+        'output' => ['status_code', 'body']
     ];
 
     public static function setUpBeforeClass()

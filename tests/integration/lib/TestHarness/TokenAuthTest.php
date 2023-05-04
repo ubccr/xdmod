@@ -232,13 +232,11 @@ abstract class TokenAuthTest extends BaseTest
      * the response.
      *
      * @param array $input associative array describing the HTTP request to be
-     *                     made. Needs to have the required keys
-     *                     (@see BaseTest::REQUIRED_ENDPOINT_TEST_KEYS).
+     *                     made. @see BaseTest::requestAndValidateJson.
      * @param string $token the API token to use for authentication.
      * @param array $output associative array describing the expected HTTP
-     *                      response status code and JSON body. Needs to have
-     *                      the required keys
-     *                      (@see BaseTest::REQUIRED_ENDPOINT_TEST_KEYS).
+     *                      response status code and JSON body.
+     *                      @see BaseTest::requestAndValidateJson().
      * @return mixed the decoded JSON response body.
      * @throws Exception if the input object does not contain all of the
      *                   required keys or if there is an error making the
