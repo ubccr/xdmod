@@ -81,10 +81,12 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $this->addField(new TableField($personTable, "long_name", "name"));
 
         $this->addField(new TableField($factTable, "job_id", "jobid"));
-        $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
+        $fta = $factTable->getAlias();
+        $this->addField(new FormulaField("CASE WHEN $fta.local_job_array_index = -1 THEN $fta.local_jobid ELSE CONCAT($fta.local_jobid, '[', $fta.local_job_array_index, ']') END", "provider_job_id"));
         $this->addField(new TableField($factTable, 'start_time_ts'));
         $this->addField(new TableField($factTable, 'end_time_ts'));
         $this->addField(new FormulaField('-1', 'cpu_user'));
+        $this->addField(new FormulaField('COALESCE(LEAST(jt.wallduration / jt.timelimit, 1), -1)', 'walltime_accuracy'));
 
         // This is used by Integrations and not currently shown on the XDMoD interface
         $this->addField(new TableField($factTable, 'name', 'job_name'));
