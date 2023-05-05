@@ -1,0 +1,213 @@
+{
+    "defaults": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "start_date is a required parameter."
+            }
+        }
+    },
+    "start_date_malformed": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid value for start_date. Must be a(n) ISO 8601 Date."
+            }
+        }
+    },
+    "no_end_date": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "end_date is a required parameter."
+            }
+        }
+    },
+    "end_date_malformed": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid value for end_date. Must be a(n) ISO 8601 Date."
+            }
+        }
+    },
+    "end_before_start": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "End date cannot be less than start date.",
+                "code": 104
+            }
+        }
+    },
+    "no_realm": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "realm is a required parameter."
+            }
+        }
+    },
+    "invalid_realm": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid realm.",
+                "code": 104
+            }
+        }
+    },
+    "invalid_fields": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid fields.",
+                "code": 104
+            }
+        }
+    },
+    "invalid_filter_key": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Invalid filter key 'asdf'.",
+                "code": 104
+            }
+        }
+    },
+    "negative_offset": {
+        "status_code": 400,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Offset must be non-negative.",
+                "code": 104
+            }
+        }
+    },
+    "success_body": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "get_raw_data_success_body",
+        "type": "object",
+        "properties": {
+            "success": { "$ref": "#/$defs/success" },
+            "fields": { "$ref": "#/$defs/fields" },
+            "data": { "$ref": "#/$defs/data" }
+        },
+        "required": [ "success", "fields", "data" ],
+        "additionalProperties": false,
+        "$defs": {
+            "success": {
+                "type": "boolean",
+                "enum": [ true ]
+            },
+            "fields": {
+                "type": "array",
+                "items": { "type": "string" },
+                "uniqueItems": true
+            },
+            "data": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/data_row" }
+            },
+            "data_row": {
+                "type": "array",
+                "items": { "type": "string" }
+            }
+        }
+    },
+    "success_all_fields_body": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "get_raw_data_success_all_fields_body",
+        "allOf": [
+            { "$ref": "get_raw_data.json#/success_body" },
+            {
+                "properties": {
+                    "fields": {
+                        "minItems": 28,
+                        "maxItems": 28
+                    },
+                    "data": {
+                        "items": {
+                            "minItems": 28,
+                            "maxItems": 28
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "success_0": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "get_raw_data_success_0_body",
+            "allOf": [
+                { "$ref": "get_raw_data.json#/success_all_fields_body" },
+                {
+                    "properties": {
+                        "data": {
+                            "minItems": 10000,
+                            "maxItems": 10000
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "success_16500": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "get_raw_data_success_16500_body",
+            "allOf": [
+                { "$ref": "get_raw_data.json#/success_all_fields_body" },
+                {
+                    "properties": {
+                        "data": {
+                            "minItems": 66,
+                            "maxItems": 66
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "success_fields_and_filters": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "allOf": [
+                { "$ref": "get_raw_data.json#/success_body" },
+                {
+                    "properties": {
+                        "fields": {
+                            "items": {
+                                "enum": [ "Nodes", "Wall Time" ]
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                        },
+                        "data": {
+                            "items": {
+                                "minItems": 2,
+                                "maxItems": 2
+                            },
+                            "minItems": 29,
+                            "maxItems": 29
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
