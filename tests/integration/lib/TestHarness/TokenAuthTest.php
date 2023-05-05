@@ -116,13 +116,6 @@ abstract class TokenAuthTest extends BaseTest
             'input'
         );
 
-        // Make sure the input object has the additional required keys.
-        parent::assertRequiredKeys(
-            ['endpoint_type', 'authentication_type'],
-            $input,
-            '$input'
-        );
-
         // Store the path to the input object for displaying in test assertion
         // failure messages.
         if (!is_null($testKey)) {
@@ -130,6 +123,13 @@ abstract class TokenAuthTest extends BaseTest
             $input = $input[$testKey];
             $input['$path'] = $path;
         }
+
+        // Make sure the input object has the additional required keys.
+        parent::assertRequiredKeys(
+            ['endpoint_type', 'authentication_type'],
+            $input,
+            '$input'
+        );
 
         if ('valid_token' === $tokenType) {
             // If the token should be valid, load the test output artifact that
@@ -193,7 +193,9 @@ abstract class TokenAuthTest extends BaseTest
                         . " '$input[endpoint_type]'."
                     );
                 }
-            } elseif ('token_required' !== $input['authentication_type']) {
+            } elseif ('token_required' === $input['authentication_type']) {
+                $testKey = null;
+            } else {
                 throw new Exception(
                     'Unknown value for authentication_type:'
                     . " '$input[authentication_type]'."
