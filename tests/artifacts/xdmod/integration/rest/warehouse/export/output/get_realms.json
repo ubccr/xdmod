@@ -2,6 +2,7 @@
     "status_code": 200,
     "body": {
         "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "get_realms_body",
         "allOf": [
             {
                 "type": "object",

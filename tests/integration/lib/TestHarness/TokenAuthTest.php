@@ -24,19 +24,29 @@ abstract class TokenAuthTest extends BaseTest
      * the user is a public user, the error conditions tested are an empty
      * token and a malformed token. If the user is non-public, the error
      * conditions tested are an invalid token, an expired token, and a deleted
-     * token, and a successful authentication is also testsed. If a token
-     * already exists for the given user when this method is called, the token
-     * is first revoked. A new token is created that is also revoked at the
-     * end of the method call.  The user is also logged out at the end of the
-     * method call.
+     * token, and a successful authentication is also tested involving one or
+     * more tests. If a token already exists for the given user when this
+     * method is called, the token is first revoked. A new token is created
+     * that is also revoked at the end of the method call.  The user is also
+     * logged out at the end of the method call.
      *
      * A JSON object is loaded from the provided test input artifact file to
      * specify how to make the HTTP request. This file needs to have the
-     * required keys (@see TokenAuthTest::runErrorTest()).  For the error
-     * tests, the expected response status codes and bodies are defined in the
-     * test artifact file integration/token_auth/output/errors.json. For the
-     * successful authentication test, the expected response status code and
-     * body are defined in the provided test output artifact file.
+     * required keys (@see TokenAuthTest::runErrorTest()). This file can
+     * specify multiple tests instead of just one by including a 'defaults' key
+     * that defines the default test (this test is used for the error tests as
+     * well as the successful authentication test) and any number of other
+     * keys that define tests that are only tested with a successful token
+     * authentication.
+     *
+     * For the error tests, the expected response status codes and bodies are
+     * defined in the test artifact file
+     * integration/token_auth/output/errors.json. For the successful
+     * authentication test, the expected response status code and body are
+     * defined in the provided test output artifact file. If the input file
+     * specifies multiple tests, the output file needs to have the same keys:
+     * 'defaults' plus the same keys as any other tests specified in the input
+     * file.
      *
      * @param string $role the user role to use when authenticating.
      * @param string $inputTestGroup the directory containing the JSON test
@@ -58,7 +68,7 @@ abstract class TokenAuthTest extends BaseTest
      *                                    when authentication is successful.
      *                                    If null, set to be equal to
      *                                    $inputFileName.
-     * @return mixed|null the decoded JSON response body of the request
+     * @return array|null array of decoded JSON response bodies of the requests
      *                    involving successful authentication, or null if there
      *                    was no successful authentication.
      * @throws Exception if the role is unrecognized or there is an error
@@ -83,22 +93,21 @@ abstract class TokenAuthTest extends BaseTest
             $inputFileName,
             'input'
         );
-        $output = parent::loadJsonTestArtifact(
-            $outputTestGroup,
-            $outputFileName,
-            'output'
-        );
-        $successBody = null;
+        $errorTestInput = $input;
+        if (array_key_exists('defaults', $input)) {
+            $errorTestInput = $input['defaults'];
+        }
+        $successBodies = null;
         if ('pub' === $role) {
             // Make a request with an empty token.
             $this->runErrorTest(
-                $input,
+                $errorTestInput,
                 '',
                 'empty_token'
             );
             // Make a request with a malformed token.
             $this->runErrorTest(
-                $input,
+                $errorTestInput,
                 'asdf',
                 'malformed_token'
             );
@@ -133,18 +142,45 @@ abstract class TokenAuthTest extends BaseTest
 
             // Make a request with an invalid token.
             $this->runErrorTest(
-                $input,
+                $errorTestInput,
                 $userId . Tokens::DELIMITER . 'asdf',
                 'invalid_token'
             );
 
-            // Make a request with the valid token.
-            $successBody = $this->runTokenAuthTest($input, $token, $output);
+            // Run tests with the valid token.
+            $successOutput = parent::loadJsonTestArtifact(
+                $outputTestGroup,
+                $outputFileName,
+                'output'
+            );
+            $successBodies = [];
+            if (array_key_exists('defaults', $input)) {
+                foreach (array_keys($input) as $key) {
+                    // The injected '$path' key does not describe a test, so
+                    // skip it.
+                    if ('$path' === $key) {
+                        continue;
+                    }
+                    $successOutput[$key]['body']['$path']
+                        = $successOutput['$path'] . "#$key";
+                    $successBodies[] = $this->runTokenAuthTest(
+                        $input[$key],
+                        $token,
+                        $successOutput[$key]
+                    );
+                }
+            } else {
+                $successBodies[] = $this->runTokenAuthTest(
+                    $input,
+                    $token,
+                    $successOutput
+                );
+            }
 
             // Expire the token and make a request with it.
             self::expireToken($userId);
             $this->runErrorTest(
-                $input,
+                $errorTestInput,
                 $token,
                 'expired_token'
             );
@@ -156,12 +192,12 @@ abstract class TokenAuthTest extends BaseTest
             // Log the user back out and make a request with the revoked token.
             $testHelper->logout();
             $this->runErrorTest(
-                $input,
+                $errorTestInput,
                 $token,
                 'revoked_token'
             );
         }
-        return $successBody;
+        return $successBodies;
     }
 
     /**
@@ -240,25 +276,48 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function runTokenAuthTest($input, $token, $output)
     {
-        // Construct a test helper for making the request.
-        $testHelper = new XdmodTestHelper();
-        // Add the token to both the header and query parameters since the
-        // Apache server eats the 'Authorization' header on EL7.
-        $testHelper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
-        parent::assertRequiredKeys(['params'], $input, '$input');
-        if (is_null($input['params'])) {
-            $input['params'] = [];
+        // Do one request with the token in both the header and the query
+        // parameters (because the Apache server eats the 'Authorization'
+        // header on EL7) and one request with the token only in the query
+        // parameters to make sure the result is the same.
+        $actualBodies = [];
+        foreach (['token_in_header', 'token_not_in_header'] as $mode) {
+            // Construct a test helper for making the request.
+            $testHelper = new XdmodTestHelper();
+            // Add the token to the header.
+            if ('token_in_header' === $mode) {
+                $testHelper->addheader(
+                    'Authorization',
+                    Tokens::HEADER_KEY . ' ' . $token
+                );
+            }
+            // Add the token to the query parameters.
+            parent::assertRequiredKeys(['params'], $input, '$input');
+            if (is_null($input['params'])) {
+                $input['params'] = [];
+            }
+            $input['params'][Tokens::HEADER_KEY] = $token;
+            // Make the request and validate the response.
+            $actualBodies[$mode] = parent::requestAndValidateJson(
+                $testHelper,
+                $input,
+                $output
+            );
         }
-        $input['params'][Tokens::HEADER_KEY] = $token;
-        $actualBody = parent::requestAndValidateJson(
-            $testHelper,
-            $input,
-            $output
+        $this->assertSame(
+            json_encode($actualBodies['token_in_header']),
+            json_encode($actualBodies['token_not_in_header']),
+            json_encode(
+                $actualBodies['token_in_header'],
+                JSON_PRETTY_PRINT
+            )
+            . "\n"
+            . json_encode(
+                $actualBodies['token_not_in_header'],
+                JSON_PRETTY_PRINT
+            )
         );
-        return $actualBody;
+        return $actualBodies['token_in_header'];
     }
 
     /**
