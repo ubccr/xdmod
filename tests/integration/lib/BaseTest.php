@@ -12,6 +12,7 @@ use TestHarness\Utilities;
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     protected static $XDMOD_REALMS;
+    protected static $ROLES;
     protected static $testFiles;
 
     /**
@@ -43,17 +44,30 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Load the base roles to be used by @see provideBaseRoles().
+     */
+    protected static function getBaseRoles()
+    {
+        if (!isset(self::$ROLES)) {
+            $testConfig = json_decode(
+                file_get_contents(__DIR__ . '/../../ci/testing.json'),
+                true
+            );
+            self::$ROLES = ['pub'] + array_keys($testConfig['role']);
+        }
+        return self::$ROLES;
+    }
+
+    /**
      * A dataProvider for tests that use each of the base roles.
      */
     public function provideBaseRoles()
     {
-        return array(
-            array('pub'),
-            array('cd'),
-            array('cs'),
-            array('pi'),
-            array('usr'),
-            array('mgr')
+        return array_map(
+            function ($role) {
+                return [$role];
+            },
+            self::getBaseRoles()
         );
     }
 

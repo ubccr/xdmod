@@ -139,33 +139,62 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     }
 
     /**
-     * @dataProvider provideGetRawDataRoles
+     * @dataProvider provideGetRawData
      */
-    public function testGetRawData($role)
+    public function testGetRawData($role, $tokenType, $testKey)
     {
-        parent::runTokenAuthTests(
+        parent::runTokenAuthTest(
             $role,
+            $tokenType,
             'integration/rest/warehouse',
-            'get_raw_data'
+            'get_raw_data',
+            $testKey
         );
     }
 
     /**
-     * Only provide one non-public role, since the tests involve pulling a lot
-     * of data and are thus slow.
+     * dataProvider for testGetRawData.
      */
-    public function provideGetRawDataRoles()
+    public function provideGetRawData()
     {
-        return [['pub'], ['usr']];
+        // Get the test keys out of the test input artifact file.
+        $input = parent::loadJsonTestArtifact(
+            'integration/rest/warehouse',
+            'get_raw_data',
+            'input'
+        );
+        unset($input['$path']);
+        $testKeys = array_keys($input);
+
+        // Build the arrays of test data — one for each role, token type, and
+        // test key.
+        $testData = [];
+        foreach (parent::provideTokenAuthTestData() as $roleAndTokenType) {
+            list($role, $tokenType) = $roleAndTokenType;
+            if ('valid_token' === $tokenType) {
+                // Only one non-public user since otherwise the tests take too
+                // long.
+                if ('pub' !== $role && 'usr' !== $role) {
+                    continue;
+                }
+                foreach ($testKeys as $testKey) {
+                    $testData[] = [$role, $tokenType, $testKey];
+                }
+            } else {
+                $testData[] = [$role, $tokenType, 'defaults'];
+            }
+        }
+        return $testData;
     }
 
     /**
-     * @dataProvider provideBaseRoles
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetRawDataLimit($role)
+    public function testGetRawDataLimit($role, $tokenType)
     {
-        parent::runTokenAuthTests(
+        parent::runTokenAuthTest(
             $role,
+            $tokenType,
             'integration/rest/warehouse',
             'get_raw_data_limit'
         );
