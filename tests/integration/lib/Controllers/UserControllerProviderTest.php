@@ -69,7 +69,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Revoke the token in case the user already has one.
             $this->helper->delete('rest/users/current/api/token');
             // Since the user now doesn't have a token, getting it should fail.
-            $this->makeTokenRequest('get', 'get_failure');
+            $this->makeTokenRequest('get', 'not_found');
             // Since the user still doesn't have a token, creating one should
             // succeed.
             $this->makeTokenRequest('post', 'create_success');
@@ -82,7 +82,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this->makeTokenRequest('delete', 'revoke_success');
             // Now that the user does not have a token, revoking one should
             // fail.
-            $this->makeTokenRequest('delete', 'revoke_failure');
+            $this->makeTokenRequest('delete', 'not_found');
             // We are finished manipulating tokens, so we can log the user out.
             $this->helper->logout();
         }

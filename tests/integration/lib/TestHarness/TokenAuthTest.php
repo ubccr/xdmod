@@ -194,7 +194,7 @@ abstract class TokenAuthTest extends BaseTest
             $this->runErrorTest(
                 $errorTestInput,
                 $token,
-                'revoked_token'
+                'invalid_token'
             );
         }
         return $successBodies;
@@ -213,8 +213,8 @@ abstract class TokenAuthTest extends BaseTest
      *                     'token_required'.
      * @param string $token the API token to use for authentication.
      * @param string $type the type of expected error ('empty_token',
-     *                     'malformed_token', 'invalid_token', 'expired_token',
-     *                     or 'revoked_token').
+     *                     'malformed_token', 'invalid_token', or
+     *                     'expired_token').
      * @return mixed the decoded JSON response body.
      * @throws Exception if an unknown value of 'endpoint_type' or
      *                   'authentication_type' is provided or there is an error
@@ -227,6 +227,11 @@ abstract class TokenAuthTest extends BaseTest
             ['endpoint_type', 'authentication_type'],
             $input,
             '$input'
+        );
+        $output = parent::loadJsonTestArtifact(
+            'integration/token_auth',
+            'errors',
+            'output'
         );
         // If the endpoint can authenticate via a method other than API token
         // (i.e., its 'authentication_type' is 'token_optional'), the response
@@ -245,17 +250,16 @@ abstract class TokenAuthTest extends BaseTest
                     . " '$input[endpoint_type]'."
                 );
             }
-        } elseif ('token_required' !== $input['authentication_type']) {
+        } elseif ('token_required' === $input['authentication_type']) {
+            $output['headers'] = [
+                'WWW-Authenticate' => Tokens::HEADER_KEY
+            ];
+        } else {
             throw new Exception(
                 'Unknown value for authentication_type:'
                 . " '$input[authentication_type]'."
             );
         }
-        $output = parent::loadJsonTestArtifact(
-            'integration/token_auth',
-            'errors',
-            'output'
-        );
         return $this->runTokenAuthTest($input, $token, $output[$type]);
     }
 
