@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "success_body",
     "type": "object",
     "properties": {
         "success": {
