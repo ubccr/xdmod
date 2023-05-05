@@ -2,44 +2,30 @@
 
 namespace IntegrationTests\Controllers;
 
-use IntegrationTests\BaseTest;
-use TestHarness\TokenHelper;
+use TestHarness\TokenAuthTest;
+use TestHarness\XdmodTestHelper;
 
-class MetricExplorerTest extends BaseTest
+class MetricExplorerTest extends TokenAuthTest
 {
+    /**
+     * Directory containing test artifact files.
+     */
+    private static $TEST_GROUP = 'integration/controllers/metric_explorer';
+
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
      * @dataProvider provideBaseRoles
      */
-    public function testGetDwDescripter($role)
+    public function testGetDwDescripterTokenAuth($role)
     {
-        $tokenHelper = new TokenHelper(
-            $this,
-            $this->helper,
+        parent::runTokenAuthTests(
             $role,
-            'controllers/metric_explorer.php',
-            'post',
-            null,
-            array(
-                'operation' => 'get_dw_descripter'
-            ),
-            'controller',
-            'token_optional'
-        );
-        $tokenHelper->runEndpointTests(
-            function ($token) use ($tokenHelper) {
-                $tokenHelper->runEndpointTest(
-                    $token,
-                    'get_dw_descripter.spec',
-                    200,
-                    'integration/controllers/metric_explorer',
-                    'schema'
-                );
-            }
+            self::$TEST_GROUP,
+            'get_dw_descripter'
         );
     }
 

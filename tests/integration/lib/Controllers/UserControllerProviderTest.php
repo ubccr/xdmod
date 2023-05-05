@@ -50,23 +50,40 @@ class UserControllerProviderTest extends BaseUserAdminTest
     }
 
     /**
+     * Test expected successes and failures at creating, getting, and revoking
+     * API tokens.
+     *
      * @dataProvider provideBaseRoles
      */
     public function testAPITokensCRD($role)
     {
         if ('pub' === $role) {
-            foreach (array('get', 'create', 'revoke') as $action) {
-                $this->makeTokenRequest($action, 401, 'authentication_error');
+            // If the user is not logged in; attempting to get, create, or
+            // revoke their tokens should fail.
+            foreach (array('get', 'post', 'delete') as $method) {
+                $this->makeTokenRequest($method, 'authentication_error');
             }
         } else {
+            // Log the user in so we can create, get, and revoke their tokens.
             $this->helper->authenticate($role);
+            // Revoke the token in case the user already has one.
             $this->helper->delete('rest/users/current/api/token');
-            $this->makeTokenRequest('get', 404, 'not_found');
-            $this->makeTokenRequest('create', 200, 'create_success', 'schema');
-            $this->makeTokenRequest('create', 409, 'create_failure');
-            $this->makeTokenRequest('get', 200, 'get_success', 'schema');
-            $this->makeTokenRequest('revoke', 200, 'revoke_success');
-            $this->makeTokenRequest('revoke', 404, 'not_found');
+            // Since the user now doesn't have a token, getting it should fail.
+            $this->makeTokenRequest('get', 'get_failure');
+            // Since the user still doesn't have a token, creating one should
+            // succeed.
+            $this->makeTokenRequest('post', 'create_success');
+            // Now that the user has a token, getting it should succeed.
+            $this->makeTokenRequest('get', 'get_success');
+            // Since the user still has a token and can only have one at a
+            // time, creating a new one should fail.
+            $this->makeTokenRequest('post', 'create_failure');
+            // Since the user has a token, revoking it should succeed.
+            $this->makeTokenRequest('delete', 'revoke_success');
+            // Now that the user does not have a token, revoking one should
+            // fail.
+            $this->makeTokenRequest('delete', 'revoke_failure');
+            // We are finished manipulating tokens, so we can log the user out.
             $this->helper->logout();
         }
     }
@@ -82,30 +99,37 @@ class UserControllerProviderTest extends BaseUserAdminTest
         );
     }
 
-    private function makeTokenRequest(
-        $action,
-        $httpCode,
-        $outputFileName,
-        $validationType = 'exact'
-    ) {
-        if ('get' === $action) {
-            $verb = 'get';
-        } elseif ('create' === $action) {
-            $verb = 'post';
-        } else {
-            $verb = 'delete';
-        }
-        return $this->makeRequest(
+    /**
+     * Make an HTTP request that creates, gets, or revokes a token, and make
+     * assertions about the JSON response's status code, content type, and
+     * body.
+     *
+     * @param string $method the HTTP method to use: 'get', 'post', or
+     *                       'delete'.
+     * @param string $key a key in the test artifact output file
+     *                    (integration/rest/user/api_token/output/crd.json)
+     *                    whose value is the expected response body.
+     * @throws Exception if there is an error making the request, loading the
+     *                   JSON output file, or running the validation of it.
+     */
+    private function makeTokenRequest($method, $key) {
+        $testGroup = 'integration/rest/user/api_token';
+        $fileName = 'crd';
+        $input = parent::loadJsonTestArtifact(
+            $testGroup,
+            $fileName,
+            'input'
+        );
+        $input['method'] = $method;
+        $output = parent::loadJsonTestArtifact(
+            $testGroup,
+            $fileName,
+            'output'
+        );
+        return parent::requestAndValidateJson(
             $this->helper,
-            'rest/users/current/api/token',
-            $verb,
-            null,
-            null,
-            $httpCode,
-            'application/json',
-            'integration/rest/user/api_token',
-            $outputFileName . ($validationType === 'schema' ? '.spec' : ''),
-            $validationType
+            $input,
+            $output[$key]
         );
     }
 }

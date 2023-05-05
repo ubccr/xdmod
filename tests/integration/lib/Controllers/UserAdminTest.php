@@ -309,7 +309,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        $this->validateJson($actual, 'schema', 'get-menus.spec', '');
+        $this->validateJsonAgainstFile($actual, 'schema', 'get-menus.spec');
 
         # Check expected file
         $expected = array();
@@ -448,15 +448,26 @@ class UserAdminTest extends BaseUserAdminTest
             $this->helper->authenticateDirect($username, $username);
         }
 
-        $data = array(
-            'operation' => 'get_dw_descripter',
-            'public_user' => ($isPublicUser ? 'true' : 'false')
+        $testGroup = 'integration/controllers/metric_explorer';
+        $fileName = 'get_dw_descripter';
+        $input = parent::loadJsonTestArtifact(
+            $testGroup,
+            $fileName,
+            'input'
         );
-
-        $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
-        $actual = $response[0];
-        $this->validateJson($actual, 'schema', 'dw_descripter.spec', '');
-        $this->validateResponse($response);
+        $input['data'] += [
+            'public_user' => ($isPublicUser ? 'true' : 'false')
+        ];
+        $output = parent::loadJsonTestArtifact(
+            $testGroup,
+            $fileName,
+            'output'
+        );
+        parent::requestAndValidateJson(
+            $this->helper,
+            $input,
+            $output
+        );
         if (!$isPublicUser) {
             $this->helper->logout();
         }
