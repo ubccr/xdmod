@@ -38,7 +38,7 @@ class MetricExplorerTest extends TokenAuthTest
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        $responseBody = parent::runTokenAuthTests(
+        $responseBodies = parent::runTokenAuthTests(
             $role,
             self::$TEST_GROUP,
             'get_dimensions'
@@ -46,7 +46,7 @@ class MetricExplorerTest extends TokenAuthTest
         if (!is_null($expectedCount)) {
             $this->assertSame(
                 $expectedCount,
-                $responseBody->totalCount
+                $responseBodies[0]->totalCount
             );
         }
     }
