@@ -18,12 +18,12 @@ class MetricExplorerTest extends TokenAuthTest
     }
 
     /**
-     * @dataProvider provideBaseRoles
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDwDescripterTokenAuth($role)
-    {
-        parent::runTokenAuthTests(
+    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+        parent::runTokenAuthTest(
             $role,
+            $tokenType,
             self::$TEST_GROUP,
             'get_dw_descripter'
         );
