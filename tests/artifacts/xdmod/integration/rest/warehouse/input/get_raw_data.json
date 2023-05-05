@@ -1,0 +1,131 @@
+{
+    "defaults": {
+        "path": "rest/warehouse/raw-data",
+        "method": "get",
+        "params": null,
+        "data": null,
+        "endpoint_type": "rest",
+        "authentication_type": "token_required"
+    },
+    "start_date_malformed": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017"
+            }
+        }
+    },
+    "no_end_date": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01"
+            }
+        }
+    },
+    "end_date_malformed": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017"
+            }
+        }
+    },
+    "end_before_start": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2016-01-01"
+            }
+        }
+    },
+    "no_realm": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01"
+            }
+        }
+    },
+    "invalid_realm": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "asdf"
+            }
+        }
+    },
+    "invalid_fields": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "Jobs",
+                "fields": "asdf"
+            }
+        }
+    },
+    "invalid_filter_key": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "Jobs",
+                "fields": "Nodes",
+                "filters[asdf]": "177"
+            }
+        }
+    },
+    "negative_offset": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "Jobs",
+                "offset": "-1"
+            }
+        }
+    },
+    "success_0": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "Jobs"
+            }
+        }
+    },
+    "success_16500": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "Jobs",
+                "offset": "16500"
+            }
+        }
+    },
+    "success_fields_and_filters": {
+        "$ref-with-overwrite": "get_raw_data.json#/defaults",
+        "$overwrite": {
+            "params": {
+                "start_date": "2017-01-01",
+                "end_date": "2017-01-01",
+                "realm": "Jobs",
+                "fields": "Nodes,Wall Time",
+                "filters[resource]": "1,2",
+                "filters[fieldofscience]": "10,91"
+            }
+        }
+    }
+}

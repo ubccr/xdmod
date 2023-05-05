@@ -1,4 +1,0 @@
-{
-    "$extends": "${INTEGRATION_ROOT}/base/error104.json",
-    "message": "Invalid realm."
-}

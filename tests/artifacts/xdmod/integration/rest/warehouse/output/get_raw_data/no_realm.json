@@ -1,4 +1,0 @@
-{
-    "$extends": "${INTEGRATION_ROOT}/base/error.json",
-    "message": "realm is a required parameter."
-}

@@ -2,27 +2,17 @@
 
 namespace IntegrationTests\Rest;
 
-use IntegrationTests\BaseTest;
+use TestHarness\TokenAuthTest;
+use TestHarness\XdmodTestHelper;
 
-class WarehouseControllerProviderTest extends BaseTest
+class WarehouseControllerProviderTest extends TokenAuthTest
 {
-    protected static $helpers = array();
+    private static $helper;
 
     public static function setUpBeforeClass()
     {
-        foreach (array('pub', 'cd') as $user) {
-            self::$helpers[$user] = new \TestHarness\XdmodTestHelper();
-            if ($user != 'pub') {
-                self::$helpers[$user]->authenticate($user);
-            }
-        }
-    }
-
-    public static function tearDownAfterClass()
-    {
-        foreach (self::$helpers as $helper) {
-            $helper->logout();
-        }
+        parent::setUpBeforeClass();
+        self::$helper = new XdmodTestHelper();
     }
 
     /**
@@ -85,10 +75,12 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateDataMalformedRequests($user, $params)
     {
-        $response = self::$helpers[$user]->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate($user);
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals(400, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
+        self::$helper->logout();
     }
 
     /**
@@ -96,27 +88,33 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateDataAccessControls($user, $http_code, $params)
     {
-        $response = self::$helpers[$user]->get('rest/warehouse/aggregatedata', $params);
+        if ('pub' !== $user) {
+            self::$helper->authenticate($user);
+        }
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals($http_code, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
+        self::$helper->logout();
     }
 
     public function testGetAggregateData()
     {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", parent::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
         $params = $this->getAggDataParameterGenerator();
 
-        $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate('cd');
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(66, $response[0]['total']);
+        self::$helper->logout();
     }
 
     /**
@@ -124,17 +122,52 @@ class WarehouseControllerProviderTest extends BaseTest
      */
     public function testGetAggregateWithFilters()
     {
-        if (!in_array("jobs", self::$XDMOD_REALMS)) {
+        if (!in_array("jobs", parent::$XDMOD_REALMS)) {
             $this->markTestSkipped('This test requires the Jobs realm');
         }
 
         $params = $this->getAggDataParameterGenerator(array('filters' => array('jobsize' => 1)));
 
-        $response = self::$helpers['cd']->get('rest/warehouse/aggregatedata', $params);
+        self::$helper->authenticate('cd');
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(23, $response[0]['total']);
+        self::$helper->logout();
+    }
+
+    /**
+     * @dataProvider provideGetRawDataRoles
+     */
+    public function testGetRawData($role)
+    {
+        parent::runTokenAuthTests(
+            $role,
+            'integration/rest/warehouse',
+            'get_raw_data'
+        );
+    }
+
+    /**
+     * Only provide one non-public role, since the tests involve pulling a lot
+     * of data and are thus slow.
+     */
+    public function provideGetRawDataRoles()
+    {
+        return [['pub'], ['usr']];
+    }
+
+    /**
+     * @dataProvider provideBaseRoles
+     */
+    public function testGetRawDataLimit($role)
+    {
+        parent::runTokenAuthTests(
+            $role,
+            'integration/rest/warehouse',
+            'get_raw_data_limit'
+        );
     }
 }
