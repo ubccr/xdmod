@@ -116,13 +116,6 @@ abstract class TokenAuthTest extends BaseTest
             'input'
         );
 
-        // Make sure the input object has the additional required keys.
-        parent::assertRequiredKeys(
-            ['endpoint_type', 'authentication_type'],
-            $input,
-            '$input'
-        );
-
         // Store the path to the input object for displaying in test assertion
         // failure messages.
         if (!is_null($testKey)) {
@@ -130,6 +123,13 @@ abstract class TokenAuthTest extends BaseTest
             $input = $input[$testKey];
             $input['$path'] = $path;
         }
+
+        // Make sure the input object has the additional required keys.
+        parent::assertRequiredKeys(
+            ['endpoint_type', 'authentication_type'],
+            $input,
+            '$input'
+        );
 
         if ('valid_token' === $tokenType) {
             // If the token should be valid, load the test output artifact that
@@ -170,6 +170,10 @@ abstract class TokenAuthTest extends BaseTest
             } elseif ('revoked_token' === $tokenType) {
                 // Create a token so we can revoke it.
                 $token = self::createAndRevokeToken($role);
+                // The key in the test output artifact should now be switched
+                // since revoked and invalid tokens are expected to produce the
+                // same response.
+                $tokenType = 'invalid_token';
             } else {
                 throw new Exception(
                     'Unknown value for $tokenType: "' . $tokenType . '".'
@@ -193,7 +197,9 @@ abstract class TokenAuthTest extends BaseTest
                         . " '$input[endpoint_type]'."
                     );
                 }
-            } elseif ('token_required' !== $input['authentication_type']) {
+            } elseif ('token_required' === $input['authentication_type']) {
+                $testKey = null;
+            } else {
                 throw new Exception(
                     'Unknown value for authentication_type:'
                     . " '$input[authentication_type]'."
@@ -218,8 +224,11 @@ abstract class TokenAuthTest extends BaseTest
             $output['body']['$path'] = $path;
         }
 
-        // Set the expected authentication header.
-        if ('token_required' === $input['authentication_type']) {
+        // Set the expected header for authentication errors.
+        if (
+            'token_required' === $input['authentication_type']
+            && 'valid_token' !== $tokenType
+        ) {
             $output['headers'] = [
                 'WWW-Authenticate' => Tokens::HEADER_KEY
             ];
