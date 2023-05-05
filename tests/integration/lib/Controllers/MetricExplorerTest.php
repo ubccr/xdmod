@@ -18,12 +18,12 @@ class MetricExplorerTest extends TokenAuthTest
     }
 
     /**
-     * @dataProvider provideBaseRoles
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDwDescripterTokenAuth($role)
-    {
-        parent::runTokenAuthTests(
+    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+        parent::runTokenAuthTest(
             $role,
+            $tokenType,
             self::$TEST_GROUP,
             'get_dw_descripter'
         );
@@ -32,35 +32,49 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider getDimensionFiltersProvider
      */
-    public function testGetDimensionFilters($role, $expectedCount)
+    public function testGetDimensionFilters($role, $tokenType, $expectedCount)
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        $responseBodies = parent::runTokenAuthTests(
+        $responseBody = parent::runTokenAuthTest(
             $role,
+            $tokenType,
             self::$TEST_GROUP,
             'get_dimensions'
         );
-        if (!is_null($expectedCount)) {
+        if ('valid_token' === $tokenType && !is_null($expectedCount)) {
             $this->assertSame(
                 $expectedCount,
-                $responseBodies[0]->totalCount
+                $responseBody->totalCount,
+                parent::getJsonStringForExceptionMessage(
+                    json_decode(json_encode($responseBody), true)
+                )
             );
         }
     }
 
+    /**
+     * dataProvider for testGetDimensionFilters
+     */
     public function getDimensionFiltersProvider()
     {
-        return [
-            ['pub', null],
-            ['cd', 66],
-            ['cs', 66],
-            ['usr', 1],
-            ['pi', 6],
-            ['mgr', 0]
+        $expectedCounts = [
+            'pub' => null,
+            'cd' => 66,
+            'cs' => 66,
+            'usr' => 1,
+            'pi' => 6,
+            'mgr' => 0
         ];
+        return array_map(
+            function ($testData) use ($expectedCounts) {
+                list($role, $tokenType) = $testData;
+                return [$role, $tokenType, $expectedCounts[$role]];
+            },
+            parent::provideTokenAuthTestData()
+        );
     }
 
     public function rawDataProvider()

@@ -22,7 +22,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
     /**
      * Directory containing test artifact files.
      */
-    const TEST_GROUP = 'integration/rest/warehouse/export';
+    private static $TEST_GROUP = 'integration/rest/warehouse/export';
 
     /**
      * User roles and usernames.
@@ -186,13 +186,13 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
 
     /**
      * @covers ::getRealms
-     * @dataProvider provideBaseRoles
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetRealmsTokenAuth($role)
-    {
-        parent::runTokenAuthTests(
+    public function testGetRealmsTokenAuth($role, $tokenType) {
+        parent::runTokenAuthTest(
             $role,
-            self::TEST_GROUP,
+            $tokenType,
+            self::$TEST_GROUP,
             'get_realms'
         );
     }
@@ -374,26 +374,26 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
 
     public function createRequestProvider()
     {
-        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'create-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::$TEST_GROUP, 'create-request', 'input');
     }
 
     public function getRequestsProvider()
     {
-        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-requests', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::$TEST_GROUP, 'get-requests', 'input');
     }
 
     public function getRequestProvider()
     {
-        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'get-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::$TEST_GROUP, 'get-request', 'input');
     }
 
     public function deleteRequestProvider()
     {
-        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-request', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::$TEST_GROUP, 'delete-request', 'input');
     }
 
     public function deleteRequestsProvider()
     {
-        return parent::getTestFiles()->loadJsonFile(self::TEST_GROUP, 'delete-requests', 'input');
+        return parent::getTestFiles()->loadJsonFile(self::$TEST_GROUP, 'delete-requests', 'input');
     }
 }

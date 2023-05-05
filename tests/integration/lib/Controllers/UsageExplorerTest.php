@@ -1202,12 +1202,13 @@ END;
     }
 
     /**
-     * @dataProvider provideBaseRoles
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDataTokenAuth($role)
+    public function testGetDataTokenAuth($role, $tokenType)
     {
-        parent::runTokenAuthTests(
+        parent::runTokenAuthTest(
             $role,
+            $tokenType,
             self::$TEST_GROUP,
             'get_data'
         );
