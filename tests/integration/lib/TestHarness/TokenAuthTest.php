@@ -18,7 +18,7 @@ abstract class TokenAuthTest extends BaseTest
      */
     private static $TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
 
-    /** 
+    /**
      * A dataProvider for testing token authentication on a given endpoint.
      * Provides data for testing empty and malformed tokens using the public
      * user and for testing invalid, valid, expired, and revoked tokens for
@@ -52,7 +52,7 @@ abstract class TokenAuthTest extends BaseTest
      * well as an 'endpoint_type' key whose value is either 'controller' or
      * 'rest' and an 'authentication_type' key whose value is either
      * 'token_optional' or 'token_required'.
-     * 
+     *
      * If this is testing an error in authentication, the expected response
      * status codes and bodies are defined in the test artifact file
      * integration/token_auth/output/errors.json. If this is instead testing a
@@ -147,15 +147,15 @@ abstract class TokenAuthTest extends BaseTest
             // Construct the desired type of token.
             if ('empty_token' === $tokenType) {
                 $token = '';
-            } else if ('malformed_token' === $tokenType) {
+            } elseif ('malformed_token' === $tokenType) {
                 $token = 'asdf';
-            } else if ('invalid_token' === $tokenType) {
+            } elseif ('invalid_token' === $tokenType) {
                 // Create a valid token so we can break it apart to make an
                 // invalid token.
                 $token = self::createToken($role);
                 $userId = self::getUserId($token);
                 $token = $userId . Tokens::DELIMITER . 'asdf';
-            } else if ('expired_token' === $tokenType) {
+            } elseif ('expired_token' === $tokenType) {
                 // Create a valid token so we can expire it.
                 $token = self::createToken($role);
                 $userId = self::getUserId($token);
@@ -167,7 +167,7 @@ abstract class TokenAuthTest extends BaseTest
                     . ' WHERE user_id = :user_id';
                 $params = [':user_id' => $userId];
                 $db->execute($query, $params);
-            } else if ('revoked_token' === $tokenType) {
+            } elseif ('revoked_token' === $tokenType) {
                 // Create a token so we can revoke it.
                 $token = self::createAndRevokeToken($role);
             } else {
