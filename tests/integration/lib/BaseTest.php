@@ -60,9 +60,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     /**
      * Load a JSON test artifact file into an associative array, replacing the
      * string '${INTEGRATION_ROOT}' with the path to the integration test
-     * artifacts directory. If the artifacts has a 'body' object, that object
-     * will have a '$path' key added to it whose value is the path to the file;
-     * this key can be later stripped out by
+     * artifacts directory, and adding a '$path' key whose value is the path to
+     * the file; this key can be later stripped out by
      * @see BaseTest::requestAndValidateJson() and used to prepare the error
      * message that is displayed when validation fails.
      *
@@ -85,6 +84,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             $filePath,
             self::getTestFiles()
         );
+        $artifact['$path'] = $filePath;
         if (isset($artifact['body'])) {
             $artifact['body']['$path'] = $filePath;
         }
@@ -290,9 +290,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     private function getJsonStringForExceptionMessage($json)
     {
         return (
-            isset($json['$path'])
-            ? 'defined in ' . $json['$path']
-            : self::truncateStr(
+            (
+                isset($json['$path'])
+                ? 'defined in ' . $json['$path'] . "\n"
+                : ''
+            )
+            . self::truncateStr(
                 json_encode($json, JSON_PRETTY_PRINT),
                 1000
             )

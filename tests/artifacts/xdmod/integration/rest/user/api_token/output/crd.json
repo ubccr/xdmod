@@ -15,8 +15,9 @@
         "status_code": 200,
         "body": {
             "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "create_success_body",
             "allOf": [
-                { "$ref": "${INTEGRATION_ROOT}/base/success.json" },
+                { "$ref": "${INTEGRATION_ROOT}/base/success_body.json" },
                 {
                     "properties": {
                         "data": {
@@ -51,8 +52,9 @@
         "status_code": 200,
         "body": {
             "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "get_success_body",
             "allOf": [
-                { "$ref": "${INTEGRATION_ROOT}/base/success.json" },
+                { "$ref": "${INTEGRATION_ROOT}/base/success_body.json" },
                 {
                     "properties": {
                         "data": {
