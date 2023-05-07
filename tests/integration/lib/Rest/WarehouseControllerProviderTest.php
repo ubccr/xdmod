@@ -172,12 +172,16 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         foreach (parent::provideTokenAuthTestData() as $roleAndTokenType) {
             list($role, $tokenType) = $roleAndTokenType;
             if ('valid_token' === $tokenType) {
-                // Only one non-public user since otherwise the tests take too
-                // long.
-                if ('pub' !== $role && 'usr' !== $role) {
-                    continue;
-                }
                 foreach ($testKeys as $testKey) {
+                    // Only run the non-default valid token test for one
+                    // non-public user to make the tests take less time.
+                    if (
+                        'pub' !== $role
+                        && 'usr' !== $role
+                        && 'defaults' !== $testKey
+                    ) {
+                        continue;
+                    }
                     $testData[] = [$role, $tokenType, $testKey];
                 }
             } else {
