@@ -304,7 +304,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param array $json the JSON associative array.
      * @return string the string representation.
      */
-    private function getJsonStringForExceptionMessage($json)
+    protected function getJsonStringForExceptionMessage($json)
     {
         return (
             (
