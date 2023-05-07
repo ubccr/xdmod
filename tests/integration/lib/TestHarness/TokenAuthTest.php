@@ -158,6 +158,10 @@ abstract class TokenAuthTest extends BaseTest
                 $token = self::getToken($role, 'valid_token');
             } elseif ('revoked_token' === $tokenType) {
                 $token = self::getToken($role, 'revoked_token');
+                // The key in the test output artifact should now be switched
+                // since revoked and invalid tokens are expected to produce the
+                // same response.
+                $tokenType = 'invalid_token';
             } else {
                 throw new Exception(
                     'Unknown value for $tokenType: "' . $tokenType . '".'
