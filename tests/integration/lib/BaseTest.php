@@ -53,7 +53,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 file_get_contents(__DIR__ . '/../../ci/testing.json'),
                 true
             );
-            self::$ROLES = ['pub'] + array_keys($testConfig['role']);
+            self::$ROLES = array_merge(
+                ['pub'],
+                array_keys($testConfig['role'])
+            );
         }
         return self::$ROLES;
     }
