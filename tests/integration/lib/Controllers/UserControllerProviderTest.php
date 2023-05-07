@@ -6,6 +6,7 @@ use CCR\Json;
 use Exception;
 use Models\Services\Tokens;
 use stdClass;
+use TestHarness\TokenAuthTest;
 use TestHarness\Utilities;
 use TestHarness\XdmodTestHelper;
 
@@ -85,6 +86,9 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this->makeTokenRequest('delete', 'not_found');
             // We are finished manipulating tokens, so we can log the user out.
             $this->helper->logout();
+            // If tokens have been generated for use in other tests, those
+            // tokens have now been invalidated and need to be regenerated.
+            TokenAuthTest::nullifyTokens();
         }
     }
 

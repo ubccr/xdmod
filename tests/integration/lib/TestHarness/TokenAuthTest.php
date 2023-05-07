@@ -19,6 +19,23 @@ abstract class TokenAuthTest extends BaseTest
     private static $TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
 
     /**
+     * Valid, expired, and revoked tokens for each of the non-public base roles
+     * (@see BaseTest::getBaseRoles()). Generated as a 2D array when it is
+     * first needed (@see self::getToken()) and stored statically for use by
+     * all tests that need the tokens. Indexed first by string role (e.g.,
+     * 'cd') and then by string token type (e.g., 'valid_token').
+     */
+    private static $TOKENS = null;
+
+    /**
+     * User IDs for each of the base roles (@see BaseTest::getBaseRoles()),
+     * used to expire and unexpire tokens. Generated when they are first needed
+     * (@see self::getToken()) and stored statically for use by all tests that
+     * need them.
+     */
+    private static $USER_IDS = [];
+
+    /**
      * A dataProvider for testing token authentication on a given endpoint.
      * Provides data for testing empty and malformed tokens using the public
      * user and for testing invalid, valid, expired, and revoked tokens for
@@ -66,30 +83,21 @@ abstract class TokenAuthTest extends BaseTest
      *                          an authentication error, this is also the key
      *                          in the test output artifact that describes the
      *                          expected response.
-     * @param string $inputTestGroup the directory containing the JSON test
-     *                               input artifact that describes the HTTP
-     *                               request to be made.
-     * @param string $inputFileName the name of the JSON test input artifact
-     *                              file that describes the HTTP request
-     *                              to be made.
+     * @param string $testGroup the directory containing the JSON test input
+     *                          artifact that describes the HTTP request to be
+     *                          made, and, if $tokenType is 'valid_token', the
+     *                          output artifact that describes how to validate
+     *                          the HTTP response body.
+     * @param string $fileName the name of the JSON test input artifact file
+     *                         that describes the HTTP request to be made, and,
+     *                         if $tokenType is 'valid_token', the output
+     *                         artifact that describes how to validate the HTTP
+     *                         response body.
      * @param string|null $testKey if the test artifact files contain multiple
      *                             keys, a single key must be provided to
      *                             indicate which test to run, and this key
      *                             must be present in both the input and output
      *                             test artifacts.
-     * @param string|null $outputTestGroup if not null, the directory
-     *                                     containing the JSON test output
-     *                                     artifact that describes how to
-     *                                     validate the HTTP response body when
-     *                                     authentication is successful. If
-     *                                     null, set to be equal to
-     *                                     $inputTestGroup.
-     * @param string|null $outputFileName if not null, the name of the JSON
-     *                                    test output artifact file that
-     *                                    describes how to validate the HTTP
-     *                                    response body when authentication is
-     *                                    successful.  If null, set to be equal
-     *                                    to $inputFileName.
      * @return mixed the decoded JSON response body of the request.
      * @throws Exception if the role is unrecognized or there is an error
      *                   parsing the input or output files, making HTTP
@@ -98,26 +106,16 @@ abstract class TokenAuthTest extends BaseTest
     public function runTokenAuthTest(
         $role,
         $tokenType,
-        $inputTestGroup,
-        $inputFileName,
-        $testKey = null,
-        $outputTestGroup = null,
-        $outputFileName = null
+        $testGroup,
+        $fileName,
+        $testKey = null
     ) {
-        if (is_null($outputTestGroup)) {
-            $outputTestGroup = $inputTestGroup;
-        }
-        if (is_null($outputFileName)) {
-            $outputFileName = $inputFileName;
-        }
-        $input = parent::loadJsonTestArtifact(
-            $inputTestGroup,
-            $inputFileName,
-            'input'
-        );
+        // Load the input test artifact.
+        $input = parent::loadJsonTestArtifact($testGroup, $fileName, 'input');
 
-        // Store the path to the input object for displaying in test assertion
-        // failure messages.
+        // If the input test artifact contains multiple test keys, load the
+        // test from the provided key, and store the path to the artifact file
+        // so it can be displayed in test assertion failure messages.
         if (!is_null($testKey)) {
             $path = $input['$path'] . "#$testKey";
             $input = $input[$testKey];
@@ -132,17 +130,15 @@ abstract class TokenAuthTest extends BaseTest
         );
 
         if ('valid_token' === $tokenType) {
-            // If the token should be valid, load the test output artifact that
-            // describes the successful authentication response.
+            $token = self::getToken($role, 'valid_token');
+
+            // Load the test output artifact that describes the successful
+            // authentication response.
             $output = parent::loadJsonTestArtifact(
-                $outputTestGroup,
-                $outputFileName,
+                $testGroup,
+                $fileName,
                 'output'
             );
-            $path = $output['$path'];
-
-            // Create the token.
-            $token = self::createToken($role);
         } else {
             // Construct the desired type of token.
             if ('empty_token' === $tokenType) {
@@ -150,30 +146,18 @@ abstract class TokenAuthTest extends BaseTest
             } elseif ('malformed_token' === $tokenType) {
                 $token = 'asdf';
             } elseif ('invalid_token' === $tokenType) {
-                // Create a valid token so we can break it apart to make an
-                // invalid token.
-                $token = self::createToken($role);
-                $userId = self::getUserId($token);
-                $token = $userId . Tokens::DELIMITER . 'asdf';
+                $token = self::getToken($role, 'invalid_token');
             } elseif ('expired_token' === $tokenType) {
-                // Create a valid token so we can expire it.
-                $token = self::createToken($role);
-                $userId = self::getUserId($token);
-                // We need to directly access the database as we do not have an
-                // endpoint for expiring a token.
-                $db = DB::factory('database');
-                $query = 'UPDATE moddb.user_tokens'
-                    . ' SET expires_on = SUBDATE(NOW(), 1)'
-                    . ' WHERE user_id = :user_id';
-                $params = [':user_id' => $userId];
-                $db->execute($query, $params);
+                // Expire the token (it will be unexpired at the end of this
+                // test).
+                self::updateTokenExpirationDate(
+                    self::$USER_IDS[$role],
+                    'SUBDATE(NOW(), 1)'
+                );
+                // Load the token for use in this test.
+                $token = self::getToken($role, 'valid_token');
             } elseif ('revoked_token' === $tokenType) {
-                // Create a token so we can revoke it.
-                $token = self::createAndRevokeToken($role);
-                // The key in the test output artifact should now be switched
-                // since revoked and invalid tokens are expected to produce the
-                // same response.
-                $tokenType = 'invalid_token';
+                $token = self::getToken($role, 'revoked_token');
             } else {
                 throw new Exception(
                     'Unknown value for $tokenType: "' . $tokenType . '".'
@@ -188,40 +172,44 @@ abstract class TokenAuthTest extends BaseTest
             // which case it will be 'authentication error').
             if ('token_optional' === $input['authentication_type']) {
                 if ('controller' === $input['endpoint_type']) {
-                    $tokenType = 'session_expired';
+                    $testKey = 'session_expired';
                 } elseif ('rest' === $input['endpoint_type']) {
-                    $tokenType = 'authentication_error';
+                    $testKey = 'authentication_error';
                 } else {
                     throw new Exception(
                         "Unknown value for endpoint_type:"
                         . " '$input[endpoint_type]'."
                     );
                 }
+            // If the endpoint requires a token for authentication, there is a
+            // separate key in the output test artifact for each token type.
             } elseif ('token_required' === $input['authentication_type']) {
-                $testKey = null;
+                $testKey = $tokenType;
             } else {
                 throw new Exception(
                     'Unknown value for authentication_type:'
                     . " '$input[authentication_type]'."
                 );
             }
-            // Load the test output artifact that describes the successful
-            // authentication response.
+
+            // Load the test output artifact that describes how to validate the
+            // authentication error response.
             $output = parent::loadJsonTestArtifact(
                 'integration/token_auth',
                 'errors',
                 'output'
             );
-            $path = $output['$path'];
-            $output = $output[$tokenType];
         }
-        // Store the path to the output object for displaying in test assertion
-        // failure messages.
-        if (!is_null($testKey)) {
-            $output = $output[$testKey];
-            $output[$testKey]['body']['$path'] = "$path#$testKey";
+
+        // Store the path to the artifact file so it can be displayed in test
+        // assertion failure messages.
+        if (is_null($testKey)) {
+            $output['body']['$path'] = $output['$path'];
         } else {
-            $output['body']['$path'] = $path;
+            $path = $output['$path'];
+            // Load the specific output object for the given test key.
+            $output = $output[$testKey];
+            $output['body']['$path'] = "$path#$testKey";
         }
 
         // Set the expected header for authentication errors.
@@ -278,32 +266,98 @@ abstract class TokenAuthTest extends BaseTest
                 JSON_PRETTY_PRINT
             )
         );
+        // If the token is expired, unexpire it.
+        if ('expired_token' === $tokenType) {
+            self::updateTokenExpirationDate(
+                self::$USER_IDS[$role],
+                'DATE_ADD(NOW(), INTERVAL 1 DAY)'
+            );
+        }
         return $actualBodies['token_in_header'];
+    }
+
+    /**
+     * Nullify the list of generated tokens. This is useful if another test
+     * invalidated them, e.g.,
+     * Controllers\UserControllerProviderTest::testAPITokensCRD().
+     */
+    public static function nullifyTokens()
+    {
+        self::$TOKENS = null;
+    }
+
+    /**
+     * Return the generated token for the given role and token type.
+     *
+     * @param string $role one of the non-public roles from
+     *                     @see BaseTest::getBaseRoles().
+     * @param string $tokenType either 'valid_token', 'invalid_token', or
+     *                          'revoked_token'.
+     * @return string the token.
+     */
+    private static function getToken($role, $tokenType)
+    {
+        // If the valid, invalid, and revoked tokens have not already been
+        // generated for the roles, generate them.
+        if (is_null(self::$TOKENS)) {
+            self::$TOKENS = [];
+            foreach (parent::getBaseRoles() as $baseRole) {
+                if ('pub' === $baseRole) {
+                    continue;
+                }
+                self::$TOKENS[$baseRole] = [];
+
+                // Construct a test helper for making HTTP requests to create
+                // and revoke tokens.
+                $helper = new XdmodTestHelper();
+
+                // Log the user in so tokens can be created for the role.
+                $helper->authenticate($baseRole);
+
+                // User tokens cannot be obtained after they have been created,
+                // so if the user already has a token, we don't know what it is
+                // and need to revoke it before creating a new one.
+                $helper->delete(self::$TOKEN_CRD_ENDPOINT);
+
+                // Create a new token.
+                $token = self::createToken($helper);
+
+                // Store the role's user ID so it can be used to create an
+                // invalid token and later used for expiring and unexpiring
+                // tokens.
+                self::$USER_IDS[$baseRole] = substr(
+                    $token,
+                    0,
+                    strpos($token, Tokens::DELIMITER)
+                );
+
+                // Create and store an invalid token.
+                self::$TOKENS[$baseRole]['invalid_token'] = (
+                    self::$USER_IDS[$baseRole] . Tokens::DELIMITER . 'asdf'
+                );
+
+                // Revoke the created token and store it.
+                $helper->delete(self::$TOKEN_CRD_ENDPOINT);
+                self::$TOKENS[$baseRole]['revoked_token'] = $token;
+
+                // Create a new token and store it.
+                self::$TOKENS[$baseRole]['valid_token'] = self::createToken(
+                    $helper
+                );
+            }
+        }
+        return self::$TOKENS[$role][$tokenType];
     }
 
     /**
      * Create an API token.
      *
-     * @param string $role for whom to create the token.
-     * @param XdmodTestHelper $helper used to authenticate the user and make
-     *                                HTTP requests.
-     * @return string the API token.
+     * @param XdmodTestHelper $helper used to make HTTP requests.
+     * @return string the token.
      * @throws Exception if there is an error making HTTP requests.
      */
-    private static function createToken($role, $helper = null)
+    private static function createToken($helper)
     {
-        if (is_null($helper)) {
-            $helper = new XdmodTestHelper();
-        }
-        // Log the user in so a token can be created.
-        $helper->authenticate($role);
-
-        // User tokens cannot be obtained after they have been created, so
-        // if the user already has a token, we don't know what it is and
-        // need to revoke it and create a new one.
-        $helper->delete(self::$TOKEN_CRD_ENDPOINT);
-
-        // Create a new token.
         $response = $helper->post(
             self::$TOKEN_CRD_ENDPOINT,
             null,
@@ -313,28 +367,19 @@ abstract class TokenAuthTest extends BaseTest
     }
 
     /**
-     * Extract a user's ID from the given token.
+     * Set the new expiration date of the given role's token.
      *
-     * @param string $token
-     * @return string
+     * @param string $userId the ID of the role.
+     * @param string $newDate the new date's SQL value.
      */
-    private static function getUserId($token)
+    private static function updateTokenExpirationDate($userId, $newDate)
     {
-        return substr($token, 0, strpos($token, Tokens::DELIMITER));
-    }
-
-    /**
-     * Create and revoke a token.
-     *
-     * @param $role for whom to create and revoke the token.
-     * @return string the token.
-     * @throws Exception if there is an error making HTTP requests.
-     */
-    private static function createAndRevokeToken($role)
-    {
-        $helper = new XdmodTestHelper();
-        $token = self::createToken($role, $helper);
-        $helper->delete(self::$TOKEN_CRD_ENDPOINT);
-        return $token;
+        // We need to directly access the database as we do not have an
+        // endpoint for expiring/unexpiring a token.
+        $db = DB::factory('database');
+        $query = "UPDATE moddb.user_tokens SET expires_on = $newDate"
+            . ' WHERE user_id = :user_id';
+        $params = [':user_id' => $userId];
+        $db->execute($query, $params);
     }
 }
