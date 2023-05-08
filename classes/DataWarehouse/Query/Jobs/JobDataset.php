@@ -51,7 +51,6 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         // This table is defined in the configuration file, but used in the section below.
         $factTable = $tables['jt'];
-
         if (isset($parameters['primary_key'])) {
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'job_id'), "=", $parameters['primary_key']));
         } elseif (isset($parameters['job_identifier'])) {
@@ -62,7 +61,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                     $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'local_jobid'), '=', $matches[1]));
                     $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'local_job_array_index'), '=', $matches[2]));
                 } else {
-                    $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'local_job_id_raw'), '=', $matches[1]));
+                    $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, $config->getRecordIdentifierColumn('Jobs')), '=', $matches[1]));
                 }
             } else {
                 throw new Exception('invalid "job_identifier" query parameter');

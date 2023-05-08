@@ -376,6 +376,7 @@
                 "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
                 "batchExport": true
             }
-        ]
+        ],
+        "record_identifier_column": "local_jobid"
     }
 }
