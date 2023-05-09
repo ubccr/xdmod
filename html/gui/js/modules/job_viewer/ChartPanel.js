@@ -9,7 +9,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
     // The default chart config options.
     _DEFAULT_CONFIG: {
-        chartPrefix: 'CreateChartPanel',
+			chartPrefix: 'CreateChartPanel',
         chartOptions: {
             chart: {
                 type: 'line',
@@ -311,26 +311,59 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 let data = [];
 
                 for (let sid = 0; sid < chartOptions.series.length; sid++) {
-                    let x = [];
-                    let y = [];
+		    if (chartOptions.series[sid].name === "Range") continue;
+		    let x = [];
+		    let y = [];
+		    	    
                     for(let i=0; i < chartOptions.series[sid].data.length; i++) {
                         x.push(moment(chartOptions.series[sid].data[i].x).format('Y-MM-DD HH:mm:ss z'));
                         y.push(chartOptions.series[sid].data[i].y);
                     }
-                    data.push({
-                        x: x,
-                        y: y,
-                        line: {
-                            color: chartOptions.colors[sid % 10]
-                        },
-                        hovertemplate:
-                        "%{x|%A, %b %e, %H:%M:%S.%L %Z}<br><br>" +
-                         chartOptions.series[sid].name + ": <b>%{y}</b>" +
-                        "<extra></extra>",
-                        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter'});
-                }
-                panel.getEl().unmask();
 
+		    if (chartOptions.series[sid].name === "Median" || chartOptions.series[sid].name === "Minimum"){
+                    	data.push({
+                        	x: x,
+                        	y: y,
+				fill: 'tonexty',
+				fillcolor: 'rgba(47, 126, 216, 0.5)',
+				/*marker: {
+                                        size: 20,
+                                        line: {
+                                        color: chartOptions.colors[sid % 10]
+                                        }
+                                },*/
+                	        hovertemplate:
+				"%{x|%A, %b %e, %H:%M:%S.%L %Z} " + this.displayTimezone + "<br>" +
+	                        chartOptions.series[sid].name + ": <b>%{y}</b>" +
+        	                "<extra></extra>",
+                	        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter+marker'});
+	 	    }
+		    else{
+			 data.push({
+                                x: x,
+                                y: y,
+				marker: {
+					size: 20,
+        	                        line: {
+	                                color: chartOptions.colors[sid % 10]
+                                	}
+				},
+                                hovertemplate:
+                                "%{x|%A, %b %e, %H:%M:%S.%L %Z} " + this.displayTimezone + "<br>" +
+                                '<span style="color:darkblue">●</span> ' + chartOptions.series[sid].name + ":<b>%{y}</b>" +
+                                "<extra></extra>",
+                                name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'lines+marker'});
+		   }    
+		   }
+                panel.getEl().unmask();
+		console.log("data");
+		console.log(data);
+		console.log("chart options data");
+		console.log(chartOptions);
+		console.log("record");
+		console.log(record);
+		console.log("SVG");
+		console.log(document.getElementsByClassName("main-svg"));
                 let layout = {
                     hoverlabel: {
                         bgcolor: 'white'
@@ -344,7 +377,8 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         },
                         color: '#606060',
                         ticks: 'outside',
-                        ticklen: 10,
+			autorange: true,
+			ticklen: 10,
                         tickcolor: '#c0cfe0',
                         linecolor: '#c0cfe0',
                         showgrid: false
@@ -357,7 +391,8 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                             color: '#5078a0'
                         },
                         color: '#606060',
-                        rangemode: 'tozero',
+			autorange: true,
+                        rangemode: 'nonnegative',
                         linecolor: '#c0cfe0'
                     },
                     title: {
@@ -382,7 +417,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
             if (!panel.chart) {
                 panel.chart = document.getElementById(this.id);
-                panel.chart.on('plotly_click', function(data){
+                panel.chart.on('plotly_click', function(data, event){
                         var pts = '';
                         for(var i=0; i < data.points.length; i++){
                            pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
@@ -390,7 +425,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         console.log('Closest point clicked:\n\n'+pts);
                         console.log(data);
 
-                        var userOptions = data.points[0].data.chartSeries;
+                        var userOptions = data.points[0].data.chartSeries
                         if (!userOptions || !userOptions.dtype) {
                             return;
                         }
@@ -401,9 +436,11 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                          * plots and for the series for simple plots.
                          */
                         if (userOptions.dtype == 'index') {
+                            var nodeidIndex = data.points[0].data.chartSeries.data.findIndex(({y}) => y === data.points[0].y);
+                            if (nodeidIndex === -1) return;
                             drilldown = {
                                 dtype: userOptions.index,
-                                value: event.point.options[userOptions.index]
+                                value: userOptions.data[nodeidIndex].nodeid
                             };
                         } else {
                             drilldown = {
@@ -416,8 +453,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         Ext.History.add(token);
                 });
             }
-            }
-
+	}
             if (!record) {
                 panel.getEl().mask('Loading...');
             }

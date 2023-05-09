@@ -99,8 +99,9 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
 
             var chartOptions = jQuery.extend(true, {}, defaultChartSettings, self.chartSettings);
 
-            self.chart = new Highcharts.Chart(chartOptions);
-            self.chart.showLoading();
+            //self.chart = new Highcharts.Chart(chartOptions);
+            //self.chart.showLoading();
+            Plotly.newPlot(this.id, [], {});
 
             var storeParams;
             if (self.panelSettings.pageSize) {
