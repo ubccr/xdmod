@@ -7,6 +7,11 @@ use TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends TokenAuthTest
 {
+    /**
+     * Directory containing test artifact files.
+     */
+    private static $TEST_GROUP = 'integration/rest/warehouse';
+
     private static $helper;
 
     public static function setUpBeforeClass()
@@ -146,46 +151,35 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            'integration/rest/warehouse',
+            self::$TEST_GROUP,
             'get_raw_data',
             $testKey
         );
     }
 
     /**
-     * dataProvider for testGetRawData.
+     * dataProvider for @see testGetRawData().
      */
     public function provideGetRawData()
     {
-        // Get the test keys out of the test input artifact file.
-        $input = parent::loadJsonTestArtifact(
-            'integration/rest/warehouse',
-            'get_raw_data',
-            'input'
+        $testData = TokenAuthTest::provideTokenAuthTestDataWithMultipleKeys(
+            self::$TEST_GROUP,
+            'get_raw_data'
         );
-        unset($input['$path']);
-        $testKeys = array_keys($input);
-
-        // Build the arrays of test data — one for each role, token type, and
-        // test key.
-        $testData = [];
-        foreach (parent::provideTokenAuthTestData() as $roleAndTokenType) {
-            list($role, $tokenType) = $roleAndTokenType;
-            if ('valid_token' === $tokenType) {
-                foreach ($testKeys as $testKey) {
-                    // Only run the non-default valid token test for one
-                    // non-public user to make the tests take less time.
-                    if (
-                        'pub' !== $role
-                        && 'usr' !== $role
-                        && 'defaults' !== $testKey
-                    ) {
-                        continue;
-                    }
-                    $testData[] = [$role, $tokenType, $testKey];
-                }
-            } else {
-                $testData[] = [$role, $tokenType, 'defaults'];
+        // Only run the non-default valid token tests for one non-public user
+        // to make the tests take less time overall.
+        $testNames = array_keys($testData);
+        foreach ($testNames as $testName) {
+            if (
+                // If the user is other than 'usr',
+                1 !== preg_match('/^usr-/', $testName)
+                // and the token type is 'valid_token',
+                && 1 === preg_match('/-valid_token-/', $testName)
+                // and the test key is not 'defaults',
+                && 1 !== preg_match('/-defaults$/', $testName)
+            ) {
+                // Remove the test from the list.
+                unset($testData[$testName]);
             }
         }
         return $testData;
@@ -199,7 +193,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            'integration/rest/warehouse',
+            self::$TEST_GROUP,
             'get_raw_data_limit'
         );
     }
