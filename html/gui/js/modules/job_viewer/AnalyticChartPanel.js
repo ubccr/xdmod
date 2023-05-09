@@ -78,7 +78,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             },
             {
                 value: .75,
-                color: '#rgb(221,223,0)'
+                color: 'rgb(221,223,0)'
             },
             {
                 value: 1,
@@ -115,7 +115,8 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 'zerolinecolor': 'black',
                 'showline': false,
                 'zerolinewidth': 0,
-                'tickformat': "%Y-%m-%d"
+                'tickformat': "%Y-%m-%d",
+		'fixedrange': true
             },
             'yaxis': {
                 'showticklabels': false,
@@ -126,13 +127,14 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 },
                 'color': '#606060',
                 'showgrid' : false,
-                'gridcolor': 'white',
+                'gridcolor': '#c0c0c0',
                 'linecolor': 'white',
                 'zeroline': false,
                 'zerolinecolor': 'white',
                 'showline': false,
                 'rangemode': 'tozero',
-                'zerolinewidth': 0
+                'zerolinewidth': 0,
+		'fixedrange': true
             },
             'title': {
                 'font': {
@@ -140,7 +142,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     'size': 16
                 }
             },
-            'hovermode': 'closest',
+            'hovermode': false,
             'showlegend': false,
             'legend': {
                 'orientation': 'h',
@@ -156,6 +158,10 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         },
 
         traces: [],
+	config: {
+		displayModeBar: false,
+			
+	},
 
         },
 
@@ -192,8 +198,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         render: function() {
 
             Ext.apply(this.chartOptions, this._DEFAULT_CONFIG.chartOptions);
-            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
-
+            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
 
         }, // render
 
@@ -206,7 +211,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         update_data: function(data) {
             this._updateData(data);
-            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
+            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
         }, // update_data
 
         /**
@@ -216,7 +221,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         reset: function() {
             if (this.chart) {
                 this.traces = [];
-                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, {displayModeBar: false} );
+                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
             }
         }, // reset
 
@@ -242,7 +247,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             if (this.chart) {
                 this._DEFAULT_CONFIG.layout['width'] = adjWidth;
                 this._DEFAULT_CONFIG.layout['height'] = adjHeight;
-                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this.layout, {displayModeBar: false, responsive: true});
+                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
                 if (this.errorMsg) {
                     this.updateErrorMessage(this.errorMsg.text.textStr);
                 }
@@ -275,9 +280,10 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     "y": 1.2
                 }
             ]
+	    console.log("new annontation");
             this._DEFAULT_CONFIG.layout['annotations'] = [
                 {       
-                    "text": errorStr,
+                    "text": wordwrap.wrap(errorStr, {width: 20}),
                     "align": "left",
                     "xref": "paper",
                     "yref": "paper",
@@ -286,18 +292,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     "x" : 0.5,
                     "y" : 0.5,
                     "showarrow": false
-                    
-
-
                 }
             ]
             this._DEFAULT_CONFIG.layout['xaxis']['showgrid'] = false;
-
-            /*this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
-                .css({ width: this.chart.chartWidth - this.chart.plotLeft - 23 })
-                .add() };
-            var box = this.errorMsg.text.getBBox();
-            this.errorMsg.image = this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();*/
         }
         else {
             this._DEFAULT_CONFIG.layout['images'] = [];
@@ -320,8 +317,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 
         this._DEFAULT_CONFIG.traces = [];
 
-        //this.chart.layout.push();
-        //this.chart.chartBackground = null;
         this._DEFAULT_CONFIG.layout['plot_bgcolor'] = 'white';
 
 
@@ -331,8 +326,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             bg_color = color.substring(0,3) + 'a' + color.substring(3, color.length-1) + ',0.4)';
             this._DEFAULT_CONFIG.layout['plot_bgcolor'] = bg_color;
             
-            //nColor = new Highcharts.Color(color).brighten(brightFactor);
-            //this.layout.push({plot_bgcolor: 'rgba(' + nColor.rgba + ')'});
             this._DEFAULT_CONFIG.traces.push(
                 {
                     x: [data.value],
@@ -349,13 +342,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     orientation: 'h'
                 }
             );
-            //this.layout.push({title: data.name ? data.name : ''});
-            //data.push({x: [data.value], type: 'bar', color: color});
         }
         this.updateErrorMessage(data.error);
-        console.log(this._DEFAULT_CONFIG.traces);
         this._updateTitle(data);
-        console.log(this._DEFAULT_CONFIG.layout);
         this.ownerCt.doLayout(false, true);
         
 

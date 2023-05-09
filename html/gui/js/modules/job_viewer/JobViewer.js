@@ -965,6 +965,10 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         export_option_selected: function (exportParams) {
             var chartPanel = this.getActiveJobSubPanel();
             if (chartPanel) {
+		var test = document.getElementsByClassName("main-svg");
+                console.log("SVG");
+                console.log(test);
+                console.log(test[test.length-1]);
                 chartPanel.fireEvent('export_option_selected', exportParams);
             }
         },
