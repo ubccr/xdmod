@@ -301,10 +301,18 @@ abstract class TokenAuthTest extends BaseTest
             list($role, $tokenType) = $roleAndTokenType;
             if ('valid_token' === $tokenType) {
                 foreach ($testKeys as $testKey) {
-                    $testData[] = [$role, $tokenType, $testKey];
+                    $testData["$role-$tokenType-$testKey"] = [
+                        $role,
+                        $tokenType,
+                        $testKey
+                    ];
                 }
             } else {
-                $testData[] = [$role, $tokenType, 'defaults'];
+                $testData["$role-$tokenType-defaults"] = [
+                    $role,
+                    $tokenType,
+                    'defaults'
+                ];
             }
         }
         return $testData;
