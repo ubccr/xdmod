@@ -2225,7 +2225,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRawData(Request $request, Application $app)
     {
-        $user = $this->authenticateToken($request);
+        $user = parent::authenticateToken($request);
         $params = $this->validateRawDataParams($request, $user);
         $query = $this->getRawDataQuery($params);
         $logger = $this->getRawDataLogger();
@@ -2275,7 +2275,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRawDataLimit(Request $request, Application $app)
     {
-        $this->authenticateToken($request);
+        parent::authenticateToken($request);
         $limit = $this->getConfiguredRawDataLimit();
         return $app->json([
             'success' => true,
@@ -2283,6 +2283,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
         ]);
     }
 
+    /**
+     * Validate the parameters of the request from the given user to the raw
+     * data endpoint (@see getRawData()).
+     *
+     * @param Request $request
+     * @param XDUser $user
+     * @return array of validated parameter values.
+     * @throws BadRequestException if any of the parameters are invalid.
+     */
     private function validateRawDataParams($request, $user)
     {
         $params = [];
@@ -2306,6 +2315,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $params;
     }
 
+    /**
+     * Get the corresponding query for a request to get raw data with the given
+     * parameters.
+     *
+     * @param array $params validated parameters
+     *                      (@see validateRawDataParams()).
+     * @return \DataWarehouse\Query\RawQuery
+     */
     private function getRawDataQuery($params)
     {
         $realmManager = new RealmManager();
