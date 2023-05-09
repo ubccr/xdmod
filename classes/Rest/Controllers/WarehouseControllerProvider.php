@@ -10,6 +10,7 @@ use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
 use DataWarehouse\Query\Model\WhereCondition;
+use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
@@ -953,7 +954,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         try {
             $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
         }
-        catch(\Exception $e){
+        catch(Exception $e){
             $multipleProvidersSupported = false;
         }
 
@@ -1575,7 +1576,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action the parent action that called this function.
      * @param string $actionName the child action that called this function.
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     private function getJobExecutable(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
     {
@@ -1585,7 +1586,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $execInfo = $query->getJobExecutableInfo($user, $jobId);
 
         if (count($execInfo) === 0) {
-            throw new \Exception(
+            throw new Exception(
                 "Executable information unavailable for $realm $jobId",
                 500
             );
@@ -1629,7 +1630,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestException
-     * @throws \Exception
+     * @throws Exception
      */
     private function processJobNodeTimeSeriesRequest(
         Application $app,
@@ -2191,6 +2192,37 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return new \UserStorage($user, $container);
     }
 
+    /**
+     * Get rows of raw data from the data warehouse. Requires API token
+     * authorization.
+     *
+     * The request should contain the following parameters:
+     * - start_date: start of date range for which to get data.
+     * - end_date: end of date range for which to get data.
+     * - realm: data realm for which to get data.
+     *
+     * It can also contain the following optional parameters:
+     * - fields: list of identifiers of fields to get (if not provided, all
+     *           fields are gotten).
+     * - filters: mapping of dimension identifiers to their possible values.
+     *            Results will only be included whose values for each of the
+     *            given dimensions match one of the corresponding given values.
+     * - offset: starting row index of data to get.
+     *
+     * If successful, the response will include the following keys:
+     * - success: true.
+     * - fields: array containing the 'display' property of each field gotten.
+     * - data: array of arrays containing the field values gotten.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws BadRequestException if any of the required parameters are not
+     *                             included; if an invalid start date, end
+     *                             date, realm, field identifier, or filter key
+     *                             is provided; if the end date is before the
+     *                             start date; or if the offset is negative.
+     */
     public function getRawData(Request $request, Application $app)
     {
         $user = $this->authenticateToken($request);
@@ -2207,7 +2239,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $limit,
                 $params['offset']
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if (preg_match('/fields/', $e->getMessage())) {
                 throw new BadRequestException('Invalid fields.');
             } else {
@@ -2215,26 +2247,26 @@ class WarehouseControllerProvider extends BaseControllerProvider
             }
         }
         $data = $this->parseRawDataBatchDataset($dataset);
-        return $app->json(array(
+        return $app->json([
             'success' => true,
             'fields' => $dataset->getHeader(),
             'data' => $data
-        ));
+        ]);
     }
 
     public function getRawDataLimit(Request $request, Application $app)
     {
         $this->authenticateToken($request);
         $limit = $this->getConfiguredRawDataLimit();
-        return $app->json(array(
+        return $app->json([
             'success' => true,
             'data' => $limit
-        ));
+        ]);
     }
 
     private function validateRawDataParams($request, $user)
     {
-        $params = array();
+        $params = [];
         list(
             $params['start_date'], $params['end_date']
         ) = $this->validateRawDataDateParams($request);
@@ -2260,10 +2292,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realmManager = new RealmManager();
         $className = $realmManager->getRawDataQueryClass($params['realm']);
         $query = new $className(
-            array(
+            [
                 'start_date' => $params['start_date'],
                 'end_date' => $params['end_date']
-            ),
+            ],
             'batch'
         );
         $query = $this->setRawDataQueryFilters($query, $params);
@@ -2279,11 +2311,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         return Log::factory(
             'data-warehouse-raw-data-rest',
-            array(
+            [
                 'console' => false,
                 'file' => false,
                 'mail' => false
-            )
+            ]
         );
     }
 
@@ -2297,7 +2329,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function parseRawDataBatchDataset($dataset)
     {
-        $data = array();
+        $data = [];
         foreach ($dataset as $record) {
             $data[] = $record;
         }
@@ -2321,7 +2353,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 'End date cannot be less than start date.'
             );
         }
-        return array($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        return [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
     }
 
     private function validateRawDataFieldsParam($request)
@@ -2339,7 +2371,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $filters = null;
         $filtersParam = $request->get('filters');
         if (!is_null($filtersParam)) {
-            $filters = array();
+            $filters = [];
             foreach ($filtersParam as $filterKey => $filterValuesStr) {
                 $filters[$filterKey] = $this->validateRawDataFilterParam(
                     $queryDescripters,
@@ -2355,15 +2387,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         if (count($params['filters']) > 0) {
             $f = new stdClass();
-            $f->{'data'} = array();
+            $f->{'data'} = [];
             foreach ($params['filters'] as $dimension => $values) {
                 foreach ($values as $value) {
-                    $f->{'data'}[] = (object) array(
+                    $f->{'data'}[] = (object) [
                         'id' => "$dimension=$value",
                         'value_id' => $value,
                         'dimension_id' => $dimension,
                         'checked' => 1,
-                    );
+                    ];
                 }
             }
             $query->setFilters($f);
