@@ -110,10 +110,10 @@ abstract class TokenAuthTest extends BaseTest
         $fileName,
         $testKey = null
     ) {
-        // Load the input test artifact.
+        // Load the test input artifact.
         $input = parent::loadJsonTestArtifact($testGroup, $fileName, 'input');
 
-        // If the input test artifact contains multiple test keys, load the
+        // If the test input artifact contains multiple test keys, load the
         // test from the provided key, and store the path to the artifact file
         // so it can be displayed in test assertion failure messages.
         if (!is_null($testKey)) {
@@ -288,6 +288,40 @@ abstract class TokenAuthTest extends BaseTest
     public static function nullifyTokens()
     {
         self::$TOKENS = null;
+    }
+
+    /**
+     * Given a test input artifact containing multiple keys, generate test data
+     * that can be returned by a dataProvider. The test data contains each
+     * role, token type, and — if the token type is 'valid_token' — test key.
+     * For error token types, the test key is set only to 'defaults'.
+     *
+     * @param string $testGroup the test group of the test input artifact.
+     * @param string $fileName the file name of the test input artifact.
+     * @return array the array of test data.
+     */
+    protected static function provideTokenAuthTestDataWithMultipleKeys(
+        $testGroup,
+        $fileName
+    ) {
+        // Get the test keys out of the test input artifact file.
+        $input = parent::loadJsonTestArtifact($testGroup, $fileName, 'input');
+        unset($input['$path']);
+        $testKeys = array_keys($input);
+
+        // Build the arrays of test data.
+        $testData = [];
+        foreach (self::provideTokenAuthTestData() as $roleAndTokenType) {
+            list($role, $tokenType) = $roleAndTokenType;
+            if ('valid_token' === $tokenType) {
+                foreach ($testKeys as $testKey) {
+                    $testData[] = [$role, $tokenType, $testKey];
+                }
+            } else {
+                $testData[] = [$role, $tokenType, 'defaults'];
+            }
+        }
+        return $testData;
     }
 
     /**
