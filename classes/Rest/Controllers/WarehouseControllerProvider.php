@@ -2193,8 +2193,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Get rows of raw data from the data warehouse. Requires API token
-     * authorization.
+     * Endpoint to get rows of raw data from the data warehouse. Requires API
+     * token authorization.
      *
      * The request should contain the following parameters:
      * - start_date: start of date range for which to get data.
@@ -2254,6 +2254,25 @@ class WarehouseControllerProvider extends BaseControllerProvider
         ]);
     }
 
+    /**
+     * Endpoint to get the maximum number of rows that can be returned in a
+     * single response from the raw data endpoint (@see getRawData()). Requires
+     * API token authorization.
+     *
+     * No parameters.
+     *
+     * If successful, the response will include the following keys:
+     * - success: true.
+     * - data: integer value obtained from the 'rest_raw_row_limit' setting in
+     *         the 'datawarehouse' section of the portal_settings.ini
+     *         configuration file.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws Exception if there is no setting for 'rest_raw_row_limit' in
+     *                   the 'datawarehouse' section of portal_settings.ini.
+     */
     public function getRawDataLimit(Request $request, Application $app)
     {
         $this->authenticateToken($request);
