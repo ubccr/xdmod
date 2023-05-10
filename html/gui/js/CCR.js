@@ -738,6 +738,11 @@ CCR.xdmod.ui.invertColor = function (hexTripletColor) {
     color = ("000000" + color).slice(-6); // pad with leading zeros
     return color;
 };
+
+CCR.randomInt = function (min, max) {
+    // eslint-disable-next-line no-mixed-operators
+    return Math.floor(Math.random() * (max - min + 1) + min);
+};
 // ------------------------------------
 
 // Global reference to login prompt
