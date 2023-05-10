@@ -47,11 +47,11 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
 	    for (i = 0; i < record.data.series.length; i++) {
 			var j = 0;
 			for (j = 0; j < record.data.series[i].data.length; j++){
-				low_data = moment(record.data.series[i].data[j].low).format('Y-MM-DD HH:mm:ss z');
-				high_data = moment(record.data.series[i].data[j].high).format('Y-MM-DD HH:mm:ss z');	
+				low_data = moment.tz(record.data.series[i].data[j].low, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS ');
+				high_data = moment.tz(record.data.series[i].data[j].high, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS ');	
 				categories.push(record.data.categories[count]);
 				var runtime = [];
-				let template = record.data.series[i].name + ": " + "<b>" +  moment(record.data.series[i].data[j].low).format('ddd, MMM DD, HH:mm:ss z') + "</b> - <b>" + moment(record.data.series[i].data[j].high).format('ddd, MMM DD, HH:mm:ss z') + " </b> ";
+				let template = record.data.series[i].name + ": " + "<b>" +  moment.tz(record.data.series[i].data[j].low, record.data.schema.timezone).format('ddd, MMM DD, HH:mm:ss z') + "</b> - <b>" + moment.tz(record.data.series[i].data[j].high, record.data.schema.timezone).format('ddd, MMM DD, HH:mm:ss z') + " </b> ";
 				var tooltip = [template];
 				var ticks = [count];
 				var start_time = record.data.series[i].data[j].low;
@@ -99,7 +99,8 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
 			  		color: 'rgb(155,255,255)'	
 					},
 					orientation: 'h',
-					hovertemplate: record.data.categories[count] + '<br> <span style="color:darkblue">●</span> %{text} <extra></extra>',
+					hovertemplate: record.data.categories[count] + '<br>'+
+					"<span style='color:"+colors[i %10]+";'>●</span>" + '%{text} <extra></extra>',
 					text: tooltip,
 					chartSeries: info
 			        };

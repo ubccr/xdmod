@@ -240,7 +240,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 chartOptions.series = record.data.series;
                 chartOptions.yAxis.title.text = record.data.schema.units;
                 chartOptions.xAxis.title.text = 'Time (' + record.data.schema.timezone + ')';
-                chartOptions.credits.text = record.data.schema.source + '. Powered by XDMoD/Highcharts';
+                chartOptions.credits.text = record.data.schema.source + '. Powered by XDMoD/Plotly';
                 chartOptions.title.text = record.data.schema.description;
                 chartOptions.dataurl = record.store.proxy.url;
                 this.dataurl = record.store.proxy.url;
@@ -309,14 +309,16 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
             if (record) {
                 let data = [];
+		let tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[0].data[0].x);
 
                 for (let sid = 0; sid < chartOptions.series.length; sid++) {
 		    if (chartOptions.series[sid].name === "Range") continue;
 		    let x = [];
 		    let y = [];
+		    let colors = chartOptions.colors[sid % 10];
 		    	    
                     for(let i=0; i < chartOptions.series[sid].data.length; i++) {
-                        x.push(moment(chartOptions.series[sid].data[i].x).format('Y-MM-DD HH:mm:ss z'));
+                        x.push(moment.tz(chartOptions.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
                         y.push(chartOptions.series[sid].data[i].y);
                     }
 
@@ -325,16 +327,18 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         	x: x,
                         	y: y,
 				fill: 'tonexty',
-				fillcolor: 'rgba(47, 126, 216, 0.5)',
-				/*marker: {
+				fillcolor: 'rgb(47, 126, 216)',
+				marker: {
                                         size: 20,
-                                        line: {
-                                        color: chartOptions.colors[sid % 10]
-                                        }
-                                },*/
+					color: colors
+				},        
+				line: {
+					width: 2,
+                                        color: colors
+                                },
                 	        hovertemplate:
-				"%{x|%A, %b %e, %H:%M:%S.%L %Z} " + this.displayTimezone + "<br>" +
-	                        chartOptions.series[sid].name + ": <b>%{y}</b>" +
+				"%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+	                        "<span style='color:"+colors+";'>●</span>" +  chartOptions.series[sid].name + ": <b>%{y}</b>" +
         	                "<extra></extra>",
                 	        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter+marker'});
 	 	    }
@@ -343,14 +347,16 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                                 x: x,
                                 y: y,
 				marker: {
-					size: 20,
-        	                        line: {
-	                                color: chartOptions.colors[sid % 10]
-                                	}
-				},
+                                        size: 20,
+                                        color: colors
+                                },
+                                line: {
+                                        width: 2,
+                                        color: colors
+                                },
                                 hovertemplate:
-                                "%{x|%A, %b %e, %H:%M:%S.%L %Z} " + this.displayTimezone + "<br>" +
-                                '<span style="color:darkblue">●</span> ' + chartOptions.series[sid].name + ":<b>%{y}</b>" +
+                                "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+                                "<span style='color:"+colors+";'>●</span>" + chartOptions.series[sid].name + ":<b>%{y}</b>" +
                                 "<extra></extra>",
                                 name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'lines+marker'});
 		   }    
