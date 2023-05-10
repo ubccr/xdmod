@@ -458,6 +458,66 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
                         Ext.History.add(token);
                 });
+		panel.chart.on('plotly_hover', function(data){
+			var pts = '';
+                        for(var i=0; i < data.points.length; i++){
+                           pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
+                        }
+                        console.log('Closest point clicked:\n\n'+pts);
+                        console.log(data);
+			
+			
+			var update = {
+				line:{
+					width: 3
+				},
+			};
+			var time = moment(data.points[0].x).subtract(1000, 's').format('Y-MM-DD HH:mm:ss.SSS ');
+			console.log("time");
+			console.log(time);
+			var layoutUpdate = {
+  				shapes: [
+                                {
+                                        type: 'circle',
+                                        xref: 'x',
+                                        yref: 'y',
+                                        x0: time,
+                                        y0: data.points[0].y - 0.5,
+                                        x1: moment(time).add(600, 's').format('Y-MM-DD HH:mm:ss.SSS '),
+                                        y1: data.points[0].y + 0.5,
+                                        line: {
+                                                color: data.points[0].data.marker.color
+                                        },
+                                        fillcolor: data.points[0].data.marker.color
+
+                                },
+
+
+
+                                ]
+
+			};
+
+			
+			console.log("shape created");
+			console.log(layoutUpdate);
+			Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
+			Plotly.relayout(panel.chart, layoutUpdate);
+		});
+		panel.chart.on('plotly_unhover', function(data){
+                        var pts = '';
+                        for(var i=0; i < data.points.length; i++){
+                           pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
+                        }
+                        console.log('Closest point clicked:\n\n'+pts);
+                        console.log(data);
+
+			var update = {'line':{width: 2}};
+			var layoutUpdate = {shapes: []};
+                        Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
+			Plotly.relayout(panel.chart, layoutUpdate);
+                });
+
             }
 	}
             if (!record) {
