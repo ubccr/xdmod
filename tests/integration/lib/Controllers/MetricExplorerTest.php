@@ -2,8 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
-use TokenAuthTest;
 
 class MetricExplorerTest extends TokenAuthTest
 {

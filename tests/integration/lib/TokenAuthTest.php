@@ -1,7 +1,8 @@
 <?php
 
+namespace IntegrationTests;
+
 use CCR\DB;
-use IntegrationTests\BaseTest;
 use Models\Services\Tokens;
 use TestHarness\XdmodTestHelper;
 

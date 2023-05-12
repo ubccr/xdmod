@@ -8,8 +8,15 @@ spl_autoload_register(
         $classPath
             = $dir
             . '/lib/'
-            . str_replace('\\', '/', $className)
-            . '.php';
+            . str_replace(
+                '\\',
+                '/',
+                preg_replace(
+                    '/IntegrationTests\\\\?/',
+                    '',
+                    $className
+                )
+            ) . '.php';
 
         if (is_readable($classPath)) {
             return require_once $classPath;

@@ -2,8 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
-use TokenAuthTest;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
