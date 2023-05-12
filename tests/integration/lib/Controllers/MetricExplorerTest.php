@@ -2,7 +2,7 @@
 
 namespace IntegrationTests\Controllers;
 
-use TestHarness\TokenAuthTest;
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
@@ -10,7 +10,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * Directory containing test artifact files.
      */
-    private static $TEST_GROUP = 'integration/controllers/metric_explorer';
+    const TEST_GROUP = 'integration/controllers/metric_explorer';
 
     protected function setUp()
     {
@@ -24,7 +24,7 @@ class MetricExplorerTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::$TEST_GROUP,
+            self::TEST_GROUP,
             'get_dw_descripter'
         );
     }
