@@ -5,11 +5,11 @@ namespace IntegrationTests\Rest;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
+use IntegrationTests\TokenAuthTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 use PHPUnit_Framework_TestCase;
 use TestHarness\XdmodTestHelper;
-use TokenAuthTest;
 use XDUser;
 
 /**
