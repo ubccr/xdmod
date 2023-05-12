@@ -6,9 +6,9 @@ use CCR\Json;
 use Exception;
 use Models\Services\Tokens;
 use stdClass;
-use TestHarness\TokenAuthTest;
 use TestHarness\Utilities;
 use TestHarness\XdmodTestHelper;
+use TokenAuthTest;
 
 class UserControllerProviderTest extends BaseUserAdminTest
 {
