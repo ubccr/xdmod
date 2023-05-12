@@ -2,7 +2,7 @@
 
 namespace IntegrationTests\Rest;
 
-use TestHarness\TokenAuthTest;
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends TokenAuthTest
@@ -10,7 +10,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * Directory containing test artifact files.
      */
-    private static $TEST_GROUP = 'integration/rest/warehouse';
+    const TEST_GROUP = 'integration/rest/warehouse';
 
     private static $helper;
 
@@ -151,7 +151,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::$TEST_GROUP,
+            self::TEST_GROUP,
             'get_raw_data',
             $testKey
         );
@@ -163,7 +163,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideGetRawData()
     {
         $testData = TokenAuthTest::provideTokenAuthTestDataWithMultipleKeys(
-            self::$TEST_GROUP,
+            self::TEST_GROUP,
             'get_raw_data'
         );
         // Only run the non-default valid token tests for one non-public user
@@ -193,7 +193,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::$TEST_GROUP,
+            self::TEST_GROUP,
             'get_raw_data_limit'
         );
     }

@@ -4,9 +4,9 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use Exception;
+use IntegrationTests\TokenAuthTest;
 use Models\Services\Tokens;
 use stdClass;
-use TestHarness\TokenAuthTest;
 use TestHarness\Utilities;
 use TestHarness\XdmodTestHelper;
 

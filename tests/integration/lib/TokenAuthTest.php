@@ -1,10 +1,8 @@
 <?php
 
-namespace TestHarness;
+namespace IntegrationTests;
 
 use CCR\DB;
-use Exception;
-use IntegrationTests\BaseTest;
 use Models\Services\Tokens;
 use TestHarness\XdmodTestHelper;
 
@@ -16,7 +14,7 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * HTTP path for endpoint that creates, reads, and deletes API tokens.
      */
-    private static $TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
+    const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
 
     /**
      * Valid, expired, and revoked tokens for each of the non-public base roles
@@ -25,7 +23,7 @@ abstract class TokenAuthTest extends BaseTest
      * all tests that need the tokens. Indexed first by string role (e.g.,
      * 'cd') and then by string token type (e.g., 'valid_token').
      */
-    private static $TOKENS = null;
+    private static $tokens = null;
 
     /**
      * User IDs for each of the base roles (@see BaseTest::getBaseRoles()),
@@ -33,7 +31,7 @@ abstract class TokenAuthTest extends BaseTest
      * (@see self::getToken()) and stored statically for use by all tests that
      * need them.
      */
-    private static $USER_IDS = [];
+    private static $userIds = [];
 
     /**
      * A dataProvider for testing token authentication on a given endpoint.
@@ -151,7 +149,7 @@ abstract class TokenAuthTest extends BaseTest
                 // Expire the token (it will be unexpired at the end of this
                 // test).
                 self::updateTokenExpirationDate(
-                    self::$USER_IDS[$role],
+                    self::$userIds[$role],
                     'SUBDATE(NOW(), 1)'
                 );
                 // Load the token for use in this test.
@@ -273,7 +271,7 @@ abstract class TokenAuthTest extends BaseTest
         // If the token is expired, unexpire it.
         if ('expired_token' === $tokenType) {
             self::updateTokenExpirationDate(
-                self::$USER_IDS[$role],
+                self::$userIds[$role],
                 'DATE_ADD(NOW(), INTERVAL 1 DAY)'
             );
         }
@@ -287,7 +285,7 @@ abstract class TokenAuthTest extends BaseTest
      */
     public static function nullifyTokens()
     {
-        self::$TOKENS = null;
+        self::$tokens = null;
     }
 
     /**
@@ -345,13 +343,13 @@ abstract class TokenAuthTest extends BaseTest
     {
         // If the valid, invalid, and revoked tokens have not already been
         // generated for the roles, generate them.
-        if (is_null(self::$TOKENS)) {
-            self::$TOKENS = [];
+        if (is_null(self::$tokens)) {
+            self::$tokens = [];
             foreach (parent::getBaseRoles() as $baseRole) {
                 if ('pub' === $baseRole) {
                     continue;
                 }
-                self::$TOKENS[$baseRole] = [];
+                self::$tokens[$baseRole] = [];
 
                 // Construct a test helper for making HTTP requests to create
                 // and revoke tokens.
@@ -363,7 +361,7 @@ abstract class TokenAuthTest extends BaseTest
                 // User tokens cannot be obtained after they have been created,
                 // so if the user already has a token, we don't know what it is
                 // and need to revoke it before creating a new one.
-                $helper->delete(self::$TOKEN_CRD_ENDPOINT);
+                $helper->delete(self::TOKEN_CRD_ENDPOINT);
 
                 // Create a new token.
                 $token = self::createToken($helper);
@@ -371,28 +369,28 @@ abstract class TokenAuthTest extends BaseTest
                 // Store the role's user ID so it can be used to create an
                 // invalid token and later used for expiring and unexpiring
                 // tokens.
-                self::$USER_IDS[$baseRole] = substr(
+                self::$userIds[$baseRole] = substr(
                     $token,
                     0,
                     strpos($token, Tokens::DELIMITER)
                 );
 
                 // Create and store an invalid token.
-                self::$TOKENS[$baseRole]['invalid_token'] = (
-                    self::$USER_IDS[$baseRole] . Tokens::DELIMITER . 'asdf'
+                self::$tokens[$baseRole]['invalid_token'] = (
+                    self::$userIds[$baseRole] . Tokens::DELIMITER . 'asdf'
                 );
 
                 // Revoke the created token and store it.
-                $helper->delete(self::$TOKEN_CRD_ENDPOINT);
-                self::$TOKENS[$baseRole]['revoked_token'] = $token;
+                $helper->delete(self::TOKEN_CRD_ENDPOINT);
+                self::$tokens[$baseRole]['revoked_token'] = $token;
 
                 // Create a new token and store it.
-                self::$TOKENS[$baseRole]['valid_token'] = self::createToken(
+                self::$tokens[$baseRole]['valid_token'] = self::createToken(
                     $helper
                 );
             }
         }
-        return self::$TOKENS[$role][$tokenType];
+        return self::$tokens[$role][$tokenType];
     }
 
     /**
@@ -405,7 +403,7 @@ abstract class TokenAuthTest extends BaseTest
     private static function createToken($helper)
     {
         $response = $helper->post(
-            self::$TOKEN_CRD_ENDPOINT,
+            self::TOKEN_CRD_ENDPOINT,
             null,
             null
         );
