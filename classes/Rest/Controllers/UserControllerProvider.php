@@ -403,7 +403,7 @@ SQL;
             )
         );
 
-        if (count($result) != 1) {
+        if ($result != 1) {
             throw new \Exception('Unable to create a new API token.');
         }
 
