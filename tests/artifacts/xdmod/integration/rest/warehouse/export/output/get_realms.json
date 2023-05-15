@@ -48,8 +48,8 @@
                                 "id": { "enum": [ "Jobs" ] },
                                 "name": { "enum": [ "Jobs" ] },
                                 "fields": {
-                                    "minItems": 28,
-                                    "maxItems": 28
+                                    "minItems": 29,
+                                    "maxItems": 29
                                 }
                             }
                         },

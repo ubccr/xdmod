@@ -133,13 +133,13 @@
             {
                 "properties": {
                     "fields": {
-                        "minItems": 28,
-                        "maxItems": 28
+                        "minItems": 29,
+                        "maxItems": 29
                     },
                     "data": {
                         "items": {
-                            "minItems": 28,
-                            "maxItems": 28
+                            "minItems": 29,
+                            "maxItems": 29
                         }
                     }
                 }
