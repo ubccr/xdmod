@@ -2,8 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
-use IntegrationTests\BaseTest;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
@@ -27,8 +27,10 @@ function arrayRecursiveDiff($a1, $a2) {
     return $retval;
 }
 
-class UsageExplorerTest extends BaseTest
+class UsageExplorerTest extends TokenAuthTest
 {
+    const TEST_GROUP = 'integration/controllers/user_interface';
+
     private static $publicView;
 
     public static function setUpBeforeClass()
@@ -1197,5 +1199,18 @@ END;
             }
         }
         return $arrays;
+    }
+
+    /**
+     * @dataProvider provideTokenAuthTestData
+     */
+    public function testGetDataTokenAuth($role, $tokenType)
+    {
+        parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            self::TEST_GROUP,
+            'get_data'
+        );
     }
 }
