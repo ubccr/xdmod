@@ -2335,11 +2335,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             'batch'
         );
         $query = $this->setRawDataQueryFilters($query, $params);
-        if ('SUPREMM' === $params['realm']) {
-            $query->addWhereCondition(
-                new WhereCondition('jf.cpu_user', 'IS NOT', 'NULL')
-            );
-        }
         return $query;
     }
 
