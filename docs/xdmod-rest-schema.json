@@ -3060,7 +3060,7 @@
                                             "totalCount": 0,
                                             "results": [],
                                             "data": [],
-                                            "message": "Invalid fields.",
+                                            "message": "Invalid fields specified: 'foo', 'bar'.",
                                             "code": 104
                                         }
                                     },

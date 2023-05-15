@@ -2240,8 +2240,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $params['offset']
             );
         } catch (Exception $e) {
-            if (preg_match('/fields/', $e->getMessage())) {
-                throw new BadRequestException('Invalid fields.');
+            if (preg_match('/Invalid fields specified/', $e->getMessage())) {
+                throw new BadRequestException($e->getMessage());
             } else {
                 throw $e;
             }

@@ -117,10 +117,22 @@ class BatchDataset extends Loggable implements Iterator
         $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions(
             $query->getRealmName()
         );
-        // If an array of field aliases has been provided, filter out the
-        // fields whose aliases are not in the list, and make sure all of the
-        // provided field aliases are valid.
-        if (!is_null($fieldAliases)) {
+        // If an array of field aliases has been provided,
+        if (is_array($fieldAliases)) {
+            // Validate the provided field aliases.
+            $validFieldAliases = array_column($this->fields, 'alias');
+            $invalidFieldAliases = array_diff(
+                $fieldAliases,
+                $validFieldAliases
+            );
+            if (count($invalidFieldAliases) > 0) {
+                throw new Exception(
+                    "Invalid fields specified: '"
+                    . join("', '", $invalidFieldAliases)
+                    . "'."
+                );
+            }
+            // Filter out the fields whose aliases were not provided.
             $this->fields = array_filter(
                 $this->fields,
                 function ($field) use ($fieldAliases) {
@@ -129,11 +141,6 @@ class BatchDataset extends Loggable implements Iterator
             );
             // Renumber the indexes.
             $this->fields = array_values($this->fields);
-            if (count($fieldAliases) !== count($this->fields)) {
-                throw new Exception(
-                    get_class($this) . ': invalid fields specified.'
-                );
-            }
         }
         $this->limit = $limit;
         $this->offset = $offset;

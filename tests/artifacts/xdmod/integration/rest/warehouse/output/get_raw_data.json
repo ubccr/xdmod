@@ -69,7 +69,7 @@
         "body": {
             "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
             "$overwrite": {
-                "message": "Invalid fields.",
+                "message": "Invalid fields specified: 'asdf', 'jkl;'.",
                 "code": 104
             }
         }
