@@ -2303,7 +2303,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         if (empty($queryDescripters)) {
             throw new BadRequestException('Invalid realm.');
         }
-        $params['fields'] = $this->validateRawDataFieldsParam($request);
+        $params['fields'] = $this->getRawDataFieldsArray($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
             $request,
             $queryDescripters
@@ -2338,6 +2338,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $query;
     }
 
+    /**
+     * Generate a database logger for the raw data queries.
+     *
+     * @return \CCR\Logger
+     */
     private function getRawDataLogger()
     {
         return Log::factory(
@@ -2350,6 +2355,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 
+    /**
+     * Get the value configured in the portal settings for the maximum number
+     * of rows that can be returned in a single response from the raw data
+     * endpoint.
+     *
+     * @return int
+     * @throws Exception if the 'datawarehouse' section and/or the
+     *                   'rest_raw_row_limit' option have not been set in the
+     *                   portal configuration.
+     */
     private function getConfiguredRawDataLimit()
     {
         return intval(\xd_utilities\getConfiguration(
@@ -2358,6 +2373,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         ));
     }
 
+    /**
+     * Parse the given dataset into an array of records.
+     *
+     * @param BatchDataset $dataset
+     * @return array of records obtained by iterating over the dataset.
+     */
     private function parseRawDataBatchDataset($dataset)
     {
         $data = [];
@@ -2367,6 +2388,17 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $data;
     }
 
+    /**
+     * Validate the 'start_date' and 'end_date' parameters of the given request
+     * to the raw data endpoint (@see getRawData()).
+     *
+     * @param Request $request
+     * @return array containing the validated start and end dates in Y-m-d
+     *               format.
+     * @throws BadRequestException if the start and/or end dates are not
+     *                             provided or are not valid ISO 8601 dates or
+     *                             the end date is less than the start date.
+     */
     private function validateRawDataDateParams($request)
     {
         $startDate = $this->getDateFromISO8601Param(
@@ -2387,7 +2419,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
     }
 
-    private function validateRawDataFieldsParam($request)
+    /**
+     * Get the array of field aliases from the given request to the raw data
+     * endpoint (@see getRawData()), e.g., the parameter 'fields=foo,bar,baz'
+     * results in ['foo', 'bar', 'baz'].
+     *
+     * @param Request $request
+     * @return array|null containing the field aliases parsed from the request,
+     *                    if provided.
+     */
+    private function getRawDataFieldsArray($request)
     {
         $fields = null;
         $fieldsStr = $this->getStringParam($request, 'fields', false);
@@ -2397,6 +2438,21 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $fields;
     }
 
+    /**
+     * Validate the optional 'filters' parameter of the given request to the
+     * raw data endpoint (@see getRawData()), e.g., the parameter
+     * 'filters[foo]=bar,baz' results in ['foo' => ['bar', 'baz']].
+     *
+     * @param Request $request
+     * @param array $queryDescripters the set of dimensions the user is
+     *                                authorized to see based on their assigned
+     *                                ACLs.
+     * @return array whose keys are the validated filter keys (they must be
+     *               valid dimensions the user is authorized to see) and whose
+     *               values are arrays of the provided string values.
+     * @throws BadRequestException if any of the filter keys are invalid
+     *                             dimension names.
+     */
     private function validateRawDataFiltersParams($request, $queryDescripters)
     {
         $filters = null;
@@ -2414,6 +2470,18 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $filters;
     }
 
+    /**
+     * Given a raw data query and a mapping of dimension names to possible
+     * values, set the query to filter out records whose value for the given
+     * dimension does not match any of the provided values.
+     *
+     * @param \DataWarehouse\Query\RawQuery $query
+     * @param array $params containing a 'filters' key whose value is an
+     *                      associative array of dimensions and dimension
+     *                      values.
+     * @return \DataWarehouse\Query\RawQuery the query with the filters
+     *                                       applied.
+     */
     private function setRawDataQueryFilters($query, $params)
     {
         if (count($params['filters']) > 0) {
@@ -2434,6 +2502,22 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $query;
     }
 
+    /**
+     * Validate a specific filter from the 'filters' parameter of a request to
+     * the raw data endpoint (@see getRawData()), and return the parsed array
+     * of values for that filter (e.g., 'foo,bar,baz' becomes ['foo', 'bar',
+     * 'baz']).
+     *
+     * @param Request $request
+     * @param array $queryDescripters the set of dimensions the user is
+     *                                authorized to see based on their assigned
+     *                                ACLs.
+     * @param string $filterKey the label of a dimension.
+     * @param string $filerValuesStr a comma-separated string.
+     * @return array
+     * @throws BadRequestException if the filter key is an invalid dimension
+     *                             name.
+     */
     private function validateRawDataFilterParam(
         $queryDescripters,
         $filterKey,
