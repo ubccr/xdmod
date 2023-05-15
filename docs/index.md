@@ -48,7 +48,7 @@ For more information, questions, or feedback send email to
 Want to be notified about XDMoD releases and news? Subscribe to our
 [mailing list][listserv].
 
-[listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
+[listserv]: https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1
 
 Referencing XDMoD
 -----------------
