@@ -437,6 +437,77 @@
                     "success",
                     "message"
                 ]
+            },
+            "warehouse-error": {
+                "type": "object",
+                "title": "error",
+                "properties": {
+                    "success":  {
+                        "type": "boolean",
+                        "enum": [ false ]
+                    },
+                    "count": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    }
+                },
+                "required": [
+                    "success",
+                    "count",
+                    "total",
+                    "totalCount",
+                    "results",
+                    "data",
+                    "message",
+                    "code"
+                ]
+            }
+        },
+        "responses": {
+            "api-token-404": {
+                "description": "Not Found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                { "$ref": "#/components/schemas/warehouse-error" },
+                                {
+                                    "properties": {
+                                        "message": {
+                                            "enum": [ "API token not found." ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {
@@ -1713,7 +1784,7 @@
                     "Authentication",
                     "Authorization"
                 ],
-                "summary": "Retrieves the API token of the currently logged in user.",
+                "summary": "Retrieve the API token of the currently logged in user",
                 "description": "",
                 "parameters": [],
                 "responses": {
@@ -1730,7 +1801,6 @@
                                         "message": {
                                             "type": "string",
                                             "enum": [
-                                                "Unable to retrieve current API token.",
                                                 "Invalid token data returned."
                                             ]
                                         },
@@ -1788,7 +1858,8 @@
                             }
 
                         }
-                    }
+                    },
+                    "404": { "$ref": "api-token-404" }
                 }
             },
             "post": {
@@ -1797,7 +1868,7 @@
                     "Authentication",
                     "Authorization"
                 ],
-                "summary": "Creates a new API token for the currently logged in user.",
+                "summary": "Create a new API token for the currently logged in user",
                 "description": "",
                 "parameters": [],
                 "responses": {
@@ -1813,7 +1884,6 @@
                                         },
                                         "message": {
                                             "enum": [
-                                                "Unable to create a new token at this time.",
                                                 "Unable to create a new API token."
                                             ]
                                         },
@@ -1872,6 +1942,25 @@
                                 }
                             }
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Token already exists." ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -1881,7 +1970,7 @@
                     "Authentication",
                     "Authorization"
                 ],
-                "summary": "Revoke the API token for the currently logged in user.",
+                "summary": "Revoke the API token for the currently logged in user",
                 "description": "",
                 "parameters": [],
                 "responses": {
@@ -1898,9 +1987,7 @@
                                         "message": {
                                             "type": "string",
                                             "enum": [
-                                                "Token successfully revoked.",
-                                                "No token to revoke.",
-                                                "Unable to revoke API token."
+                                                "Token successfully revoked."
                                             ]
                                         }
                                     }
@@ -1946,6 +2033,26 @@
                                             "type": "integer"
                                         }
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "404": { "$ref": "api-token-404" },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Unable to revoke API token." ]
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }

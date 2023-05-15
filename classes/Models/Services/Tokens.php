@@ -3,8 +3,8 @@
 namespace Models\Services;
 
 use Exception;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
 /**
@@ -33,9 +33,9 @@ class Tokens
      * @return XDUser for the provided $userId, if the authentication is successful else an exception will be thrown.
      *
      * @throws Exception                 if unable to retrieve a database connection.
-     * @throws BadRequestHttpException   if no token can be found for the provided $userId
-     * @throws BadRequestHttpException   if the stored token for $userId has expired.
-     * @throws AccessDeniedHttpException if the provided $token doesn't match the stored hash.
+     * @throws UnauthorizedHttpException if no token can be found for the provided $userId,
+     *                                   if the stored token for $userId has expired, or
+     *                                   if the provided $token doesn't match the stored hash.
      */
     public static function authenticate($userId, $password)
     {
@@ -53,7 +53,7 @@ SQL;
         $row = $db->query($query, array(':user_id' => $userId));
 
         if (count($row) === 0) {
-            throw new BadRequestHttpException('Malformed token.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
 
         $expectedToken = $row[0]['token'];
@@ -64,12 +64,12 @@ SQL;
         $now = new \DateTime();
         $expires = new \DateTime($expiresOn);
         if ($expires < $now) {
-            throw new BadRequestHttpException('The API Token has expired.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The API Token has expired.');
         }
 
         // finally check that the provided token matches it's stored hash.
         if (!password_verify($password, $expectedToken)) {
-            throw new AccessDeniedHttpException('Invalid API token.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
 
         // and if we've made it this far we can safely return the requested Users data.

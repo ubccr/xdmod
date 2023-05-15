@@ -6,7 +6,7 @@
         "$ref": "${INTEGRATION_ROOT}/base/session_expired.json"
     },
     "empty_token": {
-        "status_code": 400,
+        "status_code": 401,
         "body": {
             "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
             "$overwrite": {
@@ -15,16 +15,16 @@
         }
     },
     "malformed_token": {
-        "status_code": 400,
+        "status_code": 401,
         "body": {
             "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
             "$overwrite": {
-                "message": "Invalid token format"
+                "message": "Invalid token format."
             }
         }
     },
     "invalid_token": {
-        "status_code": 403,
+        "status_code": 401,
         "body": {
             "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
             "$overwrite": {
@@ -33,20 +33,11 @@
         }
     },
     "expired_token": {
-        "status_code": 400,
+        "status_code": 401,
         "body": {
             "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
             "$overwrite": {
                 "message": "The API Token has expired."
-            }
-        }
-    },
-    "revoked_token": {
-        "status_code": 400,
-        "body": {
-            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
-            "$overwrite": {
-                "message": "Malformed token."
             }
         }
     }

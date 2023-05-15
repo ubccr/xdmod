@@ -156,6 +156,10 @@ abstract class TokenAuthTest extends BaseTest
                 $token = self::getToken($role, 'valid_token');
             } elseif ('revoked_token' === $tokenType) {
                 $token = self::getToken($role, 'revoked_token');
+                // The key in the test output artifact should now be switched
+                // since revoked and invalid tokens are expected to produce the
+                // same response.
+                $tokenType = 'invalid_token';
             } else {
                 throw new Exception(
                     'Unknown value for $tokenType: "' . $tokenType . '".'
@@ -208,6 +212,16 @@ abstract class TokenAuthTest extends BaseTest
             // Load the specific output object for the given test key.
             $output = $output[$testKey];
             $output['body']['$path'] = "$path#$testKey";
+        }
+
+        // Set the expected header for authentication errors.
+        if (
+            'token_required' === $input['authentication_type']
+            && 'valid_token' !== $tokenType
+        ) {
+            $output['headers'] = [
+                'WWW-Authenticate' => Tokens::HEADER_KEY
+            ];
         }
 
         // Do one request with the token in both the header and the query
