@@ -2,6 +2,15 @@
     "authentication_error": {
         "$ref": "${INTEGRATION_ROOT}/base/authentication_error.json"
     },
+    "not_found": {
+        "status_code": 404,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "API token not found."
+            }
+        }
+    },
     "create_success": {
         "status_code": 200,
         "body": {
@@ -31,10 +40,12 @@
         }
     },
     "create_failure": {
-        "status_code": 200,
+        "status_code": 409,
         "body": {
-            "success": false,
-            "message": "Unable to create a new token at this time."
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Token already exists."
+            }
         }
     },
     "get_success": {
@@ -64,25 +75,11 @@
             ]
         }
     },
-    "get_failure": {
-        "status_code": 200,
-        "body": {
-            "success": false,
-            "message": "Unable to retrieve current API token."
-        }
-    },
     "revoke_success": {
         "status_code": 200,
         "body": {
             "success": true,
             "message": "Token successfully revoked."
-        }
-    },
-    "revoke_failure": {
-        "status_code": 200,
-        "body": {
-            "success": false,
-            "message": "No token to revoke."
         }
     }
 }
