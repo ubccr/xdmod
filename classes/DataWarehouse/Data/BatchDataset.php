@@ -87,15 +87,15 @@ class BatchDataset extends Loggable implements Iterator
      * @param RawQuery $query
      * @param XDUser $user
      * @param LoggerInterface $logger
-     * @param array $fields
-     * @param int $limit
+     * @param array|null $fieldAliases
+     * @param int|null $limit
      * @param int $offset
      */
     public function __construct(
         RawQuery $query,
         XDUser $user,
         LoggerInterface $logger = null,
-        $fields = null,
+        $fieldAliases = null,
         $limit = null,
         $offset = 0
     ) {
@@ -114,15 +114,22 @@ class BatchDataset extends Loggable implements Iterator
         }
 
         $rawStatsConfig = RawStatisticsConfiguration::factory();
-        $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions($query->getRealmName());
-        if ($fields !== null) {
-            foreach ($this->fields as $index => $field) {
-                if (!in_array($field['alias'], $fields)) {
-                    unset($this->fields[$index]);
+        $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions(
+            $query->getRealmName()
+        );
+        // If an array of field aliases has been provided, filter out the
+        // fields whose aliases are not in the list, and make sure all of the
+        // provided field aliases are valid.
+        if (!is_null($fieldAliases)) {
+            $this->fields = array_filter(
+                $this->fields,
+                function ($field) use ($fieldAliases) {
+                    return in_array($field['alias'], $fieldAliases);
                 }
-            }
+            );
+            // Renumber the indexes.
             $this->fields = array_values($this->fields);
-            if (count($fields) !== count($this->fields)) {
+            if (count($fieldAliases) !== count($this->fields)) {
                 throw new Exception(
                     get_class($this) . ': invalid fields specified.'
                 );
