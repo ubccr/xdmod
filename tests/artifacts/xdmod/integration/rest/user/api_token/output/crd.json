@@ -1,0 +1,88 @@
+{
+    "authentication_error": {
+        "$ref": "${INTEGRATION_ROOT}/base/authentication_error.json"
+    },
+    "create_success": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "create_success_body",
+            "allOf": [
+                { "$ref": "${INTEGRATION_ROOT}/base/success_body.json" },
+                {
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string",
+                                    "pattern": "^[0-9]+\\.[0-9a-f]{64}$"
+                                },
+                                "expiration_date": {
+                                    "$ref": "${INTEGRATION_ROOT}/base/date.json"
+                                }
+                            },
+                            "required": [ "token", "expiration_date" ]
+                        }
+                    },
+                    "required": [ "data" ]
+                }
+            ]
+        }
+    },
+    "create_failure": {
+        "status_code": 200,
+        "body": {
+            "success": false,
+            "message": "Unable to create a new token at this time."
+        }
+    },
+    "get_success": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "get_success_body",
+            "allOf": [
+                { "$ref": "${INTEGRATION_ROOT}/base/success_body.json" },
+                {
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "created_on": {
+                                    "$ref": "${INTEGRATION_ROOT}/base/date.json"
+                                },
+                                "expiration_date": {
+                                    "$ref": "${INTEGRATION_ROOT}/base/date.json"
+                                }
+                            },
+                            "required": [ "created_on", "expiration_date" ]
+                        }
+                    },
+                    "required": [ "data" ]
+                }
+            ]
+        }
+    },
+    "get_failure": {
+        "status_code": 200,
+        "body": {
+            "success": false,
+            "message": "Unable to retrieve current API token."
+        }
+    },
+    "revoke_success": {
+        "status_code": 200,
+        "body": {
+            "success": true,
+            "message": "Token successfully revoked."
+        }
+    },
+    "revoke_failure": {
+        "status_code": 200,
+        "body": {
+            "success": false,
+            "message": "No token to revoke."
+        }
+    }
+}

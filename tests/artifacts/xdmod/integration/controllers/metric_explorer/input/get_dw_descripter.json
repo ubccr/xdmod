@@ -1,0 +1,10 @@
+{
+    "path": "controllers/metric_explorer.php",
+    "method": "post",
+    "params": null,
+    "data": {
+        "operation": "get_dw_descripter"
+    },
+    "endpoint_type": "controller",
+    "authentication_type": "token_optional"
+}

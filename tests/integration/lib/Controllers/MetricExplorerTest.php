@@ -2,56 +2,31 @@
 
 namespace IntegrationTests\Controllers;
 
-use IntegrationTests\BaseTest;
+use IntegrationTests\TokenAuthTest;
+use TestHarness\XdmodTestHelper;
 
-class MetricExplorerTest extends BaseTest
+class MetricExplorerTest extends TokenAuthTest
 {
+    /**
+     * Directory containing test artifact files.
+     */
+    const TEST_GROUP = 'integration/controllers/metric_explorer';
+
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
-     * Checks the structure of the DwDescripter response.
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDwDescripter()
-    {
-        $this->helper->authenticate('cd');
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-
-
-        $dwdata = $response[0];
-
-        $this->assertArrayHasKey('totalCount', $dwdata);
-        $this->assertArrayHasKey('data', $dwdata);
-        $this->assertEquals($dwdata['totalCount'], count($dwdata['data']));
-
-        foreach($dwdata['data'] as $entry)
-        {
-            $this->assertArrayHasKey('realms', $entry);
-            foreach($entry['realms'] as $realm)
-            {
-                $this->assertArrayHasKey('dimensions', $realm);
-                $this->assertArrayHasKey('metrics', $realm);
-            }
-        }
-    }
-
-    /**
-     * checks that you need to be authenticated to get_dw_descripter
-     */
-    public function testGetDwDescripterNoAuth()
-    {
-        // note - not authenticated
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
-
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 401);
+    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+        parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            self::TEST_GROUP,
+            'get_dw_descripter'
+        );
     }
 
     /**
