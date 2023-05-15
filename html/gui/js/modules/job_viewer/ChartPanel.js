@@ -309,16 +309,26 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
             if (record) {
                 let data = [];
-		let tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[0].data[0].x);
-
+		var tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[0].data[0].x);
+		var ymin, ymax;
+		if (chartOptions.series[0].name === "Range"){
+			ymin = chartOptions.series[1].data[0].y;
+			ymax = ymin;
+		}
+		else{
+                        ymin = chartOptions.series[0].data[0].y;
+                        ymax = ymin;
+		}
                 for (let sid = 0; sid < chartOptions.series.length; sid++) {
-		    if (chartOptions.series[sid].name === "Range") continue;
+		    if (chartOptions.series[sid].name === "Range") {
+			tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[1].data[0].x);
+			continue;
+		    }	
 		    let x = [];
 		    let y = [];
 		    let colors = chartOptions.colors[sid % 10];
-		    	    
                     for(let i=0; i < chartOptions.series[sid].data.length; i++) {
-                        x.push(moment.tz(chartOptions.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
+			x.push(moment.tz(chartOptions.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
                         y.push(chartOptions.series[sid].data[i].y);
                     }
 
@@ -327,9 +337,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         	x: x,
                         	y: y,
 				fill: 'tonexty',
-				fillcolor: 'rgb(47, 126, 216)',
+				fillcolor: '#2f7ed8',
 				marker: {
-                                        size: 20,
+                                        size: 0.1,
 					color: colors
 				},        
 				line: {
@@ -340,14 +350,14 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 				"%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
 	                        "<span style='color:"+colors+";'>●</span>" +  chartOptions.series[sid].name + ": <b>%{y}</b>" +
         	                "<extra></extra>",
-                	        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter+marker'});
+                	        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
 	 	    }
 		    else{
 			 data.push({
                                 x: x,
                                 y: y,
 				marker: {
-                                        size: 20,
+                                        size: 0.1,
                                         color: colors
                                 },
                                 line: {
@@ -358,9 +368,14 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                                 "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
                                 "<span style='color:"+colors+";'>●</span>" + chartOptions.series[sid].name + ":<b>%{y}</b>" +
                                 "<extra></extra>",
-                                name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'lines+marker'});
-		   }    
+                                name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
 		   }
+		   var tempyMin = Math.min(...y);
+   		   var tempyMax = Math.max(...y);
+		   if (tempyMin < ymin) ymin = tempyMin;
+		   if (tempyMax > ymax) ymax = tempyMax;
+		}
+		
                 panel.getEl().unmask();
 		console.log("data");
 		console.log(data);
@@ -369,7 +384,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 		console.log("record");
 		console.log(record);
 		console.log("SVG");
-		console.log(document.getElementsByClassName("main-svg"));
                 let layout = {
                     hoverlabel: {
                         bgcolor: 'white'
@@ -383,11 +397,11 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         },
                         color: '#606060',
                         ticks: 'outside',
-			autorange: true,
 			ticklen: 10,
                         tickcolor: '#c0cfe0',
                         linecolor: '#c0cfe0',
-                        showgrid: false
+			automargin: true,
+                        showgrid: false 
                     },
                     yaxis: {
                         title: '<b>' + record.data.schema.units + '</b>',
@@ -397,8 +411,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                             color: '#5078a0'
                         },
                         color: '#606060',
-			autorange: true,
+			range: [0, ymax + (ymax * 0.2)],
                         rangemode: 'nonnegative',
+			gridcolor: 'lightgray',
+			automargin: true,
                         linecolor: '#c0cfe0'
                     },
                     title: {
@@ -410,32 +426,26 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                     },
                     hovermode: 'closest',
                     showlegend: false,
+		    autosize: true,
                     margin: {
                         t: 50
                     }
                 };
-
+		console.log('layout');
+		console.log(layout);
                 if (panel.chart) {
-                    Plotly.react(this.id, data, layout, {displayModeBar: false } );
+                    Plotly.react(this.id, data, layout, {displayModeBar: false} );
                 } else {
-                    Plotly.newPlot(this.id, data, layout, {displayModeBar: false } );
+                    Plotly.newPlot(this.id, data, layout, {displayModeBar: false} );
                 }
 
             if (!panel.chart) {
                 panel.chart = document.getElementById(this.id);
                 panel.chart.on('plotly_click', function(data, event){
-                        var pts = '';
-                        for(var i=0; i < data.points.length; i++){
-                           pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
-                        }
-                        console.log('Closest point clicked:\n\n'+pts);
-                        console.log(data);
-
                         var userOptions = data.points[0].data.chartSeries
                         if (!userOptions || !userOptions.dtype) {
                             return;
                         }
-
                         var drilldown;
                         /*
                          * The drilldown data are stored on each point for envelope
@@ -459,63 +469,31 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         Ext.History.add(token);
                 });
 		panel.chart.on('plotly_hover', function(data){
-			var pts = '';
-                        for(var i=0; i < data.points.length; i++){
-                           pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
-                        }
-                        console.log('Closest point clicked:\n\n'+pts);
-                        console.log(data);
-			
-			
+			if (!data.points) return;
+			setTimeout(() => {}, 50);
+			console.log(data);
+			let idx = data.points[0].pointNumber;
+			var sizes = Array(data.points[0].data.x.length).fill(1);
+			sizes[idx] = 12;
 			var update = {
-				line:{
-					width: 3
-				},
-			};
-			var time = moment(data.points[0].x).subtract(1000, 's').format('Y-MM-DD HH:mm:ss.SSS ');
-			console.log("time");
-			console.log(time);
-			var layoutUpdate = {
-  				shapes: [
-                                {
-                                        type: 'circle',
-                                        xref: 'x',
-                                        yref: 'y',
-                                        x0: time,
-                                        y0: data.points[0].y - 0.5,
-                                        x1: moment(time).add(600, 's').format('Y-MM-DD HH:mm:ss.SSS '),
-                                        y1: data.points[0].y + 0.5,
-                                        line: {
-                                                color: data.points[0].data.marker.color
-                                        },
-                                        fillcolor: data.points[0].data.marker.color
-
-                                },
-
-
-
-                                ]
-
-			};
-
-			
-			console.log("shape created");
-			console.log(layoutUpdate);
-			Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
-			Plotly.relayout(panel.chart, layoutUpdate);
+				'marker.size': [sizes],
+				'line.width': 3
+                        };
+                        Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
 		});
 		panel.chart.on('plotly_unhover', function(data){
-                        var pts = '';
-                        for(var i=0; i < data.points.length; i++){
-                           pts = 'x = '+data.points[i].x +'\ny = '+ data.points[i].y.toPrecision(4) + '\n\n';
-                        }
-                        console.log('Closest point clicked:\n\n'+pts);
-                        console.log(data);
-
-			var update = {'line':{width: 2}};
-			var layoutUpdate = {shapes: []};
+			if (!data.points) return;
+			var update = {
+				line:{
+					width: 2,
+					color: data.points[0].data.line.color
+				     },
+				marker:{
+					size: 0.1,
+					color: data.points[0].data.marker.color
+				}
+			};
                         Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
-			Plotly.relayout(panel.chart, layoutUpdate);
                 });
 
             }

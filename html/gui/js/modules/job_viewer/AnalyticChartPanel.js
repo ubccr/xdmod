@@ -97,11 +97,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             'xaxis': {
                 'showticklabels': false,
                 'range': [0,1],
-                'titlefont': {
-                    'family': 'Arial, sans-serif',
-                    'size': 12,
-                    'color': '#5078a0'
-                },
                 'color': '#606060',
                 'ticks': 'inside',
                 'tick0': 0.0,
@@ -115,16 +110,10 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 'zerolinecolor': 'black',
                 'showline': false,
                 'zerolinewidth': 0,
-                'tickformat': "%Y-%m-%d",
 		'fixedrange': true
             },
             'yaxis': {
                 'showticklabels': false,
-                'titlefont': {
-                    'family': 'Arial, sans-serif',
-                    'size': 12,
-                    'color': '#1199FF'
-                },
                 'color': '#606060',
                 'showgrid' : false,
                 'gridcolor': '#c0c0c0',
@@ -136,18 +125,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 'zerolinewidth': 0,
 		'fixedrange': true
             },
-            'title': {
-                'font': {
-                    'color': '#444b6e',
-                    'size': 16
-                }
-            },
             'hovermode': false,
             'showlegend': false,
-            'legend': {
-                'orientation': 'h',
-                'y': -0.2
-            },
+	    'autosize': true,
             'margin': {
                 't': 10,
                 'l': 7.5,
@@ -160,7 +140,6 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         traces: [],
 	config: {
 		displayModeBar: false,
-			
 	},
 
         },
@@ -211,7 +190,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         update_data: function(data) {
             this._updateData(data);
-            Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
+            Plotly.react(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
         }, // update_data
 
         /**
@@ -221,7 +200,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         reset: function() {
             if (this.chart) {
                 this.traces = [];
-                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
+                Plotly.react(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
             }
         }, // reset
 
@@ -247,7 +226,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             if (this.chart) {
                 this._DEFAULT_CONFIG.layout['width'] = adjWidth;
                 this._DEFAULT_CONFIG.layout['height'] = adjHeight;
-                Plotly.newPlot(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
+                Plotly.react(this.id, this._DEFAULT_CONFIG.traces, this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
                 if (this.errorMsg) {
                     this.updateErrorMessage(this.errorMsg.text.textStr);
                 }
