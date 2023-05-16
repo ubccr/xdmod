@@ -54,12 +54,7 @@ class UserInterfaceTest extends BaseUserAdminTest
 
         $actual = $response[0];
 
-        # Check spec file
-        $schemaObject = JSON::loadFile(
-            $this->getTestFiles()->getFile('schema', 'get-menus.spec', ''),
-            false
-        );
-        $this->validateJson($actual, $schemaObject);
+        $this->validateJsonAgainstFile($actual, 'schema', 'get-menus.spec');
 
         # Check expected file
         $expected = array();
@@ -99,7 +94,7 @@ class UserInterfaceTest extends BaseUserAdminTest
 
         $this->assertEquals($expected, $actual);
 
-    } // public function testGetMenus(array $options)
+    }
 
     /**
      * Provides test data to `testGetMenus`.
@@ -112,5 +107,5 @@ class UserInterfaceTest extends BaseUserAdminTest
         return JSON::loadFile(
             $this->getTestFiles()->getFile('user_interface', 'get_menus', 'input')
         );
-    } // public function provideTestGetMenus()
+    }
 }

@@ -33,7 +33,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
-        "ccampbell/chromephp": "^4.1"
+        "ccampbell/chromephp": "^4.1",
+        "swaggest/json-schema": "^0.12.41"
     },
     "repositories": [
         {

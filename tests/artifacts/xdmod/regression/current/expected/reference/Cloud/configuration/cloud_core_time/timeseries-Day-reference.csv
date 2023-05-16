@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by Instance Type"
+"CPU Hours: Total: by Instance Type"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[c1.m4] Core Hours: Total","[c4.m16] Core Hours: Total","[c2.m4] Core Hours: Total","[c1.m1] Core Hours: Total","[c2.m8] Core Hours: Total"
+Day,"[c1.m4] CPU Hours: Total","[c4.m16] CPU Hours: Total","[c2.m4] CPU Hours: Total","[c1.m1] CPU Hours: Total","[c2.m8] CPU Hours: Total"
 2018-04-18,32.5117,17.7044,1.4156,0.0150,0.4706
 2018-04-19,105.5942,0,31.5872,0.9328,0
 2018-04-20,49.0664,0,48.0000,0,0

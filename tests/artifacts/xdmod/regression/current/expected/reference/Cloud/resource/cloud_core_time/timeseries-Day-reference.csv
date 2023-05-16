@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by Resource"
+"CPU Hours: Total: by Resource"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[openstack] Core Hours: Total"
+Day,"[openstack] CPU Hours: Total"
 2018-04-18,52.1172
 2018-04-19,138.1142
 2018-04-20,97.0664

@@ -241,6 +241,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 chartOptions.yAxis.title.text = record.data.schema.units;
                 chartOptions.xAxis.title.text = 'Time (' + record.data.schema.timezone + ')';
                 chartOptions.credits.text = record.data.schema.source + '. Powered by XDMoD/Plotly';
+                if (record.data.schema.units.indexOf('%') !== -1) {
+                    chartOptions.yAxis.max = 100.0;
+                }
                 chartOptions.title.text = record.data.schema.description;
                 chartOptions.dataurl = record.store.proxy.url;
                 this.dataurl = record.store.proxy.url;

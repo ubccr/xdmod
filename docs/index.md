@@ -34,13 +34,13 @@ A version of Open XDMoD, namely [XDMoD](https://xdmod.ccr.buffalo.edu/),
 was developed to monitor the NSF supported portfolio of supercomputers
 that fall under the [XSEDE](https://www.xsede.org/) program.
 
-This work was sponsored by NSF under grant numbers
-[ACI 1025159][nsf-1025159], [ACI 1445806][nsf-1445806] and
-[ACI 2137603][nsf-2137603].
+This material is based upon work supported by the National Science Foundation
+under Grant Numbers [OAC 2137603][nsf-2137603],
+[ACI 1025159][nsf-1025159] and [ACI 1445806][nsf-1445806].
 
-[nsf-1025159]: http://nsf.gov/awardsearch/showAward?AWD_ID=1025159
-[nsf-1445806]: http://nsf.gov/awardsearch/showAward?AWD_ID=1445806
-[nsf-2137603]: http://nsf.gov/awardsearch/showAward?AWD_ID=2137603
+[nsf-2137603]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=2137603
+[nsf-1025159]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=1025159
+[nsf-1445806]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=1445806
 
 For more information, questions, or feedback send email to
 `ccr-xdmod-help` at `buffalo.edu`.
@@ -48,7 +48,7 @@ For more information, questions, or feedback send email to
 Want to be notified about XDMoD releases and news? Subscribe to our
 [mailing list][listserv].
 
-[listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
+[listserv]: https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1
 
 Referencing XDMoD
 -----------------

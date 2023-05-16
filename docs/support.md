@@ -5,14 +5,18 @@ title: Support
 Support Lifecycle
 -----------------
 
-Releases of Open XDMoD will receive support for one year from the time of their
-initial release.  This includes security fixes and other critical updates in
+In general, Open XDMoD has two major releases each year and each major version will receive support
+ for one year from the time of initial release.  This includes security fixes and other critical updates in
 addition to limited access to our support team.
+
+Note that there was only one major release of Open XDMoD in 2022 due to the team supporting the
+transition from the [XD Metrics Service](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1445806)
+ to [ACCESS Metrics](https://metrics.access-ci.org). The 10.0 release of
+Open XDMoD therefore has a longer than typical support time.
 
 | Version | Release Date       | End of Support     |
 | ------- | ------------------ | ------------------ |
-| 10.0    | March 10, 2022     | March 10, 2023     |
-| 9.5     | May 21, 2021       | May 21, 2022       |
+| 10.0    | March 10, 2022     | September 10, 2023     |
 
 Supported Operating Systems
 ---------------------------
@@ -22,7 +26,9 @@ are using a different operating system and encounter an issue, install Open
 XDMoD on CentOS 7 and reproduce the issue in that environment before requesting
 support.
 
-Open XDMoD 10.0 also has a [beta release](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8) version that is compatible with Rocky Linux 8
+Rocky 8 packages are available in 'beta' release.  We aim to provide the same level
+ of support for Rocky 8 as we do for Centos 7, but some issues may not be fixed until
+the planned 10.5 release, which will have full support for Rocky 8.
 
 Requesting Support
 ------------------
@@ -49,4 +55,4 @@ Mailing List
 Subscribe to our [mailing list][listserv] to stay up to date with the
 latest Open XDMoD release.
 
-[listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
+[listserv]: https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1
