@@ -2202,9 +2202,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * - realm: data realm for which to get data.
      *
      * It can also contain the following optional parameters:
-     * - fields: list of identifiers of fields to get (if not provided, all
+     * - fields: list of aliases of fields to get (if not provided, all
      *           fields are gotten).
-     * - filters: mapping of dimension identifiers to their possible values.
+     * - filters: mapping of dimension names to their possible values.
      *            Results will only be included whose values for each of the
      *            given dimensions match one of the corresponding given values.
      * - offset: starting row index of data to get.
@@ -2219,7 +2219,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestException if any of the required parameters are not
      *                             included; if an invalid start date, end
-     *                             date, realm, field identifier, or filter key
+     *                             date, realm, field alias, or filter key
      *                             is provided; if the end date is before the
      *                             start date; or if the offset is negative.
      */
@@ -2230,23 +2230,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $query = $this->getRawDataQuery($params);
         $logger = $this->getRawDataLogger();
         $limit = $this->getConfiguredRawDataLimit();
-        try {
-            $dataset = new BatchDataset(
-                $query,
-                $user,
-                $logger,
-                $params['fields'],
-                $limit,
-                $params['offset']
-            );
-        } catch (Exception $e) {
-            if (preg_match('/Invalid fields specified/', $e->getMessage())) {
-                throw new BadRequestException($e->getMessage());
-            } else {
-                throw $e;
-            }
-        }
-        $data = $this->parseRawDataBatchDataset($dataset);
+        $dataset = $this->getRawBatchDataset(
+            $user,
+            $params,
+            $query,
+            $logger,
+            $limit
+        );
+        $data = $this->parseRawBatchDataset($dataset);
         return $app->json([
             'success' => true,
             'fields' => $dataset->getHeader(),
@@ -2374,12 +2365,50 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * Get a raw batch dataset from the warehouse.
+     *
+     * @param XDUser $user
+     * @param array $params validated parameter values.
+     * @param \DataWarehouse\Query\RawQuery $query
+     * @param \CCR\Logger
+     * @param int $limit maximum number of rows to get.
+     * @return BatchDataset
+     * @throws Exception if the 'fields' parameter contains invalid field
+     *                   aliases.
+     */
+    private function getRawBatchDataset(
+        $user,
+        $params,
+        $query,
+        $logger,
+        $limit
+    ) {
+        try {
+            $dataset = new BatchDataset(
+                $query,
+                $user,
+                $logger,
+                $params['fields'],
+                $limit,
+                $params['offset']
+            );
+            return $dataset;
+        } catch (Exception $e) {
+            if (preg_match('/Invalid fields specified/', $e->getMessage())) {
+                throw new BadRequestException($e->getMessage());
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
      * Parse the given dataset into an array of records.
      *
      * @param BatchDataset $dataset
      * @return array of records obtained by iterating over the dataset.
      */
-    private function parseRawDataBatchDataset($dataset)
+    private function parseRawBatchDataset($dataset)
     {
         $data = [];
         foreach ($dataset as $record) {
