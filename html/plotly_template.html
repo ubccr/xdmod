@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>Plotly Template</title>
+
+      <style type="text/css">html,body{margin:0px;height:100%;}</style>
+      <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-1.12.4.min.js"></script>
+      <script type="text/javascript" src="_html_dir_/gui/js/StringExtensions.js"></script>
+	
+  </head>
+ <body>
+      <script type="text/javascript" src="_html_dir_/gui/lib/moment/moment.min.js"></script>
+      <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
+      <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-1.57.1.min.js"></script>
+
+      <div id="container" style="width: 100%; height: 100%; margin: 0 auto">
+
+
+      <script type="text/javascript">
+
+        var Ext = {
+            namespace: function(){}
+        };
+        var XDMoD = {
+            utils: {
+            }
+        };
+
+         // _ chartOptions _ is a macro that is substituted by \xd_charting\exportHighchart()
+         var inputChartOptions = _chartOptions_;
+
+         $(document).ready(function() {
+
+                let data = [];
+		var tz = moment.tz.zone(record.data.schema.timezone).abbr(inputChartOptions.series[0].data[0].x);
+		var ymin, ymax;
+		if (inputChartOptions.series[0].name === "Range"){
+			ymin = inputChartOptions.series[1].data[0].y;
+			ymax = ymin;
+		}
+		else{
+                        ymin = inputChartOptions.series[0].data[0].y;
+                        ymax = ymin;
+		}
+                for (let sid = 0; sid < inputChartOptions.series.length; sid++) {
+		    if (inputChartOptions.series[sid].name === "Range") {
+			tz = moment.tz.zone(record.data.schema.timezone).abbr(inputChartOptions.series[1].data[0].x);
+			continue;
+		    }	
+		    let x = [];
+		    let y = [];
+		    let colors = inputChartOptions.colors[sid % 10];
+                    for(let i=0; i < inputChartOptions.series[sid].data.length; i++) {
+			x.push(moment.tz(inputChartOptions.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
+                        y.push(inputChartOptions.series[sid].data[i].y);
+                    }
+
+		    if (inputChartOptions.series[sid].name === "Median" || inputChartOptions.series[sid].name === "Minimum"){
+                    	data.push({
+                        	x: x,
+                        	y: y,
+				fill: 'tonexty',
+				fillcolor: '#2f7ed8',
+				marker: {
+                                        size: 0,
+					color: colors
+				},        
+				line: {
+					width: 2,
+                                        color: colors
+                                },
+                	        hovertemplate:
+				"%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+	                        "<span style='color:"+colors+";'>●</span>" +  inputChartOptions.series[sid].name + ": <b>%{y}</b>" +
+        	                "<extra></extra>",
+                	        name: inputChartOptions.series[sid].name, chartSeries: inputChartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
+	 	    }
+		    else{
+			 data.push({
+                                x: x,
+                                y: y,
+				marker: {
+                                        size: 0,
+                                        color: colors
+                                },
+                                line: {
+                                        width: 2,
+                                        color: colors
+                                },
+                                hovertemplate:
+                                "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+                                "<span style='color:"+colors+";'>●</span>" + inputChartOptions.series[sid].name + ":<b>%{y}</b>" +
+                                "<extra></extra>",
+                                name: inputChartOptions.series[sid].name, chartSeries: inputChartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
+		   }
+		   var tempyMin = Math.min(...y);
+   		   var tempyMax = Math.max(...y);
+		   if (tempyMin < ymin) ymin = tempyMin;
+		   if (tempyMax > ymax) ymax = tempyMax;
+		}
+		inputChartOptions.yaxis.range = [ymin, ymax];
+		inputChartOptions.width = _width_;
+		inputChartOptions.height = _heigh_;
+		
+		
+
+	    /*var chartOptions = {
+
+               chart: {
+                  renderTo: 'container',
+                  animation: false
+               },
+
+               plotOptions: {
+                  series: {
+                     animation: false,
+                     turboThreshold: 0
+                  }
+               },
+
+               exporting: {
+                  width: _width_,
+                  height: _height_,
+                  sourceWidth: _width_,
+                  sourceHeight: _height_
+               }
+
+            };//chartOptions
+
+            jQuery.extend(true,inputChartOptions,chartOptions);
+
+            // Needed to provide comma as thousands separator in export
+            Highcharts.setOptions ({
+               lang: {
+                  thousandsSep: '\u002c' // the humble comma
+               }
+            });
+
+            var globalChartOptions = _globalChartOptions_;
+            if (globalChartOptions) {
+               Highcharts.setOptions({
+                  global: globalChartOptions
+               });
+            }*/
+
+            if (inputChartOptions.series.length == 0) {
+               inputChartOptions.title.text = 'No data available for the critera specified';
+	       inputChartOptions.title.yref = 'paper';
+	       inputChartOptions.title.y = 0.5;
+	       inputChartOptions.title.yanchor = 'bottom';	
+               inputChartOptions.title.font = { "color": "#333333", "size": "40px" }
+            }
+	    Plotly.newPlot('container', data, inputChartOptions, {displayModeBar: false} );
+
+         });//$(document).ready(...
+
+      </script>
+
+
+      </div>
+
+   </body>
+
+</html>
