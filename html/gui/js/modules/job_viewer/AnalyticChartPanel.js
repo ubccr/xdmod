@@ -251,10 +251,11 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             this._DEFAULT_CONFIG.layout['images'] = [
                 {
                     "source": '/gui/images/about_16.png',
+		    "align": "left",
                     "xref": "paper",
                     "yref": "paper",
-                    "sizex": 0.5,
-                    "sizey": 0.5,
+                    "sizex": 0.4,
+                    "sizey": 0.4,
                     "x": 0,
                     "y": 1.2
                 }
@@ -262,14 +263,15 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 	    console.log("new annontation");
             this._DEFAULT_CONFIG.layout['annotations'] = [
                 {       
-                    "text": wordwrap.wrap(errorStr, {width: 20}),
+                    "text": '<b>' + errorStr + '</b>',
                     "align": "left",
                     "xref": "paper",
                     "yref": "paper",
-                    "sizex": 1,
-                    "sizey": 1,
-                    "x" : 0.5,
-                    "y" : 0.5,
+		    "font":{ 
+			"size": 11,
+		    },
+                    "x" : 0.05,
+                    "y" : 1.2,
                     "showarrow": false
                 }
             ]

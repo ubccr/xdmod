@@ -309,6 +309,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
             if (record) {
                 let data = [];
+		var singleDataPoint = false;
 		var tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[0].data[0].x);
 		var ymin, ymax;
 		if (chartOptions.series[0].name === "Range"){
@@ -328,6 +329,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 		    let y = [];
 		    let colors = chartOptions.colors[sid % 10];
                     for(let i=0; i < chartOptions.series[sid].data.length; i++) {
+			if (chartOptions.series[sid].data.length == 1){
+				singleDataPoint = true;	
+			}
 			x.push(moment.tz(chartOptions.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
                         y.push(chartOptions.series[sid].data[i].y);
                     }
@@ -353,7 +357,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 	        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
 	 	    }
 		    else{
-			 data.push({
+			 var trace = {
                                 x: x,
                                 y: y,
 				marker: {
@@ -368,7 +372,14 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                                 "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
                                 "<span style='color:"+colors+";'>●</span>" + chartOptions.series[sid].name + ":<b>%{y}</b>" +
                                 "<extra></extra>",
-                                name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
+                                name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'};
+
+			if (singleDataPoint){
+				trace.marker.size = 20;
+				trace.mode = 'markers';
+				delete trace.line;
+			} 
+			data.push(trace);
 		   }
 		   var tempyMin = Math.min(...y);
    		   var tempyMax = Math.max(...y);
@@ -468,12 +479,13 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
                         Ext.History.add(token);
                 });
+		if (!singleDataPoint){
 		panel.chart.on('plotly_hover', function(data){
 			if (!data.points) return;
 			setTimeout(() => {}, 50);
 			console.log(data);
 			let idx = data.points[0].pointNumber;
-			var sizes = Array(data.points[0].data.x.length).fill(1);
+			var sizes = Array(data.points[0].data.x.length).fill(0.1);
 			sizes[idx] = 12;
 			var update = {
 				'marker.size': [sizes],
@@ -495,6 +507,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 			};
                         Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
                 });
+	      }
 
             }
 	}

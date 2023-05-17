@@ -113,11 +113,6 @@ function getSvgViaChromiumHelper($html, $width, $height){
         @unlink($tmpHtmlFile);
         throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
-<<<<<<< HEAD
-    //fwrite($pipes[0], 'chart.getSVG(inputChartOptions);');
-    //fclose($pipes[0]);
-=======
->>>>>>> xdmod10.5
 
     $out = stream_get_contents($pipes[1]);
     $err = stream_get_contents($pipes[2]);
@@ -127,22 +122,8 @@ function getSvgViaChromiumHelper($html, $width, $height){
 
     @unlink($tmpHtmlFile);
 
-<<<<<<< HEAD
-    $jsondata = json_decode(substr($out, 4, -6), true);
-
-    $chartSvg = null;
-    if (isset($jsondata['result']) && isset($jsondata['result']['value'])) {
-        // chrome headless 99
-        $chartSvg = $jsondata['result']['value'];
-    } elseif (isset($jsondata['result']) && isset($jsondata['result']['result']) && isset($jsondata['result']['result']['value'])) {
-        // chrome headless 109
-        $chartSvg = $jsondata['result']['result']['value'];
-    }
-
-=======
     $chartSvg = json_decode($out);
 
->>>>>>> xdmod10.5
     if ($chartSvg === null) {
         throw new \Exception('Error executing command: "'. $command . '". Details: ' . $return_value . " " . $out . ' Errors: ' . $err);
     }
