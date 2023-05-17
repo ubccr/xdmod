@@ -1984,47 +1984,31 @@ class WarehouseControllerProvider extends BaseControllerProvider
                         '#f28f43', '#77a1e5', '#c42525', '#a6c96a'
             ),
             'series' => $data['series'],
-            'xAxis' => array(
-                'type' => 'datetime',
-                'minTickInterval' => 1000,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => $axisLabelFontSize
-                    ),
+            'xaxis' => array(
+                'tickfont' => array(
+                        'size' => $axisLabelFontSize
                 ),
-                'lineWidth' => $lineWidth,
-                'title' => array(
-                    'style' => array(
-                        'fontWeight' => 'bold',
-                        'fontSize' => $axisTitleFontSize,
+                'zerolinewidth' => $lineWidth,
+                'title' => '<b>' + 'Time (' . $data['schema']['timezone'] . ')' + '</b>',
+		'titlefont' => array(
+                        'size' => $axisTitleFontSize,
                         'color' => '#5078a0'
-                    ),
-                    'text' => 'Time (' . $data['schema']['timezone'] . ')'
                 )
             ),
-            'yAxis' => array(
-                'title' => array(
-                    'style' => array(
-                        'fontWeight' => 'bold',
-                        'fontSize' => $axisTitleFontSize,
+            'yaxis' => array(
+		'title' => '<b>' + 'Time (' . $data['schema']['units'] . ')' + '</b>',
+                'titlefont' => array(
+                        'size' => $axisTitleFontSize,
                         'color' => '#5078a0'
-                    ),
-                    'text' => $data['schema']['units']
                 ),
-                'lineWidth' => $lineWidth,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => $axisLabelFontSize
-                    ),
+                'zerolinewidth' => $lineWidth,
+                'ticfont' => array(
+                        'size' => $axisLabelFontSize
                 ),
-                'min' => 0.0
+                'rangemode' => 'nonnegative'
             ),
-            'legend' => array(
-                'enabled' => false
-            ),
-            'plotOptions' => array(
+            'showlegend' => false,
+	    'plotOptions' => array(
                 'line' => array(
                     'lineWidth' => $lineWidth,
                     'marker' => array(
@@ -2032,22 +2016,29 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     )
                 )
             ),
-            'credits' => array(
-                'text' => $data['schema']['source'] . '. Powered by XDMoD/Highcharts',
-                'href' => ''
-            ),
-            'exporting' => array(
-                'enabled' => false
+            'annotations' => array(
+                'text' => $data['schema']['source'] . '. Powered by XDMoD/Plotly',
+		'xref' => 'paper',
+		'yref' => 'paper',
+		'x' => 1,
+		'xanchor' => 'left',
+		'y' => 0,
+		'yanchor' => 'top',
+		'showarrow' => false
             ),
             'title' => array(
-                'style' => array(
+                'font' => array(
                     'color' => '#444b6e',
-                    'fontSize' => $mainTitleFontSize
+                    'size' => $mainTitleFontSize
                 ),
 
                 'text' => $settings['show_title'] ? $data['schema']['description'] : null
             )
         );
+
+        /*if (strpos($data['schema']['units'], '%') !== false) {
+            $chartConfig['yAxis']['max'] = 100.0;
+        }*/
 
         $globalConfig = array(
             'timezone' => $data['schema']['timezone']

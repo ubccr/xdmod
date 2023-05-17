@@ -2,16 +2,18 @@
 
 ## Current Maintainers
 
-- Jeffrey T. Palmer
 - Nikolay Simakov
 - Joseph White
 - Ryan Rathsam
 - Gregary Dean
-- Hannah Taylor
 - Conner Saeli
+- Aaron Weeden
+- Andrew Stoltman
 
 ## Previous Maintainers
 
+- Jeffrey T. Palmer
+- Hannah Taylor
 - Jeanette Sperhac
 - Steven M. Gallo
 - Ben Plessinger

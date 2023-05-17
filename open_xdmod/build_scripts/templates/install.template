@@ -515,6 +515,7 @@ function substitutePaths($dirs)
 
     substituteInFile($destDir . $dirs['data'] . '/configuration/constants.php', array(
         '/__XDMOD_BIN_PATH__/' => $dirs['bin'],
+        '/__XDMOD_LIB_PATH__/' => $dirs['lib'],
         "#^define\('CONFIG_DIR',.+$#m"
         => "define('CONFIG_DIR', '" . $dirs['conf'] . "');",
         "#^define\('LOG_DIR',.+$#m"

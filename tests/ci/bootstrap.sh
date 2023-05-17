@@ -22,6 +22,16 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
+PYTHON_SCIPY=python3-scipy
+if [ `rpm -E %{rhel}` = 7 ]; then
+    PYTHON_SCIPY=python36-scipy
+fi
+
+# Install python dependencies for the image hash comparison algorithm
+yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
+pip3 install imagehash==4.2.1
+cp $REPODIR/tests/ci/scripts/imagehash /root/bin
+
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
@@ -74,17 +84,19 @@ then
         done
     fi
 
+    sudo -u xdmod xdmod-ingestor
+
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
     then
         last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
-        sudo -u xdmod xdmod-ingestor
 
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_error_sessions -f openstack
-        sudo -u xdmod xdmod-ingestor  --last-modified-start-date "$last_modified_start_date"
+        sudo -u xdmod xdmod-ingestor --datatype openstack
+        sudo -u xdmod xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
     fi
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
@@ -127,15 +139,6 @@ then
     fi
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
-
-    if [[ "$XDMOD_REALMS" == *"cloud"* ]];
-    then
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack -q
-        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack -q
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
-        mysql -e "TRUNCATE TABLE modw_cloud.instance_type;"
-        sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
-    fi
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
