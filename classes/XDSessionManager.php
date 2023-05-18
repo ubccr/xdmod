@@ -35,7 +35,9 @@ class XDSessionManager
      */
     public static function recordLogin($user)
     {
-        \xd_security\start_session();
+        if (session_status() === PHP_SESSION_NONE) {
+            \xd_security\start_session();
+        }
 
         $pdo = DB::factory('database');
 
@@ -101,7 +103,9 @@ class XDSessionManager
      */
     public static function logoutUser($token = "")
     {
-        \xd_security\start_session();
+        if (session_status() === PHP_SESSION_NONE) {
+            \xd_security\start_session();
+        }
 
         // If a session is still active and a token has been specified,
         // attempt to record the logout in the SessionManager table
