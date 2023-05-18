@@ -122,7 +122,7 @@ class MailWrapper
      *
      * Checks first to see if debug mode is on
      */
-    public function addAddresses($mail, $properties)
+    public static function addAddresses($mail, $properties)
     {
         if(\xd_utilities\getConfiguration('general', 'debug_mode') == 'on') {
             $mail->addAddress(\xd_utilities\getConfiguration('general', 'debug_recipient'));
@@ -152,7 +152,7 @@ class MailWrapper
         }
     }
 
-    public function sendTemplate($templateType, $properties)
+    public static function sendTemplate($templateType, $properties)
     {
         $template = new EmailTemplate($templateType);
         $template->apply($properties);
