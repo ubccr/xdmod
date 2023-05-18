@@ -740,10 +740,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $user = $this->authorize($request);
 
-        // Get parameters.
-        $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
-
-        // Get the realms for the query group and the user's active role.
+        // Get the realms for the user's active role.
         $realms = Realms::getRealmsForUser($user);
 
         // Return the realms found.
