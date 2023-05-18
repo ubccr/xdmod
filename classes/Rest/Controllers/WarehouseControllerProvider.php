@@ -2510,7 +2510,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function setRawDataQueryFilters($query, $params)
     {
-        if (count($params['filters']) > 0) {
+        if (is_array($params['filters']) && count($params['filters']) > 0) {
             $f = new stdClass();
             $f->{'data'} = [];
             foreach ($params['filters'] as $dimension => $values) {
