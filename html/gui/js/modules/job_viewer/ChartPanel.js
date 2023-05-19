@@ -9,78 +9,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
     // The default chart config options.
     _DEFAULT_CONFIG: {
-			chartPrefix: 'CreateChartPanel',
-        chartOptions: {
-            chart: {
-                type: 'line',
-                zoomType: 'x'
-            },
-            // Specify Highcharts v.3 default colors for plotting Job Viewer Timeseries data
-            colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-                        '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
-            title: {
-                style: {
-                    color: '#444b6e',
-                    fontSize: '16px'
-                },
-                text: ''
-            },
-            loading: {
-                style: {
-                    opacity: 0.7
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                minTickInterval: 1000,
-                title: {
-                    style: {
-                        fontWeight: 'bold',
-                        color: '#5078a0'
-                    },
-                    text: 'Time'
-                }
-            },
-            yAxis: {
-                title: {
-                    style: {
-                        fontWeight: 'bold',
-                        color: '#5078a0'
-                    },
-                    text: 'Units'
-                },
-                min: 0.0
-            },
-            legend: {
-                enabled: false
-            },
-            credits: {
-                text: '',
-                href: ''
-            },
-            exporting: {
-                enabled: false
-            },
-            tooltip: {
-                dateTimeLabelFormats: {
-                    millisecond:"%A, %b %e, %H:%M:%S.%L %T",
-                    second:"%A, %b %e, %H:%M:%S %T",
-                    minute: "%A, %b %e, %H:%M:%S %T",
-                    hour: "%A, %b %e, %H:%M:%S %T"
-                }
-            },
-            plotOptions: {
-                line: {
-                    marker: {
-                        enabled: false
-                    }
-                },
-                series: {
-                    allowPointSelect: false,
-                    animation: false
-                }
-            }
-        }
+	chartPrefix: 'CreateChartPanel',
     },
 
     // The chart instance.
@@ -95,7 +24,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
         this.loaded = false;
 
-        jQuery.extend(true, this.options, this._DEFAULT_CONFIG.chartOptions);
         XDMoD.Module.JobViewer.ChartPanel.superclass.initComponent.call(this, arguments);
 
         // ADD: store listeners ( if we have a store )
@@ -126,14 +54,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
     }, // initComponent
 
-    setHighchartTimezone: function() {
-        Highcharts.setOptions({
-            global: {
-                timezone: this.displayTimezone
-            }
-        });
-    },
-
     listeners: {
 
         /**
@@ -141,7 +61,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          */
         activate: function(tab, reload) {
 
-            this.setHighchartTimezone();
 
             reload = reload || false;
             // This is here so that when the chart is / panel is loaded
@@ -176,8 +95,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             if (panel.chart) {
                 Plotly.relayout(panel.id, {width: adjWidth, height: adjHeight});
             }
-            this.options.chart.width = adjWidth;
-            this.options.chart.height = adjHeight;
         }, // resize
 
         destroy: function () {
@@ -234,72 +151,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 Ext.History.add(token);
             };
 
-            var chartOptions = this.options;
-            chartOptions.chart.renderTo = this.id;
             if (record !== null && record !== undefined) {
-                chartOptions.series = record.data.series;
-                chartOptions.yAxis.title.text = record.data.schema.units;
-                chartOptions.xAxis.title.text = 'Time (' + record.data.schema.timezone + ')';
-                chartOptions.credits.text = record.data.schema.source + '. Powered by XDMoD/Plotly';
-                chartOptions.title.text = record.data.schema.description;
-                chartOptions.dataurl = record.store.proxy.url;
                 this.dataurl = record.store.proxy.url;
                 this.displayTimezone = record.data.schema.timezone;
-
-                this.setHighchartTimezone();
-
-                var hasMultipleXValues = false;
-                var firstXValue = null;
-
-                for ( var i = 0; i < chartOptions.series.length; i++) {
-                    var series = chartOptions.series[i];
-
-                    var header = '<span style="font-size: 10px">{point.key}</span><br/>';
-                    if (series.dtype === 'index') {
-                        header = '<span style="font-size: 10px; color:{point.series.color};">[ {point.point.options.qtip} ]: <span style="font-size: 10px; color: #000">{point.key}</span></span><br/>';
-                    }
-
-                    series.tooltip = {
-                        headerFormat: header
-                    };
-
-                    series.point = {
-                        events: {
-                            click: chartClickHandler
-                        }
-                    };
-
-                    // If the data series only contains one point, enable
-                    // point markers so that it is visible.
-                    if (series.data.length === 1) {
-                        series.marker = {
-                            enabled: true
-                        };
-                    }
-
-                    // Check for the presence of multiple x-axis values
-                    // (if this fact has not already been established).
-                    if (!hasMultipleXValues) {
-                        for (var j = 0; j < series.data.length; j++) {
-                            var pointXValue = series.data[j].x;
-                            if (firstXValue === null) {
-                                firstXValue = pointXValue;
-                                continue;
-                            }
-
-                            if (firstXValue !== pointXValue) {
-                                hasMultipleXValues = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // If there are not multiple x-axis values, manually specify
-                // a minimum range for the x-axis so that it can be rendered.
-                if (!hasMultipleXValues) {
-                    chartOptions.xAxis.minRange = 2000;
-                }
 
                 if (record.data.schema.help) {
                     panel.helptext.documentation = record.data.schema.help;
@@ -310,33 +164,33 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             if (record) {
                 let data = [];
 		var singleDataPoint = false;
-		var tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[0].data[0].x);
+		var tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
 		var ymin, ymax;
-		if (chartOptions.series[0].name === "Range"){
-			ymin = chartOptions.series[1].data[0].y;
+		if (record.data.series[0].name === "Range"){
+			ymin = record.data.series[1].data[0].y;
 			ymax = ymin;
 		}
 		else{
-                        ymin = chartOptions.series[0].data[0].y;
+                        ymin = record.data.series[0].data[0].y;
                         ymax = ymin;
 		}
-                for (let sid = 0; sid < chartOptions.series.length; sid++) {
-		    if (chartOptions.series[sid].name === "Range") {
-			tz = moment.tz.zone(record.data.schema.timezone).abbr(chartOptions.series[1].data[0].x);
+                for (let sid = 0; sid < record.data.series.length; sid++) {
+		    if (record.data.series[sid].name === "Range") {
+			tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[1].data[0].x);
 			continue;
 		    }	
 		    let x = [];
 		    let y = [];
-		    let colors = chartOptions.colors[sid % 10];
-                    for(let i=0; i < chartOptions.series[sid].data.length; i++) {
-			if (chartOptions.series[sid].data.length == 1){
+		    let colors = record.data.colors[sid % 10];
+                    for(let i=0; i < record.data.series[sid].data.length; i++) {
+			if (record.data.series[sid].data.length == 1){
 				singleDataPoint = true;	
 			}
-			x.push(moment.tz(chartOptions.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
-                        y.push(chartOptions.series[sid].data[i].y);
+			x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
+                        y.push(record.data.series[sid].data[i].y);
                     }
 
-		    if (chartOptions.series[sid].name === "Median" || chartOptions.series[sid].name === "Minimum"){
+		    if (record.data.series[sid].name === "Median" || record.data.series[sid].name === "Minimum"){
                     	data.push({
                         	x: x,
                         	y: y,
@@ -352,9 +206,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                                 },
                 	        hovertemplate:
 				"%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
-	                        "<span style='color:"+colors+";'>●</span>" +  chartOptions.series[sid].name + ": <b>%{y}</b>" +
+	                        "<span style='color:"+colors+";'>●</span>" +  record.data.series[sid].name + ": <b>%{y}</b>" +
         	                "<extra></extra>",
-                	        name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'});
+                	        name: record.data.series[sid].name, chartSeries: record.data.series[sid],  type: 'scatter', mode: 'markers+lines'});
 	 	    }
 		    else{
 			 var trace = {
@@ -370,9 +224,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                                 },
                                 hovertemplate:
                                 "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
-                                "<span style='color:"+colors+";'>●</span>" + chartOptions.series[sid].name + ":<b>%{y}</b>" +
+                                "<span style='color:"+colors+";'>●</span>" + record.data.series[sid].name + ":<b>%{y}</b>" +
                                 "<extra></extra>",
-                                name: chartOptions.series[sid].name, chartSeries: chartOptions.series[sid],  type: 'scatter', mode: 'markers+lines'};
+                                name: record.data.series[sid].name, chartSeries: record.data.series[sid],  type: 'scatter', mode: 'markers+lines'};
 
 			if (singleDataPoint){
 				trace.marker.size = 20;
@@ -388,13 +242,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 		}
 		
                 panel.getEl().unmask();
-		console.log("data");
-		console.log(data);
-		console.log("chart options data");
-		console.log(chartOptions);
-		console.log("record");
-		console.log(record);
-		console.log("SVG");
                 let layout = {
                     hoverlabel: {
                         bgcolor: 'white'
@@ -442,8 +289,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         t: 50
                     }
                 };
-		console.log('layout');
-		console.log(layout);
                 if (panel.chart) {
                     Plotly.react(this.id, data, layout, {displayModeBar: false} );
                 } else {
@@ -479,7 +324,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
                         Ext.History.add(token);
                 });
-		if (!singleDataPoint){
+		/*if (!singleDataPoint){
 		panel.chart.on('plotly_hover', function(data){
 			if (!data.points) return;
 			setTimeout(() => {}, 50);
@@ -507,7 +352,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 			};
                         Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
                 });
-	      }
+	      }*/
 
             }
 	}

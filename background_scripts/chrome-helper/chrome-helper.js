@@ -20,7 +20,7 @@ const args = require('yargs').argv;
 
     await page.goto('file://' + args['input-file']);
 
-    const innerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
+    const innerHtml = await page.evaluate(() => document.querySelector('.plotly').innerHTML);
 
     console.log(JSON.stringify(innerHtml));
 
