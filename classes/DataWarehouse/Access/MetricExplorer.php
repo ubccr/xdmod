@@ -14,7 +14,7 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\MissingFilterListTableException;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
-use DataWarehouse\Query\Exceptions\BadRequestException;;
+use DataWarehouse\Query\Exceptions\BadRequestException;
 use FilterListHelper;
 use XDUser;
 
