@@ -162,6 +162,8 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             }
 
             if (record) {
+		let colorChoices = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
+                        '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
                 let data = [];
 		var singleDataPoint = false;
 		var tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
@@ -181,7 +183,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 		    }	
 		    let x = [];
 		    let y = [];
-		    let colors = record.data.colors[sid % 10];
+		    let colors = colorChoices[sid % 10];
                     for(let i=0; i < record.data.series[sid].data.length; i++) {
 			if (record.data.series[sid].data.length == 1){
 				singleDataPoint = true;	
