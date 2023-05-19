@@ -1,0 +1,9 @@
+{
+    "status_code": 500,
+    "body": {
+        "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+        "$overwrite": {
+            "message": "One or more realms must be specified."
+        }
+    }
+}

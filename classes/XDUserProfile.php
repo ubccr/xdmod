@@ -223,5 +223,3 @@
       }//save
 
    }//XDUserProfile
-
-?>

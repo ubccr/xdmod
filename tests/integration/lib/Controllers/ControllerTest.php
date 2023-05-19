@@ -1,31 +1,17 @@
 <?php namespace IntegrationTests\Controllers;
 
 use CCR\Json;
-use TestHarness\TestFiles;
+use IntegrationTests\BaseTest;
 use TestHarness\TestParameterHelper;
 use TestHarness\XdmodTestHelper;
 
-class ControllerTest extends \PHPUnit_Framework_TestCase
+class ControllerTest extends BaseTest
 {
 
     /**
      * @var XdmodTestHelper
      */
     protected $helper;
-
-    /**
-     * @var TestFiles
-     */
-    protected $testFiles;
-
-
-    protected function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
-        return $this->testFiles;
-    }
 
     protected function setUp()
     {
@@ -64,7 +50,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_existing_users')
+            parent::getTestFiles()->getFile('controllers', 'enum_existing_users')
         );
 
         $this->assertEquals($expected['success'], $actual['success']);
@@ -83,7 +69,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypes()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
+            parent::getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -115,7 +101,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumRoles()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_roles-add_default_center')
+            parent::getTestFiles()->getFile('controllers', 'enum_roles-add_default_center')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -200,7 +186,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
         $data = $response[0];
         $expected = Json::loadFile(
-            $this->getTestFiles()->getFile('controllers', $outputFile)
+            parent::getTestFiles()->getFile('controllers', $outputFile)
         );
         // Retrieve the users value and ensure that it is sorted in the correct order.
         $actualUsers = $data['users'];
@@ -216,14 +202,14 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function listUsersGroupProvider()
     {
         return Json::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'list_users', 'input')
+            parent::getTestFiles()->getFile('controllers', 'list_users', 'input')
         );
     }
 
     public function testEnumUserTypesAndRoles()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-update_enum_user_types_and_roles')
+            parent::getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-update_enum_user_types_and_roles')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -287,7 +273,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('success', $data['message'], "Expected the 'message' property to equal 'success'. Received: " . $data['message']);
         $this->assertCount(300, $data['users'], "Expected 300 users to be returned. Received: " . count($data['users']));
 
-        $expectedFilePath = $this->getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users');
+        $expectedFilePath = parent::getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users');
 
         if (!is_file($expectedFilePath)) {
             file_put_contents($expectedFilePath, json_encode($data, JSON_PRETTY_PRINT) . "\n");
@@ -482,7 +468,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $expected = $options['expected'];
 
         $expectedFile = $expected['file'];
-        $expectedFileName = $this->getTestFiles()->getFile('controllers', $expectedFile);
+        $expectedFileName = parent::getTestFiles()->getFile('controllers', $expectedFile);
         $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
@@ -526,7 +512,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function provideEnumTargetAddresses()
     {
-        $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
+        $data = JSON::loadFile(parent::getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
 
         $helper = new XdmodTestHelper();
         $helper->authenticateDashboard('mgr');

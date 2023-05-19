@@ -195,4 +195,3 @@ class ColorGenerator
         }
     }
 } // class ColorGenerator
-?>

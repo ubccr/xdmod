@@ -1,0 +1,104 @@
+{
+    "status_code": 200,
+    "body": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "get_realms_body",
+        "allOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "enum": [ true ]
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": { "$ref": "#/$defs/realm" },
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "uniqueItems": true
+                    },
+                    "total": {
+                        "type": "number",
+                        "enum": [ 2 ]
+                    }
+                },
+                "required": [ "success", "data", "total" ],
+                "additionalProperties": false
+            },
+            { "$ref": "#/$defs/jobs_realm" },
+            { "$ref": "#/$defs/cloud_realm" }
+        ],
+        "$defs": {
+            "realm": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "fields": { "$ref": "#/$defs/fields" }
+                },
+                "required": [ "id", "name", "fields" ],
+                "additionalProperties": false
+            },
+            "jobs_realm": {
+                "properties": {
+                    "data": {
+                        "contains": {
+                            "properties": {
+                                "id": { "enum": [ "Jobs" ] },
+                                "name": { "enum": [ "Jobs" ] },
+                                "fields": {
+                                    "minItems": 28,
+                                    "maxItems": 28
+                                }
+                            }
+                        },
+                        "minContains": 1,
+                        "maxContains": 1
+                    }
+                }
+            },
+            "cloud_realm": {
+                "properties": {
+                    "data": {
+                        "contains": {
+                            "properties": {
+                                "id": { "enum": [ "Cloud" ] },
+                                "name": { "enum": [ "Cloud" ] },
+                                "fields": {
+                                    "minItems": 16,
+                                    "maxItems": 16
+                                }
+                            }
+                        },
+                        "minContains": 1,
+                        "maxContains": 1
+                    }
+                }
+            },
+            "fields": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/field" },
+                "uniqueItems": true
+            },
+            "field": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "alias": { "type": "string" },
+                    "display": { "type": "string" },
+                    "anonymize": { "type": "boolean" },
+                    "documentation": { "type": "string" }
+                },
+                "required": [
+                    "name",
+                    "alias",
+                    "display",
+                    "anonymize",
+                    "documentation"
+                ],
+                "additionalProperties": false
+            }
+        }
+    }
+}

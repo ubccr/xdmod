@@ -1,0 +1,59 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logger database",
+                    "config": "logger",
+                    "schema": "mod_logger",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+    "logger-bootstrap": [
+        {
+            "name": "manage-tables",
+            "description": "Manage mod_logger tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "logger/log_id_seq.json",
+                "logger/log_level.json",
+                "logger/log_table.json"
+            ]
+        },
+        {
+            "name": "log_level",
+            "description": "Insert log levels",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "logger/log_level.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Log levels",
+                    "path": "logger/log_level.json"
+                }
+            }
+        },
+        {
+            "name": "log_id_seq",
+            "description": "Initialize sequence",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "logger/log_id_seq.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Initial log sequence ID",
+                    "path": "logger/log_id_seq.json"
+                }
+            }
+        }
+    ]
+}

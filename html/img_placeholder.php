@@ -9,5 +9,3 @@
    imagepng($src);
 
    imagedestroy($src);
-   
-?>

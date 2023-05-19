@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by Department"
+"CPU Hours: Total: by Department"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Mechanical and Structural Systems] Core Hours: Total"
+Day,"[Mechanical and Structural Systems] CPU Hours: Total"
 2018-04-18,52.1172
 2018-04-19,138.1142
 2018-04-20,97.0664

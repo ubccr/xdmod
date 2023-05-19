@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by Provider"
+"CPU Hours: Total: by Provider"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[screw - Screwdriver] Core Hours: Total"
+Day,"[screw - Screwdriver] CPU Hours: Total"
 2018-04-18,52.1172
 2018-04-19,138.1142
 2018-04-20,97.0664

@@ -30,7 +30,8 @@
             "account_id": "a.account_id",
             "principalinvestigator_person_id": "a.principalinvestigator_person_id",
             "fos_id": "a.fos_id",
-            "host_id": "ev.host_id"
+            "host_id": "ev.host_id",
+            "instance_state_id": "etype.instance_state_id"
         },
         "joins": [
             {
@@ -68,6 +69,12 @@
                 "alias": "a",
                 "type": "LEFT",
                 "on": "it.account_id = a.account_id"
+            },
+            {
+                "name": "event_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "etype",
+                "on": "e.start_event_id = etype.event_type_id"
             }
         ],
         "orderby": [

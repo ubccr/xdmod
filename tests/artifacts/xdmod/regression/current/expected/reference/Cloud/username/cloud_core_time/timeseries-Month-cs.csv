@@ -1,10 +1,10 @@
 title
-"Core Hours: Total: by System Username"
+"CPU Hours: Total: by System Username"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Month,"[yerwa] Core Hours: Total","[ylwwa] Core Hours: Total","[setusca] Core Hours: Total"
+Month,"[yerwa] CPU Hours: Total","[ylwwa] CPU Hours: Total","[setusca] CPU Hours: Total"
 2018-04,1308.4522,441.1944,4.4967
 ---------

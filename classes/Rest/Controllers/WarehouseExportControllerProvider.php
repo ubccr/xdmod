@@ -91,7 +91,20 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      */
     public function getRealms(Request $request, Application $app)
     {
-        $user = $this->authorize($request);
+        $user = null;
+
+        // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
+        // to the normal session authentication if a token is not provided.
+        try {
+            $user = $this->authenticateToken($request);
+        } catch (Exception $e) {
+            // NOOP
+        }
+
+        if ($user === null) {
+            $user = $this->authorize($request);
+        }
+
 
         $config = RawStatisticsConfiguration::factory();
 

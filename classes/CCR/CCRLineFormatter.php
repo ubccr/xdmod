@@ -40,7 +40,7 @@ class CCRLineFormatter extends LineFormatter
             if (count($json) > 0) {
                 $nonMessageParts = array();
 
-                while (list($key, $value) = each($json)) {
+                foreach ($json as $key => $value) {
                     $nonMessageParts[] = "$key: $value";
                 }
 

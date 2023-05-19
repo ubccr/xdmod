@@ -100,6 +100,10 @@ class HighChartTimeseries2 extends HighChart2
 
         // prepare yAxisArray for each yAxis we will plot:
         $yAxisArray = array();
+
+        // Keep track of the unique data unit names
+        $yUnitNames = array();
+
         $multiCategory = false;
         foreach($data_series as $data_description_index => $data_description)
         {
@@ -122,6 +126,7 @@ class HighChartTimeseries2 extends HighChart2
                 continue;
             }
             $this->_chart['metrics'][$stat->getName(false)] = $stat->getHtmlDescription();
+            $yUnitNames[$stat->getName()] = 1;
 
             // determine axisId
             if($this->_shareYAxis)
@@ -542,7 +547,11 @@ class HighChartTimeseries2 extends HighChart2
                             );
                         }
                         $formattedDataSeriesName = $dataSeriesName;
-                        if ($areMultipleDataSeries)
+
+                        // Append units to legend if there are mutiple datasets unless they all use the same units (i.e. a
+                        // single y-axis is used without forcing it). If you force the single y-axis then the
+                        // units will be appended.
+                        if ($areMultipleDataSeries && (count($yUnitNames) > 1 || $this->_shareYAxis ))
                         {
                             $dataUnit = $yAxisDataObject->getUnit();
                             $formattedDataSeriesName .= " [<span style=\"color:$yAxisColor\">$dataUnit</span>]";

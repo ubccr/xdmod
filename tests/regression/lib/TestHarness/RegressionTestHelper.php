@@ -383,7 +383,7 @@ class RegressionTestHelper extends XdmodTestHelper
             } else {
                 try {
                     $decodedCsv = json_decode($csvdata);
-                    if ($decodedCsv !== false) {
+                    if ($decodedCsv !== false && !is_null($decodedCsv)) {
                         $actualJson = json_encode($decodedCsv, JSON_PRETTY_PRINT);
                         $expectedJson = json_encode(json_decode($expected), JSON_PRETTY_PRINT);
 

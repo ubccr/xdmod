@@ -1,0 +1,10 @@
+{
+    "status_code": 401,
+    "body": {
+        "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+        "$overwrite": {
+            "message": "Session Expired",
+            "code": 2
+        }
+    }
+}

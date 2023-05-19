@@ -1594,19 +1594,7 @@ class XDReportManager
         $report_format = ($export_format != null) ? $export_format : $this->getReportFormat($report_id);
 
         // Initialize a temporary working directory for the report generation
-        $template_path = tempnam(sys_get_temp_dir(), $report_id . '-');
-
-        if ($template_path === false) {
-            throw new \Exception("Failed to create temporary file");
-        }
-
-        if (!unlink($template_path)) {
-            throw new \Exception("Failed to remove file '$template_path'");
-        }
-
-        if (!mkdir($template_path, 0777)) {
-            throw new \Exception("Failed to create directory '$template_path'");
-        }
+        $template_path = xd_utilities\createTemporaryDirectory($report_id . '-');
 
         $report_output_file = $template_path . '/' . $report_id . '.' . strtolower($report_format);
 

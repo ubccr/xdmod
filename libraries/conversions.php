@@ -35,5 +35,3 @@
 	function day_to_millenium(&$value, $key) {
 	        $value = $value / 365242.199;
 	}
-
-?>

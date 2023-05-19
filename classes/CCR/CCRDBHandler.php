@@ -99,7 +99,7 @@ class CCRDBHandler extends AbstractProcessingHandler
             // Attempt to update the log_id_seq.sequence value
             $this->db->execute($query);
         } catch (\PDOException $e) {
-            if ($e->errorInfo[0] === 'HY000' && $e->errorInfo[1] === 2006) {
+            if ($e->errorInfo[0] === 'HY000' && ($e->errorInfo[1] === 2006 || $e->errorInfo[1] === 2013)) {
                 // This is the MySQL server gone away error, which is seen when
                 // there is a long delay between log messages and the
                 // connection times out. It occurs here since this is the first DB

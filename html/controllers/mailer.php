@@ -16,5 +16,3 @@
 	$controller->registerOperation('sign_up');
 			
 	$controller->invoke('POST');
-		
-?>

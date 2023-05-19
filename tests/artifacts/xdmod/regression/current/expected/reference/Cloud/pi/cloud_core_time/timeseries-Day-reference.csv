@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by PI"
+"CPU Hours: Total: by PI"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Tern, Sandwich] Core Hours: Total"
+Day,"[Tern, Sandwich] CPU Hours: Total"
 2018-04-18,52.1172
 2018-04-19,138.1142
 2018-04-20,97.0664

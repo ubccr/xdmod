@@ -44,5 +44,3 @@ EXT;
       }//loadSupportScripts
             
    }//ExtJS
-
-?>

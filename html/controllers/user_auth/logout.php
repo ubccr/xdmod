@@ -7,5 +7,3 @@
 	$returnData['status'] = 'success';
 				
 	xd_controller\returnJSON($returnData);
-				
-?>

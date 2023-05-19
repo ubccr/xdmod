@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by VM Size: Memory"
+"CPU Hours: Total: by VM Size: Memory"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[2 - 4 GB] Core Hours: Total","[8 - 16 GB] Core Hours: Total","[< 2 GB] Core Hours: Total","[4 - 8 GB] Core Hours: Total","[32 - 64 GB] Core Hours: Total"
+Day,"[2 - 4 GB] CPU Hours: Total","[8 - 16 GB] CPU Hours: Total","[< 2 GB] CPU Hours: Total","[4 - 8 GB] CPU Hours: Total","[32 - 64 GB] CPU Hours: Total"
 2018-04-18,33.8069,17.7044,0.0150,0.4706,0.1203
 2018-04-19,137.1814,0,0.9328,0,0
 2018-04-20,97.0664,0,0,0,0

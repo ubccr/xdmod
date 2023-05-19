@@ -114,7 +114,6 @@ print_r($result);
 oci_free_statement($stmt);
 
 exit(0);
-?>
 ```
 
 ### Local Naming Method
@@ -160,7 +159,6 @@ print_r($result);
 oci_free_statement($stmt);
 
 exit(0);
-?>
 ```
 
 ## Install PDOOCI

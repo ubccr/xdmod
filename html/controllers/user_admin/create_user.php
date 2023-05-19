@@ -26,7 +26,7 @@ $creator = \xd_security\assertDashboardUserLoggedIn();
 
 if (isset($_POST['acls'])) {
     $acls = json_decode($_POST['acls'], true);
-    if (count($acls) < 1){
+    if (!is_array($acls) || count($acls) < 1){
         \xd_response\presentError("Acl information is required");
     }
     // Checking for an acl set that only contains feature acls.

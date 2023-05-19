@@ -41,5 +41,3 @@
 	$controller->registerOperation('get_param_descriptions');			
 
 	$controller->invoke('REQUEST');
-		
-?>

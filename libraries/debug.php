@@ -38,6 +38,3 @@
       print '</table>';
    
    }//dumpQueryResultsAsTable   
-
-
-?>

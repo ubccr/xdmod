@@ -2,8 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
-use IntegrationTests\BaseTest;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
@@ -27,12 +27,15 @@ function arrayRecursiveDiff($a1, $a2) {
     return $retval;
 }
 
-class UsageExplorerTest extends BaseTest
+class UsageExplorerTest extends TokenAuthTest
 {
+    const TEST_GROUP = 'integration/controllers/user_interface';
+
     private static $publicView;
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         self::$publicView = array(
             "public_user" => "true",
             "realm" => "Jobs",
@@ -835,7 +838,7 @@ EOF;
         //TODO: Needs further integration for storage realm
         $realmData = array();
 
-        if (in_array("cloud", self::getRealms())) {
+        if (in_array("cloud", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
@@ -883,7 +886,7 @@ EOF;
             );
         };
 
-        if (in_array("jobs", self::getRealms())) {
+        if (in_array("jobs", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Jobs, single value filter tests
@@ -1083,5 +1086,131 @@ EOF;
 
 
         return $results;
+    }
+
+    /**
+     * @dataProvider provideGetTimeseriesDataCsv
+     */
+    public function testGetTimeseriesDataCsv(
+        $groupBy,
+        $groupByName,
+        $groups,
+        $filterKey,
+        $filterKeyName,
+        $filterValue,
+        $filterValueName,
+        $startDate,
+        $endDate,
+        $isEmpty
+    ) {
+        if (!in_array('jobs', self::$XDMOD_REALMS)) {
+            $this->markTestSkipped('Needs realm integration.');
+        }
+        $this->helper->authenticate('cd');
+        $data = array(
+            'operation' => 'get_data',
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'realm' => 'Jobs',
+            'statistic' => 'active_person_count',
+            'group_by' => $groupBy,
+            'dataset_type' => 'timeseries',
+            'format' => 'csv'
+        );
+        if (isset($filterKey)) {
+            $data[$filterKey] = $filterValue;
+            $expectedParameterLine = "\"$filterKeyName =  $filterValueName\"";
+        } else {
+            $expectedParameterLine = '';
+        }
+        $response = $this->helper->post(
+            '/controllers/user_interface.php',
+            null,
+            $data
+        );
+        $statName = 'Number of Users: Active';
+        $columns = 'Day';
+        if (!$isEmpty) {
+            $columns .= ',';
+            if (isset($groupByName)) {
+                $otherColumns = array();
+                foreach ($groups as $group) {
+                    $otherColumns[] = "\"[$group] $statName\"";
+                }
+                $columns .= implode(',', $otherColumns);
+            } else {
+                $columns .= "\"[$groups] $statName\"";
+            }
+        }
+        $this->assertSame('application/xls', $response[1]['content_type']);
+        $this->assertSame(200, $response[1]['http_code']);
+        if (isset($groupByName)) {
+            $statName .= ': by ' . $groupByName;
+        }
+        $expectedOutput = <<<END
+title
+"$statName"
+parameters
+$expectedParameterLine
+start,end
+$startDate,$endDate
+---------
+$columns
+END;
+        $expected = preg_split('/\n/', $expectedOutput);
+        $actual = preg_split('/\n/', $response[0]);
+        for ($i = 0; $i < count($expected); $i++) {
+            $this->assertSame(
+                $expected[$i],
+                $actual[$i],
+                'Output line ' . $i
+            );
+        }
+        $this->helper->logout();
+    }
+
+    public function provideGetTimeseriesDataCsv()
+    {
+        $noGroupBy = array('none', null, 'Screwdriver');
+        $withGroupBy = array(
+            'resource',
+            'Resource',
+            array('robertson', 'pozidriv', 'frearson', 'mortorq', 'phillips')
+        );
+        $noFilter = array(null, null, null, null);
+        $withFilter = array(
+            'provider_filter',
+            'Service Provider',
+            1,
+            'screw'
+        );
+        $emptyData = array('9999-12-01', '9999-12-31', true);
+        $nonEmptyData = array('2016-12-01', '2016-12-31', false);
+        $arrays = array();
+        foreach (array($noGroupBy, $withGroupBy) as $groupParams) {
+            foreach (array($noFilter, $withFilter) as $filterParams) {
+                foreach (array($emptyData, $nonEmptyData) as $emptinessParams) {
+                    $arrays[] = array_merge(
+                        $groupParams,
+                        $filterParams,
+                        $emptinessParams
+                    );
+                }
+            }
+        }
+        return $arrays;
+    }
+
+    /**
+     * @dataProvider provideTokenAuthTestData
+     */
+    public function testGetDataTokenAuth($role, $tokenType)
+    {
+        parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            self::TEST_GROUP,
+            'get_data'
+        );
     }
 }

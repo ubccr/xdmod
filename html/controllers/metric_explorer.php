@@ -33,4 +33,3 @@
 	$controller->registerOperation('set_filters');
 
 	$controller->invoke('REQUEST');
-?>

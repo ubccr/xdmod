@@ -978,9 +978,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         if (success) {
                             // If available, open the default statistic.
                             //
-                            // Open XDMoD Default: CPU Hours: Total
-                            // XDMoD Default: XD SUs Charged: Total
-                            var defaultStatistic = CCR.xdmod.features.xsede ? 'total_su' : 'total_cpu_hours';
+                            var defaultStatistic = 'total_cpu_hours';
                             var jobCountNode = child.findChild("statistic", defaultStatistic);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);

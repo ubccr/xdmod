@@ -17,5 +17,3 @@ interface Ingestor
     public function setLogger(LoggerInterface $logger);
 
 } //Ingestor
-
-?>

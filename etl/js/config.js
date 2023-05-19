@@ -13,7 +13,6 @@
 
 var fs = require('fs');
 var ini = require('ini');
-var path = require('path');
 var extend = require('util')._extend;
 
 var xdmodRoot = fs.realpathSync(__dirname + '/../..');
@@ -121,43 +120,5 @@ module.exports = {
                 throw err;
             }
         }
-
-    },
-
-    // A basic mechanism to get at the configuration settings in any
-    // json or ini config file in the XDMoD config directory.
-    //
-    // Adding support for the *.d directories
-    // and xpath expressions is left as an exercise for the reader.
-    // 
-    parseuri: function(configuri) {
-
-        if( configuri.indexOf("config://") !== 0 ) {
-            // Pass through non-config uris without modification
-            return configuri;
-        }
-
-        var items = configuri.substring(9).split(":");
-
-        if(items.length !== 2 ) {
-            throw new Error("unsupported config uri syntax");
-        }
-
-        var filename = items[0];
-        var data;
-
-        switch(path.extname(filename)) {
-            case ".json":
-                data = JSON.parse(fs.readFileSync(xdmodConfigDir + "/" + filename));
-                break;
-            case ".ini":
-                data = recursiveIniParser(xdmodConfigDir, filename.substr(0, filename.length - 4));
-                break;
-            default:
-                throw new Error("unsupported config file format");
-        }
-
-        return data[ items[1] ];
     }
-
 };

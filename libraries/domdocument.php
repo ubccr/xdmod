@@ -13,5 +13,3 @@
 		$elementNode->appendChild($textNode);
 		
 	}//createElement
-
-?>

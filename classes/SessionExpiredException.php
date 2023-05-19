@@ -27,5 +27,3 @@ class SessionExpiredException extends UserException
 		$this->headers['WWW-Authenticate'] = "XDMoDAuth realm=\"$site_address\"";
 	}
 }
-
-?>

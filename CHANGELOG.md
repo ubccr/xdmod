@@ -2,6 +2,24 @@
 
 ## XXXX-XX-XX v10.5.0
 
+## 2023-04-03 v10.0.2
+- Bug Fixes
+    -  General
+        - Added a helper script that runs chromium to generate images. This will allow us to support headless chromium v111 and later ([\#1704](https://github.com/ubccr/xdmod/pull/1704))
+- Uncategorized
+    - General
+        - Updated documentation about our supported versions, including dates ([\#1707](https://github.com/ubccr/xdmod/pull/1707))
+        - Updated our grant numbers and language to match NSF requirements ([\#1702](https://github.com/ubccr/xdmod/pull/1702))
+
+## 2023-03-10 v10.0.1
+
+- Bug Fixes
+    - General
+        - Update image export to support headless chromium 109 or later ([\#1688](https://github.com/ubccr/xdmod/pull/1688))
+- Uncategorized
+    - General
+        - Merge code updates to support Rocky 8 into single branch that supports both Centos 7 and Rocky 8 builds.
+
 ## 2022-03-10 v10.0.0
 
 - Bug Fixes

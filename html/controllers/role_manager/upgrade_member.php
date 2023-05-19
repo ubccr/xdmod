@@ -63,5 +63,3 @@ try {
 }
 
 echo json_encode($returnData);
-
-?>

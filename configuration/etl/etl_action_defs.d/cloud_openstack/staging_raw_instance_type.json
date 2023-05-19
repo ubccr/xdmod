@@ -1,0 +1,33 @@
+{
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/instance_type_union.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "instance_type": "raw.instance_type",
+            "resource_id": "raw.resource_id",
+            "display": "raw.display",
+            "description": "raw.description",
+            "num_cores": "raw.num_cores",
+            "memory_mb": "raw.memory_mb",
+            "disk_gb": "raw.disk_gb",
+            "start_time": "UNIX_TIMESTAMP(CONVERT_TZ(min(raw.start_time),'+00:00', @@session.time_zone))"
+        },
+        "joins": [
+            {
+                "name": "openstack_raw_instance_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+        "groupby": [
+            "raw.resource_id", "raw.instance_type", "raw.num_cores", "raw.memory_mb", "raw.disk_gb"
+        ],
+        "where": [
+            "display != 'Unknown' AND display != ''"
+        ]
+    }
+}

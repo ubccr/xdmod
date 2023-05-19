@@ -61,5 +61,3 @@ class ArraySourceIngestor implements Ingestor
     }
 
 }
-
-?>

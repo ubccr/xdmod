@@ -1,0 +1,14 @@
+{
+    "$ref-with-overwrite": "metric_explorer.json",
+    "$overwrite": {
+        "data": {
+            "operation": "get_dimension",
+            "dimension_id": "username",
+            "realm": "Jobs",
+            "public_user": false,
+            "start": "",
+            "limit": "10",
+            "selectedFilterIds": ""
+        }
+    }
+}

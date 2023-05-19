@@ -10,17 +10,13 @@ See [Software Requirements](software-requirements.html) for details.
 
 See [Hardware Requirements](hardware-requirements.html) for details.
 
-### Will Open XDMoD run on RHEL 5?
+### Can I use Open XDMoD with Rocky Linux 8/RHEL 8?
 
-It may be possible but this is not supported please see
-[Software Requirements](software-requirements.html) for recommended and tested
-configurations.
+Open XDMoD 10.0 has a [beta release](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8) version that is compatible with Rocky Linux 8.
 
-### Can I use Open XDMoD with MySQL 5.0?
+### Does Open XDMoD support PHP versions newer than PHP 5.4?
 
-No, versions of MySQL before 5.5.3 are not compatible with Open XDMoD. See
-[Software Requirements](software-requirements.html) for recommended and tested
-configurations.
+Open XDMoD 10.0 has a [beta release](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8) version that is compatible with PHP 7.2.
 
 ### How do I enable LDAP Authentication?
 
@@ -167,6 +163,13 @@ sites should use the https:// prefix in the web address.
 The template Apache configuration file must be edited to specify the path to
 valid SSL certificates. See the [webserver configuration section](configuration.html#apache-configuration)
 for details on how to configure the server.
+
+### I seem to be unable to login with the correct username and password?
+
+Starting with Open XDMoD 9.0 SSL must be enabled on your web server. When logging in, if you do not
+receive an error and your page refreshes without any personalized information, it may be because you
+have not enabled SSL. See the [webserver configuration section](configuration.html#apache-configuration) for details
+on enabling SSL.
 
 ### Why do I see the warning message "Skipping job with unknown state ..." while shredding Slurm data?
 

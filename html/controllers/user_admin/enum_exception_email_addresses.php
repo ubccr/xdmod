@@ -13,5 +13,3 @@
 	$returnData['email_addresses'] = $email_addresses;
 			
 	xd_controller\returnJSON($returnData);
-			
-?>

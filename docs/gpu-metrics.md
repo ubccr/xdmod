@@ -7,7 +7,7 @@ version 9.0.0.  Specifically, the number of GPUs allocated to each job is
 tracked and used to calculate the number of GPU hours and to allow grouping by
 the number of GPUs allocated.
 
-Only Slurm and PBS are supported at this time.
+Only Slurm, PBS and Grid Engine are supported at this time.
 
 **Please note that if your resource manager is not supported or GPU data is not
 available/parsable, that Open XDMoD will report zero GPU hours and a GPU count
@@ -31,7 +31,7 @@ This `AllocTRES` value would indicate that the job was allocated 4 GPUs.
 
 ## PBS
 
-The GPU source count for PBS data is the `Resource_List.nodes` field in the
+The GPU count source for PBS data is the `Resource_List.nodes` field in the
 accounting log files.  If a value is specified for `gpus` then that is used as
 the number of GPUs per node.
 
@@ -42,6 +42,14 @@ Resource_List.nodes=2:ppn=32:gpus=2
 ```
 
 This would indicate that the job used 4 GPUs (2 GPUs per node * 2 nodes).
+
+Other versions of PBS use `Resource_List.ngpus`:
+
+```
+Resource_List.ngpus=4
+```
+
+This would indicate that the job used 4 GPUs.
 
 ### Non-Standard PBS GPU data
 
@@ -70,6 +78,30 @@ Resource_List.gpu=2
 ```
 
 This would indicate that the job used 2 GPUs.
+
+## Grid Engine (UGE)
+
+Univa Grid Engine is the only Grid Engine based product that is confirmed to
+report GPU count data.  If your Grid Engine based product reports GPU data in
+the same format then it will be interpreted in the same was as described here.
+
+Please report any issues to the email address on our [support page](support.md).
+
+The GPU count source for UGE is the `category` field in the accounting log
+files.  If a value is specified for `gpu` then that is used as the total number
+of GPUs for the job.
+
+For example:
+
+```
+-l gpu=1
+```
+
+This would indicate that the job used 1 GPU.
+
+Grid Engine accounting logs contain one line per node.  If conflicting GPU
+counts are found in the data for a job then the greatest value will be used for
+the GPU count.
 
 [slurm-sacct-alloctres]: https://slurm.schedmd.com/sacct.html#OPT_AllocTres
 [slurm-tres]: https://slurm.schedmd.com/tres.html

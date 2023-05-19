@@ -1,0 +1,8 @@
+{
+    "path": "rest/warehouse/raw-data/limit",
+    "method": "get",
+    "params": null,
+    "data": null,
+    "endpoint_type": "rest",
+    "authentication_type": "token_required"
+}

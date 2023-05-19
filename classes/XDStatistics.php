@@ -23,7 +23,7 @@ class XDStatistics
      *                     timeframe defined by aggregation_type
      * @throws Exception if there is a problem retrieving data from the db.
      */
-    function getUserVisitStats($aggregation_type = 'month', $user_types = array())
+    public static function getUserVisitStats($aggregation_type = 'month', $user_types = array())
     {
 
         $db = DB::factory('database');

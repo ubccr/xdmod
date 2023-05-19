@@ -79,5 +79,3 @@ use Models\Services\Acls;
 	$returnData['success'] = true;
 		
 	\xd_controller\returnJSON($returnData);
-			
-?>

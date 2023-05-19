@@ -27,5 +27,3 @@
 	$returnData['providers'] = $providers;
 			
 	xd_controller\returnJSON($returnData);
-			
-?>

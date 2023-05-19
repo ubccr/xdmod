@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+from PIL import Image
+import imagehash
+import sys
+import io
+
+def usage():
+    print("imagehash")
+    print("  read image data from stdin and output average hash to stdout")
+
+data = sys.stdin.buffer.read()
+stream = io.BytesIO(data)
+hval = imagehash.average_hash(Image.open(stream), hash_size=24)
+print(hval)

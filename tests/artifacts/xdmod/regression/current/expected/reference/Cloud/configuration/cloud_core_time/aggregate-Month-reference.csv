@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by Instance Type"
+"CPU Hours: Total: by Instance Type"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-"Instance Type","Core Hours: Total"
+"Instance Type","CPU Hours: Total"
 c1.m4,904.6450
 c4.m16,423.1744
 c2.m4,419.2350

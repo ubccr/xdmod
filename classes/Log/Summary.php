@@ -199,7 +199,7 @@ class Summary
      * @return The Summary class.
      */
 
-    public function factory($ident, $queryRecordCounts = FALSE)
+    public static function factory($ident, $queryRecordCounts = FALSE)
     {
       if ( empty($ident) ) {
         throw new \Exception('"ident" required');

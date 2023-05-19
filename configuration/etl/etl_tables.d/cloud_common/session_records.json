@@ -159,6 +159,13 @@
                 "nullable": false,
                 "default": 1,
                 "comment": "DIMENSION: The host the VM is located on"
+            },
+            {
+                "name": "instance_state_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "DIMENSION: The state of the VM"
             }
         ],
         "indexes": [

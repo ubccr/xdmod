@@ -2,6 +2,8 @@
 
 namespace TestHarness;
 
+use stdClass;
+
 class Utilities
 {
     public static function getCombinations($arrays) {

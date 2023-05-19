@@ -6,6 +6,7 @@ use CCR\Log;
 use Exception;
 use CCR\DB\MySQLDB;
 use Psr\Log\LoggerInterface;
+use xd_utilities;
 
 class MySQLHelper
 {
@@ -591,8 +592,15 @@ class MySQLHelper
 
         $output    = array();
         $returnVar = 0;
+        $tmpHome = xd_utilities\createTemporaryDirectory('mysql-helper-');
 
-        exec($command . ' 2>&1', $output, $returnVar);
+        exec(
+            sprintf('%s %s 2>&1', 'HOME=' . escapeshellarg($tmpHome), $command),
+            $output,
+            $returnVar
+        );
+
+        rmdir($tmpHome);
 
         if ($returnVar != 0) {
             $msg = "Command returned non-zero value '$returnVar': "

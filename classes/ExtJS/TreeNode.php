@@ -96,5 +96,3 @@ namespace ExtJS;
       }//setAttribute
       
    }//TreeNode
-
-?>

@@ -39,4 +39,3 @@
 	}
 	
 	print json_encode($returnData);
-?>

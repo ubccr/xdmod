@@ -13,3 +13,4 @@ pid-file = /var/run/mariadb/mariadb.pid
 port = 3306
 sort_buffer_size = 8M
 thread_cache_size = 8
+sql_mode =

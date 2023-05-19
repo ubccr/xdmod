@@ -94,13 +94,9 @@ class UsageExplorerJobsTest extends \PHPUnit_Framework_TestCase
             'queue',
             'resource',
             'resource_type',
-            'username'
+            'username',
+            'qos'
         ];
-
-        # Move "qos" to the list above after 10.0 is released.
-        if (getenv('XDMOD_TEST_MODE') === 'fresh_install') {
-            $groupBys[] = 'qos';
-        }
 
         $settings = [
             'realm' => ['Jobs'],

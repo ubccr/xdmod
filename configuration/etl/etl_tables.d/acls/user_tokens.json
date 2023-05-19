@@ -1,0 +1,66 @@
+{
+    "table_definition": {
+        "name": "user_tokens",
+        "engine": "InnoDB",
+        "comment": "Tracks XDMoD Users API tokens for use with Data Analytics Framework endpoints.",
+        "columns": [
+            {
+                "name": "user_token_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "token",
+                "type": "varchar(512)",
+                "nullable": false
+            },
+            {
+                "name": "created_on",
+                "type": "timestamp",
+                "nullable": false
+            },
+            {
+                "name": "expires_on",
+                "type": "timestamp",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "user_token_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_user_id",
+                "columns": [
+                    "user_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_ut_user_id",
+                "columns": [
+                    "user_id"
+                ],
+                "referenced_table": "Users",
+                "referenced_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE"
+            }
+        ]
+    }
+}

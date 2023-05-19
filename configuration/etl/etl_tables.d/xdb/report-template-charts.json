@@ -2,11 +2,13 @@
     "table_definition": {
         "name": "ReportTemplateCharts",
         "engine": "InnoDB",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_general_ci",
         "columns": [
             {
                 "name": "template_id",
                 "type": "int(11)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "chart_id",
@@ -16,7 +18,7 @@
             {
                 "name": "ordering",
                 "type": "int(11)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "chart_date_description",
@@ -39,7 +41,17 @@
                 "nullable": true
             }
         ],
-        "indexes": [],
+        "indexes": [
+            {
+                "name": "Unique",
+                "columns": [
+                    "template_id",
+                    "ordering"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
         "triggers": []
     }
 }

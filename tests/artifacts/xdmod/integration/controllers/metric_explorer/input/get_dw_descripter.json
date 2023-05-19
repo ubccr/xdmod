@@ -1,0 +1,8 @@
+{
+    "$ref-with-overwrite": "metric_explorer.json",
+    "$overwrite": {
+        "data": {
+            "operation": "get_dw_descripter"
+        }
+    }
+}

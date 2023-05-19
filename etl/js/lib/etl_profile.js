@@ -645,13 +645,12 @@ var extractandsubst = function(column, item) {
     if( !column.hasOwnProperty(item) ) {
         return null;
     }
-    var result = "" + config.parseuri(column[item]);
+    var result = column[item];
 
-    if(result == column[item]) {
-        // i.e. no configuration file substitution was performed
-        for(var tagidx in column.dynamictags) {
-            result = result.replace(new RegExp(":label_"+tagidx, "g"), column.dynamictags[tagidx]);
-            result = result.replace(new RegExp(":Label_" + tagidx, "g"), wordToUpper(column.dynamictags[tagidx]));
+    for (var tagidx in column.dynamictags) {
+        if ({}.hasOwnProperty.call(column.dynamictags, tagidx)) {
+            result = result.replace(new RegExp(':label_' + tagidx, 'g'), column.dynamictags[tagidx]);
+            result = result.replace(new RegExp(':Label_' + tagidx, 'g'), wordToUpper(column.dynamictags[tagidx]));
         }
     }
     return result;

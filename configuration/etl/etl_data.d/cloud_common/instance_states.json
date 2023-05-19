@@ -1,0 +1,7 @@
+[
+    ["instance_state_id", "display",  "include_in_aggregation"],
+    [-1,                  "Unknown",  0],
+    [1,                   "Active",   1],
+    [2,                   "Inactive", 1],
+    [3,                   "Shelved",  1]
+]

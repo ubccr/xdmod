@@ -132,14 +132,16 @@ class DatabaseHelper
     {
         $schemaPath = BASE_DIR . "/db/schema/$db.sql";
 
-        MySQLHelper::staticExecuteFile(
-            $settings['db_host'],
-            $settings['db_port'],
-            $settings['db_user'],
-            $settings['db_pass'],
-            $db,
-            $schemaPath
-        );
+        if (file_exists($schemaPath)) {
+            MySQLHelper::staticExecuteFile(
+                $settings['db_host'],
+                $settings['db_port'],
+                $settings['db_user'],
+                $settings['db_pass'],
+                $db,
+                $schemaPath
+            );
+        }
 
         // Import any data if necessary.
         $dataPath = BASE_DIR . "/db/data/$db.sql";

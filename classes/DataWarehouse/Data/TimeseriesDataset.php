@@ -355,7 +355,8 @@ class TimeseriesDataset
     public function exportJsonStore($limit = null, $offset = null)
     {
         list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
-        $stat = reset($this->query->getStats());
+        $stats = $this->query->getStats();
+        $stat = reset($stats);
 
         $fields = array(
             array('name' => $timeGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'),
@@ -512,8 +513,10 @@ class TimeseriesDataset
         }
 
         // Build header
-        foreach ($dimensions as $dimension) {
-            $exportData['headers'][] = "[{$dimensionNames[$dimension]}] $seriesName";
+        if (!empty($dimensionNames)) {
+            foreach ($dimensions as $dimension) {
+                $exportData['headers'][] = "[{$dimensionNames[$dimension]}] $seriesName";
+            }
         }
 
         // Data are returned in time order, but every dimension may not have all timestamps

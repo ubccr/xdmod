@@ -59,4 +59,3 @@ if (!empty($url)) {
 EOT;
 }
 echo implode($result);
-?>

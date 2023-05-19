@@ -123,5 +123,3 @@ use CCR\DB;
 		}//chartExistsInQueue
 				
 	}//XDChartPool
-
-?>

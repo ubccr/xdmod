@@ -1,0 +1,81 @@
+{
+    "#": "Instance types are specific to a resource",
+
+    "table_definition": {
+        "name": "instance_type_union",
+        "engine": "InnoDB",
+        "comment": "Instance type configurations. Values for the same name may change over time.",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource to which this type belongs"
+            },
+            {
+                "name": "instance_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource to which this type belongs"
+            },
+            {
+                "name": "instance_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(256)",
+                "nullable": true,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "num_cores",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "disk_gb",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Disk size configured in image"
+            },
+            {
+                "name": "start_time",
+                "type": "decimal(16,6)",
+                "nullable": false,
+                "default": "0.000000",
+                "comment": "First time that this configuration was seen as a unix timestamp to the microsecond. defaults to unknown."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "instance_type_id",
+                    "instance_type",
+                    "num_cores",
+                    "memory_mb",
+                    "disk_gb"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

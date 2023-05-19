@@ -1,0 +1,12 @@
+[
+    ["log_level_id", "level", "description"],
+    [0, "EMERG", "System is unusable"],
+    [1, "ALERT", "Immediate action required"],
+    [2, "CRIT", "Critical conditions"],
+    [3, "ERR", "Error conditions"],
+    [4, "WARNING", "Warning conditions"],
+    [5, "NOTICE", "Normal but significant"],
+    [6, "INFO", "Informational"],
+    [7, "DEBUG", "Debug-level message"],
+    [8, "TRACE", "Trace-level message"]
+]

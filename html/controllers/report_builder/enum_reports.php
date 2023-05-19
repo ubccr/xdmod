@@ -23,5 +23,3 @@
       \xd_response\presentError($e->getMessage());
 	    
 	}
-	
-?>
