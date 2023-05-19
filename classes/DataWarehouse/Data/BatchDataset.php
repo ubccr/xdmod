@@ -70,12 +70,35 @@ class BatchDataset extends Loggable implements Iterator
     private $hashCache = [];
 
     /**
-     * @param mixed $name Description.
-     * @param \XDUser $user
-     * @param LoggerInterface $logger
+     * Maximum number of rows to return.
+     *
+     * @var int
      */
-    public function __construct(RawQuery $query, XDUser $user, LoggerInterface $logger = null)
-    {
+    private $limit;
+
+    /**
+     * Starting row index.
+     *
+     * @var int
+     */
+    private $offset;
+
+    /**
+     * @param RawQuery $query
+     * @param XDUser $user
+     * @param LoggerInterface $logger
+     * @param array|null $fieldAliases
+     * @param int|null $limit
+     * @param int $offset
+     */
+    public function __construct(
+        RawQuery $query,
+        XDUser $user,
+        LoggerInterface $logger = null,
+        $fieldAliases = null,
+        $limit = null,
+        $offset = 0
+    ) {
         parent::__construct($logger);
 
         $this->query = $query;
@@ -91,7 +114,36 @@ class BatchDataset extends Loggable implements Iterator
         }
 
         $rawStatsConfig = RawStatisticsConfiguration::factory();
-        $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions($query->getRealmName());
+        $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions(
+            $query->getRealmName()
+        );
+        // If an array of field aliases has been provided,
+        if (is_array($fieldAliases)) {
+            // Validate the provided field aliases.
+            $validFieldAliases = array_column($this->fields, 'alias');
+            $invalidFieldAliases = array_diff(
+                $fieldAliases,
+                $validFieldAliases
+            );
+            if (count($invalidFieldAliases) > 0) {
+                throw new Exception(
+                    "Invalid fields specified: '"
+                    . join("', '", $invalidFieldAliases)
+                    . "'."
+                );
+            }
+            // Filter out the fields whose aliases were not provided.
+            $this->fields = array_filter(
+                $this->fields,
+                function ($field) use ($fieldAliases) {
+                    return in_array($field['alias'], $fieldAliases);
+                }
+            );
+            // Renumber the indexes.
+            $this->fields = array_values($this->fields);
+        }
+        $this->limit = $limit;
+        $this->offset = $offset;
     }
 
     /**
@@ -148,7 +200,7 @@ class BatchDataset extends Loggable implements Iterator
     public function rewind()
     {
         $this->logger->debug('Executing query');
-        $this->sth = $this->query->getRawStatement();
+        $this->sth = $this->query->getRawStatement($this->limit, $this->offset);
         $this->logger->debug(sprintf(
             'Raw query string: %s',
             $this->sth->queryString

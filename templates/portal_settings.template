@@ -133,6 +133,7 @@ user = "[:datawarehouse_user:]"
 pass = "[:datawarehouse_pass:]"
 database = "modw"
 rest_logfile = "rest_datawarehouse.log"
+rest_raw_row_limit = "10000"
 
 [shredder]
 db_engine = "MySQLDB"
