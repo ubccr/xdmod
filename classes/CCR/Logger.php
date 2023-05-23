@@ -62,7 +62,7 @@ class Logger extends \Monolog\Logger implements LoggerInterface
      */
     protected function recursivelyStringifyObjects(&$array)
     {
-        while (list($key, $value) = each($array)) {
+        foreach ($array as $key => $value) {
             if (is_object($value)) {
                 $array[$key] = (string) $value;
             } elseif (is_array($value)) {

@@ -1,11 +1,11 @@
 {
     "module": "xdmod",
     "defaults": {
-        "migration-10_0_0-10_5_0": {
+        "migration-10_0_2-10_5_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions"
          },
-         "cloud-migration-10-0-0_10-5-0": {
+         "cloud-migration-10-0-2_10-5-0": {
              "namespace": "ETL\\Ingestor",
              "options_class": "IngestorOptions",
              "endpoints": {
@@ -13,20 +13,18 @@
                      "type" : "mysql",
                      "name" : "Cloud DB",
                      "config" : "datawarehouse",
-                     "schema": "modw_cloud",
-                     "create_schema_if_not_exists": "true"
+                     "schema": "modw_cloud"
                  },
                  "destination": {
                      "type" : "mysql",
                      "name" : "Cloud DB",
                      "config" : "datawarehouse",
-                     "schema": "modw_cloud",
-                     "create_schema_if_not_exists": "true"
+                     "schema": "modw_cloud"
                  }
              }
           }
     },
-    "migration-10_0_0-10_5_0": [
+    "migration-10_0_2-10_5_0": [
       {
             "name": "update-mod_shredder-tables",
             "description": "Update mod_shredder tables",
@@ -59,13 +57,55 @@
                     "schema": "moddb"
                 }
             }
+        },
+        {
+            "name": "add_user_tokens_table",
+            "description": "Creates the new moddb.user_tokens table",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "acls/user_tokens.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ],
+<<<<<<< HEAD:configuration/etl/etl.d/xdmod-migration-10_0_0-10_5_0.json
     "cloud-migration-10-0-0_10-5-0": [
+=======
+    "cloud-migration-10-0-2_10-5-0": [
+      {
+          "name": "OpenStackCloudInstanceTypeExistingStagingIngestor",
+          "description": "Open Stack cloud instance type data for existing instance types",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/staging_existing_instance_type.json",
+          "create_schema_if_not_exists": "true"
+      },
+      {
+          "name": "OpenStackCloudInstanceTypeStagingIngestor",
+          "description": "Sets end times for instance type configurations",
+          "class": "CloudInstanceTypeStateIngestor",
+          "definition_file": "cloud_openstack/instance_type_staging.json",
+          "create_schema_if_not_exists": "true"
+      },
+      {
+          "name": "OpenStackCloudInstanceTypeEndTimeIngestor",
+          "description": "Open Stack cloud instance type data",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/instance_type.json"
+      },
+>>>>>>> 364b19e88ee9d154d05e1ab16433c65cade66290:configuration/etl/etl.d/xdmod-migration-10_0_2-10_5_0.json
       {
           "name": "add-instance-state-table",
           "description": "Update mod_shredder tables",
           "class": "ManageTables",
+          "namespace": "ETL\\Maintenance",
+          "options_class": "MaintenanceOptions",
           "definition_file_list": [
               "cloud_common/instance_states.json"
           ],
@@ -94,8 +134,6 @@
       {
           "name": "update-event-types-table",
           "description": "Initialize cloud event types including unknown",
-          "namespace": "ETL\\Ingestor",
-          "options_class": "IngestorOptions",
           "class": "StructuredFileIngestor",
           "definition_file": "cloud_common/event_type.json",
           "endpoints": {
