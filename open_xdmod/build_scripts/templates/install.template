@@ -663,7 +663,7 @@ Options:
         (default: *prefix*/etc/cron.d).
 
     --rpm
-        This flag should be set when building an RPM package and ommited
+        This flag should be set when building an RPM package and omitted
         for a source code install.
 
 EOF;
