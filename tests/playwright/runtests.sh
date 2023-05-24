@@ -11,6 +11,9 @@ if (( $SHMSIZEK < 2000000 )); then
 fi
 
 set -e
+#ensure that playwright installed
+npm install
+
 echo "UI tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 
 #playwright automatically runs in headless
