@@ -74,6 +74,10 @@ jobs:
             docker cp xdmod:/var/log/xdmod /var/log/xdmod
             docker cp playwright:/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/tests/playwright/test-results /tmp/screenshots
+      - run:
+          name: Run on fail status
+          command: docker cp playwright:/tests/playwright/test-results /tmp/screenshots
+          when: on_fail
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
