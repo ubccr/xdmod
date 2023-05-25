@@ -65,7 +65,7 @@ jobs:
           name: Run Playwright Tests
           command: |
             docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
-          docker cp playwright:/tests/playwright/test-results /tmp/screenshots
+            docker cp playwright:/tests/playwright/test-results /tmp/screenshots
       - run:
           name: Copy Test Results into Unit
           command: |
