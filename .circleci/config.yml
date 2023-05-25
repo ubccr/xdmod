@@ -76,7 +76,10 @@ jobs:
             docker cp playwright:/tests/playwright/test-results /tmp/screenshots
       - run:
           name: Run on fail status
-          command: docker cp playwright:/tests/playwright/test-results /tmp/screenshots
+          command: |
+            docker exec playwright ls
+            docker exec playwright ls xdmod
+            docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
           when: on_fail
       - store_artifacts:
           path: /tmp/screenshots
