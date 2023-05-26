@@ -50,6 +50,17 @@ try {
 
     echo "XDMoD $version\n\n";
 
+    if('__XDMOD_INSTALL_TYPE__' === 'rpm'){
+        $output = array("RPM Installed Packages:\n");
+        exec('rpm -qa xdmod\*', $output);
+        $output[] = "File status:\n";
+        exec('rpm -qa --verify xdmod\*', $output);
+        foreach ($output as $line) {
+            echo "$line\n";
+        }
+        echo "\n";
+    }
+
     echo "Required prerequisites\n\n";
 
     // Apache checks.

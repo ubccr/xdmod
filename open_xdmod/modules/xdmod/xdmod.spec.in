@@ -48,6 +48,7 @@ exit 0
 rm -rf $RPM_BUILD_ROOT
 DESTDIR=$RPM_BUILD_ROOT ./install \
     --quiet \
+    --rpm \
     --bindir=%{_bindir} \
     --libdir=%{_libdir}/%{name} \
     --sysconfdir=%{_sysconfdir}/%{name} \

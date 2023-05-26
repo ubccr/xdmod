@@ -38,6 +38,7 @@ function main()
         array('',  'httpdconfdir:'),
         array('',  'logrotatedconfdir:'),
         array('',  'crondconfdir:'),
+        array('',  'rpm'),
     );
 
     $shortOptions = implode(
@@ -58,6 +59,7 @@ function main()
     $prefix = '/usr/local/xdmod';
 
     $dirs = array(
+        'installtype' => 'source',
         'src' => $srcDir,
     );
 
@@ -102,6 +104,9 @@ function main()
                 break;
             case 'crondconfdir':
                 $dirs['crond'] = $value;
+                break;
+            case 'rpm':
+                $dirs['installtype'] = 'rpm';
                 break;
             default:
                 fwrite(STDERR, "Unexpected argument '$key'\n");
@@ -552,6 +557,10 @@ function substitutePaths($dirs)
         '#/var/log/xdmod#'   => $dirs['log'],
         '#/etc/xdmod#'       => $dirs['conf'],
     ));
+
+    substituteInFile($destDir . $dirs['bin'] . '/xdmod-check-config', array(
+        '/__XDMOD_INSTALL_TYPE__/' => $dirs['installtype'],
+    ));
 }
 
 function substituteInDir($dir, array $subs)
@@ -653,6 +662,9 @@ Options:
         Copy the cron config file to this directory
         (default: *prefix*/etc/cron.d).
 
+    --rpm
+        This flag should be set when building an RPM package and omitted
+        for a source code install.
 
 EOF;
 }
