@@ -630,6 +630,7 @@ export class ReportGenerator {
         var lastCount = -1;
         while (elemCount !== lastCount) {
             lastCount = elemCount;
+            await this.page.waitForTimeout(500);
             elemCount = this.page.$(selector).length;
         }
         const computed = await this.page.$$(selector);
