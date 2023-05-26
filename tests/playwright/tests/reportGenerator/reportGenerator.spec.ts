@@ -951,9 +951,7 @@ test.describe('Report Generator', async () => {
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
             await test.step('Select a report', async () => {
-                const rows = await reportGeneratorPage.getMyReportsRows();
-                const report:MyReportsRow = rows[0];
-                //const report:MyReportsRow = (await reportGeneratorPage.getMyReportsRows())[0];
+                const report:MyReportsRow = (await reportGeneratorPage.getMyReportsRows())[0];
                 await report.click();
             });
             await test.step('Preview selected report', async () => {

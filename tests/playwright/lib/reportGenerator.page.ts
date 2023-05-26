@@ -124,14 +124,14 @@ export class MyReportsRow {
      * Click the row.
      */
     async click() {
-        await this.page.click(this.selector);
+        await this.page.click(this.selector, {delay:100});
     }
 
     /**
      * Double click the row.
      */
     async doubleClick() {
-        await this.page.dblclick(this.selector);
+        await this.page.dblclick(this.selector, {delay:100});
     }
 
     /**
@@ -630,7 +630,7 @@ export class ReportGenerator {
         var lastCount = -1;
         while (elemCount !== lastCount) {
             lastCount = elemCount;
-            await this.page.waitForTimeout(500);
+            await this.page.waitForTimeout(100);
             elemCount = this.page.$(selector).length;
         }
         const computed = await this.page.$$(selector);
