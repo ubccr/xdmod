@@ -48,7 +48,7 @@ const selectors = {
         },
         reportList: {
             panel: () => selectors.myReports.panel() + `//div[${classContains('x-panel-body-noheader')}]`,
-            rows: () => selectors.myReports.reportList.panel() + `//div[${classContains('x-grid3-row')}]`,
+            rows: () => `//div[@id='report_generator']//div[contains(@class, 'report_overview')]//div[@class='x-grid3-scroller']//div[contains(@class,'x-grid3-row')]`,
             rowByIndex: index => selectors.myReports.reportList.panel() + `//div[${classContains('x-grid3-row')} and position()=${index}]`
         }
     },
