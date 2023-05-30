@@ -15,6 +15,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
     // The chart instance.
     chart: null,
 
+    chartWidth: null,
+
+    chartHeight: null,
+
     /**
      * The component 'constructor'.
      */
@@ -60,8 +64,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          *
          */
         activate: function(tab, reload) {
-
-
             reload = reload || false;
             // This is here so that when the chart is / panel is loaded
             // via one of it's child nodes that it triggers a re-load.
@@ -93,17 +95,17 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function(panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (panel.chart) {
-                Plotly.relayout(panel.id, {width: adjWidth, height: adjHeight});
+		        this.chartWidth = adjWidth;
+        		this.chartWidth = adjHeight;
+                Plotly.relayout(this.id, {width: adjWidth, height: adjHeight});
             }
         }, // resize
 
-        destroy: function () {
-/*
+        beforedestroy: function () {
             if (this.chart) {
-                this.chart.destroy();
-                this.chart = null;
+		        Plotly.purge(this.id);
+                this.chart = false;
             }
-*/
         },
 
         export_option_selected: function (exportParams) {
@@ -162,86 +164,93 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             }
 
             if (record) {
-		let colorChoices = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-                        '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
+		        let colorChoices = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
+                    '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
                 let data = [];
-		var singleDataPoint = false;
-		var tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
-		var ymin, ymax;
-		if (record.data.series[0].name === "Range"){
-			ymin = record.data.series[1].data[0].y;
-			ymax = ymin;
-		}
-		else{
-                        ymin = record.data.series[0].data[0].y;
-                        ymax = ymin;
-		}
+                var isEnvelope = false;
+		        var hasSingleDataPoint = false;
+           		var tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
+        		var ymin, ymax;
+                ymin = record.data.series[0].data[0].y;
+                ymax = ymin;
                 for (let sid = 0; sid < record.data.series.length; sid++) {
-		    if (record.data.series[sid].name === "Range") {
-			tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[1].data[0].x);
-			continue;
-		    }	
-		    let x = [];
-		    let y = [];
-		    let colors = colorChoices[sid % 10];
+		            if (record.data.series[sid].name === "Range") {
+                        isEnvelope = true;
+                        ymin = record.data.series[1].data[0].y;
+                        ymax = ymin;
+            			tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[1].data[0].x);
+		            	continue;
+    		        }	
+	    	        let x = [];
+		            let y = [];
+                    let qtip = [];
+		            let colors = colorChoices[sid % 10];
                     for(let i=0; i < record.data.series[sid].data.length; i++) {
-			if (record.data.series[sid].data.length == 1){
-				singleDataPoint = true;	
-			}
-			x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
+        			    if (record.data.series[sid].data.length == 1){
+		        		    hasSingleDataPoint = true;	
+            			}
+	    	        	x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS '));
                         y.push(record.data.series[sid].data[i].y);
-                    }
+                        qtip.push(record.data.series[sid].data[i].qtip);
+                    }  
 
-		    if (record.data.series[sid].name === "Median" || record.data.series[sid].name === "Minimum"){
-                    	data.push({
-                        	x: x,
+		            if (record.data.series[sid].name === "Median" || record.data.series[sid].name === "Minimum"){
+                        data.push({
+                            x: x,
                         	y: y,
-				fill: 'tonexty',
-				fillcolor: '#2f7ed8',
-				marker: {
-                                        size: 0.1,
-					color: colors
-				},        
-				line: {
-					width: 2,
-                                        color: colors
-                                },
-                	        hovertemplate:
-				"%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
-	                        "<span style='color:"+colors+";'>●</span>" +  record.data.series[sid].name + ": <b>%{y}</b>" +
+    	        			fill: 'tonexty',
+	    		        	fillcolor: '#5EA0E2',
+            				marker: {
+                                size: 0.1,
+					            color: colors
+			        	    },        
+				            line: {
+			        		    width: 2,
+                                color: colors
+                            },
+                            text: qtip,
+                	        hovertemplate: "<span style='color:"+colors+";'>[%{text}]</span> " +
+		            		"%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+	                        "<span style='color:"+colors+";'>●</span> " +  record.data.series[sid].name + ": <b>%{y: .f}</b>" +
         	                "<extra></extra>",
                 	        name: record.data.series[sid].name, chartSeries: record.data.series[sid],  type: 'scatter', mode: 'markers+lines'});
-	 	    }
-		    else{
-			 var trace = {
-                                x: x,
-                                y: y,
-				marker: {
-                                        size: 0.1,
-                                        color: colors
-                                },
-                                line: {
-                                        width: 2,
-                                        color: colors
-                                },
-                                hovertemplate:
-                                "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
-                                "<span style='color:"+colors+";'>●</span>" + record.data.series[sid].name + ":<b>%{y}</b>" +
-                                "<extra></extra>",
-                                name: record.data.series[sid].name, chartSeries: record.data.series[sid],  type: 'scatter', mode: 'markers+lines'};
-
-			if (singleDataPoint){
-				trace.marker.size = 20;
-				trace.mode = 'markers';
-				delete trace.line;
-			} 
-			data.push(trace);
-		   }
-		   var tempyMin = Math.min(...y);
-   		   var tempyMax = Math.max(...y);
-		   if (tempyMin < ymin) ymin = tempyMin;
-		   if (tempyMax > ymax) ymax = tempyMax;
-		}
+	 	            }
+		            else{
+			            var trace = {
+                            x: x,
+                            y: y,
+				            marker: {
+                                size: 0.1,
+                                color: colors
+                            },
+                            line: {
+                                width: 2,
+                                color: colors
+                            },
+                            text: qtip,
+                            hovertemplate:
+                            "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+                            "<span style='color:"+colors+";'>●</span> " + record.data.series[sid].name + ": <b>%{y: .f}</b>" +
+                            "<extra></extra>",
+                            name: record.data.series[sid].name, chartSeries: record.data.series[sid],  type: 'scatter', mode: 'markers+lines'};
+                            
+                        if (isEnvelope){
+                            trace.hovertemplate = "<span style='color:"+colors+";'>[%{text}]</span> " + "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
+                            "<span style='color:"+colors+";'>●</span> " + record.data.series[sid].name + ": <b>%{y: .f}</b>" +
+                            "<extra></extra>";
+                        }
+			            if (hasSingleDataPoint){
+				            trace.marker.size = 20;
+            				trace.mode = 'markers';
+	            			delete trace.line;
+        	    		} 
+		            	data.push(trace);
+		            }
+        	        var tempyMin = Math.min(...y);
+   		            var tempyMax = Math.max(...y);
+		            if (tempyMin < ymin) ymin = tempyMin;
+		            if (tempyMax > ymax) ymax = tempyMax;
+		       }
 		
                 panel.getEl().unmask();
                 let layout = {
@@ -257,10 +266,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         },
                         color: '#606060',
                         ticks: 'outside',
-			ticklen: 10,
+			            ticklen: 10,
                         tickcolor: '#c0cfe0',
                         linecolor: '#c0cfe0',
-			automargin: true,
+            			automargin: true,
                         showgrid: false 
                     },
                     yaxis: {
@@ -271,10 +280,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                             color: '#5078a0'
                         },
                         color: '#606060',
-			range: [0, ymax + (ymax * 0.2)],
+			            range: [0, ymax + (ymax * 0.2)],
                         rangemode: 'nonnegative',
-			gridcolor: 'lightgray',
-			automargin: true,
+            			gridcolor: 'lightgray',
+			            automargin: true,
                         linecolor: '#c0cfe0'
                     },
                     title: {
@@ -286,20 +295,21 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                     },
                     hovermode: 'closest',
                     showlegend: false,
-		    autosize: true,
                     margin: {
                         t: 50
                     }
                 };
                 if (panel.chart) {
-                    Plotly.react(this.id, data, layout, {displayModeBar: false} );
+                    Plotly.react(this.id, data, layout, {displayModeBar: false, doubleClick: 'reset'} );
+                    this.chart = true;
                 } else {
-                    Plotly.newPlot(this.id, data, layout, {displayModeBar: false} );
+                    Plotly.newPlot(this.id, data, layout, {displayModeBar: false, doubleClick: 'reset'} );
+                    this.chart = true;
                 }
 
-            if (!panel.chart) {
-                panel.chart = document.getElementById(this.id);
-                panel.chart.on('plotly_click', function(data, event){
+                if (this.chart) {
+                    panel.chart = document.getElementById(this.id);
+                    panel.chart.on('plotly_click', function(data, event){
                         var userOptions = data.points[0].data.chartSeries
                         if (!userOptions || !userOptions.dtype) {
                             return;
@@ -325,39 +335,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                         var path = self.path.concat([drilldown]);
                         var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
                         Ext.History.add(token);
-                });
-		/*if (!singleDataPoint){
-		panel.chart.on('plotly_hover', function(data){
-			if (!data.points) return;
-			setTimeout(() => {}, 50);
-			console.log(data);
-			let idx = data.points[0].pointNumber;
-			var sizes = Array(data.points[0].data.x.length).fill(0.1);
-			sizes[idx] = 12;
-			var update = {
-				'marker.size': [sizes],
-				'line.width': 3
-                        };
-                        Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
-		});
-		panel.chart.on('plotly_unhover', function(data){
-			if (!data.points) return;
-			var update = {
-				line:{
-					width: 2,
-					color: data.points[0].data.line.color
-				     },
-				marker:{
-					size: 0.1,
-					color: data.points[0].data.marker.color
-				}
-			};
-                        Plotly.restyle(panel.chart, update, data.points[0].curveNumber);
-                });
-	      }*/
+                   });
+               }
+	        }
 
-            }
-	}
             if (!record) {
                 panel.getEl().mask('Loading...');
             }

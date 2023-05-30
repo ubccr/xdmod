@@ -99,10 +99,6 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
 
             var chartOptions = jQuery.extend(true, {}, defaultChartSettings, self.chartSettings);
 
-            //self.chart = new Highcharts.Chart(chartOptions);
-            //self.chart.showLoading();
-            Plotly.newPlot(this.id, [], {});
-
             var storeParams;
             if (self.panelSettings.pageSize) {
                 storeParams = {
@@ -177,28 +173,13 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
         XDMoD.Module.JobViewer.ChartTab.superclass.initComponent.call(this, arguments);
     },
 
-    updateTimezone: function (timezone) {
-        this.displayTimezone = timezone;
-        this.setHighchartTimezone();
-    },
-
-    setHighchartTimezone: function () {
-        Highcharts.setOptions({
-            global: {
-                timezone: this.displayTimezone
-            }
-        });
-    },
-
     listeners: {
         activate: function () {
-            this.setHighchartTimezone();
             Ext.History.add(this.historyToken);
         },
-        destroy: function () {
+        beforedestroy: function () {
             if (this.chart) {
-                this.chart.destroy();
-                this.chart = null;
+                Plotly.purge(this.id);
             }
         }
     }

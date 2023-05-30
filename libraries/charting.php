@@ -41,16 +41,22 @@ function exportHighchart(
     $scale,
     $format,
     $globalChartConfig = null,
-    $fileMetadata = null
+    $fileMetadata = null,
+    $isPlotly = false 
 ) {
     $effectiveWidth = (int)($width*$scale);
     $effectiveHeight = (int)($height*$scale);
 
     $html_dir = __DIR__ . "/../html";
-    $template = file_get_contents($html_dir . "/plotly_template.html");
+    $template;
+    if ($isPlotly){
+	$template = file_get_contents($html_dir . "/plotly_template.html");
+    }
+    else{
+	$template = file_get_contents($html_dir . "/highchart_template.html");
+    }
 
     $template = str_replace('_html_dir_', $html_dir, $template);
-
     $template = str_replace('_width_', $effectiveWidth, $template);
     $template = str_replace('_height_', $effectiveHeight, $template);
     $globalChartOptions = array('timezone' => date_default_timezone_get());
@@ -120,7 +126,7 @@ function getSvgViaChromiumHelper($html, $width, $height){
     fclose($pipes[2]);
     $return_value = proc_close($process);
 
-    @unlink($tmpHtmlFile);
+    //@unlink($tmpHtmlFile);
 
     $chartSvg = json_decode($out);
 
