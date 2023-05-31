@@ -124,14 +124,14 @@ export class MyReportsRow {
      * Click the row.
      */
     async click() {
-        await this.page.click(this.selector, {delay:100});
+        await this.page.click(this.selector, {delay:250});
     }
 
     /**
      * Double click the row.
      */
     async doubleClick() {
-        await this.page.dblclick(this.selector, {delay:100});
+        await this.page.dblclick(this.selector, {delay:250});
     }
 
     /**
