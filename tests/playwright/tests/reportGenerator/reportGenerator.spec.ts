@@ -769,7 +769,7 @@ test.describe('Report Generator', async () => {
             await test.step('Open the report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[reportIndex];
-                await report.doubleClick({delay:250});
+                await report.doubleClick();
             });
             await test.step('Set report name', async () => {
                 await reportGeneratorPage.setReportName(testReport.name);
@@ -953,6 +953,7 @@ test.describe('Report Generator', async () => {
             await test.step('Select a report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[0];
+                console.log(report.selector);
                 await report.click();
             });
             await test.step('Preview selected report', async () => {
@@ -976,7 +977,7 @@ test.describe('Report Generator', async () => {
             await test.step('Select a report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[0];
-                await report.click({delay:250});
+                await report.click();
             });
             await test.step('Click "Download" button', async () => {
                 await reportGeneratorPage.downloadSelectedReports();
@@ -1132,6 +1133,7 @@ test.describe('Report Generator', async () => {
             await test.step('Select report', async () => {
                 const reports = await reportGeneratorPage.getMyReportsRows();
                 reportCount = reports.length;
+                console.log(reports[0].selector);
                 await reports[0].click();
                 await expect(reports[0].isSelected(), 'Report is selected').toBeTruthy();
             });
