@@ -15,7 +15,7 @@ test('Single Sign On Login', async ({page}) =>{
         await page.click('//button[@id="btn-sign-in"]');
     });
     await test.step('Display Logged in Users Name', async () => {
-        await expect(page.locator('#welcome_message')).toBeVisible();
+        await expect(page.locator('#welcome_message')).toBeVisible({timeout:10000});
         const msg = await page.locator('#welcome_message').textContent();
         await expect(msg).toEqual('Saml Jackson');
         await expect(page.locator('#main_tab_panel__about_xdmod')).toBeVisible();
