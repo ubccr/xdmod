@@ -984,6 +984,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select a report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[0];
@@ -1083,6 +1084,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
@@ -1122,6 +1124,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
