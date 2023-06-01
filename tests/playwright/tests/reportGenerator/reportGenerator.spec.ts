@@ -266,6 +266,7 @@ test.describe('Report Generator', async () => {
         });
         await test.step('Select Report Generator tab', async () => {
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
         });
         await test.step('No reports listed', async () => {
             const first = await reportGeneratorPage.getMyReportsRows();
@@ -296,6 +297,7 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Select Report Generator tab', async () => {
                 await reportGeneratorPage.selectTab();
+                await reportGeneratorPage.waitForMyReportsPanelVisible();
             });
             await test.step('No reports listed', async () => {
                 const first = await reportGeneratorPage.getMyReportsRows();
@@ -325,6 +327,7 @@ test.describe('Report Generator', async () => {
         });
         await test.step('Select Report Generator tab', async () => {
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
         });
         await test.step('Reports listed', async () => {
             const first = await reportGeneratorPage.getMyReportsRows();
@@ -355,6 +358,7 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Select Report Generator tab', async () => {
                 await reportGeneratorPage.selectTab();
+                await reportGeneratorPage.waitForMyReportsPanelVisible();
             });
 
             await test.step('No reports listed', async () => {
@@ -409,6 +413,7 @@ test.describe('Report Generator', async () => {
                 });
                 await test.step('Check available charts', async () => {
                     await reportGeneratorPage.selectTab();
+                    await reportGeneratorPage.waitForMyReportsPanelVisible();
                     var charts;
                     for (let i = 0; i < 100; i++) {
                         charts = await reportGeneratorPage.getAvailableCharts();
@@ -442,6 +447,7 @@ test.describe('Report Generator', async () => {
             // Copy default report data for the report being tested.
             const testReport = Object.assign({}, defaultReport);
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             const rows = await reportGeneratorPage.getMyReportsRows();
             if (rows != 0){
                 await reportGeneratorPage.selectAllReports();
@@ -522,6 +528,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
 
             await test.step('Create a new report', async () => {
                 await reportGeneratorPage.createNewReport();
@@ -668,6 +675,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Store data for report that will be copied', async () => {
                 const selector = await reportGeneratorPage.getMyReportsRows();
                 const reportRow:MyReportsRow = selector[1];
@@ -765,6 +773,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
 
             await test.step('Open the report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
@@ -851,6 +860,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
 
             await test.step('Click "New Based On"', async () => {
                 await reportGeneratorPage.clickNewBasedOn();
@@ -950,6 +960,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select a report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[0];
@@ -1008,6 +1019,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select all', async () => {
                 await reportGeneratorPage.selectAllReports();
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
@@ -1051,6 +1063,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
@@ -1089,6 +1102,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
@@ -1127,6 +1141,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             let reportCount;
 
             await test.step('Select report', async () => {
@@ -1164,6 +1179,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select all', async () => {
                 await reportGeneratorPage.selectAllAvailableCharts();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
@@ -1209,6 +1225,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             let chartCount;
             await test.step('Select all charts', async () => {
                 const first = await reportGeneratorPage.getAvailableCharts();
@@ -1265,6 +1282,7 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Select Report Generator tab', async () => {
                 await reportGeneratorPage.selectTab();
+                await reportGeneratorPage.waitForMyReportsPanelVisible();
             });
             await test.step('No available charts listed', async () => {
                 const first = await reportGeneratorPage.getAvailableCharts();
@@ -1279,6 +1297,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
                 await reportGeneratorPage.selectAllReports();
             });
@@ -1299,6 +1318,7 @@ test.describe('Report Generator', async () => {
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
+            await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('No reports listed', async () => {
                 const first = await reportGeneratorPage.getMyReportsRows();
                 await expect(first.length, 'No rows in the list of reports').toEqual(0);
