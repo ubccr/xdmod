@@ -595,6 +595,7 @@ export class ReportGenerator {
         await this.waitForMyReportsPanelVisible();
         const selector = this.selectors.myReports.reportList.rows();
         const computed = await this.page.$$(selector);
+        console.log(computed.length);
         let result = await Promise.all(computed.map(async(element, i) => new MyReportsRow(`(${selector})[${i + 1}]`, this.page)));
         return result;
     }

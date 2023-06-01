@@ -27,6 +27,7 @@ test('Single Sign On Login', async ({page}) =>{
             await page.locator('#xdmod-profile-editor button.general_btn_close').click();
             await expect(page.locator('#xdmod-profile-editor')).toBeHidden();
         }
+        await expect(page.locator('#xdmod-profile-editor')).toBeHidden();
     });
     await test.step('Logout', async () => {
         await expect(page.locator('#logout_link')).toBeVisible();
