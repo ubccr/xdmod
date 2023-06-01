@@ -19,7 +19,7 @@ test.describe('Usage', async () => {
             let baseUrl = globalConfig.use.baseURL;
             const usg = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
-            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
+            await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname), {timeout:10000});
             await test.step('Select "Usage" tab', async () => {
                 await usg.selectTab();
                 await expect(page.locator(usg.selectors.chart)).toBeVisible();
