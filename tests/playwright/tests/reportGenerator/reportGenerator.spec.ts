@@ -952,9 +952,7 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await test.step('Select a report', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
-                console.log(rows);
                 const report:MyReportsRow = rows[0];
-                console.log(report.selector);
                 await report.click();
             });
             await test.step('Preview selected report', async () => {
@@ -1133,9 +1131,7 @@ test.describe('Report Generator', async () => {
 
             await test.step('Select report', async () => {
                 const reports = await reportGeneratorPage.getMyReportsRows();
-                console.log(reports);
                 reportCount = reports.length;
-                console.log(reports[0].selector);
                 await reports[0].click();
                 await expect(reports[0].isSelected(), 'Report is selected').toBeTruthy();
             });

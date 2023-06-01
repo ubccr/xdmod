@@ -595,7 +595,7 @@ export class ReportGenerator {
         const selector = this.selectors.myReports.reportList.rows();
         const computed = await this.page.$$(selector);
         //const result =
-        return await Promise.all(computed.map(async (element, i) => new MyReportsRow(`(${selector})[${i + 1}]`, this.page)));
+        return await Promise.all(computed.map((element, i) => new MyReportsRow(`(${selector})[${i + 1}]`, this.page)));
         //return result;
     }
 
