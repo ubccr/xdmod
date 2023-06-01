@@ -752,12 +752,17 @@ export class ReportGenerator {
         // There are two separate "New Based On" buttons.  Only one should be
         // visible at a time.
         const buttons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnVisibleButton());
+        console.log(buttons);
         await expect(buttons.length, 'Two "New Based On" button are present').toEqual(2);
         const button1 = await this.page.locator(this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(1));
         const button2 = await this.page.locator(this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(2));
         if (await button1.isVisible()) {
+            console.log("button1 click");
+            console.log(button1)
             await button1.click();
         } else if (await button2.isVisible()){
+            console.log("button2.click");
+            console.log(button2);
             await button2.click();
         } else {
             throw new Error('There is no button');
