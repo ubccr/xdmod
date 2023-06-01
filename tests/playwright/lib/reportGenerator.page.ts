@@ -595,7 +595,7 @@ export class ReportGenerator {
         const selector = this.selectors.myReports.reportList.rows();
         const computed = await this.page.$$(selector);
         //const result =
-        return await Promise.all(computed.map((element, i) => new MyReportsRow(`(${selector})[${i + 1}]`, this.page)));
+        return await Promise.all(computed.map(async(element, i) => new MyReportsRow(`(${selector})[${i + 1}]`, this.page)));
         //return result;
     }
 
@@ -612,7 +612,7 @@ export class ReportGenerator {
         await this.waitForIncludedChartsPanelVisible();
         const selector = this.selectors.reportEditor.includedCharts.chartList.rows();
         const computed = await this.page.$$(selector);
-        return await Promise.all(computed.map((element, i) => new IncludedChart(`(${selector})[${i + 1}]`, this.page)));
+        return await Promise.all(computed.map(async(element, i) => new IncludedChart(`(${selector})[${i + 1}]`, this.page)));
     }
 
     /**
