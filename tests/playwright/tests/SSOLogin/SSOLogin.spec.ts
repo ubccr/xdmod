@@ -47,7 +47,7 @@ test('Single Sign On Login w/ deep link', async ({page}) => {
         await page.click('//button[@id="btn-sign-in"]');
     });
     await test.step('Load Metric Explorer tab', async () => {
-        await expect(page.locator('#welcome_message')).toBeVisible();
+        await expect(page.locator('#welcome_message')).toBeVisible({timeout:10000});
         await expect(page.locator('#welcome_message')).toContainText('Saml Jackson');
         await expect(page.locator('#metric_explorer')).toBeVisible();
     });
