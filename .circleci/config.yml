@@ -69,6 +69,7 @@ jobs:
           command: |
             docker cp xdmod:/root/phpunit ~/phpunit
             docker cp xdmod:/tmp/screenshots /tmp/screenshots
+            mkdir /var/log/xdmod
             docker cp xdmod:/var/log/xdmod /var/log/xdmod
             docker cp playwright:/xdmod/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
