@@ -69,8 +69,8 @@ jobs:
           command: |
             docker cp xdmod:/root/phpunit ~/phpunit
             docker cp xdmod:/tmp/screenshots /tmp/screenshots
-            mkdir /var/log/xdmod
-            docker cp xdmod:/var/log/xdmod /var/log/xdmod
+            mkdir ~/project/log
+            docker cp xdmod:/var/log/xdmod ~/project/log
             docker cp playwright:/xdmod/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
       - run:
@@ -83,7 +83,7 @@ jobs:
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
-          path: /var/log/xdmod
+          path: ~/project/log
       - store_test_results:
           path: ~/phpunit
 workflows:
