@@ -233,16 +233,22 @@ class MetricExplorer extends BasePage{
     }
     async loadExistingChartByName(name) {
         await this.collapseButtonLocator.waitFor({state:'visible'});
+        await expect(this.collapseButtonLocator).toBeVisible();
         await this.page.locator(this.toolbar.buttonByName('Load Chart')).waitFor({state:'visible'});
+        await expect(this.page.locator(this.toolbar.buttonByName('Load Chart'))).toBeVisible();
         await this.page.click(this.toolbar.buttonByName('Load Chart'), {delay:250});
         await this.page.locator(this.load.dialog).waitFor({state:'visible'});
+        await expect(this.page.locator(this.load.dialog)).toBeVisible();
         await this.page.click(this.load.chartByName(name));
         await this.page.locator(this.load.dialog).waitFor({state:'hidden'});
+        await expect(this.page.locator(this.load.dialog)).toBeHidden();
         await this.page.locator(this.catalog.expandButton).waitFor({state:'visible'});
+        await expect(this.page.locator(this.catalog.expandButton)).toBeVisible();
     }
     async checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         await this.clickLogo();
         await this.page.locator(this.chart.titleByText(chartTitle)).waitFor({state:'visible'});
+        await expect(this.page.locator(this.chart.titleByText(chartTitle))).toBeVisible();
         var selToCheck;
         if (isValidChart) {
             selToCheck = this.chart.credits();
@@ -250,14 +256,16 @@ class MetricExplorer extends BasePage{
             selToCheck = this.chart.titleByText(chartTitle);
         }
         await this.page.locator(selToCheck).waitFor({state:'visible'});
+        await expect(this.page.locator(selToCheck)).toBeVisible();
         await this.page.click(selToCheck);
 
         if (yAxisLabel) {
             await this.page.locator(this.chart.yAxisTitle()).waitFor({state:'visible'});
+            await expect(this.page.locator(this.chart.yAxisTitle())).toBeVisible();
             var yAxisElems = await this.page.$$(this.chart.yAxisTitle());
             if (typeof yAxisLabel === 'string') {
                 await expect(yAxisElems.length).toEqual(1);
-                const result = await Promise.all(yAxisElems.map((elem) => {
+                const result = await Promise.all(yAxisElems.map(async(elem) => {
                     return elem.textContent();
                 }));
                 await expect(result[0]).toEqual(yAxisLabel);
@@ -271,6 +279,7 @@ class MetricExplorer extends BasePage{
 
         if (legend) {
             await this.page.locator(this.chart.firstLegendContent()).waitFor({state:'visible'});
+            await expect(this.page.locator(this.chart.firstLegendContent())).toBeVisible();
             var legendElems = await this.page.locator(this.chart.legend());
             if (typeof legend === 'string') {
                 await expect(legendElems).toBeVisible();
@@ -413,6 +422,7 @@ class MetricExplorer extends BasePage{
      * Best effort to try to wait until the load mask has been and gone.
      */
     async clickSelector(selector) {
+        await this.page.locator(selector).waitFor({state:'visible'});
         await expect(this.page.locator(selector)).toBeVisible();
         await this.page.click(selector, {delay:250});
     }
