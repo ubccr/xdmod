@@ -109,6 +109,7 @@ test.describe('Metric Explorer', async () => {
             await xdmod.selectTab('metric_explorer');
             await test.step('Add Filters in Toolbar', async () => {
                 await me.loadExistingChartByName(chartName);
+                await page.locator(me.chart.titleByText(chartName)).waitFor({state:'visible'});
                 await expect(page.locator(me.chart.titleByText(chartName))).toBeVisible();
                 const startDate = await page.locator(me.startDate).inputValue();
                 const endDate = await page.locator(me.endDate).inputValue();
