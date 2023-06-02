@@ -422,7 +422,6 @@ class MetricExplorer extends BasePage{
      * Best effort to try to wait until the load mask has been and gone.
      */
     async clickSelector(selector) {
-        await this.page.locator(selector).waitFor({state:'visible'});
         await expect(this.page.locator(selector)).toBeVisible();
         await this.page.click(selector, {delay:250});
     }
