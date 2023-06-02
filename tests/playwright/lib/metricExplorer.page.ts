@@ -248,7 +248,6 @@ class MetricExplorer extends BasePage{
     async checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         await this.clickLogo();
         await this.page.locator(this.chart.titleByText(chartTitle)).waitFor({state:'visible'});
-        await expect(this.page.locator(this.chart.titleByText(chartTitle))).toBeVisible();
         var selToCheck;
         if (isValidChart) {
             selToCheck = this.chart.credits();
@@ -256,16 +255,14 @@ class MetricExplorer extends BasePage{
             selToCheck = this.chart.titleByText(chartTitle);
         }
         await this.page.locator(selToCheck).waitFor({state:'visible'});
-        await expect(this.page.locator(selToCheck)).toBeVisible();
         await this.page.click(selToCheck);
 
         if (yAxisLabel) {
             await this.page.locator(this.chart.yAxisTitle()).waitFor({state:'visible'});
-            await expect(this.page.locator(this.chart.yAxisTitle())).toBeVisible();
             var yAxisElems = await this.page.$$(this.chart.yAxisTitle());
             if (typeof yAxisLabel === 'string') {
                 await expect(yAxisElems.length).toEqual(1);
-                const result = await Promise.all(yAxisElems.map(async(elem) => {
+                const result = await Promise.all(yAxisElems.map((elem) => {
                     return elem.textContent();
                 }));
                 await expect(result[0]).toEqual(yAxisLabel);
@@ -279,7 +276,6 @@ class MetricExplorer extends BasePage{
 
         if (legend) {
             await this.page.locator(this.chart.firstLegendContent()).waitFor({state:'visible'});
-            await expect(this.page.locator(this.chart.firstLegendContent())).toBeVisible();
             var legendElems = await this.page.locator(this.chart.legend());
             if (typeof legend === 'string') {
                 await expect(legendElems).toBeVisible();
