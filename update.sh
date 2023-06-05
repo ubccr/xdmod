@@ -6,6 +6,12 @@ set -e
 branches="xdmod10.0 xdmod9.5"
 latest="xdmod10.0"
 
+SED=sed
+if command -v gsed > /dev/null;
+then
+    SED=gsed
+fi
+
 for branch in $branches;
 do
     version=${branch:5}
@@ -26,7 +32,7 @@ redirect_to: /$version/${basefile}.html
 EOF
             fi
         fi
-        git show refs/remotes/upstream/$branch:$file | sed "$sedscript" > $outfile
+        git show refs/remotes/upstream/$branch:$file | $SED "$sedscript" > $outfile
     done
 
     filelist=$(git ls-tree --name-only  upstream/$branch docs/  | egrep '.*\.(json|html)$')
