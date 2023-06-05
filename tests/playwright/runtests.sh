@@ -12,7 +12,6 @@ fi
 
 set -e
 #ensure that playwright installed
-npx playwright install
 npm install -g @playwright/test
 
 echo "UI tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
