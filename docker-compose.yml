@@ -26,7 +26,7 @@ services:
             timeout: 5s
             retries: 3
     playwright:
-        image: mcr.microsoft.com/playwright:v1.34.0-jammy
+        image: mcr.microsoft.com/playwright:v1.34.0-focal
         hostname: playwright
         container_name: playwright
         volumes:

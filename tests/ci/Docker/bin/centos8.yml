@@ -15,7 +15,7 @@ services:
         tty: true
         command: sleep infinity
     playwright-centos8:
-        image: mcr.microsoft.com/playwright:v1.34.0-jammy
+        image: mcr.microsoft.com/playwright:v1.34.0-focal
         hostname: playwright
         container_name: playwright
         networks:
