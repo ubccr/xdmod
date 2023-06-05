@@ -85,8 +85,7 @@ jobs:
       - store_artifacts:
           path: ~/project/log
       - store_test_results:
-          #path: ~/phpunit
-          path: results.xml
+          path: ~/phpunit
 workflows:
   full-build:
     jobs:

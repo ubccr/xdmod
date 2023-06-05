@@ -1,6 +1,5 @@
 import {PlaywrightTestConfig, devices} from '@playwright/test';
 const config: PlaywrightTestConfig = {
-    reporter: [['junit', {outputFile: 'results.xml'}]],
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     timeout: 60 * 60 * 1000,

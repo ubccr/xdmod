@@ -933,18 +933,12 @@ test.describe('Report Generator', async () => {
                 );
                 const reportCharts = await reportGeneratorPage.getIncludedCharts();
                 var i = 0;
-                for (const charts of reportCharts){
-                    const chart:AvailableChart = charts[i];
-                    const templateChart = templateCharts[i];
-                    const title = await chart.getTitle();
-                    await expect(title, 'Chart title').toEqual(templateChart.title);
-                    const drillDetails = await chart.getDrillDetails();
-                    await expect(drillDetails, 'Drill details').toEqual(templateChart.drillDetails);
-                    const timeframetype = await chart.getTimeframeType();
-                    await expect(timeframetype, 'Timeframe type').toEqual(templateChart.timeframeType);
-                    const dateDescription = await chart.getDateDescription();
-                    await expect(dateDescription, 'Date description').toEqual(templateChart.startDate + ' to ' + templateChart.endDate);
-                    i +=1;
+                for (let chart:AvailableChart of reportCharts){
+                    await expect(await chart.getTitle(), 'Chart title').toEqual(templateCharts[i].title);
+                    await expect(await chart.getDrillDetails(), 'Drill details').toEqual(templateCharts[i].drillDetails);
+                    await expect(await chart.getTimeframeType(), 'Timeframe type').toEqual(templateCharts[i].timeframeType);
+                    await expect(await chart.getDateDescription(), 'Date description').toEqual(templateCharts[i].startDate + ' to ' + templateCharts[i].endDate);
+                    i += 1;
                 }
             });
             await test.step('Return to "My Reports"', async () => {
