@@ -885,11 +885,14 @@ test.describe('Report Generator', async () => {
             await test.step('Click "New Based On" to close menu', async () => {
                 // Close the menu so that it can be re-opened below.
                 await reportGeneratorPage.clickNewBasedOn();
+                console.log("hang1");
                 await expect(page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu())).toBeHidden();
+                console.log("hang2");
                 // mouse is stuck hovering over the "New Based On" button,
                 // so another area on the page, or the "Report Generator"
                 // tab is clicked and the delay is to give the page time
                 await page.click(reportGeneratorPage.selectors.tab(), {delay:250});
+                console.log("hang3");
             });
             var report_template_index = 0;
             var reportIndex = 3;
