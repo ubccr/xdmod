@@ -174,7 +174,7 @@ export class AvailableChart {
      * @return {String}
      */
     async getTitleAndDrillDetails() {
-        return this.page.innerHTML(this.titleAndDrillDetails, false);
+        return this.page.innerHTML(this.titleAndDrillDetails);
     }
 
     /**
@@ -469,24 +469,22 @@ export class ReportGenerator {
      * Wait for the "My Reports" panel to be visible.
      */
     async waitForMyReportsPanelVisible() {
-        await this.page.locator(this.selectors.myReports.panel()).waitFor({state:'visible'});
-        await expect(this.page.locator(this.selectors.myReports.panel())).toBeVisible({timeout: 50000});
+        await this.page.isVisible(this.selectors.myReports.panel());
+        await expect(this.page.locator(this.selectors.myReports.panel())).toBeVisible();
     }
 
     /**
      * Wait for the "Report Preview" panel to be visible.
      */
     async waitForReportPreviewPanelVisible() {
-        await this.page.locator(this.selectors.reportPreview.panel()).waitFor({state:'visible'});
-        await expect(this.page.locator(this.selectors.reportPreview.panel())).toBeVisible();
+        await this.page.isVisible(this.selectors.reportPreview.panel());
     }
 
     /**
      * Wait for the "Report Editor" panel to be visible.
      */
     async waitForReportEditorPanelVisible() {
-        await this.page.locator(this.selectors.reportEditor.panel()).waitFor({state:'visible'});
-        await expect(this.page.locator(this.selectors.reportEditor.panel())).toBeVisible();
+        await this.page.isVisible(this.selectors.reportEditor.panel());
     }
 
     /**
@@ -494,8 +492,7 @@ export class ReportGenerator {
      */
     async waitForIncludedChartsPanelVisible() {
         await this.waitForReportEditorPanelVisible();
-        await this.page.locator(this.selectors.reportEditor.includedCharts.panel()).waitFor({state:'visible'});
-        await expect(this.page.locator(this.selectors.reportEditor.includedCharts.panel())).toBeVisible();
+        await this.page.isVisible(this.selectors.reportEditor.includedCharts.panel());
     }
 
     /**
@@ -503,21 +500,20 @@ export class ReportGenerator {
      */
     async waitForAvailableChartsPanelVisible() {
         await this.page.locator(this.selectors.availableCharts.panel()).waitFor({state:'visible'});
-        await expect(this.page.locator(this.selectors.availableCharts.panel())).toBeVisible();
     }
 
     /**
      * Wait for the "Message" window to be visible.
      */
     async waitForMessageWindowVisible() {
-        await this.page.locator(this.selectors.message.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.message.window());
     }
 
     /**
      * Wait for the "Delete Selected Report" window to be visible.
      */
     async waitForDeleteSelectedReportsWindowVisible() {
-        await this.page.locator(this.selectors.deleteSelectedReports.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.deleteSelectedReports.window());
     }
 
     /**
@@ -531,7 +527,7 @@ export class ReportGenerator {
      * Wait for the "Delete Selected Chart" window to be visible.
      */
     async waitForDeleteSelectedChartsWindowVisible() {
-        await this.page.locator(this.selectors.deleteSelectedCharts.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.deleteSelectedCharts.window());
     }
 
     /**
@@ -545,7 +541,7 @@ export class ReportGenerator {
      * Wait for the "Remove Selected Chart" window to be visible.
      */
     async waitForRemoveSelectedChartsWindowVisible() {
-        await this.page.locator(this.selectors.removeSelectedCharts.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.removeSelectedCharts.window());
     }
 
     /**
@@ -561,7 +557,7 @@ export class ReportGenerator {
      * Also waits for the error message to not be visible.
      */
     async waitForEditChartTimeframeWindowVisible() {
-        await this.page.locator(this.selectors.editChartTimeframe.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.editChartTimeframe.window());
         await this.page.isHidden(this.selectors.editChartTimeframe.errorMessage());
     }
 
@@ -569,14 +565,14 @@ export class ReportGenerator {
      * Wait for the "Save Report As" window to be visible.
      */
     async waitForSaveReportAsWindowVisible() {
-        await this.page.locator(this.selectors.saveReportAs.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.saveReportAs.window());
     }
 
     /**
      * Wait for the "Report Built" window to be visible.
      */
     async waitForReportBuiltWindowVisible() {
-        await this.page.locator(this.selectors.reportBuilt.window()).waitFor({state:'visible'});
+        await this.page.isVisible(this.selectors.reportBuilt.window());
     }
 
     /**
