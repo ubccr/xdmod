@@ -677,6 +677,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Store data for report that will be copied', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 const selector = await reportGeneratorPage.getMyReportsRows();
                 const reportRow:MyReportsRow = selector[1];
                 testReport.derivedFrom = await reportRow.getDerivedFrom();
@@ -776,6 +779,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.waitForMyReportsPanelVisible();
 
             await test.step('Open the report', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[reportIndex];
                 await report.doubleClick();
@@ -863,6 +869,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.waitForMyReportsPanelVisible();
 
             await test.step('Click "New Based On"', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.clickNewBasedOn();
                 await page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'visible'});
             });
@@ -962,6 +971,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select a report', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[0];
                 await report.click();
@@ -986,6 +998,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select a report', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 const rows = await reportGeneratorPage.getMyReportsRows();
                 const report:MyReportsRow = rows[0];
                 await report.click();
@@ -1022,6 +1037,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select all', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllReports();
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
                 var i = 0;
@@ -1066,6 +1084,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Edit reports (should not be possible)', async () => {
@@ -1086,6 +1107,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Preview reports (should not be possible)', async () => {
@@ -1106,6 +1130,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Send reports (should not be possible)', async () => {
@@ -1126,6 +1153,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Download reports (should not be possible)', async () => {
@@ -1148,6 +1178,9 @@ test.describe('Report Generator', async () => {
             let reportCount;
 
             await test.step('Select report', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 const reports = await reportGeneratorPage.getMyReportsRows();
                 reportCount = reports.length;
                 await reports[0].click();
@@ -1184,6 +1217,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select all', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllAvailableCharts();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
                 var i = 0;
@@ -1231,6 +1267,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             let chartCount;
             await test.step('Select all charts', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 const first = await reportGeneratorPage.getAvailableCharts();
                 chartCount = first.length;
                 await reportGeneratorPage.selectAllAvailableCharts();
@@ -1302,6 +1341,9 @@ test.describe('Report Generator', async () => {
             await reportGeneratorPage.selectTab();
             await reportGeneratorPage.waitForMyReportsPanelVisible();
             await test.step('Select reports', async () => {
+                //to ensure reportGeneratorPage fully loaded
+                await reportGeneratorPage.fullyLoaded();
+                //continue test
                 await reportGeneratorPage.selectAllReports();
             });
             await test.step('Delete reports', async () => {

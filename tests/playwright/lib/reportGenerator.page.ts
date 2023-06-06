@@ -583,6 +583,13 @@ export class ReportGenerator {
     }
 
     /**
+     * Wait for at least one report to be visible on the page.
+     */
+    async fullyLoaded() {
+        await this.page.locator(this.selectors.myReports.reportList.rowByIndex(1)).waitFor({state:'visible'});
+    }
+
+    /**
      * Convenience method to convert the rows in the "My Reports" list into
      * objects.
      *
