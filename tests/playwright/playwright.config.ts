@@ -2,7 +2,7 @@ import {PlaywrightTestConfig, devices} from '@playwright/test';
 const config: PlaywrightTestConfig = {
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
-    timeout: 60 * 60 * 1000,
+    timeout: 30000,
     workers: 5,
     use: {
         trace: 'on-first-retry',
@@ -11,8 +11,7 @@ const config: PlaywrightTestConfig = {
         ignoreHTTPSErrors: true,
         viewport: {width: 2560, height: 1600},
         baseURL: process.env.BASE_URL,
-        sso: process.env.SSO ? true : false,
-        timeout: 30 * 1000
+    	sso: process.env.SSO ? true : false
     },
     projects: [
         {
