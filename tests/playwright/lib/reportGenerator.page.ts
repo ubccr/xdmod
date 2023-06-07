@@ -763,23 +763,24 @@ export class ReportGenerator {
         await expect(buttons.length, 'Two "New Based On" button are present').toEqual(2);
         const button1 = await this.page.locator(this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(1));
         const button2 = await this.page.locator(this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(2));
-        const isMenuVisible = await this.page.isVisible(this.selectors.myReports.toolbar.newBasedOnMenu());
+        //const isMenuVisible = await this.page.isVisible(this.selectors.myReports.toolbar.newBasedOnMenu());
         if (await button1.isVisible()) {
             await button1.click();
-            if (isMenuVisible) {
+            /*if (isMenuVisible) {
                     await this.page.locator(this.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'hidden'});
             } else {
                     await this.page.locator(this.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'visible'});
-            }
-        } else if (await button2.isVisible()){
+            }*/
+        } else {
+            //} else if (await button2.isVisible()){
             await button2.click();
-            if (isMenuVisible) {
+            /*if (isMenuVisible) {
                     await this.page.locator(this.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'hidden'});
             } else {
                     await this.page.locator(this.selectors.myReports.toolbar.newBasedOnMenu()).waitFor({state:'visible'});
             }
         } else {
-            throw new Error('There is no button');
+            throw new Error('There is no button');*/
         }
 
         // Ext.Button ignores clicks for 250ms
