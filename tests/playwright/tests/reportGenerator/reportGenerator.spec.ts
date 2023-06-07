@@ -885,6 +885,9 @@ test.describe('Report Generator', async () => {
             await test.step('Click "New Based On" to close menu', async () => {
                 // Close the menu so that it can be re-opened below.
                 await reportGeneratorPage.clickNewBasedOn();
+                if (page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu()).isVisible()){
+                    await reportGeneratorPage.clickNewBasedOn();
+                }
                 await expect(page.locator(reportGeneratorPage.selectors.myReports.toolbar.newBasedOnMenu())).toBeHidden();
                 // mouse is stuck hovering over the "New Based On" button,
                 // so another area on the page, or the "Report Generator"
