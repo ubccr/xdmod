@@ -11,7 +11,8 @@ const config: PlaywrightTestConfig = {
         ignoreHTTPSErrors: true,
         viewport: {width: 2560, height: 1600},
         baseURL: process.env.BASE_URL,
-    	sso: process.env.SSO ? true : false
+        sso: process.env.SSO ? true : false,
+        timeout: 10000
     },
     projects: [
         {
