@@ -3,7 +3,6 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
-use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 use IntegrationTests\BaseTest;
 
@@ -46,11 +45,6 @@ class ReportBuilderTest extends BaseTest
     protected $helper;
 
     /**
-     * @var TestFiles
-     */
-    protected $testFiles;
-
-    /**
      * @var bool
      */
     protected $verbose;
@@ -59,19 +53,6 @@ class ReportBuilderTest extends BaseTest
         'content_type' => 'application/json',
         'http_code' => 200
     );
-
-
-    /**
-     * @return TestFiles
-     * @throws \Exception
-     */
-    protected function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
-        }
-        return $this->testFiles;
-    }
 
     protected function setUp()
     {
@@ -192,7 +173,7 @@ class ReportBuilderTest extends BaseTest
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
 
-        $expectedFileName = $this->getTestFiles()->getFile('report_builder', $output['name'], 'output', $output['extension']);
+        $expectedFileName = parent::getTestFiles()->getFile('report_builder', $output['name'], 'output', $output['extension']);
         if ($output['extension'] === '.json') {
             $expected = JSON::loadFile($expectedFileName);
         } else {
@@ -215,7 +196,7 @@ class ReportBuilderTest extends BaseTest
     public function provideEnumAvailableCharts()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('report_builder', 'enum_available_charts', 'input')
+            parent::getTestFiles()->getFile('report_builder', 'enum_available_charts', 'input')
         );
     }
 
@@ -253,7 +234,7 @@ class ReportBuilderTest extends BaseTest
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
 
-        $expectedFileName = $this->getTestFiles()->getFile('report_builder', $output['name'], 'output', $output['extension']);
+        $expectedFileName = parent::getTestFiles()->getFile('report_builder', $output['name'], 'output', $output['extension']);
         if ($output['extension'] === '.json') {
             $expected = JSON::loadFile($expectedFileName);
         } else {
@@ -277,7 +258,7 @@ class ReportBuilderTest extends BaseTest
     public function provideEnumReports()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('report_builder', 'enum_reports', 'input')
+            parent::getTestFiles()->getFile('report_builder', 'enum_reports', 'input')
         );
     }
 
@@ -409,7 +390,7 @@ class ReportBuilderTest extends BaseTest
     public function provideCreateReport()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('report_builder', 'create_report', 'input')
+            parent::getTestFiles()->getFile('report_builder', 'create_report', 'input')
         );
     }
 
@@ -428,7 +409,7 @@ class ReportBuilderTest extends BaseTest
         $success = $options['success'];
 
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('report_builder', $expectedFile)
+            parent::getTestFiles()->getFile('report_builder', $expectedFile)
         );
 
         if ($user !== 'pub') {
@@ -455,7 +436,7 @@ class ReportBuilderTest extends BaseTest
     public function provideCreateChart()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('report_builder', 'create_chart', 'input')
+            parent::getTestFiles()->getFile('report_builder', 'create_chart', 'input')
         );
     }
 
@@ -489,7 +470,7 @@ class ReportBuilderTest extends BaseTest
         $this->assertEquals($expectedContentType, $curlinfo['content_type']);
 
         $expected = Json::loadFile(
-            $this->getTestFiles()->getFile('report_builder', $expectedFile)
+            parent::getTestFiles()->getFile('report_builder', $expectedFile)
         );
 
         $this->assertEquals($expected, $content);
@@ -506,7 +487,7 @@ class ReportBuilderTest extends BaseTest
     public function provideEnumTemplates()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('report_builder', 'enum_templates', 'input')
+            parent::getTestFiles()->getFile('report_builder', 'enum_templates', 'input')
         );
     }
 

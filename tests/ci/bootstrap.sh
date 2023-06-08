@@ -22,6 +22,19 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
+PYTHON_SCIPY=python3-scipy
+if [ `rpm -E %{rhel}` = 7 ]; then
+    PYTHON_SCIPY=python36-scipy
+fi
+
+# Install python dependencies for the image hash comparison algorithm
+yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
+pip3 install imagehash==4.2.1
+cp $REPODIR/tests/ci/scripts/imagehash /root/bin
+
+# ensure php error logging is set to E_ALL (recommended setting for development)
+sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini
+
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true

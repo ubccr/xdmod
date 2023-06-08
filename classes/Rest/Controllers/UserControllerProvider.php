@@ -8,8 +8,9 @@ use Models\Services\Organizations;
 use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use XDUser;
 
 /**
@@ -137,10 +138,7 @@ class UserControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
 
         if ($this->canCreateToken($user)) {
-            return $app->json(array(
-                'success' => false,
-                'message' => 'Unable to retrieve current API token.'
-            ));
+            throw new NotFoundHttpException('API token not found.');
         }
 
         $tokenData = $this->getCurrentAPITokenMetaData($user);
@@ -168,10 +166,7 @@ class UserControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
 
         if (!$this->canCreateToken($user)) {
-            return $app->json(array(
-                'success' => false,
-                'message' => 'Unable to create a new token at this time.'
-            ));
+            throw new ConflictHttpException('Token already exists.');
         }
 
         return $app->json(array(
@@ -198,10 +193,7 @@ class UserControllerProvider extends BaseControllerProvider
 
         // If we can create a token then we can't really revoke it can we.
         if ($this->canCreateToken($user)) {
-            return $app->json([
-                'success' => false,
-                'message' => 'No token to revoke.'
-            ]);
+            throw new NotFoundHttpException('API token not found.');
         }
 
         // Attempt to revoke the requesting users token.
@@ -213,10 +205,7 @@ class UserControllerProvider extends BaseControllerProvider
         }
 
         // If the `revokeToken` failed for some reason then we let the user know.
-        return $app->json(array(
-            'success' => false,
-            'message' => 'Unable to revoke API token.'
-        ));
+        throw new Exception('Unable to revoke API token.');
     }
 
     /**
@@ -414,7 +403,7 @@ SQL;
             )
         );
 
-        if (count($result) != 1) {
+        if ($result != 1) {
             throw new \Exception('Unable to create a new API token.');
         }
 

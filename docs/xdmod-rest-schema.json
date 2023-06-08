@@ -30,7 +30,7 @@
             "offset": {
                 "name": "offset",
                 "in": "query",
-                "description": "The start offset for the data in the result set",
+                "description": "The starting offset for the data in the result set",
                 "schema": {
                     "type": "integer",
                     "format": "int32"
@@ -52,7 +52,8 @@
                 "description": "The data realm to query",
                 "schema": {
                     "type": "string"
-                }
+                },
+                "example": "Jobs"
             },
             "dimension": {
                 "name": "dimension",
@@ -61,6 +62,26 @@
                 "description": "The dimension to query",
                 "schema": {
                     "type": "string"
+                }
+            },
+            "start_date": {
+                "name": "start_date",
+                "in": "query",
+                "required": true,
+                "description": "Start date of requested data",
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            },
+            "end_date": {
+                "name": "end_date",
+                "in": "query",
+                "required": true,
+                "description": "End date of requested data",
+                "schema": {
+                    "type": "string",
+                    "format": "date"
                 }
             }
         },
@@ -71,8 +92,7 @@
                 "properties": {
                   "operation": {
                     "type": "string",
-                    "const": "get_data",
-                    "description": "`get_data`"
+                    "enum": [ "get_data" ]
                   },
                   "aggregation_unit": {
                     "type": "string",
@@ -80,8 +100,7 @@
                   },
                   "controller_module": {
                     "type": "string",
-                    "const": "metric_explorer",
-                    "description": "`metric_explorer`"
+                    "enum": [ "metric_explorer" ]
                   },
                   "data_series": {
                     "type": "string"
@@ -207,13 +226,11 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "const": "get_charts",
-                        "description": "`get_charts`"
+                        "enum": [ "get_charts" ]
                     },
                     "controller_module": {
                         "type": "string",
-                        "const": "user_interface",
-                        "description": "`user_interface`"
+                        "enum": [ "user_interface" ]
                     },
                     "public_user": {
                         "type": "string",
@@ -355,8 +372,7 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "const": "get_menus",
-                        "description": "`get_menus`"
+                        "enum": [ "get_menus" ]
                     },
                     "node": {
                         "type": "string",
@@ -390,8 +406,7 @@
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "const": "get_tabs",
-                        "description": "`get_tabs`"
+                        "enum": [ "get_tabs" ]
                     },
                     "public_user": {
                         "type": "boolean",
@@ -443,37 +458,174 @@
                     "success",
                     "message"
                 ]
+            },
+            "warehouse-error": {
+                "type": "object",
+                "title": "error",
+                "properties": {
+                    "success":  {
+                        "type": "boolean",
+                        "enum": [ false ]
+                    },
+                    "count": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    }
+                },
+                "required": [
+                    "success",
+                    "count",
+                    "total",
+                    "totalCount",
+                    "results",
+                    "data",
+                    "message",
+                    "code"
+                ]
+            }
+        },
+        "responses": {
+            "api-token-404": {
+                "description": "Not Found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                { "$ref": "#/components/schemas/warehouse-error" },
+                                {
+                                    "properties": {
+                                        "message": {
+                                            "enum": [ "API token not found." ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {
-            "cookie": {
+            "cookie_xdmod_token": {
                 "type": "apiKey",
                 "description": "API token via a cookie",
                 "name": "xdmod_token",
                 "in": "cookie"
             },
-            "token": {
+            "query_param_token": {
                 "type": "apiKey",
                 "description": "API token via a query parameter",
                 "name": "token",
                 "in": "query"
+            },
+            "http_bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "API token via HTTP header `Authorization: Bearer <token>`"
+            },
+            "query_param_bearer": {
+                "type": "apiKey",
+                "in": "query",
+                "name": "Bearer",
+                "description": "API token via a query parameter or POST field"
+            }
+        },
+        "examples": {
+            "empty-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "No Token Provided.",
+                    "code": 0
+                }
+            },
+            "malformed-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid token format.",
+                    "code": 0
+                }
+            },
+            "invalid-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid API token.",
+                    "code": 0
+                }
+            },
+            "expired-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "The API Token has expired.",
+                    "code": 0
+                }
             }
         }
     },
-    "security": [{
-        "cookie": []
-    }, {
-        "token": []
-    }],
+    "security": [
+        { "cookie_xdmod_token": [] },
+        { "query_param_token": [] }
+    ],
     "paths": {
         "/controllers/user_interface.php": {
             "post": {
-                "tags": [ "Usage Explorer" ],
+                "tags": [
+                    "Usage Explorer",
+                    "Data Analytics Framework"
+                ],
                 "summary": "Usage Tab Controller",
                 "deprecated": true,
                 "description": "The usage tab uses a controller style API. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
                 "security": [
-                    {}
+                    { "cookie_xdmod_token": [] },
+                    { "query_param_token": [] },
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
                 ],
                 "requestBody": {
                     "required": true,
@@ -543,17 +695,28 @@
                             }
                         }
                     }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
                 }
             }
         },
         "/controllers/metric_explorer.php": {
             "post": {
-                "tags": [ "Metric Explorer" ],
+                "tags": [
+                    "Metric Explorer",
+                    "Data Analytics Framework"
+                ],
                 "summary": "Metric Explorer Tab Controller",
                 "deprecated": true,
                 "description": "The metric explorer tab uses a controller style API for some operation. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
                 "security": [
-                    {}
+                    { "cookie_xdmod_token": [] },
+                    { "query_param_token": [] },
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
                 ],
                 "requestBody": {
                     "required": true,
@@ -567,8 +730,7 @@
                                         "properties": {
                                             "operation": {
                                                 "type": "string",
-                                                "const": "get_dw_descripter",
-                                                "description": "`get_dw_descripter`"
+                                                "enum": [ "get_dw_descripter" ]
                                             }
                                         },
                                         "required": ["operation"],
@@ -587,6 +749,11 @@
                                 }
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
                     }
                 }
             }
@@ -989,7 +1156,7 @@
                     "required": true,
                     "description": "The username of the local XDMoD user account.",
                     "schema": {
-                        "type": "text"
+                        "type": "string"
                     }
                 }, {
                     "name": "password",
@@ -997,7 +1164,7 @@
                     "required": true,
                     "description": "The password for the local XDMoD user account.",
                     "schema": {
-                        "type": "text"
+                        "type": "string"
                     }
                 }],
                 "responses": {
@@ -1084,7 +1251,10 @@
                     "name": "returnTo",
                     "description": "The location to redirect to after authentication is completed.",
                     "in": "query",
-                    "required": true
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
                 }],
                 "responses": {
                     "200": {
@@ -1571,7 +1741,7 @@
                     "required": true,
                     "description": "The identifier for the resource that has job performance data.",
                     "schema": {
-                        "type": "int"
+                        "type": "integer"
                     }
                 }, {
                     "name": "db_id",
@@ -1685,7 +1855,7 @@
                     "Authentication",
                     "Authorization"
                 ],
-                "summary": "Retrieves the API token of the currently logged in user.",
+                "summary": "Retrieve the API token of the currently logged in user",
                 "description": "",
                 "parameters": [],
                 "responses": {
@@ -1702,7 +1872,6 @@
                                         "message": {
                                             "type": "string",
                                             "enum": [
-                                                "Unable to retrieve current API token.",
                                                 "Invalid token data returned."
                                             ]
                                         },
@@ -1742,10 +1911,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
@@ -1758,7 +1929,8 @@
                             }
 
                         }
-                    }
+                    },
+                    "404": { "$ref": "api-token-404" }
                 }
             },
             "post": {
@@ -1767,7 +1939,7 @@
                     "Authentication",
                     "Authorization"
                 ],
-                "summary": "Creates a new API token for the currently logged in user.",
+                "summary": "Create a new API token for the currently logged in user",
                 "description": "",
                 "parameters": [],
                 "responses": {
@@ -1783,7 +1955,6 @@
                                         },
                                         "message": {
                                             "enum": [
-                                                "Unable to create a new token at this time.",
                                                 "Unable to create a new API token."
                                             ]
                                         },
@@ -1823,10 +1994,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": [
@@ -1840,6 +2013,25 @@
                                 }
                             }
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Token already exists." ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -1849,7 +2041,7 @@
                     "Authentication",
                     "Authorization"
                 ],
-                "summary": "Revoke the API token for the currently logged in user.",
+                "summary": "Revoke the API token for the currently logged in user",
                 "description": "",
                 "parameters": [],
                 "responses": {
@@ -1866,9 +2058,7 @@
                                         "message": {
                                             "type": "string",
                                             "enum": [
-                                                "Token successfully revoked.",
-                                                "No token to revoke.",
-                                                "Unable to revoke API token."
+                                                "Token successfully revoked."
                                             ]
                                         }
                                     }
@@ -1898,10 +2088,12 @@
                                             "type": "integer"
                                         },
                                         "results": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "data": {
-                                            "type": "array"
+                                            "type": "array",
+                                            "items": {}
                                         },
                                         "message": {
                                             "enum": [
@@ -1912,6 +2104,26 @@
                                             "type": "integer"
                                         }
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "404": { "$ref": "api-token-404" },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Unable to revoke API token." ]
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -2002,7 +2214,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }],
                 "responses": {
                     "200": {
@@ -2034,7 +2246,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }, {
                     "name": "data",
                     "in": "query",
@@ -2074,7 +2286,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }, {
                     "name": "data",
                     "in": "query",
@@ -2114,7 +2326,7 @@
                         "format": "int32"
                     }
                 }, {
-                    "$ref": "#components/parameters/realm"
+                    "$ref": "#/components/parameters/realm"
                 }],
                 "responses": {
                     "200": {
@@ -2353,7 +2565,7 @@
                 "description": "",
                 "operationId": "get-warehouse-dimensions-{dimension}-name",
                 "parameters": [{
-                    "$ref": "#components/parameters/dimension"
+                    "$ref": "#/components/parameters/dimension"
                 }],
                 "responses": {
                     "200": {
@@ -2377,9 +2589,20 @@
                 "summary": "",
                 "description": "",
                 "operationId": "get-warehouse-dimensions-{dimension}-values-{valueId}-name",
-                "parameters": [{
-                    "$ref": "#components/parameters/dimension"
-                }],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/dimension"
+                    },
+                    {
+                        "name": "valueId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The value of the corresponding dimension",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -2624,6 +2847,368 @@
                 }
             }
         },
+        "/warehouse/raw-data": {
+            "get": {
+                "tags": [
+                    "Data Warehouse",
+                    "Data Analytics Framework"
+                ],
+                "summary": "Get raw data from the data warehouse",
+                "description": "This will return rows of raw data up to a maximum number of rows. The limit on number of rows can be obtained via `GET /warehouse/raw-data/limit`.",
+                "operationId": "get-warehouse-raw-data",
+                "security": [
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
+                ],
+                "parameters": [
+                    { "$ref": "#/components/parameters/start_date" },
+                    { "$ref": "#/components/parameters/end_date" },
+                    { "$ref": "#/components/parameters/realm" },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "description": "Identifiers of fields to get",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "example": [ "Nodes", "Wall Time" ]
+                        },
+                        "explode": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "filters",
+                        "required": false,
+                        "description": "A mapping of dimension identifiers to their possible values. Results will only be included whose values for each of the given dimensions match one of the corresponding given values.",
+                        "style": "deepObject",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "x-additionalPropertiesName": "dimension identifier",
+                                "type": "string",
+                                "format": "comma-separated list"
+                            }
+                        },
+                        "example": {
+                            "fieldofscience": "177",
+                            "provider": "848,856"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "required": false,
+                        "description": "Starting row index",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "minimum": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "title": "success",
+                                    "properties": {
+                                        "success":  {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "fields": {
+                                            "type": "array",
+                                            "description": "Labels of fields returned",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "description": "Rows of raw data",
+                                            "items": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "fields",
+                                        "data"
+                                    ]
+                                },
+                                "examples": {
+                                    "success": {
+                                        "description": "Parameters: `start_date=2022-01-01&end_date=2022-01-01&realm=SUPREMM&fields=nodes,cores`",
+                                        "value": {
+                                            "success": true,
+                                            "fields": [ "Cores", "Nodes" ],
+                                            "data": [ ["1", "1"], ["5", "1"], ["2304", "24"] ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "no-start-date": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "start_date is a required parameter",
+                                            "code": 0
+                                        }
+                                    },
+                                    "no-end-date": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "end_date is a required parameter",
+                                            "code": 0
+                                        }
+                                    },
+                                    "start-date-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for start_date. Must be a(n) ISO 8601 Date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "no-realm": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "realm is a required parameter.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "end-date-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for end_date. Must be a(n) ISO 8601 Date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "end-before-start": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "End date cannot be less than start date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "invalid-realm": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid realm.",
+                                            "code": 104
+                                        }
+                                    },
+                                    "invalid-fields": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid fields specified: 'foo', 'bar'.",
+                                            "code": 104
+                                        }
+                                    },
+                                    "invalid-filter-key": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid filter key 'foo'.",
+                                            "code": 104
+                                        }
+                                    },
+                                    "negative-offset": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Offset must be non-negative.",
+                                            "code": 104
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "empty-token": {
+                                        "$ref": "#/components/examples/empty-token"
+                                    },
+                                    "malformed-token": {
+                                        "$ref": "#/components/examples/malformed-token"
+                                    },
+                                    "invalid-token": {
+                                        "$ref": "#/components/examples/invalid-token"
+                                    },
+                                    "expired-token": {
+                                        "$ref": "#/components/examples/expired-token"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/raw-data/limit": {
+            "get": {
+                "tags": [
+                    "Data Warehouse",
+                    "Data Analytics Framework"
+                ],
+                "summary": "Get the raw data response limit",
+                "description": "This gets the maximum number of rows that will be returned in a single response from `GET /warehouse/raw-data`.",
+                "operationId": "get-warehouse-raw-data-limit",
+                "security": [
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "title": "success",
+                                    "properties": {
+                                        "success":  {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "data": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "data"
+                                    ]
+                                },
+                                "example": {
+                                    "success": true,
+                                    "data": 10000
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "empty-token": {
+                                        "$ref": "#/components/examples/empty-token"
+                                    },
+                                    "malformed-token": {
+                                        "$ref": "#/components/examples/malformed-token"
+                                    },
+                                    "invalid-token": {
+                                        "$ref": "#/components/examples/invalid-token"
+                                    },
+                                    "expired-token": {
+                                        "$ref": "#/components/examples/expired-token"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "count": 0,
+                                    "total": 0,
+                                    "totalCount": 0,
+                                    "results": [],
+                                    "data": [],
+                                    "message": "Option 'rest_raw_row_limit' does not exist in section 'datawarehouse'",
+                                    "code": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/warehouse/export/realms": {
             "get": {
                 "tags": [
@@ -2642,7 +3227,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "data": {
                                             "type": "array",
@@ -2719,35 +3304,9 @@
                 "summary": "Create a data export request",
                 "operationId": "post-warehouse-export-request",
                 "parameters": [
-                    {
-                        "name": "realm",
-                        "in": "query",
-                        "required": true,
-                        "description": "Realm identifier",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "required": true,
-                        "description": "Start date of requested data",
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "required": true,
-                        "description": "End date of requested data",
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
+                    { "$ref": "#/components/parameters/realm" },
+                    { "$ref": "#/components/parameters/start_date" },
+                    { "$ref": "#/components/parameters/end_date" },
                     {
                         "name": "format",
                         "in": "query",
@@ -2773,7 +3332,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "message": {
                                             "type": "string"
@@ -2840,7 +3399,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "data": {
                                             "type": "array",
@@ -2865,17 +3424,11 @@
                                                     },
                                                     "export_succeeded": {
                                                         "description": "Did the export succeed?",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "integer",
-                                                                "format": "int32",
-                                                                "minimum": 0,
-                                                                "maximum": 1
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "minimum": 0,
+                                                        "maximum": 1
                                                     },
                                                     "export_expired": {
                                                         "description": "Is the export expired?",
@@ -2886,27 +3439,15 @@
                                                     },
                                                     "export_expires_datetime": {
                                                         "description": "Data export expiration date",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "string",
-                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                                                     },
                                                     "export_created_datetime": {
                                                         "description": "Data export creation date",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "string",
-                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                                                     },
                                                     "export_file_format": {
                                                         "description": "Data export file type",
@@ -2922,15 +3463,9 @@
                                                     },
                                                     "downloaded_datetime": {
                                                         "description": "Data export (first) download date",
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "null"
-                                                            },
-                                                            {
-                                                                "type": "string",
-                                                                "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
-                                                            }
-                                                        ]
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                                                     },
                                                     "state": {
                                                         "description": "Data export state",
@@ -2999,7 +3534,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "message": {
                                             "type": "string"
@@ -3140,7 +3675,7 @@
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "const": true
+                                            "enum": [ true ]
                                         },
                                         "message": {
                                             "type": "string"

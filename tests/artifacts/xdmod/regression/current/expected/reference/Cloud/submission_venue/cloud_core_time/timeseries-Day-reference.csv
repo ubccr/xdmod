@@ -1,11 +1,11 @@
 title
-"Core Hours: Total: by Submission Venue"
+"CPU Hours: Total: by Submission Venue"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[OpenStack API] Core Hours: Total"
+Day,"[OpenStack API] CPU Hours: Total"
 2018-04-18,52.1172
 2018-04-19,138.1142
 2018-04-20,97.0664
