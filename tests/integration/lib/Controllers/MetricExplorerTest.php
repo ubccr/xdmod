@@ -73,6 +73,68 @@ class MetricExplorerTest extends TokenAuthTest
     }
 
     /**
+     * Check for correct handling of invalid or missing input parameters to the
+     * metric explorer charting controller
+     */
+    public function testInvalidRawDataRequests() {
+
+        $params = array(
+            'show_title' => 'y',
+            'timeseries' => 'y',
+            'aggregation_unit' => 'Auto',
+            'start_date' => '2013-06-08',
+            'end_date' => '2023-06-08',
+            'global_filters' => '%7B%22data%22%3A%5B%7B%22id%22%3A%22resource%3D2%22%2C%22value_id%22%3A%222%22%2C%22value_name%22%3A%22mortorq%22%2C%22dimension_id%22%3A%22resource%22%2C%22realms%22%3A%5B%22Cloud%22%2C%22Jobs%22%2C%22Storage%22%5D%2C%22checked%22%3Atrue%7D%5D%7D',
+            'title' => 'untitled query 1',
+            'show_filters' => 'true',
+            'show_warnings' => 'true',
+            'show_remainder' => 'false',
+            'start' => '0',
+            'limit' => '20',
+            'timeframe_label' => '10 year',
+            'operation' => 'get_rawdata',
+            'data_series' => '%5B%7B%22group_by%22%3A%22resource%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A-755536863343043%7D%5D',
+            'swap_xy' => 'false',
+            'share_y_axis' => 'false',
+            'hide_tooltip' => 'false',
+            'show_guide_lines' => 'y',
+            'showContextMenu' => 'y',
+            'scale' => '1',
+            'format' => 'jsonstore',
+            'width' => '1428',
+            'height' => '525',
+            'legend_type' => 'bottom_center',
+            'x_axis' => '%7B%7D',
+            'y_axis' => '%7B%7D',
+            'legend' => '%7B%7D',
+            'defaultDatasetConfig' => '%7B%7D',
+            'controller_module' => 'metric_explorer',
+            'inline' => 'n',
+            'datapoint' => '1475280000000',
+            'datasetId' => '-755536863343043'
+        );
+
+        $this->helper->authenticate('cd');
+
+        unset($params['start_date']);
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('missing required start_date parameter', $response[0]['message']);
+
+        $params['start_date'] = '2016-12-29';
+        unset($params['end_date']);
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('missing required end_date parameter', $response[0]['message']);
+
+        $params['end_date'] = '2016-12-29';
+        $params['data_series'] = '[object Object]';
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('Invalid data_series specified', $response[0]['message']);
+    }
+
+    /**
      * @dataProvider provideTokenAuthTestData
      */
     public function testGetDwDescripterTokenAuth($role, $tokenType) {
