@@ -3,7 +3,7 @@ const config: PlaywrightTestConfig = {
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     timeout: 50000,
-    workers: 9,
+    workers: 5,
     use: {
         trace: 'on-first-retry',
         video: 'on-first-retry',
