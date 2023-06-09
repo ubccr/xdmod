@@ -96,6 +96,10 @@ function getDataSeries()
 
     $jret = json_decode($ret);
 
+    if (!is_array($jret)) {
+        throw new Exception('Invalid data_series specified');
+    }
+
     foreach ($jret as &$y) {
 
         // Set values of new attribs for backward compatibility.
