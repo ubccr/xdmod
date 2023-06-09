@@ -47,8 +47,6 @@ fi
 
 if [ "$4" = "--sso" ];
 then
-    # change ip_address to localhost for sso to work and not conflict for Playwright
-    # implies possible need to rerun without adjustment for Playwright tests
     pkill node
     export IP_ADDRESS=localhost
     pushd /tmp/saml-idp/
