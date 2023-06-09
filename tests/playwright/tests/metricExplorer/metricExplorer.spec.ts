@@ -26,8 +26,6 @@ test.describe('Metric Explorer', async () => {
             contextMenu: {
                 open: async () => {
                     await test.step('Open Chart Context Menu', async () => {
-                        //  TODO: Find a better way to open this.  Currently there is a chance
-                        //  that the click will open the dataseries menu
                         await page.click('#hc-panelmetric_explorer');
                     });
                 },

@@ -15,7 +15,6 @@ const selectors= {
   container: '//div[contains(@class, "x-window") and contains(@style, "visibility: visible")]',
   header: '//div[contains(@class, "x-window")]//div//div//div//div[contains(@class,"x-window-header x-unselectable x-panel-icon ")]//span',
     floatlayer: '//div[@class="x-menu x-menu-floating x-layer"]',
-    //floatlayer: '//div[contains(@class, "x-menu x-menu-floating x-layer") and contains(@style,"visibility: visible")]',
   note: '.x-window.x-notification',
   role: '//span[@id="profile_editor_most_privileged_role"]',
   logoutLink: '//a[@id="logout_link"]',

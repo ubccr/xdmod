@@ -20,9 +20,6 @@ class About extends BasePage{
         await this.page.click(check);
         await this.page.waitForLoadState();
         await expect(this.page.locator(selectors.container)).toBeVisible();
-        //Copied from js version:
-        //TODO: Determine Pass case ffor this without using screenshot
-        //browser.takeScreenshot(name.replace(' '. ''), this.center, "xdmod");
     }
 
     async checkRoadMap(){

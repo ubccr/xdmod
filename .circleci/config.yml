@@ -54,7 +54,7 @@ jobs:
           command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
       - run:
           name: Put the updated httpd conf file in place
-          command: docker cp ~/project/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
+          command: docker cp ~/project/tests/playwright/config/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
       - run:
           name: Restart XDMoD's services
           command: docker exec xdmod /root/bin/services restart
@@ -76,8 +76,6 @@ jobs:
       - run:
           name: Run on fail status
           command: |
-            docker exec playwright ls
-            docker exec playwright ls xdmod
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
           when: on_fail
       - store_artifacts:

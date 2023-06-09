@@ -1,3 +1,6 @@
+/**
+ * Metric Explorer test class
+ */
 import {expect, Locator, Page} from '@playwright/test';
 import {BasePage} from "./base.page";
 import selectors from './metricExplorer.selectors';
@@ -58,6 +61,13 @@ class MetricExplorer extends BasePage{
     readonly newTitle:string =  '<em>"& (untitled query) 2 &"</em>';
     readonly possible:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
+    /**
+     * Create a new Chart based on a given dataset and plot type
+     *
+     * @param {String} chartName    name for new chart
+     * @param {String} datasetType  dataset type for new chart
+     * @param {String} plotType     plot type for new chart
+     */
     async createNewChart(chartName, datasetType, plotType){
         await this.page.click(this.toolbar.buttonByName('New Chart'));
         await expect(this.page.locator(this.newChart.topMenuByText(datasetType))).toBeVisible();
@@ -72,11 +82,22 @@ class MetricExplorer extends BasePage{
         await expect(this.page.locator(this.newChart.modalDialog.noDataMessage)).toBeVisible();
         await expect(this.page.locator(this.mask)).toBeHidden();
     }
+
+    /**
+     * Waits for catalog container and collapse button to be visible
+     */
     async waitForLoaded() {
         await expect(this.containerLocator).toBeVisible();
         await expect(this.catalogContainerLocator).toBeVisible();
         await expect(this.collapseButtonLocator).toBeVisible();
     }
+
+    /**
+     * Sets the date of a chart
+     *
+     * @param {String} start    the start date for the chart
+     * @param {String} end      the end date for the chart
+     */
     async setDateRange(start, end) {
         await this.clickSelector(this.startDate);
         await this.page.fill(this.startDate, start);
@@ -86,6 +107,14 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.toolbar.buttonByName('Refresh'));
         await this.page.locator(this.mask).isHidden();
     }
+
+    /**
+     * Adds data from catalog option
+     *
+     * @param {String} realm        the realm of data source
+     * @param {String} statistic    the category name under the realm
+     * @param {String} groupby      the name of the group filter for the data
+     */
     async addDataViaCatalog(realm, statistic, groupby){
         await expect(this.catalogContainerLocator).toBeVisible();
         await this.page.click(this.catalog.rootNodeByName(realm));
@@ -93,10 +122,20 @@ class MetricExplorer extends BasePage{
         await expect(this.catalogChartContainerLocator).toBeVisible();
         await this.page.click(this.catalogChartMenu.itemByName(groupby));
     }
+
+    /**
+     * Clicks on the save button
+     */
     async saveChanges() {
         await this.page.click(this.toolbar.buttonByName('Save'));
         await this.page.click(this.toolbar.saveChanges);
     }
+
+    /**
+     * Selects a filter from the toolbar
+     *
+     * @param {String} filter   name of filter option in filter menu
+     */
     async addFiltersFromToolbar(filter){
         await this.clickSelector(this.toolbar.buttonByName('Add Filter'));
         await this.page.click(this.filterMenu.addFilterMenuOption(filter));
@@ -110,6 +149,12 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.okButton);
         await expect(this.page.locator(this.subtitle)).toBeVisible();
     }
+
+    /**
+     * Selects a filter by name from toolbar
+     *
+     * @param {String} name     Name of intended filter to edit
+     */
     async editFiltersFromToolbar(name){
         for (let i = 0; i < 100; i++){
             if (await this.page.isHidden(this.grid)){
@@ -125,6 +170,10 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.apply);
         await expect(this.page.locator(this.chart.subtitleName(name))).toBeHidden();
     }
+
+    /**
+     * Select filters from toolbar menu and then cancel
+     */
     async cancelFiltersFromToolbar() {
         await this.clickLogo();
         await this.page.click(this.toolbar.buttonByName('Filters'));
@@ -139,11 +188,22 @@ class MetricExplorer extends BasePage{
         await expect(this.page.locator(this.checkbox).length).toEqual(checkboxes.length);
         await this.clickLogo();
     }
+    
+    /**
+     * Select first data point in chart and open data information
+     */
     async openDataSeriesDefinitionFromDataPoint() {
         await this.clickLogo();
         await this.clickFirstDataPoint();
         await this.page.click(this.chartContextMenu.menuItemByText('Data Series:', 'Edit Dataset'));
     }
+
+    /**
+     * Add a name from filter list from a data series of a data point
+     *
+     * @param {String} filter   name of category filter from list of filters
+     * @param {String} name     name of filter to add
+     */
     async addFiltersFromDataSeriesDefinition(filter, name) {
         await this.clickLogo();
         await this.openDataSeriesDefinitionFromDataPoint();
@@ -155,6 +215,12 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.dataSeriesDef.addButton);
         await expect(this.page.locator(this.chart.legendContent(name))).toBeVisible();
     }
+
+    /**
+     * Edit filter from data series from data point
+     *
+     * @param {String} name     name of filter from list of filters
+     */
     async editFiltersFromDataSeriesDefinition(name){
         await this.clickLogo();
         await this.openDataSeriesDefinitionFromDataPoint();
@@ -165,6 +231,10 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.dataSeriesDef.addButton);
         await this.page.locator(this.chart.legendContent(name)).waitFor({state:'detached'});
     }
+
+    /**
+     * Select filter from data series from data point and then cancel
+     */
     async cancelFiltersFromDataSeriesDefinition() {
         await this.clickLogo();
         await this.openDataSeriesDefinitionFromDataPoint();
@@ -183,10 +253,21 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.dataSeriesDef.header());
         await this.page.click(this.dataSeriesDef.addButton);
     }
+
+    /**
+     * Refresh the page
+     */
     async clear() {
         await this.page.reload();
         await this.page.isVisible(this.logoutLink);
     }
+
+    /**
+     * Helper function to generate a unique title for chart
+     *
+     * @param {Number} size         length of resulting title
+     * @return {String} result      a randomly generated string for a title
+     */
     generateTitle(size) {
         var result = '';
         for (var i = 0; i < size; i++) {
@@ -194,11 +275,18 @@ class MetricExplorer extends BasePage{
         }
         return result;
     }
+
+    /**
+     * Set the display type to pie for the chart
+     */
     async setToPie() {
         await this.page.evaluate("return document.getElementsByName('display_type')[0];").click();
         await this.page.evaluate("return document.querySelector('div.x-layer.x-combo-list[style*=\"visibility: visible\"] div.x-combo-list-inner div.x-combo-list-item:last-child');").click();
     }
 
+    /**
+     * Ensure that the error received/displayed is as expected
+     */
     async verifyError() {
         var invalidChart = await this.page.evaluate("return document.querySelectorAll('div.x-window.x-window-plain.x-window-dlg[style*=\"visibility: visible\"] span.x-window-header-text')[0];").textContent();
         await expect(invalidChart).toEqual('Invalid Chart Display Type');
@@ -207,6 +295,9 @@ class MetricExplorer extends BasePage{
         await expect(errorText).toContainText('Please change the dataset or display type.');
     }
 
+    /**
+     * Select options and check cursor position to check pressing the up arrow key 
+     */
     async arrowKeys() {
         await this.page.locator(this.optionsButton).waitFor({state:'visible'}).click();
         await this.page.locator(this.optionsTitle).waitFor({state:'visible'}).click();
@@ -219,6 +310,13 @@ class MetricExplorer extends BasePage{
         await expect(newPosition.value).toEqual(0, 'Cursor Position not at begining');
         await this.page.click(this.optionsButton);
     }
+
+    /**
+     * Add data from a specificed name under Jobs
+     *
+     * @param {String} maskName     selector for mask to ensure hidden status
+     * @param {String} n            name of type for data to be grouped by
+     */
     async addDataViaMenu(maskName, n) {
         await this.page.locator(maskName).isHidden();
         await this.catalogContainerLocator.isVisible();
@@ -227,10 +325,20 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.toolbar.addDataGroupBy(n));
         await expect(this.page.locator(this.dataSeriesDef.dialogBox)).toBeVisible();
     }
+
+    /**
+     * Select add Button from data series
+     */
     async addDataSeriesByDefinition() {
         await this.page.click(this.dataSeriesDef.addButton);
         await expect(this.page.locator(this.dataSeriesDef.dialogBox)).toBeHidden();
     }
+
+    /**
+     * Load an existing chart based on a given name
+     *
+     * @param {String} name     title of chart
+     */
     async loadExistingChartByName(name) {
         await this.collapseButtonLocator.waitFor({state:'visible'});
         await expect(this.collapseButtonLocator).toBeVisible();
@@ -245,6 +353,15 @@ class MetricExplorer extends BasePage{
         await this.page.locator(this.catalog.expandButton).waitFor({state:'visible'});
         await expect(this.page.locator(this.catalog.expandButton)).toBeVisible();
     }
+
+    /**
+     * Check if the chart matches a title, y-axis, legend, and its validity
+     *
+     * @param {String} chartTitle       name to match the chart to
+     * @param {String} yAxisLabel       name to match the y-axis label to
+     * @param {String} legend           name to match the legend to
+     * @param {Boolean} isValidChart    determine if the chart is valid or not
+     */
     async checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         await this.clickLogo();
         await this.page.locator(this.chart.titleByText(chartTitle)).waitFor({state:'visible'});
@@ -291,18 +408,34 @@ class MetricExplorer extends BasePage{
             }
         }
     }
+
+    /**
+     * Set the name of the chart from the options menu
+     *
+     * @param {String} title    name of chart to set to
+     */
     async setTitleWithOptionsMenu(title) {
         await this.page.click(this.optionsButton);
         await expect(this.page.locator(this.optionsTitle)).toBeVisible();
         await this.page.fill(this.optionsTitle, '');
         await this.page.fill(this.optionsTitle, title);
     }
+
+    /**
+     * Check if the name of the chart matches a given title
+     *
+     * @param {String} title    name to check if chart matches
+     */
     async verifyHighChartsTitle(title) {
         var execReturn = await this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title + '").textContent);');
         await expect(execReturn._status).toEqual(0);
         await expect(typeof(execReturn.value)).toEqual('string');
         await expect(execReturn.value).toEqual(title);
     }
+
+    /**
+     * Check if the chart matches the readonly newTitle variable
+     */
     async verifyEditChartTitle() {
         await this.page.click(this.chart.title);
         await expect(this.page.isVisible(this.chart.titleInput));
@@ -311,11 +444,22 @@ class MetricExplorer extends BasePage{
         await expect(titleValue).toEqual(this.newTitle);
         await this.page.click(this.chart.titleOkButton);
     }
+
+    /**
+     * Check if the instructions when there is no data matches
+     * the instructions helper class
+     */
     async verifyInstructions() {
         await this.page.locator(this.newChart.modalDialog.noDataMessage).waitFor({state:'visible'});
         const boo = await instructions(this.page, 'metricExplorer', this.container);
         await expect(boo).toBeTruthy();
     }
+
+    /**
+     * Clears and sets the title of the chart
+     *
+     * @param {String} title    name of chart to set title to
+     */
     async setChartTitleViaChart(title) {
         await this.page.click(this.chart.title);
         await expect(this.page.locator(this.chart.titleInput)).isVisible();
@@ -323,10 +467,18 @@ class MetricExplorer extends BasePage{
         await this.page.fill(this.chart.titleInput, title);
         await this.page.click(this.chart.titleOkButton);
     }
+
+    /**
+     * Sets group by option to resource
+     */
     async setGroupByToResource() {
         await this.page.click(this.dataInput);
         await this.page.evaluate("return document.querySelectorAll('div.x-layer.x-combo-list[style*=\"visibility: visible\"] .x-combo-list-item:nth-child(10)')[0];").click();
     }
+
+    /**
+     * Swap the axes of the chart
+     */
     async axisSwap() {
         var axisFirstChildText = '';
         var axisSecondChildText = '';
@@ -337,6 +489,10 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.optionsButton);
         await expect(axisFirstChildText[1]).not.toEqual(axisSecondChildText[1]);
     }
+
+    /**
+     * Update title of chart in options
+     */
     async chartTitleInOptionsUpdated() {
         await this.page.click(this.optionsButton);
         await expect(this.page.locator(this.optionsTitle)).toBeVisible();
@@ -350,6 +506,10 @@ class MetricExplorer extends BasePage{
         await expect(optionsTitle2.value).toEqual(this.newTitle);
         await this.page.click(this.optionsButton);
     }
+
+    /**
+     * Attempt to delete chart
+     */
     async attemptDeleteScratchpad() {
         const title = this.page.locator(this.chart.title).textContent();
         await expect(this.page.locator(this.toolbar.buttonByName('Delete'))).toBeVisible();
@@ -363,10 +523,20 @@ class MetricExplorer extends BasePage{
         await this.page.locator(this.load.dialog).waitFor({state:'visible'});
         await expect(this.page.locator(this.load.chartByName(title)).waitFor({state:'detached'})).toBeTruthy();
     }
+
+    /**
+     * Load a chart based on given chart number
+     *
+     * @param {Number} chartNumber      chart to load based on number
+     */
     async actionLoadChart(chartNumber) {
         await this.page.click(this.load.button());
         await this.page.click(this.load.chartNum(chartNumber));
     }
+
+    /**
+     * Add data from "Jobs", grouped by "CPU Hours: Per Job"
+     */
     async addDataViaToolbar() {
         await this.page.click(this.addDataButton);
         await this.page.locator(this.toolbar.addDataMenu).waitFor({state:'visible'});
@@ -375,6 +545,10 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.toolbar.addDataGroupBy('CPU Hours: Per Job'));
         await this.addDataSeriesByDefinition();
     }
+
+    /**
+     * Add data from "CPU Hours: Total" under "Jobs"
+     */
     async genericStartingPoint() {
         await this.page.click(this.addDataButton);
         // Click on Jobs (5 on original site)
@@ -383,6 +557,12 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.addDataSecondLevelChild);
         await this.addDataSeriesByDefinition();
     }
+
+    /**
+     * Check if the chart title was correctly changed based on a given title
+     *
+     * @param {String} largeTitle   name for chart title to match to
+     */
     async confirmChartTitleChange(largeTitle) {
         var titleChange = await this.page.evaluate('return document.querySelector("' + this.chart.title + '").textContent;');
         await expect(titleChange._status).toEqual(0);
@@ -390,6 +570,9 @@ class MetricExplorer extends BasePage{
         await expect(titleChange.value).toEqual(largeTitle);
     }
 
+    /**
+     * Switch chart options to aggregate
+     */
     async switchToAggregate() {
         await this.page.click(this.optionsButton);
         await this.page.click(this.optionsAggregate);
@@ -398,12 +581,20 @@ class MetricExplorer extends BasePage{
         await expect(this.page.locator(this.mask)).toBeHidden();
     }
 
+    /**
+     * Undo Aggregate option from chart
+     *
+     * @param {String} container    selector for Metric Explorer page
+     */
     async undoAggregateOrTrendLine(container) {
         await this.page.click(this.undo);
         // The mouse stays and causes a hover, lets move the mouse somewhere else
         await this.clickLogo();
     }
 
+    /**
+     * Click on the first data point
+     */
     async clickFirstDataPoint() {
         var elems = await this.page.locator(this.chart.seriesMarkers(0));
         // Data points are returned in reverse order.
@@ -416,12 +607,18 @@ class MetricExplorer extends BasePage{
 
     /**
      * Best effort to try to wait until the load mask has been and gone.
+     * Then click on a given selector
+     *
+     * @param {String} selector     Selector to wait for and click
      */
     async clickSelector(selector) {
         await expect(this.page.locator(selector)).toBeVisible();
         await this.page.click(selector, {delay:250});
     }
 
+    /**
+     * Click on the page's logo
+     */
     async clickLogo() {
         await this.clickSelector(this.logo);
     }
