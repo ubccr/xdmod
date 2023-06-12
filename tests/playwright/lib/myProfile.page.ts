@@ -1,7 +1,7 @@
 import {BasePage} from "./base.page";
 import selectors from './myProfile.selectors'
 
-class myProfile extends BasePage{
+class MyProfile extends BasePage{
     static readonly selectors = selectors;
     
     static readonly toolbarButton = this.selectors.buttons.toolbar;
@@ -17,7 +17,7 @@ class myProfile extends BasePage{
      * @returns {string}
      */
     async tab(text) {
-        return myProfile.tabs.byText(text);
+        return MyProfile.tabs.byText(text);
     }
 
     /**
@@ -28,7 +28,7 @@ class myProfile extends BasePage{
      * @returns {string}
      */
     async button(name) {
-      return myProfile.general.generalName(name);
+      return MyProfile.general.generalName(name);
     }
 }
-export default myProfile;
+export default MyProfile;

@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from "../../lib/login.page";
-import myProfile from '../../lib/myProfile.page';
-let selectors = myProfile.selectors;
+import MyProfile from '../../lib/myProfile.page';
+let selectors = MyProfile.selectors;
 import testing from  '../../../ci/testing.json';
 import artifacts from "../helpers/artifacts";
 import globalConfig from '../../playwright.config';
@@ -18,9 +18,9 @@ test.describe('My Profile Tests', async () => {
                 const loginPage = new LoginPage(page, baseUrl, page.sso);
                 await loginPage.login(roles[role].username, roles[role].password, (roles[role].givenname + " " + roles[role].surname));
                 await test.step('Click the `My Profile` button', async () => {
-                    await page.isVisible(myProfile.toolbarButton);
-                    await page.click(myProfile.toolbarButton);
-                    await page.isVisible(myProfile.container);
+                    await page.isVisible(MyProfile.toolbarButton);
+                    await page.click(MyProfile.toolbarButton);
+                    await page.isVisible(MyProfile.container);
                 });
                 
                 await test.step('Check User Information', async () => {
@@ -63,13 +63,13 @@ test.describe('My Profile Tests', async () => {
                         await expect(computed).toEqual(expectedValue);
                     });
                     await test.step('Click the `Close` button', async () => {
-                        const profile = new myProfile(page, page.baseUrl);
+                        const profile = new MyProfile(page, page.baseUrl);
                         let closeButton = await profile.button(selectors.buttons.close);
 
                         await page.isVisible(closeButton);
                         await page.waitForLoadState();
                         await page.click(closeButton);
-                        await page.isHidden(myProfile.container);
+                        await page.isHidden(MyProfile.container);
                     });
                 });
             });
