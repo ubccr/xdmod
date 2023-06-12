@@ -601,7 +601,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             array(
                 'success' => true,
                 'action' => $action,
-                'total' => count($history),
                 'results' => $result
             ),
             200
