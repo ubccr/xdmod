@@ -8,8 +8,8 @@ services:
         networks:
             - testing
         volumes:
-            - ../xdmod/tests/playwright/config/xdmod.conf:/etc/httpd/conf.d/xdmod.conf
-            - ../xdmod:/root/src/github.com/ubccr/xdmod
+            - ./config/xdmod.conf:/etc/httpd/conf.d/xdmod.conf
+            - ../../../xdmod:/root/src/github.com/ubccr/xdmod
         shm_size: 2g
         ports:
             - 9006:443
@@ -30,7 +30,7 @@ services:
         hostname: playwright
         container_name: playwright
         volumes:
-            - ../xdmod:/xdmod
+            - ../../../xdmod:/xdmod
         networks:
             - testing
         stdin_open: true
