@@ -1,4 +1,4 @@
-import {expect, Locator, Page} from '@playwright/test';
+import {expect} from '@playwright/test';
 import XDMoD from './xdmod.page';
 import {BasePage} from "./base.page";
 import selectors from './usageTab.selectors'
@@ -45,7 +45,7 @@ class Usage extends BasePage{
         // The chart automatically refreshes after a new duration is
         // selected, but the menu remains open. Clicking the refresh
         // button will close the menu.
-        this.refresh();
+        await this.refresh();
     }
 
     /**
@@ -53,7 +53,7 @@ class Usage extends BasePage{
      *
      * @param {String} date Start date.
      */
-    async setStartDate(date:String){
+    async setStartDate(date:string){
         await this.startFieldLocator.fill(date);
     }
 
@@ -62,7 +62,7 @@ class Usage extends BasePage{
      *
      * @param {String} date End date.
      */
-    async setEndDate(date:String){
+    async setEndDate(date:string){
         await this.endFieldLocator.fill(date);
     }
 
@@ -164,7 +164,8 @@ class Usage extends BasePage{
      * @param {String} childName The name of the child tree node.
      */
     async selectChildTreeNode(topName, childName){
-        if (!this.isTreeNodeExpanded(topName)){
+        const check = await this.isTreeNodeExpanded(topName);
+        if (!check){
             await this.expandTreeNode(topName);
         }
         await this.page.locator(selectors.treeNodeByPath(topName, childName)).click();
@@ -177,7 +178,7 @@ class Usage extends BasePage{
      * @returns {boolean}
      */
     async toolbarMenuItemIsEnabled(display){
-        var item = selectors.displayMenuItemByText(display);
+        const item = selectors.displayMenuItemByText(display);
         await this.page.locator(item).isVisible();
         const itemClass = await this.page.getAttribute(item, 'class');
         const itemIsDisabled = itemClass.includes('x-item-disabled');

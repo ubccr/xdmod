@@ -19,7 +19,7 @@ function classContains(className) {
 }
 
 import XDMoD from './xdmod.page';
-import {expect, Locator, Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 import selectors from './reportGenerator.selectors'
 
 /**
@@ -634,8 +634,8 @@ export class ReportGenerator {
     async getAvailableCharts() {
         await this.waitForAvailableChartsPanelVisible();
         const selector = this.selectors.availableCharts.chartList.rows();
-        var elemCount = this.page.$(selector).length;
-        var lastCount = -1;
+        let elemCount = this.page.$(selector).length;
+        let lastCount = -1;
         while (elemCount !== lastCount) {
             lastCount = elemCount;
             await this.page.waitForTimeout(100);
@@ -1451,7 +1451,7 @@ export class ReportGenerator {
         const first = await this.getIncludedCharts();
         const chartCount = first.length;
         await this.page.click(this.selectors.removeSelectedCharts.yesButton());
-        this.waitForRemoveSelectedChartsWindowNotVisible();
+        await this.waitForRemoveSelectedChartsWindowNotVisible();
         // There is no visible indicator that the charts are being
         // updated, so wait for the number of rows to change.
         await this.page.waitForFunction(async () => chartCount !== (await this.getIncludedCharts()).length);
@@ -1562,7 +1562,7 @@ export class ReportGenerator {
     }
 
     async getCharts(user, report_template_index, options) {
-        var charts = expected[user].report_templates[report_template_index].charts;
+        let charts = expected[user].report_templates[report_template_index].charts;
         await charts.forEach(function (chart, i) {
             if (chart.startDate in options) {
                 charts[i].startDate = options[chart.startDate];

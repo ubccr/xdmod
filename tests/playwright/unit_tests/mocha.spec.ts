@@ -1,13 +1,12 @@
-import {test, expect, Page} from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import fs from 'fs';
 import selectors from '../lib/mocha.selectors';
 
 test.describe('Mocha Tests', async() => {
-    const data = [];
     const fileName = 'stats.md';
     test('All Pass', async({page}) => {
         await page.goto(selectors.index);
-        var total = 0;
+        let total = 0;
         let values = '';
         for (let i = 0; i < 20; i++) {
             await test.step('Check initial passes/failures', async() => {
@@ -57,7 +56,7 @@ test.describe('Mocha Tests', async() => {
         ];
         await page.goto(selectors.index);
         for (const task of changeStack){
-            var subheader;
+            let subheader;
             if (task == 'add some changes'){
                 subheader = 'Auto commit';
             } else if (task == 'linear push pop'|| task == 'save state'){

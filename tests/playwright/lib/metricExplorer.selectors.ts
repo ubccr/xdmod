@@ -36,7 +36,7 @@ const selectors = {
         },
         firstSaved: '.x-menu-floating:not(.x-hide-offsets) .x-grid3-body .x-grid3-row-first',
         chartNum: function meChartByIndex(number) {
-            var mynumber = number + 1;
+            const mynumber = number + 1;
             return '.x-menu-floating:not(.x-hide-offsets) .x-grid3-body > div:nth-child(' + mynumber + ')';
         },
         dialog: '//div[contains(@class,"x-grid3-header-inner")]//div[contains(@class,"x-grid3-hd-name") and text() = "Chart Name"]/ancestor::node()[8]',

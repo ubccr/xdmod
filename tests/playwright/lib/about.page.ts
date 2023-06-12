@@ -1,4 +1,4 @@
-import {expect, Locator, Page} from '@playwright/test';
+import {expect} from '@playwright/test';
 import {BasePage} from "./base.page";
 import selectors from "./about.selectors";
 
@@ -12,7 +12,7 @@ class About extends BasePage{
     readonly lastTabLocator = this.page.locator(selectors.last_tab);
 
     async checkTab(name){
-        var check = await selectors.navEntryPath(name);
+        let check = selectors.navEntryPath(name);
         if (name == 'XDMoD'){
             check = '(' + check + ')[1]';
         }
@@ -23,8 +23,8 @@ class About extends BasePage{
     }
 
     async checkRoadMap(){
-        await expect(this.page.locator(await selectors.navEntryPath('Roadmap'))).toBeVisible();
-        await this.page.locator(await selectors.navEntryPath('Roadmap')).click();
+        await expect(this.page.locator(selectors.navEntryPath('Roadmap'))).toBeVisible();
+        await this.page.locator(selectors.navEntryPath('Roadmap')).click();
         await expect(this.page.locator(this.roadMapFrame)).toBeVisible();
         await this.page.locator(this.roadMapFrame, async function (err, result){
             await expect(err).toEqual(undefined);

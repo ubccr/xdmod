@@ -4,10 +4,10 @@ import Usage from '../../lib/usageTab.page';
 import {MyReportsRow, AvailableChart, IncludedChart, ReportGenerator} from '../../lib/reportGenerator.page';
 import artifacts from "../helpers/artifacts";
 const expected = artifacts.getArtifact('reportGenerator');
-var XDMOD_REALMS = process.env.XDMOD_REALMS;
+let XDMOD_REALMS = process.env.XDMOD_REALMS;
 import globalConfig from '../../playwright.config';
 import testing from  '../../../ci/testing.json';
-var roles = testing.role;
+let roles = testing.role;
 
 test.describe('Report Generator', async () => {
     // These dates correspond to the dates of the test job data.
@@ -21,13 +21,13 @@ test.describe('Report Generator', async () => {
     const previousMonth = new Date();
     previousMonth.setDate(1);
     previousMonth.setMonth(previousMonth.getMonth() - 1);
-    const previousMonthStartDate = previousMonth.toISOString().substr(0, 10);
+    const previousMonthStartDate = previousMonth.toISOString().substring(0, 10);
 
     // Setting the date to day "0" of a month will result in the last
     // day of the previous month.
     previousMonth.setMonth(previousMonth.getMonth() + 1);
     previousMonth.setDate(0);
-    const previousMonthEndDate = previousMonth.toISOString().substr(0, 10);
+    const previousMonthEndDate = previousMonth.toISOString().substring(0, 10);
 
     // Calculate start and end dates of previous quarter.
     const previousQuarter = new Date();
@@ -35,10 +35,10 @@ test.describe('Report Generator', async () => {
     const currentMonth = previousQuarter.getMonth();
     const monthModThree = currentMonth % 3;
     previousQuarter.setMonth(currentMonth - 3 - monthModThree);
-    const previousQuarterStartDate = previousQuarter.toISOString().substr(0, 10);
+    const previousQuarterStartDate = previousQuarter.toISOString().substring(0, 10);
     previousQuarter.setMonth(previousQuarter.getMonth() + 3);
     previousQuarter.setDate(0);
-    const previousQuarterEndDate = previousQuarter.toISOString().substr(0, 10);
+    const previousQuarterEndDate = previousQuarter.toISOString().substring(0, 10);
 
     // Calculate start and end dates of previous year.
     const previousYearStartDate = (currentDate.getFullYear() - 1) + '-01-01';
@@ -46,7 +46,7 @@ test.describe('Report Generator', async () => {
 
     // Calculate year-to-date start and end dates.
     const yearToDateStartDate = currentDate.getFullYear() + '-01-01';
-    const yearToDateEndDate = currentDate.toISOString().substr(0, 10);
+    const yearToDateEndDate = currentDate.toISOString().substring(0, 10);
 
     // Descriptive text displayed in empty fields of a newly created
     // report.
@@ -257,7 +257,6 @@ test.describe('Report Generator', async () => {
     test('Normal user default report generator state', async ({page}) => {
         //Generate pages
         const reportGeneratorPage = new ReportGenerator(page);
-        const usagePage = new Usage(page, page.baseUrl);
         let baseUrl = globalConfig.use.baseURL;
         const loginPage = new LoginPage(page, baseUrl, page.sso);
         await loginPage.login(roles['usr'].username, roles['usr'].password, (roles['usr'].givenname + " " + roles['usr'].surname));
@@ -282,13 +281,12 @@ test.describe('Report Generator', async () => {
         });
     });
 
-    // TODO: Add tests for storage and cloud realms
+    // There are no tests for storage and cloud realms currently
     if (XDMOD_REALMS.includes('jobs')) {
         // PI
         test('Principal investigator default report generator state', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
-            const usagePage = new Usage(page, page.baseUrl);
             let baseUrl = globalConfig.use.baseURL;
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['pi'].username, roles['pi'].password, (roles['pi'].givenname + " " + roles['pi'].surname));
@@ -318,7 +316,6 @@ test.describe('Report Generator', async () => {
     test('Center staff default report generator state', async ({page}) => {
         //Generate pages
         const reportGeneratorPage = new ReportGenerator(page);
-        const usagePage = new Usage(page, page.baseUrl);
         let baseUrl = globalConfig.use.baseURL;
         const loginPage = new LoginPage(page, baseUrl, page.sso);
         await loginPage.login(roles['cs'].username, roles['cs'].password, (roles['cs'].givenname + " " + roles['cs'].surname));
@@ -343,14 +340,13 @@ test.describe('Report Generator', async () => {
         });
     });
 
-    // TODO: Add tests for storage and cloud realms
+    // There are no tests for storage and cloud realms currently
     if (XDMOD_REALMS.includes('jobs')) {
         // Center director
         test('Center director default report generator state', async ({page}) => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
-            const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await test.step('Report Generator is enabled', async () => {
@@ -407,14 +403,14 @@ test.describe('Report Generator', async () => {
                 });
                 await test.step(`Make "${testChart.title}" chart available in the Report Generator`, async () => {
                     const checkbox = await page.$eval(usagePage.selectors.availableForReportCheckbox, node => node.checked);
-                    if (checkbox == false){
+                    if (!checkbox){
                         await usagePage.makeCurrentChartAvailableForReport();
                     }
                 });
                 await test.step('Check available charts', async () => {
                     await reportGeneratorPage.selectTab();
                     await reportGeneratorPage.waitForMyReportsPanelVisible();
-                    var charts;
+                    let charts;
                     for (let i = 0; i < 100; i++) {
                         charts = await reportGeneratorPage.getAvailableCharts();
                         if (charts.length === (index + 1)) {
@@ -441,7 +437,6 @@ test.describe('Report Generator', async () => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
-            const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             // Copy default report data for the report being tested.
@@ -524,7 +519,6 @@ test.describe('Report Generator', async () => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
-            const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
@@ -559,7 +553,7 @@ test.describe('Report Generator', async () => {
 
                 // Add chart to test report data to reflect the change made
                 // to the report.
-                await testReport.charts.push(usageTabCharts[0]);
+                testReport.charts.push(usageTabCharts[0]);
             });
             await test.step('Edit the timeframe of the chart', async () => {
                 const charts = await reportGeneratorPage.getIncludedCharts();
@@ -772,7 +766,6 @@ test.describe('Report Generator', async () => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
-            const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await reportGeneratorPage.selectTab();
@@ -812,7 +805,7 @@ test.describe('Report Generator', async () => {
 
                 // Add chart to test report data to reflect the change made
                 // to the report.
-                await testReport.charts.push(usageTabCharts[1]);
+                testReport.charts.push(usageTabCharts[1]);
             });
             await test.step('Save report', async () => {
                 await reportGeneratorPage.saveReport();
@@ -839,7 +832,7 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Edit report and compare values', async () => {
                 const rows = await reportGeneratorPage.getMyReportsRows();
-                const row:MyReportsRow = rows[reportIndex].doubleClick();
+                await rows[reportIndex].doubleClick();
                 const name = await reportGeneratorPage.getReportName();
                 await expect(name, 'Report name is correct').toEqual(testReport.name);
                 const title = await reportGeneratorPage.getReportTitle();
@@ -862,7 +855,6 @@ test.describe('Report Generator', async () => {
             //Generate pages
             const reportGeneratorPage = new ReportGenerator(page);
             let baseUrl = globalConfig.use.baseURL;
-            const usagePage = new Usage(page, baseUrl);
             const loginPage = new LoginPage(page, baseUrl, page.sso);
             await loginPage.login('centerdirector', 'centerdirector', 'Reed Bunting');
             await reportGeneratorPage.selectTab();
@@ -877,7 +869,7 @@ test.describe('Report Generator', async () => {
             });
             await test.step('Check list of report templates', async () => {
                 const reportTemplateNames = await reportGeneratorPage.getReportTemplateNames();
-                var i = 0;
+                let i = 0;
                 for (const reportTemplateName of reportTemplateNames){
                     await expect(reportTemplateName, 'Report template ' + i).toEqual(centerDirectorReportTemplates[i].name);
                 }
@@ -894,8 +886,8 @@ test.describe('Report Generator', async () => {
                 // tab is clicked and the delay is to give the page time
                 await page.click(reportGeneratorPage.selectors.tab(), {delay:250});
             });
-            var report_template_index = 0;
-            var reportIndex = 3;
+            let report_template_index = 0;
+            let reportIndex = 3;
             const template = centerDirectorReportTemplates[0];
             await test.step('Click "New Based On"', async () => {
                 await reportGeneratorPage.clickNewBasedOn();
@@ -944,7 +936,7 @@ test.describe('Report Generator', async () => {
                     }
                 );
                 const reportCharts = await reportGeneratorPage.getIncludedCharts();
-                var i = 0;
+                let i = 0;
                 for (const charts of reportCharts){
                     const chart:AvailableChart = charts[i];
                     const templateChart = templateCharts[i];
@@ -1045,7 +1037,7 @@ test.describe('Report Generator', async () => {
                 //continue test
                 await reportGeneratorPage.selectAllReports();
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
-                var i = 0;
+                let i = 0;
                 for (const row:MyReportsRow of reportRows){
                     await expect(row.isSelected(), `Row ${i} is selected`).toBeTruthy();
                     i+=1;
@@ -1054,7 +1046,7 @@ test.describe('Report Generator', async () => {
             await test.step('Select none', async () => {
                 await reportGeneratorPage.deselectAllReports();
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
-                var i = 0;
+                let i = 0;
                 for (const row:MyReportsRow of reportRows){
                     const isRowSelected = await row.isSelected();
                     await expect(isRowSelected, `Row ${i} is not selected`).toBeFalsy();
@@ -1069,7 +1061,7 @@ test.describe('Report Generator', async () => {
                 const selectedStatus = await Promise.all(first.map(row => row.isSelected()));
                 await reportGeneratorPage.invertReportSelection();
                 const reportRows = await reportGeneratorPage.getMyReportsRows();
-                var i = 0;
+                let i = 0;
                 for (const row:MyReportsRow of reportRows){
                     const isRowSelected = await row.isSelected();
                     await expect(isRowSelected, `Row ${i} has been inverted`).toEqual(!selectedStatus[i]);
@@ -1225,7 +1217,7 @@ test.describe('Report Generator', async () => {
                 //continue test
                 await reportGeneratorPage.selectAllAvailableCharts();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
-                var i = 0;
+                let i = 0;
                 for (const chart:AvailableChart of reportCharts){
                     await expect(chart.isSelected(), `Chart ${i} is selected`).toBeTruthy();
                     i+=1;
@@ -1234,7 +1226,7 @@ test.describe('Report Generator', async () => {
             await test.step('Select none', async () => {
                 await reportGeneratorPage.deselectAllAvailableCharts();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
-                var i = 0;
+                let i = 0;
                 for (const chart:AvailableChart of reportCharts){
                     const isChartSelected = await chart.isSelected();
                     await expect(isChartSelected, `Chart ${i} is not selected`).toBeFalsy();
@@ -1250,7 +1242,7 @@ test.describe('Report Generator', async () => {
                 const selectedStatus = await Promise.all(first.map(chart => chart.isSelected()));
                 await reportGeneratorPage.invertAvailableChartsSelection();
                 const reportCharts = await reportGeneratorPage.getAvailableCharts();
-                var i = 0;
+                let i = 0;
                 for (const chart:AvailableChart of reportCharts){
                     const isChartSelected = await chart.isSelected();
                     await expect(isChartSelected, `Chart ${i} selection has been inverted`).toEqual(!selectedStatus[i]);

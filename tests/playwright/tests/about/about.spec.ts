@@ -1,9 +1,9 @@
-import {test, expect, Page} from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import About from "../../lib/about.page";
 import {LoginPage} from "../../lib/login.page";
 import globalConfig from '../../playwright.config';
 import testing from  '../../../ci/testing.json';
-var roles = testing.role;
+let roles = testing.role;
 
 test.describe('About', async () => {
     let baseUrl = globalConfig.use.baseURL;

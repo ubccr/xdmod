@@ -19,7 +19,7 @@ test('Export Dialog', async ({page}) => {
         await expect(page.locator(xdmod.selectors.exportDialog.formatDropdown())).toBeVisible();
         await page.click(xdmod.selectors.exportDialog.formatDropdown());
         await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(1))).toBeVisible();
-        var expected = [
+        const expected = [
             'PNG - Portable Network Graphics',
             'SVG - Scalable Vector Graphics',
             'CSV - Comma Separated Values',
@@ -39,7 +39,7 @@ test('Export Dialog', async ({page}) => {
         await expect(page.locator(xdmod.selectors.exportDialog.imageSizeDropdown())).toBeVisible();
         await page.click(xdmod.selectors.exportDialog.imageSizeDropdown());
         await expect(page.locator(xdmod.selectors.exportDialog.comboListItemByNum(8))).toBeVisible();
-        var expected = [
+        const expected = [
             'Small',
             'Medium',
             'Large',

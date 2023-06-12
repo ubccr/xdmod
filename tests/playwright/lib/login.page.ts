@@ -25,9 +25,9 @@ export class LoginPage extends BasePage implements LoginInterface {
   readonly loginTitle: string;
   readonly adminTitle: string;
   
-  readonly sso:Boolean;
+  readonly sso:boolean;
   
-  constructor(page: Page, baseUrl: string, sso:Boolean) {
+  constructor(page: Page, baseUrl: string, sso:boolean) {
     super(page, baseUrl);
     this.sso = sso;
     this.logo = page.locator('#logo');

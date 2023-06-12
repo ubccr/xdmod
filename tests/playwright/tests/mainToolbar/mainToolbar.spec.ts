@@ -1,8 +1,7 @@
-import {test, expect} from '@playwright/test';
-import {LoginPage} from "../../lib/login.page";
+import {test} from '@playwright/test';
 import MainToolbar from "../../lib/mainToolbar.page";
 
-var mainTab;
+let mainTab;
 
 test.describe('Main Toolbar', async () => {
     test('Check Tab', async ({page}) => {
@@ -44,11 +43,9 @@ test.describe('Main Toolbar', async () => {
         await page.goto('/');
         await page.waitForLoadState();
         const mTb = new MainToolbar(page, page.baseUrl);
-        for (var type in mTb.selectors.helpTypes){
+        for (let type in mTb.selectors.helpTypes){
             if (mTb.selectors.helpTypes.hasOwnProperty(type)){
-                await test.step(type, async () => {
-                    await mTb.helpFunc(type, mainTab);
-                });
+                await mTb.helpFunc(type, mainTab);
             }
         }
     });

@@ -56,12 +56,10 @@ const selectors ={
  * @returns {string}
  */
 function generalUserInformation(name) {
-    switch (name) {
-        case 'profile_editor_most_privileged_role':
+    if (name == 'profile_editor_most_privileged_role') {
             return selectors.userInformation() + '//span[@id="' + name + '"]';
-        default:
-            return selectors.userInformation() + '//input[@name="'+ name + '"]';
     }
+    return selectors.userInformation() + '//input[@name="'+ name + '"]';
 }
 
 export default selectors;

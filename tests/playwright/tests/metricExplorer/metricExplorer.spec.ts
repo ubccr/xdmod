@@ -2,23 +2,22 @@ import {test, expect} from '@playwright/test';
 import {LoginPage} from "../../lib/login.page";
 import MetricExplorer from '../../lib/metricExplorer.page';
 import artifacts from "../helpers/artifacts";
-var expected = artifacts.getArtifact('metricExplorer');
-var XDMOD_REALMS = process.env.XDMOD_REALMS;
+let expected = artifacts.getArtifact('metricExplorer');
+let XDMOD_REALMS = process.env.XDMOD_REALMS;
 import globalConfig from '../../playwright.config';
 import XDMoD from '../../lib/xdmod.page';
 import testing from  '../../../ci/testing.json';
-var roles = testing.role;
+let roles = testing.role;
 
 test.describe('Metric Explorer', async () => {
-    var baselineDate = {
+    let baselineDate = {
         start: '2016-12-22',
         end: '2017-01-01'
     };
-    var container;
-    var actions = {
+    let actions = {
         chart: {
             load: async (chartNumber) => {
-                var mychartNumber = chartNumber || 0;
+                let mychartNumber = chartNumber || 0;
                 await test.step('Load Chart', async () => {
                     await me.actionLoadChart(mychartNumber);
                 });
@@ -55,7 +54,7 @@ test.describe('Metric Explorer', async () => {
                         await actions.chart.contextMenu.open();
                         await actions.chart.contextMenu.legend();
                         await test.step('Click ' + position, async () => {
-                            var posId = me.selectors.chart.contextMenu.legend + '-' +
+                            let posId = me.selectors.chart.contextMenu.legend + '-' +
                                 await position.toLowerCase().replace(/ /g, '-');
                             await page.click(posId);
                         });
@@ -74,11 +73,10 @@ test.describe('Metric Explorer', async () => {
             await page.click(me.selectors.tab);
             await page.isVisible(me.selectors.container);
             await page.isVisible(me.selectors.catalog.container);
-            container = page.content(me.selectors.container);
             await page.click(me.selectors.catalog.collapseButton);
         });
     });
-    // TODO: Add tests for storage and cloud realms
+    // There are no tests for storage and cloud realms currently
     if (XDMOD_REALMS.includes('jobs')) {
         test('Create and save a chart', async ({page}) => {
             let baseUrl = globalConfig.use.baseURL;
@@ -139,7 +137,7 @@ test.describe('Metric Explorer', async () => {
                 await expect(toolbars.length).toEqual(3);
             });
             await test.step('Has one canned Date Picker', async () => {
-                // TODO: Make Datepicker have a unique name
+                // Datepicker does not have a unique name currently
                 // This check is done by using strict mode
                 await expect(page.locator(me.selectors.toolbar.cannedDatePicker())).toBeVisible();
             });
@@ -208,7 +206,7 @@ test.describe('Metric Explorer', async () => {
                 await page.locator(me.selectors.options.menu).waitFor({state:'visible'});
             });
             await test.step('Chart options looks the same as previous run', async () => {
-                // TODO: Determine Pass case for this without using screenshot
+                // Can only check this with screenshot for now
                 // browser.takeScreenshot(moduleName, me.selectors.container, "chart.options")
                 // browser.pause(1000);
             });
@@ -309,7 +307,7 @@ test.describe('Metric Explorer', async () => {
                     expect(execReturn).to.equal(false);
                 });
                 it('Chart looks the same as previous run', function () {
-                    // TODO: Determine Pass case for this without using screenshot
+                    // Can only be checked using screenshot currently
                     // browser.takeScreenshot(moduleName, me.selectors.container, "pie.loaded");
                 });
                 it("Select the 'Data' toolbar button", function selectData() {
@@ -360,7 +358,7 @@ test.describe('Metric Explorer', async () => {
                     expect(execReturn.value).to.equal(false);
                 });
                 it('Chart looks the same as previous run', function () {
-                    // TODO: Determine Pass case for this without using screenshot
+                    // Can only be checked using screenshot for now
                     // browser.takeScreenshot(moduleName, me.selectors.container, "highcharts.loaded")
                 });
             }); // Should start with a dataset.
@@ -477,5 +475,4 @@ test.describe('Metric Explorer', async () => {
         });
         */
     }
-    //loginPage.logout();
 });

@@ -1,4 +1,4 @@
-import {expect, Locator, Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 import {BasePage} from "./base.page";
 import selectors from "./mainToolbar.selectors";
 
@@ -26,8 +26,8 @@ class MainToolbar extends BasePage{
       await helpTypesLoc.click(),
     ]);
     await newPage.waitForLoadState();
-    var ids = context.pages();
-    var id = ids.length;
+    let ids = context.pages();
+    let id = ids.length;
     await expect(id).toEqual(2);
     await newPage.close();
     await expect(context.pages().length).toEqual(1);

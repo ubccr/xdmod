@@ -1,7 +1,7 @@
 /**
  * Metric Explorer test class
  */
-import {expect, Locator, Page} from '@playwright/test';
+import {expect} from '@playwright/test';
 import {BasePage} from "./base.page";
 import selectors from './metricExplorer.selectors';
 import {instructions} from '../tests/helpers/instructions';
@@ -269,8 +269,8 @@ class MetricExplorer extends BasePage{
      * @return {String} result      a randomly generated string for a title
      */
     generateTitle(size) {
-        var result = '';
-        for (var i = 0; i < size; i++) {
+        let result = '';
+        for (let i = 0; i < size; i++) {
             result += this.possible.charAt(Math.floor(Math.random() * this.possible.length));
         }
         return result;
@@ -288,9 +288,9 @@ class MetricExplorer extends BasePage{
      * Ensure that the error received/displayed is as expected
      */
     async verifyError() {
-        var invalidChart = await this.page.evaluate("return document.querySelectorAll('div.x-window.x-window-plain.x-window-dlg[style*=\"visibility: visible\"] span.x-window-header-text')[0];").textContent();
+        const invalidChart = await this.page.evaluate("return document.querySelectorAll('div.x-window.x-window-plain.x-window-dlg[style*=\"visibility: visible\"] span.x-window-header-text')[0];").textContent();
         await expect(invalidChart).toEqual('Invalid Chart Display Type');
-        var errorText = await this.page.evaluate("return document.querySelectorAll('div.x-window.x-window-plain.x-window-dlg[style*=\"visibility: visible\"] span.ext-mb-text')[0];").textContent();
+        const errorText = await this.page.evaluate("return document.querySelectorAll('div.x-window.x-window-plain.x-window-dlg[style*=\"visibility: visible\"] span.ext-mb-text')[0];").textContent();
         await expect(errorText).toContainText('You cannot display timeseries data in a pie chart.');
         await expect(errorText).toContainText('Please change the dataset or display type.');
     }
@@ -301,11 +301,11 @@ class MetricExplorer extends BasePage{
     async arrowKeys() {
         await this.page.locator(this.optionsButton).waitFor({state:'visible'}).click();
         await this.page.locator(this.optionsTitle).waitFor({state:'visible'}).click();
-        var cursorPosition = await this.page.evaluate('return document.getElementById("me_chart_title").selectionStart;');
+        const cursorPosition = await this.page.evaluate('return document.getElementById("me_chart_title").selectionStart;');
         await expect(cursorPosition._status).toEqual(0);
         await expect(cursorPosition.value).toEqual(this.originalTitle.length, 'Cursor Position not at end');
         await this.page.keyboard.press('ArrowUp');
-        var newPosition = await this.page.evaluate('return document.getElementById("me_chart_title").selectionStart;');
+        const newPosition = await this.page.evaluate('return document.getElementById("me_chart_title").selectionStart;');
         await expect(newPosition._status).toEqual(0);
         await expect(newPosition.value).toEqual(0, 'Cursor Position not at begining');
         await this.page.click(this.optionsButton);
@@ -365,7 +365,7 @@ class MetricExplorer extends BasePage{
     async checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         await this.clickLogo();
         await this.page.locator(this.chart.titleByText(chartTitle)).waitFor({state:'visible'});
-        var selToCheck;
+        let selToCheck;
         if (isValidChart) {
             selToCheck = this.chart.credits();
         } else {
@@ -375,36 +375,54 @@ class MetricExplorer extends BasePage{
         await this.page.click(selToCheck);
 
         if (yAxisLabel) {
-            await this.page.locator(this.chart.yAxisTitle()).waitFor({state:'visible'});
-            var yAxisElems = await this.page.$$(this.chart.yAxisTitle());
-            if (typeof yAxisLabel === 'string') {
-                await expect(yAxisElems.length).toEqual(1);
-                const result = await Promise.all(yAxisElems.map((elem) => {
-                    return elem.textContent();
-                }));
-                await expect(result[0]).toEqual(yAxisLabel);
-            } else {
-                await expect(yAxisElems.length).toEqual(yAxisLabel.length);
-                for (let i = 0; i < legend.length; i++) {
-                    await expect(yAxisElems[i]).toEqual(yAxisLabel[i]);
-                }
-            }
+            await this.checkChartYAxisLabel(yAxisLabel);
         }
 
         if (legend) {
-            await this.page.locator(this.chart.firstLegendContent()).waitFor({state:'visible'});
-            var legendElems = await this.page.locator(this.chart.legend());
-            if (typeof legend === 'string') {
-                await expect(legendElems).toBeVisible();
-                const result = await legendElems.textContent();
-                await expect(result).toEqual(legend);
-            } else {
-                const num = await legendElems.count();
-                await expect(num).toEqual(legend.length);
-                for (let i = 0; i < legend.length; i++) {
-                    const computed = await legendElems.nth(i).textContent();
-                    await expect(computed).toContain(legend[i]);
-                }
+            await this.checkChartLegend(legend);
+        }
+    }
+
+    /**
+     * Helper function for checkChart() for the yAxisLabel
+     *
+     * @param {String} yAxisLabel   name to match the y-axis label to
+     */
+    async checkChartYAxisLabel(yAxisLabel) {
+        await this.page.locator(this.chart.yAxisTitle()).waitFor({state:'visible'});
+        const yAxisElems = await this.page.$$(this.chart.yAxisTitle());
+        if (typeof yAxisLabel === 'string') {
+            await expect(yAxisElems.length).toEqual(1);
+            const result = await Promise.all(yAxisElems.map((elem) => {
+                return elem.textContent();
+            }));
+            await expect(result[0]).toEqual(yAxisLabel);
+        } else {
+            await expect(yAxisElems.length).toEqual(yAxisLabel.length);
+            for (let i = 0; i < legend.length; i++) {
+                await expect(yAxisElems[i]).toEqual(yAxisLabel[i]);
+            }
+        }
+    }
+
+    /**
+     * Helper function for checkChart() for the legend
+     *
+     * @param {String} legend   name to match the legend to
+     */
+    async checkChartLegend(legend) {
+        await this.page.locator(this.chart.firstLegendContent()).waitFor({state:'visible'});
+        const legendElems = await this.page.locator(this.chart.legend());
+        if (typeof legend === 'string') {
+            await expect(legendElems).toBeVisible();
+            const result = await legendElems.textContent();
+            await expect(result).toEqual(legend);
+        } else {
+            const num = await legendElems.count();
+            await expect(num).toEqual(legend.length);
+            for (let i = 0; i < legend.length; i++) {
+                const computed = await legendElems.nth(i).textContent();
+                await expect(computed).toContain(legend[i]);
             }
         }
     }
@@ -427,7 +445,7 @@ class MetricExplorer extends BasePage{
      * @param {String} title    name to check if chart matches
      */
     async verifyHighChartsTitle(title) {
-        var execReturn = await this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title + '").textContent);');
+        const execReturn = await this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title + '").textContent);');
         await expect(execReturn._status).toEqual(0);
         await expect(typeof(execReturn.value)).toEqual('string');
         await expect(execReturn.value).toEqual(title);
@@ -439,7 +457,7 @@ class MetricExplorer extends BasePage{
     async verifyEditChartTitle() {
         await this.page.click(this.chart.title);
         await expect(this.page.isVisible(this.chart.titleInput));
-        var titleValue = await this.page.locator(this.chart.titleInput).inputValue();
+        const titleValue = await this.page.locator(this.chart.titleInput).inputValue();
         await expect(typeof(titleValue)).toEqual('string');
         await expect(titleValue).toEqual(this.newTitle);
         await this.page.click(this.chart.titleOkButton);
@@ -480,8 +498,8 @@ class MetricExplorer extends BasePage{
      * Swap the axes of the chart
      */
     async axisSwap() {
-        var axisFirstChildText = '';
-        var axisSecondChildText = '';
+        let axisFirstChildText = '';
+        let axisSecondChildText = '';
         axisFirstChildText = await this.page.locator(this.chart.axisText()).textContent();
         await this.page.click(this.optionsButton);
         await this.page.click(this.optionsSwap);
@@ -496,10 +514,10 @@ class MetricExplorer extends BasePage{
     async chartTitleInOptionsUpdated() {
         await this.page.click(this.optionsButton);
         await expect(this.page.locator(this.optionsTitle)).toBeVisible();
-        var optionsTitle1 = await this.page.locator(this.optionsTitle).textContent();
+        const optionsTitle1 = await this.page.locator(this.optionsTitle).textContent();
         await expect(typeof(optionsTitle1)).toEqual('string');
-        var optionsTitle2 = await this.page.evaluate(function (text) {
-            // TODO: Fix this withOut having to use EXT if Possible
+        const optionsTitle2 = await this.page.evaluate(function (text) {
+            // For now, EXT will be used
             // eslint-disable-next-line no-undef
             return Ext.util.Format.htmlDecode(text);
         }, optionsTitle1);
@@ -564,7 +582,7 @@ class MetricExplorer extends BasePage{
      * @param {String} largeTitle   name for chart title to match to
      */
     async confirmChartTitleChange(largeTitle) {
-        var titleChange = await this.page.evaluate('return document.querySelector("' + this.chart.title + '").textContent;');
+        const titleChange = await this.page.evaluate('return document.querySelector("' + this.chart.title + '").textContent;');
         await expect(titleChange._status).toEqual(0);
         await expect(typeof(titleChange.value)).toEqual('string');
         await expect(titleChange.value).toEqual(largeTitle);
@@ -596,7 +614,7 @@ class MetricExplorer extends BasePage{
      * Click on the first data point
      */
     async clickFirstDataPoint() {
-        var elems = await this.page.locator(this.chart.seriesMarkers(0));
+        const elems = await this.page.locator(this.chart.seriesMarkers(0));
         // Data points are returned in reverse order.
         // for some unknown reason the first point click gets intercepted by the series
         // menu.

@@ -5,8 +5,8 @@ let selectors = myProfile.selectors;
 import testing from  '../../../ci/testing.json';
 import artifacts from "../helpers/artifacts";
 import globalConfig from '../../playwright.config';
-var roles = testing.role;
-var expected = artifacts.getArtifact('myProfile');
+let roles = testing.role;
+let expected = artifacts.getArtifact('myProfile');
 
 test.describe('My Profile Tests', async () => {
     let keys = Object.keys(roles);

@@ -2,18 +2,18 @@ import {test, expect} from '@playwright/test';
 import Usage from "../../lib/usageTab.page";
 import {LoginPage} from "../../lib/login.page";
 import artifacts from "../helpers/artifacts";
-var expected = artifacts.getArtifact('usage');
-var XDMOD_REALMS = process.env.XDMOD_REALMS;
+let expected = artifacts.getArtifact('usage');
+let XDMOD_REALMS = process.env.XDMOD_REALMS;
 import globalConfig from '../../playwright.config';
 import testing from  '../../../ci/testing.json';
-var roles = testing.role;
+let roles = testing.role;
 
 test.describe('Usage', async () => {
     const baselineDate={
         start: '2016-12-25',
         end: '2017-01-02'
     };
-    // TODO: Add tests for storage and cloud realms
+    // There are no tests for storage and cloud realms currently
     if (XDMOD_REALMS.includes('jobs')){
         test('(Center Director)', async ({page}) => {
             let baseUrl = globalConfig.use.baseURL;

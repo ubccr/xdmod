@@ -1,4 +1,4 @@
-import {expect, Page} from "@playwright/test";
+import {expect} from "@playwright/test";
 import {BasePage} from "./base.page";
 import {LoginInterface} from "./login.page";
 import selectors from "./internal_dashboard.selectors";

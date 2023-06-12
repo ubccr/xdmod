@@ -3,7 +3,7 @@ import InternalDashboard from "../../lib/internal_dashboard.page";
 import settings from '../../config/internal_dashboard/settings.json';
 import globalConfig from '../../playwright.config';
 import testing from  '../../../ci/testing.json';
-var roles = testing.role;
+let roles = testing.role;
 
 test.describe('Internal Dashboard Tests', async () => {
     let baseUrl = globalConfig.use.baseURL;
@@ -52,7 +52,6 @@ test.describe('Internal Dashboard Tests', async () => {
 
             await page.type(InternalDashboard.selectors.create_manage_users.new_user.username(), 'btest', {delay: 100});
             await page.type(InternalDashboard.selectors.create_manage_users.new_user.mapTo(), 'Unknown', {delay: 100});
-            //await page.press(InternalDashboard.selectors.create_manage_users.new_user.mapTo(), 'Tab');
 
             await expect(page.locator(InternalDashboard.selectors.combo.container)).toBeVisible();
             await expect(page.locator(InternalDashboard.selectors.combo.itemByText('Unknown'))).toBeVisible();

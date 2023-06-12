@@ -1,4 +1,3 @@
-import {expect, Locator, Page} from '@playwright/test';
 import {BasePage} from "./base.page";
 import selectors from './myProfile.selectors'
 
