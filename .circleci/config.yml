@@ -29,6 +29,11 @@ jobs:
       # We need to update our acct before we can enable docker layer caching
       #    docker_layer_caching: true
       - run:
+          name: Create Code Coverage Directories
+          command: |
+            mkdir ~/code_coverage_raw
+            mkdir ~/code_coverage
+      - run:
           name: Download and Install Docker
           command: |
             apt update && apt install curl
@@ -53,6 +58,9 @@ jobs:
           name: Execute Install Script
           command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
       - run:
+          name: Installing Code Coverage Dependencies
+          command: docker exec xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
+      - run:
           name: Put the updated httpd conf file in place
           command: docker cp ~/project/tests/playwright/config/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
       - run:
@@ -64,6 +72,13 @@ jobs:
       - run:
           name: Run Playwright Tests
           command: docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
+      - run:
+          name: Process Code Coverage Data
+          no_output_timeout: 120m
+          command: docker exec xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i ~/code_coverage_raw
+      - run:
+          name: Tar Up Code Coverage Report for later download
+          command: docker exec xdmod tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw
       - run:
           name: Copy Test Results into Unit
           command: |
@@ -84,6 +99,8 @@ jobs:
           path: ~/project/log
       - store_test_results:
           path: ~/phpunit
+      - store_test_results:
+          path: ~/code_coverage
 workflows:
   full-build:
     jobs:
