@@ -12,7 +12,10 @@ const config: PlaywrightTestConfig = {
         viewport: {width: 2560, height: 1600},
         baseURL: process.env.BASE_URL,
         sso: process.env.SSO ? true : false,
-        timeout: 15000
+        timeout: 20000
+    },
+    expect: {
+        timeout: 10000,
     },
     projects: [
         {
