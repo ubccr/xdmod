@@ -59,7 +59,9 @@ jobs:
           command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
       - run:
           name: Installing Code Coverage Dependencies
-          command: docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
+          command: |
+            docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageSetup.sh
+            docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - run:
           name: Put the updated httpd conf file in place
           command: docker cp ~/project/tests/playwright/config/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
@@ -75,7 +77,9 @@ jobs:
       - run:
           name: Process Code Coverage Data
           no_output_timeout: 120m
-          command: docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i ~/code_coverage_raw
+          command: |
+            docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageProcess.sh
+            docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i ~/code_coverage_raw
       - run:
           name: Tar Up Code Coverage Report for later download
           command: docker exec xdmod tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw
