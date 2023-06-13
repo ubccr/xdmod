@@ -29,11 +29,6 @@ jobs:
       # We need to update our acct before we can enable docker layer caching
       #    docker_layer_caching: true
       - run:
-          name: Create Code Coverage Directories
-          command: |
-            mkdir ~/code_coverage_raw
-            mkdir ~/code_coverage
-      - run:
           name: Download and Install Docker
           command: |
             apt update && apt install curl
@@ -51,6 +46,11 @@ jobs:
           command: |
             docker cp ~/project xdmod:/xdmod
             docker cp ~/project playwright:/xdmod
+      - run:
+          name: Create Code Coverage Directories
+          command: |
+            docker exec xdmod mkdir ~/code_coverage_raw
+            docker exec xdmod mkdir ~/code_coverage
       - run:
          name: Make sure that procps-ng is installed
          command: docker exec xdmod yum install -y procps-ng
@@ -92,6 +92,11 @@ jobs:
             docker cp xdmod:/var/log/xdmod ~/project/log
             docker cp playwright:/xdmod/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
+      - run:
+          name: Copy Code Coverage Report zip
+          command: |
+            mkdir ~/code_coverage
+            docker cp xdmod:/code_coverage/report.tgz ~/code_coverage
       - run:
           name: Run on fail status
           command: |
