@@ -150,31 +150,33 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         var realm_dimensions = this.realms[this.record.data.realm]['dimensions'];
 
         this.filterItemsList = function () {
-          var hidden_groupbys = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].hidden_groupbys;
+          var recordData = this.record.data;
+          var hidden_groupbys = this.realms[recordData.realm]['metrics'][recordData.metric].hidden_groupbys;
           var filterItems = [];
           var filterMap = {};
 
-          for (var x in realm_dimensions) {
-              if (x === 'none' || realm_dimensions[x].text === undefined || hidden_groupbys.includes(x)) {
-                continue;
+          Object.entries(realm_dimensions).forEach( function (item, key, value) {
+              var dimension_name = item[0];
+              if (dimension_name === 'none' || item[1].text === undefined || hidden_groupbys.includes(dimension_name)) {
+                return;
               }
-              if (filterMap[x] === undefined) {
-                  filterMap[x] = filterItems.length;
+              if (filterMap[dimension_name] === undefined) {
+                  filterMap[dimension_name] = filterItems.length;
                   filterItems.push({
-                      text: realm_dimensions[x].text,
+                      text: item[1].text,
                       iconCls: 'menu',
-                      realms: [this.record.data.realm],
-                      dimension: x,
+                      realms: [recordData.realm],
+                      dimension: dimension_name,
                       scope: this,
                       handler: function (b, e) {
                           XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
                           filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
                       }
                   });
-              } else if (filterItems[filterMap[x]].realms.indexOf(this.record.data.realm) === -1) {
-                    filterItems[filterMap[x]].realms.push(this.record.data.realm);
+              } else if (filterItems[filterMap[dimension_name]].realms.indexOf(recordData.realm) === -1) {
+                  filterItems[filterMap[dimension_name]].realms.push(recordData.realm);
               }
-          }
+          });
 
           filterItems.sort(
               function (a, b) {
@@ -251,7 +253,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             }
 
             return metricData;
-        }
+        };
 
         this.dimensionDataList = function () {
             var hidden_groupbys = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].hidden_groupbys;
@@ -264,7 +266,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             }
 
             return dimensionData;
-        }
+        };
 
         var activeFilterCheckColumn = new Ext.grid.CheckColumn({
             id: 'checked',

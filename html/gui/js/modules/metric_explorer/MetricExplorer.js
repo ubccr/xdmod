@@ -5310,7 +5310,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             // for each item in the filtersMenu,
             this.filtersMenu.items.each(function (item) {
-
                 // Get the item's realms array, if it exists.
                 var iRealms = item.realms;
                 if (iRealms === undefined) {
