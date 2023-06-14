@@ -517,7 +517,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                       this.filtersMenu.addItem(this.filterItemsList());
                   }
               }
-          },
+          }
         );
 
         this.dimensionComboBox = new Ext.form.ComboBox({
