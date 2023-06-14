@@ -108,7 +108,7 @@ jobs:
           path: ~/project/log
       - store_test_results:
           path: ~/phpunit
-      - store_test_results:
+      - store_artifacts:
           path: ~/code_coverage
 workflows:
   full-build:
