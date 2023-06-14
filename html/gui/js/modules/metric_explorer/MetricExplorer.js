@@ -781,7 +781,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         var dimensions = instance.realms[realm]['dimensions'];
         var drilldownItems = ['<span class="menu-title">' + (dimensions[dimension].text !== drillLabel ? (dimension !== 'none' ? 'For ' + dimensions[dimension].text + ' = ' + drillLabel + ', ' : '') : '') + 'Drilldown to:</span><br/>'];
-        var metrics = instance.realms[realm]['metrics'];
+        var metrics = instance.realms[realm].metrics;
 
         if (drillId && drillLabel) {
             for (var dim in dimensions) {
@@ -5305,7 +5305,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             var instance = CCR.xdmod.ui.metricExplorer;
 
             this.datasetStore.each(function (record) {
-              hidden_groupbys[record.get('realm')] = instance.realms[record.get('realm')]['metrics'][record.get('metric')].hidden_groupbys;
+              hidden_groupbys[record.get('realm')] = instance.realms[record.get('realm')].metrics[record.get('metric')].hidden_groupbys;
             });
 
             // for each item in the filtersMenu,

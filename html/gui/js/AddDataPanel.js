@@ -151,7 +151,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
 
         this.filterItemsList = function () {
           var recordData = this.record.data;
-          var hidden_groupbys = this.realms[recordData.realm]['metrics'][recordData.metric].hidden_groupbys;
+          var hidden_groupbys = this.realms[recordData.realm].metrics[recordData.metric].hidden_groupbys;
           var filterItems = [];
           var filterMap = {};
 
@@ -246,9 +246,9 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         this.metricsDataList = function () {
             var metricData = [];
 
-            for (var metric in this.realms[this.record.data.realm]['metrics']) {
-                if (this.realms[this.record.data.realm]['metrics'][metric].hidden_groupbys.includes(this.record.data.group_by) === false) {
-                  metricData.push([metric, this.realms[this.record.data.realm]['metrics'][metric].text]);
+            for (var metric in this.realms[this.record.data.realm].metrics) {
+                if (this.realms[this.record.data.realm].metrics[metric].hidden_groupbys.includes(this.record.data.group_by) === false) {
+                  metricData.push([metric, this.realms[this.record.data.realm].metrics[metric].text]);
                 }
             }
 
@@ -256,12 +256,12 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         };
 
         this.dimensionDataList = function () {
-            var hidden_groupbys = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].hidden_groupbys;
+            var hidden_groupbys = this.realms[this.record.data.realm].metrics[this.record.data.metric].hidden_groupbys;
             var dimensionData = [];
 
-            for (var dimension in this.realms[this.record.data.realm]['dimensions']) {
+            for (var dimension in this.realms[this.record.data.realm].dimensions) {
                 if (hidden_groupbys.includes(dimension) === false) {
-                    dimensionData.push([dimension, this.realms[this.record.data.realm]['dimensions'][dimension].text]);
+                    dimensionData.push([dimension, this.realms[this.record.data.realm].dimensions[dimension].text]);
                 }
             }
 
@@ -511,7 +511,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                       XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
                       var metric = record.get('id');
                       this.record.set('metric', metric);
-                      var has_std_err = this.realms[this.record.data.realm]['metrics'][metric].std_err;
+                      var has_std_err = this.realms[this.record.data.realm].metrics[metric].std_err;
                       this.record.set('has_std_err', has_std_err);
                       this.stdErrorCheckBox.setDisabled(!has_std_err || this.record.data.log_scale);
                       this.stdErrorLabelsCheckBox.setDisabled(!has_std_err || this.record.data.log_scale);
