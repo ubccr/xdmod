@@ -75,10 +75,11 @@ class QueryDescripter
         $this->_disable_menu = false;
     }
 
-    public function getDrillTargets()
+    public function getDrillTargets($hiddenGroupBys=array())
     {
         return $this->realm->getDrillTargets(
             $this->_group_by_name,
+            $hiddenGroupBys,
             \Realm\Realm::SORT_ON_NAME
         );
     }

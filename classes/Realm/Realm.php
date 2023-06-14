@@ -799,7 +799,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::getDrillTargets()
      */
 
-    public function getDrillTargets($groupById, $order = self::SORT_ON_ORDER)
+    public function getDrillTargets($groupById, $hiddenGroupBys=array(), $order = self::SORT_ON_ORDER)
     {
         $drillTargets = array();
         $groupByObjects = $this->getGroupByObjects($order);
@@ -807,7 +807,7 @@ class Realm extends \CCR\Loggable implements iRealm
         foreach ( $groupByObjects as $gId => $groupByObj ) {
             // Don't include the current group by or any group bys that are not available for drill
             // down.
-            if ( $gId == $groupById || ! $groupByObj->showInMetricCatalog() ) {
+            if ( $gId == $groupById || ! $groupByObj->showInMetricCatalog() || in_array($gId, $hiddenGroupBys) ) {
                 continue;
             }
             $drillTargets[] = sprintf('%s-%s', $gId, $groupByObj->getName());

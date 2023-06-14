@@ -781,11 +781,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         var dimensions = instance.realms[realm]['dimensions'];
         var drilldownItems = ['<span class="menu-title">' + (dimensions[dimension].text !== drillLabel ? (dimension !== 'none' ? 'For ' + dimensions[dimension].text + ' = ' + drillLabel + ', ' : '') : '') + 'Drilldown to:</span><br/>'];
+        var metrics = instance.realms[realm]['metrics'];
 
         if (drillId && drillLabel) {
             for (var dim in dimensions) {
                 if (dimensions.hasOwnProperty(dim)) {
-                    if (dim === dimension || dim === 'none') {
+                    if (dim === dimension || dim === 'none' || metrics[metric].hidden_groupbys.includes(dim)) {
                         continue;
                     }
                     drilldownItems.push({
@@ -823,10 +824,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         }
         var metricItems = [];
-        var metrics = instance.realms[realm]['metrics'];
+
         for (var met in metrics) {
             if (metrics.hasOwnProperty(met)) {
-                if (metric === met) {
+                if (metric === met || metrics[met].hidden_groupbys.includes(dimension)) {
                     continue;
                 }
                 metricItems.push({
@@ -842,7 +843,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var compareToItems = [];
         for (var thisMet in metrics) {
             if (metrics.hasOwnProperty(thisMet)) {
-                if (metric === thisMet) {
+                if (metric === thisMet || metrics[thisMet].hidden_groupbys.includes(dimension)) {
                     continue;
                 }
                 compareToItems.push({
@@ -873,7 +874,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var dimensionItems = [];
         for (var thisDim in dimensions) {
             if (dimensions.hasOwnProperty(thisDim)) {
-                if (thisDim === dimension) {
+                if (thisDim === dimension || metrics[metric].hidden_groupbys.includes(thisDim)) {
                     continue;
                 }
                 dimensionItems.push({
@@ -2822,14 +2823,22 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     continue;
                                 }
 
+                                metric_dimensions = {};
+                                for(var dimension in realm_dimensions) {
+                                    if (!realm_metrics[rm].hidden_groupbys.includes(dimension)) {
+                                        metric_dimensions[dimension] = realm_dimensions[dimension];
+                                    }
+                                }
+
                                 var metricNode = new Ext.tree.TreeNode({
                                     id: realm + '_' + rm,
-                                    dimensions: realm_dimensions,
+                                    dimensions: metric_dimensions,
                                     leaf: true,
                                     singleClickExpand: true,
                                     type: 'metric',
                                     text: realm_metrics[rm].text,
                                     has_std_err: realm_metrics[rm].std_err,
+                                    hidden_groupbys: realm_metrics[rm].hidden_groupbys,
                                     iconCls: 'chart',
                                     category: category,
                                     realm: realm,
@@ -5292,6 +5301,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             // get a list of the currently plotted realms:
             var enabledRealms = this.getEnabledRealmsList();
 
+            hidden_groupbys = [];
+            instance = CCR.xdmod.ui.metricExplorer;
+
+            this.datasetStore.each(function(record) {
+              var metric = record.get('metric');
+              hidden_groupbys[record.get('realm')] = instance.realms[record.get('realm')]['metrics'][record.get('metric')].hidden_groupbys;
+            });
+
             // for each item in the filtersMenu,
             this.filtersMenu.items.each(function(item) {
 
@@ -5317,6 +5334,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     }
                 }
                 item.setVisible(realmInItem);
+
+                for (var iRealm in iRealms) {
+                  if (hidden_groupbys[iRealms[iRealm]] !== undefined && hidden_groupbys[iRealms[iRealm]].includes(item.dimension)) {
+                    item.setVisible(false);
+                  }
+                }
             });
             //console.timeEnd("update available");
         };
