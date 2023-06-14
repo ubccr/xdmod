@@ -155,7 +155,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
           var filterItems = [];
           var filterMap = {};
 
-          Object.entries(realm_dimensions).forEach( function (item, key, value) {
+          Object.entries(realm_dimensions).forEach(function (item, key, value) {
               var dimension_name = item[0];
               if (dimension_name === 'none' || item[1].text === undefined || hidden_groupbys.includes(dimension_name)) {
                 return;
