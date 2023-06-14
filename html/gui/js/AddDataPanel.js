@@ -126,7 +126,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
     },
     initComponent: function () {
         var filterButtonHandler;
-        var _self = this;
+        var that = this;
 
         if (!this.record && this.store) {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
@@ -168,7 +168,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                       iconCls: 'menu',
                       realms: [recordData.realm],
                       dimension: dimension_name,
-                      scope: _self,
+                      scope: that,
                       handler: function (b, e) {
                           XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
                           filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
