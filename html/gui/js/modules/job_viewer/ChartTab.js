@@ -148,10 +148,8 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             xtype: 'container',
             id: this.id + '_hc',
             listeners: {
-                resize: function () {
-                    if (self.chart) {
-                        self.chart.reflow();
-                    }
+                resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
+                    self.fireEvent('resize', panel, adjWidth, adjHeight, rawWidth, rawHeight);
                 },
                 render: createChart
             }
@@ -181,6 +179,6 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             if (this.chart) {
                 Plotly.purge(this.id);
             }
-        }
+        },
     }
 });

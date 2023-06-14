@@ -223,18 +223,18 @@ XDMoD.GlobalToolbar.Contact = function () {
                 id: 'global-toolbar-contact-us-send-message',
                 handler: contactHandler
             },
-            {
-                text: 'Request Feature',
-                iconCls: 'bulb_16',
-                id: 'global-toolbar-contact-us-request-feature',
-                handler: contactHandler
-            },
-            {
-                text: 'Submit Support Request',
-                iconCls: 'help_16',
-                id: 'global-toolbar-contact-us-submit-support-request',
-                handler: contactHandler
-            }]
+                {
+                    text: 'Request Feature',
+                    iconCls: 'bulb_16',
+                    id: 'global-toolbar-contact-us-request-feature',
+                    handler: contactHandler
+                },
+                {
+                    text: 'Submit Support Request',
+                    iconCls: 'help_16',
+                    id: 'global-toolbar-contact-us-submit-support-request',
+                    handler: contactHandler
+                }]
         }) //menu
     };
 }; //XDMoD.GlobalToolbar.Contact
@@ -254,31 +254,31 @@ XDMoD.createTour = function () {
     var tourItems = [
         {
             html: 'Welcome to XDMoD! This tour will guide you through some of the features of XDMoD.' +
-                ((CCR.xdmod.publicUser) ? ' This tour has additional information after you sign in.' : ''),
+            ((CCR.xdmod.publicUser) ? ' This tour has additional information after you sign in.' : ''),
             target: '#tg_summary',
             position: 't-t'
         },
         {
             html: 'XDMoD provides a wealth of information. Different functionality is provided by individual tabs listed below.' +
-                ((CCR.xdmod.publicUser) ? ' Some tabs are only visible after you sign in.' : '') +
-                '<ul>' +
-                '<li>' +
-                dashboardDescription +
-                '</li>' +
-                '<li>' +
-                'Usage - A convenient way to browse all available statistics.' +
-                '</li>' +
-                '<li>' +
-                'Metric Explorer - Allows you to create complex charts containing multiple statistics and optionally apply filters.' +
-                '</li>' +
-                '<li>' +
-                'Report Generator - Create reports that may contain multiple charts. Reports may be downloaded directly or scheduled to be emailed periodically.' +
-                '</li>' +
-                '<li>' +
-                'Job Viewer - A detailed view of individual jobs that provides an overall summary of job accounting data, job performance, and a temporal view of a job\'s CPU, network, and disk I/O utilization.' +
-                '</li>' +
-                '</ul>' +
-                '* Additional modules might provide additional tabs not mentioned here.',
+            ((CCR.xdmod.publicUser) ? ' Some tabs are only visible after you sign in.' : '') +
+            '<ul>' +
+            '<li>' +
+            dashboardDescription +
+            '</li>' +
+            '<li>' +
+            'Usage - A convenient way to browse all available statistics.' +
+            '</li>' +
+            '<li>' +
+            'Metric Explorer - Allows you to create complex charts containing multiple statistics and optionally apply filters.' +
+            '</li>' +
+            '<li>' +
+            'Report Generator - Create reports that may contain multiple charts. Reports may be downloaded directly or scheduled to be emailed periodically.' +
+            '</li>' +
+            '<li>' +
+            'Job Viewer - A detailed view of individual jobs that provides an overall summary of job accounting data, job performance, and a temporal view of a job\'s CPU, network, and disk I/O utilization.' +
+            '</li>' +
+            '</ul>' +
+            '* Additional modules might provide additional tabs not mentioned here.',
             target: '#main_tab_panel .x-tab-panel-header',
             position: 'tl-bl',
             maxWidth: 400,
@@ -289,19 +289,19 @@ XDMoD.createTour = function () {
         tourItems.push(
             {
                 html: 'The Dashboard tab presents individual component and summary charts that provide an overview of information that is available throughout XDMoD as well as the ability to access more detailed information. ' +
-                    'In order to provide relevant information, XDMoD accounts have an assigned role (set by the XDMoD system administrator), the content of the dashboard is tailored to your role.' +
-                    '<ul>' +
-                    '<li>' +
-                    'User - Information such as a list of all jobs that you have run as well as other useful information such as queue wait times. ' +
-                    '</li>' +
-                    '<li>' +
-                    'Principal Investigator - Information about all the jobs running under your projects. ' +
-                    '</li>' +
-                    '<li>' +
-                    'Center Staff - Information on all user jobs run at the center as well as information you can use to gauge how well the center is running. ' +
-                    '</li>' +
-                    '</ul>' +
-                    'For more information on XDMoD roles, please refer to the XDMoD User Manual available from the Help menu.',
+                'In order to provide relevant information, XDMoD accounts have an assigned role (set by the XDMoD system administrator), the content of the dashboard is tailored to your role.' +
+                '<ul>' +
+                '<li>' +
+                'User - Information such as a list of all jobs that you have run as well as other useful information such as queue wait times. ' +
+                '</li>' +
+                '<li>' +
+                'Principal Investigator - Information about all the jobs running under your projects. ' +
+                '</li>' +
+                '<li>' +
+                'Center Staff - Information on all user jobs run at the center as well as information you can use to gauge how well the center is running. ' +
+                '</li>' +
+                '</ul>' +
+                'For more information on XDMoD roles, please refer to the XDMoD User Manual available from the Help menu.',
                 target: '#tg_summary',
                 position: 't-t'
             }
@@ -310,28 +310,28 @@ XDMoD.createTour = function () {
     tourItems.push(
         {
             html: 'Each component provides a toolbar that is customized to provide controls relevant to that component. ' +
-                'Hovering over each control with your mouse will display a tool-tip describing what that control does.' +
-                '<ul>' +
-                '<li>' +
-                '"?" - Display additional information about a component' +
-                '</li>' +
-                '<li>' +
-                '"*" - Open a chart in the Metric Explorer.' +
-                '</li>' +
-                '</ul>',
+            'Hovering over each control with your mouse will display a tool-tip describing what that control does.' +
+            '<ul>' +
+            '<li>' +
+            '"?" - Display additional information about a component' +
+            '</li>' +
+            '<li>' +
+            '"*" - Open a chart in the Metric Explorer.' +
+            '</li>' +
+            '</ul>',
             target: '.x-panel-header:first',
             position: 'tl-br',
             offset: [-10, 0]
         },
         {
             html: 'The Help button provides you with the following options:' +
-                '<ul>' +
-                '<li>User Manual - A detailed help document for XDMoD.  If help is available for the section of XDMoD you currently are visiting, this' +
-                'will automatically navigate to the respective section.' +
-                '</li>' +
-                '<li>XDMoD Tour - start this tour again' +
-                '</li>' +
-                '</ul>',
+            '<ul>' +
+            '<li>User Manual - A detailed help document for XDMoD.  If help is available for the section of XDMoD you currently are visiting, this' +
+            'will automatically navigate to the respective section.' +
+            '</li>' +
+            '<li>XDMoD Tour - start this tour again' +
+            '</li>' +
+            '</ul>',
             target: '#help_button',
             position: 'tr-bl'
         }
@@ -339,7 +339,7 @@ XDMoD.createTour = function () {
     if (CCR.xdmod.publicUser !== true) {
         tourItems.push({
             html: 'The My Profile button allows you to view and update your account settings. Your role will be displayed in the title bar of the My Profile window.' +
-                '<br /><br />>Information you can update includes your Name, Email Address and Password.',
+            '<br /><br />>Information you can update includes your Name, Email Address and Password.',
             target: '#global-toolbar-profile',
             position: 'tl-bl'
         });
@@ -751,8 +751,8 @@ CCR.xdmod.ui.login_prompt = null;
 CCR.xdmod.ui.createUserManualLink = function (tags) {
 
     return '<div style="background-image: url(\'gui/images/user_manual.png\'); background-repeat: no-repeat; height: 36px; padding-left: 40px; padding-top: 10px">' +
-            'For more information, please refer to the <a href="javascript:void(0)" onClick="CCR.xdmod.ui.userManualNav(\'' + tags + '\')">User Manual</a>' +
-            '</div>';
+        'For more information, please refer to the <a href="javascript:void(0)" onClick="CCR.xdmod.ui.userManualNav(\'' + tags + '\')">User Manual</a>' +
+        '</div>';
 
 }; //CCR.xdmod.ui.createUserManualLink
 
@@ -1319,24 +1319,24 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 id: 'btn_sign_in',
                 handler: signInWithLocalAccount
             },
-            {
-                xtype: 'container',
-                autoEl: 'div',
-                autoWidth: true,
-                flex: 2,
-                height: 38,
-                id: 'assistancePrompt',
-                items: [{
-                    xtype: 'tbtext',
-                    html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
-                    id: 'forgot_password_link'
-                },
                 {
-                    xtype: 'tbtext',
-                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
-                    id: 'sign_up_link'
+                    xtype: 'container',
+                    autoEl: 'div',
+                    autoWidth: true,
+                    flex: 2,
+                    height: 38,
+                    id: 'assistancePrompt',
+                    items: [{
+                        xtype: 'tbtext',
+                        html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
+                        id: 'forgot_password_link'
+                    },
+                        {
+                            xtype: 'tbtext',
+                            html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+                            id: 'sign_up_link'
+                        }]
                 }]
-            }]
         }
     ];
 
@@ -1861,7 +1861,7 @@ CCR.isType = function (value, type) {
         return Object.prototype.toString.call(value) === type;
     } else {
         return Object.prototype.toString.call(value) ===
-                Object.prototype.toString.call(type);
+            Object.prototype.toString.call(type);
     }
 };
 
@@ -1892,10 +1892,10 @@ CCR.merge = function (obj1, obj2) {
 CCR.getParameter = function (name, source) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(source);
+        results = regex.exec(source);
     return results === null
-            ? ""
-            : decodeURIComponent(results[1].replace(/\+/g, " "));
+        ? ""
+        : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 /*
  * Process the location hash string. The string should have the form:
@@ -1909,8 +1909,8 @@ CCR.getParameter = function (name, source) {
  */
 CCR.tokenize = function (hash) {
     var raw = (typeof hash !== 'string')
-      ? String(hash)
-      : hash;
+        ? String(hash)
+        : hash;
 
     var matches = raw.match(/^#?(([^:\\?]*):?([^:\\?]*):?([^:\\?]*)\??(.*))/);
 
@@ -2124,13 +2124,13 @@ CCR._encodeObject = function(value, options) {
             var propertyValue = value[property];
             if (CCR.isType(propertyValue, CCR.Types.Array)) {
                 results.push(property + '=' + encodeURIComponent(CCR._encodeArray(propertyValue, {
-                            wrap: true,
-                            seperator: ':'
-                        })));
+                    wrap: true,
+                    seperator: ':'
+                })));
             } else if (CCR.isType(propertyValue, CCR.Types.Object)) {
                 results.push(property + '=' + encodeURIComponent(CCR._encodeObject(propertyValue, {
-                            wrap: true
-                        })));
+                    wrap: true
+                })));
             } else {
                 var key = wrap ? '"' + property + '"' : property;
                 results.push(key + separator + propertyValue);
@@ -2153,8 +2153,8 @@ CCR.encode = function (values) {
                 var isArray = CCR.isType(values[property], CCR.Types.Array);
                 var isObject = CCR.isType(values[property], CCR.Types.Object);
                 var value = isArray || isObject
-                        ? encodeURIComponent(CCR.deepEncode(values[property]))
-                        : values[property];
+                    ? encodeURIComponent(CCR.deepEncode(values[property]))
+                    : values[property];
                 parameters.push(property + '=' + value);
             }
         }
@@ -2184,7 +2184,7 @@ CCR.apply = function (lhs, rhs) {
         for (property in rhs) {
             if (rhs.hasOwnProperty(property)) {
                 var rhsExists = rhs[property] !== undefined
-                        && rhs[property] !== null;
+                    && rhs[property] !== null;
                 if (rhsExists) {
                     results[property] = rhs[property];
                 }
@@ -2210,7 +2210,7 @@ CCR.toInt = function (value) {
 
 /**
  * Displays a MessageBox to the user with the error styling.
-  *
+ *
  * @param {String}   title   of the Error Dialog Box.
  * @param {String}   message that will be displayed to the user.
  * @param {Function} success function that will be executed if the user does not
@@ -2232,7 +2232,7 @@ CCR.error = function (title, message, success, failure, buttons) {
         fn: function(buttonId, text, options) {
             var compare = CCR.compare;
             if (compare.strings(buttonId, Ext.MessageBox.buttonText['no'])
-                    || compare.strings(buttonId, Ext.MessageBox.buttonText['cancel'])) {
+                || compare.strings(buttonId, Ext.MessageBox.buttonText['cancel'])) {
                 failure(buttonId, text, options);
             } else {
                 success(buttonId, text, options);
@@ -2306,11 +2306,11 @@ CCR.getInstance = function(instancePath, classPath, config) {
      * @return {*} the result of walking the provided 'path'.
      **/
     var getReference = function(path, callback) {
-            callback = callback !== undefined
-                ? callback
-                : function(previous, current) {
-                    return previous[current];
-                };
+        callback = callback !== undefined
+            ? callback
+            : function(previous, current) {
+                return previous[current];
+            };
 
         return path.split('.').reduce( callback, window );
     };
@@ -2371,6 +2371,51 @@ CCR.intersect = function (left, right) {
     return found;
 };
 
+/**
+ * Basic word wrap that will insert <br> tags at specified line break points. 
+ *
+ * @param {String} str
+ * @param {Int} lineBreak
+ * @return {String} 
+ */
+CCR.wordWrap = function (str, lineBreak) {
+    var retVal = "";
+    var count = 0;
+    var newLineIndex = 0;
+    var lastSpaceIndex = 0;
+    let len = str.length;
+
+    if (len < lineBreak){
+        return str;
+    }
+
+    for (var i = 0; i < len; i++){
+        if (str[i] === ' '){
+            lastSpaceIndex = i;
+        }
+        if (count == lineBreak){
+            //Non-Alphanumeric character found 
+            if (!(/[a-z]|[0-9]/i.test(str[i]))){
+                retVal = retVal.concat("<br>", str.substr(newLineIndex, lineBreak));
+                newLineIndex = i;            
+            }
+            //Line break landed in the middle of a word. Need to back up.
+            else{
+                retVal = retVal.concat("<br>", str.substr(newLineIndex, (lastSpaceIndex - newLineIndex)));
+                newLineIndex = lastSpaceIndex + 1; //Start on next character
+                i = lastSpaceIndex + 1; 
+            }
+            //Append rest of str if there remains less characters than specified line break.
+            if ((len - i) < lineBreak){
+                retVal = retVal.concat("<br>", str.substr(newLineIndex, len));   
+                break; 
+            }
+            count = 0;
+        }
+        count++;        
+    }
+    return retVal;
+}
 
 // override 3.4.0 to be able to restore column state
 Ext.override(Ext.grid.ColumnModel, {
@@ -2470,18 +2515,18 @@ Ext.override(Ext.ToolTip, {
 // override 3.4.0 to ensure that the grid stops editing if the view is refreshed
 // actual bug: removing grid lines with active lookup editor didn't hide editor
 Ext.grid.GridView.prototype.processRows =
-        Ext.grid.GridView.prototype.processRows.createInterceptor(function () {
-            if (this.grid) {
-                this.grid.stopEditing(true);
-            }
-        });
+    Ext.grid.GridView.prototype.processRows.createInterceptor(function () {
+        if (this.grid) {
+            this.grid.stopEditing(true);
+        }
+    });
 
 // override 3.4.0 to fix issue with chart labels losing their labelRenderer after hide/show
 Ext.override(Ext.chart.CartesianChart, {
     createAxis: function (axis, value) {
         var o = Ext.apply({}, value),
-                ref,
-                old;
+            ref,
+            old;
 
         if (this[axis]) {
             old = this[axis].labelFunction;
@@ -2530,7 +2575,7 @@ Ext.override(Ext.menu.Item, {
                 '<img src="{icon}" class="x-menu-item-icon {iconCls}"/>',
                 '<span class="x-menu-item-text">{text}</span>',
                 '</a>'
-                );
+            );
         }
         var a = this.getTemplateArgs();
         this.el = position ? this.itemTpl.insertBefore(position, a, true) : this.itemTpl.append(container, a, true);

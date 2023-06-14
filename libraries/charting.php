@@ -50,10 +50,10 @@ function exportHighchart(
     $html_dir = __DIR__ . "/../html";
     $template;
     if ($isPlotly){
-	$template = file_get_contents($html_dir . "/plotly_template.html");
+        $template = file_get_contents($html_dir . "/plotly_template.html");
     }
     else{
-	$template = file_get_contents($html_dir . "/highchart_template.html");
+        $template = file_get_contents($html_dir . "/highchart_template.html");
     }
 
     $template = str_replace('_html_dir_', $html_dir, $template);
@@ -66,16 +66,17 @@ function exportHighchart(
     $template = str_replace('_globalChartOptions_', json_encode($globalChartOptions), $template);
 
     $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
-    $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight);
+
+    $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight, $isPlotly);
     switch($format){
-        case 'png':
-            return convertSvg($svg, 'png', $effectiveWidth, $effectiveHeight, $fileMetadata);
-            break;
-        case 'pdf':
-            return convertSvg($svg, 'pdf', round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
-            break;
-        default:
-            return $svg;
+    case 'png':
+        return convertSvg($svg, 'png', $effectiveWidth, $effectiveHeight, $fileMetadata);
+        break;
+    case 'pdf':
+        return convertSvg($svg, 'pdf', round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
+        break;
+    default:
+        return $svg;
     }
 }
 
@@ -90,7 +91,7 @@ function exportHighchart(
  *
  * @throws \Exception on invalid format, command execution failure, or non zero exit status
  */
-function getSvgViaChromiumHelper($html, $width, $height){
+function getSvgViaChromiumHelper($html, $width, $height, $isPlotly){
 
     // Chromium requires the file to have a .html extension
     // cant use datauri as it will not execute embdeeded javascript
@@ -107,7 +108,8 @@ function getSvgViaChromiumHelper($html, $width, $height){
     $command = LIB_DIR . '/chrome-helper/chrome-helper.js' .
         ' --window-size=' . $width . ',' . $height .
         ' --path-to-chrome=' . $chromiumPath .
-        ' --input-file=' . $tmpHtmlFile;
+        ' --input-file=' . $tmpHtmlFile .
+        ' --plotly=' . $isPlotly;
 
     $pipes = array();
     $descriptor_spec = array(
@@ -126,7 +128,7 @@ function getSvgViaChromiumHelper($html, $width, $height){
     fclose($pipes[2]);
     $return_value = proc_close($process);
 
-    //@unlink($tmpHtmlFile);
+    @unlink($tmpHtmlFile);
 
     $chartSvg = json_decode($out);
 
@@ -156,17 +158,20 @@ function convertSvg($svgData, $format, $width, $height, $docmeta){
     $creator = addcslashes('XDMoD ' . OPEN_XDMOD_VERSION, "()\n\\");
 
     switch($format){
-        case 'png':
-            $exifArgs = "-Title='$title' -Author='$author' -Description='$subject' -Source='$creator'";
-            break;
-        case 'pdf':
-            $exifArgs = "-Title='$title' -Author='$author' -Subject='$subject' -Creator='$creator'";
-            break;
-        default:
-            return $svgData;
+    case 'png':
+        $exifArgs = "-Title='$title' -Author='$author' -Description='$subject' -Source='$creator'";
+        break;
+    case 'pdf':
+        $exifArgs = "-Title='$title' -Author='$author' -Subject='$subject' -Creator='$creator'";
+        break;
+    default:
+        return $svgData;
     }
 
     $rsvgCommand = 'rsvg-convert -w ' .$width. ' -h '.$height.' -f ' . $format;
+    if ($format == 'png'){
+        $rsvgCommand = 'rsvg-convert -b "#FFFFFF" -w ' .$width. ' -h '.$height.' -f ' . $format;
+    }
     $exifCommand = 'exiftool ' . $exifArgs . ' -o - -';
 
     $command = $rsvgCommand . ' | ' . $exifCommand;
