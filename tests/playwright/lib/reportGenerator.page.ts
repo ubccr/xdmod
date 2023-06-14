@@ -401,6 +401,7 @@ export class ReportGenerator {
      */
     async isNewBasedOnEnabled() {
         await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
+        await this.page.locator(this.selectors.myReports.reportList.panel()).waitFor({state:'visible'});
         const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnVisibleButton());
         await expect(visibleButtons.length, 'Two "New Based On" button are present').toEqual(2);
         const firstButton = this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(1);

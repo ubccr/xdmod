@@ -12,6 +12,7 @@ const selectors = {
     navEntryPath: function (name) {
         return navEntry(name);
     },
+    roadMapText: '//div[@id="about_xdmod"]//div[contains(@class, "x-panel-body") and contains(@class, "x-border-layout-ct")]//p[contains(text(), "roadmap")]',
     roadMapFrame: '//iframe[@id="about_roadmap"]',
     trelloBoard: '//div[contains(@class,"full-bleed-trello-board")]',
     expiredMessageBox: '.x-window',

@@ -120,6 +120,7 @@ const selectors = {
         },
         chartList: {
             panel: () => selectors.availableCharts.panel() + '//div[@class="x-panel-body" and .//div[text()="Chart"]]',
+            empty: '//div[@id="chart_pool_panel"]//div[@class="x-panel-body" and .//div[text()="Chart"]]//b[text()="No charts have been added."]',
             rows: () => selectors.availableCharts.chartList.panel() + `//div[${classContains('x-grid3-row')}]`
         }
     },
