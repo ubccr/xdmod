@@ -75,7 +75,7 @@ class QueryDescripter
         $this->_disable_menu = false;
     }
 
-    public function getDrillTargets($hiddenGroupBys=array())
+    public function getDrillTargets($hiddenGroupBys = array())
     {
         return $this->realm->getDrillTargets(
             $this->_group_by_name,

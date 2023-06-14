@@ -2823,8 +2823,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     continue;
                                 }
 
-                                metric_dimensions = {};
-                                for(var dimension in realm_dimensions) {
+                                var metric_dimensions = {};
+                                for (var dimension in realm_dimensions) {
                                     if (!realm_metrics[rm].hidden_groupbys.includes(dimension)) {
                                         metric_dimensions[dimension] = realm_dimensions[dimension];
                                     }
@@ -5301,16 +5301,15 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             // get a list of the currently plotted realms:
             var enabledRealms = this.getEnabledRealmsList();
 
-            hidden_groupbys = [];
-            instance = CCR.xdmod.ui.metricExplorer;
+            var hidden_groupbys = [];
+            var instance = CCR.xdmod.ui.metricExplorer;
 
-            this.datasetStore.each(function(record) {
-              var metric = record.get('metric');
+            this.datasetStore.each(function (record) {
               hidden_groupbys[record.get('realm')] = instance.realms[record.get('realm')]['metrics'][record.get('metric')].hidden_groupbys;
             });
 
             // for each item in the filtersMenu,
-            this.filtersMenu.items.each(function(item) {
+            this.filtersMenu.items.each(function (item) {
 
                 // Get the item's realms array, if it exists.
                 var iRealms = item.realms;

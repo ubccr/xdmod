@@ -149,14 +149,14 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
 
         var realm_dimensions = this.realms[this.record.data.realm]['dimensions'];
 
-        this.filterItemsList = function(){
+        this.filterItemsList = function () {
           var hidden_groupbys = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].hidden_groupbys;
           var filterItems = [];
           var filterMap = {};
 
-          for (x in realm_dimensions) {
-              if (x == 'none' || realm_dimensions[x].text == undefined || hidden_groupbys.includes(x)) continue;
-              if (filterMap[x] == undefined) {
+          for (var x in realm_dimensions) {
+              if (x === 'none' || realm_dimensions[x].text === undefined || hidden_groupbys.includes(x)) { continue };
+              if (filterMap[x] === undefined) {
                   filterMap[x] = filterItems.length;
                   filterItems.push({
                       text: realm_dimensions[x].text,
@@ -178,12 +178,14 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
 
           filterItems.sort(
               function (a, b) {
-                  var nameA = a.text.toLowerCase(),
-                      nameB = b.text.toLowerCase();
-                  if (nameA < nameB) //sort string ascending
+                  var nameA = a.text.toLowerCase();
+                  var nameB = b.text.toLowerCase();
+                  if (nameA < nameB) { //sort string ascending
                       return -1;
-                  if (nameA > nameB)
+                  }
+                  if (nameA > nameB) {
                       return 1;
+                  }
                   return 0; //default return value (no sorting)
               }
           );
@@ -239,11 +241,11 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             realmData.push([realm]);
         }
 
-        this.metricsDataList = function(){
+        this.metricsDataList = function () {
             var metricData = [];
 
-            for (metric in this.realms[this.record.data.realm]['metrics']) {
-                if(this.realms[this.record.data.realm]['metrics'][metric].hidden_groupbys.includes(this.record.data.group_by) === false){
+            for (var metric in this.realms[this.record.data.realm]['metrics']) {
+                if (this.realms[this.record.data.realm]['metrics'][metric].hidden_groupbys.includes(this.record.data.group_by) === false) {
                   metricData.push([metric, this.realms[this.record.data.realm]['metrics'][metric].text]);
                 }
             }
@@ -251,17 +253,17 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             return metricData;
         }
 
-        this.dimensionDataList = function(){
+        this.dimensionDataList = function () {
             var hidden_groupbys = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].hidden_groupbys;
             var dimensionData = [];
 
-            for (dimension in this.realms[this.record.data.realm]['dimensions']) {
+            for (var dimension in this.realms[this.record.data.realm]['dimensions']) {
                 if (hidden_groupbys.includes(dimension) === false) {
                     dimensionData.push([dimension, this.realms[this.record.data.realm]['dimensions'][dimension].text]);
                 }
             }
 
-            return dimensionData
+            return dimensionData;
         }
 
         var activeFilterCheckColumn = new Ext.grid.CheckColumn({
@@ -503,7 +505,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
               triggerAction: 'all',
               listeners: {
                   scope: this,
-                  'select': function (combo, record, index) {
+                  select: function (combo, record, index) {
                       XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
                       var metric = record.get('id');
                       this.record.set('metric', metric);
@@ -541,7 +543,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
               triggerAction: 'all',
               listeners: {
                   scope: this,
-                  'select': function (combo, record, index) {
+                  select: function (combo, record, index) {
                       XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
                       this.record.set('group_by', record.get('id'));
                       this.metricsComboBox.store.removeAll();

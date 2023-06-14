@@ -799,7 +799,7 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::getDrillTargets()
      */
 
-    public function getDrillTargets($groupById, $hiddenGroupBys=array(), $order = self::SORT_ON_ORDER)
+    public function getDrillTargets($groupById, $hiddenGroupBys = array(), $order = self::SORT_ON_ORDER)
     {
         $drillTargets = array();
         $groupByObjects = $this->getGroupByObjects($order);
