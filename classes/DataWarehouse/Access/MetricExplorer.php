@@ -14,6 +14,7 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\MissingFilterListTableException;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
+use DataWarehouse\Query\Exceptions\BadRequestException;
 use FilterListHelper;
 use XDUser;
 
@@ -410,6 +411,10 @@ class MetricExplorer extends Common
         $ret =  urldecode($this->request['data_series']);
 
         $jret = json_decode($ret);
+
+        if (!is_array($jret)) {
+            throw new BadRequestException('Invalid data_series specified');
+        }
 
         foreach ($jret as &$y) {
 
