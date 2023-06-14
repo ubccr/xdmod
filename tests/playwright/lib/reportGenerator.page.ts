@@ -400,6 +400,7 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isNewBasedOnEnabled() {
+        await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
         const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.newBasedOnVisibleButton());
         await expect(visibleButtons.length, 'Two "New Based On" button are present').toEqual(2);
         const firstButton = this.selectors.myReports.toolbar.numNewBasedOnVisibleButton(1);
@@ -413,6 +414,8 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isEditSelectedReportsEnabled() {
+        await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
+        await this.page.locator(this.selectors.myReports.toolbar.editButtonInClass()).waitFor({state:'visible'});
         const editButtonClass = await this.page.getAttribute(this.selectors.myReports.toolbar.editButtonInClass(), 'class');
         return editButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
@@ -423,6 +426,8 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isPreviewSelectedReportsEnabled() {
+        await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
+        await this.page.locator(this.selectors.myReports.toolbar.previewButtonInClass()).waitFor({state:'visible'});
         const previewButtonClass = await this.page.getAttribute(this.selectors.myReports.toolbar.previewButtonInClass(), 'class');
         return previewButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
@@ -435,6 +440,7 @@ export class ReportGenerator {
     async isSendSelectedReportsEnabled() {
         // There are two separate "Send Now" buttons in the "My Reports" panel.
         // Only one should be visible at a time.
+        await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
         const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.sendNowButtonInClass());
         await expect(visibleButtons.length, 'Two "Send Now" button are present').toEqual(2);
         const firstSendButton = this.selectors.myReports.toolbar.firstSendNowButton();
@@ -448,6 +454,7 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isDownloadSelectedReportsEnabled() {
+        await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
         const visibleButtons = await this.page.$$(this.selectors.myReports.toolbar.downloadButtonInClass());
         await expect(visibleButtons.length, 'Two "New Based On" button are present').toEqual(2);
         const firstDownloadButton = this.selectors.myReports.toolbar.firstDownloadButton();
@@ -461,6 +468,8 @@ export class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     async isDeleteSelectedReportsEnabled() {
+        await this.page.locator(this.selectors.myReports.toolbar.panel()).waitFor({state:'visible'});
+        await this.page.locator(this.selectors.myReports.toolbar.deleteButtonInClass()).waitFor({state:'visible'});
         const deleteButtonClass = await this.page.getAttribute(this.selectors.myReports.toolbar.deleteButtonInClass(), 'class');
         return deleteButtonClass.match(/(^| )x-item-disabled($| )/) === null;
     }
