@@ -155,7 +155,9 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
           var filterMap = {};
 
           for (var x in realm_dimensions) {
-              if (x === 'none' || realm_dimensions[x].text === undefined || hidden_groupbys.includes(x)) { continue };
+              if (x === 'none' || realm_dimensions[x].text === undefined || hidden_groupbys.includes(x)) {
+                continue;
+              }
               if (filterMap[x] === undefined) {
                   filterMap[x] = filterItems.length;
                   filterItems.push({
@@ -169,10 +171,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                           filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
                       }
                   });
-              } else {
-                  if (filterItems[filterMap[x]].realms.indexOf(this.record.data.realm) == -1) {
-                      filterItems[filterMap[x]].realms.push(this.record.data.realm);
-                  }
+              } else if (filterItems[filterMap[x]].realms.indexOf(this.record.data.realm) === -1) {
+                    filterItems[filterMap[x]].realms.push(this.record.data.realm);
               }
           }
 
@@ -180,18 +180,18 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
               function (a, b) {
                   var nameA = a.text.toLowerCase();
                   var nameB = b.text.toLowerCase();
-                  if (nameA < nameB) { //sort string ascending
+                  if (nameA < nameB) { // sort string ascending
                       return -1;
                   }
                   if (nameA > nameB) {
                       return 1;
                   }
-                  return 0; //default return value (no sorting)
+                  return 0; // default return value (no sorting)
               }
           );
 
           return filterItems;
-        }
+        };
 
         this.filtersMenu.addItem(this.filterItemsList());
         filterButtonHandler = function (dim_id, dim_label, realms) {
