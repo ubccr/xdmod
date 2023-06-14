@@ -79,7 +79,7 @@ jobs:
           no_output_timeout: 120m
           command: |
             docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageProcess.sh
-            docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i ./code_coverage_raw
+            docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i /code_coverage_raw
       - run:
           name: Tar Up Code Coverage Report for later download
           command: docker exec xdmod tar -czvf ./code_coverage/report.tgz ./code_coverage_raw
