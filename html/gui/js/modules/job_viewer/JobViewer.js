@@ -129,12 +129,12 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         this.on('duration_change', this.noOpt);
 
         this.addEvents(
-            'record_loaded',
-            'data_account_loaded',
-            'data_acct_loaded',
-            'data_mdata_loaded',
-            'data_jobrecord_loaded',
-            'data_store_loaded'
+                'record_loaded',
+                'data_account_loaded',
+                'data_acct_loaded',
+                'data_mdata_loaded',
+                'data_jobrecord_loaded',
+                'data_store_loaded'
         );
 
         // SETUP: the components for this tab and add them to this tabs 'items'
@@ -182,7 +182,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             for (property in rhs) {
                 if (rhs.hasOwnProperty(property)) {
                     var rhsExists = rhs[property] !== undefined
-                        && rhs[property] !== null;
+                            && rhs[property] !== null;
                     if (rhsExists) {
                         results[property] = rhs[property];
                     }
@@ -270,19 +270,19 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         });
 
         self.treeSorter = new Ext.tree.TreeSorter(self.searchHistoryPanel, {
-            folderSort: false,
-            dir: "asc",
-            sortType: function(value, node) {
-                if (node.attributes.dtype == 'recordid') {
-                    if (self.sortMode == 'age') {
-                        return 9007199254740991 - parseInt(node.attributes.recordid, 10);
+                folderSort: false,
+                dir: "asc",
+                sortType: function(value, node) {
+                    if (node.attributes.dtype == 'recordid') {
+                        if (self.sortMode == 'age') {
+                            return 9007199254740991 - parseInt(node.attributes.recordid, 10);
+                        } else {
+                            return node.attributes.text;
+                        }
                     } else {
-                        return node.attributes.text;
+                        return node.attributes[node.attributes.dtype];
                     }
-                } else {
-                    return node.attributes[node.attributes.dtype];
                 }
-            }
         });
 
         // NAVIGATION ( PARENT WESTERN PANEL ) =================================
@@ -376,8 +376,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         // RETURN: an array of the top level components. To be used as the
         //         'items' for another component with a border layout.
         return new Array(
-            searchHistory,// WEST
-            viewPanel     // CENTER
+                searchHistory,// WEST
+                viewPanel     // CENTER
         );
     }, // setupComponents
 
@@ -456,10 +456,10 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     getParameterByName: function (name, source) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(source);
+                results = regex.exec(source);
         return results === null
-            ? ""
-            : decodeURIComponent(results[1].replace(/\+/g, " "));
+                ? ""
+                : decodeURIComponent(results[1].replace(/\+/g, " "));
     }, // getParameterByName
 
     /**
@@ -821,21 +821,21 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 break;
             case 'vmstate':
                 tab = new XDMoD.Module.JobViewer.VMStateChartPanel({
-                    id: chartId,
-                    title: title,
-                    url: base,
-                    baseParams: this._getParams(path),
-                    historyToken: '#' + this.module_id + '?' + this._createHistoryTokenFromArray(path),
-                    path: path,
-                    dtypes: [],
-                    dtype: dtype,
-                    dtypeValue: id,
-                    store: new Ext.data.JsonStore({
-                        proxy: new Ext.data.HttpProxy({ url: url }),
-                        autoLoad: true,
-                        root: 'data',
-                        fields: ['series', 'schema']
-                    })
+                  id: chartId,
+                  title: title,
+                  url: base,
+                  baseParams: this._getParams(path),
+                  historyToken: '#' + this.module_id + '?' + this._createHistoryTokenFromArray(path),
+                  path: path,
+                  dtypes: [],
+                  dtype: dtype,
+                  dtypeValue: id,
+                  store: new Ext.data.JsonStore({
+                      proxy: new Ext.data.HttpProxy({ url: url }),
+                      autoLoad: true,
+                      root: 'data',
+                      fields: ['series', 'schema']
+                  })
                 });
                 break;
             case 'analytics':
@@ -973,7 +973,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var chartPanel = this.getActiveJobSubPanel();
             if (chartPanel) {
                 chartPanel.fireEvent('print_clicked');
-                chartPanel.resize();
             }
         },
 
@@ -1139,8 +1138,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     if (exists(jobTab)) {
 
                         var currentlyActive = tabs.activeTab && tabs.activeTab.jobId
-                            ? tabs.activeTab.jobId === jobTab.jobId
-                            : false;
+                                ? tabs.activeTab.jobId === jobTab.jobId
+                                : false;
 
                         if (!currentlyActive) {
                             jobTab.revert = false;
@@ -1215,27 +1214,36 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var exists = CCR.exists;
             if (isType(realm, CCR.Types.String)) {
                 Ext.MessageBox.confirm('Delete All Saved Searches?', 'Do you want to delete all saved searches for the realm: ' + realm + ' ?',
-                    function (btn) {
-                        if (btn === 'ok' || btn === 'yes') {
-                            Ext.Ajax.request({
-                                /*'/rest/datawarehouse/search/history?realm=' + realm + '&token=' + XDMoD.REST.token,*/
-                                url: XDMoD.REST.url + '/' + self.rest.warehouse + '/search/history?realm=' + realm + '&token=' + XDMoD.REST.token,
-                                method: 'DELETE',
-                                success: function (response) {
-                                    var data = JSON.parse(response.responseText);
-                                    var success = exists(data) && exists(data.success) && data.success;
-                                    if (success) {
-                                        self.fireEvent('clear_display');
-                                        var current = Ext.History.getToken();
-                                        if (isType(current, CCR.Types.String)) {
-                                            var currentToken = CCR.tokenize(current);
-                                            var token = currentToken.tab + '?realm=' + realm;
-                                            Ext.History.add(token);
-                                        } else if (isType(current, CCR.Types.Object)) {
-                                            var token = current.tab + '?realm=' + realm;
-                                            Ext.History.add(token);
+                        function (btn) {
+                            if (btn === 'ok' || btn === 'yes') {
+                                Ext.Ajax.request({
+                                    /*'/rest/datawarehouse/search/history?realm=' + realm + '&token=' + XDMoD.REST.token,*/
+                                    url: XDMoD.REST.url + '/' + self.rest.warehouse + '/search/history?realm=' + realm + '&token=' + XDMoD.REST.token,
+                                    method: 'DELETE',
+                                    success: function (response) {
+                                        var data = JSON.parse(response.responseText);
+                                        var success = exists(data) && exists(data.success) && data.success;
+                                        if (success) {
+                                            self.fireEvent('clear_display');
+                                            var current = Ext.History.getToken();
+                                            if (isType(current, CCR.Types.String)) {
+                                                var currentToken = CCR.tokenize(current);
+                                                var token = currentToken.tab + '?realm=' + realm;
+                                                Ext.History.add(token);
+                                            } else if (isType(current, CCR.Types.Object)) {
+                                                var token = current.tab + '?realm=' + realm;
+                                                Ext.History.add(token);
+                                            }
+                                        } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Deletion Error',
+                                                msg: 'There was an error removing all searches for the realm: [' + realm + '].',
+                                                icon: Ext.MessageBox.ERROR,
+                                                buttons: Ext.MessageBox.OK
+                                            });
                                         }
-                                    } else {
+                                    },
+                                    failure: function (response) {
                                         Ext.MessageBox.show({
                                             title: 'Deletion Error',
                                             msg: 'There was an error removing all searches for the realm: [' + realm + '].',
@@ -1243,20 +1251,11 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                             buttons: Ext.MessageBox.OK
                                         });
                                     }
-                                },
-                                failure: function (response) {
-                                    Ext.MessageBox.show({
-                                        title: 'Deletion Error',
-                                        msg: 'There was an error removing all searches for the realm: [' + realm + '].',
-                                        icon: Ext.MessageBox.ERROR,
-                                        buttons: Ext.MessageBox.OK
-                                    });
-                                }
-                            });
-                        } else {
-                            Ext.MessageBox.alert('Ok', 'All your searches are belong to you.');
-                        }
-                    });
+                                });
+                            } else {
+                                Ext.MessageBox.alert('Ok', 'All your searches are belong to you.');
+                            }
+                        });
             }
         }, // search_delete_by_realm
 
@@ -1273,35 +1272,44 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             if (isType(node, CCR.Types.Object)) {
                 var title = node.text || node.attributes ? node.attributes.text : undefined;
                 Ext.MessageBox.confirm('Delete All Saved Searches?', 'Do you want to delete the search: ' + title + ' ?',
-                    function (text) {
-                        if (text === 'ok' || text === 'yes') {
-                            var recordId = node.attributes.recordid !== undefined ? node.attributes.recordid : null;
-                            var fragment = recordId !== null ? '/search/history/' + recordId : '/search/history';
-                            var path = self._getPath(node);
-                            /*'/rest/datawarehouse/search/history'*/
-                            var url = self._generateURL(XDMoD.REST.url + '/' + self.rest.warehouse + fragment, path);
-                            Ext.Ajax.request({
-                                url: url,
-                                method: 'DELETE',
-                                success: function (response) {
-                                    var data = JSON.parse(response.responseText);
-                                    var success = exists(data) && exists(data.success) && data.success;
-                                    if (success) {
-                                        self.fireEvent('clear_display');
-                                        var current = Ext.History.getToken();
-                                        var path = self._getPath(node);
-                                        if (path && path.length && path.length > 0) delete path[path.length - 1];
-                                        var params = self._getParams(path);
-                                        var encoded = encode(params);
-                                        if (isType(current, CCR.Types.String)) {
-                                            var currentToken = CCR.tokenize(current);
-                                            var token = currentToken.tab + '?' + encoded;
-                                            Ext.History.add(token);
-                                        } else if (isType(current, CCR.Types.Object)) {
-                                            var token = current.tab + '?' + encoded;
-                                            Ext.History.add(token);
+                        function (text) {
+                            if (text === 'ok' || text === 'yes') {
+                                var recordId = node.attributes.recordid !== undefined ? node.attributes.recordid : null;
+                                var fragment = recordId !== null ? '/search/history/' + recordId : '/search/history';
+                                var path = self._getPath(node);
+                                /*'/rest/datawarehouse/search/history'*/
+                                var url = self._generateURL(XDMoD.REST.url + '/' + self.rest.warehouse + fragment, path);
+                                Ext.Ajax.request({
+                                    url: url,
+                                    method: 'DELETE',
+                                    success: function (response) {
+                                        var data = JSON.parse(response.responseText);
+                                        var success = exists(data) && exists(data.success) && data.success;
+                                        if (success) {
+                                            self.fireEvent('clear_display');
+                                            var current = Ext.History.getToken();
+                                            var path = self._getPath(node);
+                                            if (path && path.length && path.length > 0) delete path[path.length - 1];
+                                            var params = self._getParams(path);
+                                            var encoded = encode(params);
+                                            if (isType(current, CCR.Types.String)) {
+                                                var currentToken = CCR.tokenize(current);
+                                                var token = currentToken.tab + '?' + encoded;
+                                                Ext.History.add(token);
+                                            } else if (isType(current, CCR.Types.Object)) {
+                                                var token = current.tab + '?' + encoded;
+                                                Ext.History.add(token);
+                                            }
+                                        } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Deletion Error',
+                                                msg: 'There was an error removing search: [' + title + '].',
+                                                icon: Ext.MessageBox.ERROR,
+                                                buttons: Ext.MessageBox.OK
+                                            });
                                         }
-                                    } else {
+                                    },
+                                    failure: function (response) {
                                         Ext.MessageBox.show({
                                             title: 'Deletion Error',
                                             msg: 'There was an error removing search: [' + title + '].',
@@ -1309,18 +1317,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                             buttons: Ext.MessageBox.OK
                                         });
                                     }
-                                },
-                                failure: function (response) {
-                                    Ext.MessageBox.show({
-                                        title: 'Deletion Error',
-                                        msg: 'There was an error removing search: [' + title + '].',
-                                        icon: Ext.MessageBox.ERROR,
-                                        buttons: Ext.MessageBox.OK
-                                    });
-                                }
-                            })
+                                })
+                            }
                         }
-                    }
                 );
 
             }
@@ -1743,8 +1742,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         if (exists(jobTab)) {
 
             var currentlyActive = tabs.activeTab && tabs.activeTab.jobId
-                ? tabs.activeTab.jobId === jobTab.jobId
-                : false;
+                    ? tabs.activeTab.jobId === jobTab.jobId
+                    : false;
 
             if (!currentlyActive) {
                 tabs.setActiveTab(jobTab);
@@ -1862,8 +1861,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var data = results.data;
             var recordId = data.recordid;
             var jobs = data.results || [
-                jobData
-            ];
+                        jobData
+                    ];
             var jobFound = false;
             for (var i = 0; i < jobs.length; i++) {
                 var job = jobs[i];
@@ -1940,11 +1939,11 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         searchTerms = searchTerms || {};
         var params = {
             'data': JSON.stringify(
-                {
-                    "text": title,
-                    "searchterms": searchTerms,
-                    "results": jobs
-                })
+                    {
+                        "text": title,
+                        "searchterms": searchTerms,
+                        "results": jobs
+                    })
         };
         if (CCR.exists(id)) params['recordid'] = id;
 
