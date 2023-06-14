@@ -456,11 +456,11 @@ pecl install Xdebug-"$XDEBUG_VERSION"
 ### Ensure PHP knows about xdebug and enables code coverage
 echo "zend_extension=$(find /usr/lib64/php/modules/ -name xdebug.so)" > /etc/php.d/xdebug.ini
 echo "$XDEBUG_MODE" >> /etc/php.d/xdebug.ini
-echo "xdebug.coverage_enable=1" >> /etc/php.d/xdebug.ini
+echo "xdebug.mode=coverage" >> /etc/php.d/xdebug.ini
 
-echo "xdebug.profiler_enable=1" >> /etc/php.d/xdebug.ini
-echo "xdebug.profiler_output_dir=${arg_l}" >> /etc/php.d/xdebug.ini
-echo "xdebug.collect_params=3">> /etc/php.d/xdebug.ini
+#echo "xdebug.profiler_enable=1" >> /etc/php.d/xdebug.ini
+echo "xdebug.output_dir=${arg_l}" >> /etc/php.d/xdebug.ini
+#echo "xdebug.collect_params=3">> /etc/php.d/xdebug.ini
 
 ### For Remote Debug uncomment the following lines...
 #echo "xdebug.remote_enable=on" >> /etc/php.d/xdebug.ini
