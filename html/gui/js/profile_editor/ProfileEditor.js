@@ -35,6 +35,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
     init: function () {
         this.general_settings.init();
         this.api_token.init();
+        this.show();
     },
 
     handleProfileClose: function () {
