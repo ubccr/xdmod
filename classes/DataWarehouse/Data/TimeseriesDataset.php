@@ -355,7 +355,8 @@ class TimeseriesDataset
     public function exportJsonStore($limit = null, $offset = null)
     {
         list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
-        $stat = reset($this->query->getStats());
+        $stats = $this->query->getStats();
+        $stat = reset($stats);
 
         $fields = array(
             array('name' => $timeGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'),

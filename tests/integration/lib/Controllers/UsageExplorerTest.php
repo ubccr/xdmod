@@ -2,8 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use IntegrationTests\TokenAuthTest;
 use TestHarness\XdmodTestHelper;
-use IntegrationTests\BaseTest;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
@@ -27,8 +27,10 @@ function arrayRecursiveDiff($a1, $a2) {
     return $retval;
 }
 
-class UsageExplorerTest extends BaseTest
+class UsageExplorerTest extends TokenAuthTest
 {
+    const TEST_GROUP = 'integration/controllers/user_interface';
+
     private static $publicView;
 
     public static function setUpBeforeClass()
@@ -836,7 +838,7 @@ EOF;
         //TODO: Needs further integration for storage realm
         $realmData = array();
 
-        if (in_array("cloud", self::getRealms())) {
+        if (in_array("cloud", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
@@ -884,7 +886,7 @@ EOF;
             );
         };
 
-        if (in_array("jobs", self::getRealms())) {
+        if (in_array("jobs", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Jobs, single value filter tests
@@ -1197,5 +1199,18 @@ END;
             }
         }
         return $arrays;
+    }
+
+    /**
+     * @dataProvider provideTokenAuthTestData
+     */
+    public function testGetDataTokenAuth($role, $tokenType)
+    {
+        parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            self::TEST_GROUP,
+            'get_data'
+        );
     }
 }

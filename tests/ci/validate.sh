@@ -51,4 +51,11 @@ then
     exitcode=1
 fi
 
+# Confirm that xdmod-check-config finds the RPM installation details
+if ! xdmod-check-config | grep -q 'RPM Installed Packages'
+then
+    echo "Missing RPM information from xdmod-check-config"
+    exitcode=1
+fi
+
 exit $exitcode
