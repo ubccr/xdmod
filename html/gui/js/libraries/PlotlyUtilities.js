@@ -13,8 +13,14 @@ function generateChartOptions(record){
     let ymin, ymax;
     ymin = record.data.series[0].data[0].y;
     ymax = ymin;
-
-    for (let sid = 0; sid < record.data.series.length; sid++) {
+    let sid = 0;
+    if (record.data.series[sid].name === 'Range') {
+            sid = 1;
+            isEnvelope = true;
+            ymin = record.data.series[1].data[0].y;
+            ymax = ymin;
+    }  
+    for (sid = 0; sid < record.data.series.length; sid++) {
         if (record.data.series[sid].name === 'Range') {
             isEnvelope = true;
             ymin = record.data.series[1].data[0].y;
