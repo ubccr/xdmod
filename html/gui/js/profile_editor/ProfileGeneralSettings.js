@@ -6,15 +6,35 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
     resizable: false,
     title: 'General',
     cls: 'no-underline-invalid-fields-form',
+    hasBeenClosed: false,
+    responseArgs: null,
 
     // Dictates whether closing the profile editor logs out the user automatically
     perform_logout_on_close: false,
 
     init: function () {
+        let self = this;
         XDMoD.REST.connection.request({
             url: '/users/current',
             method: 'GET',
-            callback: this.cbProfile
+            callback: function (options, success, response) {
+                // If the window has already been closed, throw away the
+                // response.
+                if (self.hasBeenClosed) {
+                    return;
+                }
+                // Store the arguments needed to process the response.
+                self.responseArgs = {
+                    'success': success,
+                    'response': response
+                };
+                // If the window has finished opening, go ahead and process
+                // the response. Otherwise, the window will call
+                // handleOpenEvent later to process the response.
+                if (self.parentWindow.isVisible()) {
+                    self.processHttpResponse();
+                }
+            }
         });
     },
 
@@ -165,11 +185,10 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
         // ------------------------------------------------
 
-        this.cbProfile = function (options, success, response) {
-            // If the window is not open, do not attempt to manipulate the DOM.
-            if (!self.parentWindow.isVisible()) {
-                return;
-            }
+        this.processHttpResponse = function () {
+            const success = this.responseArgs.success;
+            const response = this.responseArgs.response;
+            this.responseArgs = null;
             // If success reported, attempt to extract user data.
             var data;
             var decodedSuccessResponse;
@@ -217,7 +236,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             } else {
                 Ext.MessageBox.alert('My Profile', 'There was a problem retrieving your profile information.');
             }
-        }; // cbProfile
+        }; // processHttpResponse
 
         // ------------------------------------------------
         var optPasswordUpdate;
@@ -461,6 +480,19 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         });
 
         XDMoD.ProfileGeneralSettings.superclass.initComponent.call(this);
-    } // initComponent
+    }, // initComponent
+
+    handleOpenEvent: function () {
+        this.hasBeenClosed = false;
+        // If a response arrived while the window was opening, process it now.
+        if (this.responseArgs !== null) {
+            this.processHttpResponse();
+        }
+    },
+
+    handleCloseEvent: function () {
+        this.hasBeenClosed = true;
+        this.responseArgs = null;
+    }
 
 }); // XDMoD.ProfileGeneralSettings

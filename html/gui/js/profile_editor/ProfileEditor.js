@@ -14,7 +14,7 @@ XDMoD.ProfileEditorConstants = {
 
 XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
     id: 'xdmod-profile-editor',
-    width: 375,
+    width: 400,
 
     border: false,
     frame: true,
@@ -33,8 +33,20 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
     tooltip: 'Profile Editor',
 
     init: function () {
-        this.general_settings.init();
-        this.api_token.init();
+        const tabs = [ this.general_settings, this.api_token ];
+        this.addListener('afterrender', function () {
+            tabs.forEach(function (tab) {
+                tab.handleOpenEvent();
+            });
+        });
+        this.addListener('close', function () {
+            tabs.forEach(function (tab) {
+                tab.handleCloseEvent();
+            });
+        });
+        tabs.forEach(function (tab) {
+            tab.init();
+        });
         this.show();
     },
 
