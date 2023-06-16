@@ -1980,71 +1980,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $lineWidth = 1 + $settings['scale'];
 
         $chartConfig = array(
-            'colors' => array( '#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-                        '#f28f43', '#77a1e5', '#c42525', '#a6c96a'
-            ),
-            'series' => $data['series'],
-            'xaxis' => array(
-                'tickfont' => array(
-                        'size' => $axisLabelFontSize
-                ),
-                'zerolinewidth' => $lineWidth,
-                'title' => '<b>' + 'Time (' . $data['schema']['timezone'] . ')' + '</b>',
-		'titlefont' => array(
-                        'size' => $axisTitleFontSize,
-                        'color' => '#5078a0'
-                )
-            ),
-            'yaxis' => array(
-		'title' => '<b>' + 'Time (' . $data['schema']['units'] . ')' + '</b>',
-                'titlefont' => array(
-                        'size' => $axisTitleFontSize,
-                        'color' => '#5078a0'
-                ),
-                'zerolinewidth' => $lineWidth,
-                'ticfont' => array(
-                        'size' => $axisLabelFontSize
-                ),
-                'rangemode' => 'nonnegative'
-            ),
-            'showlegend' => false,
-	    'plotOptions' => array(
-                'line' => array(
-                    'lineWidth' => $lineWidth,
-                    'marker' => array(
-                        'enabled' => $markerEnabled
-                    )
-                )
-            ),
-            'annotations' => array(
-                'text' => $data['schema']['source'] . '. Powered by XDMoD/Plotly',
-		'xref' => 'paper',
-		'yref' => 'paper',
-		'x' => 1,
-		'xanchor' => 'left',
-		'y' => 0,
-		'yanchor' => 'top',
-		'showarrow' => false
-            ),
-            'title' => array(
-                'font' => array(
-                    'color' => '#444b6e',
-                    'size' => $mainTitleFontSize
-                ),
-
-                'text' => $settings['show_title'] ? $data['schema']['description'] : null
-            )
+           'width' => $settings['width'],
+           'height' => $settings['height'],
+           'data' => $data,
+           'axisTickSize' => $axisLabelFontSize,
+           'axisTitleSize' => $axisTitleFontSize,
+           'lineWidth' => $lineWidth,
+           'chartTitleSize' => $mainTitleFontSize 
         );
-
-        /*if (strpos($data['schema']['units'], '%') !== false) {
-            $chartConfig['yAxis']['max'] = 100.0;
-        }*/
 
         $globalConfig = array(
             'timezone' => $data['schema']['timezone']
         );
 
-        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata']);
+        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata'], true);
         $chartFilename = $settings['fileMetadata']['title'] . '.' . $type;
         $mimeOverride = $type == 'svg' ? 'image/svg+xml' : null;
 

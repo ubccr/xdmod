@@ -37,68 +37,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
         var self = this;
 
         var createChart = function () {
-            var defaultChartSettings = {
-                chart: {
-                    renderTo: self.id + '_hc'
-                },
-                colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
-                title: {
-                    style: {
-                        color: '#444b6e',
-                        fontSize: '16px'
-                    },
-                    text: ''
-                },
-                loading: {
-                    style: {
-                        opacity: 0.7
-                    }
-                },
-                yAxis: {
-                    title: {
-                        style: {
-                            fontWeight: 'bold',
-                            color: '#5078a0'
-                        }
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                exporting: {
-                    enabled: false
-                },
-                tooltip: {
-                    pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low:%A, %b %e, %H:%M:%S}</b> - <b>{point.high:%A, %b %e, %H:%M:%S}</b><br/>',
-                    dateTimeLabelFormats: {
-                        millisecond: '%A, %b %e, %H:%M:%S.%L %T',
-                        second: '%A, %b %e, %H:%M:%S %T',
-                        minute: '%A, %b %e, %H:%M:%S %T',
-                        hour: '%A, %b %e, %H:%M:%S %T'
-                    }
-                },
-                plotOptions: {
-                    line: {
-                        marker: {
-                            enabled: false
-                        }
-                    },
-                    columnrange: {
-                        minPointLength: 3,
-                        animation: false,
-                        dataLabels: {
-                            enabled: false
-                        }
-                    },
-                    series: {
-                        allowPointSelect: false,
-                        animation: false
-                    }
-                }
-            };
-
-            var chartOptions = jQuery.extend(true, {}, defaultChartSettings, self.chartSettings);
-
+            this.chart = Plotly.newPlot(this.id, [], [], {displayModeBar: false, doubleClick: 'reset'});
             var storeParams;
             if (self.panelSettings.pageSize) {
                 storeParams = {
@@ -148,9 +87,9 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             xtype: 'container',
             id: this.id + '_hc',
             listeners: {
-                resize: function () {
-                    if (self.chart) {
-                        self.chart.reflow();
+                resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
+                    if (this.chart) {
+                        Plotly.relayout(this.id, {width: adjWidth, height: adjHeight});
                     }
                 },
                 render: createChart
@@ -180,7 +119,8 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
         beforedestroy: function () {
             if (this.chart) {
                 Plotly.purge(this.id);
+                this.chart = false;
             }
-        }
+        },
     }
 });
