@@ -24,7 +24,7 @@
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
         "phpoffice/phpword": "^0.17.0",
         "monolog/monolog": "^1.25",
-        "plotly/plotly": "^2.24.2",
+        "plotly/plotly": "^1.57.1",
         "kassner/log-parser": "~1.5",
         "geoip2/geoip2": "~2.0",
         "ua-parser/uap-php": "^3.9"
@@ -211,13 +211,13 @@
             "package": {
                 "name": "plotly/plotly",
                 "type": "vanilla-plugin",
-                "version": "2.24.2",
+                "version": "1.57.1",
                 "license": "MIT",
                 "homepage": "https://github.com/plotly/plotly.js",
                 "dist": {
-                    "url": "https://cdn.plot.ly/plotly-2.24.2.min.js",
+                    "url": "https://cdn.plot.ly/plotly-1.57.1.min.js",
                     "type": "file",
-                    "shasum": "18d8802e7767617cfc23b6008a56581a567c1015"
+                    "shasum": "ccf99902ea104599c3b5b4811e83b8ee8118aad3"
                 },
                 "require": {
                     "composer/installers": "~1.0"

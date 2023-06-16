@@ -97,115 +97,115 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private $_supported_types = array(
         \DataWarehouse\Query\RawQueryTypes::ACCOUNTING =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::ACCOUNTING,
-            "dtype" => "infoid",
-            "text" => "Accounting data",
-            "url" => "/rest/v1.0/warehouse/search/jobs/accounting",
-            "documentation" => "Shows information about the job that was obtained from the resource manager.
-            This includes timing information such as the start and end time of the job as
-            well as administrative information such as the user that submitted the job and
-            the account that was charged.",
-            "type" => "keyvaluedata",
-            "leaf" => true
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::ACCOUNTING,
+                "dtype" => "infoid",
+                "text" => "Accounting data",
+                "url" => "/rest/v1.0/warehouse/search/jobs/accounting",
+                "documentation" => "Shows information about the job that was obtained from the resource manager.
+                                  This includes timing information such as the start and end time of the job as
+                                  well as administrative information such as the user that submitted the job and
+                                  the account that was charged.",
+                "type" => "keyvaluedata",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT,
-            "dtype" => "infoid",
-            "text" => "Job script",
-            "url" => "/rest/v1.0/warehouse/search/jobs/jobscript",
-            "documentation" => "Shows the job batch script that was passed to the resource manager when the
-            job was submitted. The script is displayed verbatim.",
-            "type" => "utf8-text",
-            "leaf" => true
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT,
+                "dtype" => "infoid",
+                "text" => "Job script",
+                "url" => "/rest/v1.0/warehouse/search/jobs/jobscript",
+                "documentation" => "Shows the job batch script that was passed to the resource manager when the
+                                    job was submitted. The script is displayed verbatim.",
+                "type" => "utf8-text",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::EXECUTABLE =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
-            "dtype" => "infoid",
-            "text" => "Executable information",
-            "url" => "/rest/v1.0/warehouse/search/jobs/executable",
-            "documentation" => "Shows information about the processes that were run on the compute nodes during
-            the job. This information includes the names of the various processes and may
-            contain information about the linked libraries, loaded modules and process
-            environment.",
-            "type" => "nested",
-            "leaf" => true),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
+                "dtype" => "infoid",
+                "text" => "Executable information",
+                "url" => "/rest/v1.0/warehouse/search/jobs/executable",
+                "documentation" => "Shows information about the processes that were run on the compute nodes during
+                                    the job. This information includes the names of the various processes and may
+                                    contain information about the linked libraries, loaded modules and process
+                                    environment.",
+                "type" => "nested",
+                "leaf" => true),
         \DataWarehouse\Query\RawQueryTypes::PEERS =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
-            "dtype" => "infoid",
-            "text" => "Peers",
-            'url' => '/rest/v1.0/warehouse/search/jobs/peers',
-            'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.',
-            'type' => 'ganttchart',
-            "leaf" => true
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
+                "dtype" => "infoid",
+                "text" => "Peers",
+                'url' => '/rest/v1.0/warehouse/search/jobs/peers',
+                'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.',
+                'type' => 'ganttchart',
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
-            "dtype" => "infoid",
-            "text" => "Summary metrics",
-            "url" => "/rest/v1.0/warehouse/search/jobs/metrics",
-            "documentation" => "shows a table with the performance metrics collected during
-            the job. These are typically average values over the job. The
-            label for each row has a tooltip that describes the metric. The
-            data are grouped into the following categories:
-            <ul>
-            <li>CPU Statistics: information about the cores on which the job was
-            assigned, such as CPU usage, FLOPs, CPI</li>
-            <li>File I/O Statistics: information about the data read from and
-            written to block devices and file system mount points.  </li>
-            <li>Memory Statistics: information about the memory usage on the nodes
-            on which the job ran.</li>
-            <li>Network I/O Statistics: information about the data transmitted and
-            received over the network devices.</li>
-            </ul>
-            ",
-            "type" => "metrics",
-            "leaf" => true
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
+                "dtype" => "infoid",
+                "text" => "Summary metrics",
+                "url" => "/rest/v1.0/warehouse/search/jobs/metrics",
+                "documentation" => "shows a table with the performance metrics collected during
+                                    the job. These are typically average values over the job. The
+                                    label for each row has a tooltip that describes the metric. The
+                                    data are grouped into the following categories:
+                                    <ul>
+                                        <li>CPU Statistics: information about the cores on which the job was
+                                         assigned, such as CPU usage, FLOPs, CPI</li>
+                                        <li>File I/O Statistics: information about the data read from and
+                                         written to block devices and file system mount points.  </li>
+                                        <li>Memory Statistics: information about the memory usage on the nodes
+                                         on which the job ran.</li>
+                                        <li>Network I/O Statistics: information about the data transmitted and
+                                         received over the network devices.</li>
+                                    </ul>
+                ",
+                "type" => "metrics",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS,
-            "dtype" => "infoid",
-            "text" => "Detailed metrics",
-            "url" => "/rest/v1.0/warehouse/search/jobs/detailedmetrics",
-            "documentation" => "shows the data generated by the job summarization software. Please
-            consult the relevant job summarization software documentation for details
-            about these metrics.",
-            "type" => "detailedmetrics",
-            "leaf" => true
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS,
+                "dtype" => "infoid",
+                "text" => "Detailed metrics",
+                "url" => "/rest/v1.0/warehouse/search/jobs/detailedmetrics",
+                "documentation" => "shows the data generated by the job summarization software. Please
+                                    consult the relevant job summarization software documentation for details
+                                    about these metrics.",
+                "type" => "detailedmetrics",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::ANALYTICS =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::ANALYTICS,
-            "dtype" => "infoid",
-            "text" => "Job analytics",
-            "url" => "/rest/v1.0/warehouse/search/jobs/analytics",
-            "documentation" => "Click the help icon on each plot to show the description of the analytic",
-            "type" => "analytics",
-            "hidden" => true,
-            "leaf" => true
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::ANALYTICS,
+                "dtype" => "infoid",
+                "text" => "Job analytics",
+                "url" => "/rest/v1.0/warehouse/search/jobs/analytics",
+                "documentation" => "Click the help icon on each plot to show the description of the analytic",
+                "type" => "analytics",
+                "hidden" => true,
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS,
-            "dtype" => "infoid",
-            "text" => "Timeseries",
-            "leaf" => false
-        ),
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS,
+                "dtype" => "infoid",
+                "text" => "Timeseries",
+                "leaf" => false
+            ),
         \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE =>
-        array(
-            "infoid" => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE,
-            "dtype" => "infoid",
-            "text" => "VM State/Events",
-            "documentation" => "Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.",
-            "url" => "/rest/v1.0/warehouse/search/cloud/vmstate",
-            "type" => "vmstate",
-            "leaf" => true
-        )
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE,
+                "dtype" => "infoid",
+                "text" => "VM State/Events",
+                "documentation" => "Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.",
+                "url" => "/rest/v1.0/warehouse/search/cloud/vmstate",
+                "type" => "vmstate",
+                "leaf" => true
+            )
     );
 
     /**
@@ -1025,7 +1025,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         ));
     }
 
-    /**
+        /**
      * Attempt to retrieve the the name for the provided dimensionId.
      *
      * @param Request     $request
@@ -1042,15 +1042,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $status = $success ? 200 : 404;
         $payload = $success
-            ? array(
-                'success' => $success,
-                'results' => array(
-                    'name' => $dimensionName
-                ))
-                : array(
-                    'success' => false,
-                    'message' => "Unable to find a name for dimension: $dimensionId"
-                );
+                 ? array(
+                     'success' => $success,
+                     'results' => array(
+                         'name' => $dimensionName
+                     ))
+                 : array(
+                         'success' => false,
+                         'message' => "Unable to find a name for dimension: $dimensionId"
+                 );
 
         return $app->json(
             $payload,
@@ -1077,16 +1077,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $status = $success ? 200 : 404;
         $payload = $success
-            ? array(
-                'success' => $success,
-                'results' => array(
-                    'name' => $valueName
-                )
-            )
-            : array(
-                'success' => $success,
-                'message' => "Unable to find a name for dimesion: $dimensionId | value: $valueId"
-            );
+                 ? array(
+                     'success' => $success,
+                     'results' => array(
+                         'name' => $valueName
+                     )
+                 )
+                 : array(
+                     'success' => $success,
+                     'message' => "Unable to find a name for dimesion: $dimensionId | value: $valueId"
+                 );
 
         return $app->json(
             $payload,
@@ -1381,44 +1381,44 @@ class WarehouseControllerProvider extends BaseControllerProvider
     public function processJobSearchByAction(Request $request, Application $app, XDUser $user, $action, $realm, $jobId, $actionName)
     {
         switch ($action) {
-        case 'accounting':
-        case 'jobscript':
-        case 'analysis':
-        case 'metrics':
-        case 'analytics':
-            $results = $this->getJobData($app, $user, $realm, $jobId, $action, $actionName);
-            break;
-        case 'peers':
-            $start = $this->getIntParam($request, 'start', true);
-            $limit = $this->getIntParam($request, 'limit', true);
-            $results = $this->getJobPeers($app, $user, $realm, $jobId, $start, $limit);
-            break;
-        case 'executable':
-            $results = $this->getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
-            break;
-        case 'detailedmetrics':
-            $results = $this->getJobSummary($app, $user, $realm, $jobId, $action, $actionName);
-            break;
-        case 'timeseries':
-            $tsId = $this->getStringParam($request, 'tsid', true);
-            $nodeId = $this->getIntParam($request, 'nodeid', false);
-            $cpuId = $this->getIntParam($request, 'cpuid', false);
+            case 'accounting':
+            case 'jobscript':
+            case 'analysis':
+            case 'metrics':
+            case 'analytics':
+                $results = $this->getJobData($app, $user, $realm, $jobId, $action, $actionName);
+                break;
+            case 'peers':
+                $start = $this->getIntParam($request, 'start', true);
+                $limit = $this->getIntParam($request, 'limit', true);
+                $results = $this->getJobPeers($app, $user, $realm, $jobId, $start, $limit);
+                break;
+            case 'executable':
+                $results = $this->getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
+                break;
+            case 'detailedmetrics':
+                $results = $this->getJobSummary($app, $user, $realm, $jobId, $action, $actionName);
+                break;
+            case 'timeseries':
+                $tsId = $this->getStringParam($request, 'tsid', true);
+                $nodeId = $this->getIntParam($request, 'nodeid', false);
+                $cpuId = $this->getIntParam($request, 'cpuid', false);
 
-            $results = $this->getJobTimeSeriesData($app, $request, $user, $realm, $jobId, $tsId, $nodeId, $cpuId);
-            break;
-        case 'vmstate':
-            $results = $this->getJobTimeSeriesData($app, $request, $user, $realm, $jobId, null, null, null);
-            break;
-        default:
-            $results = $app->json(
-                array(
-                    'success' => false,
-                    'action' => $actionName,
-                    'message' => "Unable to process the requested operation. Unsupported action $action."
-                ),
-                400
-            );
-            break;
+                $results = $this->getJobTimeSeriesData($app, $request, $user, $realm, $jobId, $tsId, $nodeId, $cpuId);
+                break;
+            case 'vmstate':
+                $results = $this->getJobTimeSeriesData($app, $request, $user, $realm, $jobId, null, null, null);
+                break;
+            default:
+                $results = $app->json(
+                    array(
+                        'success' => false,
+                        'action' => $actionName,
+                        'message' => "Unable to process the requested operation. Unsupported action $action."
+                    ),
+                    400
+                );
+                break;
         }
 
         return $results;
@@ -1591,7 +1591,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function arraytostore(array $values)
     {
-        return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, false) ));
+            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, false) ));
     }
 
     private function atosrecurse(array $values)
@@ -1713,34 +1713,34 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
 
         switch ($infoId) {
-        case "" . \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE:
-            $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
-            $info = new $infoclass();
+            case "" . \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE:
+                $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
+                $info = new $infoclass();
 
-            $result = array();
-            foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
-                $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/vmstate";
-                $tsid['type'] = "timeseries";
-                $tsid['dtype'] = "tsid";
-                $result[] = $tsid;
-            }
-            return $app->json(array('success' => true, "results" => $result));
-            break;
-        case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
-            $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
-            $info = new $infoclass();
+                $result = array();
+                foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
+                    $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/vmstate";
+                    $tsid['type'] = "timeseries";
+                    $tsid['dtype'] = "tsid";
+                    $result[] = $tsid;
+                }
+                return $app->json(array('success' => true, "results" => $result));
+                break;
+            case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
+                $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
+                $info = new $infoclass();
 
-            $result = array();
-            foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
-                $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
-                $tsid['type'] = "timeseries";
-                $tsid['dtype'] = "tsid";
-                $result[] = $tsid;
-            }
-            return $app->json(array('success' => true, "results" => $result));
-            break;
-        default:
-            throw new BadRequestException("Node is a leaf");
+                $result = array();
+                foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
+                    $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
+                    $tsid['type'] = "timeseries";
+                    $tsid['dtype'] = "tsid";
+                    $result[] = $tsid;
+                }
+                return $app->json(array('success' => true, "results" => $result));
+                break;
+            default:
+                throw new BadRequestException("Node is a leaf");
         }
     }
 
@@ -1960,6 +1960,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         // Enable plot marker only if a single point is present in the data series' plot data.
         // Otherwise plot the data with a line.
+
         $markerEnabled = false;
 
         // check the series array passed in from the overall data array:
@@ -1979,20 +1980,71 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $lineWidth = 1 + $settings['scale'];
 
         $chartConfig = array(
-            'width' => $settings['width'],
-            'height' => $settings['height'],
-            'data' => $data,
-            'axisTickSize' => $axisLabelFontSize,
-            'axisTitleSize' => $axisTitleFontSize,
-            'lineWidth' => $lineWidth,
-            'chartTitleSize' => $mainTitleFontSize
+            'colors' => array( '#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
+                        '#f28f43', '#77a1e5', '#c42525', '#a6c96a'
+            ),
+            'series' => $data['series'],
+            'xaxis' => array(
+                'tickfont' => array(
+                        'size' => $axisLabelFontSize
+                ),
+                'zerolinewidth' => $lineWidth,
+                'title' => '<b>' + 'Time (' . $data['schema']['timezone'] . ')' + '</b>',
+		'titlefont' => array(
+                        'size' => $axisTitleFontSize,
+                        'color' => '#5078a0'
+                )
+            ),
+            'yaxis' => array(
+		'title' => '<b>' + 'Time (' . $data['schema']['units'] . ')' + '</b>',
+                'titlefont' => array(
+                        'size' => $axisTitleFontSize,
+                        'color' => '#5078a0'
+                ),
+                'zerolinewidth' => $lineWidth,
+                'ticfont' => array(
+                        'size' => $axisLabelFontSize
+                ),
+                'rangemode' => 'nonnegative'
+            ),
+            'showlegend' => false,
+	    'plotOptions' => array(
+                'line' => array(
+                    'lineWidth' => $lineWidth,
+                    'marker' => array(
+                        'enabled' => $markerEnabled
+                    )
+                )
+            ),
+            'annotations' => array(
+                'text' => $data['schema']['source'] . '. Powered by XDMoD/Plotly',
+		'xref' => 'paper',
+		'yref' => 'paper',
+		'x' => 1,
+		'xanchor' => 'left',
+		'y' => 0,
+		'yanchor' => 'top',
+		'showarrow' => false
+            ),
+            'title' => array(
+                'font' => array(
+                    'color' => '#444b6e',
+                    'size' => $mainTitleFontSize
+                ),
+
+                'text' => $settings['show_title'] ? $data['schema']['description'] : null
+            )
         );
+
+        /*if (strpos($data['schema']['units'], '%') !== false) {
+            $chartConfig['yAxis']['max'] = 100.0;
+        }*/
 
         $globalConfig = array(
             'timezone' => $data['schema']['timezone']
         );
 
-        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata'], true);
+        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata']);
         $chartFilename = $settings['fileMetadata']['title'] . '.' . $type;
         $mimeOverride = $type == 'svg' ? 'image/svg+xml' : null;
 
@@ -2016,30 +2068,30 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         switch ($format) {
-        case 'png':
-        case 'pdf':
-        case 'svg':
-            $exportConfig = array(
-                'width' => $this->getIntParam($request, 'width', false, 916),
-                'height' => $this->getIntParam($request, 'height', false, 484),
-                'scale' => floatval($this->getStringParam($request, 'scale', false, '1')),
-                'font_size' => $this->getIntParam($request, 'font_size', false, 3),
-                'show_title' => $this->getStringParam($request, 'show_title', false, 'y') === 'y' ? true : false,
-                'fileMetadata' => array(
-                    'author' => $user->getFormalName(),
-                    'subject' => 'Timeseries data for ' . $results['schema']['source'],
-                    'title' => $results['schema']['description']
-                )
-            );
-            $response = $this->chartImageResponse($results, $format, $exportConfig);
-            break;
-        case 'csv':
-            $response = $this->chartDataResponse($results);
-            break;
-        case 'json':
-        default:
-            $response = $app->json(array("success" => true, "data" => array($results)));
-            break;
+            case 'png':
+            case 'pdf':
+            case 'svg':
+                $exportConfig = array(
+                    'width' => $this->getIntParam($request, 'width', false, 916),
+                    'height' => $this->getIntParam($request, 'height', false, 484),
+                    'scale' => floatval($this->getStringParam($request, 'scale', false, '1')),
+                    'font_size' => $this->getIntParam($request, 'font_size', false, 3),
+                    'show_title' => $this->getStringParam($request, 'show_title', false, 'y') === 'y' ? true : false,
+                    'fileMetadata' => array(
+                        'author' => $user->getFormalName(),
+                        'subject' => 'Timeseries data for ' . $results['schema']['source'],
+                        'title' => $results['schema']['description']
+                    )
+                );
+                $response = $this->chartImageResponse($results, $format, $exportConfig);
+                break;
+            case 'csv':
+                $response = $this->chartDataResponse($results);
+                break;
+            case 'json':
+            default:
+                $response = $app->json(array("success" => true, "data" => array($results)));
+                break;
         }
 
         return $response;

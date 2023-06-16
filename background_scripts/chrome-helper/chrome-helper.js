@@ -20,24 +20,17 @@ const args = require('yargs').argv;
 
     await page.goto('file://' + args['input-file']);
 
-    let svgInnerHtml;
+    const highchartInnerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);	
 
-    if (args.plotly) {
-        // Chart traces and axis values svg
-        let plotlyChart = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[0].outerHTML);
-        // Chart title and axis titles svg
-        const plotlyLabels = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[2].innerHTML);
-
-        plotlyChart = plotlyChart.substring(0, plotlyChart.length-6);
-        const plotlyImage = plotlyChart + "" + plotlyLabels + "</svg>";
-
-        svgInnerHtml = plotlyImage.replace(/<br>|<b>|<\/b>/gm,""); //HTML tags in titles throw xml error
+    if (highchartInnerHtml !== null){
+	console.log(JSON.stringify(highchartInnerHtml));
     }
-    else {
-        svgInnerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
+    else{
+        const plotlyInnerHtml = await page.evaluate(() => document.querySelector('#container').innerHTML);
+	console.log(JSON.stringify(plotlyInnerHtml));
     }
 
-    console.log(JSON.stringify(svgInnerHtml));
+    console.log(JSON.stringify(innerHtml));
 
     await browser.close();
 })();

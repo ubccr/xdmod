@@ -162,7 +162,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <!-- Libraries -->
     <script type="text/javascript" src="gui/js/libraries/utilities.js"></script>
-    <script type="text/javascript" src="gui/js/libraries/PlotlyUtilities.js"></script>
 
     <script type="text/javascript" src="gui/js/SessionManager.js"></script>
 
@@ -422,7 +421,7 @@ JS;
     <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
     <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
-    <script type="text/javascript" src="gui/lib/plotly/plotly-2.24.2.min.js"></script>
+    <script type="text/javascript" src="gui/lib/plotly/plotly-1.57.1.min.js"></script>
 
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
