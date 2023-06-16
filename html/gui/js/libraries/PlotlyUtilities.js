@@ -15,19 +15,12 @@ function generateChartOptions(record){
     ymax = ymin;
     let sid = 0;
     if (record.data.series[sid].name === 'Range') {
-            sid = 1;
+            sid++;
             isEnvelope = true;
             ymin = record.data.series[1].data[0].y;
             ymax = ymin;
     }  
-    for (sid = 0; sid < record.data.series.length; sid++) {
-        if (record.data.series[sid].name === 'Range') {
-            isEnvelope = true;
-            ymin = record.data.series[1].data[0].y;
-            ymax = ymin;
-            tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[1].data[0].x);
-            continue;
-        }
+    for (sid; sid < record.data.series.length; sid++) {
         let x = [];
         let y = [];
         let qtip = [];
