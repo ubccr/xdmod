@@ -223,6 +223,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             this.errorMsg = null;
         }
         if (errorStr) {
+            errorStr = errorStr, 60;
             this.errorMsg = errorStr;
             let errorImage = [
             {
