@@ -1587,7 +1587,7 @@
         },
         {
             "name": "plotly/plotly",
-            "version": "2.24.2,
+            "version": "2.24.2",
             "dist": {
                 "type": "file",
                 "url": "https://cdn.plot.ly/plotly-2.24.2.min.js",
