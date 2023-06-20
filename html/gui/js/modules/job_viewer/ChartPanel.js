@@ -86,7 +86,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function(panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (panel.chart) {
-                Plotly.relayout(this.id, {width: adjWidth, height: adjHeight});
+                Plotly.relayout(this.id, { width: adjWidth, height: adjHeight });
             }
         }, // resize
 
@@ -103,30 +103,30 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
         print_clicked: function () {
             if (this.chart) {
-                let chartDiv = document.querySelector('#' + this.id);
+                var chartDiv = document.querySelector('#' + this.id);
                 chartDiv = chartDiv.firstChild.firstChild; // parent div of the plotly SVGs
 
                 // Make deep copy
-                const tmpWidth = structuredClone(chartDiv.clientWidth);
-                const tmpHeight = structuredClone(chartDiv.clientHeight);
+                var tmpWidth = structuredClone(chartDiv.clientWidth);
+                var tmpHeight = structuredClone(chartDiv.clientHeight);
 
                 // Resize to 'medium' export width and height -- Currently placeholder width and height
                 Plotly.relayout(this.id, {width: 916, height: 484});
 
                 // Combine Plotly svg elements similar to export
-                let plotlyChart = chartDiv.children[0].outerHTML;
-                const plotlyLabels = chartDiv.children[2].innerHTML;
+                var plotlyChart = chartDiv.children[0].outerHTML;
+                var plotlyLabels = chartDiv.children[2].innerHTML;
 
                 plotlyChart = plotlyChart.substring(0, plotlyChart.length-6);
-                let svg = plotlyChart + plotlyLabels + '</svg>'
+                var svg = plotlyChart + plotlyLabels + '</svg>'
 
-                let printWindow = window.open();
+                var printWindow = window.open();
                 printWindow.document.write('<html> <head> <title> Printing </title> </head> </html>');
                 printWindow.document.write(svg);
                 printWindow.print();
                 printWindow.close();
 
-                Plotly.relayout(this.id, {width: tmpWidth, height: tmpHeight});
+                Plotly.relayout(this.id, { width: tmpWidth, height: tmpHeight });
             }
         },
 
@@ -149,44 +149,43 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             }
 
             if (record) {
-                let chartOptions = generateChartOptions(record);
+                var chartOptions = generateChartOptions(record);
                 panel.getEl().unmask();
 
                 if (panel.chart) {
-                    Plotly.react(this.id, chartOptions.chartData, chartOptions.chartLayout, {displayModeBar: false, doubleClick: 'reset'} );
+                    Plotly.react(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' } );
                     this.chart = true;
                 } else {
-                    Plotly.newPlot(this.id, chartOptions.chartData, chartOptions.chartLayout, {displayModeBar: false, doubleClick: 'reset'} );
+                    Plotly.newPlot(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' } );
                     this.chart = true;
                 }
                 if (panel.chart) {
                     panel.chart = document.getElementById(this.id);
                     panel.chart.on('plotly_click', function(data, event){
-                        const userOptions = data.points[0].data.chartSeries;
+                        var userOptions = data.points[0].data.chartSeries;
                         if (!userOptions || !userOptions.dtype) {
                             return;
                         }
-                        let drilldown;
+                        var drilldown;
                         /*
                          * The drilldown data are stored on each point for envelope
                          * plots and for the series for simple plots.
                          */
                         if (userOptions.dtype == 'index') {
-                            const nodeidIndex = data.points[0].pointIndex;
+                            var nodeidIndex = data.points[0].pointIndex;
                             if (nodeidIndex === -1) return;
                             drilldown = {
                                 dtype: userOptions.index,
                                 value: userOptions.data[nodeidIndex].nodeid
                             };
-                        }
-                        else {
+                        } else {
                             drilldown = {
                                 dtype: userOptions.dtype,
                                 value: userOptions[userOptions.dtype]
                             };
                         }
-                        const path = self.path.concat([drilldown]);
-                        const token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
+                        var path = self.path.concat([drilldown]);
+                        var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
                         Ext.History.add(token);
                     });
                 }

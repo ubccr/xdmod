@@ -157,15 +157,15 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
-                const container = document.querySelector('#'+this.id);
-                const bgcolor = container._fullLayout.plot_bgcolor;
-                const annotation = structuredClone(container._fullLayout.annotations);
-                const image = structuredClone(container._fullLayout.images);
+                var container = document.querySelector('#'+this.id);
+                var bgcolor = container._fullLayout.plot_bgcolor;
+                var annotation = structuredClone(container._fullLayout.annotations);
+                var image = structuredClone(container._fullLayout.images);
                 Plotly.relayout(this.id, {width: adjWidth});
                 if (annotation.length > 0){
                     Plotly.relayout(this.id, {images: image});
                     Plotly.relayout(this.id, {annotations: annotation});
-                    let update = {
+                    var update = {
                         xaxis: {
                             showticklabels: false,
                             tickcolor: '#ffffff',
@@ -184,7 +184,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 else {
                     Plotly.relayout(this.id, {images: []});
                     Plotly.relayout(this.id, {annotations: []});
-                    let update = {
+                    var update = {
                         xaxis: {
                             showticklabels: false,
                             range: [0,1],
@@ -224,7 +224,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         }
         if (errorStr) {
             this.errorMsg = errorStr;
-            let errorImage = [
+            var errorImage = [
             {
                 source: '/gui/images/about_16.png',
                 align: 'left',
@@ -237,7 +237,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             }
             ];
             this._DEFAULT_CONFIG.layout.images = errorImage;
-            let errorText = [
+            var errorText = [
             {
                 text: '<b>' + errorStr + '</b>',
                 align: 'left',
@@ -269,9 +269,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * @private
      */
     _updateData: function(data) {
-        let trace = {};
+        var trace = {};
         if (data.error == '') {
-            let chartColor = this._getDataColor(data.value);
+            var chartColor = this._getDataColor(data.value);
             this._DEFAULT_CONFIG.layout['plot_bgcolor'] = chartColor.bg_color;
 
             trace = {
@@ -324,7 +324,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             for ( var i = 0; i < count; i++) {
                 var step = steps[i];
                 if (data <= step.value) {
-                    let ret = {
+                    var ret = {
                         color: step.color,
                         bg_color: step.bg_color
                     };

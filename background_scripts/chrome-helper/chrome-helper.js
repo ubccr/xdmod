@@ -28,12 +28,11 @@ const args = require('yargs').argv;
         // Chart title and axis titles svg
         const plotlyLabels = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[2].innerHTML);
 
-        plotlyChart = plotlyChart.substring(0, plotlyChart.length-6);
-        const plotlyImage = plotlyChart + "" + plotlyLabels + "</svg>";
-
-        svgInnerHtml = plotlyImage.replace(/<br>|<b>|<\/b>/gm,""); //HTML tags in titles throw xml error
-    }
-    else {
+        plotlyChart = plotlyChart.substring(0, plotlyChart.length - 6);
+        const plotlyImage = plotlyChart + '' + plotlyLabels + '</svg>';
+        // HTML tags in titles thorw xml not well-formed error
+        svgInnerHtml = plotlyImage.replace(/<br>|<b>|<\/b>/gm, '');
+    } else {
         svgInnerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
     }
 

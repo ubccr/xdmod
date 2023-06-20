@@ -50,7 +50,7 @@ function exportHighchart(
     $html_dir = __DIR__ . "/../html";
     $template = file_get_contents($html_dir . "/highchart_template.html");
     if ($isPlotly){
-    $template = file_get_contents($html_dir . "/plotly_template.html");
+        $template = file_get_contents($html_dir . "/plotly_template.html");
     }
 
     $template = str_replace('_html_dir_', $html_dir, $template);

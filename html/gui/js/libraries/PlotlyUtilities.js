@@ -19,7 +19,7 @@ function generateChartOptions(record){
             isEnvelope = true;
             ymin = record.data.series[1].data[0].y;
             ymax = ymin;
-    }  
+    }
     for (sid; sid < record.data.series.length; sid++) {
         let x = [];
         let y = [];
@@ -54,7 +54,7 @@ function generateChartOptions(record){
         if (record.data.series[sid].name === "Median" || record.data.series[sid].name === "Minimum"){
             trace['fill'] = 'tonexty';
             trace['fillcolor'] = '#5EA0E2';
-        }            
+        }
 
         if (isEnvelope){
             trace.hovertemplate = "<span style='color:"+color+";'>[%{text}]</span> " + "%{x|%A, %b %e, %H:%M:%S.%L} " + tz + "<br>" +
@@ -66,7 +66,7 @@ function generateChartOptions(record){
             trace.marker.size = 20;
             trace.mode = 'markers';
             delete trace.line;
-        } 
+        }
 
         data.push(trace);
         const tempMin = Math.min(...y);
@@ -148,4 +148,3 @@ function generateChartOptions(record){
 
     return ret;
 }
-

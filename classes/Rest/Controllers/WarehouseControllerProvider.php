@@ -1986,7 +1986,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
            'axisTickSize' => $axisLabelFontSize,
            'axisTitleSize' => $axisTitleFontSize,
            'lineWidth' => $lineWidth,
-           'chartTitleSize' => $mainTitleFontSize 
+           'chartTitleSize' => $mainTitleFontSize
         );
 
         $globalConfig = array(

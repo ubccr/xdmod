@@ -37,7 +37,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
         var self = this;
 
         var createChart = function () {
-            this.chart = Plotly.newPlot(this.id, [], [], {displayModeBar: false, doubleClick: 'reset'});
+            this.chart = Plotly.newPlot(this.id, [], [], { displayModeBar: false, doubleClick: 'reset' });
             var storeParams;
             if (self.panelSettings.pageSize) {
                 storeParams = {
@@ -89,7 +89,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             listeners: {
                 resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
                     if (this.chart) {
-                        Plotly.relayout(this.id, {width: adjWidth, height: adjHeight});
+                        Plotly.relayout(this.id, { width: adjWidth, height: adjHeight });
                     }
                 },
                 render: createChart
@@ -121,6 +121,6 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
                 Plotly.purge(this.id);
                 this.chart = false;
             }
-        },
+        }
     }
 });

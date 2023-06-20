@@ -21,22 +21,22 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
             }
 
             var record = store.getAt(0);
-            let data = [];
-            let categories = [];
-            let count = 0;
-            let rect = [];
-            let yvals = [];
-            let colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
-            for (let i = 0; i < record.data.series.length; i++) {
-                for (let j = 0; j < record.data.series[i].data.length; j++){
-                    let low_data = moment.tz(record.data.series[i].data[j].low, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS ');
-                    let high_data = moment.tz(record.data.series[i].data[j].high, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS ');
+            var data = [];
+            var categories = [];
+            var count = 0;
+            var rect = [];
+            var yvals = [];
+            var colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
+            for (var i = 0; i < record.data.series.length; i++) {
+                for (var j = 0; j < record.data.series[i].data.length; j++){
+                    var low_data = moment.tz(record.data.series[i].data[j].low, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS ');
+                    var high_data = moment.tz(record.data.series[i].data[j].high, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS ');
                     categories.push(record.data.categories[count]);
-                    let runtime = [];
-                    let template = record.data.series[i].name + ": " + "<b>" +  moment.tz(record.data.series[i].data[j].low, record.data.schema.timezone).format('ddd, MMM DD, HH:mm:ss z') + "</b> - <b>" + moment.tz(record.data.series[i].data[j].high, record.data.schema.timezone).format('ddd, MMM DD, HH:mm:ss z') + " </b> ";
-                    let tooltip = [template];
-                    let ticks = [count];
-                    let start_time = record.data.series[i].data[j].low;
+                    var runtime = [];
+                    var template = record.data.series[i].name + ": " + "<b>" +  moment.tz(record.data.series[i].data[j].low, record.data.schema.timezone).format('ddd, MMM DD, HH:mm:ss z') + "</b> - <b>" + moment.tz(record.data.series[i].data[j].high, record.data.schema.timezone).format('ddd, MMM DD, HH:mm:ss z') + " </b> ";
+                    var tooltip = [template];
+                    var ticks = [count];
+                    var start_time = record.data.series[i].data[j].low;
                     // Need to create a underlying scatter plot for each peer due to drawing gantt chart with rect shapes.
                     // Points on the scatter plot are created every min to create better coverage for tooltip information
                     while (start_time < record.data.series[i].data[j].high){
@@ -58,7 +58,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                         fillcolor: colors[i % 10],
                     });
 
-                    let info = {};
+                    var info = {};
                     if (i > 0){
                         info = {
                             realm: record.data.series[i].data[j].ref.realm,
@@ -67,7 +67,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                             infoid: 3
                         };
                     }
-                    let peer = {
+                    var peer = {
                         x: runtime,
                         y: ticks,
                         type: 'scatter',
@@ -88,7 +88,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                 }
 
             }
-            let layout = {
+            var layout = {
                 hoverlabel: {
                     bgcolor: '#ffffff'
                 },
@@ -108,7 +108,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                 yaxis: {
                     autorange: 'reversed',
                     ticktext: categories,
-                    zeroline: false, 
+                    zeroline: false,
                     showgrid: false,
                     showline: true,
                     linecolor: '#c0cfe0',
@@ -150,12 +150,12 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
             layout['shapes'] = rect;
             Plotly.react(this.id + '_hc', data, layout, {displayModeBar: false, doubleClick: 'reset'});
 
-            const panel = document.getElementById(this.id + '_hc');
+            var panel = document.getElementById(this.id + '_hc');
             panel.on('plotly_click', function(data){
-                const userOptions = data.points[0].data.chartSeries;
+                var userOptions = data.points[0].data.chartSeries;
                 userOptions['action'] = 'show';
                 Ext.History.add('job_viewer?' + Ext.urlEncode(userOptions));
-            }); 
+            });
 
         });
     }
