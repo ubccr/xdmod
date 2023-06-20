@@ -101,7 +101,7 @@ jobs:
       - run:
           name: Make sure that we reset COMPOSER when upgrading.
           command: |
-            echo "export COMPOSER=composer-el7.json" >> $BASH_ENV
+            echo "export COMPOSER=composer.json" >> $BASH_ENV
       - run:
           name: Setup & Run QA Tests
           command: |
