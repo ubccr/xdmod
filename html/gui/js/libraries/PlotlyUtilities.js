@@ -57,8 +57,7 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
         }
 
         if (isEnvelope) {
-            trace.hovertemplate = '<span style=color:'+color+';>[%{text}]</span> %{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style=color:' + color + ';>●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b>' +
-                "<extra></extra>";
+            trace.hovertemplate = '<span style=color:' + color + ';>[%{text}]</span> %{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style=color:' + color + ';>●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b> <extra></extra>';
         }
 
         if (record.data.series[sid].data.length === 1) {
