@@ -1,4 +1,4 @@
-/* generateChartOptions - Generates data array and layout dict for Plotly Chart 
+/* generateChartOptions - Generates data array and layout dict for Plotly Chart
  *                        ** Currently assumes that data is in format of a record returned in the JobViewer **
  *
  * @param{dict} Record containing chart data
@@ -69,8 +69,8 @@ function generateChartOptions (record) {
         }
 
         data.push(trace);
-        var tempMin = Math.min(...y);
-        var tempMax = Math.max(...y);
+        var tempMin = Math.min.apply(null, y);
+        var tempMax = Math.max.apply(null, y);
         if (tempMin < ymin) ymin = tempMin;
         if (tempMax > ymax) ymax = tempMax;
     }

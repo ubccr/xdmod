@@ -208,7 +208,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
      * @private
      */
     _findDtype: function (series) {
-        if (!CCR.isType(series, CCR.Types.Array)) return null;
+        if (!CCR.isType(series, CCR.Types.Array)) {
+            return null;
+        }
 
         var result = null;
         for (var i = 0; i < series.length; i++) {

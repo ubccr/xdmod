@@ -154,7 +154,6 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                 userOptions['action'] = 'show';
                 Ext.History.add('job_viewer?' + Ext.urlEncode(userOptions));
             });
-
         });
     }
 });

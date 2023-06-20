@@ -195,7 +195,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                             tickcolor: '#ffffff',
                             gridcolor: '#c0c0c0',
                             linecolor: '#ffffff',
-                            zeroline : false,
+                            zeroline: false,
                             showgrid: true,
                             zerolinecolor: '#000000',
                             showline: false,
@@ -243,7 +243,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 xref: 'paper',
                 yref: 'paper',
                 font: {
-                    size: 11,
+                    size: 11
                 },
                 x: 0.05,
                 y: 1.2,
@@ -286,8 +286,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 type: 'bar',
                 orientation: 'h'
             };
-        }
-        else {
+        } else {
             this._DEFAULT_CONFIG.layout['plot_bgcolor'] = '#ffffff';
         }
         this.updateErrorMessage(data.error);
