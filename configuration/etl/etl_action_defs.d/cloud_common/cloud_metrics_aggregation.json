@@ -41,7 +41,7 @@
                 "disk_gb": "SUM(sr.disk_gb)",
                 "num_sessions_started": "SUM(IF((sr.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}) AND sr.instance_state_id = 1 AND sr.start_event_type_id != 49, 1, 0))",
                 "num_sessions_ended": "SUM(IF((sr.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}) AND sr.instance_state_id = 1 AND sr.start_event_type_id != 49, 1, 0))",
-                "num_sessions_running": "SUM(IF(sr.instance_state_id = 1 AND sr.start_event_type_id != 49, 1, 0))",
+                "num_sessions_running": "SUM(IF((${:PERIOD_START_DAY_ID} != sr.start_day_id AND sr.instance_state_id = 1) OR (${:PERIOD_START_DAY_ID} = sr.start_day_id AND sr.instance_state_id = 1 AND sr.start_event_type_id != 49), 1, 0))",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
                 "submission_venue_id": "sr.submission_venue_id",
                 "domain_id": "sr.domain_id",
