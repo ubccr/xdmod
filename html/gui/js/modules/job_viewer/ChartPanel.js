@@ -13,8 +13,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
     /**
      * The component 'constructor'.
      */
-    initComponent: function() {
-
+    initComponent: function () {
         this.options = this.options || {};
 
         this.loaded = false;
@@ -34,14 +33,14 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
         // We need this for some of it's helper functions.
         var jv = this.jobViewer;
-        this.store.proxy.on('beforeload', function(proxy){
+        this.store.proxy.on('beforeload', function (proxy) {
             var path = self.path;
             var token = jv._createHistoryTokenFromArray(path);
             self.loaded = true;
             var url = self.baseUrl + '?' + token + '&token=' + XDMoD.REST.token;
             proxy.setUrl(url, true);
         });
-        this.store.on('load', function(store, records, params) {
+        this.store.on('load', function (store, records, params) {
             self.doLayout();
         });
 
@@ -50,11 +49,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
     }, // initComponent
 
     listeners: {
-
         /**
          *
          */
-        activate: function(tab, reload) {
+        activate: function (tab, reload) {
             reload = reload || false;
             // This is here so that when the chart is / panel is loaded
             // via one of it's child nodes that it triggers a re-load.
@@ -67,7 +65,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
         /**
          *
          */
-        render: function() {
+        render: function () {
             if (this.store && this.store.getCount() > 0) {
                 var record = this.store.getAt(0);
                 this.fireEvent('load_record', this, record);
@@ -111,14 +109,14 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 var tmpHeight = structuredClone(chartDiv.clientHeight);
 
                 // Resize to 'medium' export width and height -- Currently placeholder width and height
-                Plotly.relayout(this.id, {width: 916, height: 484});
+                Plotly.relayout(this.id, { width: 916, height: 484 });
 
                 // Combine Plotly svg elements similar to export
                 var plotlyChart = chartDiv.children[0].outerHTML;
                 var plotlyLabels = chartDiv.children[2].innerHTML;
 
-                plotlyChart = plotlyChart.substring(0, plotlyChart.length-6);
-                var svg = plotlyChart + plotlyLabels + '</svg>'
+                plotlyChart = plotlyChart.substring(0, plotlyChart.length - 6);
+                var svg = plotlyChart + plotlyLabels + '</svg>';
 
                 var printWindow = window.open();
                 printWindow.document.write('<html> <head> <title> Printing </title> </head> </html>');
@@ -135,8 +133,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          * @param panel
          * @param record
          */
-        load_record: function(panel, record) {
-
+        load_record: function (panel, record) {
             var self = this;
 
             if (record !== null && record !== undefined) {
@@ -144,7 +141,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 this.displayTimezone = record.data.schema.timezone;
                 if (record.data.schema.help) {
                     panel.helptext.documentation = record.data.schema.help;
-                    this.jobTab.fireEvent("display_help", panel.helptext);
+                    this.jobTab.fireEvent('display_help', panel.helptext);
                 }
             }
 
@@ -153,15 +150,15 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 panel.getEl().unmask();
 
                 if (panel.chart) {
-                    Plotly.react(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' } );
+                    Plotly.react(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' });
                     this.chart = true;
                 } else {
-                    Plotly.newPlot(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' } );
+                    Plotly.newPlot(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' });
                     this.chart = true;
                 }
                 if (panel.chart) {
                     panel.chart = document.getElementById(this.id);
-                    panel.chart.on('plotly_click', function(data, event){
+                    panel.chart.on('plotly_click', function (data, event) {
                         var userOptions = data.points[0].data.chartSeries;
                         if (!userOptions || !userOptions.dtype) {
                             return;
@@ -171,9 +168,11 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                          * The drilldown data are stored on each point for envelope
                          * plots and for the series for simple plots.
                          */
-                        if (userOptions.dtype == 'index') {
+                        if (userOptions.dtype === 'index') {
                             var nodeidIndex = data.points[0].pointIndex;
-                            if (nodeidIndex === -1) return;
+                            if (nodeidIndex === -1) {
+                                return;
+                            }
                             drilldown = {
                                 dtype: userOptions.index,
                                 value: userOptions.data[nodeidIndex].nodeid
@@ -195,7 +194,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 panel.getEl().mask('Loading...');
             }
             panel.fireEvent('record_loaded');
-            if (CCR.isType(panel.layout, CCR.Types.Object) && panel.rendered) panel.doLayout();
+            if (CCR.isType(panel.layout, CCR.Types.Object) && panel.rendered) {
+                panel.doLayout();
+            }
         } // load_record
 
     }, // listeners
@@ -206,7 +207,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
      * @returns {*}
      * @private
      */
-    _findDtype: function(series) {
+    _findDtype: function (series) {
         if (!CCR.isType(series, CCR.Types.Array)) return null;
 
         var result = null;
@@ -231,11 +232,11 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
      * @param store to be listened to.
      * @private
      */
-    _addStoreListeners: function(store) {
-        if ( typeof store === 'object') {
+    _addStoreListeners: function (store) {
+        if (typeof store === 'object') {
             var self = this;
-            store.on('load', function(tor, records, options) {
-                if (tor.getCount() == 0) {
+            store.on('load', function (tor, records, options) {
+                if (tor.getCount() === 0) {
                     return;
                 }
                 var record = tor.getAt(0);

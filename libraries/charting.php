@@ -62,7 +62,7 @@ function exportHighchart(
     }
     $template = str_replace('_globalChartOptions_', json_encode($globalChartOptions), $template);
     $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
-    
+
     $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight, $isPlotly);
     switch($format){
         case 'png':

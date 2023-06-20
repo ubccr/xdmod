@@ -4,16 +4,16 @@
  * @param{dict} Record containing chart data
  *
  */
-function generateChartOptions(record){
-    let colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
+function generateChartOptions (record) {
+    var colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
     '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
-    let data = [];
-    let isEnvelope = false;
-    let tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
-    let ymin, ymax;
+    var data = [];
+    var isEnvelope = false;
+    var tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
+    var ymin, ymax;
     ymin = record.data.series[0].data[0].y;
     ymax = ymin;
-    let sid = 0;
+    var sid = 0;
     if (record.data.series[sid].name === 'Range') {
             sid++;
             isEnvelope = true;
@@ -21,18 +21,18 @@ function generateChartOptions(record){
             ymax = ymin;
     }
     for (sid; sid < record.data.series.length; sid++) {
-        let x = [];
-        let y = [];
-        let qtip = [];
-        let color = colors[sid % 10];
+        var x = [];
+        var y = [];
+        var qtip = [];
+        var color = colors[sid % 10];
 
-        for(let i = 0; i < record.data.series[sid].data.length; i++) {
+        for(var i = 0; i < record.data.series[sid].data.length; i++) {
             x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS'));
             y.push(record.data.series[sid].data[i].y);
             qtip.push(record.data.series[sid].data[i].qtip);
         }
 
-        let trace = {
+        var trace = {
             x: x,
             y: y,
             marker: {
@@ -69,13 +69,13 @@ function generateChartOptions(record){
         }
 
         data.push(trace);
-        const tempMin = Math.min(...y);
-        const tempMax = Math.max(...y);
+        var tempMin = Math.min(...y);
+        var tempMax = Math.max(...y);
         if (tempMin < ymin) ymin = tempMin;
         if (tempMax > ymax) ymax = tempMax;
     }
 
-    let layout = {
+    var layout = {
         hoverlabel: {
             bgcolor: '#ffffff'
         },
@@ -141,7 +141,7 @@ function generateChartOptions(record){
         }
     };
 
-    let ret = {
+    var ret = {
         chartData: data,
         chartLayout: layout
     };

@@ -18,18 +18,18 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         delimiter: ':',
         colorSteps: [
         {
-            value: .25,
+            value: 0.25,
             color: '#ff0000',
             bg_color: 'rgb(255,102,102)'
         },
         {
-            value: .50,
+            value: 0.50,
             color: '#ffb336',
             bg_color: 'rgb(255,255,156)'
 
         },
         {
-            value: .75,
+            value: 0.75,
             color: '#dddf00',
             bg_color: 'rgb(255,255,102)'
         },
@@ -44,7 +44,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             height: 65,
             xaxis: {
                 showticklabels: false,
-                range: [0,1],
+                range: [0, 1],
                 color: '#606060',
                 ticks: 'inside',
                 tick0: 0.0,
@@ -53,7 +53,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 tickcolor: '#ffffff',
                 gridcolor: '#c0c0c0',
                 linecolor: '#ffffff',
-                zeroline : false,
+                zeroline: false,
                 showgrid: true,
                 zerolinecolor: '#000000',
                 showline: false,
@@ -63,7 +63,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             yaxis: {
                 showticklabels: false,
                 color: '#606060',
-                showgrid : false,
+                showgrid: false,
                 gridcolor: '#c0c0c0',
                 linecolor: '#ffffff',
                 zeroline: false,
@@ -89,7 +89,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         config: {
             displayModeBar: false,
             staticPlot: true
-        },
+        }
     },
 
     // The instance of Highcharts used as this components primary display.
@@ -101,7 +101,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     /**
      * This components 'constructor'.
      */
-    initComponent: function() {
+    initComponent: function () {
         this.colorSteps = Ext.apply(this.colorSteps || [], this._DEFAULT_CONFIG.colorSteps);
         XDMoD.Module.JobViewer.AnalyticChartPanel.superclass.initComponent.call(this);
     }, // initComponent
@@ -113,7 +113,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          * Processes that require the HighCharts component to be created /
          * a visible element to hook into are handled here.
          */
-        render: function() {
+        render: function () {
             this.chart = Plotly.newPlot(this.id, [], this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
         }, // render
 
@@ -124,7 +124,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          * @param {Array|Number|Object} data that should be used to update this
          *                              component.
          */
-        update_data: function(data) {
+        update_data: function (data) {
             this._updateData(data);
         }, // update_data
 
@@ -132,7 +132,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          * Attempt to reset this components' data ensuring that the HighCharts
          * instance updates correctly to reflect the change, if any.
          */
-        reset: function() {
+        reset: function () {
             if (this.chart) {
                 Plotly.react(this.id, [], this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
             }
@@ -157,37 +157,36 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
-                var container = document.querySelector('#'+this.id);
+                var container = document.querySelector('#' + this.id);
                 var bgcolor = container._fullLayout.plot_bgcolor;
                 var annotation = structuredClone(container._fullLayout.annotations);
                 var image = structuredClone(container._fullLayout.images);
-                Plotly.relayout(this.id, {width: adjWidth});
-                if (annotation.length > 0){
-                    Plotly.relayout(this.id, {images: image});
-                    Plotly.relayout(this.id, {annotations: annotation});
-                    var update = {
+                Plotly.relayout(this.id, { width: adjWidth });
+                if (annotation.length > 0) {
+                    Plotly.relayout(this.id, { images: image });
+                    Plotly.relayout(this.id, { annotations: annotation });
+                    var errorTextUpdate = {
                         xaxis: {
                             showticklabels: false,
                             tickcolor: '#ffffff',
                             gidcolor: '#ffffff',
                             linecolor: '#ffffff',
-                            zeroline : false,
+                            zeroline: false,
                             showgrid: false,
                             zerolinecolor: '#000000',
                             showline: false,
                             zerolinewidth: 0
                         }
                     };
-                    Plotly.relayout(this.id, update);
-                    Plotly.relayout(this.id, {plot_bgcolor: bgcolor});
-                }
-                else {
-                    Plotly.relayout(this.id, {images: []});
-                    Plotly.relayout(this.id, {annotations: []});
+                    Plotly.relayout(this.id, errorTextUpdate);
+                    Plotly.relayout(this.id, { plot_bgcolor: bgcolor });
+                } else {
+                    Plotly.relayout(this.id, { images: [] });
+                    Plotly.relayout(this.id, { annotations: [] });
                     var update = {
                         xaxis: {
                             showticklabels: false,
-                            range: [0,1],
+                            range: [0, 1],
                             color: '#606060',
                             ticks: 'inside',
                             tick0: 0.0,
@@ -205,7 +204,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                         }
                     };
                     Plotly.relayout(this.id, update);
-                    Plotly.relayout(this.id, {plot_bgcolor: bgcolor});
+                    Plotly.relayout(this.id, { plot_bgcolor: bgcolor });
                 }
             }
         } // resize
@@ -243,18 +242,17 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 align: 'left',
                 xref: 'paper',
                 yref: 'paper',
-                font:{
+                font: {
                     size: 11,
                 },
-                x : 0.05,
-                y : 1.2,
+                x: 0.05,
+                y: 1.2,
                 showarrow: false
             }
             ];
             this._DEFAULT_CONFIG.layout.annotations = errorText;
             this._DEFAULT_CONFIG.layout.xaxis.showgrid = false;
-        }
-        else {
+        } else {
             this._DEFAULT_CONFIG.layout.images = [];
             this._DEFAULT_CONFIG.layout.annotations = [];
             this._DEFAULT_CONFIG.layout.xaxis.showgrid = true;
@@ -268,9 +266,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * @param {Array|Object} data
      * @private
      */
-    _updateData: function(data) {
+    _updateData: function (data) {
         var trace = {};
-        if (data.error == '') {
+        if (data.error === '') {
             var chartColor = this._getDataColor(data.value);
             this._DEFAULT_CONFIG.layout['plot_bgcolor'] = chartColor.bg_color;
 
@@ -278,15 +276,15 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 x: [data.value],
                 name: data.name ? data.name : '',
                 width: [0.5],
-                marker:{
+                marker: {
                     color: chartColor.color,
-                    line:{
+                    line: {
                         color: '#ffffff',
                         width: 1
                     }
                 },
                 type: 'bar',
-                orientation: 'h',
+                orientation: 'h'
             };
         }
         else {
@@ -304,7 +302,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * @param {Object} data
      * @private
      */
-    _updateTitle: function(data) {
+    _updateTitle: function (data) {
         var title = data.name + this._DEFAULT_CONFIG.delimiter + ' ' + data.value;
         this.ownerCt.setTitle(title);
     }, // _updateTitle
@@ -316,12 +314,12 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * @returns {Null|String}
      * @private
      */
-    _getDataColor: function(data) {
+    _getDataColor: function (data) {
         var color = null;
         if (typeof data === 'number') {
             var steps = this.colorSteps;
             var count = steps.length;
-            for ( var i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 var step = steps[i];
                 if (data <= step.value) {
                     var ret = {
