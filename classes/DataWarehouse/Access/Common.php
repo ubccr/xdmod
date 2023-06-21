@@ -45,6 +45,12 @@ class Common
 
     protected function checkDateParameters()
     {
+        if (!isset($this->request['start_date'])) {
+            throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+                'missing required start_date parameter'
+            );
+        }
+
         $start_date_parsed = date_parse_from_format(
             'Y-m-d',
             $this->request['start_date']
@@ -53,6 +59,12 @@ class Common
         if ($start_date_parsed['error_count'] !== 0) {
             throw new \DataWarehouse\Query\Exceptions\BadRequestException(
                 'start_date param is not in the correct format of Y-m-d.'
+            );
+        }
+
+        if (!isset($this->request['end_date'])) {
+            throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+                'missing required end_date parameter'
             );
         }
 
@@ -178,7 +190,7 @@ class Common
         return
             isset($this->request['font_size']) && $this->request['font_size'] != ''
             ? $this->request['font_size']
-            : 'default';
+            : '3';
     }
 
     protected function getTitle()

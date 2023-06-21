@@ -89,10 +89,18 @@ class UsageExplorerTest extends TokenAuthTest
             "controller_module"=> "user_interface"
         );
 
+        $view['start_date'] = null;
+        $tests[] = array($view, 'missing required start_date parameter');
+
+        $view['start_date'] = '2017-05-01';
         $view['end_date'] = null;
+        $tests[] = array($view, 'missing required end_date parameter');
+
+        $view['end_date'] = 'Yesterday';
         $tests[] = array($view, 'end_date param is not in the correct format of Y-m-d.');
 
-        $view['start_date'] = null;
+        $view['start_date'] = 'Tomorrow';
+        $view['end_date'] = '2017-05-01';
         $tests[] = array($view, 'start_date param is not in the correct format of Y-m-d.');
 
         $view['group_by'] = "elephants";
