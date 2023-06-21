@@ -24,10 +24,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
         this._addStoreListeners(this.store);
 
         // ADD: The custom events that we're listening for.
-        this.addEvents(
-                'load_record',
-                'record_loaded'
-                );
+        this.addEvents('load_record', 'record_loaded');
 
         var self = this;
 
@@ -45,7 +42,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
         });
 
         this.displayTimezone = 'UTC';
-
     }, // initComponent
 
     listeners: {
@@ -82,7 +78,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
          * @param rawWidth
          * @param rawHeight
          */
-        resize: function(panel, adjWidth, adjHeight, rawWidth, rawHeight) {
+        resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (panel.chart) {
                 Plotly.relayout(this.id, { width: adjWidth, height: adjHeight });
             }
@@ -105,8 +101,8 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 chartDiv = chartDiv.firstChild.firstChild; // parent div of the plotly SVGs
 
                 // Make deep copy
-                var tmpWidth = structuredClone(chartDiv.clientWidth);
-                var tmpHeight = structuredClone(chartDiv.clientHeight);
+                var tmpWidth = jQuery.extend(true, {}, chartDiv.clientWidth, {});
+                var tmpHeight = jQuery.extend(true, {}, chartDiv.clientHeight, {});
 
                 // Resize to 'medium' export width and height -- Currently placeholder width and height
                 Plotly.relayout(this.id, { width: 916, height: 484 });

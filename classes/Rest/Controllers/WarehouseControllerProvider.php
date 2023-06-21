@@ -1964,21 +1964,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function chartImageResponse($data, $type, $settings)
     {
-        // Enable plot marker only if a single point is present in the data series' plot data.
-        // Otherwise plot the data with a line.
-
-        $markerEnabled = false;
-
-        // check the series array passed in from the overall data array:
-        foreach ($data['series'] as $series) {
-            // if the series array contains any data array with exactly one element, enable markers
-            // (a dot for each series' element) so that the plotted data can be seen:
-            if (isset($series['data']) && count($series['data']) == 1) {
-                $markerEnabled = true;
-                break;
-            }
-        }
-
         $axisTitleFontSize = ($settings['font_size'] + 12) . 'px';
         $axisLabelFontSize = ($settings['font_size'] + 11) . 'px';
         $mainTitleFontSize = ($settings['font_size'] + 16) . 'px';

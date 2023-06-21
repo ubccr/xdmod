@@ -145,13 +145,13 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                 }
             };
 
-            layout['shapes'] = rect;
+            layout.shapes = rect;
             Plotly.react(this.id + '_hc', data, layout, { displayModeBar: false, doubleClick: 'reset' });
 
             var panel = document.getElementById(this.id + '_hc');
             panel.on('plotly_click', function (eventData) {
                 var userOptions = eventData.points[0].data.chartSeries;
-                userOptions['action'] = 'show';
+                userOptions.action = 'show';
                 Ext.History.add('job_viewer?' + Ext.urlEncode(userOptions));
             });
         });

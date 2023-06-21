@@ -52,8 +52,8 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
         };
 
         if (record.data.series[sid].name === 'Median' || record.data.series[sid].name === 'Minimum') {
-            trace['fill'] = 'tonexty';
-            trace['fillcolor'] = '#5EA0E2';
+            trace.fill = 'tonexty';
+            trace.fillcolor = '#5EA0E2';
         }
 
         if (isEnvelope) {

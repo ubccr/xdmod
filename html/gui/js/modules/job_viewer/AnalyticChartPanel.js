@@ -17,27 +17,26 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     _DEFAULT_CONFIG: {
         delimiter: ':',
         colorSteps: [
-        {
-            value: 0.25,
-            color: '#ff0000',
-            bg_color: 'rgb(255,102,102)'
-        },
-        {
-            value: 0.50,
-            color: '#ffb336',
-            bg_color: 'rgb(255,255,156)'
-
-        },
-        {
-            value: 0.75,
-            color: '#dddf00',
-            bg_color: 'rgb(255,255,102)'
-        },
-        {
-            value: 1,
-            color: '#50b432',
-            bg_color: 'rgb(182,255,152)'
-        }
+            {
+                value: 0.25,
+                color: '#ff0000',
+                bg_color: 'rgb(255,102,102)'
+            },
+            {
+                value: 0.50,
+                color: '#ffb336',
+                bg_color: 'rgb(255,255,156)'
+            },
+            {
+                value: 0.75,
+                color: '#dddf00',
+                bg_color: 'rgb(255,255,102)'
+            },
+            {
+                value: 1,
+                color: '#50b432',
+                bg_color: 'rgb(182,255,152)'
+            }
         ],
 
         layout: {
@@ -159,8 +158,8 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             if (this.chart) {
                 var container = document.querySelector('#' + this.id);
                 var bgcolor = container._fullLayout.plot_bgcolor;
-                var annotation = structuredClone(container._fullLayout.annotations);
-                var image = structuredClone(container._fullLayout.images);
+                var annotation = jQuery.extend(true, {}, container._fullLayout.annotations, {});
+                var image = jQuery.extend(true, {}, container._fullLayout.images, {});
                 Plotly.relayout(this.id, { width: adjWidth });
                 if (annotation.length > 0) {
                     Plotly.relayout(this.id, { images: image });
@@ -224,31 +223,31 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         if (errorStr) {
             this.errorMsg = errorStr;
             var errorImage = [
-            {
-                source: '/gui/images/about_16.png',
-                align: 'left',
-                xref: 'paper',
-                yref: 'paper',
-                sizex: 0.4,
-                sizey: 0.4,
-                x: 0,
-                y: 1.2
-            }
+                {
+                    source: '/gui/images/about_16.png',
+                    align: 'left',
+                    xref: 'paper',
+                    yref: 'paper',
+                    sizex: 0.4,
+                    sizey: 0.4,
+                    x: 0,
+                    y: 1.2
+                }
             ];
             this._DEFAULT_CONFIG.layout.images = errorImage;
             var errorText = [
-            {
-                text: '<b>' + errorStr + '</b>',
-                align: 'left',
-                xref: 'paper',
-                yref: 'paper',
-                font: {
-                    size: 11
-                },
-                x: 0.05,
-                y: 1.2,
-                showarrow: false
-            }
+                {
+                    text: '<b>' + errorStr + '</b>',
+                    align: 'left',
+                    xref: 'paper',
+                    yref: 'paper',
+                    font: {
+                        size: 11
+                    },
+                    x: 0.05,
+                    y: 1.2,
+                    showarrow: false
+                }
             ];
             this._DEFAULT_CONFIG.layout.annotations = errorText;
             this._DEFAULT_CONFIG.layout.xaxis.showgrid = false;
@@ -270,7 +269,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         var trace = {};
         if (data.error === '') {
             var chartColor = this._getDataColor(data.value);
-            this._DEFAULT_CONFIG.layout['plot_bgcolor'] = chartColor.bg_color;
+            this._DEFAULT_CONFIG.layout.plot_bgcolor = chartColor.bg_color;
 
             trace = {
                 x: [data.value],
@@ -287,7 +286,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 orientation: 'h'
             };
         } else {
-            this._DEFAULT_CONFIG.layout['plot_bgcolor'] = '#ffffff';
+            this._DEFAULT_CONFIG.layout.plot_bgcolor = '#ffffff';
         }
         this.updateErrorMessage(data.error);
         this._updateTitle(data);
