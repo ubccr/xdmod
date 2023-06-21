@@ -2838,7 +2838,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     type: 'metric',
                                     text: realm_metrics[rm].text,
                                     has_std_err: realm_metrics[rm].std_err,
-                                    hidden_groupbys: realm_metrics[rm].hidden_groupbys,
                                     iconCls: 'chart',
                                     category: category,
                                     realm: realm,
