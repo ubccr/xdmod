@@ -105,7 +105,8 @@ foreach ($roles as $activeRole) {
                             array(
                                 'text' => $statistic_object->getName(),
                                 'info' => $statistic_object->getHtmlDescription(),
-                                'std_err' => in_array($semStatId, $permittedStatistics)
+                                'std_err' => in_array($semStatId, $permittedStatistics),
+                                'hidden_groupbys' => $statistic_object->getHiddenGroupBys()
                             );
                         $seenstats[] = $realm_group_by_statistic;
                     }

@@ -175,6 +175,11 @@ interface iStatistic
     public function showInMetricCatalog();
 
     /**
+     * @return array Returns array of group by names that should be hidden for this statistic.
+     */
+    public function getHiddenGroupBys();
+
+    /**
      * Generate a string representation of the object
      */
 

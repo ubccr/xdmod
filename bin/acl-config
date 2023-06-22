@@ -1491,9 +1491,12 @@ SQL;
 
             $id = "[ $module, $realm, $acl, $groupByName, $statisticId ]";
             $visible = 1;
-            if (!$realmData['show_in_catalog'] || !$statisticData->showInMetricCatalog()) {
+            $hiddenGroupBys = $statisticData->getHiddenGroupBys();
+
+            if (!$realmData['show_in_catalog'] || !$statisticData->showInMetricCatalog() || in_array($groupByName, $hiddenGroupBys)) {
                 $visible = 0;
             }
+
             $params = array(
                 ':module_name' => $module,
                 ':realm_name' => $realm,
