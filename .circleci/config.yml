@@ -75,8 +75,7 @@ jobs:
       - when:
           condition:
             and:
-                - not:
-                    equal: ["rocky8", << parameters.os >> ]
+                equal: ["centos7", << parameters.os >> ]
           steps:
             - run:
                 name: Execute Install Script
