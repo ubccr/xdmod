@@ -10,12 +10,19 @@ openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:
 mkdir ~/phpunit
 mkdir /tmp/screenshots
 
+dnf module -y reset nodejs
+dnf module -y install nodejs:16
+
 # make sure that we're in the right directory.
 pushd /xdmod || exit
+    
+    composer install --no-progress
+    
     # build the XDMoD rpm so that it can be installed.
     ~/bin/buildrpm xdmod
 
     #Install / Upgrade XDMoD from RPM
+    export XDMOD_TEST_MODE="fresh_install"
     ./tests/ci/bootstrap.sh
 
     #Validate the newly installed / Upgraded XDMoD

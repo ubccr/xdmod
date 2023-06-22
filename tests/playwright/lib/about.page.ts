@@ -4,7 +4,6 @@ import selectors from "./about.selectors";
 
 class About extends BasePage{
     readonly selectors = selectors;
-    readonly roadMapText = selectors.roadMapText;
     readonly roadMapFrame = selectors.roadMapFrame;
     readonly trelloBoard = selectors.trelloBoard;
     readonly tabLocator = this.page.locator(selectors.tab);
@@ -26,8 +25,6 @@ class About extends BasePage{
     async checkRoadMap(){
         await expect(this.page.locator(selectors.navEntryPath('Roadmap'))).toBeVisible();
         await this.page.locator(selectors.navEntryPath('Roadmap')).click();
-        await this.page.locator(this.roadMapText).waitFor({state:'visible'});
-        await this.page.locator(this.roadMapFrame).waitFor({state:'visible'});
         await expect(this.page.locator(this.roadMapFrame)).toBeVisible();
         await this.page.locator(this.roadMapFrame, async function (err, result){
             await expect(err).toEqual(undefined);
