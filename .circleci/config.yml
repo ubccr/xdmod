@@ -48,10 +48,9 @@ jobs:
             docker cp ~/project playwright:/xdmod
       - when:
           condition:
-             and:
-               - equal: ["rocky8", << parameters.os >> ]
+            - equal: ["rocky8", << parameters.os >> ]
           steps:
-             - run:
+            - run:
                  name: Create Code Coverage Directories
                  command: |
                    docker exec xdmod mkdir code_coverage_raw
@@ -59,13 +58,21 @@ jobs:
       - run:
           name: Make sure that procps-ng is installed
           command: docker exec xdmod yum install -y procps-ng
-      - run:
-          name: Execute Install Script
-          command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
       - when:
           condition:
-            and:
-              - equal: ["rocky8", << parameters.os >> ]
+            - equal: ["rocky8", << parameters.os >> ]
+          steps:
+            - run:
+                name: Execute Install Script
+                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
+      - unless:
+          steps:
+            - run:
+                name: Execute Install Script
+                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-test.sh
+      - when:
+          condition:
+            - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Installing Code Coverage Dependencies
@@ -86,8 +93,7 @@ jobs:
           command: docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
       - when:
           condition:
-            and:
-              - equal: ["rocky8", << parameters.os >> ]
+            - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -109,8 +115,7 @@ jobs:
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
       - when:
           condition:
-            and:
-                - equal: ["rocky8", << parameters.os >> ]
+            - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Copy Code Coverage Report zip
