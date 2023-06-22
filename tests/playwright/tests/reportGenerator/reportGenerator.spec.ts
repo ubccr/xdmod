@@ -276,8 +276,6 @@ test.describe('Report Generator', async () => {
             await expect(first.length, 'No charts in the list of available charts').toEqual(0);
         });
         await test.step('No report templates available', async () => {
-            //For the purpose of code coverage centos7, the following one line is necessary
-            await page.locator(reportGeneratorPage.selectors.availableCharts.chartList.empty).waitFor({state:'visible'});
             const isOptionEnabled = await reportGeneratorPage.isNewBasedOnEnabled();
             await expect(isOptionEnabled).toBe(false);
         });
@@ -308,8 +306,6 @@ test.describe('Report Generator', async () => {
                 await expect(first.length, 'No charts in the list of available charts').toEqual(0);
             });
             await test.step('No report templates available', async () => {
-                //For the purpose of code coverage centos7, the following one line is necessary
-                await page.locator(reportGeneratorPage.selectors.availableCharts.chartList.empty).waitFor({state:'visible'});
                 const isOptionEnabled = await reportGeneratorPage.isNewBasedOnEnabled();
                 await expect(isOptionEnabled).toBe(false);
             });
@@ -339,8 +335,6 @@ test.describe('Report Generator', async () => {
             await expect(first.length, 'No charts in the list of available charts').toEqual(0);
         });
         await test.step('No report templates available', async () => {
-            //For the purpose of code coverage for centos7, the following one line is necessary
-            await page.locator(reportGeneratorPage.selectors.availableCharts.chartList.empty).waitFor({state:'visible'});
             const isOptionEnabled = await reportGeneratorPage.isNewBasedOnEnabled();
             await expect(isOptionEnabled).toEqual(expected.centerstaff.report_templates_available);
         });
@@ -361,7 +355,6 @@ test.describe('Report Generator', async () => {
             await test.step('Select Report Generator tab', async () => {
                 await reportGeneratorPage.selectTab();
                 await reportGeneratorPage.waitForMyReportsPanelVisible();
-                await page.locator(reportGeneratorPage.selectors.availableCharts.chartList.empty).waitFor({state:'visible'});
             });
 
             await test.step('No reports listed', async () => {
