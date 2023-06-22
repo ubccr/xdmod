@@ -74,8 +74,9 @@ jobs:
                   docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - when:
           condition:
-            - not:
-                - equal: ["rocky8", << parameters.os >> ]
+            and:
+                - not:
+                    equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Execute Install Script
