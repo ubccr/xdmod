@@ -65,7 +65,10 @@ jobs:
             - run:
                 name: Execute Install Script
                 command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
-      - unless:
+      - when:
+          condition:
+            - not:
+                equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Execute Install Script
