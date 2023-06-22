@@ -192,7 +192,7 @@ try {
                     foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
                         $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
 
-                        if ( ! $statistic_object->showInMetricCatalog() ) {
+                        if ( ! $statistic_object->showInMetricCatalog() || in_array($group_by_name, $statistic_object->getHiddenGroupBys())) {
                             continue;
                         }
 
