@@ -48,7 +48,8 @@ jobs:
             docker cp ~/project playwright:/xdmod
       - when:
           condition:
-            - equal: ["rocky8", << parameters.os >> ]
+            and:
+                 - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                  name: Create Code Coverage Directories
@@ -60,28 +61,25 @@ jobs:
           command: docker exec xdmod yum install -y procps-ng
       - when:
           condition:
-            - equal: ["rocky8", << parameters.os >> ]
+            and:
+                - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Execute Install Script
                 command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
-      - when:
-          condition:
-            - not:
-                equal: ["rocky8", << parameters.os >> ]
-          steps:
-            - run:
-                name: Execute Install Script
-                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-test.sh
-      - when:
-          condition:
-            - equal: ["rocky8", << parameters.os >> ]
-          steps:
             - run:
                 name: Installing Code Coverage Dependencies
                 command: |
                   docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageSetup.sh
                   docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
+      - when:
+          condition:
+            - not:
+                - equal: ["rocky8", << parameters.os >> ]
+          steps:
+            - run:
+                name: Execute Install Script
+                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-test.sh
       - run:
           name: Put the updated httpd conf file in place
           command: docker cp ~/project/tests/playwright/config/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
@@ -96,7 +94,8 @@ jobs:
           command: docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
       - when:
           condition:
-            - equal: ["rocky8", << parameters.os >> ]
+            and:
+                - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -118,7 +117,8 @@ jobs:
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
       - when:
           condition:
-            - equal: ["rocky8", << parameters.os >> ]
+            and:
+                - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
                 name: Copy Code Coverage Report zip
