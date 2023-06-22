@@ -16,7 +16,6 @@ pushd /xdmod || exit
     ~/bin/buildrpm xdmod
 
     #Install / Upgrade XDMoD from RPM
-    export XDMOD_TEST_MODE="fresh_install"
     ./tests/ci/bootstrap.sh
 
     #Validate the newly installed / Upgraded XDMoD
