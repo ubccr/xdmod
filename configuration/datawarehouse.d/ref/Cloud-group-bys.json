@@ -277,6 +277,33 @@
         "description_html": "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.",
         "name": "VM Size: Memory"
     },
+    "instance_state": {
+        "attribute_table_schema": "modw_cloud",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "instance_state_id": "instance_state_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "instance_states"
+                }
+            ],
+            "orderby": [
+                "instance_state_id"
+            ],
+            "records": {
+                "id": "instance_state_id",
+                "name": "display",
+                "order_id": "instance_state_id",
+                "short_name": "display"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "A categorization of VM based on their state, ex. Active, Inactve, etc.",
+        "name": "VM State"
+    },
     "year": {
         "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
     },
