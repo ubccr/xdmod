@@ -186,8 +186,8 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         // ------------------------------------------------
 
         this.processHttpResponse = function () {
-            const success = this.responseArgs.success;
-            const response = this.responseArgs.response;
+            var success = this.responseArgs.success;
+            var response = this.responseArgs.response;
             this.responseArgs = null;
             // If success reported, attempt to extract user data.
             var data;

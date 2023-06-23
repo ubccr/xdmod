@@ -33,7 +33,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
     tooltip: 'Profile Editor',
 
     init: function () {
-        const tabs = [ this.general_settings, this.api_token ];
+        var tabs = [ this.general_settings, this.api_token ];
         this.addListener('afterrender', function () {
             tabs.forEach(function (tab) {
                 tab.handleOpenEvent();
