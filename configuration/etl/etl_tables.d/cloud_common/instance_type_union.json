@@ -10,24 +10,27 @@
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false,
+                "default": -1,
                 "comment": "Resource to which this type belongs"
             },
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
-                "nullable": false,
+                "nullable": true,
                 "comment": "Resource to which this type belongs"
             },
             {
                 "name": "instance_type",
                 "type": "varchar(64)",
                 "nullable": false,
+                "default": "Unknown",
                 "comment": "Short version or abbrev"
             },
             {
                 "name": "display",
                 "type": "varchar(256)",
                 "nullable": false,
+                "default": "Unknown",
                 "comment": "What to show the user"
             },
             {

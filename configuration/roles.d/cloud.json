@@ -56,6 +56,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "parentscience"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "instance_state"
                 }
             ],
             "+summary_charts": [{
@@ -187,6 +191,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "parentscience"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "instance_state"
                 }
             ]
         }
