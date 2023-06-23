@@ -13,7 +13,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
     perform_logout_on_close: false,
 
     init: function () {
-        let self = this;
+        var self = this;
         XDMoD.REST.connection.request({
             url: '/users/current',
             method: 'GET',

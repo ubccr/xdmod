@@ -272,9 +272,9 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     },
 
     processHttpResponse: function () {
-        const success = this.responseArgs.success;
-        const params = this.responseArgs.params;
-        const response = this.responseArgs.response;
+        var success = this.responseArgs.success;
+        var params = this.responseArgs.params;
+        var response = this.responseArgs.response;
         this.responseArgs = null;
         if (success) {
             this.processSuccessfulResponse(params, response);
