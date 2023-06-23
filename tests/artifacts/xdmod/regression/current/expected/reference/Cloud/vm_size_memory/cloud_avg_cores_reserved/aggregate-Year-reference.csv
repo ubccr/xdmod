@@ -8,7 +8,7 @@ start,end
 "VM Size: Memory","Average Cores Reserved Weighted By Wall Hours"
 "8 - 16 GB",4.0000
 "4 - 8 GB",2.0000
-"2 - 4 GB",1.1881
+"2 - 4 GB",1.1879
 "< 2 GB",1.0000
 "32 - 64 GB",1.0000
 ---------
