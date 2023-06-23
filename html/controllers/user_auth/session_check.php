@@ -19,5 +19,3 @@
 	$returnData['success'] = true;
 	$returnData['message'] = 'Session Alive';
 	xd_controller\returnJSON($returnData);
-
-?>

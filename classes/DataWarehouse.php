@@ -57,7 +57,7 @@ class DataWarehouse
 	 */
     public function __destruct()
     {
-        destroy();
+        $this->destroy();
     }
 
     /**

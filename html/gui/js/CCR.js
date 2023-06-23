@@ -571,7 +571,9 @@ XDMoD.utils.trimOnBlur = function (thisField) {
 XDMoD.utils.syncWindowShadow = function (thisComponent) {
     thisComponent.bubble(function (currentComponent) {
         if (currentComponent instanceof Ext.Window) {
-            currentComponent.syncShadow();
+            if (currentComponent.rendered) {
+                currentComponent.syncShadow();
+            }
             return false;
         }
         return true;
@@ -1024,7 +1026,7 @@ CCR.WebPanel = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant number OCI 1025159';
+CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant numbers ACI 1025159, ACI 1445806 and ACI 2137603';
 
 //Used in html/gui/general/login.php
 var toggle_about_footer = function (o) {

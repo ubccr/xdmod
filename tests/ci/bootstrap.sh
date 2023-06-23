@@ -22,15 +22,18 @@ cp -r $REF_SOURCE /var/tmp/
 set -e
 set -o pipefail
 
-# Detect what version of CentOS we're running in, if it's 8 then we need to do some rejiggering of the yum repos to
-# make things work. From: https://stackoverflow.com/questions/70926799/centos-through-vm-no-urls-in-mirrorlist
-OS_VERSION=$(grep VERSION_ID < /etc/os-release  | cut -d"=" -f 2 | tr -d '"')
-case "$OS_VERSION" in
-    "8")
-        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
-        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
-        ;;
-esac
+PYTHON_SCIPY=python3-scipy
+if [ `rpm -E %{rhel}` = 7 ]; then
+    PYTHON_SCIPY=python36-scipy
+fi
+
+# Install python dependencies for the image hash comparison algorithm
+yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
+pip3 install imagehash==4.2.1
+cp $REPODIR/tests/ci/scripts/imagehash /root/bin
+
+# ensure php error logging is set to E_ALL (recommended setting for development)
+sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini
 
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
@@ -84,17 +87,19 @@ then
         done
     fi
 
+    sudo -u xdmod xdmod-ingestor
+
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
     then
         last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
-        sudo -u xdmod xdmod-ingestor
 
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_error_sessions -f openstack
-        sudo -u xdmod xdmod-ingestor  --last-modified-start-date "$last_modified_start_date"
+        sudo -u xdmod xdmod-ingestor --datatype openstack
+        sudo -u xdmod xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
     fi
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
@@ -138,15 +143,6 @@ then
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
-    if [[ "$XDMOD_REALMS" == *"cloud"* ]];
-    then
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack -q
-        sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack -q
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
-        mysql -e "TRUNCATE TABLE modw_cloud.instance_type;"
-        sudo -u xdmod xdmod-ingestor --last-modified-start-date="2017-01-01 00:00:00"
-    fi
-
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
         for storage_dir in $REF_DIR/storage/*; do
@@ -157,7 +153,3 @@ then
         sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     fi
 fi
-
-# Remove old PEAR dependencies.  This command can be removed when a new Docker
-# image is created without these packages installed.
-yum -y remove php-pear-MDB2 php-pear-MDB2-Driver-mysql

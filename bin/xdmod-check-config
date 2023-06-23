@@ -50,6 +50,17 @@ try {
 
     echo "XDMoD $version\n\n";
 
+    if('__XDMOD_INSTALL_TYPE__' === 'rpm'){
+        $output = array("RPM Installed Packages:\n");
+        exec('rpm -qa xdmod\*', $output);
+        $output[] = "File status:\n";
+        exec('rpm -qa --verify xdmod\*', $output);
+        foreach ($output as $line) {
+            echo "$line\n";
+        }
+        echo "\n";
+    }
+
     echo "Required prerequisites\n\n";
 
     // Apache checks.
@@ -88,13 +99,13 @@ try {
         . " or greater."
     );
 
-    _debug('Checking for PHP 7 or later');
-    $unsupportedVersion = '7.0.0';
+    _debug('Checking for PHP 8 or later');
+    $unsupportedVersion = '8.0.0';
     $result = version_compare($currentVersion, $unsupportedVersion, '<');
     displayResult(
         $result,
-        "PHP 7 and later are not supported",
-        "You have PHP version $currentVersion. Downgrade to PHP 5."
+        "PHP 8 and later are not supported",
+        "You have PHP version $currentVersion. Downgrade to PHP 5 or 7."
     );
 
     _debug('Checking for PDO class');
@@ -216,6 +227,22 @@ try {
         $result,
         "sendmail executable installed"
     );
+
+    _debug('Checking for nodejs');
+    $output = null;
+    $returnVar = null;
+    $nodejs = exec('node --version 2>&1', $output, $returnVar);
+    displayResult(
+        $returnVar == 0,
+        "nodejs " . implode(' ', $output)
+    );
+
+    echo "\nOptional prerequisites\n\n";
+
+    _debug('Checking for a mongodb driver');
+    $result = class_exists('\MongoClient') || class_exists('\MongoDB\Client');
+    echo ' INFO     PHP MongoDB client driver ' . ($result ? 'installed' : 'not found') . "\n\n";
+
 } catch (Exception $e) {
     do {
         _error($e->getMessage());

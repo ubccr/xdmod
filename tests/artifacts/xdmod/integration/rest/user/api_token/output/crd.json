@@ -1,0 +1,85 @@
+{
+    "authentication_error": {
+        "$ref": "${INTEGRATION_ROOT}/base/authentication_error.json"
+    },
+    "not_found": {
+        "status_code": 404,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "API token not found."
+            }
+        }
+    },
+    "create_success": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "create_success_body",
+            "allOf": [
+                { "$ref": "${INTEGRATION_ROOT}/base/success_body.json" },
+                {
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string",
+                                    "pattern": "^[0-9]+\\.[0-9a-f]{64}$"
+                                },
+                                "expiration_date": {
+                                    "$ref": "${INTEGRATION_ROOT}/base/date.json"
+                                }
+                            },
+                            "required": [ "token", "expiration_date" ]
+                        }
+                    },
+                    "required": [ "data" ]
+                }
+            ]
+        }
+    },
+    "create_failure": {
+        "status_code": 409,
+        "body": {
+            "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
+            "$overwrite": {
+                "message": "Token already exists."
+            }
+        }
+    },
+    "get_success": {
+        "status_code": 200,
+        "body": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "get_success_body",
+            "allOf": [
+                { "$ref": "${INTEGRATION_ROOT}/base/success_body.json" },
+                {
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "created_on": {
+                                    "$ref": "${INTEGRATION_ROOT}/base/date.json"
+                                },
+                                "expiration_date": {
+                                    "$ref": "${INTEGRATION_ROOT}/base/date.json"
+                                }
+                            },
+                            "required": [ "created_on", "expiration_date" ]
+                        }
+                    },
+                    "required": [ "data" ]
+                }
+            ]
+        }
+    },
+    "revoke_success": {
+        "status_code": 200,
+        "body": {
+            "success": true,
+            "message": "Token successfully revoked."
+        }
+    }
+}

@@ -2,10 +2,15 @@
 
 namespace Rest\Controllers;
 
+use CCR\Log;
 use Configuration\XdmodConfiguration;
+use DataWarehouse\Data\BatchDataset;
+use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
+use DataWarehouse\Query\Model\WhereCondition;
+use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
@@ -19,6 +24,7 @@ use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use XDUser;
 use DataWarehouse\Access\MetricExplorer;
 use DataWarehouse\Access\Usage;
+use stdClass;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -328,6 +334,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $controller
             ->get("$root/plots", "$current::getPlots");
 
+        $controller
+            ->get("$root/raw-data", "$current::getRawData");
+
+        $controller
+            ->get("$root/raw-data/limit", "$current::getRawDataLimit");
     }
 
     /**
@@ -590,7 +601,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             array(
                 'success' => true,
                 'action' => $action,
-                'total' => count($history),
                 'results' => $result
             ),
             200
@@ -729,10 +739,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $user = $this->authorize($request);
 
-        // Get parameters.
-        $queryGroup = $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
-
-        // Get the realms for the query group and the user's active role.
+        // Get the realms for the user's active role.
         $realms = Realms::getRealmsForUser($user);
 
         // Return the realms found.
@@ -888,8 +895,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $user = $this->authorize($request);
 
-        $action = 'dimensionValues';
-
         // Get parameters.
         $offset = $this->getIntParam($request, 'offset', false, 0);
         $limit = $this->getIntParam($request, 'limit');
@@ -945,7 +950,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         try {
             $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
         }
-        catch(\Exception $e){
+        catch(Exception $e){
             $multipleProvidersSupported = false;
         }
 
@@ -1567,7 +1572,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action the parent action that called this function.
      * @param string $actionName the child action that called this function.
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     private function getJobExecutable(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
     {
@@ -1577,7 +1582,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $execInfo = $query->getJobExecutableInfo($user, $jobId);
 
         if (count($execInfo) === 0) {
-            throw new \Exception(
+            throw new Exception(
                 "Executable information unavailable for $realm $jobId",
                 500
             );
@@ -1621,7 +1626,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestException
-     * @throws \Exception
+     * @throws Exception
      */
     private function processJobNodeTimeSeriesRequest(
         Application $app,
@@ -1836,7 +1841,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 
-    private function encodeFloatArray(array $in) {
+    private function encodeFloatArray(array $in)
+    {
         $out = array();
         foreach ($in as $key => $value) {
             if (is_float($value) && is_nan($value)) {
@@ -2049,6 +2055,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
             )
         );
 
+        if (strpos($data['schema']['units'], '%') !== false) {
+            $chartConfig['yAxis']['max'] = 100.0;
+        }
+
         $globalConfig = array(
             'timezone' => $data['schema']['timezone']
         );
@@ -2176,5 +2186,374 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $container = implode('-', array_filter(array(self::_HISTORY_STORE, strtoupper($realm))));
         return new \UserStorage($user, $container);
+    }
+
+    /**
+     * Endpoint to get rows of raw data from the data warehouse. Requires API
+     * token authorization.
+     *
+     * The request should contain the following parameters:
+     * - start_date: start of date range for which to get data.
+     * - end_date: end of date range for which to get data.
+     * - realm: data realm for which to get data.
+     *
+     * It can also contain the following optional parameters:
+     * - fields: list of aliases of fields to get (if not provided, all
+     *           fields are gotten).
+     * - filters: mapping of dimension names to their possible values.
+     *            Results will only be included whose values for each of the
+     *            given dimensions match one of the corresponding given values.
+     * - offset: starting row index of data to get.
+     *
+     * If successful, the response will include the following keys:
+     * - success: true.
+     * - fields: array containing the 'display' property of each field gotten.
+     * - data: array of arrays containing the field values gotten.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws BadRequestException if any of the required parameters are not
+     *                             included; if an invalid start date, end
+     *                             date, realm, field alias, or filter key
+     *                             is provided; if the end date is before the
+     *                             start date; or if the offset is negative.
+     */
+    public function getRawData(Request $request, Application $app)
+    {
+        $user = parent::authenticateToken($request);
+        $params = $this->validateRawDataParams($request, $user);
+        $query = $this->getRawDataQuery($params);
+        $logger = $this->getRawDataLogger();
+        $limit = $this->getConfiguredRawDataLimit();
+        $dataset = $this->getRawBatchDataset(
+            $user,
+            $params,
+            $query,
+            $logger,
+            $limit
+        );
+        $data = $this->parseRawBatchDataset($dataset);
+        return $app->json([
+            'success' => true,
+            'fields' => $dataset->getHeader(),
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Endpoint to get the maximum number of rows that can be returned in a
+     * single response from the raw data endpoint (@see getRawData()). Requires
+     * API token authorization.
+     *
+     * No parameters.
+     *
+     * If successful, the response will include the following keys:
+     * - success: true.
+     * - data: integer value obtained from the 'rest_raw_row_limit' setting in
+     *         the 'datawarehouse' section of the portal_settings.ini
+     *         configuration file.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws Exception if there is no setting for 'rest_raw_row_limit' in
+     *                   the 'datawarehouse' section of portal_settings.ini.
+     */
+    public function getRawDataLimit(Request $request, Application $app)
+    {
+        parent::authenticateToken($request);
+        $limit = $this->getConfiguredRawDataLimit();
+        return $app->json([
+            'success' => true,
+            'data' => $limit
+        ]);
+    }
+
+    /**
+     * Validate the parameters of the request from the given user to the raw
+     * data endpoint (@see getRawData()).
+     *
+     * @param Request $request
+     * @param XDUser $user
+     * @return array of validated parameter values.
+     * @throws BadRequestException if any of the parameters are invalid.
+     */
+    private function validateRawDataParams($request, $user)
+    {
+        $params = [];
+        list(
+            $params['start_date'], $params['end_date']
+        ) = $this->validateRawDataDateParams($request);
+        $params['realm'] = $this->getStringParam($request, 'realm', true);
+        $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
+        if (empty($queryDescripters)) {
+            throw new BadRequestException('Invalid realm.');
+        }
+        $params['fields'] = $this->getRawDataFieldsArray($request);
+        $params['filters'] = $this->validateRawDataFiltersParams(
+            $request,
+            $queryDescripters
+        );
+        $params['offset'] = $this->getIntParam($request, 'offset', false, 0);
+        if ($params['offset'] < 0) {
+            throw new BadRequestException('Offset must be non-negative.');
+        }
+        return $params;
+    }
+
+    /**
+     * Get the corresponding query for a request to get raw data with the given
+     * parameters.
+     *
+     * @param array $params validated parameters
+     *                      (@see validateRawDataParams()).
+     * @return \DataWarehouse\Query\RawQuery
+     */
+    private function getRawDataQuery($params)
+    {
+        $realmManager = new RealmManager();
+        $className = $realmManager->getRawDataQueryClass($params['realm']);
+        $query = new $className(
+            [
+                'start_date' => $params['start_date'],
+                'end_date' => $params['end_date']
+            ],
+            'batch'
+        );
+        $query = $this->setRawDataQueryFilters($query, $params);
+        return $query;
+    }
+
+    /**
+     * Generate a database logger for the raw data queries.
+     *
+     * @return \CCR\Logger
+     */
+    private function getRawDataLogger()
+    {
+        return Log::factory(
+            'data-warehouse-raw-data-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+    }
+
+    /**
+     * Get the value configured in the portal settings for the maximum number
+     * of rows that can be returned in a single response from the raw data
+     * endpoint.
+     *
+     * @return int
+     * @throws Exception if the 'datawarehouse' section and/or the
+     *                   'rest_raw_row_limit' option have not been set in the
+     *                   portal configuration.
+     */
+    private function getConfiguredRawDataLimit()
+    {
+        return intval(\xd_utilities\getConfiguration(
+            'datawarehouse',
+            'rest_raw_row_limit'
+        ));
+    }
+
+    /**
+     * Get a raw batch dataset from the warehouse.
+     *
+     * @param XDUser $user
+     * @param array $params validated parameter values.
+     * @param \DataWarehouse\Query\RawQuery $query
+     * @param \CCR\Logger
+     * @param int $limit maximum number of rows to get.
+     * @return BatchDataset
+     * @throws Exception if the 'fields' parameter contains invalid field
+     *                   aliases.
+     */
+    private function getRawBatchDataset(
+        $user,
+        $params,
+        $query,
+        $logger,
+        $limit
+    ) {
+        try {
+            $dataset = new BatchDataset(
+                $query,
+                $user,
+                $logger,
+                $params['fields'],
+                $limit,
+                $params['offset']
+            );
+            return $dataset;
+        } catch (Exception $e) {
+            if (preg_match('/Invalid fields specified/', $e->getMessage())) {
+                throw new BadRequestException($e->getMessage());
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Parse the given dataset into an array of records.
+     *
+     * @param BatchDataset $dataset
+     * @return array of records obtained by iterating over the dataset.
+     */
+    private function parseRawBatchDataset($dataset)
+    {
+        $data = [];
+        foreach ($dataset as $record) {
+            $data[] = $record;
+        }
+        return $data;
+    }
+
+    /**
+     * Validate the 'start_date' and 'end_date' parameters of the given request
+     * to the raw data endpoint (@see getRawData()).
+     *
+     * @param Request $request
+     * @return array containing the validated start and end dates in Y-m-d
+     *               format.
+     * @throws BadRequestException if the start and/or end dates are not
+     *                             provided or are not valid ISO 8601 dates or
+     *                             the end date is less than the start date.
+     */
+    private function validateRawDataDateParams($request)
+    {
+        $startDate = $this->getDateFromISO8601Param(
+            $request,
+            'start_date',
+            true
+        );
+        $endDate = $this->getDateFromISO8601Param(
+            $request,
+            'end_date',
+            true
+        );
+        if ($endDate < $startDate) {
+            throw new BadRequestException(
+                'End date cannot be less than start date.'
+            );
+        }
+        return [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
+    }
+
+    /**
+     * Get the array of field aliases from the given request to the raw data
+     * endpoint (@see getRawData()), e.g., the parameter 'fields=foo,bar,baz'
+     * results in ['foo', 'bar', 'baz'].
+     *
+     * @param Request $request
+     * @return array|null containing the field aliases parsed from the request,
+     *                    if provided.
+     */
+    private function getRawDataFieldsArray($request)
+    {
+        $fields = null;
+        $fieldsStr = $this->getStringParam($request, 'fields', false);
+        if (!is_null($fieldsStr)) {
+            $fields = explode(',', $fieldsStr);
+        }
+        return $fields;
+    }
+
+    /**
+     * Validate the optional 'filters' parameter of the given request to the
+     * raw data endpoint (@see getRawData()), e.g., the parameter
+     * 'filters[foo]=bar,baz' results in ['foo' => ['bar', 'baz']].
+     *
+     * @param Request $request
+     * @param array $queryDescripters the set of dimensions the user is
+     *                                authorized to see based on their assigned
+     *                                ACLs.
+     * @return array whose keys are the validated filter keys (they must be
+     *               valid dimensions the user is authorized to see) and whose
+     *               values are arrays of the provided string values.
+     * @throws BadRequestException if any of the filter keys are invalid
+     *                             dimension names.
+     */
+    private function validateRawDataFiltersParams($request, $queryDescripters)
+    {
+        $filters = null;
+        $filtersParam = $request->get('filters');
+        if (!is_null($filtersParam)) {
+            $filters = [];
+            foreach ($filtersParam as $filterKey => $filterValuesStr) {
+                $filters[$filterKey] = $this->validateRawDataFilterParam(
+                    $queryDescripters,
+                    $filterKey,
+                    $filterValuesStr
+                );
+            }
+        }
+        return $filters;
+    }
+
+    /**
+     * Given a raw data query and a mapping of dimension names to possible
+     * values, set the query to filter out records whose value for the given
+     * dimension does not match any of the provided values.
+     *
+     * @param \DataWarehouse\Query\RawQuery $query
+     * @param array $params containing a 'filters' key whose value is an
+     *                      associative array of dimensions and dimension
+     *                      values.
+     * @return \DataWarehouse\Query\RawQuery the query with the filters
+     *                                       applied.
+     */
+    private function setRawDataQueryFilters($query, $params)
+    {
+        if (is_array($params['filters']) && count($params['filters']) > 0) {
+            $f = new stdClass();
+            $f->{'data'} = [];
+            foreach ($params['filters'] as $dimension => $values) {
+                foreach ($values as $value) {
+                    $f->{'data'}[] = (object) [
+                        'id' => "$dimension=$value",
+                        'value_id' => $value,
+                        'dimension_id' => $dimension,
+                        'checked' => 1,
+                    ];
+                }
+            }
+            $query->setFilters($f);
+        }
+        return $query;
+    }
+
+    /**
+     * Validate a specific filter from the 'filters' parameter of a request to
+     * the raw data endpoint (@see getRawData()), and return the parsed array
+     * of values for that filter (e.g., 'foo,bar,baz' becomes ['foo', 'bar',
+     * 'baz']).
+     *
+     * @param Request $request
+     * @param array $queryDescripters the set of dimensions the user is
+     *                                authorized to see based on their assigned
+     *                                ACLs.
+     * @param string $filterKey the label of a dimension.
+     * @param string $filerValuesStr a comma-separated string.
+     * @return array
+     * @throws BadRequestException if the filter key is an invalid dimension
+     *                             name.
+     */
+    private function validateRawDataFilterParam(
+        $queryDescripters,
+        $filterKey,
+        $filterValuesStr
+    ) {
+        if (!in_array($filterKey, array_keys($queryDescripters))) {
+            throw new BadRequestException(
+                'Invalid filter key \'' . $filterKey . '\'.'
+            );
+        }
+        $filterValuesArray = explode(',', $filterValuesStr);
+        return $filterValuesArray;
     }
 }

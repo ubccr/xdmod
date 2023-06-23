@@ -28,5 +28,3 @@
 	$controller->registerOperation('update_pass');
 			
 	$controller->invoke('POST');
-		
-?>

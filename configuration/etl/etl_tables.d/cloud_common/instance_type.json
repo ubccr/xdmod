@@ -82,6 +82,7 @@
                 "columns": [
                     "resource_id",
                     "instance_type",
+                    "start_time",
                     "num_cores",
                     "memory_mb",
                     "disk_gb"

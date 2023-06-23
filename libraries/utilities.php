@@ -9,6 +9,7 @@
 namespace xd_utilities;
 
 use Exception;
+use UnexpectedValueException;
 
 /**
  * Global INI data.
@@ -196,34 +197,6 @@ function remove_element_by_value(&$array, $value)
 }
 
 /**
- * Power cube?
- */
-function power_cube($arr, $minLength = 1)
-{
-    $pp = power_set($arr, $minLength);
-
-    foreach ($pp as $key => $value) {
-        if (count($value) <= 0) {
-            continue;
-        }
-        $pp_copy = $pp;
-        unset($pp_copy[$key]);
-
-        $value_string = implode(",", $value);
-
-        foreach ($pp_copy as $pp_copy_el) {
-            $el_value = implode(",", $pp_copy_el);
-            if (string_begins_with($el_value, $value_string)) {
-                unset($pp[$key]);
-                break;
-            }
-        }
-    }
-
-    return $pp;
-}
-
-/**
  * Check if a string begins with another string.
  *
  * @param string $string The string to check.
@@ -275,107 +248,6 @@ function ensure_string_ends_with($string, $ending)
         $string .= $ending;
     }
     return $string;
-}
-
-/**
- * Power permutations?
- */
-function power_perms($arr, $minLength = 1)
-{
-    $power_set = power_set($arr, $minLength);
-
-    $result = array();
-
-    foreach ($power_set as $set) {
-        $perms = perms($set);
-        $result = array_merge($result, $perms);
-    }
-
-    return $result;
-}
-
-/**
- * Power set?
- */
-function power_set($in, $minLength = 1)
-{
-    $count   = count($in);
-    $members = pow(2, $count);
-
-    $return = array();
-
-    for ($i = 0; $i < $members; $i++) {
-        $b = sprintf("%0" . $count . "b", $i);
-        $out = array();
-        for ($j = 0; $j < $count; $j++) {
-            if ($b{$j} == '1') {
-                $out[] = $in[$j];
-            }
-        }
-        if (count($out) >= $minLength) {
-            $return[] = $out;
-        }
-    }
-
-    return $return;
-}
-
-/**
- * Factorial function.
- *
- * @param int $int Integer.
- *
- * @return int
- */
-function factorial($int)
-{
-    if ($int < 2) {
-        return 1;
-    }
-
-    for ($f = 2; $int-1 > 1; $f *= $int--) {
-    }
-
-    return $f;
-}
-
-/**
- * Permutations?
- */
-function perm($arr, $nth = null)
-{
-    if ($nth === null) {
-        return perms($arr);
-    }
-
-    $result = array();
-    $length = count($arr);
-
-    while ($length--) {
-        $f = factorial($length);
-        $p = floor($nth / $f);
-        $result[] = $arr[$p];
-        array_delete_by_key($arr, $p);
-        $nth -= $p * $f;
-    }
-
-    $result = array_merge($result, $arr);
-
-    return $result;
-}
-
-/**
- * Permutation helper function?
- */
-function perms($arr)
-{
-    $p = array();
-
-    for ($i = 0; $i < factorial(count($arr)); $i++) {
-        $p[] = perm($arr, $i);
-    }
-
-    return $p;
 }
 
 /**
@@ -721,4 +593,32 @@ function verify_captcha(){
             \xd_response\presentError('You must enter the words in the Recaptcha box properly.' . print_r($errors, 1));
         }
     }
+}
+
+/**
+ * Create a temporary directory.
+ *
+ * PHP does not have the equivalent of "mktemp -d".
+ *
+ * @param $prefix string The prefix of the generated directory.
+ *
+ * @return string The path to the temporary directory.
+ */
+function createTemporaryDirectory($prefix = 'xdmod-tmp-dir-')
+{
+    $tmpDir = tempnam(sys_get_temp_dir(), $prefix);
+
+    if ($tmpDir === false) {
+        throw new UnexpectedValueException("Failed to create temporary file");
+    }
+
+    if (!unlink($tmpDir)) {
+        throw new UnexpectedValueException("Failed to remove file '$tmpDir'");
+    }
+
+    if (!mkdir($tmpDir, 0700)) {
+        throw new UnexpectedValueException("Failed to create directory '$tmpDir'");
+    }
+
+    return $tmpDir;
 }

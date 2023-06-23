@@ -33,6 +33,8 @@ the planned 10.5 release, which will have full support for Rocky 8.
 Requesting Support
 ------------------
 
+Before contacting us please see the list of [Frequently Asked Questions](faq.html).
+
 Email `ccr-xdmod-help` at `buffalo.edu` for support.  Please include the following in your support request. Failure to include this information may delay support.
 
 - Open XDMoD version number
@@ -53,4 +55,4 @@ Mailing List
 Subscribe to our [mailing list][listserv] to stay up to date with the
 latest Open XDMoD release.
 
-[listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
+[listserv]: https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1

@@ -241,21 +241,21 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 This process has been tested on CentOS 7. Known issues are documented in the
 [Building FAQ](#building-faq) below. If you run into any issues not listed
 below on these or any other platforms, please let us know. The tested version
-of composer is 1.3.2 (TravisCI builds use --stable)
+of composer is 1.10.25 on CentOS 7 and 2.4.2 on Rocky 8.
 
   1. Change directory to the root of the Open XDMoD repository.
-  2. Install Composer dependencies for Open XDMoD.
-    - `export COMPOSER=composer-el[7|8].json`
-      - use `el7` if you are building this on CentOS7 w/ PHP5.4
-      - use `el8` if you are building this on CentOS8 ( or equivalent ) w/ PHP7.2
-    - `composer install`
-    - Depending on the versions of various software installed on your system,
-      you may run into errors. If you do, see the [Building FAQ](#building-faq)
-      below.
+  1. Install Composer dependencies for Open XDMoD.
+      - `export COMPOSER=composer-el[7|8].json`
+        - use `el7` if you are building this on CentOS7 w/ PHP5.4
+        - use `el8` if you are building this on CentOS8 ( or equivalent ) w/ PHP7.2
+      - `composer install`
+      - Depending on the versions of various software installed on your system,
+        you may run into errors. If you do, see the [Building FAQ](#building-faq)
+        below.
   1. Run the package builder script.
-    - `open_xdmod/build_scripts/build_package.php --module xdmod`
-    - To build Open XDMoD modules, substitute `xdmod` with the name of a
-      module's directory within `open_xdmod/modules`.
+      - `open_xdmod/build_scripts/build_package.php --module xdmod`
+      - To build Open XDMoD modules, substitute `xdmod` with the name of a
+        module's directory within `open_xdmod/modules`.
 
 The resulting tarball will be located in `open_xdmod/build`.
 
@@ -273,13 +273,13 @@ substitute accordingly.
      Source section.
   1. Copy the source tarball to the `SOURCES` directory in your `rpmbuild`
      directory.
-    - `cp open_xdmod/build/xdmod-x.y.z.tar.gz ~/rpmbuild/SOURCES`
+      - `cp open_xdmod/build/xdmod-x.y.z.tar.gz ~/rpmbuild/SOURCES`
   1. Extract the `.spec` file from the source tarball into the `SPECS` directory
      in your `rpmbuild` directory.
-    - `tar -xOf ~/rpmbuild/SOURCES/xdmod-x.y.z.tar.gz xdmod-x.y.z/xdmod.spec >~/rpmbuild/SPECS/xdmod.spec`
+      - `tar -xOf ~/rpmbuild/SOURCES/xdmod-x.y.z.tar.gz xdmod-x.y.z/xdmod.spec >~/rpmbuild/SPECS/xdmod.spec`
   1. Run `rpmbuild`.
-    - `rpmbuild -bb ~/rpmbuild/SPECS/xdmod.spec`
-    - There may be warnings about files not being found or files being
+      - `rpmbuild -bb ~/rpmbuild/SPECS/xdmod.spec`
+      - There may be warnings about files not being found or files being
       listed twice. These are likely benign - see the
       [Building FAQ](#building-faq) below.
 

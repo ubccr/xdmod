@@ -97,65 +97,17 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-10.0.0 Upgrade Notes
+10.5.0 Upgrade Notes
 -------------------
 
-Open XDMoD 10.0.0 is a major release that includes new features along with many
+Open XDMoD 10.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 9.5.0.
+You may upgrade directly from 10.0.0.
 
 ### Configuration File Changes
 
 ### Database Changes
-
-Open XDMoD 10.0.0 is converting all database tables that use the MyISAM table
-engine to use the InnoDB table engine. This conversion will take place as part
-of the upgrade process. There are two things to note about this conversion.
-
-1. This conversion can cause the upgrade process to take a long time. When running
-the upgrade process on our Open XDMoD install at the University at Buffalo, the
-upgrade took around 40 hours with most of that time being spent on converting
-the tables from MyISAM to InnoDB.
-
-2. Additional disk space will be needed for the conversion of the tables and to
-store the data afterwards. On our development instance, which contains about 20
-years of data and around 49 million jobs, the `modw` schema increased from 58GB
-to 94GB after converting to InnoDB.
-
-We also recommend changing the `innodb_file_per_table` setting to `On` for this
-release. Instructions on how to do this can be found in the [Configuration Guide][mysql-config]
-
-### Slurm Input Format Changes
-
-The input file format for Slurm data has changed to include the `qos` field.
-
-**If you are generating Slurm input for the `xdmod-shredder` command then you
-will need to make the appropriate changes.**  Refer to the [Slurm
-Notes](resource-manager-slurm.html#input-format) for the example `sacct`
-command.  If you are using the `xdmod-slurm-helper` command then no changes are
-necessary.
-
-10.0.1 Upgrade Notes
--------------------
-
-Open XDMoD 10.0.1 is a bug fix release that fixes a compatibility issue with
-headless chromium 109 (used for image export and report generation).
-
-You may upgrade directly from 9.5.0 or 10.0.0
-
-10.0.2 Upgrade Notes
--------------------
-
-Open XDMoD 10.0.2 is a bug fix release that fixes a compatibility issue with
-headless chromium 111 (used for image export and report generation).
-
-You may upgrade directly from 9.5.0, 10.0.0, or 10.0.1
-
-The 10.0.2 release has a dependency on nodejs 16. If upgrading
-Open XDMoD by rpm on Centos 7 then the nodejs package will be installed automatically.
-If upgrading Open XDMoD by rpm on Rocky 8 then then nodejs 16 module
-stream must be enabled following the directions on the [software requirements page](software-requirements.md#Rocky-8).
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration

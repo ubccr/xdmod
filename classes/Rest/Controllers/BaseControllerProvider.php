@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use DateTime;
+use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -14,7 +15,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
 /**
  * Class BaseControllerProvider
@@ -160,65 +160,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     {
         // NO-OP UNLESS OVERRIDDEN
     } // setupAssertions
-
-
-    /**
-     * This function takes in a Request object and an array of required
-     * parameter keys. It then determines if all of the parameters are
-     * present in the provided Request object. If they are, an array
-     * of the parameters and their values are returned. If they are not
-     * all found then an Exception is raised.
-     *
-     * @param Request $request to be used in
-     *                         retrieving the the required params.
-     * @param array $requiredParams an array of strings that defines the
-     *                         parameters that are required to continue.
-     * @param boolean $strict if set to true, then it will throw an exception if not all of the provided params are found.
-     *                        defaults to true.
-     * @return array of all of the required params and their values as supplied
-     *                         by the Request object.
-     * @throws \Exception if not all of the $requiredParams were found.
-     */
-    protected function parseRestArguments(Request $request, $requiredParams = array(), $strict = true, $alternative_source = null)
-    {
-        if (!isset($request)) {
-            return array();
-        }
-
-        $found = 0;
-        $results = array();
-        $length = count($requiredParams);
-        foreach ($requiredParams as $requiredParam) {
-
-            $value = $request->get($requiredParam);
-
-            if (!isset($value) && is_string($alternative_source)) {
-
-                $source = $request->get($alternative_source);
-                $needsDecoding = is_string($source);
-
-                if ($needsDecoding) {
-                    $source = json_decode($source, true);
-                }
-
-                $found = isset($source[$requiredParam]);
-                $value = $found ? $source[$requiredParam] : null;
-            }
-
-            $mod = is_string($requiredParam) && isset($value) ? 1 : 0;
-
-            if ($mod > 0) {
-                $results[$requiredParam] = $value;
-            }
-            $found += $mod;
-        }
-
-        if ($found !== $length && $strict) {
-            throw new MissingMandatoryParametersException('Not all parameters were supplied');
-        }
-
-        return $results;
-    }//parseRestArguments
 
     /**
      * A simple piece of Middleware that ensures that the user making the current
@@ -751,7 +692,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         return $retval;
 
-    }  // formatLogMessage()
+    }
 
     /**
      * Checks that the `$[start|end]Date` values are valid ( `Y-m-d` ) dates and that `$startDate`
@@ -799,5 +740,44 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         return $date;
+    }
+
+    /**
+     * @param Request $request
+     * @return \XDUser
+     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
+     * @throws \Exception if the user's token from the db does not validate against the provided token.
+     */
+    protected function authenticateToken($request)
+    {
+        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
+        // to the request's query params.
+        $authorizationHeader = $request->headers->get('Authorization');
+        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
+            $rawToken = $request->get(Tokens::HEADER_KEY);
+        } else {
+            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
+        }
+        if (empty($rawToken)) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'No Token Provided.'
+            );
+        }
+
+
+        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
+        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
+        if ($delimPosition === false) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'Invalid token format.'
+            );
+        }
+
+        $userId = substr($rawToken, 0, $delimPosition);
+        $token = substr($rawToken, $delimPosition + 1);
+
+        return Tokens::authenticate($userId, $token);
     }
 }

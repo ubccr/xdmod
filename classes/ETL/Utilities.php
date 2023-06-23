@@ -229,7 +229,7 @@ class Utilities
         return $localVariableMap;
     }  // quoteVariables()
 
-    public static function runEtlPipeline(array $pipelines, $logger, array $params = array())
+    public static function runEtlPipeline(array $pipelines, $logger, array $params = array(), $module = 'xdmod')
     {
         $logger->debug(
             sprintf(
@@ -239,7 +239,7 @@ class Utilities
             )
         );
 
-        $configOptions = array('default_module_name' => 'xdmod');
+        $configOptions = array('default_module_name' => $module);
         if( array_key_exists('variable-overrides', $params) ){
             $configOptions['config_variables'] = $params['variable-overrides'];
         }
@@ -257,7 +257,7 @@ class Utilities
 
         $scriptOptions = array_merge(
             array(
-                'default-module-name' => 'xdmod',
+                'default-module-name' => $module,
                 'process-sections' => $pipelines,
             ),
             $params

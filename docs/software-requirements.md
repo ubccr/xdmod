@@ -8,8 +8,8 @@ Open XDMoD requires the following software:
     - [mod_rewrite][]
     - [mod_ssl][]
     - [mod_headers][]
-- [MariaDB][]/[MySQL][] 5.5.3+
-- [PHP][] 5.4+
+- [MariaDB][]/[MySQL][] 5.5.3+, MariaDB 10.3.17+
+- [PHP][] 5.4+, 7.2+, (PHP 8 not supported)
     - [PDO][]
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
@@ -120,7 +120,7 @@ Additional Notes
 ### PHP
 
 Open XDMoD is tested to work with the versions of PHP that is supplied with
-Centos 7 (PHP 5.4.16) and Rocky 8 (PHP 7.2).  Open XDMoD is not compatible
+Centos 7 (PHP 5.4.16) and Rocky 8 (PHP 7.2.24).  Open XDMoD is not compatible
 with PHP 8 at this time.
 
 Some Linux distributions (including CentOS) do not set the timezone used
@@ -153,11 +153,9 @@ network access.
 
 ### MySQL
 
-MySQL 5.5.3+ is currently required for use with Open XDMoD.
-
-Open XDMoD is tested to work with MariaDB 5.5.60 and may be compatible with
-more recent releases of MySQL and MariaDB.  Open XDMoD is currently not
-compatible with MySQL 8.0 at this time.
+Open XDMoD is tested to work with MariaDB 5.5.60 and 10.3.28, and may be
+compatible with more recent releases of MySQL and MariaDB.  Open XDMoD is
+not compatible with MySQL 8.0 at this time.
 
 Refer to the [Configuration Guide](configuration.html#mysql-configuration)
 for configuration details.

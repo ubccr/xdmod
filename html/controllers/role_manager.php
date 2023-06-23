@@ -25,5 +25,3 @@
 	$controller->registerOperation('downgrade_member');
 					
 	$controller->invoke('POST');
-		
-?>

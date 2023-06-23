@@ -384,6 +384,7 @@ JS;
         <link rel="stylesheet" type="text/css" href="gui/css/ProfileEditor.css"/>
         <script type="text/javascript" src="gui/js/profile_editor/ProfileGeneralSettings.js"></script>
         <script type="text/javascript" src="gui/js/profile_editor/ProfileRoleDelegation.js"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileApiToken.js"></script>
         <script type="text/javascript" src="gui/js/profile_editor/ProfileEditor.js"></script>
     <?php endif; ?>
 

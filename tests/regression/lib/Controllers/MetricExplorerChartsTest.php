@@ -149,10 +149,10 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $expected = array (
             'total' => '55',
             'series_data' => array(
-                array('name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844, 'percentage' => null),
-                array('name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733, 'percentage' => null),
-                array('name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52, 'percentage' => null),
-                array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null)
+                array('name' => 'aytinis', 'y' => 10091.8844, 'percentage' => null),
+                array('name' => 'sarwa', 'y' => 6955.7733, 'percentage' => null),
+                array('name' => 'crane', 'y' => 6839.52, 'percentage' => null),
+                array('name' => 'duswa', 'y' => 5701.5467, 'percentage' => null)
             )
         );
         $this->testChartData($requestData, $expected);
@@ -196,6 +196,39 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $helper->logout();
     }
 
+    /**
+     * Tests the scenario where multiple datasets are plotted
+     * and shareY axis is true so they get the units shown in the
+     * data labels.
+     */
+    public function testChartMultiAxis()
+    {
+        $requestData =  $this->getChartRequest(
+            array(
+                array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'),
+                array('realm' => 'Jobs', 'group_by' => 'none', 'metric' => 'total_cpu_hours'),
+            ),
+            array(
+                'start' => '4',
+                'showRemainder' => 'false',
+                'share_y_axis' => 'true'
+            )
+        );
+
+        $expected = array (
+            'total' => '55',
+            'series_data' => array(
+                array('name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844, 'percentage' => null),
+                array('name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733, 'percentage' => null),
+                array('name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52, 'percentage' => null),
+                array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null)
+            )
+        );
+
+        $this->testChartData($requestData, $expected);
+    }
+
+
     public function getChartRequest($data_settings, $global_settings = null)
     {
         $dataseries = array();
@@ -213,6 +246,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $testdate = isset($global_settings['date']) ? $global_settings['date'] : '2016-12-31';
         $startOffset = isset($global_settings['start']) ? $global_settings['start'] : '0';
         $showRemainder = isset($global_settings['showRemainder']) ? $global_settings['showRemainder'] : 'true';
+        $shareYAxis = isset($global_settings['share_y_axis']) ? $global_settings['share_y_axis'] : 'false';
 
         $chartSettings = array(
             'show_title' => 'y',
@@ -231,7 +265,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             'operation' => 'get_data',
             'data_series' => urlencode(json_encode($dataseries)),
             'swap_xy' => 'false',
-            'share_y_axis' => 'false',
+            'share_y_axis' => $shareYAxis,
             'hide_tooltip' => 'false',
             'show_guide_lines' => 'y',
             'showContextMenu' => 'y',
@@ -364,16 +398,16 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             array (
                 'total' => '55',
                 'series_data' => array (
-                    array('name' => 'Moorhen [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 20518.0064, 'percentage' => null),
-                    array('name' => 'Honey-buzzard [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 8276.1947, 'percentage' => null),
-                    array('name' => 'Grey, Lesser [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 5534.6542, 'percentage' => null),
-                    array('name' => 'Lapwing [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 2761.8142, 'percentage' => null),
-                    array('name' => 'All 51 Others [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 5231.8753, 'percentage' => null),
-                    array('name' => 'white [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 32448.9128, 'percentage' => null),
-                    array('name' => 'black [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 7527.9847, 'percentage' => null),
-                    array('name' => 'pikelet [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 1112.6033, 'percentage' => null),
-                    array('name' => 'croutons [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 481.5464, 'percentage' => null),
-                    array('name' => 'All 13 Others [<span style="color:#1199ff">Wall Hours: Total</span>]', 'y' => 751.4976, 'percentage' => null)
+                    array('name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => null),
+                    array('name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => null),
+                    array('name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => null),
+                    array('name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => null),
+                    array('name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null),
+                    array('name' => 'white', 'y' => 32448.9128, 'percentage' => null),
+                    array('name' => 'black', 'y' => 7527.9847, 'percentage' => null),
+                    array('name' => 'pikelet', 'y' => 1112.6033, 'percentage' => null),
+                    array('name' => 'croutons', 'y' => 481.5464, 'percentage' => null),
+                    array('name' => 'All 13 Others', 'y' => 751.4976, 'percentage' => null)
                 ),
             )
         );

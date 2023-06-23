@@ -268,7 +268,7 @@ class JobViewerTest extends BaseTest
 
     public function missingParamsProvider() {
         //TODO: Needs further integration for other realms.
-        if (!in_array("jobs", self::getRealms())) {
+        if (!in_array("jobs", parent::getRealms())) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -490,6 +490,17 @@ class JobViewerTest extends BaseTest
 
         // get the record id
         $recordId = $result['results'][$result['results']['dtype']];
+
+        // update existing search
+        $input['text'] = 'Updated';
+        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history/' . $recordId, array('realm' => 'Jobs'), array('data' => json_encode($input)));
+
+        $this->assertEquals(200, $response[1]['http_code']);
+        $result = $response[0];
+        $this->assertTrue($result['success']);
+        $this->assertEquals($input['searchterms'], $result['results']['searchterms']);
+        $this->assertEquals($input['results'], $result['results']['results']);
+        $this->assertEquals('Updated', $result['results']['text']);
 
         // remove the dummy saved search.
         $response = $this->xdmodhelper->delete(self::ENDPOINT . 'search/history/' . $recordId, array('realm' => 'Jobs'));

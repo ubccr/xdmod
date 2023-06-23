@@ -817,7 +817,7 @@ class Usage extends Common
                     $usageGroupBy,
                     $meRequestMetric->getId()
                 );
-                $drillTargets = $queryDescripter->getDrillTargets();
+                $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getHiddenGroupBys());
                 $drillDowns = array_map(
                     function ($drillTarget) {
                         return explode('-', $drillTarget, 2);

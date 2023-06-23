@@ -1,5 +1,7 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v10.5.0
+
 ## 2023-04-03 v10.0.2
 - Bug Fixes
     -  General

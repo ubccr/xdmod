@@ -2,114 +2,196 @@
 
 namespace IntegrationTests\Controllers;
 
-use IntegrationTests\BaseTest;
+use IntegrationTests\TokenAuthTest;
+use TestHarness\XdmodTestHelper;
 
-class MetricExplorerTest extends BaseTest
+class MetricExplorerTest extends TokenAuthTest
 {
+    /**
+     * Directory containing test artifact files.
+     */
+    const TEST_GROUP = 'integration/controllers/metric_explorer';
+
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
-     * Checks the structure of the DwDescripter response.
+     * Check for correct handling of invalid or missing input parameters to the
+     * metric explorer charting controller
      */
-    public function testGetDwDescripter()
-    {
+    public function testInvalidChartRequests() {
+
+        $params = array(
+            "show_title" => "y",
+            "timeseries" => "y",
+            "aggregation_unit" => "Auto",
+            "start_date" => "2016-12-29",
+            "end_date" => "2017-01-01",
+            "global_filters" => "%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D",
+            "title" => "untitled query 1",
+            "show_filters" => "true",
+            "show_warnings" => "true",
+            "show_remainder" => "false",
+            "start" => "0",
+            "limit" => "10",
+            "timeframe_label" => "User Defined",
+            "operation" => "get_data",
+            "data_series" => "%5B%7B%22group_by%22%3A%22none%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A2627927508440901%7D%5D",
+            "swap_xy" => "false",
+            "share_y_axis" => "false",
+            "hide_tooltip" => "false",
+            "show_guide_lines" => "y",
+            "showContextMenu" => "y",
+            "scale" => "1",
+            "format" => "hc_jsonstore",
+            "width" => "1500",
+            "height" => "626",
+            "legend_type" => "bottom_center",
+            "font_size" => "3",
+            "featured" => "false",
+            "trendLineEnabled" => "",
+            "x_axis" => "%7B%7D",
+            "y_axis" => "%7B%7D",
+            "legend" => "%7B%7D",
+            "defaultDatasetConfig" => "%7B%7D",
+            "controller_module" => "metric_explorer"
+        );
+
         $this->helper->authenticate('cd');
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
+        unset($params['font_size']);
 
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $output = json_decode($response[0]);
+        $this->assertEquals($output->data[0]->title->style->fontSize, "19px");
 
-
-        $dwdata = $response[0];
-
-        $this->assertArrayHasKey('totalCount', $dwdata);
-        $this->assertArrayHasKey('data', $dwdata);
-        $this->assertEquals($dwdata['totalCount'], count($dwdata['data']));
-
-        foreach($dwdata['data'] as $entry)
-        {
-            $this->assertArrayHasKey('realms', $entry);
-            foreach($entry['realms'] as $realm)
-            {
-                $this->assertArrayHasKey('dimensions', $realm);
-                $this->assertArrayHasKey('metrics', $realm);
-            }
-        }
+        $params['data_series'] = '[object Object]';
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertEquals(400, $response[1]['http_code']);
     }
 
     /**
-     * checks that you need to be authenticated to get_dw_descripter
+     * Check for correct handling of invalid or missing input parameters to the
+     * metric explorer charting controller
      */
-    public function testGetDwDescripterNoAuth()
-    {
-        // note - not authenticated
+    public function testInvalidRawDataRequests() {
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
+        $params = array(
+            'show_title' => 'y',
+            'timeseries' => 'y',
+            'aggregation_unit' => 'Auto',
+            'start_date' => '2013-06-08',
+            'end_date' => '2023-06-08',
+            'global_filters' => '%7B%22data%22%3A%5B%7B%22id%22%3A%22resource%3D2%22%2C%22value_id%22%3A%222%22%2C%22value_name%22%3A%22mortorq%22%2C%22dimension_id%22%3A%22resource%22%2C%22realms%22%3A%5B%22Cloud%22%2C%22Jobs%22%2C%22Storage%22%5D%2C%22checked%22%3Atrue%7D%5D%7D',
+            'title' => 'untitled query 1',
+            'show_filters' => 'true',
+            'show_warnings' => 'true',
+            'show_remainder' => 'false',
+            'start' => '0',
+            'limit' => '20',
+            'timeframe_label' => '10 year',
+            'operation' => 'get_rawdata',
+            'data_series' => '%5B%7B%22group_by%22%3A%22resource%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A-755536863343043%7D%5D',
+            'swap_xy' => 'false',
+            'share_y_axis' => 'false',
+            'hide_tooltip' => 'false',
+            'show_guide_lines' => 'y',
+            'showContextMenu' => 'y',
+            'scale' => '1',
+            'format' => 'jsonstore',
+            'width' => '1428',
+            'height' => '525',
+            'legend_type' => 'bottom_center',
+            'x_axis' => '%7B%7D',
+            'y_axis' => '%7B%7D',
+            'legend' => '%7B%7D',
+            'defaultDatasetConfig' => '%7B%7D',
+            'controller_module' => 'metric_explorer',
+            'inline' => 'n',
+            'datapoint' => '1475280000000',
+            'datasetId' => '-755536863343043'
+        );
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 401);
+        $this->helper->authenticate('cd');
+
+        unset($params['start_date']);
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('missing required start_date parameter', $response[0]['message']);
+
+        $params['start_date'] = '2016-12-29';
+        unset($params['end_date']);
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('missing required end_date parameter', $response[0]['message']);
+
+        $params['end_date'] = '2016-12-29';
+        $params['data_series'] = '[object Object]';
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('Invalid data_series specified', $response[0]['message']);
     }
 
     /**
-     * Checks that the filters work correctly
+     * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDimensionFilters()
+    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+        parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            self::TEST_GROUP,
+            'get_dw_descripter'
+        );
+    }
+
+    /**
+     * @dataProvider getDimensionFiltersProvider
+     */
+    public function testGetDimensionFilters($role, $tokenType, $expectedCount)
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-
-        $this->helper->authenticate('usr');
-
-        $params = array(
-            'operation' => 'get_dimension',
-            'dimension_id' => 'username',
-            'realm' => 'Jobs',
-            'public_user' => false,
-            'start' => '',
-            'limit' => '10',
-            'selectedFilterIds' => ''
+        $responseBody = parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            self::TEST_GROUP,
+            'get_dimensions'
         );
+        if ('valid_token' === $tokenType && !is_null($expectedCount)) {
+            $this->assertSame(
+                $expectedCount,
+                $responseBody->totalCount,
+                parent::getJsonStringForExceptionMessage(
+                    json_decode(json_encode($responseBody), true)
+                )
+            );
+        }
+    }
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-        $this->assertEquals(1, $response[0]['totalCount']);
-
-        $this->helper->logout();
-
-        $this->helper->authenticate('cd');
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-        $this->assertGreaterThan(1, $response[0]['totalCount']);
-        $totalUsers = $response[0]['totalCount'];
-
-        $this->helper->logout();
-
-        $this->helper->authenticate('pi');
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
-        $this->assertGreaterThan(1, $response[0]['totalCount']);
-        $this->assertLessThan($totalUsers, $response[0]['totalCount']);
-
-        $this->helper->logout();
-
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
-
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(401, $response[1]['http_code']);
+    /**
+     * dataProvider for testGetDimensionFilters
+     */
+    public function getDimensionFiltersProvider()
+    {
+        $expectedCounts = [
+            'pub' => null,
+            'cd' => 66,
+            'cs' => 66,
+            'usr' => 1,
+            'pi' => 6,
+            'mgr' => 0
+        ];
+        return array_map(
+            function ($testData) use ($expectedCounts) {
+                list($role, $tokenType) = $testData;
+                return [$role, $tokenType, $expectedCounts[$role]];
+            },
+            parent::provideTokenAuthTestData()
+        );
     }
 
     public function rawDataProvider()

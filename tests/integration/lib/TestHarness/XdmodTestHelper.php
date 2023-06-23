@@ -90,7 +90,7 @@ class XdmodTestHelper
         }
     }
 
-    private function getheaders()
+    public function getheaders()
     {
         $headers = array();
         foreach ($this->headers as $name => $value) {
