@@ -203,9 +203,9 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
                 }
                 // Store the arguments needed to process the response.
                 self.responseArgs = {
-                    'params': params,
-                    'success': success,
-                    'response': response
+                    params: params,
+                    success: success,
+                    response: response
                 };
                 // If the window has finished opening, go ahead and process the
                 // response. Otherwise, the window will call handleOpenEvent

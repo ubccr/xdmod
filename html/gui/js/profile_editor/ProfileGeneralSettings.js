@@ -25,8 +25,8 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
                 }
                 // Store the arguments needed to process the response.
                 self.responseArgs = {
-                    'success': success,
-                    'response': response
+                    success: success,
+                    response: response
                 };
                 // If the window has finished opening, go ahead and process
                 // the response. Otherwise, the window will call
@@ -185,6 +185,8 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
         // ------------------------------------------------
 
+        var user_profile_most_privileged_role;
+        var btnUpdate;
         this.processHttpResponse = function () {
             var success = this.responseArgs.success;
             var response = this.responseArgs.response;
@@ -232,7 +234,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
                 user_profile_most_privileged_role.update(data.results.most_privileged_role);
                 btnUpdate.setDisabled(false);
-
             } else {
                 Ext.MessageBox.alert('My Profile', 'There was a problem retrieving your profile information.');
             }
@@ -322,7 +323,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
         // ------------------------------------------------
 
-        var user_profile_most_privileged_role = new Ext.form.DisplayField({
+        user_profile_most_privileged_role = new Ext.form.DisplayField({
             fieldLabel: 'Top Role',
             html: 'Loading...',
             id: 'user_profile_most_privileged_role'
@@ -446,7 +447,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         // ------------------------------------------------
 
 
-        var btnUpdate = new Ext.Button({
+        btnUpdate = new Ext.Button({
 
             iconCls: 'user_profile_btn_update_icon',
             cls: 'user_profile_btn_update',
