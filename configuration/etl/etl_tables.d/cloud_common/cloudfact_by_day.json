@@ -139,6 +139,12 @@
                 "default": 1,
                 "comment": "DIMENSION: The field of science of the project to which the jobs belong"
             },{
+                "name": "instance_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "DIMENSION: The state (active, inactive, shelved) of the instances"
+            },{
                 "name": "session_id_list",
                 "type": "mediumtext",
                 "nullable": false,

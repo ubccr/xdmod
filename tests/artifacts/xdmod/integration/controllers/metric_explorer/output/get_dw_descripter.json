@@ -71,8 +71,8 @@
                         "maxProperties": 10
                     },
                     "dimensions": {
-                        "minProperties": 14,
-                        "maxProperties": 14
+                        "minProperties": 15,
+                        "maxProperties": 15
                     },
                     "text": {
                         "enum": [ "Cloud" ]

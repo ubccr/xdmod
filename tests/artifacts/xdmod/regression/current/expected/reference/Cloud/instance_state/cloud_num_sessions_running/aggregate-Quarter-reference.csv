@@ -1,0 +1,11 @@
+title
+"Number of Sessions Active: by VM State"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM State","Number of Sessions Active"
+Active,53
+Inactive,0
+---------
