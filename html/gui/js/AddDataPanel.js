@@ -55,10 +55,7 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
         ['label_asc', 'Labels Ascending'],
         ['label_desc', 'Labels Descending']
     ],
-    randomInt: function (min, max) {
-        // eslint-disable-next-line no-mixed-operators
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    },
+
     defaultConfig: function (timeseries) {
         return {
             group_by: 'none',
@@ -87,7 +84,7 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
         var conf = {};
         jQuery.extend(true, conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
         if (config) jQuery.extend(true, conf, config);
-        conf.id = this.randomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+        conf.id = CCR.randomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         conf.z_index = store.getCount();
         conf.filters = selectedFilters ? selectedFilters : {
             data: [],
