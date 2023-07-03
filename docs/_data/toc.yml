@@ -75,6 +75,8 @@ toc:
         url: /dw-export.html
       - page: User Dashboard Guide
         url: /dashboard.html
+      - page: Data Analytics Framework
+        url: /data-analytics-framework.html
   - title: Resource Manager Notes
     subfolderitems:
       - page: Slurm
