@@ -98,6 +98,12 @@ jobs:
                 - equal: ["rocky8", << parameters.os >> ]
           steps:
             - run:
+                name: Set environment for Vendor PHPUnit Integration Test
+                command: docker exec -w /xdmod xdmod ./tests/playwright/setUpEnv.sh
+            - run:
+                name: Run Vendor PHPUnit Integration Test
+                command: docker exec -w /xdmod xdmod ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+            - run:
                 name: Process Code Coverage Data
                 no_output_timeout: 120m
                 command: |
