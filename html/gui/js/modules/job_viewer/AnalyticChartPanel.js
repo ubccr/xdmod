@@ -39,7 +39,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             }
         ],
 
-        layout: {
+        chartOptions: {
             height: 65,
             xaxis: {
                 showticklabels: false,
@@ -91,7 +91,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         }
     },
 
-    // The instance of Highcharts used as this components primary display.
+    // The instance of Plotly used as this components primary display.
     chart: null,
 
     // private member that stores the error message object
@@ -109,16 +109,18 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
 
         /**
          * Event that is fired when this component is rendered to the page.
-         * Processes that require the HighCharts component to be created /
+         * Processes that require the Plotly component to be created /
          * a visible element to hook into are handled here.
          */
         render: function () {
-            this.chart = Plotly.newPlot(this.id, [], this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
+            Ext.apply(this.chartOptions, this._DEFAULT_CONFIG.chartOptions);
+            delete this.chartOptions.title;
+            this.chart = Plotly.newPlot(this.id, [], this.chartOptions, this._DEFAULT_CONFIG.config);
         }, // render
 
         /**
          * Attempt to execute an update of this components' data ensuring that
-         * the HighCharts instance updates.
+         * the Plotly instance updates.
          *
          * @param {Array|Number|Object} data that should be used to update this
          *                              component.
@@ -128,12 +130,12 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         }, // update_data
 
         /**
-         * Attempt to reset this components' data ensuring that the HighCharts
+         * Attempt to reset this components' data ensuring that the Plotly
          * instance updates correctly to reflect the change, if any.
          */
         reset: function () {
             if (this.chart) {
-                Plotly.react(this.id, [], this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
+                Plotly.react(this.id, [], this.chartOptions, this._DEFAULT_CONFIG.config);
             }
         }, // reset
 
@@ -145,7 +147,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         },
 
         /**
-         * Attempt to resize this components HighCharts instance such that it
+         * Attempt to resize this components Plotly instance such that it
          * falls with in the new adjWidth and adjHeight.
          *
          * @param {Ext.Panel} panel
@@ -156,54 +158,15 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
-                var container = document.querySelector('#' + this.id);
-                var bgcolor = container._fullLayout.plot_bgcolor;
-                var annotation = jQuery.extend(true, {}, container._fullLayout.annotations, {});
-                var image = jQuery.extend(true, {}, container._fullLayout.images, {});
                 Plotly.relayout(this.id, { width: adjWidth });
-                if (annotation.length > 0) {
-                    Plotly.relayout(this.id, { images: image });
-                    Plotly.relayout(this.id, { annotations: annotation });
-                    var errorTextUpdate = {
-                        xaxis: {
-                            showticklabels: false,
-                            tickcolor: '#ffffff',
-                            gidcolor: '#ffffff',
-                            linecolor: '#ffffff',
-                            zeroline: false,
-                            showgrid: false,
-                            zerolinecolor: '#000000',
-                            showline: false,
-                            zerolinewidth: 0
-                        }
-                    };
-                    Plotly.relayout(this.id, errorTextUpdate);
-                    Plotly.relayout(this.id, { plot_bgcolor: bgcolor });
-                } else {
-                    Plotly.relayout(this.id, { images: [] });
-                    Plotly.relayout(this.id, { annotations: [] });
+                if (this.chartOptions.annotations.length > 0){
                     var update = {
-                        xaxis: {
-                            showticklabels: false,
-                            range: [0, 1],
-                            color: '#606060',
-                            ticks: 'inside',
-                            tick0: 0.0,
-                            dtick: 0.2,
-                            ticklen: 2,
-                            tickcolor: '#ffffff',
-                            gridcolor: '#c0c0c0',
-                            linecolor: '#ffffff',
-                            zeroline: false,
-                            showgrid: true,
-                            zerolinecolor: '#000000',
-                            showline: false,
-                            zerolinewidth: 0,
-                            fixedrange: true
-                        }
+                        showticklabels: false,
+                        zeroline: false,
+                        showgrid: false,
+                        showline: false,
                     };
-                    Plotly.relayout(this.id, update);
-                    Plotly.relayout(this.id, { plot_bgcolor: bgcolor });
+                    Plotly.relayout(this.id, {xaxis: update});
                 }
             }
         } // resize
@@ -234,7 +197,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     y: 1.2
                 }
             ];
-            this._DEFAULT_CONFIG.layout.images = errorImage;
+            this.chartOptions.images = errorImage;
             var errorText = [
                 {
                     text: '<b>' + errorStr + '</b>',
@@ -249,17 +212,17 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     showarrow: false
                 }
             ];
-            this._DEFAULT_CONFIG.layout.annotations = errorText;
-            this._DEFAULT_CONFIG.layout.xaxis.showgrid = false;
+            this.chartOptions.annotations = errorText;
+            this.chartOptions.xaxis.showgrid = false;
         } else {
-            this._DEFAULT_CONFIG.layout.images = [];
-            this._DEFAULT_CONFIG.layout.annotations = [];
-            this._DEFAULT_CONFIG.layout.xaxis.showgrid = true;
+            this.chartOptions.images = [];
+            this.chartOptions.annotations = [];
+            this.chartOptions.xaxis.showgrid = true;
         }
     },
 
     /**
-     * Helper function that handles the work of updating this HighCharts
+     * Helper function that handles the work of updating this Plotly
      * instance with new data.
      *
      * @param {Array|Object} data
@@ -269,7 +232,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         var trace = {};
         if (data.error === '') {
             var chartColor = this._getDataColor(data.value);
-            this._DEFAULT_CONFIG.layout.plot_bgcolor = chartColor.bg_color;
+            this.chartOptions.plot_bgcolor = chartColor.bg_color;
 
             trace = {
                 x: [data.value],
@@ -286,12 +249,12 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 orientation: 'h'
             };
         } else {
-            this._DEFAULT_CONFIG.layout.plot_bgcolor = '#ffffff';
+            this.chartOptions.plot_bgcolor = '#ffffff';
         }
         this.updateErrorMessage(data.error);
         this._updateTitle(data);
         this.ownerCt.doLayout(false, true);
-        Plotly.react(this.id, [trace], this._DEFAULT_CONFIG.layout, this._DEFAULT_CONFIG.config);
+        Plotly.react(this.id, [trace], this.chartOptions, this._DEFAULT_CONFIG.config);
     }, // _updateData
 
     /**

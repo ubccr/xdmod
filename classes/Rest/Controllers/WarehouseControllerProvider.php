@@ -1971,8 +1971,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $lineWidth = 1 + $settings['scale'];
 
         $chartConfig = array(
-           'width' => $settings['width'],
-           'height' => $settings['height'],
            'data' => $data,
            'axisTickSize' => $axisLabelFontSize,
            'axisTitleSize' => $axisTitleFontSize,

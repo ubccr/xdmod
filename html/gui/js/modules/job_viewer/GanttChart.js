@@ -80,7 +80,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                         text: tooltip,
                         chartSeries: info
                     };
-
+                    
                     data.push(peer);
                     yvals.push(count);
                     count++;

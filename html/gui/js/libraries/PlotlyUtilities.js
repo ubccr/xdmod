@@ -4,9 +4,19 @@
  * @param{dict} Record containing chart data
  *
  */
-function generateChartOptions(record) { // eslint-disable-line no-unused-vars
+function generateChartOptions(record, args = null) { // eslint-disable-line no-unused-vars
     var colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
         '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
+    var mainTitleFontSize = 16;
+    var axisLabelFontSize = 11;
+    var axisTitleFontSize = 12;
+    var lineWidth = 2;
+    if (args){
+        mainTitleFontSize = args.mainTitleFontSize;
+        axisLabelFontSize = args.axisLabelFontSize;
+        axisTitleFontSize = args.axisTitleFontSize;
+        lineWidth = args.lineWidth;
+    }
     var data = [];
     var isEnvelope = false;
     var tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[0].data[0].x);
@@ -18,6 +28,7 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
         isEnvelope = true;
         ymin = record.data.series[1].data[0].y;
         ymax = ymin;
+        tz = moment.tz.zone(record.data.schema.timezone).abbr(record.data.series[1].data[0].x);
     }
     for (sid; sid < record.data.series.length; sid++) {
         var x = [];
@@ -39,12 +50,12 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
                 color: color
             },
             line: {
-                width: 2,
+                width: lineWidth,
                 color: color
             },
             text: qtip,
-            hovertemplate: '%{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style=color:'
-            + color + ';>●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b> <extra></extra>',
+            hovertemplate: '%{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style="color:'
+            + color + ';">●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b> <extra></extra>',
             name: record.data.series[sid].name,
             chartSeries: record.data.series[sid],
             type: 'scatter',
@@ -57,9 +68,9 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
         }
 
         if (isEnvelope) {
-            trace.hovertemplate = '<span style=color:' + color + ';>[%{text}]</span> %{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style=color:' + color + ';>●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b> <extra></extra>';
+            trace.hovertemplate = '<span style="color:' + color + ';">[%{text}]</span> %{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style="color:' + color + ';">●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b> <extra></extra>';
         }
-
+        console.log(trace.hovertemplate);
         if (record.data.series[sid].data.length === 1) {
             trace.marker.size = 20;
             trace.mode = 'markers';
@@ -85,12 +96,15 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
             title: '<b> Time (' + record.data.schema.timezone + ') </b>',
             titlefont: {
                 family: 'Open-Sans, verdana, arial, sans-serif',
-                size: 12,
+                size: axisTitleFontSize,
                 color: '#5078a0'
             },
             color: '#606060',
             ticks: 'outside',
             tickcolor: '#c0cfe0',
+            tickfont: {
+                size: axisLabelFontSize
+            },
             linecolor: '#c0cfe0',
             automargin: true,
             showgrid: false
@@ -99,7 +113,7 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
             title: '<b>' + record.data.schema.units + '</b>',
             titlefont: {
                 family: 'Open-Sans, verdana, arial, sans-serif',
-                size: 12,
+                size: axisTitleFontSize,
                 color: '#5078a0'
             },
             color: '#606060',
@@ -110,6 +124,9 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
             automargin: true,
             ticks: 'outside',
             tickcolor: '#ffffff',
+            tickfont: {
+                size: axisLabelFontSize
+            },
             seperatethousands: true
         },
         title: {
@@ -117,7 +134,7 @@ function generateChartOptions(record) { // eslint-disable-line no-unused-vars
             font: {
                 family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                 color: '#444b6e',
-                size: 16
+                size: mainTitleFontSize 
             }
         },
         annotations: [{

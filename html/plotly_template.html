@@ -30,24 +30,18 @@
         $(document).ready(function () {
         // _ chartOptions _ is a macro that is substituted by \xd_charting\exportHighchart()
         var inputChartOptions = _chartOptions_;
-        var chartOptions = generateChartOptions(inputChartOptions);
+        var args = {
+            mainTitleFontSize: inputChartOptions.chartTitleSize,
+            axisTitleFontSize: inputChartOptions.axisTitleSize,
+            axisLabelFontSize: inputChartOptions.axisTickSize,
+            lineWidth: inputChartOptions.lineWidth
+        };
+        var chartOptions = generateChartOptions(inputChartOptions, args);
 
         chartOptions.chartLayout['width'] = _width_;
         chartOptions.chartLayout['height'] = _height_;
 
-        chartOptions.chartLayout.title.font.size = inputChartOptions.chartTitleSize;
-
-        chartOptions.chartLayout.xaxis.titlefont.size = inputChartOptions.axisTitleSize;
-        chartOptions.chartLayout.xaxis['zerolinewidth'] = inputChartOptions.lineWidth;
-        chartOptions.chartLayout.xaxis['tickfont.size'] = inputChartOptions.axisTickSize;
-
-        chartOptions.chartLayout.yaxis.titlefont.size = inputChartOptions.axisTitleSize;
-        chartOptions.chartLayout.yaxis['zerolinewidth'] = inputChartOptions.lineWidth;
-        chartOptions.chartLayout.yaxis['tickfont.size'] = inputChartOptions.axisTickSize;
-
         Plotly.newPlot('container', chartOptions.chartData, chartOptions.chartLayout, { staticPlot: true } );
-        Plotly.restyle('container', { 'line.width': inputChartOptions.lineWidth });
-
         });
 
         </script>

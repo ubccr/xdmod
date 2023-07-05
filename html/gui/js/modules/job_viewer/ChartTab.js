@@ -4,7 +4,7 @@ Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
  * @class XDMoD.Module.JobViewer.ChartTab
  * @extends Ext.Panel
  * <p>A specialized panel intended for the display of timeseries data from an Ext.store into
- * a Highcharts chart in the job viewer.</p>
+ * a Plotly chart in the job viewer.</p>
  * <p> The derived class should implement the updateChart event listener that is fired when
  * ever data is loaded from the store.
  * @constructor
@@ -12,9 +12,6 @@ Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
  */
 XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
     /**
-     * @cfg {Object} chartSettings
-     * The Highcharts chart settings. This settings object overrides the default values.
-     *
      * @cfg {string} panelSettings.url
      * The url to connect to
      *

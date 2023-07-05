@@ -101,8 +101,8 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 chartDiv = chartDiv.firstChild.firstChild; // parent div of the plotly SVGs
 
                 // Make deep copy
-                var tmpWidth = jQuery.extend(true, {}, chartDiv.clientWidth, {});
-                var tmpHeight = jQuery.extend(true, {}, chartDiv.clientHeight, {});
+                var tmpWidth = Ext.apply(chartDiv.clientWidth, {});
+                var tmpHeight = Ext.apply(chartDiv.clientHeight, {});
 
                 // Resize to 'medium' export width and height -- Currently placeholder width and height
                 Plotly.relayout(this.id, { width: 916, height: 484 });
