@@ -4,15 +4,15 @@
  * @param{dict} Record containing chart data
  *
  */
-function generateChartOptions(record, args) { // eslint-disable-line no-unused-vars
-    var args = args || {};
+function generateChartOptions(record, params) { // eslint-disable-line no-unused-vars
+    var args = params || {};
     var colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
         '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
     var mainTitleFontSize = 16;
     var axisLabelFontSize = 11;
     var axisTitleFontSize = 12;
     var lineWidth = 2;
-    if (args){
+    if (args) {
         mainTitleFontSize = args.mainTitleFontSize;
         axisLabelFontSize = args.axisLabelFontSize;
         axisTitleFontSize = args.axisTitleFontSize;
@@ -71,7 +71,7 @@ function generateChartOptions(record, args) { // eslint-disable-line no-unused-v
         if (isEnvelope) {
             trace.hovertemplate = '<span style="color:' + color + ';">[%{text}]</span> %{x|%A, %b %e, %H:%M:%S.%L} ' + tz + '<br> <span style="color:' + color + ';">●</span> ' + record.data.series[sid].name + ': <b>%{y:}</b> <extra></extra>';
         }
-        console.log(trace.hovertemplate);
+
         if (record.data.series[sid].data.length === 1) {
             trace.marker.size = 20;
             trace.mode = 'markers';
