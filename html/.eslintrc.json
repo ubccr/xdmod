@@ -17,6 +17,8 @@
     "Dashboard": false,
     "DashboardStore": false,
     "grecaptcha": false,
-    "StringUtilities": false
+    "StringUtilities": false,
+    "Plotly": false,
+    "generateChartOptions": false
   }
 }

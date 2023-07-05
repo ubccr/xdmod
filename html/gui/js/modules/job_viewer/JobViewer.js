@@ -148,17 +148,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         XDMoD.Module.JobViewer.superclass.initComponent.apply(this, arguments);
 
         this.loading = false;
-
-        /*
-         * The timezone setting for highcharts is a global option that applies
-         * to all charts in the browser window. Individual charts in the job viewer
-         * can change the timezone as appropriate. The job viewer tab resets the
-         * timezone on deactivate to avoid impacting the highcharts plots in
-         * other tabs in the interface. The timezone settings are cached in the
-         * tab so that when it is activated again they are restored.
-         */
-        this.cachedHighChartTimezone = null;
-
     }, // initComponent
 
     /**
@@ -881,7 +870,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 this.getPrintButton().setDisabled(true);
                 this.loadMask = new Ext.LoadMask(this.id);
             }
-            Highcharts.setOptions({ global: { timezone: this.cachedHighChartTimezone } });
 
             if (this.clearing) {
                 return;
@@ -928,11 +916,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 }
             }
         }, // activate
-
-        deactivate: function() {
-            this.cachedHighChartTimezone = Highcharts.getOptions().global.timezone;
-            Highcharts.setOptions({global: {timezone: null}});
-        },
 
         /**
          * Takes care of clearing the whole informational display area.

@@ -20,9 +20,23 @@ const args = require('yargs').argv;
 
     await page.goto('file://' + args['input-file']);
 
-    const innerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
+    let svgInnerHtml;
 
-    console.log(JSON.stringify(innerHtml));
+    if (args.plotly) {
+        // Chart traces and axis values svg
+        let plotlyChart = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[0].outerHTML);
+        // Chart title and axis titles svg
+        const plotlyLabels = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[2].innerHTML);
+
+        plotlyChart = plotlyChart.substring(0, plotlyChart.length - 6);
+        const plotlyImage = plotlyChart + '' + plotlyLabels + '</svg>';
+        // HTML tags in titles thorw xml not well-formed error
+        svgInnerHtml = plotlyImage.replace(/<br>|<b>|<\/b>/gm, '');
+    } else {
+        svgInnerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
+    }
+
+    console.log(JSON.stringify(svgInnerHtml));
 
     await browser.close();
 })();
