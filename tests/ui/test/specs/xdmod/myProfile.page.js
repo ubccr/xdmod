@@ -16,7 +16,7 @@ class MyProfile {
             general: {
                 user_information: {
                     top_role: function () {
-                        return self.generalUserInformation('profile_editor_most_privileged_role');
+                        return self.generalUserInformation('user_profile_most_privileged_role');
                     },
                     first_name: function () {
                         return self.generalUserInformation('first_name');
@@ -65,8 +65,8 @@ class MyProfile {
      */
     generalUserInformation(name) {
         switch (name) {
-            case 'profile_editor_most_privileged_role':
-                return `${this.userInformation}//span[@id="${name}"]`;
+            case 'user_profile_most_privileged_role':
+                return `${this.userInformation}//div[@id="${name}"]`;
             default:
                 return `${this.userInformation}//input[@name="${name}"]`;
         }
