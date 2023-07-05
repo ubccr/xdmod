@@ -159,14 +159,14 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
                 Plotly.relayout(this.id, { width: adjWidth });
-                if (this.chartOptions.annotations.length > 0){
+                if (this.chartOptions.annotations.length > 0) {
                     var update = {
                         showticklabels: false,
                         zeroline: false,
                         showgrid: false,
-                        showline: false,
+                        showline: false
                     };
-                    Plotly.relayout(this.id, {xaxis: update});
+                    Plotly.relayout(this.id, { xaxis: update });
                 }
             }
         } // resize

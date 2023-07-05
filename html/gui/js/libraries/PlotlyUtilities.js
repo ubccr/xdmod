@@ -134,7 +134,7 @@ function generateChartOptions(record, args = null) { // eslint-disable-line no-u
             font: {
                 family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                 color: '#444b6e',
-                size: mainTitleFontSize 
+                size: mainTitleFontSize
             }
         },
         annotations: [{
