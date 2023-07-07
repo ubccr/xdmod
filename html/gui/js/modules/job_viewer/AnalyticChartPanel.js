@@ -191,24 +191,25 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                     align: 'left',
                     xref: 'paper',
                     yref: 'paper',
-                    sizex: 0.4,
-                    sizey: 0.4,
+                    sizex: 0.35,
+                    sizey: 0.35,
                     x: 0,
-                    y: 1.2
+                    y: 1.05
                 }
             ];
             this.chartOptions.images = errorImage;
             var errorText = [
                 {
-                    text: '<b>' + errorStr + '</b>',
+                    text: errorStr,
                     align: 'left',
                     xref: 'paper',
                     yref: 'paper',
                     font: {
-                        size: 11
+                        size: 12,
+                        family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                     },
-                    x: 0.05,
-                    y: 1.2,
+                    x: 0.08,
+                    y: 1.1,
                     showarrow: false
                 }
             ];
