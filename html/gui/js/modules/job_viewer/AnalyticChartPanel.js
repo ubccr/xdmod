@@ -198,9 +198,11 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 }
             ];
             this.chartOptions.images = errorImage;
+            var max = Math.floor(this.chartOptions.width / 7);
+            var wordMatch = new RegExp('(?![^\\n]{1,' + max + '}$)([^\\n]{1,' + max + '})\\s', 'g');
             var errorText = [
                 {
-                    text: errorStr,
+                    text: errorStr.replace(wordMatch, '$1<br />'),
                     align: 'left',
                     xref: 'paper',
                     yref: 'paper',
