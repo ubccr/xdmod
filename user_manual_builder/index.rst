@@ -1,0 +1,65 @@
+.. xdmodtest documentation master file, created by
+   sphinx-quickstart on Fri Jun  9 15:47:05 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to XDMoD Manual
+=====================================
+
+.. toctree::
+   :maxdepth: 3
+   :numbered:
+
+   Browser_Requirements/index
+   Introduction/index
+   Obtaining_an_Account/index
+   Getting_Started/index
+   Common_User_Interface_Elements/index
+   Summary_Tab/index
+   Dashboard_Tab/index
+   Usage_Tab/index
+   Metric_Explorer/index
+   Job_Viewer/index
+   App_Kernels/index
+   Data_Export/index
+   Report_Generator/index
+   Efficiency/index
+   Compliance_Tab/index
+   My_Profile_About_Roadmap_Contact_and_Help/index
+   Design_Philosophy/index
+   Appendix_I-XML_Document_Type_Definition/index
+
+.. only Open
+   .. toctree::
+      :maxdepth: 3
+      :numbered:
+
+      Browser_Requirements/index
+      Introduction/index
+      Obtaining_an_Account/index
+      Getting_Started/index
+      Common_User_Interface_Elements/index
+      Summary_Tab/index
+      Dashboard_Tab/index
+      Usage_Tab/index
+      Metric_Explorer/index
+      Job_Viewer/index
+      App_Kernels/index
+      Data_Export/index
+      Report_Generator/index
+      Efficiency/index
+      My_Profile_About_Roadmap_Contact_and_Help/index
+      Design_Philosophy/index
+      Appendix_I-XML_Document_Type_Definition/index
+
+This work was sponsored by NSF under grant numbers ACI 1025159, ACI
+1445806 and 2137603.
+
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+
+
