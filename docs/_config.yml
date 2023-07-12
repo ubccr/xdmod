@@ -48,3 +48,6 @@ gems:
   - jekyll-redirect-from
 whitelist:
   - jekyll-redirect-from
+include:
+  - _static
+  - _sphinx_javascript_frameworks_compat.js
