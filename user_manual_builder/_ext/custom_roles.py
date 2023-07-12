@@ -7,7 +7,11 @@ from docutils.parsers.rst.roles import set_classes
 from sphinx import addnodes
 
 def extract_tag(text: str):
-    # extract tag from inline text string
+    """
+    text: string, an unmanipulated string from a role
+    returns: string, string tuple. first string is the extracted tag, and the second string is the rest
+             of the text without the tag.
+    """
     tag = ''
     tag_start = tag_end = 0
     on_tag = False
@@ -24,7 +28,19 @@ def extract_tag(text: str):
     return tag, text
 
 def only_text_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=[]):
-    # usage: :only-text:`<tag-name>desired text`
+    """
+    name: string
+    rawtext: string inclduing the name of role
+    text: string inside of the back ticks
+    lineno: int
+    inliner
+    options: dictionary
+    content: dictionary
+    returns: inline node that only contains text, without the tag name
+    usage: :only-text: `<tag-name>desired text`
+            tag name is extracted out of the text with extract_tag(text) function, and then returns the text node
+            if the extracted tag is active.
+    """
 
     env = inliner.document.settings.env
     tags = env.app.tags
@@ -35,11 +51,23 @@ def only_text_role(name: str, rawtext: str, text: str, lineno: int, inliner, opt
         return [], []
     else:
         node = nodes.inline(rawtext, text, **options)
-        # print('text role node', node)
         return [node], []
 
 def only_numref_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=[]):
-    # usage: :only-numref:`<tag-name>name of crossreference`
+    """
+    name: string
+    rawtext: string inclduing the name of role
+    text: string inside of the back ticks
+    lineno: int
+    inliner
+    options: dictionary
+    content: dictionary
+    returns: pending_xref node that contains the reference if it exists, and an inline child node if reference does not exist
+             also removes the tag name from the entered text
+    usage: :only-numref:`<tag-name>name of crossreference`
+            tag name is extracted out of the text with extract_tag(text) function, and then returns the numref node
+            if the extracted tag is active.
+    """
 
     env = inliner.document.settings.env
     tags = env.app.tags
@@ -47,10 +75,8 @@ def only_numref_role(name: str, rawtext: str, text: str, lineno: int, inliner, o
     tag, text = extract_tag(text)
 
     if tag not in tags:
-        # The tag is not enabled, so return an empty node.
         return [], []
     else:
-        # The tag is enabled, so return the node with the content.
         set_classes(options)
         node = addnodes.pending_xref(
             '',
@@ -60,38 +86,40 @@ def only_numref_role(name: str, rawtext: str, text: str, lineno: int, inliner, o
             refexplicit=False,
             **options
         )
-        # print('numref role first node', node)
         node += nodes.inline(text, text, classes=['xref', 'std', 'std-numref'])
-        # print('numref role fin node', node)
         return [node], []
 
 def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=[]):
-    # usage: :only:`<tag-name>desired text {name of crossref} additional desired text`
-    #        can use any order combination of text and numrefs
+    """
+    name: string
+    rawtext: string inclduing the name of role
+    text: string inside of the back ticks
+    lineno: int
+    inliner
+    options: dictionary
+    content: dictionary
+    returns: inline node that contains the any order of text and reference nodes
+             also removes the tag name from the entered text
+    usage: :only:`<tag-name>desired text {name of crossref} additional desired text`
+            tag name is extracted out of the text with extract_tag(text) function, and then returns a list of nodes, making sure to
+            differentiate between reference nodes and text nodes.
+    """
 
     env = inliner.document.settings.env
     tags = env.app.tags
 
-    # extract tag and separate text
     tag, text = extract_tag(text)
 
     if tag not in tags:
-        # The tag is not enabled, so return an empty node.
         return [], []
     else:
-        # The tag is enabled, so return the node with the content.
         curr = ''
         is_ref = False
         node = nodes.inline(rawtext, '', **options)
-        #node = nodes.inline(rawtext, curr, **options)
-        for i, c in enumerate(text):
+        for c in text:
             if c == '{':
                 is_ref = True
-                #if not node:
-                #    node = nodes.inline(rawtext, curr, **options)
-                #else:
                 node += nodes.inline(rawtext, curr, **options)
-                #nodeList.append(nodes.inline(rawtext, curr, **options))
                 curr = ''
             elif c == '}':
                 is_ref = False
@@ -104,33 +132,13 @@ def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options=
                     refexplicit=False,
                     **options
                 )
-
                 pend_node += nodes.inline(rawtext, curr, classes=['xref', 'std', 'std-numref'])
                 node += pend_node
                 curr = ''
-                '''
-                nodeList.append(addnodes.pending_xref(
-                    '',
-                    refdomain='std',
-                    reftype='numref',
-                    reftarget=curr,
-                    refexplicit=True,
-                    **options
-                ))
-                #print(text, node)
-                nodeList.append(nodes.inline(rawtext, curr, classes=['xref', 'std', 'std-numref']))
-                curr = ''
-                '''
             else:
                 curr += c
         if curr != '':
             node += nodes.inline(rawtext, curr, **options)
-            #nodeList.append(nodes.inline(rawtext, curr, **options))
-        #para = nodes.paragraph()
-        #print('para', para)
-        #_ = [para.append(node) for node in nodeList]
-        #print('para mod', para)
-        # print('final nodes', node)
         return [node], []
 
 def setup(app: Sphinx):
