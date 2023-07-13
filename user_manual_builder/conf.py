@@ -33,7 +33,7 @@ numfig = True
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-html_logo = "https://lh6.googleusercontent.com/e5KIW2f4HAY96PH8Oob-LPHSHpChwqPk9GG0C7UgRHdhqm8xwC8W2kLyyj4pln4THP5V-xkM8BI-bbO9yutuXjbjP9tki1UpGRxqP9RdwUCq6JZD7BHrBI4YLCOVXYiC3pHb5AZXUOH-I70"
+html_logo = 'media/image43.png'
 html_theme_options = {
     'logo_only': True,
 }
