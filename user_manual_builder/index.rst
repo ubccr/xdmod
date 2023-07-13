@@ -25,7 +25,7 @@ Welcome to XDMoD Manual
    Report_Generator/index
    Efficiency/index
    Compliance_Tab/index
-   My_Profile_About_Roadmap_Contact_and_Help/index
+   About/index
    Design_Philosophy/index
    Appendix_I-XML_Document_Type_Definition/index
 
