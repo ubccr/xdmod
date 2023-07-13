@@ -377,14 +377,13 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             iconCls: 'user_manual_16',
             id: 'global-toolbar-help-user-manual',
             handler: function () {
-                if (tabPanel === undefined) {
-                    window.open("user_manual/index.html");
+                var userManualSectionName = tabPanel.getActiveTab().userManualSectionName;
+                if (!userManualSectionName) {
+                    window.open('user_manual/index.html');
                     return;
                 }
-                var searchTerms = tabPanel.getActiveTab().userManualSectionName;
-                XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + searchTerms || "no" + " tab selected");
-                window.open('user_manual/' + searchTerms.replace(/ /g, "_") + '/index.html');
-                // window.open('user_manual.php?t=' + encodeURIComponent(searchTerms));
+                XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + userManualSectionName || "no" + " tab selected");
+                window.open('user_manual/' + userManualSectionName.replace(/ /g, '_') + '/index.html');
             }
         },
         {
