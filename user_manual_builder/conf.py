@@ -3,7 +3,7 @@ import os
 
 sys.path.insert(0, os.path.abspath('_ext'))
 
-from custom_roles import only_text_role, only_numref_role, only_role
+from custom_roles import only_role
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -39,8 +39,6 @@ html_theme_options = {
 }
 
 def setup(app):
-    app.add_role('only-text', only_text_role)
-    app.add_role('only-numref', only_numref_role)
     app.add_role('only', only_role)
     app.add_css_file('custom.css')
     

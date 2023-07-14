@@ -8,9 +8,7 @@ from sphinx import addnodes
 
 def extract_tag(text: str):
     """
-    text: string, an unmanipulated string from a role
-    returns: string, string tuple. first string is the extracted tag, and the second string is the rest
-             of the text without the tag.
+    Extracts out a tag string from string in format `<tag-name>rest of text`
     """
     tag = ''
     tag_start = tag_end = 0
@@ -27,80 +25,11 @@ def extract_tag(text: str):
     text = text[:tag_start] + text[tag_end:]
     return tag, text
 
-def only_text_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=[]):
-    """
-    name: string
-    rawtext: string inclduing the name of role
-    text: string inside of the back ticks
-    lineno: int
-    inliner
-    options: dictionary
-    content: dictionary
-    returns: inline node that only contains text, without the tag name
-    usage: :only-text: `<tag-name>desired text`
-            tag name is extracted out of the text with extract_tag(text) function, and then returns the text node
-            if the extracted tag is active.
-    """
-
-    env = inliner.document.settings.env
-    tags = env.app.tags
-    
-    tag, text = extract_tag(text)
-
-    if tag not in tags:
-        return [], []
-    else:
-        node = nodes.inline(rawtext, text, **options)
-        return [node], []
-
-def only_numref_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=[]):
-    """
-    name: string
-    rawtext: string inclduing the name of role
-    text: string inside of the back ticks
-    lineno: int
-    inliner
-    options: dictionary
-    content: dictionary
-    returns: pending_xref node that contains the reference if it exists, and an inline child node if reference does not exist
-             also removes the tag name from the entered text
-    usage: :only-numref:`<tag-name>name of crossreference`
-            tag name is extracted out of the text with extract_tag(text) function, and then returns the numref node
-            if the extracted tag is active.
-    """
-
-    env = inliner.document.settings.env
-    tags = env.app.tags
-
-    tag, text = extract_tag(text)
-
-    if tag not in tags:
-        return [], []
-    else:
-        set_classes(options)
-        node = addnodes.pending_xref(
-            '',
-            refdomain='std',
-            reftype='numref',
-            reftarget=text,
-            refexplicit=False,
-            **options
-        )
-        node += nodes.inline(text, text, classes=['xref', 'std', 'std-numref'])
-        return [node], []
-
 def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=[]):
     """
-    name: string
-    rawtext: string inclduing the name of role
-    text: string inside of the back ticks
-    lineno: int
-    inliner
-    options: dictionary
-    content: dictionary
-    returns: inline node that contains the any order of text and reference nodes
-             also removes the tag name from the entered text
-    usage: :only:`<tag-name>desired text {name of crossref} additional desired text`
+    Creates a Sphinx extension that can filter out text based on the entered tags
+    Implemented because Sphinx only has a block directive of filtering out text, and not inline, so this satisfies that
+    Usage: :only:`<tag-name>desired text {name of crossref} additional desired text`
             tag name is extracted out of the text with extract_tag(text) function, and then returns a list of nodes, making sure to
             differentiate between reference nodes and text nodes.
     """
@@ -110,7 +39,7 @@ def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options=
 
     tag, text = extract_tag(text)
 
-    if tag not in tags:
+    if not tags.has(tag):
         return [], []
     else:
         curr = ''
@@ -142,8 +71,6 @@ def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options=
         return [node], []
 
 def setup(app: Sphinx):
-    app.add_role('only-text', only_text_role)
-    app.add_role('only-numref', only_numref_role)
     app.add_role('only', only_role)
     return {'version': '0.1', 
             'parallel_read_safe': True, 
