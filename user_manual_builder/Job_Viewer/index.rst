@@ -200,6 +200,20 @@ the format and content is specific to the job summarization software
 used. Please consult the relevant job summarization software
 documentation for details about these metrics.
 
+Peers
+~~~~~~~~
+
+This tab shows a Gantt chart representation of all other HPC jobs that ran
+concurrently using the same shared hardware resources. The peers tab has the
+ability to drill down on the jobs that run concurrently by clicking on a
+peer’s data. Note: For jobs with many peers, it is recommended to hover over
+the start or end of a job due to tooltip displacement (see :numref:`peer_charts`).
+
+.. figure:: ../media/peercharts.png
+   :name: peer_charts
+
+   Peer Charts
+
 Timeseries plots
 ~~~~~~~~~~~~~~~~~~~~~~~
 
