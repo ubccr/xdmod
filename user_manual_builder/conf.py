@@ -16,6 +16,7 @@ from custom_roles import only_role
 project = 'XDMoD Manual'
 copyright = '2023, UB CCR'
 author = 'UB CCR'
+release = '11.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
