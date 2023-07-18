@@ -74,9 +74,9 @@ fi
 cp $BASE_BUILD_DIR/index.rst.in $BASE_BUILD_DIR/index.rst
 
 if [ "$MANUAL_VERSION" = "XSEDE" ]; then
-    sed -e "s/<XSEDE>//g" "$BASE_BUILD_DIR/index.rst" 
+    sed -i "s/<XSEDE>//g" "$BASE_BUILD_DIR/index.rst" 
 else
-    sed -e "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
+    sed -i "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
 fi
 
 sphinx-build -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
