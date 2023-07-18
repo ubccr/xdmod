@@ -47,6 +47,12 @@ fi
 
 if [ "$4" = "--sso" ];
 then
+    pkill node
+    export IP_ADDRESS=localhost
+    pushd /tmp/saml-idp/
+    node app.js  --acs https://"$IP_ADDRESS"/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://"$IP_ADDRESS"/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
+    pushd ${BASEDIR}
+    ~/bin/services restart
     npm run test-sso
 else
     npm test

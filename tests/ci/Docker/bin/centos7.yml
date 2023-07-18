@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+    xdmod:
+        image: tools-ext-01.ccr.xdmod.org/xdmod-10.0.0:centos7.9-0.6
+        hostname: xdmod
+        container_name: xdmod
+        networks:
+            - testing-centos7
+        shm_size: 2g
+        ports:
+            - 9006:443
+            - 7000:7000
+        stdin_open: true
+        tty: true
+        command: sleep infinity
+    playwright:
+        image: mcr.microsoft.com/playwright:v1.35.0-focal
+        hostname: playwright
+        container_name: playwright
+        networks:
+            - testing-centos7
+        stdin_open: true
+        tty: true
+        ipc: host
+        links:
+            - xdmod
+        depends_on:
+            - xdmod
+        environment:
+            BASE_URL: https://xdmod
+            XDMOD_REALMS: 'jobs,storage,cloud'
+        command: sleep infinity
+networks:
+    testing-centos7:

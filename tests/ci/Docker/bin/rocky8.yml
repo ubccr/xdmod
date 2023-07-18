@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+    xdmod:
+        image: tools-ext-01.ccr.xdmod.org/xdmod10.0:rockylinux8.5-0.5
+        container_name: xdmod
+        hostname: xdmod
+        networks:
+            - testing-rocky8
+        shm_size: 2g
+        ports:
+            - 9006:443
+            - 7000:7000
+        environment:
+            - COMPOSER=composer-el8.json
+            - XDMOD_REALMS=jobs,storage,cloud
+        stdin_open: true
+        tty: true
+        command: sleep infinity
+    playwright:
+        image: mcr.microsoft.com/playwright:v1.35.0-focal
+        hostname: playwright
+        container_name: playwright
+        networks:
+            - testing-rocky8
+        stdin_open: true
+        tty: true
+        ipc: host
+        links:
+            - xdmod
+        depends_on:
+            - xdmod
+        environment:
+            BASE_URL: https://xdmod
+            XDMOD_REALMS: 'jobs,storage,cloud'
+        command: sleep infinity
+networks:
+    testing-rocky8:
