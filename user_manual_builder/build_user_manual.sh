@@ -18,7 +18,7 @@ MANUAL_VERSION=Open
 
 ARGS=$(getopt -o "b:d:v:h" -l "builddir:,destdir:,version:,help" -n "build_user_manual" -- "$@");
 
-eval set -- "$ARGGS";
+eval set -- "$ARGS";
 
 while true; do
 	case "$1" in
@@ -71,12 +71,12 @@ fi
 # Build the manual
 # -----
 
-cp $DEST_DIR/index.rst.in $DEST_DIR/index.rst
+cp $BASE_BUILD_DIR/index.rst.in $BASE_BUILD_DIR/index.rst
 
 if [ "$MANUAL_VERSION" = "XSEDE" ]; then
-    sed -e "s/<XSEDE>//g" "$DEST_DIR/index.rst" 
+    sed -e "s/<XSEDE>//g" "$BASE_BUILD_DIR/index.rst" 
 else
-    sed -e "/<XSEDE>/d" "$DEST_DIR/index.rst"
+    sed -e "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
 fi
 
 sphinx-build -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
