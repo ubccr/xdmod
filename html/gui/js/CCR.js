@@ -377,7 +377,7 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             iconCls: 'user_manual_16',
             id: 'global-toolbar-help-user-manual',
             handler: function () {
-                var userManualSectionName = tabPanel.getActiveTab().userManualSectionName;
+                const userManualSectionName = tabPanel.getActiveTab().userManualSectionName;
                 if (!userManualSectionName) {
                     window.open('user_manual/index.html');
                     return;
