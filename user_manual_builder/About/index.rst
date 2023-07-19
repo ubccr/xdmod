@@ -7,7 +7,7 @@ about XDMoD, view the XDMoD Roadmap, contact the XDMoD developers and
 seek help.
 
 .. figure:: ../media/image45.png
-   :name: my_profile_help_buttons
+   :name: about_help_buttons
 
    My Profile, About, Roadmap, Contact and Help functional button
 
@@ -83,12 +83,12 @@ Help Menu
 --------------
 
 .. figure:: ../media/image134.png
-   :name: my_profile_help_menu
+   :name: about_help_menu
 
    Help menu
 
 Clicking on the Help menu will provide you with the following options:
-User Manual, FAQ and YouTube Channel (:numref:`my_profile_help_menu`). Clicking on User
+User Manual, FAQ and YouTube Channel (:numref:`about_help_menu`). Clicking on User
 Manual will direct the user to the XDMoD User Manual (the document you
 are viewing at this very moment). If help is available for the section
 of XDMoD you are currently visiting, the User Manual will automatically
@@ -101,29 +101,29 @@ Roadmap
 
 Clicking on the RoadMap button brings up a screen which displays an
 information page giving details on how to navigate to the XDMoD
-development roadmap (:numref:`my_profile_roadmap_info`). Click on any feature in this page
+development roadmap (:numref:`about_roadmap_info`). Click on any feature in this page
 and you will be taken off of the XDMoD site to the Trello.com site where
-you will be able to view and interact with the XDMoD roadmap (:numref:`my_profile_trello_roadmap`). 
+you will be able to view and interact with the XDMoD roadmap (:numref:`about_trello_roadmap`). 
 To return to XDMoD, simply close the browser tab/window. If you
 simply want to view the Roadmap you can select the various Trello cards
-shown in :numref:`my_profile_trello_roadmap` for further details about each roadmap task.
+shown in :numref:`about_trello_roadmap` for further details about each roadmap task.
 You can also “vote” for a feature in the roadmap that you would
 particularly like to use. To do this Sign Up or Log In to Trello (upper
 right corner Figure 15-6). Then clicking on any roadmap feature such as
 X-Y plot capacity, will give you access to the Vote box, as shown in
-:numref:`my_profile_roadmap_voting`.
+:numref:`about_roadmap_voting`.
 
 .. figure:: ../media/image19.png
-   :name: my_profile_roadmap_info
+   :name: about_roadmap_info
 
    Roadmap information page
 
 .. figure:: ../media/image119.png
-   :name: my_profile_trello_roadmap
+   :name: about_trello_roadmap
 
    XDMD Roadmap on Trello.com
 
 .. figure:: ../media/image54.png
-   :name: my_profile_roadmap_voting
+   :name: about_roadmap_voting
 
    Voting for a feature in the XDMD Roadmap on Trello.com

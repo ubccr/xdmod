@@ -14,7 +14,7 @@ relevant to ACCESS from a “job level” as well as “resource level”.
 
 .. figure:: ../media/image70.png
    :alt: Compliance tab.png
-   :name: compliance_tab
+   :name: compliance_tab_page
 
    Compliance tab
 

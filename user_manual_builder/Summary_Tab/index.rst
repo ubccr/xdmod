@@ -64,6 +64,6 @@ summary content tailored to specific roles (:numref:`summary_portlet_tools`).
    |                                 | chart.                                                        |
    +---------------------------------+---------------------------------------------------------------+
 
-   .. |image23| image:: ../media/image48.png
-      :width: 0.67708in
-      :height: 0.30208in
+.. |image23| image:: ../media/image48.png
+   :width: 0.67708in
+   :height: 0.30208in
