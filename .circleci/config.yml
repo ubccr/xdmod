@@ -55,12 +55,9 @@ jobs:
                     dnf module -y reset nodejs
                     dnf module -y install nodejs:16
             - run:
-                  name: install Sphinx dependencies
+                  name: Build User Manual
                   command: |
                     pip3 install sphinx sphinx-rtd-theme
-            - run:
-                  name: build Sphinx manual
-                  command: |
                     user_manual_builder/build_user_manual.sh -b user_manual_builder/ -d html/user_manual/ -v Open
             - restore_cache:
                 keys:
