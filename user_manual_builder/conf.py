@@ -38,6 +38,11 @@ html_logo = 'media/image43.png'
 html_theme_options = {
     'logo_only': True,
 }
+html_context = {
+    'display_github': True,
+    'github_user': 'ubccr',
+    'github_repo': 'xdmod',
+}
 
 def setup(app):
     app.add_role('only', only_role)

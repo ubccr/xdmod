@@ -33,6 +33,6 @@ started.
 .. figure:: ../media/image100.png
     :name: xdmodquickstart
 
-    **XDMoD Help.** *The XDMoD Quick Start Guide for the
+    XDMoD Help. *The XDMoD Quick Start Guide for the
     Metric Explorer Tab*
 

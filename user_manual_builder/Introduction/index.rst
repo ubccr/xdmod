@@ -117,7 +117,7 @@ Metric Explorer tab, App Kernels tab, Job Viewer tab, and Report
 Generator tab`
 
 
-The **Summary tab** :only:`<XSEDE>({xsede_sum_tab})` :only:`(<Open>{open_sum_tab})`
+The :ref:`summary_tab` :only:`<XSEDE>({xsede_sum_tab})` :only:`(<Open>{open_sum_tab})`
 provides a snapshot overview of selected data with several small summary charts visible that can be
 expanded to full size charts through a simple mouse click. The default
 is to show utilization over the previous month, but the user may select
@@ -212,7 +212,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
       **XDMoD Usage Tab**. A Usage plot showing the total CPU hours
       broken out per job on all available resources.
 
-The **Metric Explorer** tab provides a powerful tool for organizing and
+The :ref:`metric_explorer` tab provides a powerful tool for organizing and
 comparing the data from a wide variety of metrics. The Metric Explorer
 tab, which also provides access to all of the metrics available through
 the Usage tab, facilitates comparison among the various metrics by
@@ -291,7 +291,7 @@ and flexible interface to facilitate analysis of the data.
       (right-hand axis). Plot was generated from Figure 2-3 by applying
       a filter that limited the analysis to the resource of chemistry.
 
-The **App Kernels tab** (:numref:`app_kernels_tab`) contains three sub tabs that provide information
+The :ref:`App Kernals Tab<app_kernels>` (:numref:`app_kernels_tab`) contains three sub tabs that provide information
 on the application kernel performance *and quality of service* for
 resources. Through this tab, users can view historical performance for
 all application kernels run on all :only:`<XSEDE>ACCESS` resources. For
@@ -316,7 +316,7 @@ multiple :only:`<XSEDE>ACCESS` resources.
    plot window provides more detailed information on the application
    kernel and the resource.
 
-The **Report Generator tab** (:numref:`report_generator_tab`) gives the user access to
+The :ref:`Report Generator Tab<report_generator>` (:numref:`report_generator_tab`) gives the user access to
 the Custom Report Builder that allows a user to create and save custom
 reports. For example, a user may wish to have specific plots and data
 summarized in a concise report that they can download for offline
@@ -333,7 +333,7 @@ without the need to log into the portal.
    reports by selecting plots from the pool of plots (right hand
    side) that were generated previously using the XDMoD portal.*
 
-The **Job Viewer Tab** (:numref:`intro_job_viewer_tab`), provides the user with the
+The :ref:`Job Viewer Tab<job_viewer>` (:numref:`intro_job_viewer_tab`), provides the user with the
 capability to search for and view specific jobs or jobs that meet
 specified criteria. The Job Viewer displays job accounting and
 performance data for any job for which this information is available in
@@ -378,7 +378,7 @@ fitting the specified criteria.
       **Custom Query tab** *showing number of SUs delivered in 2013 by
       supporting funding agency*
 
-   A **Compliance tab** was added to the XDMoD framework to provide service
+   A :ref:`compliance_tab` was added to the XDMoD framework to provide service
    providers, NSF Program Officers and ACCESS leadership with a tool to
    quickly assess service provider compliance with ACCESS operational
    reporting requirements and TAS recommendations. The new compliance tab

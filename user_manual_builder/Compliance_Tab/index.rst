@@ -1,3 +1,5 @@
+.. _compliance_tab:
+
 Compliance Tab
 =================
 
@@ -79,8 +81,7 @@ collected records, it was determined that only a fraction (or subset) of
 those records consisted of a meaningful value that represented the
 number *of cores charged,* *SUs charged,* etc. This fraction is
 represented as a percentage in the table cell where the *requirement*
-row and the *resource* column intersect.\ *
-*
+row and the *resource* column intersect.
 
 **Note:** It is important to note that a “job record” **does not**
 correspond to a single job. Each resource’s definition of a “job”
@@ -124,4 +125,3 @@ associated with your XDMoD account.
 
    Creating a compliance report to be delivered on a monthly basis
 
-</XSEDE>

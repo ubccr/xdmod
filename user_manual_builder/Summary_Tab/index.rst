@@ -1,3 +1,5 @@
+.. _summary_tab:
+
 Summary Tab 
 ==============
 
@@ -51,21 +53,16 @@ summary content tailored to specific roles (:numref:`summary_portlet_tools`).
    user role), those of your group (for PI role) or those of your entire
    center (for center director role).
 
-.. figure:: ../media/image48.png
-   :name: summary_portlet_tools
+.. table::
+   :widths: 20 80
 
-   **Summary Portlet Tools**. From left to right, this toolbar provides a 
-   button for collapsing the portlet, a button to configure the chart, and a 
-   button that when hovered over will present a tooltip to describe the data 
-   in the chart.
-
-.. +-----------+---------------------------------------------------------------+
-   | |image23| | **Figure 6-2: Summary Portlet Tools**. From left to right,    |
-   |           | this toolbar provides a button for collapsing the portlet, a  |
-   |           | button to configure the chart, and a button that when hovered |
-   |           | over will present a tooltip to describe the data in the       |
-   |           | chart.                                                        |
-   +-----------+---------------------------------------------------------------+
+   +---------------------------------+---------------------------------------------------------------+
+   | .. figure:: ..media/image48.png | From left to right,                                           |
+   |    :name: summary_portlet_tools | this toolbar provides a button for collapsing the portlet, a  |
+   |                                 | button to configure the chart, and a button that when hovered |
+   |    Summary Portlet Tools        | over will present a tooltip to describe the data in the       |
+   |                                 | chart.                                                        |
+   +---------------------------------+---------------------------------------------------------------+
 
    .. |image23| image:: ../media/image48.png
       :width: 0.67708in

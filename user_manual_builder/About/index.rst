@@ -11,6 +11,8 @@ seek help.
 
    My Profile, About, Roadmap, Contact and Help functional button
 
+.. _my_profile_button:
+
 My Profile Button
 ----------------------
 
@@ -52,7 +54,7 @@ follow.
 About Button
 -----------------
 
-.. missing images from conversion
+.. missing images 
 
 +-----------------------------------------------------------------------+
 |                                                                       |

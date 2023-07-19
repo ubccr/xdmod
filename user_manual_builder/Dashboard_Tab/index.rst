@@ -1,8 +1,6 @@
 Dashboard Tab
 ===============
 
-.. TODO: fix section and table refs
-
 :only:`<Open>The dashboard tab is an optional replacement for the summary tab.
 The dashboard must be enabled by the XDMoD system administrator and is
 only available for logged in users.` :only:`<XSEDE>The dashboard tab is
@@ -25,35 +23,35 @@ lists the default settings for each role.
       | **Role**              | **Components          | **XDMoD module**      |
       |                       | Displayed**           |                       |
       +=======================+=======================+=======================+
-      | Center Director       | Center summary        |    -                  |
+      | Center Director       | Center summary        |    \-                 |
       |                       |                       |                       |
-      |                       | Saved charts and      |    -                  |
+      |                       | Saved charts and      |    \-                 |
       |                       | reports               |                       |
       |                       |                       |    Application        |
       |                       | Center Report Card    |    Kernels            |
       +-----------------------+-----------------------+-----------------------+
-      | Center Staff          | Center summary        |    -                  |
+      | Center Staff          | Center summary        |    \-                 |
       |                       |                       |                       |
-      |                       | Saved charts and      |    -                  |
+      |                       | Saved charts and      |    \-                 |
       |                       | reports               |                       |
       |                       |                       |    SUPReMM            |
       |                       | Job Efficiency Report |                       |
-      |                       |                       |    -                  |
+      |                       |                       |    \-                 |
       |                       | Recent jobs           |                       |
       |                       |                       |    Application        |
       |                       | Center Report Card    |    Kernels            |
       +-----------------------+-----------------------+-----------------------+
-      | Principal             | Recent jobs           |    -                  |
+      | Principal             | Recent jobs           |    \-                 |
       | Investigator          |                       |                       |
       |                       | Job Efficiency Report |    SUPReMM            |
       |                       |                       |                       |
-      |                       | Summary Charts        |    -                  |
+      |                       | Summary Charts        |    \-                 |
       +-----------------------+-----------------------+-----------------------+
-      | User                  | Recent jobs           | -                     |
+      | User                  | Recent jobs           | \-                    |
       |                       |                       |                       |
       |                       | Job Efficiency Report | SUPReMM               |
       |                       |                       |                       |
-      |                       | Summary Charts        | -                     |
+      |                       | Summary Charts        | \-                    |
       +-----------------------+-----------------------+-----------------------+
 
 .. only:: XSEDE

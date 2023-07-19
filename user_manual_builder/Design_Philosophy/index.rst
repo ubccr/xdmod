@@ -16,6 +16,3 @@ separation between the user interface and the application logic. This
 also allows 3rd party tools to access the services directly and ingest
 or present the information as they see fit.
 
-.. _section-1:
-
-.. _section-2:

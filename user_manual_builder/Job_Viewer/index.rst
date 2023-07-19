@@ -1,3 +1,5 @@
+.. _job_viewer:
+
 Job Viewer
 =============
     
@@ -225,8 +227,6 @@ collection software that runs on the compute nodes as well as the
 hardware on the nodes themselves. A brief description of the metrics
 follow:
 
-.. original figure is 10-6 or chart vs time
-
 -  CPU User: The ratio of time spent in user mode to total CPU time for
       the cores that were assigned to the job.
 
@@ -272,20 +272,3 @@ software).
 
    Chart vs Time
 
-.. +-----------------------------------------------------------------------+
-      | .. figure:: ../media/image73.png                                      |
-      |    :alt: Job_Viewer_Info.png                                          |
-      |    :width: 7.27083in                                                  |
-      |    :height: 3.75in                                                    |
-      |                                                                       |
-      | **Figure 10-5: Job Viewer Information**                               |
-      +-----------------------------------------------------------------------+
-
-      +-----------------------------------------------------------------------+
-      | .. figure:: ../media/image72.png                                      |
-      |    :alt: ChartvsTime_Job_Viewer.png                                   |
-      |    :width: 7.27083in                                                  |
-      |    :height: 2.86111in                                                 |
-      |                                                                       |
-      | **Figure 10-6: Chart vs Time**                                        |
-      +-----------------------------------------------------------------------+

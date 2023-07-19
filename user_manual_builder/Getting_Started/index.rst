@@ -14,7 +14,7 @@ Logging In
    .. figure:: ../media/image7.png
       :name: xsede_login
    
-      **ACCESS XDMoD Login**
+      ACCESS XDMoD Login
 
    You must have an ACCESS account to be able to log in to XDMoD.
 

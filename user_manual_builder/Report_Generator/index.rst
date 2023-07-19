@@ -3,17 +3,12 @@
 Report Generator
 ===================
 
-.. TODO section refs
-
 To manage reports, click on the **Report Generator** tab.
-
-.. broken link:
 
 The default view of the Report Generator UI is shown below. The left
 region provides a listing of any reports you have created. The right
 region displays any charts you have chosen to make available for
-building a report (see `Available for Report check
-box <https://docs.google.com/document/d/1rz7Kqe1Y9yz5o2C3Q9gz55F4mvtseQs_7PiDlJOSKco/edit#bookmark=id.a96eh7adrkbo>`__
+building a report (see :ref:`common_available_report`
 section).
 
 .. figure:: ../media/image85.png
@@ -70,8 +65,6 @@ one of the entries in* **My Reports**\ *:*
 -  **Download**: Builds the (selected) report and presents it to the
    user as a downloadable file.
 
-.. section ref
-
 .. _selection_model:
 
 Selection Model
@@ -95,8 +88,6 @@ Clicking on one entry, followed by holding the control key (or
 individual selections being added (appended) to what is currently
 selected.
 
-.. fig 13-6
-
 .. figure:: ../media/image17.png
    :name: report_generator_select_2
 
@@ -108,8 +99,6 @@ a Mac).*
 
 Whether you choose to create a new report or edit an existing report,
 you will be directed to the **Report Editor**:
-
-.. fig 13-7
 
 .. figure:: ../media/image60.png
    :name: report_generator_select_3
@@ -124,8 +113,6 @@ select menus also gives you the ability to invert selections made in the
 report and chart grids. In other words, when you click on Invert
 Selection, any items previously selected will become deselected, and
 vice-versa (see :numref:`report_generator_select_2` c).
-
-.. fig 13-8
 
 .. figure:: ../media/image39.png
    :name: report_generator_editor
@@ -144,11 +131,11 @@ vice-versa (see :numref:`report_generator_select_2` c).
    |                                   | (including a new report based on        |
    |                                   | another report), a default unique file  |
    |                                   | name will be generated and assigned to  |
-   |                                   | the **File Name** field.                |
+   |                                   | the **File Name** field. |br| |br|      |
    |                                   |                                         |
    |                                   | The **Chart Layout** section allows you |
    |                                   | to control how many charts are to       |
-   |                                   | appear on a single page.                |
+   |                                   | appear on a single page. |br| |br|      |
    |                                   |                                         |
    |                                   | The **Scheduling** section allows you   |
    |                                   | to customize the frequency in which     |
@@ -174,8 +161,6 @@ of the Report Editor dictates the order in which they will appear in the
 report. Re-ordering of charts in the report can be accomplished by
 simply dragging the charts into the desired order:
 
-.. fig 13-10
-
 .. figure:: ../media/image86.png
    :name: report_generator_reordering
 
@@ -194,8 +179,6 @@ timeframe to your liking.
 .. |image43| image:: ../media/image44.png
    :width: 0.1875in
    :height: 0.19792in
-
-.. fig 13-11
 
 .. figure:: ../media/image26.png
    :name: report_generator_change_timeframe
@@ -234,18 +217,12 @@ following sections: **My Reports**, **Report Editor**, and **Report
 Preview**. The **Download** feature will allow you to immediately access
 or download the resulting document, whereas the **Send Now** feature
 will email the constructed report to the address associated with your
-profile (see the `My
-Profile <https://docs.google.com/document/d/1rz7Kqe1Y9yz5o2C3Q9gz55F4mvtseQs_7PiDlJOSKco/edit#bookmark=id.ttarg0a8rnur>`__
-section).
+profile (see the :ref:`my_profile_button` section).
 
 .. figure:: ../media/image99.png
    :name: report_generator_send_download
 
    Sending a report with Send Now or Download
-
-.. where does this tag close??
-
-<XSEDE>
 
 Report Templates
 ---------------------
@@ -313,3 +290,7 @@ template.
 
 Each generated report would be configured for quarterly delivery, and
 each of the included charts would be based on the previous quarter.
+
+.. |br| raw:: html
+
+   <br />

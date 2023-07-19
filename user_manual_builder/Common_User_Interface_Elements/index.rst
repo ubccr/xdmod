@@ -5,6 +5,8 @@ Common User Interface Elements
 
 Here we describe some common XDMoD user interface elements.
 
+.. _duration_selection_toolbar:
+
 Duration Selection Toolbar
 ------------------------------
 
@@ -35,13 +37,6 @@ the data and in turn refreshing the screen.
    |                                   | field will accomplish the same   |
    |                                   | thing.                           |
    +-----------------------------------+----------------------------------+
-
-.. figure ../media/image115.png
-   :name: start_end_toolbar
-
-   When you interact with the **Start** and **End** date fields, the **Refresh** button
-   will automatically highlight to indicate that it needs to be pressed to apply the new
-   timeframe. Pressing ENTER in either the Start or End date field will accomplish the same thing. 
 
 .. table:: 
    :widths: 50 50
@@ -108,8 +103,7 @@ Chart Configuration Toolbar
 The chart configuration toolbar (:numref:`chart_config_toolbar`) provides options for a
 user to customize the appearance of individual charts (and their
 datasheet view), export the data in a number of output formats, and make
-a chart available to the `Report
-Generator <https://docs.google.com/document/d/1gBF_4dl4CnEeogDdhI07fBNxdKoPpIofUDbdTVR_cN8/edit#bookmark=id.nrw8c46czun7>`__.
+a chart available to the :ref:`Report Generator <report_generator>` 
 
 .. figure:: ../media/image127.png
    :name: dataset_filter

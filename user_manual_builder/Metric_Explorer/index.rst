@@ -27,8 +27,7 @@ Other features of the top toolbar include:
 
 .. broken link
 
-**Duration Selectors**: The `duration selection
-toolbar <https://docs.google.com/document/d/1rz7Kqe1Y9yz5o2C3Q9gz55F4mvtseQs_7PiDlJOSKco/edit#bookmark=id.q3maidusqku9>`__
+**Duration Selectors**: The :ref:`duration_selection_toolbar`
 is provided for selection of the desired time frame. To define a custom
 timeframe, specify a start and end date in the date fields to the right
 of the **Duration** drop-down menu.

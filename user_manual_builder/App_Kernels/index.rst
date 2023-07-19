@@ -1,3 +1,5 @@
+.. _app_kernals:
+
 App Kernels
 ==============
 
