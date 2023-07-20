@@ -1,6 +1,7 @@
 <?php
 
 use DataWarehouse\Access\Usage;
+
 $logger = new \CCR\RequestLogger();
 
 // Attempt authentication by API token.
