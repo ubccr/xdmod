@@ -37,6 +37,8 @@ html_static_path = ['_static']
 html_logo = 'media/image43.png'
 html_theme_options = {
     'logo_only': True,
+    'collapse_navigation': False,
+    'style_nav_header_background': '#e0e0e0',
 }
 html_context = {
     'display_github': True,
