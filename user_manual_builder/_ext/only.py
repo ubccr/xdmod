@@ -2,6 +2,7 @@ from docutils import nodes
 from docutils.parsers.rst.roles import set_classes
 
 from sphinx import addnodes
+from sphinx.application import Sphinx
 
 def extract_tag(text: str):
     """
