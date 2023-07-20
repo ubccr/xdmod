@@ -6,6 +6,10 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Rest\Utilities\Authentication;
 
+/**
+ * This class is meant to provide logging functionality for use with the html controller operations akin to the logging
+ * done for requests to REST stack endpoints.
+ */
 class RequestLogger
 {
     /**
@@ -23,6 +27,14 @@ class RequestLogger
         ));
     }
 
+    /**
+     * Log request related data to the database.
+     *
+     * @param float $start the result of a call to `microtime(true)` that indicates the start of a request.
+     * @param float $end the result of a call to `microtime(true)` that indicates the end of a request.
+     * @param int $level at which level the log request should be made. Corresponds to \CCR\Log::[EMERG|ALERT|CRIT|ERR|WARNING|NOTICE|INFO|DEBUG]
+     * @return void
+     */
     public function log($start, $end, $level = \CCR\Log::INFO)
     {
         $authInfo = $this->getAuthenticationInfo();
@@ -49,6 +61,8 @@ class RequestLogger
     }
 
     /**
+     * Retrieve username, token from the current request, if present.
+     *
      * @return array
      */
     private function getAuthenticationInfo()
@@ -74,15 +88,14 @@ class RequestLogger
 
         $tokenProperties = array(Authentication::_DEFAULT_TOKEN, Authentication::_DEFAULT_AUTH_TOKEN, Authentication::_DEFAULT_COOKIE_TOKEN);
         $tokenSources = array($_REQUEST, $_COOKIE, $headers);
-        foreach($tokenProperties as $tokenProperty) {
-            foreach($tokenSources as $tokenSource) {
+        foreach ($tokenProperties as $tokenProperty) {
+            foreach ($tokenSources as $tokenSource) {
                 $token = $tokenSource[$tokenProperty];
                 if (isset($token)) {
                     break;
                 }
             }
         }
-
 
         return array(
             'username' => $username,
