@@ -1,10 +1,6 @@
 XDMoD Manual
 =====================================
 
-.. TODO: 
-   Metric Explorer: broken link
-   Report Generator: broken links and unclosed XSEDE tag
-
 .. toctree::
    :maxdepth: 3
    :numbered:

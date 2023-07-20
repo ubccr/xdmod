@@ -3,9 +3,6 @@
 Metric Explorer 
 ==================
 
-.. TODO: Fix broken link
-    
-
 The Metric Explorer allows you to create complex plots containing
 multiple metrics. It has many point-and-click features so you can easily
 add and filter plotted data and customize plot appearance.
@@ -24,8 +21,6 @@ you select User, you see only the information from jobs that you
 submitted yourself.
 
 Other features of the top toolbar include:
-
-.. broken link
 
 **Duration Selectors**: The :ref:`duration_selection_toolbar`
 is provided for selection of the desired time frame. To define a custom
