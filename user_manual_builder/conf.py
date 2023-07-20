@@ -1,9 +1,6 @@
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath('_ext'))
-
-from custom_roles import only_role
+import sys, os
+  
+sys.path.append(os.path.abspath('./_ext'))
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -21,7 +18,7 @@ release = '11.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx_rtd_theme']
+extensions = ['sphinx_rtd_theme', 'only']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -47,6 +44,5 @@ html_context = {
 }
 
 def setup(app):
-    app.add_role('only', only_role)
     app.add_css_file('custom.css')
     
