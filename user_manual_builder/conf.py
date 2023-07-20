@@ -1,5 +1,5 @@
-import sys, os
-  
+import sys
+import os
 sys.path.append(os.path.abspath('./_ext'))
 
 # Configuration file for the Sphinx documentation builder.
@@ -45,4 +45,3 @@ html_context = {
 
 def setup(app):
     app.add_css_file('custom.css')
-    

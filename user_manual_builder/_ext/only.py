@@ -1,3 +1,5 @@
+"""Creates the only role extension for Sphinx
+"""
 from docutils import nodes
 from docutils.parsers.rst.roles import set_classes
 
@@ -39,38 +41,40 @@ def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options=
 
     if not tags.has(tag):
         return [], []
-    else:
-        curr = ''
-        is_ref = False
-        node = nodes.inline(rawtext, '', **options)
-        for c in text:
-            if c == '{':
-                is_ref = True
-                node += nodes.inline(rawtext, curr, **options)
-                curr = ''
-            elif c == '}':
-                is_ref = False
-                set_classes(options)
-                pend_node = addnodes.pending_xref(
-                    '',
-                    refdomain='std',
-                    reftype='numref',
-                    reftarget=curr,
-                    refexplicit=False,
-                    **options
-                )
-                pend_node += nodes.inline(rawtext, curr, classes=['xref', 'std', 'std-numref'])
-                node += pend_node
-                curr = ''
-            else:
-                curr += c
-        if curr != '':
+    curr = ''
+    is_ref = False
+    node = nodes.inline(rawtext, '', **options)
+    for c in text:
+        if c == '{':
+            is_ref = True
             node += nodes.inline(rawtext, curr, **options)
-        return [node], []
+            curr = ''
+        elif c == '}':
+            is_ref = False
+            set_classes(options)
+            pend_node = addnodes.pending_xref(
+                '',
+                refdomain='std',
+                reftype='numref',
+                reftarget=curr,
+                refexplicit=False,
+                **options
+            )
+            pend_node += nodes.inline(rawtext, curr, classes=['xref', 'std', 'std-numref'])
+            node += pend_node
+            curr = ''
+        else:
+            curr += c
+    if curr != '':
+        node += nodes.inline(rawtext, curr, **options)
+    return [node], []
 
 def setup(app: Sphinx):
+    """Install the plugin.
+
+    :param app: Sphinx application context.
+    """
     app.add_role('only', only_role)
-    return {'version': '0.1', 
+    return {'version': '0.1',
             'parallel_read_safe': True, 
             'parallel_write_safe': True,}
-
