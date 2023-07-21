@@ -69,23 +69,30 @@ class RequestLogger
     {
         $username = null;
         $token = null;
+        $headers = getallheaders();
 
+        # Determine if basic auth is being used.
         $useBasicAuth = false;
         try {
-            $useBasicAuth = \xd_utilities\getConfiguration('rest', 'basic_auth') == 'on';
+            $useBasicAuth = \xd_utilities\getConfiguration('rest', 'basic_auth') === 'on';
         } catch (Exception $e) {
         }
 
-        $headers = getallheaders();
+        # If we're using basic auth, than the username value should be included in the headers.
         if ($useBasicAuth) {
-            if (array_key_exists(Authentication::_DEFAULT_USER, $headers)) {
-                $username = $headers[Authentication::_DEFAULT_USER];
-            }
-        }
-        if (!isset($username)) {
-            $username = $_REQUEST[Authentication::_DEFAULT_USER];
+            $username = array_key_exists(Authentication::_DEFAULT_USER, $headers)
+                ? $headers[Authentication::_DEFAULT_USER]
+                : null;
         }
 
+        # If $username is still not set ( because we're not using basic auth ) than check for it in the request parameters.
+        if (!isset($username)) {
+            $username = array_key_exists(Authentication::_DEFAULT_USER, $_REQUEST)
+                ? $_REQUEST[Authentication::_DEFAULT_USER]
+                : null;
+        }
+
+        # Now that we have th username, find where they've hid the token value.
         $tokenProperties = array(Authentication::_DEFAULT_TOKEN, Authentication::_DEFAULT_AUTH_TOKEN, Authentication::_DEFAULT_COOKIE_TOKEN);
         $tokenSources = array($_REQUEST, $_COOKIE, $headers);
         foreach ($tokenProperties as $tokenProperty) {
