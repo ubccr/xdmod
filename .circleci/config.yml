@@ -170,6 +170,3 @@ workflows:
             parameters:
               os: [centos7, rocky8]
               install-type: ["fresh_install", "upgrade"]
-            exclude:
-              - os: rocky8
-                install-type: "upgrade"
