@@ -90,7 +90,7 @@ class RequestLogger
         $tokenSources = array($_REQUEST, $_COOKIE, $headers);
         foreach ($tokenProperties as $tokenProperty) {
             foreach ($tokenSources as $tokenSource) {
-                $token = $tokenSource[$tokenProperty];
+                $token = array_key_exists($tokenProperty, $tokenSource) ? $tokenSource[$tokenProperty] : null;
                 if (isset($token)) {
                     break;
                 }
