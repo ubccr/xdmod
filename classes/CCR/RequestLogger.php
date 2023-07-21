@@ -41,23 +41,23 @@ class RequestLogger
 
         $retval = array(
             'message' => 'Route called',
-            'path' => $this->array_get_or('REQUEST_URI', $_SERVER),
-            'query' => $this->array_get_or('QUERY_STRING', $_SERVER),
-            'referer' => $this->array_get_or('HTTP_REFERER', $_SERVER),
+            'path' => $this->arrayGetOr('REQUEST_URI', $_SERVER),
+            'query' => $this->arrayGetOr('QUERY_STRING', $_SERVER),
+            'referer' => $this->arrayGetOr('HTTP_REFERER', $_SERVER),
             'elapsed' => $end - $start,
             'post' => $_POST,
             'data' => array(
-                'ip' => $this->array_get_or('REMOTE_ADDR', $_SERVER),
-                'method' => $this->array_get_or('REQUEST_METHOD', $_SERVER),
-                'host' => $this->array_get_or('REMOTE_HOST', $_SERVER),
-                'port' => $this->array_get_or('REMOTE_PORT', $_SERVER),
+                'ip' => $this->arrayGetOr('REMOTE_ADDR', $_SERVER),
+                'method' => $this->arrayGetOr('REQUEST_METHOD', $_SERVER),
+                'host' => $this->arrayGetOr('REMOTE_HOST', $_SERVER),
+                'port' => $this->arrayGetOr('REMOTE_PORT', $_SERVER),
                 'username' => $authInfo['username'],
                 'token' => $authInfo['token'],
                 'timestamp' => null
             )
         );
 
-        $requestTime = $this->array_get_or('REQUEST_TIME', $_SERVER);
+        $requestTime = $this->arrayGetOr('REQUEST_TIME', $_SERVER);
         if (isset($requestTime)) {
             $retval['data']['timestamp'] = date("Y-m-d H:i:s", $requestTime);
         }
@@ -73,7 +73,7 @@ class RequestLogger
      * @param mixed|null $default
      * @return mixed|null
      */
-    private function array_get_or($property, $array, $default = null)
+    private function arrayGetOr($property, $array, $default = null)
     {
         return array_key_exists($property, $array) ? $array[$property] : $default;
     }
