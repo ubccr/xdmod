@@ -73,7 +73,7 @@ class RequestLogger
      * @param mixed|null $default
      * @return mixed|null
      */
-    private function array_get_or($property, $array, $default=null)
+    private function array_get_or($property, $array, $default = null)
     {
         return array_key_exists($property, $array) ? $array[$property] : $default;
     }
