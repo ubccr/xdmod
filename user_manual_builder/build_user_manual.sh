@@ -42,7 +42,7 @@ while true; do
 		;;
 	-h|--help)
 		echo "Usage: $0 \\" >&2
-		echo "  -v|--version manual_version : Manual version to be linked (open or xsede) [$MANUAL_VERSION] \\" >&2
+		echo "  -v|--version manual_version : Manual version to be linked (Open or XSEDE) [$MANUAL_VERSION] \\" >&2
 		echo "  [-b|--builddir dir] : Directory where the manual will be built [$BASE_BUILD_DIR]" >&2
 		echo "  [-d|--destdir dir] : Directory that the tarball will unpack into [$DEST_DIR]" >&2
 		echo "  [-h|--help] : Display this help" >&2
