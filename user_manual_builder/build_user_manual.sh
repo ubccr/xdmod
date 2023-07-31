@@ -57,6 +57,9 @@ elif [ ! -d "$BASE_BUILD_DIR" ]; then
 		echo "Error creating base build directory: '$BASE_BUILD_DIR'" >&2
 		exit 1
 	fi
+elif [ "$MANUAL_VERSION"!="XSEDE" ] && [ "$MANUAL_VERSION"!="Open" ]
+	echo "Must input either Open or XSEDE for manual version"
+	exit 1
 fi
 
 #
