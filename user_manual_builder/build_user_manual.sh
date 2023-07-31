@@ -1,20 +1,12 @@
 #!/bin/bash
-# -------
+#
 # build user manual from restructured text files
-# -------
+#
 
-# Destination directory
-DEST_DIR=html/user_manual
 
-# Directory where manuals are built
-BASE_BUILD_DIR=user_manual_builder
-
-# Version of the manual (XDMoD version)
-MANUAL_VERSION=Open
-
-# ------
+#
 # Parse command line arguments
-# ------
+#
 
 ARGS=$(getopt -o "b:d:v:h" -l "builddir:,destdir:,version:,help" -n "build_user_manual" -- "$@");
 
@@ -67,9 +59,9 @@ elif [ ! -d "$BASE_BUILD_DIR" ]; then
 	fi
 fi
 
-# ------
+#
 # Build the manual
-# -----
+#
 
 cp $BASE_BUILD_DIR/index.rst.in $BASE_BUILD_DIR/index.rst
 
