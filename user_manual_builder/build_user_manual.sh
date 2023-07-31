@@ -56,7 +56,7 @@ done
 # Verify arguments
 #
 
-if [ -z "$BASE_BUILD_DIR" -o -z "$DEST_DIR" -o -z "$MANUAL_VERSION" ]; then
+if [ -z "$BASE_BUILD_DIR" || -z "$DEST_DIR" || -z "$MANUAL_VERSION" ]; then
 	echo "Must specify build_dir, dest_dir and manual_version" >&2 
 	exit 1
 elif [ ! -d "$BASE_BUILD_DIR" ]; then
