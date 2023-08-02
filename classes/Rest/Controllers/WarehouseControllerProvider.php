@@ -1964,21 +1964,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function chartImageResponse($data, $type, $settings)
     {
-        // Enable plot marker only if a single point is present in the data series' plot data.
-        // Otherwise plot the data with a line.
-
-        $markerEnabled = false;
-
-        // check the series array passed in from the overall data array:
-        foreach ($data['series'] as $series) {
-            // if the series array contains any data array with exactly one element, enable markers
-            // (a dot for each series' element) so that the plotted data can be seen:
-            if (isset($series['data']) && count($series['data']) == 1) {
-                $markerEnabled = true;
-                break;
-            }
-        }
-
         $axisTitleFontSize = ($settings['font_size'] + 12) . 'px';
         $axisLabelFontSize = ($settings['font_size'] + 11) . 'px';
         $mainTitleFontSize = ($settings['font_size'] + 16) . 'px';
@@ -1986,84 +1971,18 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $lineWidth = 1 + $settings['scale'];
 
         $chartConfig = array(
-            'colors' => array( '#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-                        '#f28f43', '#77a1e5', '#c42525', '#a6c96a'
-            ),
-            'series' => $data['series'],
-            'xAxis' => array(
-                'type' => 'datetime',
-                'minTickInterval' => 1000,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => $axisLabelFontSize
-                    ),
-                ),
-                'lineWidth' => $lineWidth,
-                'title' => array(
-                    'style' => array(
-                        'fontWeight' => 'bold',
-                        'fontSize' => $axisTitleFontSize,
-                        'color' => '#5078a0'
-                    ),
-                    'text' => 'Time (' . $data['schema']['timezone'] . ')'
-                )
-            ),
-            'yAxis' => array(
-                'title' => array(
-                    'style' => array(
-                        'fontWeight' => 'bold',
-                        'fontSize' => $axisTitleFontSize,
-                        'color' => '#5078a0'
-                    ),
-                    'text' => $data['schema']['units']
-                ),
-                'lineWidth' => $lineWidth,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => $axisLabelFontSize
-                    ),
-                ),
-                'min' => 0.0
-            ),
-            'legend' => array(
-                'enabled' => false
-            ),
-            'plotOptions' => array(
-                'line' => array(
-                    'lineWidth' => $lineWidth,
-                    'marker' => array(
-                        'enabled' => $markerEnabled
-                    )
-                )
-            ),
-            'credits' => array(
-                'text' => $data['schema']['source'] . '. Powered by XDMoD/Highcharts',
-                'href' => ''
-            ),
-            'exporting' => array(
-                'enabled' => false
-            ),
-            'title' => array(
-                'style' => array(
-                    'color' => '#444b6e',
-                    'fontSize' => $mainTitleFontSize
-                ),
-
-                'text' => $settings['show_title'] ? $data['schema']['description'] : null
-            )
+           'data' => $data,
+           'axisTickSize' => $axisLabelFontSize,
+           'axisTitleSize' => $axisTitleFontSize,
+           'lineWidth' => $lineWidth,
+           'chartTitleSize' => $mainTitleFontSize
         );
-
-        if (strpos($data['schema']['units'], '%') !== false) {
-            $chartConfig['yAxis']['max'] = 100.0;
-        }
 
         $globalConfig = array(
             'timezone' => $data['schema']['timezone']
         );
 
-        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata']);
+        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata'], true);
         $chartFilename = $settings['fileMetadata']['title'] . '.' . $type;
         $mimeOverride = $type == 'svg' ? 'image/svg+xml' : null;
 

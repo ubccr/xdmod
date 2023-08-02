@@ -16,7 +16,8 @@ describe('My Profile Tests', function generalTests() {
                     browser.waitForAllInvisible('.ext-el-mask');
                     browser.waitForVisible(myProfile.toolbarButton, 3000);
                     browser.waitForLoadedThenClick(myProfile.toolbarButton);
-                    browser.waitForVisible(myProfile.container, 20000);
+                    browser.waitForVisible(myProfile.container, 1000);
+                    browser.waitForEnabled(selectors.general.user_information.first_name(), 3000);
                 });
 
                 describe('Check User Information', function checkUserInformation() {

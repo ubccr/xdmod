@@ -6,15 +6,35 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
     resizable: false,
     title: 'General',
     cls: 'no-underline-invalid-fields-form',
+    hasBeenClosed: false,
+    responseArgs: null,
 
     // Dictates whether closing the profile editor logs out the user automatically
     perform_logout_on_close: false,
 
     init: function () {
+        var self = this;
         XDMoD.REST.connection.request({
             url: '/users/current',
             method: 'GET',
-            callback: this.cbProfile
+            callback: function (options, success, response) {
+                // If the window has already been closed, throw away the
+                // response.
+                if (self.hasBeenClosed) {
+                    return;
+                }
+                // Store the arguments needed to process the response.
+                self.responseArgs = {
+                    success: success,
+                    response: response
+                };
+                // If the window has finished opening, go ahead and process
+                // the response. Otherwise, the window will call
+                // handleOpenEvent later to process the response.
+                if (self.parentWindow.isVisible()) {
+                    self.processHttpResponse();
+                }
+            }
         });
     },
 
@@ -30,7 +50,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         var user_profile_firstname = new Ext.form.TextField({
             name: 'first_name',
             fieldLabel: 'First Name',
-            emptyText: '1 min, ' + maxFirstNameLength + ' max',
+            emptyText: 'Loading...',
             msgTarget: 'under',
 
             allowBlank: false,
@@ -39,6 +59,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             maxLengthText: 'Maximum length (' + maxFirstNameLength + ' characters) exceeded.',
             regex: XDMoD.regex.noReservedCharacters,
             regexText: reservedCharactersNotAllowedText,
+            disabled: true,
 
             listeners: {
                 blur: XDMoD.utils.trimOnBlur,
@@ -51,7 +72,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         var user_profile_lastname = new Ext.form.TextField({
             name: 'last_name',
             fieldLabel: 'Last Name',
-            emptyText: '1 min, ' + maxLastNameLength + ' max',
+            emptyText: 'Loading...',
             msgTarget: 'under',
 
             allowBlank: false,
@@ -60,6 +81,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             maxLengthText: 'Maximum length (' + maxLastNameLength + ' characters) exceeded.',
             regex: XDMoD.regex.noReservedCharacters,
             regexText: reservedCharactersNotAllowedText,
+            disabled: true,
 
             listeners: {
                 blur: XDMoD.utils.trimOnBlur,
@@ -76,7 +98,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         var user_profile_email_addr = new Ext.form.TextField({
             name: 'email_address',
             fieldLabel: 'E-Mail Address',
-            emptyText: minEmailLength + ' min, ' + maxEmailLength + ' max',
+            emptyText: 'Loading...',
             msgTarget: 'under',
             allowBlank: false,
             blankText: fieldRequiredText,
@@ -85,6 +107,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             maxLength: maxEmailLength,
             maxLengthText: 'Maximum length (' + maxEmailLength + ' characters) exceeded.',
             validator: XDMoD.validator.email,
+            disabled: true,
 
             listeners: {
                 blur: XDMoD.utils.trimOnBlur,
@@ -162,7 +185,12 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
         // ------------------------------------------------
 
-        this.cbProfile = function (options, success, response) {
+        var user_profile_most_privileged_role;
+        var btnUpdate;
+        this.processHttpResponse = function () {
+            var success = this.responseArgs.success;
+            var response = this.responseArgs.response;
+            this.responseArgs = null;
             // If success reported, attempt to extract user data.
             var data;
             var decodedSuccessResponse;
@@ -172,9 +200,23 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             }
 
             if (decodedSuccessResponse) {
+                user_profile_firstname.emptyText = (
+                    '1 min, ' + maxFirstNameLength + ' max'
+                );
                 user_profile_firstname.setValue(data.results.first_name);
+                user_profile_firstname.setDisabled(false);
+
+                user_profile_lastname.emptyText = (
+                    '1 min, ' + maxLastNameLength + ' max'
+                );
                 user_profile_lastname.setValue(data.results.last_name);
+                user_profile_lastname.setDisabled(false);
+
+                user_profile_email_addr.emptyText = (
+                    minEmailLength + ' min, ' + maxEmailLength + ' max'
+                );
                 user_profile_email_addr.setValue(data.results.email_address);
+                user_profile_email_addr.setDisabled(false);
 
                 // ================================================
 
@@ -190,21 +232,12 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
                     }
                 }
 
-                // ================================================
-                // eslint-disable-next-line no-use-before-define
-                lblRole.on(
-                    'afterrender',
-                    function () {
-                        // eslint-disable-next-line no-undef
-                        document.getElementById('profile_editor_most_privileged_role').innerHTML = data.results.most_privileged_role;
-                    }
-                );
-
-                self.parentWindow.show();
+                user_profile_most_privileged_role.update(data.results.most_privileged_role);
+                btnUpdate.setDisabled(false);
             } else {
                 Ext.MessageBox.alert('My Profile', 'There was a problem retrieving your profile information.');
             }
-        }; // cbProfile
+        }; // processHttpResponse
 
         // ------------------------------------------------
         var optPasswordUpdate;
@@ -290,8 +323,10 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
         // ------------------------------------------------
 
-        var lblRole = new Ext.form.Label({
-            html: '<div style="width: 300px; font-size: 12px; padding-top: 5px">Top Role: <b style="margin-left: 45px"><span id="profile_editor_most_privileged_role"></span></b><br /></div>'
+        user_profile_most_privileged_role = new Ext.form.DisplayField({
+            fieldLabel: 'Top Role',
+            html: 'Loading...',
+            id: 'user_profile_most_privileged_role'
         });
 
         // ------------------------------------------------
@@ -315,7 +350,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
                 user_profile_lastname,
                 user_profile_email_addr,
 
-                lblRole
+                user_profile_most_privileged_role
                 // cmbFieldOfScience
 
             ]
@@ -412,11 +447,12 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         // ------------------------------------------------
 
 
-        var btnUpdate = new Ext.Button({
+        btnUpdate = new Ext.Button({
 
             iconCls: 'user_profile_btn_update_icon',
             cls: 'user_profile_btn_update',
             text: 'Update',
+            disabled: true,
             handler: function () {
                 updateProfile();
             } // handler
@@ -445,6 +481,19 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         });
 
         XDMoD.ProfileGeneralSettings.superclass.initComponent.call(this);
-    } // initComponent
+    }, // initComponent
+
+    handleOpenEvent: function () {
+        this.hasBeenClosed = false;
+        // If a response arrived while the window was opening, process it now.
+        if (this.responseArgs !== null) {
+            this.processHttpResponse();
+        }
+    },
+
+    handleCloseEvent: function () {
+        this.hasBeenClosed = true;
+        this.responseArgs = null;
+    }
 
 }); // XDMoD.ProfileGeneralSettings
