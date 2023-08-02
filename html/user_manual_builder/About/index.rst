@@ -54,11 +54,11 @@ follow.
 About Button
 -----------------
 
-.. missing images 
+.. figure:: ../media/aboutbutton.png
+   :name: about_button
+   :scale: 75%
 
-+-----------------------------------------------------------------------+
-|                                                                       |
-+-----------------------------------------------------------------------+
+   About Button
 
 Clicking the about button will display a page of information about
 XDMoD.
@@ -66,9 +66,11 @@ XDMoD.
 Contact Button
 -------------------
 
-+-----------------------------------------------------------------------+
-|                                                                       |
-+-----------------------------------------------------------------------+
+.. figure:: ../media/contactusbutton.png
+   :name: contact_us_button
+   :scale: 75%
+
+   Contact Us Button
 
 Selecting the contact button will bring up a window that allows the user
 to send a message to the XDMoD team. The user must fill in his name,
@@ -82,19 +84,22 @@ email address and his message.
 Help Menu
 --------------
 
-.. figure:: ../media/image134.png
+.. figure:: ../media/helpbutton.png
    :name: about_help_menu
+   :scale: 70%
 
    Help menu
 
 Clicking on the Help menu will provide you with the following options:
-User Manual, FAQ and YouTube Channel (:numref:`about_help_menu`). Clicking on User
+User Manual, FAQ, and View XDMoD User Tour (:numref:`about_help_menu`). Clicking on User
 Manual will direct the user to the XDMoD User Manual (the document you
 are viewing at this very moment). If help is available for the section
 of XDMoD you are currently visiting, the User Manual will automatically
 navigate to the respective section when it loads. Clicking on FAQ will
 take you to a page containing Frequently Asked Questions. Clicking on
-YouTube Channel takes you to the XDMoD YouTube Channel.
+View XDMoD User Tour will bring you to the user tour of common UI elements.
+Go to our `YouTube Channel <https://www.youtube.com/channel/UChm_AbEcBryCdIfebN5Kkrg>`_
+to find more help on navigating the XDMoD interface.
 
 Roadmap
 ------------
