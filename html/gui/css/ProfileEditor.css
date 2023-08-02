@@ -44,6 +44,11 @@
    width: 125px !important;
 }
 
+#user_profile_most_privileged_role {
+    font-weight: bold;
+    padding-left: 3px;
+}
+
 /* ----------------------------- */
 
 .role_manager .lbl_member_status{
