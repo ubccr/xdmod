@@ -19,7 +19,7 @@ expiration_interval = "6 months"
 
 ### Raw Data Request Limit
 
-Requests for raw data are limited to a maximum number of rows per request. This is configured by the `rest_raw_row_limit` setting in the `datawarehouse` section. Note that the `xdmod-data` API is configured to make multiple requests until all rows are obtained, so this limit is transparent to the end user.
+REST requests for raw data are limited to a maximum number of rows per request. This is configured by the `rest_raw_row_limit` setting in the `datawarehouse` section. Note that the `xdmod-data` API is configured to make multiple requests until all rows are obtained, so this limit is transparent to the end user of the framework.
 
 ```ini
 [datawarehouse]
