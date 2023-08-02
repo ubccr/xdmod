@@ -30,7 +30,7 @@ when a user views the Metric Explorer tab and has not created a
 query, visual assistance is provided to guide them in quickly getting                        
 started.                                                                                     
                                                                                              
-.. figure:: ../media/image100.png
+.. figure:: media/image100.png
     :name: xdmodquickstart
 
     XDMoD Help. *The XDMoD Quick Start Guide for the

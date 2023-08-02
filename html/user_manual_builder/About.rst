@@ -6,7 +6,7 @@ buttons that allow the user to set his profile, get more information
 about XDMoD, view the XDMoD Roadmap, contact the XDMoD developers and
 seek help.
 
-.. figure:: ../media/image45.png
+.. figure:: media/image45.png
    :name: about_help_buttons
 
    My Profile, About, Roadmap, Contact and Help functional button
@@ -34,7 +34,7 @@ account password. In order to update your password, click the **Update**
 radio button and specify the new password twice into the fields that
 follow.
 
-.. figure:: ../media/image71.png
+.. figure:: media/image71.png
    :name: my_profile_password_change
 
    Password change window
@@ -46,7 +46,7 @@ follow.
    This tab allows you to choose a specific staff member
    connected to your account to delegate special privileges.
 
-   .. figure:: ../media/image112.png
+   .. figure:: media/image112.png
       :name: my_profile_role_delegation_menu
 
       Role Delegation Menu
@@ -54,7 +54,7 @@ follow.
 About Button
 -----------------
 
-.. figure:: ../media/aboutbutton.png
+.. figure:: media/aboutbutton.png
    :name: about_button
    :scale: 75%
 
@@ -66,7 +66,7 @@ XDMoD.
 Contact Button
 -------------------
 
-.. figure:: ../media/contactusbutton.png
+.. figure:: media/contactusbutton.png
    :name: contact_us_button
    :scale: 75%
 
@@ -76,7 +76,7 @@ Selecting the contact button will bring up a window that allows the user
 to send a message to the XDMoD team. The user must fill in his name,
 email address and his message.
 
-.. figure:: ../media/image79.png
+.. figure:: media/image79.png
    :name: my_profile_contact_window
 
    Contact window
@@ -84,7 +84,7 @@ email address and his message.
 Help Menu
 --------------
 
-.. figure:: ../media/helpbutton.png
+.. figure:: media/helpbutton.png
    :name: about_help_menu
    :scale: 70%
 
@@ -118,17 +118,17 @@ right corner Figure 15-6). Then clicking on any roadmap feature such as
 X-Y plot capacity, will give you access to the Vote box, as shown in
 :numref:`about_roadmap_voting`.
 
-.. figure:: ../media/image19.png
+.. figure:: media/image19.png
    :name: about_roadmap_info
 
    Roadmap information page
 
-.. figure:: ../media/image119.png
+.. figure:: media/image119.png
    :name: about_trello_roadmap
 
    XDMD Roadmap on Trello.com
 
-.. figure:: ../media/image54.png
+.. figure:: media/image54.png
    :name: about_roadmap_voting
 
    Voting for a feature in the XDMD Roadmap on Trello.com

@@ -7,7 +7,7 @@ The Metric Explorer allows you to create complex plots containing
 multiple metrics. It has many point-and-click features so you can easily
 add and filter plotted data and customize plot appearance.
 
-.. figure:: ../media/image82.png
+.. figure:: media/image82.png
    :name: metric_explorer_tab
 
    Metric Explorer
@@ -63,7 +63,7 @@ Managing Charts
    :widths: 50 50 
 
    +-----------------------------------+-----------------------------------------+
-   | .. figure:: ../media/image32.png  | The **Charts** section                  |
+   | .. figure:: media/image32.png     | The **Charts** section                  |
    |    :name: metric_charts_section   | (:numref:`metric_charts_section` a)     |
    |                                   | allows you to manage chart              |
    |                                   | presets. Chart presets are mappings     |
@@ -105,15 +105,15 @@ Managing Charts
    |                                   | charts.                                 |
    +-----------------------------------+-----------------------------------------+
 
-.. |image25| image:: ../media/image117.png
+.. |image25| image:: media/image117.png
    :width: 0.22917in
    :height: 0.20833in
 
-.. |image26| image:: ../media/image109.png
+.. |image26| image:: media/image109.png
    :width: 0.20833in
    :height: 0.20833in
 
-.. |chart_tools| image:: ../media/image32.png
+.. |chart_tools| image:: media/image32.png
 
 .. alternative way of doing tables, but pandoc created the other type of table, and I wanted
    to be consistent
@@ -121,7 +121,7 @@ Managing Charts
 .. list-table
    :widths: 50 50
    
-   * - .. figure:: ../media/image32.png
+   * - .. figure:: media/image32.png
           :name: chart_tools
 
           Charts Tools
@@ -156,7 +156,7 @@ Basic Chart Options
    :widths: 50 50
 
    +-----------------------------------+----------------------------------+
-   | .. figure:: ../media/image92.png  | The **Basic Chart Options**      |
+   | .. figure:: media/image92.png     | The **Basic Chart Options**      |
    |    :name: metric_chart_options    | button can be found at the top   |
    |                                   | right of the chart viewer        |
    |    Chart Options                  | (:numref:`metric_explorer_tab`). |
@@ -206,7 +206,7 @@ opens (:numref:`metric_explorer_plot_rename`) allowing a wide range of changes, 
 adding another metric, drilling downs, and options that alter the
 display format.
 
-.. figure:: ../media/image5.png
+.. figure:: media/image5.png
    :name: metric_explorer_plot_rename
 
    In the Metric Explorer Plots can easily be changed directly by clicking on them.
@@ -214,7 +214,7 @@ display format.
 Managing Data Series 
 -------------------------
 
-.. figure:: ../media/image111.png
+.. figure:: media/image111.png
    :name: metric_explorer_left_panel_add_data
    
    Adding additional data to a chart is made easier 
@@ -223,7 +223,7 @@ Managing Data Series
    of jobs Ended (Selecting CPU Hours Per Job is shown in the upper left
    corner of the window).
 
-.. figure:: ../media/image56.png
+.. figure:: media/image56.png
    :name: metric_explorer_click_add_data
 
    Adding data to the plot is as simple as clicking on the chart.
@@ -250,7 +250,7 @@ more precision. For example, you may be interested in the number of jobs
 run by a particular user at an institution for a particular time frame.
 Using filters allows you to acquire this information.
 
-.. figure:: ../media/image11.png
+.. figure:: media/image11.png
    :name: metric_explorer_data_series_workflow
 
    Data Series workflow of Metric Explorer
@@ -262,7 +262,7 @@ when you click on a data series within the chart viewer. Selecting
 “Drilldown” will display the data analyzed by the chosen dimension or 
 grouping, as described by Section 5.3 (the Chart Viewer) previously.
 
-.. figure:: ../media/image52.png
+.. figure:: media/image52.png
    :name: metric_explorer_dialogue_box
 
    Changing how the data for a given data series is
@@ -270,7 +270,7 @@ grouping, as described by Section 5.3 (the Chart Viewer) previously.
    to bring up a dialogue box.
 
 
-.. figure:: ../media/image129.png
+.. figure:: media/image129.png
    :name: metric_explorer_data_options
 
    Data section of Metric Explorer
@@ -289,7 +289,7 @@ Managing Filters
    :widths: 75 25
 
    +----------------------------------------------+-----------------------+
-   | .. figure:: ../media/image38.png             | As mentioned in the   |
+   | .. figure:: media/image38.png                | As mentioned in the   |
    |    :name: metric_explorer_filters            | previous section,     |
    |                                              | filters allow you to  |
    |    Filters section of Metric Explorer        | focus on a subset of  |
@@ -342,7 +342,7 @@ Managing Filters
    :widths: 75 25
 
    +---------------------------------------------------+--------------------------------+
-   | .. figure:: ../media/image105.png                 | Filters in the                 |
+   | .. figure:: media/image105.png                    | Filters in the                 |
    |    :name: metric_filter_logic                     | Metric Explorer                |
    |                                                   | are applied as                 |
    |    Understanding filter logic                     | follows:                       |

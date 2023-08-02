@@ -9,7 +9,7 @@ regarding that specific analytic. The scatter plots are intended to give
 you a quick view of which analytics need to be investigated more for
 poor efficiency.
 
-.. figure:: ../media/image42.png
+.. figure:: media/image42.png
    :name: efficiency_tab
 
    Efficiency Tab. The efficiency tab shows analytic cards
@@ -22,7 +22,7 @@ on the analytic that you want to learn more about (:numref:`efficiency_interacti
 scatter plots are described in more detail in 
 :numref:`Section %s - Scatter Plot View <scatter_plot_view>`.
 
-.. figure:: ../media/image6.png
+.. figure:: media/image6.png
    :name: efficiency_interactive_scatter_plot
 
    When you click on one of the analytic cards, you will
@@ -81,7 +81,7 @@ statistic plotted on the x-axis and the overall usage plotted on the
 y-axis. :numref:`efficiency_scatter_statistics` shows the analytics and their associated
 efficiency and usage statistics that are plotted in the scatter plots.
 
-.. figure:: ../media/image102.png
+.. figure:: media/image102.png
    :name: efficiency_scatter_plot_view
 
    Scatter Plot View. This view displays a larger scatter
@@ -127,7 +127,7 @@ regard to that analytic. A tooltip appears (:numref:`efficiency_tooltip`) when y
 mouse over a point to show the user name (if you have access), the
 efficiency statistic value, and the usage statistic value.
 
-.. figure:: ../media/image20.png
+.. figure:: media/image20.png
    :name: efficiency_tooltip
 
    A tooltip giving information
@@ -146,7 +146,7 @@ When you drill down, you will be presented with a histogram chart
 (:numref:`efficiency_histogram_2`) which is described in 
 :numref:`Section %s - Histogram View <histogram_view>`.
 
-.. figure:: ../media/image130.png
+.. figure:: media/image130.png
    :name: efficiency_histogram_1
 
    Clicking on a point in the scatter plot that you are
@@ -160,7 +160,7 @@ The main differences between the views are
 the markers used on the scatter plot and the ability to drill down and
 learn more about a user’s jobs. The markers are shown in :numref:`efficiency_user_markers`.
 
-.. figure:: ../media/image2.png
+.. figure:: media/image2.png
    :name: efficiency_user_markers
 
    Different markers used to indicate users on the scatter plot.
@@ -209,7 +209,7 @@ specific user’s jobs in relation to the analytic that is being
 investigated. For example, :numref:`efficiency_histogram_2` shows the histogram view for
 the CPU Usage analytic.
 
-.. figure:: ../media/image66.png
+.. figure:: media/image66.png
    :name: efficiency_histogram_2
 
    Histogram view. This view gives a more detailed view of
@@ -235,7 +235,7 @@ each of the bins, you can click on any of the bars in the plot that have
 data in them. Clicking on them will bring up a window that lists all
 jobs that were grouped in the category that you are viewing (:numref:`efficiency_histogram_bin`).
 
-.. figure:: ../media/image3.png
+.. figure:: media/image3.png
    :name: efficiency_histogram_bin
 
    Clicking on a bin in the histogram plot will bring up a
@@ -255,7 +255,7 @@ Viewer (:numref:`efficiency_job_viewer`). When you click on a job, you will be
 redirected to the Job Viewer tab with that job showing. This will
 provide you with more details about the job.
 
-.. figure:: ../media/image25.png
+.. figure:: media/image25.png
    :name: efficiency_job_viewer
 
    Clicking on a row in the job list table will take you
@@ -266,7 +266,7 @@ provide you with more details about the job.
 Filtering Charts 
 -------------------------------
 
-.. figure:: ../media/image34.png
+.. figure:: media/image34.png
    :name: efficiency_filter_menu
 
    Filter Menu.** Select filters you want to apply to the
@@ -288,7 +288,7 @@ Filters button in the top of the filter menu to apply those filters to
 the chart that you are looking at. The chart will reload and filters
 that have applied will be listed in the subtitle (:numref:`effiency_chart_filters`).
 
-.. figure:: ../media/image74.png
+.. figure:: media/image74.png
    :name: effiency_chart_filters
 
    Filters that have applied to the chart will be listed
@@ -310,7 +310,7 @@ the top of the filter menu.
 Selecting Duration of Charts 
 -------------------------------------------
 
-.. figure:: ../media/image21.png
+.. figure:: media/image21.png
    :name: efficiency_duration_selection_toolbar
 
    Duration Selection Toolbar.** Use this toolbar
@@ -334,7 +334,7 @@ analytic card to navigate to the scatter plot view. For the scatter plot
 view, you click on a point on the chart to move to the drilldown view
 (this is only true for users that you have access to view their jobs).
 
-.. figure:: ../media/image93.png
+.. figure:: media/image93.png
    :name: efficiency_navigation_toolbar
 
    Navigation Toolbar. Use the navigation toolbar to

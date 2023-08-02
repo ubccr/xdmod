@@ -5,14 +5,14 @@ Summary Tab
 
 .. only:: XSEDE
 
-   .. figure:: ../media/image65.png
+   .. figure:: media/image65.png
       :name: xsede_summary_tab
 
       Summary Tab
 
 .. only:: Open
    
-   .. figure:: ../media/image63.png
+   .. figure:: media/image63.png
       :name: open_summary_tab
 
       Summary Tab
@@ -57,13 +57,13 @@ summary content tailored to specific roles (:numref:`summary_portlet_tools`).
    :widths: 20 80
 
    +----------------------------------+---------------------------------------------------------------+
-   | .. figure:: ../media/image48.png | From left to right,                                           |
+   | .. figure:: media/image48.png    | From left to right,                                           |
    |    :name: summary_portlet_tools  | this toolbar provides a button for collapsing the portlet, a  |
    |                                  | button to configure the chart, and a button that when hovered |
    |    Summary Portlet Tools         | over will present a tooltip to describe the data in the       |
    |                                  | chart.                                                        |
    +----------------------------------+---------------------------------------------------------------+
 
-.. |image23| image:: ../media/image48.png
+.. |image23| image:: media/image48.png
    :width: 0.67708in
    :height: 0.30208in

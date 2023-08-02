@@ -12,7 +12,7 @@ can be thought of as a “report card”, reflecting the level of
 consistency in which each service provider is contributing information
 relevant to ACCESS from a “job level” as well as “resource level”.
 
-.. figure:: ../media/image70.png
+.. figure:: media/image70.png
    :alt: Compliance tab.png
    :name: compliance_tab_page
 
@@ -22,7 +22,7 @@ relevant to ACCESS from a “job level” as well as “resource level”.
    :widths: 40 60
 
    +-----------------------------------+---------------------------------------+
-   | .. figure:: ../media/image126.png | Under the Compliance tab,             |
+   | .. figure:: media/image126.png    | Under the Compliance tab,             |
    |    :name: compliance_requirements | requirements are displayed in the     |
    |                                   | left-most column.                     |
    |    Requirements Listing in the    |                                       |
@@ -54,12 +54,12 @@ relevant to ACCESS from a “job level” as well as “resource level”.
    |                                   | found by hovering over the |image57|  |
    |                                   | icon to the right of its name.        |
    |                                   |                                       |
-   |                                   | .. figure:: ../media/image4.png       |
+   |                                   | .. figure:: media/image4.png          |
    |                                   |    :width: 3.70833in                  |
    |                                   |    :height: 0.54167in                 |
    +-----------------------------------+---------------------------------------+
 
-.. |image57| image:: ../media/image30.png
+.. |image57| image:: media/image30.png
    :width: 0.19792in
    :height: 0.22917in
 
@@ -70,7 +70,7 @@ allocation service are analyzed on a daily basis. The first row
 immediately under the **Job Level** header reflects this raw job record
 count.
 
-.. figure:: ../media/image81.png
+.. figure:: media/image81.png
    :name: compliance_job_record_count
 
    Job Record count as determined from the XDcDB
@@ -100,7 +100,7 @@ To view more details about a particular compliance value, simply click
 on the cell of interest. As a result, the **Description** section at the
 bottom will provide more information.
 
-.. figure:: ../media/image121.png
+.. figure:: media/image121.png
    :name: compliance_description
 
    Description associated with a cell in the Compliance grid
@@ -120,7 +120,7 @@ Compliance Report**. As a result, a new report will be made available to
 you, already configured for monthly delivery to the email address
 associated with your XDMoD account.
 
-.. figure:: ../media/image24.png
+.. figure:: media/image24.png
    :name: compliance_create_scheduled_report
 
    Creating a compliance report to be delivered on a monthly basis

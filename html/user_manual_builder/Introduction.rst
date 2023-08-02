@@ -127,7 +127,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
 
 .. only:: XSEDE
 
-   .. figure:: ../media/image58.png
+   .. figure:: media/image58.png
       :name: xsede_sum_tab
 
       **XDMoD Summary Tab**. Summary tab contains a series of user configurable summary 
@@ -135,7 +135,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
 
 .. only:: Open
 
-   .. figure:: ../media/image88.png
+   .. figure:: media/image88.png
       :name: open_sum_tab
 
       **XDMoD Summary Tab**. Summary tab contains a series of user
@@ -197,7 +197,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
 
 .. only:: XSEDE
 
-   .. figure:: ../media/image36.png
+   .. figure:: media/image36.png
       :alt: Usage_Overview.png
       :name: xsede_usage_tab
                              
@@ -206,7 +206,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
 
 .. only:: Open
 
-   .. figure:: ../media/image135.png
+   .. figure:: media/image135.png
       :name: open_usage_tab
       
       **XDMoD Usage Tab**. A Usage plot showing the total CPU hours
@@ -245,7 +245,7 @@ and flexible interface to facilitate analysis of the data.
 
 .. only:: XSEDE
 
-   .. figure:: ../media/image9.png
+   .. figure:: media/image9.png
       :alt: Metric Explorer_Overview.png
       :name: xsede_metric_explorer_1
 
@@ -256,7 +256,7 @@ and flexible interface to facilitate analysis of the data.
       (weighted by each job's total SU’s charged) is shown on the
       secondary axis (right-hand axis).*
 
-   .. figure:: ../media/image118.png
+   .. figure:: media/image118.png
       :alt: Metric Explorer_Overview2.png
       :name: xsede_metric_explorer_2
 
@@ -272,7 +272,7 @@ and flexible interface to facilitate analysis of the data.
 
 .. only:: Open
 
-   .. figure:: ../media/image103.png
+   .. figure:: media/image103.png
       :name: open_metric_explorer_1
       :alt: Open Metric Explorer_Overview3.png
       
@@ -281,7 +281,7 @@ and flexible interface to facilitate analysis of the data.
       jobs running is shown on the primary axis (left-hand axis) and
       Max core count is shown on the secondary axis (right-hand axis).
 
-   .. figure:: ../media/image15.png
+   .. figure:: media/image15.png
       :name: open_metric_explorer_2
       
       **The XDMoD Metric Explorer Tab.** A Metric Explorer generated
@@ -307,7 +307,7 @@ resources, and a range of job sizes for which to view performance. It
 allows users to directly compare application kernel performance across
 multiple :only:`<XSEDE>ACCESS` resources.
 
-.. figure:: ../media/image40.png
+.. figure:: media/image40.png
    :alt: app_kernel.png
    :name: app_kernels_tab
 
@@ -325,7 +325,7 @@ user specified interval (daily, weekly, quarterly, etc) and
 automatically sent to them via email at the specified time interval,
 without the need to log into the portal.
 
-.. figure:: ../media/image120.png
+.. figure:: media/image120.png
    :alt: Report Generator_Overview.png
    :name: report_generator_tab
    
@@ -344,7 +344,7 @@ data for the job. If a job or jobs fitting a given set of criteria are
 desired the Advanced search function can be used to locate all jobs
 fitting the specified criteria.
 
-.. figure:: ../media/image123.png
+.. figure:: media/image123.png
    :alt: Job_Viewer.png
    :name: intro_job_viewer_tab
 
@@ -371,7 +371,7 @@ fitting the specified criteria.
    generation of these queries have resulted in requirements to improve the
    quality of data collected by the ACCESS allocations process.
 
-   .. figure:: ../media/image50.png
+   .. figure:: media/image50.png
       :alt: Custom Queries_Overview.png
       :name: custom_query_tab
    

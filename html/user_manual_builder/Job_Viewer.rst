@@ -20,7 +20,7 @@ collection software that is used by the resource provider. <XSEDE>Most
 of the ACCESS resource providers use tacc_stats software to collect
 performance information.</XSEDE>
 
-.. figure:: ../media/image95.png
+.. figure:: media/image95.png
    :name: job_viewer_tab
 
    Job Viewer Tab
@@ -49,7 +49,7 @@ choose a descriptive name for the job search in the Search Name entry
 box and then click Save Results to add the job to the search history for
 viewing.
 
-.. figure:: ../media/image96.png
+.. figure:: media/image96.png
    :name: job_viewer_search_window
 
    Search Window
@@ -71,7 +71,7 @@ displayed. You can select specific jobs that you would like to view by
 checking the box next to the job ID, (5) then click **Save Results** (6)
 to add the selected jobs to the search history for viewing.
 
-.. figure:: ../media/image61.png
+.. figure:: media/image61.png
    :name: job_viewer_advanced_search
 
    Using the Advanced Search Form in the Search dialog.
@@ -87,7 +87,7 @@ selected jobs for each search and the list of data available for each
 job. Selecting a data node for a job will result in the job data loading
 in the main viewer pane.
 
-.. figure:: ../media/image57.png
+.. figure:: media/image57.png
    :name: job_viewer_search_history_tree
 
    Job viewer search history tree. The tree shows every
@@ -211,7 +211,7 @@ ability to drill down on the jobs that run concurrently by clicking on a
 peer’s data. Note: For jobs with many peers, it is recommended to hover over
 the start or end of a job due to tooltip displacement (see :numref:`peer_charts`).
 
-.. figure:: ../media/peercharts.png
+.. figure:: media/peercharts.png
    :name: peer_charts
 
    Peer Charts
@@ -262,12 +262,12 @@ metric shows the compute node-level average value and it is possible to
 drill down to the individual NUMA nodes (for supported collection
 software).
 
-.. figure:: ../media/image73.png
+.. figure:: media/image73.png
    :name: job_viewer_information
 
    Job Viewer Information
 
-.. figure:: ../media/image72.png
+.. figure:: media/image72.png
    :name: job_viewer_chart_vs_time
 
    Chart vs Time
