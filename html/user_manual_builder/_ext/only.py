@@ -6,7 +6,7 @@ from docutils.parsers.rst.roles import set_classes
 from sphinx import addnodes
 from sphinx.application import Sphinx
 
-def extract_tag(text: str):
+def extract_tag(text):
     """
     Extracts out a tag string from string in format `<tag-name>rest of text`
     """
@@ -25,7 +25,7 @@ def extract_tag(text: str):
     text = text[:tag_start] + text[tag_end:]
     return tag, text
 
-def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options={}, content=None):
+def only_role(name, rawtext, text, lineno, inliner, options={}, content=None):
     """
     Creates a Sphinx extension that can filter out text based on the entered tags
     Implemented because Sphinx only has a block directive of filtering out text, and not inline, so this satisfies that
@@ -69,7 +69,7 @@ def only_role(name: str, rawtext: str, text: str, lineno: int, inliner, options=
         node += nodes.inline(rawtext, curr, **options)
     return [node], []
 
-def setup(app: Sphinx):
+def setup(app):
     """Install the plugin.
 
     :param app: Sphinx application context.
