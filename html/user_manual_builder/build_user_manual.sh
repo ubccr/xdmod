@@ -74,6 +74,6 @@ else
     sed -i "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
 fi
 
-sphinx-build -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
+sphinx-build -E -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
 
 rm -rf $DEST_DIR/_sources/
