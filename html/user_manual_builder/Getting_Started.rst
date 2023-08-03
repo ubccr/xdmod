@@ -11,7 +11,7 @@ Logging In
    CILogon where you can provide your ACCESS credentials to log in to
    XDMoD.
 
-   .. figure:: ../media/image7.png
+   .. figure:: media/image7.png
       :name: xsede_login
    
       ACCESS XDMoD Login
@@ -30,7 +30,7 @@ Logging In
    login panel for an Open XDMoD instance configured to use local login is
    shown in :numref:`open_login_2`.
 
-   .. figure:: ../media/image76.png
+   .. figure:: media/image76.png
       :name: open_login_1
 
       Example Login dialog for an Open XDMoD instance
@@ -40,7 +40,7 @@ Logging In
       login page where users can use their university-wide login credentials
       to authenticate.
 
-   .. figure:: ../media/image83.png
+   .. figure:: media/image83.png
       :name: open_login_2
 
       Example Login dialog for an Open XDMoD instance
@@ -57,7 +57,7 @@ buttons on a common toolbar at the upper right region of the page
 
 .. only:: XSEDE
 
-   .. figure:: ../media/image13.png
+   .. figure:: media/image13.png
       :alt: XSEDE_tabs.png        
       :name: xsede_tabs    
                                  
@@ -65,7 +65,7 @@ buttons on a common toolbar at the upper right region of the page
 
 .. only:: Open
 
-   .. figure:: ../media/image104.png
+   .. figure:: media/image104.png
       :name: open_tabs
 
       XDMoD Portal tabs and common toolbar. For description see section 2.0

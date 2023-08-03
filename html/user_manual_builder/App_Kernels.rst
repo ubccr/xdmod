@@ -3,7 +3,7 @@
 App Kernels
 ==============
 
-.. figure:: ../media/image87.png
+.. figure:: media/image87.png
    :name: app_kernels
 
    Application Kernels
@@ -46,23 +46,23 @@ specific the set of data displayed. The available node types are:
 When navigating the App Kernels Viewer subtab, targeting solely a
 specific number of node configuration will yield a comprehensive plot:
 
-.. |image30| image:: ../media/image69.png
+.. |image30| image:: media/image69.png
    :width: 0.16667in
    :height: 0.16667in
 
-.. |image31| image:: ../media/image84.png
+.. |image31| image:: media/image84.png
    :width: 0.16667in
    :height: 0.16667in
 
-.. |image32| image:: ../media/image101.png
+.. |image32| image:: media/image101.png
    :width: 0.16667in
    :height: 0.16667in
 
-.. |image33| image:: ../media/image110.png
+.. |image33| image:: media/image110.png
    :width: 0.16667in
    :height: 0.16667in
 
-.. figure:: ../media/image47.png
+.. figure:: media/image47.png
    :name: app_kernel_viewer_plot
 
    Application Kernel Viewer Plot
@@ -110,7 +110,7 @@ The following table helps to analyze the plot more effectively:
 App Kernel Explorer
 ------------------------
 
-.. figure:: ../media/image16.png
+.. figure:: media/image16.png
    :alt: App kernel explorer_no Color.png
    :name: app_kernel_explorer
 
@@ -135,7 +135,7 @@ Alternatively, all possible values for either Metrics, Resources or
 Processing Units can be toggled on or off using the global selection
 boxes as shown in :numref:`app_kernel_explorer_reset`.
 
-.. figure:: ../media/image89.png
+.. figure:: media/image89.png
    :name: app_kernel_explorer_reset
 
    Reset buttons for App Kernel Explorer sections
@@ -161,7 +161,7 @@ There is also an option to send reports covering specific and
 customizable date ranges via email; this can be found directly below the
 first section.
 
-.. figure:: ../media/image68.png
+.. figure:: media/image68.png
    :alt: Reports_App_kernels.png
    :name: app_kernel_reports_subtab
 

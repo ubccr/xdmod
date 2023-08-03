@@ -10,7 +10,7 @@ Here we describe some common XDMoD user interface elements.
 Duration Selection Toolbar
 ------------------------------
 
-.. figure:: ../media/image133.png
+.. figure:: media/image133.png
    :name: durationtoolbar
 
    Duration Selection Toolbar
@@ -26,7 +26,7 @@ the data and in turn refreshing the screen.
    :widths: 50 50
 
    +-----------------------------------+----------------------------------+
-   | .. figure:: ../media/image115.png | When you interact with the       |
+   | .. figure:: media/image115.png    | When you interact with the       |
    |    :name: start_end_toolbar       | **Start** and **End** date       |
    |                                   | fields, the **Refresh** button   |
    |    Start and end toolbar          | will automatically highlight to  |
@@ -42,7 +42,7 @@ the data and in turn refreshing the screen.
    :widths: 50 50
 
    +-----------------------------------+------------------------------------------+
-   | .. figure:: ../media/image106.png | The user can choose from a series of     |
+   | .. figure:: media/image106.png    | The user can choose from a series of     |
    |    :name: common_preset_time      | commonly selected time frames including  |
    |                                   | 7, 30, and 90 days from the present or   |
    |    |image5| Preset time frames    | 1, 2, 3, 5, and 10 years from the        |
@@ -65,13 +65,13 @@ the data and in turn refreshing the screen.
    |                                   | is not supported.                        |
    +-----------------------------------+------------------------------------------+
 
-.. |image5| image:: ../media/image37.png
+.. |image5| image:: media/image37.png
 
 .. table::
    :widths: 30 70
 
    +---------------------------------+---------------------------------------------------+
-   | .. figure:: ../media/image8.png | The user may choose to click on the |image8|      |
+   | .. figure:: media/image8.png    | The user may choose to click on the |image8|      |
    |    :name: custom_time_frames    | button, located to the right of the start and end |
    |                                 | date choosers, to get the interactive date        |
    |    |image7| Custom time         | chooser, shown on the left, for selecting a date  |
@@ -88,14 +88,14 @@ the data and in turn refreshing the screen.
    |                                 | chooser will not change.                          |
    +---------------------------------+---------------------------------------------------+
 
-.. |image7| image:: ../media/image1.png
+.. |image7| image:: media/image1.png
 
-.. |image8| image:: ../media/image1.png
+.. |image8| image:: media/image1.png
 
 Chart Configuration Toolbar
 -------------------------------
 
-.. figure:: ../media/image53.png
+.. figure:: media/image53.png
    :name: chart_config_toolbar
 
    Chart Configuration Toolbar
@@ -105,7 +105,7 @@ user to customize the appearance of individual charts (and their
 datasheet view), export the data in a number of output formats, and make
 a chart available to the :ref:`Report Generator <report_generator>` 
 
-.. figure:: ../media/image127.png
+.. figure:: media/image127.png
    :name: dataset_filter
 
    Dataset Filter
@@ -126,7 +126,7 @@ give more details on the use of the filters.
    :widths: 30 70
 
    +----------------------------------+---------------------------------------------------+
-   | .. figure:: ../media/image18.png | When the user clicks on the Display button in the |
+   | .. figure:: media/image18.png    | When the user clicks on the Display button in the |
    |    :name: common_display_menu    | Usage tab, they are presented with a menu for     |
    |                                  | customizing the display of the current chart or   |
    |    |image10| Display menu.       | data. Options include:                            |
@@ -201,13 +201,13 @@ give more details on the use of the filters.
    |                                  |                                                   |
    +----------------------------------+---------------------------------------------------+
 
-.. |image10| image:: ../media/image12.png
+.. |image10| image:: media/image12.png
 
 .. table::
    :widths: 50 50
 
    +----------------------------------+---------------------------------------+
-   | .. figure:: ../media/image33.png | Allows the user to download a chart   |
+   | .. figure:: media/image33.png    | Allows the user to download a chart   |
    |    :name: common_export_menu     | image in a number of formats or to    |
    |                                  | export the underlying data. When the  |
    |    |image11| Export menu         | user presses the Export button they   |
@@ -251,13 +251,13 @@ give more details on the use of the filters.
    |                                  | and the font size in points.          |
    +----------------------------------+---------------------------------------+
 
-.. |image11| image:: ../media/image125.png
+.. |image11| image:: media/image125.png
 
 .. table:: 
    :widths: 50 50
 
    +-----------------------------------+----------------------------------------------------+
-   | .. figure:: ../media/image108.png | Selecting the Available for Report check box will  |
+   | .. figure:: media/image108.png    | Selecting the Available for Report check box will  |
    |    :name: common_available_report | cause the chart to be added to the list of         |
    |                                   | available charts for the Report Generator.         |
    |    "Available For Report" check   |                                                    |
@@ -273,7 +273,7 @@ Chart Selection Tree
    :widths: 50 50
 
    +----------------------------------+----------------------------------------+
-   | .. figure:: ../media/image14.png | The chart selection tree is displayed  |
+   | .. figure:: media/image14.png    | The chart selection tree is displayed  |
    |    :name: chart_selection_tree   | in the Usage Tab. The tree nodes are   |
    |                                  | grouped by Realm (e.g., Jobs,          |
    |    Chart Selection Tree.         | Allocations, SUPReMM, etc.) and there  |
@@ -308,11 +308,11 @@ Chart Selection Tree
    |                                  |     series.                            |
    +----------------------------------+----------------------------------------+
 
-.. |image13| image:: ../media/image113.png
+.. |image13| image:: media/image113.png
 
-.. |image14| image:: ../media/image67.png
+.. |image14| image:: media/image67.png
 
-.. |image15| image:: ../media/image46.png
+.. |image15| image:: media/image46.png
 
 Selection of a node in the tree can be accomplished by left-clicking the
 node. A triangular icon to the left of the tree node will point to the
@@ -323,7 +323,7 @@ expand it. Selected tree nodes are indicated by a light blue background.
 Collapse All Button |image16|: This will collapse all of the expanded
 nodes in the tree.
 
-.. |image16| image:: ../media/image10.gif
+.. |image16| image:: media/image10.gif
 
 Collapse Selector Tree Button |image17|: This will collapse the Usage
 tab Chart Selection Tree to the left so that it is only visible as a
@@ -331,14 +331,14 @@ thin vertical bar to the left of the screen providing more screen area
 for the display of the selected chart or data sheet. Clicking on the
 button will show the Selector Tree again.
 
-.. |image17| image:: ../media/image90.png
+.. |image17| image:: media/image90.png
 
 Chart Viewer
 ----------------
 
 .. fig 10
 
-.. figure:: ../media/image28.png
+.. figure:: media/image28.png
    :name: chart_viewer
 
    Chart Viewer
@@ -364,7 +364,7 @@ user will be notified via a tooltip.
 
 .. added captions to following two figures
 
-.. figure:: ../media/image35.png
+.. figure:: media/image35.png
    :name: chart_drilldowns
 
    Example of when dilldown is available vs when drilldown is not available
@@ -378,12 +378,12 @@ the timeframe selected). Note that the breadcrumb trail reflects the
 origin of the chart.
 
 
-.. figure:: ../media/image51.png
+.. figure:: media/image51.png
    :name: drilldown_example
 
    Example of adding a drilldown metric
 
-.. figure:: ../media/image22.png
+.. figure:: media/image22.png
    :name: drilldown_chart_example
 
    Example of a drilldown chart
@@ -391,7 +391,7 @@ origin of the chart.
 Chart Viewer Tools
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: ../media/image41.png
+.. figure:: media/image41.png
    :name: chart_viewer_tools
 
    Chart Viewer Tools (Thumbnail Views)

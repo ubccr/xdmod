@@ -1,7 +1,7 @@
 Usage Tab 
 ============
 
-.. figure:: ../media/image131.png
+.. figure:: media/image131.png
    :name: usage_tab
 
    Usage Tab
@@ -11,7 +11,7 @@ XDMoD’s realms. It consists of a chart selection tree on the left, and a
 chart viewer to the right of the page. You can interact with the chart
 selection tree to explore the realms and view individual metric charts.
 
-.. figure:: ../media/image62.png
+.. figure:: media/image62.png
    :name: usage_tab_metric
 
    Usage Tab Metric
@@ -29,7 +29,7 @@ Elements”). For example, you can:
 Note that any selection in the Duration control applies to all charts in
 the Usage tab.
 
-.. figure:: ../media/image122.png
+.. figure:: media/image122.png
    :name: usage_tab_drilldown
 
    Usage Tab Drilldown

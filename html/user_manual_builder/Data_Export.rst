@@ -15,7 +15,7 @@ The Data Export tab appears as shown below with a form used to create
 requests (:numref:`data_export_create_request_panel`) on the left and a list of existing requests
 (:numref:`data_export_status_panel`) on the right.
 
-.. figure:: ../media/image31.png
+.. figure:: media/image31.png
    :name: data_export_tab
 
    Data Export Tab
@@ -29,7 +29,7 @@ exported are displayed below the form. A start date, end date and format
 must be selected. The maximum duration is one year. The export formats
 are CSV and JSON. The JSON export is structured as an array of arrays.
 
-.. figure:: ../media/image23.png
+.. figure:: media/image23.png
    :name: data_export_create_request_panel
 
    Data Export Create Request Panel
@@ -40,7 +40,7 @@ Manage Existing Export Requests
 After submitting a request it will be added to the list in the
 "Submitted" state. The request may be deleted before it is fulfilled.
 
-.. figure:: ../media/image94.png
+.. figure:: media/image94.png
    :name: data_export_status_panel
 
    Data Export Status Panel

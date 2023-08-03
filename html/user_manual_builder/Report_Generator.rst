@@ -11,7 +11,7 @@ region displays any charts you have chosen to make available for
 building a report (see :ref:`common_available_report`
 section).
 
-.. figure:: ../media/image85.png
+.. figure:: media/image85.png
    :alt: report Generator.png
    :name: report_generator_overview
 
@@ -28,14 +28,14 @@ on the filtering and drilldown processes can be viewed in by moving your
 mouse over the information icon to the left the chart title in the chart
 entry as shown in :numref:`report_generator_chart_details`.
 
-.. figure:: ../media/image55.png
+.. figure:: media/image55.png
    :name: report_generator_chart_details
 
    Viewing additional details for a chart entry
 
 The top toolbar serves as the starting point for managing a report.
 
-.. figure:: ../media/image49.png
+.. figure:: media/image49.png
    :name: report_generator_toolbar
 
    Report Generator toolbar
@@ -52,7 +52,7 @@ chosen and assigned to this report.
 *NOTE: Another way to open a report for editing is to double-click on
 one of the entries in* **My Reports**\ *:*
 
-.. figure:: ../media/image75.png
+.. figure:: media/image75.png
    :name: report_generator_edit_report
 
    Editing a report
@@ -78,7 +78,7 @@ Clicking on one entry, followed by holding **shift** while clicking
 another entry results in the selection of both entries along with all
 the entries that fall in between them:
 
-.. figure:: ../media/image59.png
+.. figure:: media/image59.png
    :name: report_generator_select_1
 
    Selecting charts for addition in a report
@@ -88,7 +88,7 @@ Clicking on one entry, followed by holding the control key (or
 individual selections being added (appended) to what is currently
 selected.
 
-.. figure:: ../media/image17.png
+.. figure:: media/image17.png
    :name: report_generator_select_2
 
    Another method to select charts for addition in a report
@@ -100,7 +100,7 @@ a Mac).*
 Whether you choose to create a new report or edit an existing report,
 you will be directed to the **Report Editor**:
 
-.. figure:: ../media/image60.png
+.. figure:: media/image60.png
    :name: report_generator_select_3
 
    Selecting reports and charts via the Select menus
@@ -114,7 +114,7 @@ report and chart grids. In other words, when you click on Invert
 Selection, any items previously selected will become deselected, and
 vice-versa (see :numref:`report_generator_select_2` c).
 
-.. figure:: ../media/image39.png
+.. figure:: media/image39.png
    :name: report_generator_editor
 
    Report editor
@@ -123,7 +123,7 @@ vice-versa (see :numref:`report_generator_select_2` c).
    :widths: 40 60
 
    +-----------------------------------+-----------------------------------------+
-   | .. figure:: ../media/image98.png  | **General Information** for this report |
+   | .. figure:: media/image98.png     | **General Information** for this report |
    |    :name: report_info             | is displayed on the left side of the    |
    |                                   | Report Editor. The only required field  |
    |    Information to be entered to   | is the report File Name, which must be  |
@@ -161,7 +161,7 @@ of the Report Editor dictates the order in which they will appear in the
 report. Re-ordering of charts in the report can be accomplished by
 simply dragging the charts into the desired order:
 
-.. figure:: ../media/image86.png
+.. figure:: media/image86.png
    :name: report_generator_reordering
 
    Reordering charts in a report
@@ -176,11 +176,11 @@ the left of the time frame in the respective chart entry. As a result,
 you will be presented with a dialog for conveniently updating the
 timeframe to your liking.
 
-.. |image43| image:: ../media/image44.png
+.. |image43| image:: media/image44.png
    :width: 0.1875in
    :height: 0.19792in
 
-.. figure:: ../media/image26.png
+.. figure:: media/image26.png
    :name: report_generator_change_timeframe
 
    Changing the timeframe of a chart entry in the report editor
@@ -192,7 +192,7 @@ Edit Chart Timeframe dialog as mentioned above. When you click on
 Update, each of the charts you had previously selected will update to
 reflect the new timeframe you specified.
 
-.. figure:: ../media/image107.png
+.. figure:: media/image107.png
    :name: report_generator_edit_timeframe
 
 Previewing a Report
@@ -203,7 +203,7 @@ current state of the report by first saving and then pressing the
 **Preview** button (previewing reports is also possible from the **My
 Reports** view):
 
-.. figure:: ../media/image114.png
+.. figure:: media/image114.png
    :name: report_generator_preview
 
    Previewing a report
@@ -219,7 +219,7 @@ or download the resulting document, whereas the **Send Now** feature
 will email the constructed report to the address associated with your
 profile (see the :ref:`my_profile_button` section).
 
-.. figure:: ../media/image99.png
+.. figure:: media/image99.png
    :name: report_generator_send_download
 
    Sending a report with Send Now or Download
@@ -237,7 +237,7 @@ navigating XDMoD and hand-selecting a series of charts.
    :widths: 50 50
 
    +-----------------------------------------+----------------------------+
-   | .. figure:: ../media/image27.png        | At this moment, report     |
+   | .. figure:: media/image27.png           | At this moment, report     |
    |    :name: report_creation               | template functionality is  |
    |                                         | only available to          |
    |    Creating reports from templates      | center-based roles (e.g.   |

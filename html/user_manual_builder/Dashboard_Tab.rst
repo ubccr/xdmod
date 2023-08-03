@@ -103,7 +103,7 @@ the date range of the data. Clicking the question mark icon on the right
 of the title bar will show a help window that explains how to use the
 component.
 
-.. figure:: ../media/image97.png
+.. figure:: media/image97.png
    :name: dashboard_title_bar
 
    Example title bar of a dashboard component. Typically
@@ -120,14 +120,14 @@ Settings tab of the “My Profile” dialog (:numref:`dashboard_reset_default`).
 dialog is accessed via the “My Profile” button on the top left of the
 XDMoD portal. Full-width dashboard components cannot be moved.
 
-.. figure:: ../media/image80.png
+.. figure:: media/image80.png
    :name: dashboard_rearrange_layout
 
    Example of rearranging the layout of half-width
    dashboard components. A component can be moved by selecting the title
    bar and dragging into the new position.
 
-.. figure:: ../media/image132.png
+.. figure:: media/image132.png
    :name: dashboard_reset_default
    :width: 66%
 
@@ -142,7 +142,7 @@ the chart component is shown in :numref:`chart_component`. The time range of the
 chart is shown in the title bar. The wheel icon on the top right of the
 component will open the chart in the Metric Explorer.
 
-.. figure:: ../media/image124.png
+.. figure:: media/image124.png
    :name: chart_component
 
    Example of a chart component. The time range of the
@@ -178,7 +178,7 @@ type (chart or report), and last modification date. By default, the list
 is sorted by the last modification date in descending order. The user
 can filter the list by name by using the search box.
 
-.. figure:: ../media/image136.png
+.. figure:: media/image136.png
    :name: saved_charts_and_reports
 
    **Shows the saved charts and reports components.**
@@ -197,7 +197,7 @@ The user can control the time period of the charts by using the time
 range menu. The user can also download the charts as a PDF by clicking
 the Download Report button.
 
-.. figure:: ../media/image77.png
+.. figure:: media/image77.png
    :name: center_summary_report
 
    The center summary report shows thumbnails of charts
@@ -211,7 +211,7 @@ AppKernels module. The component shows a summary of the results of
 recent application kernel jobs. :numref:`center_report_card` shows an annotated
 example of the center report card.
 
-.. figure:: ../media/image128.png
+.. figure:: media/image128.png
    :name: center_report_card
 
    An annotated example of the Center Report
@@ -232,7 +232,7 @@ role based access controls. A summary of the data available is shown in
 below. The “Filter by Person” widget is not displayed for
 the user role since it is superfluous.
 
-.. figure:: ../media/image64.png
+.. figure:: media/image64.png
    :name: jobs_component
 
    Annotated example of the Jobs component. The User role
@@ -308,7 +308,7 @@ Principal Investigator role does not have a toolbar that switches the
 data grouping between user and PI. The User role example is shown in
 :numref:`job_efficiency_2`.
 
-.. figure:: ../media/image91.png
+.. figure:: media/image91.png
    :name: job_efficiency_1
 
    Annotated example of the Job Efficiency component. The
@@ -316,7 +316,7 @@ data grouping between user and PI. The User role example is shown in
    categorization. Click on a row in the table to open a window that lists
    the jobs that were classified as inefficient.
 
-.. figure:: ../media/image29.png
+.. figure:: media/image29.png
    :name: job_efficiency_2
 
    Annotated example of the Job Efficiency component for
@@ -333,7 +333,7 @@ data grouping between user and PI. The User role example is shown in
    example of the Allocations Component is shown in :numref:`allocations_component` below.
    Clicking on the component will load the Allocations Tab
 
-   .. figure:: ../media/image116.png
+   .. figure:: media/image116.png
       :name: allocations_component
 
       Allocations Component
