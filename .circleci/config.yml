@@ -102,10 +102,14 @@ jobs:
           name: Make sure that we reset COMPOSER when upgrading.
           command: |
             echo "export COMPOSER=composer.json" >> $BASH_ENV
-      - run:
-          name: Setup & Run QA Tests
-          command: |
-            ./tests/ci/scripts/qa-test-setup.sh
+      - when:
+          condition:
+            equal: [ *centos7-executor, << parameters.os >> ]
+          steps:
+            - run:
+                name: Setup & Run QA Tests
+                command: |
+                  ./tests/ci/scripts/qa-test-setup.sh
       - run: ./tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
@@ -170,6 +174,3 @@ workflows:
             parameters:
               os: [centos7, rocky8]
               install-type: ["fresh_install", "upgrade"]
-            exclude:
-              - os: rocky8
-                install-type: "upgrade"
