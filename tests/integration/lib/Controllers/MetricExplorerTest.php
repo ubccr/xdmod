@@ -212,6 +212,21 @@ class MetricExplorerTest extends BaseTest
         $params['limit'] = 10;
         $tests[] = array($params, 712, true);
 
+        $params['start'] = 40;
+        $params['limit'] = 40;
+
+        $invalid_filter =  array(
+            'data' => array(
+                array(
+                    'checked' => true,
+                    'value_id' => 'Timmy O\'Tool',
+                    'dimension_id' => 'person'
+                ),
+            ),
+        );
+        $params['global_filters'] = urlencode(json_encode($invalid_filter));
+        $tests[] = array($params, 0, false);
+
         return $tests;
     }
 
