@@ -1,5 +1,10 @@
 # Open XDMoD Change Log
 
+## 2023-08-04 v10.0.3
+- Bug Fixes
+    - General
+        - Fix handling of filters where the filter string has a quote character in it ([\#1749](https://github.com/ubccr/xdmod/pull/1749))
+
 ## 2023-04-03 v10.0.2
 - Bug Fixes
     -  General
