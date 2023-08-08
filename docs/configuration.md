@@ -304,6 +304,7 @@ Primary configuration file. Contains:
 - Header logo (see [Logo Image Guide](logo-image.html) for details)
 - Database configuration
 - Integration settings (see [Integrations](integrations.html) for details)
+- [Data Analytics Framework](data-analytics-framework.html) settings
 
 ### datawarehouse.json
 
