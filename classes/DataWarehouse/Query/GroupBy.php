@@ -182,19 +182,23 @@ abstract class GroupBy extends \Common\Identity
     }
     public function pullQueryParameters2(&$request, $filter_query, $id_column)
     {
+        $db = \CCR\DB::factory('datawarehouse');
         $parameters = array();
         $filterItems = array();
         if (isset($request[$this->getName().'_filter']) && $request[$this->getName().'_filter'] != '') {
             $filterString = $request[$this->getName().'_filter'];
-            $filterItems = array_merge($filterItems, explode(',', $filterString));
+            $items = explode(',', $filterString);
+            foreach ($items as $filterItem) {
+                $filterItems[] = $db->quote($filterItem);
+            }
         }
 
         if (isset($request[$this->getName()])) {
-            $filterItems[] = $request[$this->getName()];
+            $filterItems[] = $db->quote($request[$this->getName()]);
         }
         $filterCount = count($filterItems);
         if ($filterCount > 0) {
-            $fieldIdQuery = str_replace('_filter_', "'".implode("','", $filterItems)."'", $filter_query);
+            $fieldIdQuery = str_replace('_filter_', implode(",", $filterItems), $filter_query);
 
             $parameters[] = new \DataWarehouse\Query\Model\Parameter($id_column, 'in', "($fieldIdQuery)");
         }
@@ -203,20 +207,24 @@ abstract class GroupBy extends \Common\Identity
     }
     public function pullQueryParameterDescriptions2(&$request, $filter_query)
     {
+        $db = \CCR\DB::factory('datawarehouse');
         $parameters = array();
         $filterItems = array();
         if (isset($request[$this->getName().'_filter']) && $request[$this->getName().'_filter'] != '') {
             $filterString = $request[$this->getName().'_filter'];
-            $filterItems = array_merge($filterItems, explode(',', $filterString));
+            $items = explode(',', $filterString);
+            foreach ($items as $filterItem) {
+                $filterItems[] = $db->quote($filterItem);
+            }
         }
 
         if (isset($request[$this->getName()])) {
-            $filterItems[] = $request[$this->getName()];
+            $filterItems[] = $db->quote($request[$this->getName()]);
         }
         $filterCount = count($filterItems);
 
         if ($filterCount > 0) {
-            $fieldLabelQuery = str_replace('_filter_', "'".implode("','", $filterItems)."'", $filter_query);
+            $fieldLabelQuery = str_replace('_filter_', implode(',', $filterItems), $filter_query);
             $fieldLabelResults = \DataWarehouse::connect()->query($fieldLabelQuery);
 
             $label = $this->getLabel();
