@@ -71,7 +71,7 @@ SQL;
 
         if (count($row) === 0) {
             $this->logger->debug('User (%s) does not have an active token.');
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.')
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
 
         $expectedToken = $row[0]['token'];
