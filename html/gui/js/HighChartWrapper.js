@@ -2,6 +2,34 @@
 
 Ext.namespace('XDMoD.utils');
 
+XDMoD.utils.extend = function extend(out, ...arguments_) {
+  if (!out) {
+    return {};
+  }
+
+  for (const obj of arguments_) {
+    if (!obj) {
+      continue;
+    }
+
+    for (const [key, value] of Object.entries(obj)) {
+      switch (Object.prototype.toString.call(value)) {
+        case '[object Object]':
+          out[key] = out[key] || {};
+          out[key] = XDMoD.utils.extend(out[key], value);
+          break;
+        case '[object Array]':
+          out[key] = XDMoD.utils.extend(new Array(value.length), value);
+          break;
+        default:
+          out[key] = value;
+      }
+    }
+  }
+
+  return out;
+};
+
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {
         chart: {
@@ -168,7 +196,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
     }
 
-    jQuery.extend(true, baseChartOptions, chartOptions);
+    XDMoD.utils.extend(true, baseChartOptions, chartOptions);
 
     if (extraHandlers) {
         if (extraHandlers.loadHandlers) {
