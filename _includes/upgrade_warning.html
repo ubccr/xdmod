@@ -1,0 +1,24 @@
+<div class="patch-info">
+<h2><img src="../assets/images/exclamation_ak.png" alt="" /> Warning</h2>
+<p>
+There is a known security issue with the validation of filter parameters in Open XDMoD {{ page.version }}. We
+highly recommend upgrading to <a href="/{{site.latest_version}}/">Open XDMoD {{site.latest_sw_version}}</a>.
+</p>
+
+<p>
+If upgrading to the latest supported version is not an option, then your Open
+XDMoD instance should be patched as follows:
+</p>
+
+<h4>RPM installs</h4>
+<ol>
+	<li>Download the updated source file <a href="https://raw.githubusercontent.com/ubccr/xdmod/xdmod{{ page.version }}/classes/{{ include.gbpath }}">GroupBy.php</a></li>
+	<li>Copy this file to: <code>/usr/share/xdmod/classes/{{ include.gbpath }}</code></li>
+</ol>
+
+<h4>Source code installs</h4>
+<ol>
+	<li>Download the updated source file <a href="https://raw.githubusercontent.com/ubccr/xdmod/xdmod{{ page.version }}/classes/{{ include.gbpath }}">GroupBy.php</a></li>
+	<li>Copy this file to: <code>/opt/xdmod/share/classes/{{ include.gbpath }}</code> (where <code>/opt/xdmod</code> is the installation prefix)</li>
+</ol>
+</div>

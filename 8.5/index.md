@@ -2,6 +2,8 @@
 title: Open XDMoD
 ---
 
+{% include upgrade_warning.html gbpath="DataWarehouse/Query/GroupBy.php" %}
+
 Open XDMoD is an open source tool to facilitate the management of high
 performance computing resources.   It is widely deployed at academic,
 industrial and governmental HPC centers.  Open XDMoD's management
