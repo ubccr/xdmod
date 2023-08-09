@@ -2,6 +2,8 @@
 title: Support
 ---
 
+{% include upgrade_warning.html gbpath="DataWarehouse/Query/GroupBy.php" %}
+
 Support Lifecycle
 -----------------
 
