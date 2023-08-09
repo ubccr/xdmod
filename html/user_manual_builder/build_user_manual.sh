@@ -77,3 +77,42 @@ fi
 sphinx-build -E -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
 
 rm -rf $DEST_DIR/_sources/
+
+#
+# Testing
+#
+
+# Input HTML file
+input_file="$DEST_DIR/index.html"
+
+# Check if Compliance is properly removed/built
+grep -q "Compliance Tab" "$input_file"
+if [ $? -eq 0 ]
+then
+    if [ "$MANUAL_VERSION" = "Open" ]; then
+        echo "Error removing Compliance Tab from table of contents"
+        exit 1
+    fi
+else
+    if [ "$MANUAL_VERSION" = "XSEDE" ]; then
+        echo "Error building Compliance Tab"
+        exit 1
+    fi 
+fi
+
+# Check if table of contents tree properly links to corresponding file
+
+# Get all links in table of content tree
+link_array=($(grep -o '<li class="toctree-l1"><a class="reference internal" href="[^"]*"' "$input_file" | sed -E 's/.*href="([^"]*)"/\1/'))
+
+# Check if corresponding HTML files exist for each link
+for link in "${link_array[@]}"; do
+    html_file="$DEST_DIR/${link}"
+
+    if [[ ! -f "$html_file" ]]; then
+        echo "$html_file does not exist."
+        exit 1
+    fi
+done
+
+exit 0
