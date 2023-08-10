@@ -2,7 +2,7 @@
 
 Ext.namespace('XDMoD.utils');
 
-XDMoD.utils.extend = function extend(out, ...arguments_) {
+XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
   if (!out) {
     return {};
   }
@@ -16,10 +16,10 @@ XDMoD.utils.extend = function extend(out, ...arguments_) {
       switch (Object.prototype.toString.call(value)) {
         case '[object Object]':
           out[key] = out[key] || {};
-          out[key] = XDMoD.utils.extend(out[key], value);
+          out[key] = XDMoD.utils.deepExtend(out[key], value);
           break;
         case '[object Array]':
-          out[key] = XDMoD.utils.extend(new Array(value.length), value);
+          out[key] = XDMoD.utils.deepExtend(new Array(value.length), value);
           break;
         default:
           out[key] = value;
@@ -196,7 +196,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
     }
 
-    XDMoD.utils.extend(true, baseChartOptions, chartOptions);
+    XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
 
     if (extraHandlers) {
         if (extraHandlers.loadHandlers) {

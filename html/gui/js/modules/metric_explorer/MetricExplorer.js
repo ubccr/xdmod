@@ -801,7 +801,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 if (datasetCount === 1) {
                                     instance.filtersStore.add(new instance.filtersStore.recordType(filter));
                                 } else if (datasetCount > 1) {
-                                    var filters = { ...{}, ...record.get('filters') };
+                                    var filters = XDMoD.utils.deepExtend({}, record.get('filters'));
                                     var found = false;
                                     for (var i = 0; i < filters.length; i++) {
                                         if (filters[i].id == filter.id) {
@@ -1146,8 +1146,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             });
             if (dimension !== 'none') {
                 if (instance.filtersStore.getById(drillFilter.id) === undefined) {
-                    var filters = XDMoD.utils.extend(true, {}, record.get('filters')),
-                        found = false;
+                    var filters = XDMoD.utils.deepExtend({}, record.get('filters'));
+                    var found = false;
                     for (var k = 0; k < filters.length; k++) {
                         if (filters[k].id == drillFilter.id) {
                             found = true;
