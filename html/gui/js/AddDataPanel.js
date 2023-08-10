@@ -102,7 +102,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         if (this.filtersStore) {
             this.filtersStore.each(
                 function (record) {
-                    var data = { {}, ...record.data }; // eslint-disable-line
+                    var data = { ...{}, ...record.data }; // eslint-disable-line
                     ret.push(data);
                 });
         }
@@ -129,7 +129,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
         }
         this.originalData = {};
-        this.originalData = { ...this.originalData, ...this.record.data ); // eslint-disable-line
+        this.originalData = { ...this.originalData, ...this.record.data }; // eslint-disable-line
         this.filtersMenu = new Ext.menu.Menu({
             showSeparator: false,
             ignoreParentClicks: true
