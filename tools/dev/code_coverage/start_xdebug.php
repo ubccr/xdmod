@@ -1,7 +1,7 @@
 <?php
 namespace CCR\CodeCoverage;
 
-xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+\xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 
 function end_coverage()
 {
