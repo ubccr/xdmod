@@ -19,5 +19,10 @@
     "StringUtilities": false,
     "Plotly": false,
     "generateChartOptions": false
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+    }
   }
 }
