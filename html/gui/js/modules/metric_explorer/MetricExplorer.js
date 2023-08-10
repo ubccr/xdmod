@@ -801,7 +801,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 if (datasetCount === 1) {
                                     instance.filtersStore.add(new instance.filtersStore.recordType(filter));
                                 } else if (datasetCount > 1) {
-                                    var filters = { ...{}, ...(record.get('filters')) };
+                                    var filters = { ...{}, ...record.get('filters') };
                                     var found = false;
                                     for (var i = 0; i < filters.length; i++) {
                                         if (filters[i].id == filter.id) {
