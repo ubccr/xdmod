@@ -2,7 +2,9 @@
 
 Ext.namespace('XDMoD.utils');
 
-XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
+// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery
+// Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
+XDMoD.utils.deepExtend = function extend(out, ...arguments_) { // eslint-disable-line
   if (!out) {
     return {};
   }
