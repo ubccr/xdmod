@@ -46,7 +46,7 @@
 
             };//chartOptions
 
-            XDMoD.utils.extend(true,inputChartOptions,chartOptions);
+            XDMoD.utils.deepExtend(inputChartOptions,chartOptions);
 
             // Needed to provide comma as thousands separator in export
             Highcharts.setOptions ({
