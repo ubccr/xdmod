@@ -97,7 +97,7 @@ else
     if [ "$MANUAL_VERSION" = "XSEDE" ]; then
         echo "Error building Compliance Tab"
         exit 1
-    fi 
+    fi
 fi
 
 # Check if table of contents tree properly links to corresponding file
