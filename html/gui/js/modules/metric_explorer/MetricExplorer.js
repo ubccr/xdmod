@@ -858,8 +858,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 metric: this.met,
                                 color: 'auto'
                            };
-                        config = { ...config, ...record.data };
-                        config = { ...config, ...defaultConfig };
+                        config = { ...config, ...record.data }; // eslint-disable-line
+                        config = { ...config, ...defaultConfig }; // eslint-disable-line
                         var newRecord = CCR.xdmod.ui.AddDataPanel.initRecord(
                             instance.datasetStore,
                             config,
