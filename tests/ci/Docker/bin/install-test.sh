@@ -22,7 +22,7 @@ pushd /xdmod || exit
     ./tests/ci/validate.sh
 
     #Make sure that the Compose Test Dependencies are installed
-    composer install --no-progress
+    COMPOSER=composer-el7.json composer install --no-progress
 
     # Setup SimpleSAML for testing purposes.
     ./tests/ci/samlSetup.sh

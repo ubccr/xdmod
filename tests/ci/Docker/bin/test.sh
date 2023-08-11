@@ -1,5 +1,12 @@
 #!/bin/bash
 pushd /xdmod || exit
+
+#Ensure XDMOD_REALMS is set
+if [ "$XDMOD_REALMS" != 'jobs,storage,cloud' ]
+then
+    export XDMOD_REALMS='jobs,storage,cloud'
+fi
+
 #Setup & Run QA Tests
 ./tests/ci/scripts/qa-test-setup.sh
 
