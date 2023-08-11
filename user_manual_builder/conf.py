@@ -37,11 +37,7 @@ html_theme_options = {
     'collapse_navigation': False,
     'style_nav_header_background': '#e0e0e0',
 }
-html_context = {
-    'display_github': True,
-    'github_user': 'ubccr',
-    'github_repo': 'xdmod',
-}
+html_show_sourcelink = False
 
 def setup(app):
     app.add_css_file('custom.css')
