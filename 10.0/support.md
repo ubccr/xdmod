@@ -2,6 +2,8 @@
 title: Support
 ---
 
+{% include upgrade_info.html %}
+
 Support Lifecycle
 -----------------
 
