@@ -103,5 +103,11 @@
         "etc/crond": {
             "configuration/cron.conf": "xdmod"
         }
+    },
+    "commands": {
+        "pre_build": [
+            "pip3 install sphinx sphinx-rtd-theme",
+            "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open"
+        ]
     }
 }

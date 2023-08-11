@@ -54,11 +54,6 @@ jobs:
                   command: |
                     dnf module -y reset nodejs
                     dnf module -y install nodejs:16
-            - run:
-                  name: Build User Manual
-                  command: |
-                    pip3 install sphinx sphinx-rtd-theme
-                    user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open
             - restore_cache:
                 keys:
                   # "composer.lock" can be used if it is committed to the repo
