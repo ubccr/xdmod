@@ -74,9 +74,10 @@ else
     sed -i "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
 fi
 
-curr_year=$(date +'%Y')
-sed -i "s/year = ''/year = '$curr_year'/g" "$BASE_BUILD_DIR/conf.py"
+# Update copyright year
+sed -i "s/copyright = '/copyright = '$(date +'%Y')/g" "$BASE_BUILD_DIR/conf.py"
 
+# Update version number
 sed -i "s/release = ''/release = '$(jq -r '.version' open_xdmod/modules/xdmod/build.json)'/g" "$BASE_BUILD_DIR/conf.py"
 
 #
