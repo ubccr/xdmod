@@ -77,6 +77,8 @@ fi
 curr_year=$(date +'%Y')
 sed -i "s/year = ''/year = '$curr_year'/g" "$BASE_BUILD_DIR/conf.py"
 
+sed -i "s/release = ''/release = '$(jq -r '.version' open_xdmod/modules/xdmod/build.json)'/g" "$BASE_BUILD_DIR/conf.py"
+
 #
 # Build the manual
 #

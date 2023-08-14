@@ -14,7 +14,7 @@ year = ''
 project = 'XDMoD Manual'
 copyright = year + ' University at Buffalo Center for Computational Research'
 author = 'UB CCR'
-release = '11.0'
+release = ''
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
