@@ -12,10 +12,14 @@ mkdir /tmp/screenshots
 
 # make sure that we're in the right directory.
 pushd /xdmod || exit
+
+    COMPOSER=composer-el7.json composer install --no-progress
+
     # build the XDMoD rpm so that it can be installed.
     ~/bin/buildrpm xdmod
 
     #Install / Upgrade XDMoD from RPM
+    export XDMOD_TEST_MODE="fresh_install"
     ./tests/ci/bootstrap.sh
 
     #Validate the newly installed / Upgraded XDMoD
