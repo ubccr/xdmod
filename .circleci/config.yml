@@ -46,16 +46,11 @@ jobs:
           command: |
             docker cp ~/project xdmod:/xdmod
             docker cp ~/project playwright:/xdmod
-      - when:
-          condition:
-            and:
-                 - equal: ["rocky8", << parameters.os >> ]
-          steps:
-            - run:
-                 name: Create Code Coverage Directories
-                 command: |
-                   docker exec xdmod mkdir code_coverage_raw
-                   docker exec xdmod mkdir code_coverage
+      - run:
+          name: Create Code Coverage Directories
+          command: |
+            docker exec xdmod mkdir code_coverage_raw
+            docker exec xdmod mkdir code_coverage
       - run:
           name: Make sure that procps-ng is installed
           command: docker exec xdmod yum install -y procps-ng
@@ -67,11 +62,6 @@ jobs:
             - run:
                 name: Execute Install Script
                 command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
-            - run:
-                name: Installing Code Coverage Dependencies
-                command: |
-                  docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageSetup.sh
-                  docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - when:
           condition:
             and:
@@ -80,6 +70,11 @@ jobs:
             - run:
                 name: Execute Install Script
                 command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-test.sh
+      - run:
+          name: Installing Code Coverage Dependencies
+          command: |
+              docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageSetup.sh
+              docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageSetup.sh -b . -x ./tools/dev/code_coverage/start_xdebug.php  -p ./tools/dev/code_coverage/combine_xdebug.php
       - run:
           name: Put the updated httpd conf file in place
           command: docker cp ~/project/tests/playwright/config/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
@@ -92,26 +87,21 @@ jobs:
       - run:
           name: Run Playwright Tests
           command: docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
-      - when:
-          condition:
-            and:
-                - equal: ["rocky8", << parameters.os >> ]
-          steps:
-            - run:
-                name: Set environment for Vendor PHPUnit Integration Test
-                command: docker exec -w /xdmod xdmod ./tests/playwright/setUpEnv.sh
-            - run:
-                name: Run Vendor PHPUnit Integration Test
-                command: docker exec -w /xdmod xdmod ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
-            - run:
-                name: Process Code Coverage Data
-                no_output_timeout: 120m
-                command: |
-                  docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageProcess.sh
-                  docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i /code_coverage_raw
-            - run:
-                name: Tar Up Code Coverage Report for later download
-                command: docker exec xdmod tar -czvf ./code_coverage/report.tgz ./code_coverage_raw
+      - run:
+          name: Set environment for Vendor PHPUnit Integration Test
+          command: docker exec -w /xdmod xdmod ./tests/playwright/setUpEnv.sh
+      - run:
+          name: Run Vendor PHPUnit Integration Test
+          command: docker exec -w /xdmod xdmod ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
+      - run:
+          name: Process Code Coverage Data
+          no_output_timeout: 120m
+          command: |
+              docker exec xdmod chmod +x /xdmod/tools/dev/code_coverage/codeCoverageProcess.sh
+              docker exec -w /xdmod xdmod ./tools/dev/code_coverage/codeCoverageProcess.sh -i /code_coverage_raw
+      - run:
+          name: Tar Up Code Coverage Report for later download
+          command: docker exec xdmod tar -czvf ./code_coverage/report.tgz ./code_coverage_raw
       - run:
           name: Copy Test Results into Unit
           command: |
@@ -121,16 +111,11 @@ jobs:
             docker cp xdmod:/var/log/xdmod ~/project/log
             docker cp playwright:/xdmod/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
             docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
-      - when:
-          condition:
-            and:
-                - equal: ["rocky8", << parameters.os >> ]
-          steps:
-            - run:
-                name: Copy Code Coverage Report zip
-                command: |
-                  mkdir ~/code_coverage
-                  docker cp xdmod:/code_coverage/report.tgz ~/code_coverage
+      - run:
+          name: Copy Code Coverage Report zip
+          command: |
+             mkdir ~/code_coverage
+             docker cp xdmod:/code_coverage/report.tgz ~/code_coverage
       - run:
           name: Run on fail status
           command: |
