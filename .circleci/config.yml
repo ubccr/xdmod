@@ -63,7 +63,7 @@ jobs:
           steps:
             - run:
                 name: Execute Install Script
-                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install.sh
+                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-el8.sh
             - run:
                 name: Installing Code Coverage Dependencies
                 command: |
@@ -76,7 +76,7 @@ jobs:
           steps:
             - run:
                 name: Execute Install Script
-                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-test.sh
+                command: docker exec xdmod /xdmod/tests/ci/Docker/bin/install-el7.sh
       - run:
           name: Put the updated httpd conf file in place
           command: docker cp ~/project/tests/playwright/config/xdmod.conf xdmod:/etc/httpd/conf.d/xdmod.conf
