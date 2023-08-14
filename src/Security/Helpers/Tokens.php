@@ -82,7 +82,7 @@ SQL;
         $now = new DateTime();
         $expires = new DateTime($expiresOn);
         if ($expires < $now) {
-            $this->logger->debug(sprintf('User\'s (%s) token is expired.'));
+            $this->logger->debug(sprintf('User\'s (%s) token is expired.', $userId));
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The API Token has expired.');
         }
 
@@ -107,7 +107,7 @@ SQL;
     {
         $this->logger->info('Beginning Token Authentication');
 
-        $rawToken = self::getRawToken();
+        $rawToken = self::getRawToken($request);
         if (empty($rawToken)) {
             // we want to the token authentication to be optional so instead of throwing an exception we return null.
             // This allows us to provide token authentication to existing endpoints without impeding their normal use.

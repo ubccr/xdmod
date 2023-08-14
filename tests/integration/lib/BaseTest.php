@@ -2,14 +2,13 @@
 
 namespace IntegrationTests;
 
-use CCR\Json;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use InvalidArgumentException;
-
 /**
  * This class serves as a base for test classes.
  *
@@ -89,7 +88,7 @@ use InvalidArgumentException;
  *      );
  *  }
  */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
 

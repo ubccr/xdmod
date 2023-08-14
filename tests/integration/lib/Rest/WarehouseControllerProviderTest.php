@@ -664,7 +664,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         if ('pub' !== $user) {
             self::$helper->authenticate($user);
         }
-        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
+        $response = self::$helper->get('warehouse/aggregatedata', $params);
 
         $this->assertEquals($http_code, $response[1]['http_code']);
         $this->assertFalse($response[0]['success']);
@@ -681,7 +681,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $params = $this->getAggDataParameterGenerator();
 
         self::$helper->authenticate('cd');
-        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
+        $response = self::$helper->get('warehouse/aggregatedata', $params);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);
@@ -702,7 +702,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $params = $this->getAggDataParameterGenerator(array('filters' => array('jobsize' => 1)));
 
         self::$helper->authenticate('cd');
-        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
+        $response = self::$helper->get('warehouse/aggregatedata', $params);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);

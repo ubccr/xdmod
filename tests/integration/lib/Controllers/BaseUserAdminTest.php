@@ -57,7 +57,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $this->peopleHelper = new PeopleHelper();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$newUsers as $username => $userId) {
             try {
@@ -200,6 +200,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $userType = isset($options['user_type']) ? $options['user_type'] : self::DEFAULT_USER_TYPE;
         $output = isset($options['output']) ? $options['output'] : 'test.create.user';
         $expectedSuccess = isset($options['expected_success']) ? $options['expected_success'] : true;
+        $expectedHttpCode = !$expectedSuccess ? 400 : 200;
 
         // construct form params for post request to create new user.
         $data = array(
@@ -219,7 +220,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
-        $this->validateResponse($response);
+        $this->validateResponse($response, $expectedHttpCode);
 
         // retrieve the expected results of submitting the 'create_user' request
         // with the supplied arguments.
@@ -480,6 +481,10 @@ abstract class BaseUserAdminTest extends BaseTest
     {
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
+        if ($actualHttpCode !== $expectedHttpCode || $actualContentType !== $expectedContentType) {
+            print_r($response);
+        }
+
         $this->assertTrue(
             strpos($actualContentType, $expectedContentType) !== false,
             "Expected content-type: $expectedContentType. Received: $actualContentType"

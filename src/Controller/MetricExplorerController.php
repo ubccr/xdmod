@@ -368,7 +368,18 @@ class MetricExplorerController extends BaseController
         $user = \xd_security\detectUser([XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
 
         $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);
-        $result = $m->get_data($user);
+        try {
+            $result = $m->get_data($user);
+        } catch (Exception $e) {
+            return $this->json(
+                [
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ],
+                400
+            );
+        }
+
 
         $format = $this->getStringParam($request, 'format');
         if ($format === 'png'
@@ -402,11 +413,18 @@ class MetricExplorerController extends BaseController
     public function getDimensionValues(Request $request): Response
     {
         try {
-            $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
-        } catch (SessionExpiredException $e) {
-            return $this->json(buildError($e), $e->httpCode, $e->headers);
-        }
+            $user = $this->tokenHelper->authenticateToken($request);
 
+            // If token authentication failed then fallback to the standard session based authentication method.
+            if ($user === null) {
+                $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+            }
+        } catch (Exception $e) {
+            return $this->json(
+                buildError(new Exception('Session Expired', 2)),
+                401
+            );
+        }
         $this->logger->warning('User retrieved ', [$user->getUserIdentifier()]);
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
@@ -455,7 +473,7 @@ class MetricExplorerController extends BaseController
             }
         } catch (Exception $e) {
             return $this->json(
-                buildError('An error was encountered while attempting to process the requested authorization procedure.'),
+                buildError(new Exception('Session Expired', 2)),
                 401
             );
         }
@@ -731,8 +749,17 @@ class MetricExplorerController extends BaseController
 
             $dataset_classname = '\DataWarehouse\Data\SimpleDataset';
 
-            // TODO: start here.
-            $all_data_series = $this->getDataSeries($request);
+            try {
+                $all_data_series = $this->getDataSeries($request);
+            } catch (Exception $e) {
+                return $this->json(
+                    [
+                        'success' => false,
+                        'message' => $e->getMessage()
+                    ],
+                    400
+                );
+            }
 
             // find requested dataset.
             $data_description = null;
@@ -952,7 +979,9 @@ class MetricExplorerController extends BaseController
     {
         $jsonDataSeries = json_decode(urldecode($dataSeries));
         $this->logger->warning('Json Data Series', [json_encode($jsonDataSeries)]);
-
+        if (null === $jsonDataSeries) {
+            throw new BadRequestHttpException('Invalid data_series specified');
+        }
         foreach ($jsonDataSeries as &$y) {
             // Set values of new attribs for backward compatibility.
             if (empty($y->line_type)) {

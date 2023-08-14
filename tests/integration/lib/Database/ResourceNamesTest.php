@@ -15,7 +15,7 @@ class ResourceNamesTest extends BaseTest
 {
     private $db;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = DB::factory('datawarehouse');
     }

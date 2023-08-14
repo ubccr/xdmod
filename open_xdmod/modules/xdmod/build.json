@@ -13,7 +13,6 @@
             "/docs",
             "/html/gui/js/modules/Module.template",
             "/logs",
-            "/phpcs.xml",
             "/setup",
             "/sonar-project.properties",
             "/tests",

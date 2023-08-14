@@ -200,7 +200,7 @@ class BaseController extends AbstractController
         // mandatory and return the default if it was not.
         if ($value === null) {
             if ($mandatory) {
-                throw new BadRequestHttpException("$name is a required parameter.");
+                throw new BadRequestHttpException("missing required $name parameter");
             } else {
                 return $default;
             }
@@ -601,5 +601,43 @@ class BaseController extends AbstractController
         return $features;
     }
 
+    /**
+     * @param Request $request
+     * @return \XDUser
+     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
+     * @throws \Exception if the user's token from the db does not validate against the provided token.
+     */
+    protected function authenticateToken($request)
+    {
+        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
+        // to the request's query params.
+        $authorizationHeader = $request->headers->get('Authorization');
+        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
+            $rawToken = $request->get(Tokens::HEADER_KEY);
+        } else {
+            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
+        }
+        if (empty($rawToken)) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'No Token Provided.'
+            );
+        }
+
+
+        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
+        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
+        if ($delimPosition === false) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'Invalid token format.'
+            );
+        }
+
+        $userId = substr($rawToken, 0, $delimPosition);
+        $token = substr($rawToken, $delimPosition + 1);
+
+        return $this->tokenHelper->authenticate($userId, $token);
+    }
 
 }

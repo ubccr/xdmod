@@ -12,6 +12,7 @@ use Models\Services\Realms;
 use Models\Services\Tabs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use function xd_response\buildError;
@@ -100,8 +101,25 @@ class UserInterfaceController extends BaseController
     public function getCharts(Request $request): Response
     {
         $this->logger->error('Calling Get Charts');
+        try {
+            $user = $this->tokenHelper->authenticateToken($request);
 
-        $user = $this->getXDUser($request->getSession());
+            // If token authentication failed then fallback to the standard session based authentication method.
+            if ($user === null) {
+                $user = $this->getXDUser($request->getSession());
+            }
+        } catch (Exception $e) {
+            return $this->json(
+                buildError(new Exception('Session Expired', 2)),
+                401
+            );
+        }
+
+        $allowPublicUser = $request->get('public_user', false);
+        if ($user->isPublicUser() && !$allowPublicUser) {
+            return $this->json(buildError(new Exception('Session Expired', 2)), 401);
+        }
+
         // Send the request and user to the Usage-to-Metric Explorer adapter.
         $this->logger->error('Instantiating Usage Object');
         $usageAdapter = new Usage($request->request->all());
@@ -111,7 +129,8 @@ class UserInterfaceController extends BaseController
         try {
             $chartResponse = $usageAdapter->getCharts($user);
         } catch (Exception $e) {
-            return $this->json(buildError($e), 400);
+            $statusCode = $e->getMessage() === 'One or more realms must be specified.' ? 500 : 400;
+            return $this->json(buildError($e), $statusCode);
         }
 
         $newHeaders = [];

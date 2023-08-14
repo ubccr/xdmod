@@ -15,7 +15,7 @@ class ControllerTest extends BaseTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
     }
@@ -466,12 +466,13 @@ class ControllerTest extends BaseTest
      */
     public function testEnumTargetAddresses(array $options)
     {
+        # enum_target_addresses_all_any
         $testData = $options['data'];
         $expected = $options['expected'];
 
         $expectedFile = $expected['file'];
         $expectedFileName = parent::getTestFiles()->getFile('controllers', $expectedFile);
-        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
+        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json'/*'text/html; charset=UTF-8'*/;
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
         $data = array_merge(
@@ -484,6 +485,9 @@ class ControllerTest extends BaseTest
         $helper = $options['helper'];
 
         $response = $helper->post("internal_dashboard/controllers/mailer.php", null, $data);
+        if ($expectedHttpCode !== $response[1]['http_code'] || $expectedContentType !== $response[1]['content_type']) {
+            print_r($response);
+        }
 
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);

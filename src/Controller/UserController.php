@@ -9,6 +9,8 @@ use Models\Services\Acls;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use xd_security\SessionSingleton;
 use XDUser;
@@ -201,10 +203,7 @@ class UserController extends BaseController
         $user = $this->authorize($request);
 
         if ($this->canCreateToken($user)) {
-            return $this->json([
-                'success' => false,
-                'message' => 'Unable to retrieve current API token.'
-            ]);
+            throw new NotFoundHttpException('API token not found.');
         }
 
         $tokenData = $this->getCurrentAPITokenMetaData($user);
@@ -231,10 +230,7 @@ class UserController extends BaseController
         $user = $this->authorize($request);
 
         if (!$this->canCreateToken($user)) {
-            return $this->json(array(
-                'success' => false,
-                'message' => 'Unable to create a new token at this time.'
-            ));
+            throw new ConflictHttpException('Token already exists.');
         }
 
         return $this->json(array(
@@ -261,10 +257,7 @@ class UserController extends BaseController
 
         // If we can create a token then we can't really revoke it can we.
         if ($this->canCreateToken($user)) {
-            return $this->json([
-                'success' => false,
-                'message' => 'No token to revoke.'
-            ]);
+            throw new NotFoundHttpException('API token not found.');
         }
 
         // Attempt to revoke the requesting users token.
@@ -276,10 +269,7 @@ class UserController extends BaseController
         }
 
         // If the `revokeToken` failed for some reason then we let the user know.
-        return $this->json(array(
-            'success' => false,
-            'message' => 'Unable to revoke API token.'
-        ));
+        throw new Exception('Unable to revoke API token.');
     }
 
 
