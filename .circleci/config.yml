@@ -36,9 +36,6 @@ jobs:
             chmod +x ~/docker-compose  
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
-          name: check contents
-          command: ls -alh /home/circleci/project/
-      - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f tests/ci/Docker/bin/<< parameters.os >>.yml up -d
       - run:
