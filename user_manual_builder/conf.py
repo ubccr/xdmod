@@ -10,8 +10,9 @@ sys.path.append(os.path.abspath('./_ext'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+year = ''
 project = 'XDMoD Manual'
-copyright = '2023, UB CCR'
+copyright = year + ' University at Buffalo Center for Computational Research'
 author = 'UB CCR'
 release = '11.0'
 

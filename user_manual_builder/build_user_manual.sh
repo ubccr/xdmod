@@ -63,7 +63,7 @@ elif [ "$MANUAL_VERSION" != "XSEDE" ] && [ "$MANUAL_VERSION" != "Open" ]; then
 fi
 
 #
-# Build the manual
+# Format the manual
 #
 
 cp $BASE_BUILD_DIR/index.rst.in $BASE_BUILD_DIR/index.rst
@@ -73,6 +73,13 @@ if [ "$MANUAL_VERSION" = "XSEDE" ]; then
 else
     sed -i "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
 fi
+
+curr_year=$(date +'%Y')
+sed -i "s/year = ''/year = '$curr_year'/g" "$BASE_BUILD_DIR/conf.py"
+
+#
+# Build the manual
+#
 
 sphinx-build -E -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
 
