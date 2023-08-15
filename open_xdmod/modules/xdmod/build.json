@@ -28,16 +28,16 @@
             "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
             "/user_manual_builder",
-            "/bin/console"
+            "/var"
         ],
         "exclude_patterns": [
-            "#/\\.#",
             "#xdmod-.*\\.rpm$#",
             "#xdmod-.*\\.tar\\.gz$#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/examples\\/[A-t,v-z].*#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/images\\/[a,h-z].*#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/.*\\.swf#",
-            "#^\\/configuration\\/.+\\..+\\.template$#"
+            "#^\\/configuration\\/.+\\..+\\.template$#",
+            "#^\\.(?!env).*$#"
         ]
     },
     "file_maps": {
@@ -52,7 +52,6 @@
             "src",
             "public",
             "config",
-            "var",
             { "configuration/constants.php": true },
             { "configuration/linker.php" : true }
         ],

@@ -80,6 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0750,root,xdmod,-)
 %{_bindir}/%{name}-*
 %{_bindir}/acl-*
+%{_bindir}/console
 
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
@@ -87,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/vendor
 %{_datadir}/%{name}/public
 %{_datadir}/%{name}/config
-%{_datadir}/%{name}/var
+%{_datadir}/%{name}/.env
 
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
