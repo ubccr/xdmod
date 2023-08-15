@@ -52,6 +52,7 @@
             "src",
             "public",
             "config",
+            {".env":  true},
             { "configuration/constants.php": true },
             { "configuration/linker.php" : true }
         ],
