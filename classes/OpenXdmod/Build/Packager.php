@@ -311,7 +311,7 @@ class Packager
     {
         $fileName = '.env';
         $srcFile = implode(DIRECTORY_SEPARATOR, array($this->srcDir, $fileName));
-        $destFile = implode(DIRECTORY_SEPARATOR, array($this->getTmpDir(),$this->config->getName(),$fileName));
+        $destFile = implode(DIRECTORY_SEPARATOR, array($this->getPackageDir(),$fileName));
 
         $this->logger->info(sprintf('Copying %s to %s', $srcFile, $destFile));
 
