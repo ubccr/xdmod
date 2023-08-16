@@ -31,7 +31,7 @@ numfig = True
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-html_logo = 'media/image43.png'
+html_logo = 'media/xdmod_logo.png'
 html_theme_options = {
     'logo_only': True,
     'collapse_navigation': False,
