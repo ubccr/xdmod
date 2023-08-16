@@ -27,8 +27,7 @@
             "/html/gui/lib/highcharts/graphics",
             "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
-            "/user_manual_builder",
-            "/var"
+            "/user_manual_builder"
         ],
         "exclude_patterns": [
             "#xdmod-.*\\.rpm$#",
@@ -37,7 +36,8 @@
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/images\\/[a,h-z].*#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/.*\\.swf#",
             "#^\\/configuration\\/.+\\..+\\.template$#",
-            "#^\\.(?!env).*$#"
+            "#^\\.(?!env).*$#",
+            "#\\/var\\/*#"
         ]
     },
     "file_maps": {
@@ -52,6 +52,7 @@
             "src",
             "public",
             "config",
+            "var",
             {".env":  true},
             { "configuration/constants.php": true },
             { "configuration/linker.php" : true }

@@ -67,6 +67,10 @@ for file in exceptions.log query.log; do
     chown apache:xdmod %{_localstatedir}/log/%{name}/$file
     chmod 0660 %{_localstatedir}/log/%{name}/$file
 done
+
+# Ensure the var directory is owned by apache so it can be written to.
+chown apache:xdmod %{_datadir}/%{name}/var
+
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
     echo "Refer to http://open.xdmod.org/upgrade.html for more details."

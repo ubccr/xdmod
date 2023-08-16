@@ -7,7 +7,7 @@ assets_dir="$(
 module_dir="$assets_dir/.."
 xdmod_dir="$module_dir/../../.."
 
-echo Installing composer managed dependencies
+#echo Installing composer managed dependencies
 #cd $xdmod_dir
 #composer install --no-dev
 
