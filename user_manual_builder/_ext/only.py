@@ -42,15 +42,12 @@ def only_role(name, rawtext, text, lineno, inliner, options={}, content=None):
     if not tags.has(tag):
         return [], []
     curr = ''
-    is_ref = False
     node = nodes.inline(rawtext, '', **options)
     for c in text:
         if c == '{':
-            is_ref = True
             node += nodes.inline(rawtext, curr, **options)
             curr = ''
         elif c == '}':
-            is_ref = False
             set_classes(options)
             pend_node = addnodes.pending_xref(
                 '',
