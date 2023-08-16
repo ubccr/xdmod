@@ -60,6 +60,23 @@ then
 fi
 
 # Confirm that the user manual is built
+# Check if table of contents tree properly links to corresponding file and each
+# html file exists
+input_directory=$XDMOD_INSTALL_DIR/html/user_manual
+# Get all links in table of content tree
+link_array=($(grep -o '<li class="toctree-l1"><a class="reference internal" href="[^"]*"' "$input_directory/index.html" | sed -E 's/.*href="([^"]*)"/\1/'))
+
+# Check if corresponding HTML files exist for each link
+for link in "${link_array[@]}"; do
+    html_file="$input_directory/${link}"
+
+    if [[ ! -f "$html_file" ]]; then
+        echo "$html_file does not exist."
+        exitcode=1
+    fi
+done
+
+# Check if user manual is being properly hosted on the server
 if [ !$(curl -I -s -o /dev/null -w "%{http_code}" -k https://localhost:443/user_manual/index.html) == "200" ];
 then
     echo "User Manual was not built"

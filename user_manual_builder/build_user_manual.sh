@@ -110,19 +110,4 @@ else
     fi
 fi
 
-# Check if table of contents tree properly links to corresponding file
-
-# Get all links in table of content tree
-link_array=($(grep -o '<li class="toctree-l1"><a class="reference internal" href="[^"]*"' "$input_file" | sed -E 's/.*href="([^"]*)"/\1/'))
-
-# Check if corresponding HTML files exist for each link
-for link in "${link_array[@]}"; do
-    html_file="$DEST_DIR/${link}"
-
-    if [[ ! -f "$html_file" ]]; then
-        echo "$html_file does not exist."
-        exit 1
-    fi
-done
-
 exit 0
