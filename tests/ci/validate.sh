@@ -56,6 +56,20 @@ if ! xdmod-check-config | grep -q 'RPM Installed Packages'
 then
     echo "Missing RPM information from xdmod-check-config"
     exitcode=1
+
+fi
+
+# Confirm that the user manual is built
+if [ !$(curl -I -s -o /dev/null -w "%{http_code}" -k https://localhost:443/user_manual/index.html) == "200" ];
+then
+    echo "User Manual was not built"
+    exitcode=1
+fi
+
+if !(curl -s -k https://localhost:443/user_manual/index.html | grep -q h1)
+then
+    echo "User Manual is missing html"
+    exitcode=1
 fi
 
 exit $exitcode
