@@ -37,7 +37,7 @@
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/.*\\.swf#",
             "#^\\/configuration\\/.+\\..+\\.template$#",
             "#^\\.(?!env).*$#",
-            "#\\/var\\/*#"
+            "#\\/var\\/.*#"
         ]
     },
     "file_maps": {
