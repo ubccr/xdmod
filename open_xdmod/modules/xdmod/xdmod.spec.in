@@ -93,6 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/public
 %{_datadir}/%{name}/config
 %{_datadir}/%{name}/.env
+%{_datadir}/%{name}/var
 
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
