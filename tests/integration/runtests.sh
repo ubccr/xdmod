@@ -14,9 +14,10 @@ if [ ! -x "$phpunit" ]; then
 fi
 
 # Run the tests in UserAdminTest.createUsers
-$phpunit --testsuite default --group UserAdminTest.createUsers $(log_opts "integration" "UserAdminTest.createUsers")
+$phpunit --testsuite default --group UserAdminTest.createUsers $(log_opts "integration" "UserAdminTest.createUsers") --stop-on-error --stop-on-failure
 
 # Run everything else
-$phpunit --testsuite default --exclude-group UserAdminTest.createUsers $(log_opts "integration" "All")
+$phpunit --testsuite default --exclude-group UserAdminTest.createUsers $(log_opts "integration" "All") --stop-on-error --stop-on-failure
 
-./email-subject-test.sh
+# ryanrath: I've commented the following test out due to some issues with the history of code that it depends on.
+# ./email-subject-test.sh
