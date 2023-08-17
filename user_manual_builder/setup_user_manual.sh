@@ -1,4 +1,6 @@
 #!/bin/bash
+# Installs the dependencies needed for the sphinx build process and then calls
+# the build_user_manual.sh script to build the manual
 
 #
 # Parse command line arguments
@@ -66,6 +68,7 @@ python3 -m venv sphinx_venv
 
 source sphinx_venv/bin/activate
 
+# Requirements include Sphinx and Sphinx-rtd-theme for building and stylizing the manual
 python3 -m pip install -r $BASE_BUILD_DIR/requirements.txt
 
 #
