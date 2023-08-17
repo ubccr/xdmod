@@ -963,7 +963,7 @@ SQL;
                 $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
                 $update_data['password'] = $this->_password;
             }
-            $update_data['password_last_updated'] = 'NOW()';
+            $update_data['password_last_updated'] = date('Y-m-d H:i:s');
         }
         $update_data['email_address'] = ($this->_email);
         $update_data['first_name'] = ($this->_firstName);
@@ -973,9 +973,7 @@ SQL;
         $update_data['person_id'] = $this->_personID == null
             ? 'NULL'
             : ($this->_personID);
-        $update_data['organization_id'] = $this->_organizationID == null
-            ? 'NULL'
-            : ($this->_organizationID);
+        $update_data['organization_id'] = $this->_organizationID === null ? null : $this->_organizationID;
         $update_data['field_of_science'] = ($this->_field_of_science);
         if ($this->_update_token) {
             $update_data['token'] = ($this->_generateToken());
