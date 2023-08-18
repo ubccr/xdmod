@@ -50,7 +50,7 @@ describe('My Profile Tests', function generalTests() {
                         // We need to account for the different displays for users
                         // with center related acls and the others.
                         let expectedValue = role === 'cd' || role === 'cs' ? `${expected.top_roles[role]} - ${expected.organization.name}` : expected.top_roles[role];
-                        let topRoleControl = selectors.general.user_information.top_role();
+                        let topRoleControl = '//span[@id="profile_editor_most_privileged_role"]';
 
                         browser.waitForVisible(topRoleControl);
                         expect(browser.getText(topRoleControl)).to.equal(expectedValue);
