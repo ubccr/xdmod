@@ -87,7 +87,7 @@ class BatchDataset extends Loggable implements Iterator
      * @param RawQuery $query
      * @param XDUser $user
      * @param LoggerInterface $logger
-     * @param array|null $fieldAliases
+     * @param array|null $fields
      * @param int|null $limit
      * @param int $offset
      */
@@ -95,7 +95,7 @@ class BatchDataset extends Loggable implements Iterator
         RawQuery $query,
         XDUser $user,
         LoggerInterface $logger = null,
-        $fieldAliases = null,
+        $fields = null,
         $limit = null,
         $offset = 0
     ) {
@@ -113,34 +113,13 @@ class BatchDataset extends Loggable implements Iterator
             $this->logger->warning('data_warehouse_export hash_salt is not set');
         }
 
-        $rawStatsConfig = RawStatisticsConfiguration::factory();
-        $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions(
-            $query->getRealmName()
-        );
-        // If an array of field aliases has been provided,
-        if (is_array($fieldAliases)) {
-            // Validate the provided field aliases.
-            $validFieldAliases = array_column($this->fields, 'alias');
-            $invalidFieldAliases = array_diff(
-                $fieldAliases,
-                $validFieldAliases
+        if (is_null($fields)) {
+            $rawStatsConfig = RawStatisticsConfiguration::factory();
+            $this->fields = $rawStatsConfig->getBatchExportFieldDefinitions(
+                $query->getRealmName()
             );
-            if (count($invalidFieldAliases) > 0) {
-                throw new Exception(
-                    "Invalid fields specified: '"
-                    . join("', '", $invalidFieldAliases)
-                    . "'."
-                );
-            }
-            // Filter out the fields whose aliases were not provided.
-            $this->fields = array_filter(
-                $this->fields,
-                function ($field) use ($fieldAliases) {
-                    return in_array($field['alias'], $fieldAliases);
-                }
-            );
-            // Renumber the indexes.
-            $this->fields = array_values($this->fields);
+        } else {
+            $this->fields = $fields;
         }
         $this->limit = $limit;
         $this->offset = $offset;

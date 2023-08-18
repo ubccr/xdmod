@@ -5,6 +5,7 @@ namespace Rest\Controllers;
 use CCR\Log;
 use Configuration\XdmodConfiguration;
 use DataWarehouse\Data\BatchDataset;
+use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
@@ -2141,16 +2142,28 @@ class WarehouseControllerProvider extends BaseControllerProvider
     public function getRawData(Request $request, Application $app)
     {
         $user = parent::authenticateToken($request);
-        $params = $this->validateRawDataParams($request, $user);
-        $query = $this->getRawDataQuery($params);
-        $logger = $this->getRawDataLogger();
+        list ($startDate, $endDate) = $this->validateRawDataDateParams(
+            $request
+        );
+        $realm = $this->validateRawDataRealm($request, $user);
+        $offset = $this->validateRawDataOffset($request);
+        $query = $this->initRawDataQuery($startDate, $endDate, $realm);
+        $rawStatsConfig = RawStatisticsConfiguration::factory();
+        $validFields = $rawStatsConfig->getBatchExportFieldDefinitions(
+            $realm
+        );
+        $fields = $this->validateRawDataFields($request, $validFields);
+        $filters = $this->validateRawDataFilters($request, $validFields);
+        $query = $this->setRawDataQueryFilters($query, $filters);
+        $logger = $this->initRawDataLogger();
         $limit = $this->getConfiguredRawDataLimit();
-        $dataset = $this->getRawBatchDataset(
-            $user,
-            $params,
+        $dataset = new BatchDataset(
             $query,
+            $user,
             $logger,
-            $limit
+            $fields,
+            $limit,
+            $offset
         );
         $data = $this->parseRawBatchDataset($dataset);
         return $app->json([
@@ -2190,150 +2203,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate the parameters of the request from the given user to the raw
-     * data endpoint (@see getRawData()).
-     *
-     * @param Request $request
-     * @param XDUser $user
-     * @return array of validated parameter values.
-     * @throws BadRequestException if any of the parameters are invalid.
-     */
-    private function validateRawDataParams($request, $user)
-    {
-        $params = [];
-        list(
-            $params['start_date'], $params['end_date']
-        ) = $this->validateRawDataDateParams($request);
-        $params['realm'] = $this->getStringParam($request, 'realm', true);
-        $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
-        if (empty($queryDescripters)) {
-            throw new BadRequestException('Invalid realm.');
-        }
-        $params['fields'] = $this->getRawDataFieldsArray($request);
-        $params['filters'] = $this->validateRawDataFiltersParams(
-            $request,
-            $queryDescripters
-        );
-        $params['offset'] = $this->getIntParam($request, 'offset', false, 0);
-        if ($params['offset'] < 0) {
-            throw new BadRequestException('Offset must be non-negative.');
-        }
-        return $params;
-    }
-
-    /**
-     * Get the corresponding query for a request to get raw data with the given
-     * parameters.
-     *
-     * @param array $params validated parameters
-     *                      (@see validateRawDataParams()).
-     * @return \DataWarehouse\Query\RawQuery
-     */
-    private function getRawDataQuery($params)
-    {
-        $realmManager = new RealmManager();
-        $className = $realmManager->getRawDataQueryClass($params['realm']);
-        $query = new $className(
-            [
-                'start_date' => $params['start_date'],
-                'end_date' => $params['end_date']
-            ],
-            'batch'
-        );
-        $query = $this->setRawDataQueryFilters($query, $params);
-        return $query;
-    }
-
-    /**
-     * Generate a database logger for the raw data queries.
-     *
-     * @return \CCR\Logger
-     */
-    private function getRawDataLogger()
-    {
-        return Log::factory(
-            'data-warehouse-raw-data-rest',
-            [
-                'console' => false,
-                'file' => false,
-                'mail' => false
-            ]
-        );
-    }
-
-    /**
-     * Get the value configured in the portal settings for the maximum number
-     * of rows that can be returned in a single response from the raw data
-     * endpoint.
-     *
-     * @return int
-     * @throws Exception if the 'datawarehouse' section and/or the
-     *                   'rest_raw_row_limit' option have not been set in the
-     *                   portal configuration.
-     */
-    private function getConfiguredRawDataLimit()
-    {
-        return intval(\xd_utilities\getConfiguration(
-            'datawarehouse',
-            'rest_raw_row_limit'
-        ));
-    }
-
-    /**
-     * Get a raw batch dataset from the warehouse.
-     *
-     * @param XDUser $user
-     * @param array $params validated parameter values.
-     * @param \DataWarehouse\Query\RawQuery $query
-     * @param \CCR\Logger
-     * @param int $limit maximum number of rows to get.
-     * @return BatchDataset
-     * @throws Exception if the 'fields' parameter contains invalid field
-     *                   aliases.
-     */
-    private function getRawBatchDataset(
-        $user,
-        $params,
-        $query,
-        $logger,
-        $limit
-    ) {
-        try {
-            $dataset = new BatchDataset(
-                $query,
-                $user,
-                $logger,
-                $params['fields'],
-                $limit,
-                $params['offset']
-            );
-            return $dataset;
-        } catch (Exception $e) {
-            if (preg_match('/Invalid fields specified/', $e->getMessage())) {
-                throw new BadRequestException($e->getMessage());
-            } else {
-                throw $e;
-            }
-        }
-    }
-
-    /**
-     * Parse the given dataset into an array of records.
-     *
-     * @param BatchDataset $dataset
-     * @return array of records obtained by iterating over the dataset.
-     */
-    private function parseRawBatchDataset($dataset)
-    {
-        $data = [];
-        foreach ($dataset as $record) {
-            $data[] = $record;
-        }
-        return $data;
-    }
-
-    /**
-     * Validate the 'start_date' and 'end_date' parameters of the given request
+     * Validate the `start_date` and `end_date` parameters of the given request
      * to the raw data endpoint (@see getRawData()).
      *
      * @param Request $request
@@ -2364,115 +2234,236 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Get the array of field aliases from the given request to the raw data
-     * endpoint (@see getRawData()), e.g., the parameter 'fields=foo,bar,baz'
-     * results in ['foo', 'bar', 'baz'].
+     * Validate the `realm` parameter of the given request from the given user
+     * to the raw data endpoint (@see getRawData()).
      *
      * @param Request $request
-     * @return array|null containing the field aliases parsed from the request,
-     *                    if provided.
+     * @param XDUser $user
+     * @return string the realm, if it is valid.
+     * @throws BadRequestException if the realm is invalid.
      */
-    private function getRawDataFieldsArray($request)
+    private function validateRawDataRealm($request, $user)
+    {
+        $realm = $this->getStringParam($request, 'realm', true);
+        $realmsForUser = Realms::getRealmIdsForUser($user);
+        if (!in_array($realm, $realmsForUser)) {
+            throw new BadRequestException('Invalid realm.');
+        }
+        return $realm;
+    }
+
+    /**
+     * Validate the `offset` parameter of the given request to the raw data
+     * endpoint (@see getRawData()).
+     *
+     * @param Request $request
+     * @return string the offset, if it is valid.
+     * @throws BadRequestException if the offset is invalid.
+     */
+    private function validateRawDataOffset($request)
+    {
+        $offset = $this->getIntParam($request, 'offset', false, 0);
+        if ($offset < 0) {
+            throw new BadRequestException('Offset must be non-negative.');
+        }
+        return $offset;
+    }
+
+    /**
+     * Initialize a query for raw data with the given start date, end date, and
+     * realm.
+     *
+     * @param $startDate string
+     * @param $endDate string
+     * @param $realm string
+     * @return \DataWarehouse\Query\RawQuery
+     */
+    private function initRawDataQuery($startDate, $endDate, $realm)
+    {
+        $realmManager = new RealmManager();
+        $className = $realmManager->getRawDataQueryClass($realm);
+        $query = new $className(
+            [
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            ],
+            'batch'
+        );
+        return $query;
+    }
+
+    /**
+     * Validate the optional `fields` parameter for the given request to the
+     * raw data endpoint (@see getRawData()).
+     *
+     * @param Request $request
+     * @param array $validFields the list of all valid fields for the requested
+     *                           realm.
+     * @return array valid requested fields or null if no fields were
+     *               requested.
+     * @throws BadRequestException if any invalid fields were requested.
+     */
+    private function validateRawDataFields($request, $validFields)
     {
         $fields = null;
         $fieldsStr = $this->getStringParam($request, 'fields', false);
         if (!is_null($fieldsStr)) {
             $fields = explode(',', $fieldsStr);
+            $this->validateRawDataFieldAliases(
+                $fields,
+                $validFields,
+                'fields'
+            );
+            // Filter out the fields whose aliases were not provided.
+            $fields = array_filter(
+                $validFields,
+                function ($field) use ($fields) {
+                    return in_array($field['alias'], $fields);
+                }
+            );
+            // Renumber the indexes.
+            $fields = array_values($fields);
         }
         return $fields;
     }
 
     /**
-     * Validate the optional 'filters' parameter of the given request to the
-     * raw data endpoint (@see getRawData()), e.g., the parameter
-     * 'filters[foo]=bar,baz' results in ['foo' => ['bar', 'baz']].
+     * Validate the optional `filters` parameters of the given request to the
+     * raw data endpoint (@see getRawData()), e.g., the parameters
+     * `filters[a]=b,c&filters[d]=e,f,g` result in:
+     * [
+     *     'a' => ['b', 'c'],
+     *     'd' => ['e', 'f', 'g']
+     * ]
      *
      * @param Request $request
-     * @param array $queryDescripters the set of dimensions the user is
-     *                                authorized to see based on their assigned
-     *                                ACLs.
-     * @return array whose keys are the validated filter keys (they must be
-     *               valid dimensions the user is authorized to see) and whose
-     *               values are arrays of the provided string values.
+     * @param array $validFields the list of all valid fields for the requested
+     *                           realm.
+     * @return array whose keys are the validated filter keys (i.e., valid
+     *               field aliases) and whose values are arrays of the provided
+     *               string values. Note that the keys have been validated but
+     *               the values have not.
      * @throws BadRequestException if any of the filter keys are invalid
-     *                             dimension names.
+     *                             field aliases.
      */
-    private function validateRawDataFiltersParams($request, $queryDescripters)
+    private function validateRawDataFilters($request, $validFields)
     {
         $filters = null;
-        $filtersParam = $request->get('filters');
-        if (!is_null($filtersParam)) {
+        $filtersParams = $request->get('filters');
+        if (is_array($filtersParams)) {
+            $this->validateRawDataFieldAliases(
+                array_keys($filtersParams),
+                $validFields,
+                'filter keys'
+            );
             $filters = [];
-            foreach ($filtersParam as $filterKey => $filterValuesStr) {
-                $filters[$filterKey] = $this->validateRawDataFilterParam(
-                    $queryDescripters,
-                    $filterKey,
-                    $filterValuesStr
-                );
+            foreach ($filtersParams as $filterKey => $filterValuesStr) {
+                $filters[$filterKey] = explode(',', $filterValuesStr);
             }
         }
         return $filters;
     }
 
     /**
-     * Given a raw data query and a mapping of dimension names to possible
-     * values, set the query to filter out records whose value for the given
-     * dimension does not match any of the provided values.
+     * Given a raw data query and a mapping of field aliases to possible
+     * values, set the query to filter out records whose values for the fields
+     * does not match any of the provided values.
      *
      * @param \DataWarehouse\Query\RawQuery $query
-     * @param array $params containing a 'filters' key whose value is an
-     *                      associative array of dimensions and dimension
-     *                      values.
+     * @param array|null $filters associative array of field aliases mapped to
+     *                            arrays of field values.
      * @return \DataWarehouse\Query\RawQuery the query with the filters
      *                                       applied.
      */
-    private function setRawDataQueryFilters($query, $params)
+    private function setRawDataQueryFilters($query, $filters)
     {
-        if (is_array($params['filters']) && count($params['filters']) > 0) {
-            $f = new stdClass();
-            $f->{'data'} = [];
-            foreach ($params['filters'] as $dimension => $values) {
-                foreach ($values as $value) {
-                    $f->{'data'}[] = (object) [
-                        'id' => "$dimension=$value",
-                        'value_id' => $value,
-                        'dimension_id' => $dimension,
-                        'checked' => 1,
-                    ];
-                }
+        if (is_array($filters)) {
+            foreach ($filters as $fieldAlias => $fieldValues) {
+                $fields = $query->getFields();
+                $field = $fields[$fieldAlias];
+                $query->addPdoWhereCondition(new WhereCondition(
+                    $field,
+                    'IN',
+                    $fieldValues
+                ));
             }
-            $query->setFilters($f);
         }
         return $query;
     }
 
     /**
-     * Validate a specific filter from the 'filters' parameter of a request to
-     * the raw data endpoint (@see getRawData()), and return the parsed array
-     * of values for that filter (e.g., 'foo,bar,baz' becomes ['foo', 'bar',
-     * 'baz']).
+     * Generate a database logger for the raw data queries.
      *
-     * @param Request $request
-     * @param array $queryDescripters the set of dimensions the user is
-     *                                authorized to see based on their assigned
-     *                                ACLs.
-     * @param string $filterKey the label of a dimension.
-     * @param string $filerValuesStr a comma-separated string.
-     * @return array
-     * @throws BadRequestException if the filter key is an invalid dimension
-     *                             name.
+     * @return \CCR\Logger
      */
-    private function validateRawDataFilterParam(
-        $queryDescripters,
-        $filterKey,
-        $filterValuesStr
+    private function initRawDataLogger()
+    {
+        return Log::factory(
+            'data-warehouse-raw-data-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+    }
+
+    /**
+     * Get the value configured in the portal settings for the maximum number
+     * of rows that can be returned in a single response from the raw data
+     * endpoint.
+     *
+     * @return int
+     * @throws Exception if the 'datawarehouse' section and/or the
+     *                   'rest_raw_row_limit' option have not been set in the
+     *                   portal configuration.
+     */
+    private function getConfiguredRawDataLimit()
+    {
+        return intval(\xd_utilities\getConfiguration(
+            'datawarehouse',
+            'rest_raw_row_limit'
+        ));
+    }
+
+    /**
+     * Parse the given dataset into an array of records.
+     *
+     * @param BatchDataset $dataset
+     * @return array of records obtained by iterating over the dataset.
+     */
+    private function parseRawBatchDataset($dataset)
+    {
+        $data = [];
+        foreach ($dataset as $record) {
+            $data[] = $record;
+        }
+        return $data;
+    }
+
+    /**
+     * Check whether each of the given field aliases is valid.
+     *
+     * @param array $fields the list of field aliases to validate.
+     * @param array $validFields the list of valid fields.
+     * @param string $label how to refer to the fields in the exception
+     *                      message.
+     * @return null
+     * @throws BadRequestException if any of the field aliases are invalid.
+     */
+    private function validateRawDataFieldAliases(
+        $fieldAliases,
+        $validFields,
+        $label
     ) {
-        if (!in_array($filterKey, array_keys($queryDescripters))) {
+        $validFieldAliases = array_column($validFields, 'alias');
+        $invalidFieldAliases = array_diff($fieldAliases, $validFieldAliases);
+        if (count($invalidFieldAliases) > 0) {
             throw new BadRequestException(
-                'Invalid filter key \'' . $filterKey . '\'.'
+                "Invalid $label specified: '"
+                . join("', '", $invalidFieldAliases)
+                . "'."
             );
         }
-        $filterValuesArray = explode(',', $filterValuesStr);
-        return $filterValuesArray;
     }
 }
