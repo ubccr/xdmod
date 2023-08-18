@@ -4,6 +4,11 @@ namespace DataWarehouse\Query\Model;
 class WhereCondition
 {
     public $_left;
+
+    /**
+     * @var mixed Right-hand side of the operator. An array should be used iff
+     * the operator is 'IN'.
+     */
     public $_right;
     public $_operation;
 
@@ -16,6 +21,10 @@ class WhereCondition
 
     public function __toString()
     {
-        return $this->_left. ' '.$this->_operation.' '.$this->_right ;
+        $right = $this->_right;
+        if (is_array($this->_right)) {
+            $right = sprintf('(%s)', implode(',', $this->_right));
+        }
+        return sprintf('%s %s %s', $this->_left, $this->_operation, $right);
     }
 }

@@ -10,7 +10,8 @@ class Parameter extends \Common\Identity
     protected $_operator;
 
     /**
-     * @var string Right-hand side of the operator
+     * @var string|array Right-hand side of the operator. An array should be
+     * used iff the operator is 'IN'.
      */
 
     protected $_value;
@@ -38,6 +39,10 @@ class Parameter extends \Common\Identity
 
     public function __toString()
     {
-        return sprintf('%s %s %s', $this->_name, $this->_operator, $this->_value);
+        $right = $this->_value;
+        if (is_array($this->_value)) {
+            $right = sprintf('(%s)' . implode(',', $this->_value));
+        }
+        return sprintf('%s %s %s', $this->_name, $this->_operator, $right);
     }
 }

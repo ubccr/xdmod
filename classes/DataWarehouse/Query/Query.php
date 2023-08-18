@@ -466,8 +466,6 @@ class Query extends Loggable
      * Add a where condition to the query and add the data to the pdo parameters. This
      * function should be used when the right hand side of the where condition is untrused
      * user supplied data.
-     *
-     * Note this function does not handle pdo parameterization of 'IN' conditions.
      */
     public function addPdoWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
     {
@@ -478,12 +476,12 @@ class Query extends Loggable
             return;
         }
 
-        $namedParam = $this->getNamedParameterMarker($where_condition->_right);
+        $namedParams = $this->getNamedParameterMarkers($where_condition->_right);
 
         $this->_where_conditions[$key] = new \DataWarehouse\Query\Model\WhereCondition(
             $where_condition->_left,
             $where_condition->_operation,
-            $namedParam
+            $namedParams
         );
     }
 
@@ -791,6 +789,27 @@ SQL;
         );
 
         return $data_query;
+    }
+
+    /**
+     * Store bound parameters for the query and return the named parameter
+     * markers that should be used in the SQL query.
+     *
+     * @param mixed values the values to bind to the query.
+     * @return string|array named parameter markers. Iff values was an array,
+     * this will also be an array.
+     */
+    protected function getNamedParameterMarkers($values) {
+        $namedParams = null;
+        if (is_array($values)) {
+            $namedParams = [];
+            foreach ($values as $value) {
+                $namedParams[] = $this->getNamedParameterMarker($value);
+            }
+        } else {
+            $namedParams = $this->getNamedParameterMarker($values);
+        }
+        return $namedParams;
     }
 
     /**
