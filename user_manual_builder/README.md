@@ -1,4 +1,4 @@
-# Create the XDMoD User Manual 
+# Create the XDMoD User Manual
 
 ## Build Scripts
 
@@ -26,8 +26,8 @@ build_user_manual.sh
 
 ### reStructuredText Guide
 
-reStructuredText is a lightweight markup language, developed by the Python community, 
-that aims to offer more advanced formatting and extensibility compared to Markdown. 
+reStructuredText is a lightweight markup language, developed by the Python community,
+that aims to offer more advanced formatting and extensibility compared to Markdown.
 
 #### Syntax Example
 ```rst
@@ -93,6 +93,7 @@ Example:
 will then get rendered as
 
 Figure image
+
 Fig. # caption text
 
 This can then be referenced by a numref in the form ":numref:`name_of_image`". This will generate
@@ -122,24 +123,29 @@ Use in reStructuredText:
 :only:`<tag-name>text{figure or table reference name}additional text if needed`
 ```
 Breakdown:
-<> tag name in angled brackets
-{} reference name in curly brackets
-text not wrapped by anything
+<> : tag name in angled brackets
+
+{} : reference name in curly brackets
+
+text : not wrapped by anything
 
 The extension code uses the app variable stored by Sphinx and the .has(tag) function to separate XSEDE and Open
 versions of XDMoD. The only function then relies on Sphinx's node based system to add in the proper nodes
-depending on what tags are active. This shouldn't require a lot of maintenance, as the extension works for 4 
+depending on what tags are active. This shouldn't require a lot of maintenance, as the extension works for 4
 previous versions. If the extension stops working, the most likely culprit is the app variable and how it is 
 declared.
 
 ### Breaking down the sphinx-build command
 
 This is the bread and butter of build_user_manual.sh. This uses Sphinx to build the user manual and store
-it in the intended directory. 
+it in the intended directory.
 ```shell
 sphinx-build -E -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
 ```
 -E : hard rebuild of Sphinx. If not present, can cause issues when changing a specific file
+
 -t $MANUAL_VERSION : name of tag or version. Manual is currently only setup for XSEDE and Open
+
 $BASE_BUILD_DIR : source files
+
 $DEST_DIR : destination files
