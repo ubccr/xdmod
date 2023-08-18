@@ -79,7 +79,7 @@
         "body": {
             "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
             "$overwrite": {
-                "message": "Invalid filter key 'asdf'.",
+                "message": "Invalid filter keys specified: 'asdf'.",
                 "code": 104
             }
         }

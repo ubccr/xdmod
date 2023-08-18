@@ -123,8 +123,8 @@
                 "end_date": "2017-01-01",
                 "realm": "Jobs",
                 "fields": "Nodes,Wall Time",
-                "filters[resource]": "1,2",
-                "filters[fieldofscience]": "10,91"
+                "filters[Resource]": "Frearson,Mortorq",
+                "filters[PI Group]": "Arts,Mechanics and Materials"
             }
         }
     }
