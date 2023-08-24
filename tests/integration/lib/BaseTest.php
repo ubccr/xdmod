@@ -185,24 +185,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see requestAndValidateJson().
-     */
-    protected function authenticateRequestAndValidateJson(
-        XdmodTestHelper $testHelper,
-        $role,
-        array $input,
-        array $output
-    ) {
-        if ('pub' !== $role) {
-            $testHelper->authentice($role);
-        }
-        $this->requestAndValidateJson($testHelper, $input, $output);
-        if ('pub' !== $role) {
-            $testHelper->logout();
-        }
-    }
-
-    /**
      * Assert that a given JSON object validates against a provided file. If
      * the object in the file contains a '$schema' property, treat it as a JSON
      * schema; otherwise, treat it as a literal JSON object to be compared
