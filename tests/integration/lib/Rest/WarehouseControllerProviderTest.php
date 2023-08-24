@@ -175,42 +175,41 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $validRealm = 'Jobs';
         $validFields = 'Nodes,Wall Time';
         $generateSuccessBodyValidator = function ($count, $fields) {
-            return parent::assertSuccess(function (
-                $body,
-                $assertMessage
-            ) use ($count, $fields) {
-                $this->assertCount($count, $body['data'], $assertMessage);
-                if (!is_null($fields)) {
-                    $this->assertEquals(
-                        $fields,
-                        $body['fields'],
-                        $assertMessage
-                    );
-                }
-                foreach ($body['fields'] as $field) {
-                    $this->assertInternalType(
-                        'string',
-                        $field,
-                        $assertMessage
-                    );
-                }
-                foreach ($body['data'] as $dataRow) {
-                    foreach ($dataRow as $field) {
+            return parent::validateSuccessResponse(
+                function ($body, $assertMessage) use ($count, $fields) {
+                    $this->assertCount($count, $body['data'], $assertMessage);
+                    if (!is_null($fields)) {
+                        $this->assertEquals(
+                            $fields,
+                            $body['fields'],
+                            $assertMessage
+                        );
+                    }
+                    foreach ($body['fields'] as $field) {
                         $this->assertInternalType(
                             'string',
                             $field,
                             $assertMessage
                         );
                     }
-                    if (!is_null($fields)) {
-                        $this->assertSame(
-                            count($fields),
-                            count($dataRow),
-                            $assertMessage
-                        );
+                    foreach ($body['data'] as $dataRow) {
+                        foreach ($dataRow as $field) {
+                            $this->assertInternalType(
+                                'string',
+                                $field,
+                                $assertMessage
+                            );
+                        }
+                        if (!is_null($fields)) {
+                            $this->assertSame(
+                                count($fields),
+                                count($dataRow),
+                                $assertMessage
+                            );
+                        }
                     }
                 }
-            });
+            );
         };
         $tests = [];
         foreach (parent::provideTokenAuthTestData() as $testData) {
@@ -222,7 +221,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     $role,
                     $tokenType,
                     null,
-                    parent::assertMissingRequiredParameter('start_date')
+                    parent::validateMissingRequiredParameterResponse(
+                        'start_date'
+                    )
                 ]
             );
             // Only run the non-default valid token tests for one non-public
@@ -235,14 +236,18 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                         $role,
                         $tokenType,
                         ['start_date' => '2017'],
-                        parent::assertInvalidDateParameter('start_date')
+                        parent::validateInvalidDateParameterResponse(
+                            'start_date'
+                        )
                     ],
                     [
                         'no_end_date',
                         $role,
                         $tokenType,
                         ['start_date' => $validStartDate],
-                        parent::assertMissingRequiredParameter('end_date')
+                        parent::validateMissingRequiredParameterResponse(
+                            'end_date'
+                        )
                     ],
                     [
                         'end_date_malformed',
@@ -252,7 +257,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'start_date' => $validStartDate,
                             'end_date' => '2017'
                         ],
-                        parent::assertInvalidDateParameter('end_date')
+                        parent::validateInvalidDateParameterResponse(
+                            'end_date'
+                        )
                     ],
                     [
                         'end_before_start',
@@ -262,7 +269,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'start_date' => $validStartDate,
                             'end_date' => $endDateBeforeStart
                         ],
-                        parent::assertBadRequest(
+                        parent::validateBadRequestResponse(
                             'End date cannot be less than start date.',
                             104
                         )
@@ -275,7 +282,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'start_date' => $validStartDate,
                             'end_date' => $validEndDate
                         ],
-                        parent::assertMissingRequiredParameter('realm')
+                        parent::validateMissingRequiredParameterResponse(
+                            'realm'
+                        )
                     ],
                     [
                         'invalid_realm',
@@ -286,7 +295,10 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'end_date' => $validEndDate,
                             'realm' => 'foo'
                         ],
-                        parent::assertBadRequest('Invalid realm.', 104)
+                        parent::validateBadRequestResponse(
+                            'Invalid realm.',
+                            104
+                        )
                     ],
                     [
                         'invalid_fields',
@@ -298,7 +310,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'realm' => $validRealm,
                             'fields' => 'foo,bar;'
                         ],
-                        parent::assertBadRequest(
+                        parent::validateBadRequestResponse(
                             "Invalid fields specified: 'foo', 'bar;'.",
                             104
                         )
@@ -314,7 +326,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'fields' => $validFields,
                             'filters[foo]' => '177'
                         ],
-                        parent::assertBadRequest(
+                        parent::validateBadRequestResponse(
                             "Invalid filter key 'foo'.",
                             104
                         )
@@ -329,7 +341,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                             'realm' => $validRealm,
                             'offset' => -1
                         ],
-                        parent::assertBadRequest(
+                        parent::validateBadRequestResponse(
                             "Offset must be non-negative.",
                             104
                         )
@@ -396,7 +408,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_required'
             ],
-            parent::assertSuccess(function ($body, $assertMessage) {
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
                 $this->assertGreaterThan(
                     0,
                     $body['data'],

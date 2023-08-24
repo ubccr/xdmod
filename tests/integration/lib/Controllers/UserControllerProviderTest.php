@@ -64,7 +64,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             foreach (['get', 'post', 'delete'] as $method) {
                 $this->makeTokenRequest(
                     $method,
-                    parent::assertAuthorizationError(401)
+                    parent::validateAuthorizationErrorResponse(401)
                 );
             }
         } else {
@@ -75,7 +75,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Since the user now doesn't have a token, getting it should fail.
             $notFoundOutput = [
                 'status_code' => 404,
-                'body_validator' => parent::assertErrorBody(
+                'body_validator' => parent::validateErrorResponseBody(
                     'API token not found.',
                     0
                 )
@@ -85,20 +85,20 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // succeed.
             $this->makeTokenRequest(
                 'post',
-                parent::assertSuccess(function ($body) {
+                parent::validateSuccessResponse(function ($body) {
                     $this->assertRegExp(
                         '/^[0-9]+\\.[0-9a-f]{64}$/',
                         $body['data']['token']
                     );
-                    parent::assertDate($body['data']['expiration_date']);
+                    parent::validateDate($body['data']['expiration_date']);
                 })
             );
             // Now that the user has a token, getting it should succeed.
             $this->makeTokenRequest(
                 'get',
-                parent::assertSuccess(function ($body) {
-                    parent::assertDate($body['data']['created_on']);
-                    parent::assertDate($body['data']['expiration_date']);
+                parent::validateSuccessResponse(function ($body) {
+                    parent::validateDate($body['data']['created_on']);
+                    parent::validateDate($body['data']['expiration_date']);
                 })
             );
             // Since the user still has a token and can only have one at a
@@ -107,7 +107,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'post',
                 [
                     'status_code' => 409,
-                    'body_validator' => parent::assertErrorBody(
+                    'body_validator' => parent::validateErrorResponseBody(
                         'Token already exists.',
                         0
                     )
@@ -116,7 +116,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Since the user has a token, revoking it should succeed.
             $this->makeTokenRequest(
                 'delete',
-                parent::assertSuccess(function ($body) {
+                parent::validateSuccessResponse(function ($body) {
                     parent::assertSame(
                         'Token successfully revoked.',
                         $body['message']

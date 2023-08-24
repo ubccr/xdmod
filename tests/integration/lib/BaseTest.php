@@ -277,7 +277,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param callable $validator
      * @return array
      */
-    protected function assertSuccess(callable $validator)
+    protected function validateSuccessResponse(callable $validator)
     {
         return [
             'status_code' => 200,
@@ -299,8 +299,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @return array
      */
-    protected function assertMissingRequiredParameter(string $name) {
-        return $this->assertBadRequest("$name is a required parameter.", 0);
+    protected function validateMissingRequiredParameterResponse(string $name)
+    {
+        return $this->validateBadRequestResponse(
+            "$name is a required parameter.",
+            0
+        );
     }
 
     /**
@@ -311,8 +315,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @return array
      */
-    protected function assertInvalidDateParameter(string $name) {
-        return $this->assertBadRequest(
+    protected function validateInvalidDateParameterResponse(string $name)
+    {
+        return $this->validateBadRequestResponse(
             "Invalid value for $name. Must be a(n) ISO 8601 Date.",
             0
         );
@@ -327,11 +332,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $code
      * @return array
      */
-    protected function assertBadRequest(string $message, int $code)
+    protected function validateBadRequestResponse(string $message, int $code)
     {
         return [
             'status_code' => 400,
-            'body_validator' => $this->assertErrorBody($message, $code)
+            'body_validator' => $this->validateErrorResponseBody(
+                $message,
+                $code
+            )
         ];
     }
 
@@ -342,11 +350,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $statusCode
      * @return array
      */
-    protected function assertAuthorizationError(int $statusCode)
+    protected function validateAuthorizationErrorResponse(int $statusCode)
     {
         return [
             'status_code' => $statusCode,
-            'body_validator' => $this->assertErrorBody(
+            'body_validator' => $this->validateErrorResponseBody(
                 (
                     'An error was encountered while attempting to process the'
                     . ' requested authorization procedure.'
@@ -365,7 +373,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $code
      * @return callable
      */
-    protected function assertErrorBody(string $message, int $code)
+    protected function validateErrorResponseBody(string $message, int $code)
     {
         return function ($body, $assertMessage) use ($message, $code) {
             $this->assertEquals(
@@ -391,7 +399,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $date
      * @return null
      */
-    protected function assertDate(string $date)
+    protected function validateDate(string $date)
     {
         $this->assertRegExp(
             '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/',

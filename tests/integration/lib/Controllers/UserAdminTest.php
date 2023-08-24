@@ -451,7 +451,7 @@ class UserAdminTest extends BaseUserAdminTest
         parent::requestAndValidateJson(
             $this->helper,
             array_replace(
-                MetricExplorerTest::DEFAULT_INPUT,
+                MetricExplorerTest::getDefaultRequestInput(),
                 [
                     'data' => [
                         'operation' => 'get_dw_descripter',

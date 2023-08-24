@@ -1229,7 +1229,7 @@ END;
             ],
             [
                 'status_code' => 500,
-                'body_validator' => parent::assertErrorBody(
+                'body_validator' => parent::validateErrorResponseBody(
                     'One or more realms must be specified.',
                     0
                 )

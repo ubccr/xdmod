@@ -200,7 +200,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_optional'
             ],
-            parent::assertSuccess(function ($body, $assertMessage) {
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
                 $this->assertSame(2, $body['total'], $assertMessage);
                 $index = 0;
                 foreach (['Jobs', 'Cloud'] as $realmName) {

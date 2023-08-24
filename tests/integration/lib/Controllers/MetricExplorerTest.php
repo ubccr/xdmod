@@ -11,19 +11,23 @@ class MetricExplorerTest extends TokenAuthTest
      * Directory containing test artifact files.
      */
     const TEST_GROUP = 'integration/controllers/metric_explorer';
-    const DEFAULT_INPUT = [
-        'path' => 'controllers/metric_explorer.php',
-        'method' => 'post',
-        'params' => null,
-        'endpoint_type' => 'controller',
-        'authentication_type' => 'token_optional'
-    ];
 
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
     }
- 
+
+    public static function getDefaultRequestInput()
+    {
+        return [
+            'path' => 'controllers/metric_explorer.php',
+            'method' => 'post',
+            'params' => null,
+            'endpoint_type' => 'controller',
+            'authentication_type' => 'token_optional'
+        ];
+    }
+
     /**
      * This method is used by both testGetDwDescripterTokenAuth() and
      * UserAdminTest::testGetDwDescripters().
@@ -208,7 +212,7 @@ class MetricExplorerTest extends TokenAuthTest
             $role,
             $tokenType,
             array_replace(
-                self::DEFAULT_INPUT,
+                self::getDefaultRequestInput(),
                 [
                     'data' => [
                         'operation' => 'get_dw_descripter'
@@ -235,7 +239,7 @@ class MetricExplorerTest extends TokenAuthTest
             $role,
             $tokenType,
             array_replace(
-                self::DEFAULT_INPUT,
+                self::getDefaultRequestInput(),
                 [
                     'data' => [
                         'operation' => 'get_dimension',
@@ -253,7 +257,10 @@ class MetricExplorerTest extends TokenAuthTest
                 'body_validator' => function (
                     $body,
                     $assertMessage
-                ) use ($tokenType, $expectedCount) {
+                ) use (
+                    $tokenType,
+                    $expectedCount
+                ) {
                     $this->assertGreaterThanOrEqual(
                         0,
                         $body['totalCount'],

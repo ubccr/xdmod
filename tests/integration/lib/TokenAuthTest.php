@@ -129,13 +129,13 @@ abstract class TokenAuthTest extends BaseTest
                 if ('controller' === $input['endpoint_type']) {
                     $output = [
                         'status_code' => 401,
-                        'body_validator' => $this->assertErrorBody(
+                        'body_validator' => $this->validateErrorResponseBody(
                             'Session Expired',
                             2
                         )
                     ];
                 } elseif ('rest' === $input['endpoint_type']) {
-                    $output = parent::assertAuthorizationError(401);
+                    $output = parent::validateAuthorizationErrorResponse(401);
                 } else {
                     throw new Exception(
                         "Unknown value for endpoint_type:"
@@ -154,7 +154,7 @@ abstract class TokenAuthTest extends BaseTest
                 ];
                 $output = [
                     'status_code' => 401,
-                    'body_validator' => $this->assertErrorBody(
+                    'body_validator' => $this->validateErrorResponseBody(
                         $messages[$tokenType],
                         0
                     )
