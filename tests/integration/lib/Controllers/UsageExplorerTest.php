@@ -1217,8 +1217,23 @@ END;
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_data'
+            [
+                'path' => 'controllers/user_interface.php',
+                'method' => 'post',
+                'params' => null,
+                'data' => [
+                    'operation' => 'get_data'
+                ],
+                'endpoint_type' => 'controller',
+                'authentication_type' => 'token_optional'
+            ],
+            [
+                'status_code' => 500,
+                'body_validator' => parent::assertErrorBody(
+                    'One or more realms must be specified.',
+                    0
+                )
+            ]
         );
     }
 }

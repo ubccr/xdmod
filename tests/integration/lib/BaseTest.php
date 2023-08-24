@@ -5,9 +5,9 @@ namespace IntegrationTests;
 use CCR\Json;
 use Exception;
 use Swaggest\JsonSchema\Schema;
-use TestHarness\IntegrationTestConfiguration;
 use TestHarness\TestFiles;
 use TestHarness\Utilities;
+use TestHarness\XdmodTestHelper;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +22,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected static $REQUIRED_ENDPOINT_TEST_KEYS = [
         'input' => ['path', 'method', 'params', 'data'],
-        'output' => ['status_code', 'body']
+        'output' => ['status_code', 'body_validator']
     ];
 
     public static function setUpBeforeClass()
@@ -75,45 +75,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Load a JSON test artifact file into an associative array, replacing the
-     * string '${INTEGRATION_ROOT}' with the path to the integration test
-     * artifacts directory, and adding a '$path' key whose value is the path to
-     * the file; this key can be later stripped out by
-     * @see BaseTest::requestAndValidateJson() and used to prepare the error
-     * message that is displayed when validation fails.
-     *
-     * @param string $testGroup the directory (relative to the test artifacts
-     *                          directory) containing the file.
-     * @param string $fileName the name of the file.
-     * @param string $fileType the type of file, i.e., the subdirectory in
-     *                         which the file is located.
-     * @return array the test artifact as an associative array.
-     * @throws Exception if there is an error loading the file.
-     */
-    protected function loadJsonTestArtifact($testGroup, $fileName, $fileType)
-    {
-        $filePath = self::getTestFiles()->getFile(
-            $testGroup,
-            $fileName,
-            $fileType
-        );
-        $artifact = IntegrationTestConfiguration::defaultAssocArrayFactory(
-            $filePath,
-            self::getTestFiles()
-        );
-        $artifact['$path'] = $filePath;
-        if (isset($artifact['body'])) {
-            $artifact['body']['$path'] = $filePath;
-        }
-        return $artifact;
-    }
-
-    /**
      * Make an HTTP request and make assertions about the JSON response's
      * status code, content type, body, and possibly headers.
      *
-     * @param \TestHarness\XdmodTestHelper $testHelper the test helper making
-     *                                                 the HTTP request.
+     * @param XdmodTestHelper $testHelper the test helper making the HTTP
+     *                                    request.
      * @param array $input associative array describing the HTTP request. Must
      *                     have the required keys from
      *                     @see self::$REQUIRED_ENDPOINT_TEST_KEYS['input'].
@@ -129,17 +95,17 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                      the list, this will NOT cause the assertion to
      *                      fail).
      * @return mixed the actual decoded JSON response body.
-     * @throws Exception if the input object does not contain all of the
+     * @throws Exception if the input array does not contain all of the
      *                   required keys or if there is an error making the
      *                   request, loading the JSON output file, or running the
      *                   validation of it.
      */
     protected function requestAndValidateJson(
-        $testHelper,
-        $input,
-        $output
+        XdmodTestHelper $testHelper,
+        array $input,
+        array $output
     ) {
-        // Make sure the input and output objects have all the required keys.
+        // Make sure the input and output arrays have all the required keys.
         self::assertRequiredKeys(
             self::$REQUIRED_ENDPOINT_TEST_KEYS['input'],
             $input,
@@ -196,22 +162,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             . "\nACTUAL STATUS CODE: $actualStatusCode"
             . "\nEXPECTED CONTENT TYPE: application/json"
             . "\nACTUAL CONTENT TYPE: $actualContentType"
-            . "\nEXPECTED BODY: "
-            . self::getJsonStringForExceptionMessage($output['body'])
             . "\nACTUAL BODY: "
             . self::getJsonStringForExceptionMessage($actualBody)
             . "\n"
         );
 
-        // If the expected body has a path defined, strip it out before making
-        // any assertions.
-        unset($output['body']['$path']);
-
         // Make assertions
         $this->assertSame($output['status_code'], $actualStatusCode, $message);
         $this->assertSame('application/json', $actualContentType, $message);
-        $actualBody = json_decode(json_encode($actualBody));
-        $this->validateJson($output['body'], $actualBody, $message);
+        $output['body_validator']($actualBody, $message);
         if (isset($output['headers'])) {
             foreach ($output['headers'] as $key => $value) {
                 $this->assertArrayHasKey($key, $actualHeaders, $message);
@@ -223,6 +182,24 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             }
         }
         return $actualBody;
+    }
+
+    /**
+     * @see requestAndValidateJson().
+     */
+    protected function authenticateRequestAndValidateJson(
+        XdmodTestHelper $testHelper,
+        string $role,
+        array $input,
+        array $output
+    ) {
+        if ('pub' !== $role) {
+            $testHelper->authentice($role);
+        }
+        $this->requestAndValidateJson($testHelper, $input, $output);
+        if ('pub' !== $role) {
+            $testHelper->logout();
+        }
     }
 
     /**
@@ -255,10 +232,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             $fileName,
             $fileType
         );
-        $expectedJson = IntegrationTestConfiguration::defaultAssocArrayFactory(
-            $expectedFilePath,
-            self::getTestFiles()
-        );
+        $expectedJson = JSON::loadFile($expectedFilePath);
         return $this->validateJson($expectedJson, $json);
     }
 
@@ -296,26 +270,148 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * uses the given validator to validate 200 OK responses in which the
+     * 'success' property is true.
+     *
+     * @param callable $validator
+     * @return array
+     */
+    protected function assertSuccess(callable $validator)
+    {
+        return [
+            'status_code' => 200,
+            'body_validator' => function (
+                $body,
+                $assertMessage
+            ) use ($validator) {
+                $this->assertSame(true, $body['success']);
+                $validator($body, $assertMessage);
+            }
+        ];
+    }
+
+    /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * validates 400 Bad Request responses in which a required parameter with
+     * the given name was not provided in the request.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function assertMissingRequiredParameter(string $name) {
+        return $this->assertBadRequest("$name is a required parameter.", 0);
+    }
+
+    /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * validates 400 Bad Request responses in which a parameter with the given
+     * name was not a valid ISO 8601 date.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function assertInvalidDateParameter(string $name) {
+        return $this->assertBadRequest(
+            "Invalid value for $name. Must be a(n) ISO 8601 Date.",
+            0
+        );
+    }
+
+    /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * validates 400 Bad Request responses expected to have the given message
+     * and code in their JSON.
+     *
+     * @param string $message
+     * @param int $code
+     * @return array
+     */
+    protected function assertBadRequest(string $message, int $code)
+    {
+        return [
+            'status_code' => 400,
+            'body_validator' => $this->assertErrorBody($message, $code)
+        ];
+    }
+
+    /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * validates authorization error responses with the given HTTP status code.
+     *
+     * @param int $statusCode
+     * @return array
+     */
+    protected function assertAuthorizationError(int $statusCode)
+    {
+        return [
+            'status_code' => $statusCode,
+            'body_validator' => $this->assertErrorBody(
+                (
+                    'An error was encountered while attempting to process the'
+                    . ' requested authorization procedure.'
+                ),
+                0
+            )
+        ];
+    }
+
+    /**
+     * Return a validator for use in @see requestAndValidateJson() that
+     * validates HTTP error responses expected to have the given message
+     * and code in their JSON.
+     *
+     * @param string $message
+     * @param int $code
+     * @return callable
+     */
+    protected function assertErrorBody(string $message, int $code)
+    {
+        return function ($body, $assertMessage) use ($message, $code) {
+            $this->assertEquals(
+                [
+                    'success' => false,
+                    'count' => 0,
+                    'total' => 0,
+                    'totalCount' => 0,
+                    'results' => [],
+                    'data' => [],
+                    'message' => $message,
+                    'code' => $code
+                ],
+                $body,
+                $assertMessage
+            );
+        };
+    }
+
+    /**
+     * Validate ISO 8601 dates.
+     *
+     * @param string $date
+     * @return null
+     */
+    protected function assertDate(string $date)
+    {
+        $this->assertRegExp(
+            '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/',
+            $date
+        );
+    }
+
+    /**
      * Given a JSON associative array, return a string representation of it for
-     * printing in exception messages. If the array has the key '$path',
-     * return only that it was defined in the file at that path. Otherwise,
-     * return the pretty-printed JSON itself, truncated at 1000 characters.
+     * printing in exception messages: pretty-print the JSON, and truncate at
+     * 1000 characters.
      *
      * @param array $json the JSON associative array.
      * @return string the string representation.
      */
-    protected function getJsonStringForExceptionMessage($json)
+    protected function getJsonStringForExceptionMessage(array $json)
     {
-        return (
-            (
-                isset($json['$path'])
-                ? 'defined in ' . $json['$path'] . "\n"
-                : ''
-            )
-            . self::truncateStr(
-                json_encode($json, JSON_PRETTY_PRINT),
-                1000
-            )
+        return self::truncateStr(
+            json_encode($json, JSON_PRETTY_PRINT),
+            1000
         );
     }
 

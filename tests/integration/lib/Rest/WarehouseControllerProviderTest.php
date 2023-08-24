@@ -146,14 +146,21 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetRawData
      */
-    public function testGetRawData($role, $tokenType, $testKey)
+    public function testGetRawData($id, $role, $tokenType, $params, $output)
     {
+        $input = [
+            'path' => 'rest/warehouse/raw-data',
+            'method' => 'get',
+            'params' => $params,
+            'data' => null,
+            'endpoint_type' => 'rest',
+            'authentication_type' => 'token_required'
+        ];
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_raw_data',
-            $testKey
+            $input,
+            $output
         );
     }
 
@@ -162,27 +169,215 @@ class WarehouseControllerProviderTest extends TokenAuthTest
      */
     public function provideGetRawData()
     {
-        $testData = TokenAuthTest::provideTokenAuthTestDataWithMultipleKeys(
-            self::TEST_GROUP,
-            'get_raw_data'
-        );
-        // Only run the non-default valid token tests for one non-public user
-        // to make the tests take less time overall.
-        $testNames = array_keys($testData);
-        foreach ($testNames as $testName) {
-            if (
-                // If the user is other than 'usr',
-                1 !== preg_match('/^usr-/', $testName)
-                // and the token type is 'valid_token',
-                && 1 === preg_match('/-valid_token-/', $testName)
-                // and the test key is not 'defaults',
-                && 1 !== preg_match('/-defaults$/', $testName)
-            ) {
-                // Remove the test from the list.
-                unset($testData[$testName]);
+        $validStartDate = '2017-01-01';
+        $validEndDate = '2017-01-01';
+        $endDateBeforeStart = '2016-01-01';
+        $validRealm = 'Jobs';
+        $validFields = 'Nodes,Wall Time';
+        $generateSuccessBodyValidator = function ($count, $fields) {
+            return parent::assertSuccess(function (
+                $body,
+                $assertMessage
+            ) use ($count, $fields) {
+                $this->assertCount($count, $body['data'], $assertMessage);
+                if (!is_null($fields)) {
+                    $this->assertEquals(
+                        $fields,
+                        $body['fields'],
+                        $assertMessage
+                    );
+                }
+                foreach ($body['fields'] as $field) {
+                    $this->assertInternalType(
+                        'string',
+                        $field,
+                        $assertMessage
+                    );
+                }
+                foreach ($body['data'] as $dataRow) {
+                    foreach ($dataRow as $field) {
+                        $this->assertInternalType(
+                            'string',
+                            $field,
+                            $assertMessage
+                        );
+                    }
+                    if (!is_null($fields)) {
+                        $this->assertSame(
+                            count($fields),
+                            count($dataRow),
+                            $assertMessage
+                        );
+                    }
+                }
+            });
+        };
+        $tests = [];
+        foreach (parent::provideTokenAuthTestData() as $testData) {
+            list($role, $tokenType) = $testData;
+            array_push(
+                $tests,
+                [
+                    'default',
+                    $role,
+                    $tokenType,
+                    null,
+                    parent::assertMissingRequiredParameter('start_date')
+                ]
+            );
+            // Only run the non-default valid token tests for one non-public
+            // user to make the tests take less time overall.
+            if ('usr' === $role && 'valid_token' === $tokenType) {
+                array_push(
+                    $tests,
+                    [
+                        'start_date_malformed',
+                        $role,
+                        $tokenType,
+                        ['start_date' => '2017'],
+                        parent::assertInvalidDateParameter('start_date')
+                    ],
+                    [
+                        'no_end_date',
+                        $role,
+                        $tokenType,
+                        ['start_date' => $validStartDate],
+                        parent::assertMissingRequiredParameter('end_date')
+                    ],
+                    [
+                        'end_date_malformed',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => '2017'
+                        ],
+                        parent::assertInvalidDateParameter('end_date')
+                    ],
+                    [
+                        'end_before_start',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $endDateBeforeStart
+                        ],
+                        parent::assertBadRequest(
+                            'End date cannot be less than start date.',
+                            104
+                        )
+                    ],
+                    [
+                        'no_realm',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate
+                        ],
+                        parent::assertMissingRequiredParameter('realm')
+                    ],
+                    [
+                        'invalid_realm',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => 'foo'
+                        ],
+                        parent::assertBadRequest('Invalid realm.', 104)
+                    ],
+                    [
+                        'invalid_fields',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => $validRealm,
+                            'fields' => 'foo,bar;'
+                        ],
+                        parent::assertBadRequest(
+                            "Invalid fields specified: 'foo', 'bar;'.",
+                            104
+                        )
+                    ],
+                    [
+                        'invalid_filter_key',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => $validRealm,
+                            'fields' => $validFields,
+                            'filters[foo]' => '177'
+                        ],
+                        parent::assertBadRequest(
+                            "Invalid filter key 'foo'.",
+                            104
+                        )
+                    ],
+                    [
+                        'negative_offset',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => $validRealm,
+                            'offset' => -1
+                        ],
+                        parent::assertBadRequest(
+                            "Offset must be non-negative.",
+                            104
+                        )
+                    ],
+                    [
+                        'success_0',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => $validRealm
+                        ],
+                        $generateSuccessBodyValidator(10000, null)
+                    ],
+                    [
+                        'success_16500',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => $validRealm,
+                            'offset' => 16500
+                        ],
+                        $generateSuccessBodyValidator(66, null)
+                    ],
+                    [
+                        'success_fields_and_filters',
+                        $role,
+                        $tokenType,
+                        [
+                            'start_date' => $validStartDate,
+                            'end_date' => $validEndDate,
+                            'realm' => $validRealm,
+                            'fields' => $validFields,
+                            'filters[resource]' => '1,2',
+                            'filters[fieldofscience]' => '10,91'
+                        ],
+                        $generateSuccessBodyValidator(
+                            29,
+                            ['Nodes', 'Wall Time']
+                        )
+                    ]
+                );
             }
         }
-        return $testData;
+        return $tests;
     }
 
     /**
@@ -193,8 +388,21 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_raw_data_limit'
+            [
+                'path' => 'rest/warehouse/raw-data/limit',
+                'method' => 'get',
+                'params' => null,
+                'data' => null,
+                'endpoint_type' => 'rest',
+                'authentication_type' => 'token_required'
+            ],
+            parent::assertSuccess(function ($body, $assertMessage) {
+                $this->assertGreaterThan(
+                    0,
+                    $body['data'],
+                    $assertMessage
+                );
+            })
         );
     }
 }

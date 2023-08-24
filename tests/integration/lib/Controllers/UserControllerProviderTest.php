@@ -61,8 +61,11 @@ class UserControllerProviderTest extends BaseUserAdminTest
         if ('pub' === $role) {
             // If the user is not logged in; attempting to get, create, or
             // revoke their tokens should fail.
-            foreach (array('get', 'post', 'delete') as $method) {
-                $this->makeTokenRequest($method, 'authentication_error');
+            foreach (['get', 'post', 'delete'] as $method) {
+                $this->makeTokenRequest(
+                    $method,
+                    parent::assertAuthorizationError(401)
+                );
             }
         } else {
             // Log the user in so we can create, get, and revoke their tokens.
@@ -70,20 +73,59 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Revoke the token in case the user already has one.
             $this->helper->delete('rest/users/current/api/token');
             // Since the user now doesn't have a token, getting it should fail.
-            $this->makeTokenRequest('get', 'not_found');
+            $notFoundOutput = [
+                'status_code' => 404,
+                'body_validator' => parent::assertErrorBody(
+                    'API token not found.',
+                    0
+                )
+            ];
+            $this->makeTokenRequest('get', $notFoundOutput);
             // Since the user still doesn't have a token, creating one should
             // succeed.
-            $this->makeTokenRequest('post', 'create_success');
+            $this->makeTokenRequest(
+                'post',
+                parent::assertSuccess(function ($body) {
+                    $this->assertRegExp(
+                        '/^[0-9]+\\.[0-9a-f]{64}$/',
+                        $body['data']['token']
+                    );
+                    parent::assertDate($body['data']['expiration_date']);
+                })
+            );
             // Now that the user has a token, getting it should succeed.
-            $this->makeTokenRequest('get', 'get_success');
+            $this->makeTokenRequest(
+                'get',
+                parent::assertSuccess(function ($body) {
+                    parent::assertDate($body['data']['created_on']);
+                    parent::assertDate($body['data']['expiration_date']);
+                })
+            );
             // Since the user still has a token and can only have one at a
             // time, creating a new one should fail.
-            $this->makeTokenRequest('post', 'create_failure');
+            $this->makeTokenRequest(
+                'post',
+                [
+                    'status_code' => 409,
+                    'body_validator' => parent::assertErrorBody(
+                        'Token already exists.',
+                        0
+                    )
+                ]
+            );
             // Since the user has a token, revoking it should succeed.
-            $this->makeTokenRequest('delete', 'revoke_success');
+            $this->makeTokenRequest(
+                'delete',
+                parent::assertSuccess(function ($body) {
+                    parent::assertSame(
+                        'Token successfully revoked.',
+                        $body['message']
+                    );
+                })
+            );
             // Now that the user does not have a token, revoking one should
             // fail.
-            $this->makeTokenRequest('delete', 'not_found');
+            $this->makeTokenRequest('delete', $notFoundOutput);
             // We are finished manipulating tokens, so we can log the user out.
             $this->helper->logout();
             // If tokens have been generated for use in other tests, those
@@ -110,30 +152,20 @@ class UserControllerProviderTest extends BaseUserAdminTest
      *
      * @param string $method the HTTP method to use: 'get', 'post', or
      *                       'delete'.
-     * @param string $key a key in the test artifact output file
-     *                    (integration/rest/user/api_token/output/crd.json)
-     *                    whose value is the expected response body.
-     * @throws Exception if there is an error making the request, loading the
-     *                   JSON output file, or running the validation of it.
+     * @param array $output @see BaseTest::requestAndValidateJson
+     * @throws Exception if there is an error making the request or running the
+     *                   validation of it.
      */
-    private function makeTokenRequest($method, $key) {
-        $testGroup = 'integration/rest/user/api_token';
-        $fileName = 'crd';
-        $input = parent::loadJsonTestArtifact(
-            $testGroup,
-            $fileName,
-            'input'
-        );
-        $input['method'] = $method;
-        $output = parent::loadJsonTestArtifact(
-            $testGroup,
-            $fileName,
-            'output'
-        );
-        return parent::requestAndValidateJson(
+    private function makeTokenRequest(string $method, array $output) {
+        parent::requestAndValidateJson(
             $this->helper,
-            $input,
-            $output[$key]
+            [
+                'path' => 'rest/users/current/api/token',
+                'method' => $method,
+                'params' => null,
+                'data' => null
+            ],
+            $output
         );
     }
 }

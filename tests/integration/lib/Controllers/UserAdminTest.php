@@ -4,6 +4,7 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use Models\Services\Realms;
+use IntegrationTests\Controllers\MetricExplorerTest;
 
 class UserAdminTest extends BaseUserAdminTest
 {
@@ -447,26 +448,23 @@ class UserAdminTest extends BaseUserAdminTest
         if (!$isPublicUser) {
             $this->helper->authenticateDirect($username, $username);
         }
-
-        $testGroup = 'integration/controllers/metric_explorer';
-        $fileName = 'get_dw_descripter';
-        $input = parent::loadJsonTestArtifact(
-            $testGroup,
-            $fileName,
-            'input'
-        );
-        $input['data'] += [
-            'public_user' => ($isPublicUser ? 'true' : 'false')
-        ];
-        $output = parent::loadJsonTestArtifact(
-            $testGroup,
-            $fileName,
-            'output'
-        );
         parent::requestAndValidateJson(
             $this->helper,
-            $input,
-            $output
+            array_replace(
+                MetricExplorerTest::DEFAULT_INPUT,
+                [
+                    'data' => [
+                        'operation' => 'get_dw_descripter',
+                        'public_user' => ($isPublicUser ? 'true' : 'false')
+                    ]
+                ]
+            ),
+            [
+                'status_code' => 200,
+                'body_validator' => (
+                    MetricExplorerTest::getDwDescriptersBodyValidator($this)
+                )
+            ]
         );
         if (!$isPublicUser) {
             $this->helper->logout();
