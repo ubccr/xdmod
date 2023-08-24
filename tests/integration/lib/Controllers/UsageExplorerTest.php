@@ -1221,9 +1221,7 @@ END;
                 'path' => 'controllers/user_interface.php',
                 'method' => 'post',
                 'params' => null,
-                'data' => [
-                    'operation' => 'get_data'
-                ],
+                'data' => ['operation' => 'get_data'],
                 'endpoint_type' => 'controller',
                 'authentication_type' => 'token_optional'
             ],

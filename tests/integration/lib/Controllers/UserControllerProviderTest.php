@@ -156,7 +156,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
      * @throws Exception if there is an error making the request or running the
      *                   validation of it.
      */
-    private function makeTokenRequest(string $method, array $output) {
+    private function makeTokenRequest($method, array $output) {
         parent::requestAndValidateJson(
             $this->helper,
             [

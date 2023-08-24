@@ -76,8 +76,8 @@ abstract class TokenAuthTest extends BaseTest
      *                   making the HTTP request or validating the response.
      */
     public function runTokenAuthTest(
-        string $role,
-        string $tokenType,
+        $role,
+        $tokenType,
         array $input,
         array $output
     ) {
@@ -250,7 +250,7 @@ abstract class TokenAuthTest extends BaseTest
      *                     @see BaseTest::getBaseRoles().
      * @return string the token.
      */
-    private static function getToken(string $tokenType, string $role)
+    private static function getToken($tokenType, $role)
     {
         // If the valid, invalid, and revoked tokens have not already been
         // generated for the roles, generate them.

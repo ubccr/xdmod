@@ -189,7 +189,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function authenticateRequestAndValidateJson(
         XdmodTestHelper $testHelper,
-        string $role,
+        $role,
         array $input,
         array $output
     ) {
@@ -277,7 +277,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param callable $validator
      * @return array
      */
-    protected function validateSuccessResponse(callable $validator)
+    protected function validateSuccessResponse($validator)
     {
         return [
             'status_code' => 200,
@@ -299,7 +299,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @return array
      */
-    protected function validateMissingRequiredParameterResponse(string $name)
+    protected function validateMissingRequiredParameterResponse($name)
     {
         return $this->validateBadRequestResponse(
             "$name is a required parameter.",
@@ -315,7 +315,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @return array
      */
-    protected function validateInvalidDateParameterResponse(string $name)
+    protected function validateInvalidDateParameterResponse($name)
     {
         return $this->validateBadRequestResponse(
             "Invalid value for $name. Must be a(n) ISO 8601 Date.",
@@ -332,7 +332,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $code
      * @return array
      */
-    protected function validateBadRequestResponse(string $message, int $code)
+    protected function validateBadRequestResponse($message, $code)
     {
         return [
             'status_code' => 400,
@@ -350,7 +350,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $statusCode
      * @return array
      */
-    protected function validateAuthorizationErrorResponse(int $statusCode)
+    protected function validateAuthorizationErrorResponse($statusCode)
     {
         return [
             'status_code' => $statusCode,
@@ -373,7 +373,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param int $code
      * @return callable
      */
-    protected function validateErrorResponseBody(string $message, int $code)
+    protected function validateErrorResponseBody($message, $code)
     {
         return function ($body, $assertMessage) use ($message, $code) {
             $this->assertEquals(
@@ -399,7 +399,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $date
      * @return null
      */
-    protected function validateDate(string $date)
+    protected function validateDate($date)
     {
         $this->assertRegExp(
             '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/',

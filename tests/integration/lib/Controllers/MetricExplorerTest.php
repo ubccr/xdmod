@@ -217,11 +217,7 @@ class MetricExplorerTest extends TokenAuthTest
             $tokenType,
             array_replace(
                 self::getDefaultRequestInput(),
-                [
-                    'data' => [
-                        'operation' => 'get_dw_descripter'
-                    ]
-                ]
+                ['data' => ['operation' => 'get_dw_descripter']]
             ),
             [
                 'status_code' => 200,
@@ -276,21 +272,13 @@ class MetricExplorerTest extends TokenAuthTest
                         $assertMessage
                     );
                     foreach ($body['data'] as $item) {
-                        $this->assertInternalType(
-                            'string',
-                            $item['id'],
-                            $assertMessage
-                        );
-                        $this->assertInternalType(
-                            'string',
-                            $item['name'],
-                            $assertMessage
-                        );
-                        $this->assertInternalType(
-                            'string',
-                            $item['short_name'],
-                            $assertMessage
-                        );
+                        foreach (['id', 'name', 'short_name'] as $property) {
+                            $this->assertInternalType(
+                                'string',
+                                $item[$property],
+                                $assertMessage
+                            );
+                        }
                         $this->assertInternalType(
                             'bool',
                             $item['checked'],
