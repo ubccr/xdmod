@@ -17,6 +17,10 @@ class MetricExplorerTest extends TokenAuthTest
         $this->helper = new XdmodTestHelper();
     }
 
+    /**
+     * This method is used by a few methods in this class and in the
+     * UserAdminTest class.
+     */
     public static function getDefaultRequestInput()
     {
         return [
