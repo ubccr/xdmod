@@ -57,10 +57,7 @@ abstract class TokenAuthTest extends BaseTest
      *
      * @param string $role the user role to use when authenticating.
      * @param string $tokenType the type of token being provided
-     *                          (@see provideTokenAuthTestData()); if testing
-     *                          an authentication error, this is also the key
-     *                          in the test output artifact that describes the
-     *                          expected response.
+     *                          (@see provideTokenAuthTestData()).
      * @param array input @see BaseTest::requestAndValidateJson(). Must have
      *                    additional required keys 'endpoint_type', whose value
      *                    is either 'controller' or 'rest', and
@@ -81,7 +78,7 @@ abstract class TokenAuthTest extends BaseTest
         array $input,
         array $output
     ) {
-        // Make sure the input object has the additional required keys.
+        // Make sure the input array has the additional required keys.
         parent::assertRequiredKeys(
             ['endpoint_type', 'authentication_type'],
             $input,

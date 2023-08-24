@@ -171,16 +171,16 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     {
         $validStartDate = '2017-01-01';
         $validEndDate = '2017-01-01';
-        $endDateBeforeStart = '2016-01-01';
+        $endDateBeforeStartDate = '2016-01-01';
         $validRealm = 'Jobs';
         $validFields = 'Nodes,Wall Time';
-        $generateSuccessBodyValidator = function ($count, $fields) {
+        $generateSuccessBodyValidator = function ($count, $expectedFields) {
             return parent::validateSuccessResponse(
-                function ($body, $assertMessage) use ($count, $fields) {
+                function ($body, $assertMessage) use ($count, $expectedFields) {
                     $this->assertCount($count, $body['data'], $assertMessage);
-                    if (!is_null($fields)) {
+                    if (!is_null($expectedFields)) {
                         $this->assertEquals(
-                            $fields,
+                            $expectedFields,
                             $body['fields'],
                             $assertMessage
                         );
@@ -200,9 +200,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                                 $assertMessage
                             );
                         }
-                        if (!is_null($fields)) {
+                        if (!is_null($expectedFields)) {
                             $this->assertSame(
-                                count($fields),
+                                count($expectedFields),
                                 count($dataRow),
                                 $assertMessage
                             );
@@ -267,7 +267,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                         $tokenType,
                         [
                             'start_date' => $validStartDate,
-                            'end_date' => $endDateBeforeStart
+                            'end_date' => $endDateBeforeStartDate
                         ],
                         parent::validateBadRequestResponse(
                             'End date cannot be less than start date.',
