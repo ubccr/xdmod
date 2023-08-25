@@ -141,16 +141,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetRawData
      */
-    public function testGetRawData($id, $role, $tokenType, $params, $output)
+    public function testGetRawData($id, $role, $tokenType, $input, $output)
     {
-        $input = [
-            'path' => 'rest/warehouse/raw-data',
-            'method' => 'get',
-            'params' => $params,
-            'data' => null,
-            'endpoint_type' => 'rest',
-            'authentication_type' => 'token_required'
-        ];
         parent::runTokenAuthTest(
             $role,
             $tokenType,
@@ -164,132 +156,62 @@ class WarehouseControllerProviderTest extends TokenAuthTest
      */
     public function provideGetRawData()
     {
-        $validStartDate = '2017-01-01';
-        $validEndDate = '2017-01-01';
-        $endDateBeforeStartDate = '2016-01-01';
-        $validRealm = 'Jobs';
-        $validFields = 'Nodes,Wall Time';
-        $generateSuccessBodyValidator = function ($count, $expectedFields) {
-            return parent::validateSuccessResponse(
-                function ($body, $assertMessage) use ($count, $expectedFields) {
-                    $this->assertCount($count, $body['data'], $assertMessage);
-                    if (!is_null($expectedFields)) {
-                        $this->assertEquals(
-                            $expectedFields,
-                            $body['fields'],
-                            $assertMessage
-                        );
-                    }
-                    foreach ($body['fields'] as $field) {
-                        $this->assertInternalType(
-                            'string',
-                            $field,
-                            $assertMessage
-                        );
-                    }
-                    foreach ($body['data'] as $dataRow) {
-                        foreach ($dataRow as $field) {
-                            $this->assertInternalType(
-                                'string',
-                                $field,
-                                $assertMessage
-                            );
-                        }
-                        if (!is_null($expectedFields)) {
-                            $this->assertSame(
-                                count($expectedFields),
-                                count($dataRow),
-                                $assertMessage
-                            );
-                        }
-                    }
-                }
-            );
-        };
+        $defaultInput = [
+            'path' => 'rest/warehouse/raw-data',
+            'method' => 'get',
+            'params' => null,
+            'data' => null,
+            'endpoint_type' => 'rest',
+            'authentication_type' => 'token_required'
+        ];
+        $validRequiredParams = [
+            'start_date' => '2017-01-01',
+            'end_date' => '2017-01-01',
+            'realm' => 'Jobs'
+        ];
         $tests = [];
         foreach (parent::provideTokenAuthTestData() as $testData) {
             list($role, $tokenType) = $testData;
-            array_push(
-                $tests,
-                [
+            if ('valid_token' !== $tokenType) {
+                $tests[] = [
                     'default',
                     $role,
                     $tokenType,
-                    null,
-                    parent::validateMissingRequiredParameterResponse(
-                        'start_date'
-                    )
-                ]
-            );
-            // Only run the non-default valid token tests for one non-public
-            // user to make the tests take less time overall.
-            if ('usr' === $role && 'valid_token' === $tokenType) {
-                array_push(
+                    $defaultInput,
+                    []
+                ];
+            } else {
+                parent::appendMissingParamsTestData(
                     $tests,
-                    [
-                        'start_date_malformed',
-                        $role,
-                        $tokenType,
-                        ['start_date' => '2017'],
-                        parent::validateInvalidDateParameterResponse(
-                            'start_date'
-                        )
-                    ],
-                    [
-                        'no_end_date',
-                        $role,
-                        $tokenType,
-                        ['start_date' => $validStartDate],
-                        parent::validateMissingRequiredParameterResponse(
-                            'end_date'
-                        )
-                    ],
-                    [
-                        'end_date_malformed',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => '2017'
-                        ],
-                        parent::validateInvalidDateParameterResponse(
-                            'end_date'
-                        )
-                    ],
+                    array_keys($validRequiredParams),
+                    $role,
+                    array_replace(
+                        $defaultInput,
+                        ['params' => $validRequiredParams]
+                    ),
+                    $tokenType
+                );
+                $testData = [];
+                foreach (['start_date', 'end_date'] as $param) {
+                    $testData[] = [
+                        $param . '_malformed',
+                        [$param => 'foo'],
+                        parent::validateInvalidDateParameterResponse($param)
+                    ];
+                }
+                array_push(
+                    $testData,
                     [
                         'end_before_start',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $endDateBeforeStartDate
-                        ],
+                        ['end_date' => '2016-01-01'],
                         parent::validateBadRequestResponse(
                             'End date cannot be less than start date.',
                             104
                         )
                     ],
                     [
-                        'no_realm',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate
-                        ],
-                        parent::validateMissingRequiredParameterResponse(
-                            'realm'
-                        )
-                    ],
-                    [
                         'invalid_realm',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => 'foo'
-                        ],
+                        ['realm' => 'foo'],
                         parent::validateBadRequestResponse(
                             'Invalid realm.',
                             104
@@ -297,14 +219,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     ],
                     [
                         'invalid_fields',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => $validRealm,
-                            'fields' => 'foo,bar;'
-                        ],
+                        ['fields' => 'foo,bar;'],
                         parent::validateBadRequestResponse(
                             "Invalid fields specified: 'foo', 'bar;'.",
                             104
@@ -312,15 +227,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     ],
                     [
                         'invalid_filter_key',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => $validRealm,
-                            'fields' => $validFields,
-                            'filters[foo]' => '177'
-                        ],
+                        ['filters[foo]' => '177'],
                         parent::validateBadRequestResponse(
                             "Invalid filter key 'foo'.",
                             104
@@ -328,14 +235,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     ],
                     [
                         'negative_offset',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => $validRealm,
-                            'offset' => -1
-                        ],
+                        ['offset' => -1],
                         parent::validateBadRequestResponse(
                             "Offset must be non-negative.",
                             104
@@ -343,48 +243,87 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     ],
                     [
                         'success_0',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => $validRealm
-                        ],
-                        $generateSuccessBodyValidator(10000, null)
+                        [],
+                        $this->generateGetDataSuccessBodyValidator(10000, null)
                     ],
                     [
                         'success_16500',
-                        $role,
-                        $tokenType,
-                        [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => $validRealm,
-                            'offset' => 16500
-                        ],
-                        $generateSuccessBodyValidator(66, null)
+                        ['offset' => 16500],
+                        $this->generateGetDataSuccessBodyValidator(66, null)
                     ],
                     [
                         'success_fields_and_filters',
-                        $role,
-                        $tokenType,
                         [
-                            'start_date' => $validStartDate,
-                            'end_date' => $validEndDate,
-                            'realm' => $validRealm,
-                            'fields' => $validFields,
+                            'fields' => 'Nodes,Wall Time',
                             'filters[resource]' => '1,2',
                             'filters[fieldofscience]' => '10,91'
                         ],
-                        $generateSuccessBodyValidator(
+                        $this->generateGetDataSuccessBodyValidator(
                             29,
                             ['Nodes', 'Wall Time']
                         )
                     ]
                 );
+                foreach ($testData as $t) {
+                    list($id, $params, $output) = $t;
+                    $tests[] = [
+                        $id,
+                        $role,
+                        $tokenType,
+                        array_replace(
+                            $defaultInput,
+                            ['params' => array_replace(
+                                $validRequiredParams,
+                                $params
+                            )]
+                        ),
+                        $output
+                    ];
+                }
             }
         }
         return $tests;
+    }
+
+    private function generateGetDataSuccessBodyValidator(
+        $count,
+        $expectedFields
+    ) {
+        return parent::validateSuccessResponse(
+            function ($body, $assertMessage) use ($count, $expectedFields) {
+                $this->assertCount($count, $body['data'], $assertMessage);
+                if (!is_null($expectedFields)) {
+                    $this->assertEquals(
+                        $expectedFields,
+                        $body['fields'],
+                        $assertMessage
+                    );
+                }
+                foreach ($body['fields'] as $field) {
+                    $this->assertInternalType(
+                        'string',
+                        $field,
+                        $assertMessage
+                    );
+                }
+                foreach ($body['data'] as $dataRow) {
+                    foreach ($dataRow as $field) {
+                        $this->assertInternalType(
+                            'string',
+                            $field,
+                            $assertMessage
+                        );
+                    }
+                    if (!is_null($expectedFields)) {
+                        $this->assertSame(
+                            count($expectedFields),
+                            count($dataRow),
+                            $assertMessage
+                        );
+                    }
+                }
+            }
+        );
     }
 
     /**

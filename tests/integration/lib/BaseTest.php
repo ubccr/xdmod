@@ -252,6 +252,55 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Given an array of arrays of test data (the inner arrays contain an
+     * ID, role, possibly an API token type, an input object, and an output
+     * object), append new test data for testing missing required query
+     * parameters.
+     *
+     * @param array $tests array into which the new test data is appended.
+     * @param array $requiredParams of strings, the query parameters that are
+     *                              required in requests to the endpoint being
+     *                              tested.
+     * @param string $role the role as whom the test will be authenticated.
+     * @param array $defaultInput the default values for the input that
+     *                            will be modified and eventually passed to
+     *                            @see requestAndValidateJson(); this needs to
+     *                            include the 'params' property that has
+     *                            default valid values for each of the query
+     *                            parameters.
+     * @param string|null $tokenType if the endpoint being tested is
+     *                               authenticated via API token, this is the
+     *                               type of token being used during this test,
+     *                               e.g., 'valid_token'.
+     * @return null
+     */
+    protected function appendMissingParamsTestData(
+        array &$tests,
+        array $requiredParams,
+        $role,
+        array $defaultInput,
+        $tokenType = null
+    ) {
+        foreach ($requiredParams as $param) {
+            $input = $defaultInput;
+            unset($input['params'][$param]);
+            $testData = [
+                'missing_' . $param,
+                $role
+            ];
+            if (!is_null($tokenType)) {
+                $testData[] = $tokenType;
+            }
+            array_push(
+                $testData,
+                $input,
+                $this->validateMissingRequiredParameterResponse($param)
+            );
+            $tests[] = $testData;
+        }
+    }
+
+    /**
      * Return an output array for use in @see requestAndValidateJson() that
      * uses the given validator to validate 200 OK responses in which the
      * 'success' property is true.
@@ -397,7 +446,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param array $json the JSON associative array.
      * @return string the string representation.
      */
-    protected function getJsonStringForExceptionMessage(array $json)
+    protected static function getJsonStringForExceptionMessage(array $json)
     {
         return self::truncateStr(
             json_encode($json, JSON_PRETTY_PRINT),
