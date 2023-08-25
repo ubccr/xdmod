@@ -300,21 +300,24 @@ class MetricExplorerTest extends TokenAuthTest
      */
     public function getDimensionFiltersProvider()
     {
+        $tests = [];
+        foreach (parent::provideTokenAuthTestData() as $testData) {
+            list($role, $tokenType) = $testData;
+            if ('valid_token' !== $tokenType) {
+                $tests[] = [$role, $tokenType, null];
+            }
+        }
         $expectedCounts = [
-            'pub' => null,
             'cd' => 66,
             'cs' => 66,
             'usr' => 1,
             'pi' => 6,
             'mgr' => 0
         ];
-        return array_map(
-            function ($testData) use ($expectedCounts) {
-                list($role, $tokenType) = $testData;
-                return [$role, $tokenType, $expectedCounts[$role]];
-            },
-            parent::provideTokenAuthTestData()
-        );
+        foreach ($expectedCounts as $role => $count) {
+            $tests[] = [$role, 'valid_token', $count];
+        }
+        return $tests;
     }
 
     public function rawDataProvider()
