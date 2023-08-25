@@ -7,11 +7,6 @@ use TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends TokenAuthTest
 {
-    /**
-     * Directory containing test artifact files.
-     */
-    const TEST_GROUP = 'integration/rest/warehouse';
-
     private static $helper;
 
     public static function setUpBeforeClass()

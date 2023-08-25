@@ -29,8 +29,6 @@ function arrayRecursiveDiff($a1, $a2) {
 
 class UsageExplorerTest extends TokenAuthTest
 {
-    const TEST_GROUP = 'integration/controllers/user_interface';
-
     private static $publicView;
 
     public static function setUpBeforeClass()

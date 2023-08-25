@@ -7,11 +7,6 @@ use TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
-    /**
-     * Directory containing test artifact files.
-     */
-    const TEST_GROUP = 'integration/controllers/metric_explorer';
-
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
