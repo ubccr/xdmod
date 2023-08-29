@@ -16,6 +16,79 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     }
 
     /**
+     * @dataProvider provideCreateSearchHistory
+     */
+    public function testCreateSearchHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideCreateSearchHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history',
+            'method' => 'post',
+            'params' => null,
+            'data' => [
+                'realm' => 'Jobs',
+                'data' => '{"text":"foo"}'
+            ]
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'param_source' => 'data',
+                'authentication' => true,
+                'run_as' => 'usr',
+                'int_params' => ['recordid']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideGetSearchHistory
+     */
+    public function testGetSearchHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetSearchHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'param_source' => 'params',
+                'authentication' => true,
+                'run_as' => 'usr',
+                'int_params' => ['nodeid', 'infoid', 'jobid', 'recordid']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
      * The warehouse/aggregate data endpoint uses a json encoded configuration
      * settings. This helper function generates a valid set of parameters for the
      * endpoint.
@@ -44,20 +117,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         );
     }
 
-
-    public function aggregateDataMalformedRequestProvider()
-    {
-        $inputs = array();
-
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10));
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => ''));
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => '{"realm": "Jobs"}'));
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => 'not json data'));
-        $inputs[] = array('cd', array('start' => 'smart', 'limit' => 'asdf', 'config' => '{"realm": "Jobs"}'));
-
-        return $inputs;
-    }
-
     public function aggregateDataAccessControlsProvider()
     {
         $inputs = array();
@@ -73,14 +132,108 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider aggregateDataMalformedRequestProvider
      */
-    public function testGetAggregateDataMalformedRequests($user, $params)
-    {
-        self::$helper->authenticate($user);
-        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
+    public function testGetAggregateDataMalformedRequests(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
 
-        $this->assertEquals(400, $response[1]['http_code']);
-        $this->assertFalse($response[0]['success']);
-        self::$helper->logout();
+    public function aggregateDataMalformedRequestProvider()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/aggregatedata',
+            'method' => 'get',
+            'params' => $this->getAggDataParameterGenerator(),
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'param_source' => 'params',
+                'authentication' => true,
+                'run_as' => 'cd',
+                'int_params' => ['start', 'limit']
+            ]
+        );
+        // Test bad request parameters.
+        $tests[] = [
+            'invalid_config',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                ['config' => 'foo']
+            ),
+            parent::validateBadRequestResponse(
+                'syntax error in config parameter',
+                104
+            )
+        ];
+        $config = json_decode($validInput['params']['config'], true);
+        $tests = $this->getAggregateDataMalformedParamTests(
+            $tests,
+            $validInput,
+            $config,
+            null,
+            'missing_config_',
+            function ($param) {
+                return "Missing mandatory config property $param";
+            }
+        );
+        $tests = $this->getAggregateDataMalformedParamTests(
+            $tests,
+            $validInput,
+            $config,
+            'order_by',
+            'missing_config_order_by_',
+            function ($param) {
+                return 'Malformed config property order_by';
+            }
+        );
+        return $tests;
+    }
+
+    private function getAggregateDataMalformedParamTests(
+        array $tests,
+        array $validInput,
+        array $config,
+        $key,
+        $idPrefix,
+        $getMessage
+    ) {
+        if (is_null($key)) {
+            $params = $config;
+        } else {
+            $params = $config[$key];
+        }
+        foreach (array_keys($params) as $param) {
+            $newConfig = $config;
+            if (is_null($key)) {
+                unset($newConfig[$param]);
+            } else {
+                unset($newConfig[$key][$param]);
+            }
+            $tests[] = [
+                $idPrefix . $param,
+                'cd',
+                parent::mergeParams(
+                    $validInput,
+                    'params',
+                    ['config' => json_encode($newConfig)]
+                ),
+                parent::validateBadRequestResponse($getMessage($param), 104)
+            ];
+        }
+        return $tests;
     }
 
     /**
@@ -139,6 +292,41 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     }
 
     /**
+     * @dataProvider provideGetDimensions
+     */
+    public function testGetDimensions($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetDimensions()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/dimensions/resource',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'param_source' => 'params',
+                'authentication' => true,
+                'run_as' => 'usr',
+                'int_params' => ['offset', 'limit']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
      * @dataProvider provideGetRawData
      */
     public function testGetRawData($id, $role, $tokenType, $input, $output)
@@ -156,49 +344,43 @@ class WarehouseControllerProviderTest extends TokenAuthTest
      */
     public function provideGetRawData()
     {
-        $defaultInput = [
+        $validInput = [
             'path' => 'rest/warehouse/raw-data',
             'method' => 'get',
-            'params' => null,
+            'params' => [
+                'start_date' => '2017-01-01',
+                'end_date' => '2017-01-01',
+                'realm' => 'Jobs'
+            ],
             'data' => null,
             'endpoint_type' => 'rest',
             'authentication_type' => 'token_required'
         ];
-        $validRequiredParams = [
-            'start_date' => '2017-01-01',
-            'end_date' => '2017-01-01',
-            'realm' => 'Jobs'
-        ];
-        $tests = [];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'param_source' => 'params',
+                'token_auth' => true,
+                'run_as' => 'usr',
+                'int_params' => ['offset'],
+                'date_params' => ['start_date', 'end_date']
+            ]
+        );
         foreach (parent::provideTokenAuthTestData() as $testData) {
             list($role, $tokenType) = $testData;
+            // Run some standard token auth tests.
             if ('valid_token' !== $tokenType) {
                 $tests[] = [
                     'default',
                     $role,
                     $tokenType,
-                    $defaultInput,
+                    $validInput,
                     []
                 ];
             } else {
-                parent::appendMissingParamsTestData(
-                    $tests,
-                    array_keys($validRequiredParams),
-                    $role,
-                    array_replace(
-                        $defaultInput,
-                        ['params' => $validRequiredParams]
-                    ),
-                    $tokenType
-                );
                 $testData = [];
-                foreach (['start_date', 'end_date'] as $param) {
-                    $testData[] = [
-                        $param . '_malformed',
-                        [$param => 'foo'],
-                        parent::validateInvalidDateParameterResponse($param)
-                    ];
-                }
+                // Test bad request parameters.
                 array_push(
                     $testData,
                     [
@@ -270,12 +452,10 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                         $id,
                         $role,
                         $tokenType,
-                        array_replace(
-                            $defaultInput,
-                            ['params' => array_replace(
-                                $validRequiredParams,
-                                $params
-                            )]
+                        parent::mergeParams(
+                            $validInput,
+                            'params',
+                            $params
                         ),
                         $output
                     ];

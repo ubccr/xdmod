@@ -185,6 +185,29 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @see requestAndValidateJson().
+     */
+    protected function authenticateRequestAndValidateJson(
+        XdmodTestHelper $testHelper,
+        $role,
+        array $input,
+        array $output
+    ) {
+        if ('pub' !== $role) {
+            $testHelper->authenticate($role);
+        }
+        $actualBody = $this->requestAndValidateJson(
+            $testHelper,
+            $input,
+            $output
+        );
+        if ('pub' !== $role) {
+            $testHelper->logout();
+        }
+        return $actualBody;
+    }
+
+    /**
      * Assert that a given JSON object validates against a provided file. If
      * the object in the file contains a '$schema' property, treat it as a JSON
      * schema; otherwise, treat it as a literal JSON object to be compared
@@ -252,74 +275,86 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Given an array of arrays of test data (the inner arrays contain an
-     * ID, role, possibly an API token type, an input object, and an output
-     * object), append new test data for testing missing required query
-     * parameters.
-     *
-     * @param array $tests array into which the new test data is appended.
-     * @param array $requiredParams of strings, the query parameters that are
-     *                              required in requests to the endpoint being
-     *                              tested.
-     * @param string $role the role as whom the test will be authenticated.
-     * @param array $defaultInput the default values for the input that
-     *                            will be modified and eventually passed to
-     *                            @see requestAndValidateJson(); this needs to
-     *                            include the 'params' property that has
-     *                            default valid values for each of the query
-     *                            parameters.
-     * @param string|null $tokenType if the endpoint being tested is
-     *                               authenticated via API token, this is the
-     *                               type of token being used during this test,
-     *                               e.g., 'valid_token'.
-     * @return null
+     * 'params' needs to have the minimal set of required parameters with valid
+     * values.
      */
-    protected function appendMissingParamsTestData(
-        array &$tests,
-        array $requiredParams,
-        $role,
-        array $defaultInput,
-        $tokenType = null
+    protected function provideRestEndpointTests(
+        array $validInput,
+        array $options
     ) {
-        foreach ($requiredParams as $param) {
-            $input = $defaultInput;
-            unset($input['params'][$param]);
-            $testData = [
-                'missing_' . $param,
-                $role
+        $tests = [];
+        // Test failed authentication.
+        if (
+            array_key_exists('authentication', $options)
+            && $options['authentication']
+        ) {
+            $tests[] = [
+                'unauthenticated',
+                'pub',
+                $validInput,
+                $this->validateAuthorizationErrorResponse(401)
             ];
-            if (!is_null($tokenType)) {
-                $testData[] = $tokenType;
+        }
+        // Test failed authorization.
+        if (array_key_exists('authorization', $options)) {
+            $runAs = $options['authorization'];
+            foreach (self::getBaseRoles() as $role) {
+                if ('pub' !== $role && $options['authorization'] !== $role) {
+                    $tests[] = [
+                        'unauthorized',
+                        $role,
+                        $validInput,
+                        $this->validateAuthorizationErrorResponse(403)
+                    ];
+                }
             }
-            array_push(
-                $testData,
+        }
+        // Set the role for running the tests.
+        if (!isset($runAs)) {
+            $runAs = $options['run_as'];
+        }
+        // Determine whether API token authorization is used on this endpoint.
+        $tokenAuth = (
+            array_key_exists('token_auth', $options) && $options['token_auth']
+        );
+        // Test missing required parameters.
+        foreach (array_keys($validInput[$options['param_source']]) as $param) {
+            $input = $validInput;
+            unset($input[$options['param_source']][$param]);
+            $tests[] = self::getEndpointTestData(
+                'missing_' . $param,
+                $runAs,
+                $tokenAuth,
                 $input,
                 $this->validateMissingRequiredParameterResponse($param)
             );
-            $tests[] = $testData;
         }
-    }
-
-    /**
-     * Return an output array for use in @see requestAndValidateJson() that
-     * uses the given validator to validate 200 OK responses in which the
-     * 'success' property is true.
-     *
-     * @param callable $validator
-     * @return array
-     */
-    protected function validateSuccessResponse($validator)
-    {
-        return [
-            'status_code' => 200,
-            'body_validator' => function (
-                $body,
-                $assertMessage
-            ) use ($validator) {
-                $this->assertSame(true, $body['success']);
-                $validator($body, $assertMessage);
+        // Test invalid parameters.
+        $validators = [
+            'int_params' => function ($param) {
+                return $this->validateInvalidIntParameterResponse($param);
+            },
+            'date_params' => function ($param) {
+                return $this->validateInvalidDateParameterResponse($param);
             }
         ];
+        foreach ($validators as $key => $validator) {
+            if (array_key_exists($key, $options)) {
+                foreach ($options[$key] as $param) {
+                    $input = $validInput;
+                    $input[$options['param_source']][$param] = 'foo';
+                    $tests[] = self::getEndpointTestData(
+                        $param . '_string',
+                        $runAs,
+                        $tokenAuth,
+                        $input,
+                        $validator($param)
+                    );
+                }
+            }
+        }
+        // Test invalid date parameters.
+        return $tests;
     }
 
     /**
@@ -341,6 +376,19 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     /**
      * Return an output array for use in @see requestAndValidateJson() that
      * validates 400 Bad Request responses in which a parameter with the given
+     * name was not a valid integer.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function validateInvalidIntParameterResponse($name)
+    {
+        return $this->validateInvalidParameterResponse($name, 'integer');
+    }
+
+    /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * validates 400 Bad Request responses in which a parameter with the given
      * name was not a valid ISO 8601 date.
      *
      * @param string $name
@@ -348,8 +396,22 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function validateInvalidDateParameterResponse($name)
     {
+        return $this->validateInvalidParameterResponse($name, 'ISO 8601 Date');
+    }
+
+    /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * validates 400 Bad Request responses in which a parameter with the given
+     * name was not the given type.
+     *
+     * @param string $name
+     * @param string $type
+     * @return array
+     */
+    protected function validateInvalidParameterResponse($name, $type)
+    {
         return $this->validateBadRequestResponse(
-            "Invalid value for $name. Must be a(n) ISO 8601 Date.",
+            "Invalid value for $name. Must be a(n) $type.",
             0
         );
     }
@@ -425,6 +487,34 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Return an output array for use in @see requestAndValidateJson() that
+     * uses the given validator to validate 200 OK responses in which the
+     * 'success' property is true.
+     *
+     * @param callable|array $validator if callable, a method used to validate
+     *                                  the response body. If an array, the
+     *                                  expected response body.
+     * @return array
+     */
+    protected function validateSuccessResponse($validator)
+    {
+        return [
+            'status_code' => 200,
+            'body_validator' => function (
+                $body,
+                $assertMessage
+            ) use ($validator) {
+                if (is_callable($validator)) {
+                    $this->assertSame(true, $body['success'], $assertMessage);
+                    $validator($body, $assertMessage);
+                } else {
+                    $this->assertEquals($validator, $body, $assertMessage);
+                }
+            }
+        ];
+    }
+
+    /**
      * Validate ISO 8601 dates.
      *
      * @param string $date
@@ -436,6 +526,26 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/',
             $date
         );
+    }
+
+    /**
+     * Given an input associative array, a key of that array whose value is an
+     * associative array, and a new associative array of parameters, make a
+     * copy of the input array and merge the parameters into the associative
+     * array at the given key.
+     * 
+     * @param array $input the input array, e.g., one that could be passed into
+     *                     @see requestAndValidateJson.
+     * @param string $key, e.g., 'params' or 'data'.
+     * @param array $params the new associative array of parameters, e.g., as
+     *                      could be used as a 'params' or 'data' property.
+     * @return array the $input array with changes made to it.
+     */
+    protected function mergeParams(array $input, $key, array $params)
+    {
+        $newInput = $input;
+        $newInput[$key] = array_merge($input[$key], $params);
+        return $newInput;
     }
 
     /**
@@ -502,5 +612,20 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             ? substr($str, 0, $numChars) . '...'
             : $str
         );
+    }
+
+    private static function getEndpointTestData(
+        $id,
+        $role,
+        $tokenAuth,
+        array $input,
+        array $output
+    ) {
+        $testData = [$id, $role];
+        if ($tokenAuth) {
+            $testData[] = 'valid_token';
+        }
+        array_push($testData, $input, $output);
+        return $testData;
     }
 }
