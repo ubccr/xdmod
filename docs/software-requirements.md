@@ -114,6 +114,11 @@ there is output:
 php -i | grep mongo
 ```
 
+Add the following property to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf`
+```shell
+sql_mode=
+```
+
 Additional Notes
 ----------------
 
