@@ -105,17 +105,17 @@ enhancements and bug fixes.
 
 You may upgrade directly from 10.0.X.
 
-Included in these new features is official support for a new operating system, Rocky 8. This will allow organizations 
-to migrate their XDMoD installations from the soon-to-be end-of-life CentOS 7 to a currently supported OS. The officially 
+Included in these new features is official support for a new operating system, Rocky 8. This will allow organizations
+to migrate their XDMoD installations from the soon-to-be end-of-life CentOS 7 to a currently supported OS. The officially
 recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an Rocky 8 XDMoD 10.5 installation is as follows:
 - Update the CentOS 7 XDMoD 10.0.X installation to XDMoD 10.5
 - Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server.
-- Copy contents of `/etc/xdmod` from CentOS 7 to the Rocky 8 server. 
-  - Adjust database connection properties as appropriate. 
+- Copy contents of `/etc/xdmod` from CentOS 7 to the Rocky 8 server.
+  - Adjust database connection properties as appropriate.
 - Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
 - Import the CentOS 7 exported database files into the Rocky 8 servers database.
 - Ensure that you have added the `sql_mode=` line to the Rocky 8 database server configuration.
-- Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected. 
+- Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
 
 ### Configuration File Changes
 
