@@ -90,35 +90,88 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
     }
 
     var layout = {
+        xaxis: {
+            title: '<b> Time (' + record.data.schema.timezone + ') </b>',
+            titlefont: {
+                size: axisTitleFontSize,
+            },
+            tickfont: {
+                size: axisLabelFontSize
+            },
+        },
+        yaxis: {
+            title: '<b>' + record.data.schema.units + '</b>',
+            titlefont: {
+                size: axisTitleFontSize,
+            },
+            range: [0, ymax + (ymax * 0.2)],
+            tickfont: {
+                size: axisLabelFontSize
+            },
+        },
+        title: {
+            text: record.data.schema.description,
+            font: {
+                size: mainTitleFontSize
+            }
+        },
+        annotations: [{
+            text: record.data.schema.source + '. Powered by XDMoD/Plotly',
+            font: {
+                color: '#909090',
+                size: 10,
+                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+            },
+            xref: 'paper',
+            yref: 'paper',
+            xanchor: 'right',
+            yanchor: 'bottom',
+            x: 1,
+            y: 0,
+            yshift: -80,
+            showarrow: false
+        }],
+    };
+
+	var defaultLayout = getDefaultLayout();
+	XDMoD.utils.deepExtend(layout, defaultLayout);
+
+    var ret = {
+        chartData: data,
+        chartLayout: layout
+    };
+
+    return ret;
+}
+
+function getDefaultLayout() {
+	var layout = {
         hoverlabel: {
             bgcolor: '#ffffff'
         },
         xaxis: {
-            title: '<b> Time (' + record.data.schema.timezone + ') </b>',
             titlefont: {
                 family: 'Open-Sans, verdana, arial, sans-serif',
-                size: axisTitleFontSize,
+                size: 12,
                 color: '#5078a0'
             },
             color: '#606060',
             ticks: 'outside',
             tickcolor: '#c0cfe0',
             tickfont: {
-                size: axisLabelFontSize
+                size: 11
             },
             linecolor: '#c0cfe0',
             automargin: true,
             showgrid: false
         },
         yaxis: {
-            title: '<b>' + record.data.schema.units + '</b>',
             titlefont: {
                 family: 'Open-Sans, verdana, arial, sans-serif',
-                size: axisTitleFontSize,
+                size: 12,
                 color: '#5078a0'
             },
             color: '#606060',
-            range: [0, ymax + (ymax * 0.2)],
             showline: false,
             zeroline: false,
             gridcolor: '#d8d8d8',
@@ -126,20 +179,19 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             ticks: 'outside',
             tickcolor: '#ffffff',
             tickfont: {
-                size: axisLabelFontSize
+                size: 11
             },
             seperatethousands: true
         },
         title: {
-            text: record.data.schema.description,
             font: {
                 family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                 color: '#444b6e',
-                size: mainTitleFontSize
+                size: 16
             }
         },
         annotations: [{
-            text: record.data.schema.source + '. Powered by XDMoD/Plotly',
+            text: '. Powered by XDMoD/Plotly',
             font: {
                 color: '#909090',
                 size: 10,
@@ -160,11 +212,4 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             t: 50
         }
     };
-
-    var ret = {
-        chartData: data,
-        chartLayout: layout
-    };
-
-    return ret;
 }
