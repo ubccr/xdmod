@@ -295,14 +295,20 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                       - 'authentication' — if the value is true, the
      *                         return will include a test for failed
      *                         authentication in which the endpoint is
-     *                         requested by the 'pub' role.
+     *                         requested by the 'pub' role. Note that this
+     *                         option and 'token_auth' are incompatible;
+     *                         'token_auth' will already include authentication
+     *                         tests.
      *                       - 'authorization' — if the value is a string role,
      *                         the return will include tests of failed
-     *                         authorization of the endpoint by all of the base
-     *                         roles (from getBaseRoles()) except that one;
-     *                         e.g., if the value is 'mgr', tests to make sure
-     *                         you have to be authorized as an admin to use the
-     *                         endpoint.
+     *                         authorization of the endpoint by all of the
+     *                         non-pub base roles (from getBaseRoles()) except
+     *                         the one specified; e.g., if the value is 'mgr',
+     *                         the return will include tests to make sure the
+     *                         endpoint restricts access to just the admin
+     *                         user. Note that this option and 'token_auth' are
+     *                         incompatible; 'token_auth' will already include
+     *                         authorization tests.
      *                       - 'run_as' — if the value is a string role, any
      *                         tests in the return involving an an
      *                         authenticated user will use that role, e.g.,
