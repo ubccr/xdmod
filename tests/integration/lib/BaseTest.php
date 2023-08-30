@@ -322,6 +322,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         fed into TokenAuthTest::runTokenAuthTest();
      *                         namely, each of the error tests from
      *                         TokenAuthTest::provideTokenAuthTestData().
+     *                       - 'additional_params' — array of parameters that
+     *                         will be merged into either 'params' or 'data'
+     *                         (based on the value of 'param_source') of
+     *                         $validInput; e.g., if there are parameters that
+     *                         are not required in all cases for the endpoint
+     *                         (i.e., which shouldn't be tested here for
+     *                         missing mandatory parameters) but which need to
+     *                         be present for other tests here to succeed.
      *                       - 'int_params' — array of parameters that
      *                         will each be tested for invalid integer values.
      *                       - 'date_params' — array of parameters that will
@@ -337,6 +345,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         array $validInput,
         array $options
     ) {
+        // Add any additional parameters.
+        $validInputWithAdditionalParams = $validInput;
+        if (array_key_exists('additional_params', $options)) {
+            $validInputWithAdditionalParams = self::mergeParams(
+                $validInputWithAdditionalParams,
+                $options['param_source'],
+                $options['additional_params']
+            );
+        }
         $tests = [];
         // Test failed authentication.
         if (
@@ -346,7 +363,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             $tests[] = [
                 'unauthenticated',
                 'pub',
-                $validInput,
+                $validInputWithAdditionalParams,
                 $this->validateAuthorizationErrorResponse(401)
             ];
         }
@@ -358,7 +375,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                     $tests[] = [
                         'unauthorized',
                         $role,
-                        $validInput,
+                        $validInputWithAdditionalParams,
                         $this->validateAuthorizationErrorResponse(403)
                     ];
                 }
@@ -381,7 +398,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                         $tokenType,
                         $role,
                         $tokenType,
-                        $validInput,
+                        $validInputWithAdditionalParams,
                         []
                     ];
                 }
@@ -411,7 +428,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         foreach ($validators as $key => $validator) {
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
-                    $input = $validInput;
+                    $input = $validInputWithAdditionalParams;
                     $input[$options['param_source']][$param] = 'foo';
                     $tests[] = self::getEndpointTestData(
                         $param . '_string',
