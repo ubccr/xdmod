@@ -19,7 +19,7 @@ Open XDMoD therefore has a longer than typical support time.
 | 10.0    | March 10, 2022     | September 10, 2023  |
 | 10.5    | September 03, 2023 | September 03, 2024* |
 
-**\* Note: CentOS 7 will officially be end of life on June 30, 2024 and as such so will our official support for el7 XDMoD.**
+**\* Note: CentOS 7 will officially reach end of life on June 30, 2024, and as such so will our official support for el7 XDMoD.**
 
 Supported Operating Systems
 ---------------------------
