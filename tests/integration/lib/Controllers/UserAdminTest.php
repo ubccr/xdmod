@@ -875,7 +875,7 @@ class UserAdminTest extends BaseUserAdminTest
      *                            been found.
      * @return bool true if the entry exists, else false.
      */
-    protected function entryExists(array $source, $predicate)
+    protected function entryExists(array $source, callable $predicate)
     {
         foreach ($source as $key => $value) {
             if ($predicate($key, $value) === true) {
