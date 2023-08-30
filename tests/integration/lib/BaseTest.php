@@ -372,13 +372,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $tokenAuth = (
             array_key_exists('token_auth', $options) && $options['token_auth']
         );
-        // Test token authentication.
+        // Test failed token authentication.
         if ($tokenAuth && $this instanceof TokenAuthTest) {
             foreach ($this->provideTokenAuthTestData() as $testData) {
                 list($role, $tokenType) = $testData;
                 if ('valid_token' !== $tokenType) {
                     $tests[] = [
-                        'token_auth_' . $tokenType,
+                        $tokenType,
                         $role,
                         $tokenType,
                         $validInput,
@@ -423,12 +423,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 }
             }
         }
-        // Test invalid date parameters.
         return $tests;
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * validates 400 Bad Request responses in which a required parameter with
      * the given name was not provided in the request.
      *
@@ -444,7 +443,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * validates 400 Bad Request responses in which a parameter with the given
      * name was not a valid integer.
      *
@@ -457,7 +456,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * validates 400 Bad Request responses in which a parameter with the given
      * name was not a valid ISO 8601 date.
      *
@@ -470,7 +469,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * validates 400 Bad Request responses in which a parameter with the given
      * name was not the given type.
      *
@@ -487,7 +486,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * validates 400 Bad Request responses expected to have the given message
      * and code in their JSON.
      *
@@ -507,7 +506,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * validates authorization error responses with the given HTTP status code.
      *
      * @param int $statusCode
@@ -528,7 +527,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return a validator for use in @see requestAndValidateJson() that
+     * Return a validator for use in requestAndValidateJson() that
      * validates HTTP error responses expected to have the given message
      * and code in their JSON.
      *
@@ -557,7 +556,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return an output array for use in @see requestAndValidateJson() that
+     * Return an output array for use in requestAndValidateJson() that
      * uses the given validator to validate 200 OK responses in which the
      * 'success' property is true.
      *
@@ -605,7 +604,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * array at the given key.
      *
      * @param array $input the input array, e.g., one that could be passed into
-     *                     @see requestAndValidateJson.
+     *                     requestAndValidateJson.
      * @param string $key, e.g., 'params' or 'data'.
      * @param array $params the new associative array of parameters, e.g., as
      *                      could be used as a 'params' or 'data' property.
