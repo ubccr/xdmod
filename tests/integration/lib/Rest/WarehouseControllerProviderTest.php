@@ -226,12 +226,12 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             [
                 'success_0',
                 [],
-                $this->generateGetDataSuccessBodyValidator(10000, null)
+                $this->validateGetDataSuccessResponse(10000, null)
             ],
             [
                 'success_16500',
                 ['offset' => 16500],
-                $this->generateGetDataSuccessBodyValidator(66, null)
+                $this->validateGetDataSuccessResponse(66, null)
             ],
             [
                 'success_fields_and_filters',
@@ -240,7 +240,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     'filters[resource]' => '1,2',
                     'filters[fieldofscience]' => '10,91'
                 ],
-                $this->generateGetDataSuccessBodyValidator(
+                $this->validateGetDataSuccessResponse(
                     29,
                     ['Nodes', 'Wall Time']
                 )
@@ -263,7 +263,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         return $tests;
     }
 
-    private function generateGetDataSuccessBodyValidator(
+    private function validateGetDataSuccessResponse(
         $count,
         $expectedFields
     ) {
