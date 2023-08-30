@@ -174,7 +174,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                 'data',
                 ['viewedTour' => '-1']
             ),
-            parent::validateBadRequestResponse('Invalid data parameter', 0);
+            parent::validateBadRequestResponse('Invalid data parameter', 0)
         ];
         // Test successful requests.
         foreach ([1, 0] as $viewedTour) {
