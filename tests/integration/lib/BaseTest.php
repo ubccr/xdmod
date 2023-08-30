@@ -290,8 +290,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         specifying whether request parameters are to be
      *                         located in the query parameters ('params') or
      *                         the POST data ('data'). The return will include
-     *                         tests of missing required parameters and invalid
-     *                         integer and date parameters.
+     *                         tests of missing required parameters.
      *                       The other keys are optional:
      *                       - 'authentication' — if the value is true, the
      *                         return will include a test for failed
@@ -299,22 +298,28 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         requested by the 'pub' role.
      *                       - 'authorization' — if the value is a string role,
      *                         the return will include tests of failed
-     *                         authorization of the endpoint by all roles
-     *                         except that one; e.g., if the value is 'mgr',
-     *                         tests to make sure you have to be authorized as
-     *                         an admin to use the endpoint.
-     *                       - 'run_as' — if the value is a string role, runs
-     *                         the tests for missing and invalid parameters as
-     *                         that role, e.g., 'usr'. This is overriden by
-     *                         setting 'authorization' key, in which case those
-     *                         tests will be run as that authorized role.
-     *                       - 'token_auth' — if the value is true, the return
-     *                         includes tests that can be fed into
-     *                         TokenAuthTest::runTokenAuthTest(); namely, each
-     *                         of the error tests from
-     *                         TokenAuthTest::provideTokenAuthTestData(), and
-     *                         specifying 'valid_token' as the token type for
-     *                         the tests of missing and invalid parameters.
+     *                         authorization of the endpoint by all of the base
+     *                         roles (from getBaseRoles()) except that one;
+     *                         e.g., if the value is 'mgr', tests to make sure
+     *                         you have to be authorized as an admin to use the
+     *                         endpoint.
+     *                       - 'run_as' — if the value is a string role, any
+     *                         tests in the return involving an an
+     *                         authenticated user will use that role, e.g.,
+     *                         'usr'. This is overriden by setting the
+     *                         'authorization' key, in which case those tests
+     *                         will instead run as that authorized role.
+     *                       - 'token_auth' — if the value is true, the tests
+     *                         in the return will include 'valid_token' as
+     *                         their token type. If $this is a TokenAuthTest,
+     *                         the return will also include tests that can be
+     *                         fed into TokenAuthTest::runTokenAuthTest();
+     *                         namely, each of the error tests from
+     *                         TokenAuthTest::provideTokenAuthTestData().
+     *                       - 'int_params' — array of parameters that
+     *                         will each be tested for invalid integer values.
+     *                       - 'date_params' — array of parameters that will
+     *                         each be tested for invalid ISO 8601 date values.
      * @return array of arrays of test data, each of which contains a string
      *               ID of the test, a string role as whom the request will be
      *               made, the value 'valid_token' if $tokenAuth is true
@@ -361,6 +366,21 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $tokenAuth = (
             array_key_exists('token_auth', $options) && $options['token_auth']
         );
+        // Test token authentication.
+        if ($tokenAuth && $this instanceof TokenAuthTest) {
+            foreach ($this->provideTokenAuthTestData() as $testData) {
+                list($role, $tokenType) = $testData;
+                if ('valid_token' !== $tokenType) {
+                    $tests[] = [
+                        'token_auth_' . $tokenType,
+                        $role,
+                        $tokenType,
+                        $validInput,
+                        []
+                    ];
+                }
+            }
+        }
         // Test missing required parameters.
         foreach (array_keys($validInput[$options['param_source']]) as $param) {
             $input = $validInput;

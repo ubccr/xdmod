@@ -259,100 +259,86 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 'date_params' => ['start_date', 'end_date']
             ]
         );
-        foreach (parent::provideTokenAuthTestData() as $testData) {
-            list($role, $tokenType) = $testData;
-            // Run some standard token auth tests.
-            if ('valid_token' !== $tokenType) {
-                $tests[] = [
-                    'default',
-                    $role,
-                    $tokenType,
+        $testData = [];
+        // Test bad request parameters.
+        array_push(
+            $testData,
+            [
+                'end_before_start',
+                ['end_date' => '2016-01-01'],
+                parent::validateBadRequestResponse(
+                    'End date cannot be less than start date.',
+                    104
+                )
+            ],
+            [
+                'invalid_realm',
+                ['realm' => 'foo'],
+                parent::validateBadRequestResponse(
+                    'Invalid realm.',
+                    104
+                )
+            ],
+            [
+                'invalid_fields',
+                ['fields' => 'foo,bar;'],
+                parent::validateBadRequestResponse(
+                    "Invalid fields specified: 'foo', 'bar;'.",
+                    104
+                )
+            ],
+            [
+                'invalid_filter_key',
+                ['filters[foo]' => '177'],
+                parent::validateBadRequestResponse(
+                    "Invalid filter key 'foo'.",
+                    104
+                )
+            ],
+            [
+                'negative_offset',
+                ['offset' => -1],
+                parent::validateBadRequestResponse(
+                    "Offset must be non-negative.",
+                    104
+                )
+            ],
+            [
+                'success_0',
+                [],
+                $this->generateGetDataSuccessBodyValidator(10000, null)
+            ],
+            [
+                'success_16500',
+                ['offset' => 16500],
+                $this->generateGetDataSuccessBodyValidator(66, null)
+            ],
+            [
+                'success_fields_and_filters',
+                [
+                    'fields' => 'Nodes,Wall Time',
+                    'filters[resource]' => '1,2',
+                    'filters[fieldofscience]' => '10,91'
+                ],
+                $this->generateGetDataSuccessBodyValidator(
+                    29,
+                    ['Nodes', 'Wall Time']
+                )
+            ]
+        );
+        foreach ($testData as $t) {
+            list($id, $params, $output) = $t;
+            $tests[] = [
+                $id,
+                'usr',
+                'valid_token',
+                parent::mergeParams(
                     $validInput,
-                    []
-                ];
-            } else {
-                $testData = [];
-                // Test bad request parameters.
-                array_push(
-                    $testData,
-                    [
-                        'end_before_start',
-                        ['end_date' => '2016-01-01'],
-                        parent::validateBadRequestResponse(
-                            'End date cannot be less than start date.',
-                            104
-                        )
-                    ],
-                    [
-                        'invalid_realm',
-                        ['realm' => 'foo'],
-                        parent::validateBadRequestResponse(
-                            'Invalid realm.',
-                            104
-                        )
-                    ],
-                    [
-                        'invalid_fields',
-                        ['fields' => 'foo,bar;'],
-                        parent::validateBadRequestResponse(
-                            "Invalid fields specified: 'foo', 'bar;'.",
-                            104
-                        )
-                    ],
-                    [
-                        'invalid_filter_key',
-                        ['filters[foo]' => '177'],
-                        parent::validateBadRequestResponse(
-                            "Invalid filter key 'foo'.",
-                            104
-                        )
-                    ],
-                    [
-                        'negative_offset',
-                        ['offset' => -1],
-                        parent::validateBadRequestResponse(
-                            "Offset must be non-negative.",
-                            104
-                        )
-                    ],
-                    [
-                        'success_0',
-                        [],
-                        $this->generateGetDataSuccessBodyValidator(10000, null)
-                    ],
-                    [
-                        'success_16500',
-                        ['offset' => 16500],
-                        $this->generateGetDataSuccessBodyValidator(66, null)
-                    ],
-                    [
-                        'success_fields_and_filters',
-                        [
-                            'fields' => 'Nodes,Wall Time',
-                            'filters[resource]' => '1,2',
-                            'filters[fieldofscience]' => '10,91'
-                        ],
-                        $this->generateGetDataSuccessBodyValidator(
-                            29,
-                            ['Nodes', 'Wall Time']
-                        )
-                    ]
-                );
-                foreach ($testData as $t) {
-                    list($id, $params, $output) = $t;
-                    $tests[] = [
-                        $id,
-                        $role,
-                        $tokenType,
-                        parent::mergeParams(
-                            $validInput,
-                            'params',
-                            $params
-                        ),
-                        $output
-                    ];
-                }
-            }
+                    'params',
+                    $params
+                ),
+                $output
+            ];
         }
         return $tests;
     }
