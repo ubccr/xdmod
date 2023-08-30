@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use Configuration\XdmodConfiguration;
-use DataWarehouse\Query\Exceptions\BadRequestException;
 use Exception;
 use PDOException;
 use Silex\Application;

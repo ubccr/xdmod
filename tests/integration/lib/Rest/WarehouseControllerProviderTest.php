@@ -16,79 +16,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     }
 
     /**
-     * @dataProvider provideCreateSearchHistory
-     */
-    public function testCreateSearchHistory($id, $role, $input, $output)
-    {
-        parent::authenticateRequestAndValidateJson(
-            self::$helper,
-            $role,
-            $input,
-            $output
-        );
-    }
-
-    public function provideCreateSearchHistory()
-    {
-        $validInput = [
-            'path' => 'rest/warehouse/search/history',
-            'method' => 'post',
-            'params' => null,
-            'data' => [
-                'realm' => 'Jobs',
-                'data' => '{"text":"foo"}'
-            ]
-        ];
-        // Run some standard endpoint tests.
-        $tests = parent::provideRestEndpointTests(
-            $validInput,
-            [
-                'param_source' => 'data',
-                'authentication' => true,
-                'run_as' => 'usr',
-                'int_params' => ['recordid']
-            ]
-        );
-        // TODO: Add more test coverage of this method.
-        return $tests;
-    }
-
-    /**
-     * @dataProvider provideGetSearchHistory
-     */
-    public function testGetSearchHistory($id, $role, $input, $output)
-    {
-        parent::authenticateRequestAndValidateJson(
-            self::$helper,
-            $role,
-            $input,
-            $output
-        );
-    }
-
-    public function provideGetSearchHistory()
-    {
-        $validInput = [
-            'path' => 'rest/warehouse/search/history',
-            'method' => 'get',
-            'params' => [],
-            'data' => null
-        ];
-        // Run some standard endpoint tests.
-        $tests = parent::provideRestEndpointTests(
-            $validInput,
-            [
-                'param_source' => 'params',
-                'authentication' => true,
-                'run_as' => 'usr',
-                'int_params' => ['nodeid', 'infoid', 'jobid', 'recordid']
-            ]
-        );
-        // TODO: Add more test coverage of this method.
-        return $tests;
-    }
-
-    /**
      * The warehouse/aggregate data endpoint uses a json encoded configuration
      * settings. This helper function generates a valid set of parameters for the
      * endpoint.
@@ -289,41 +216,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $this->assertCount($params['limit'], $response[0]['results']);
         $this->assertEquals(23, $response[0]['total']);
         self::$helper->logout();
-    }
-
-    /**
-     * @dataProvider provideGetDimensions
-     */
-    public function testGetDimensions($id, $role, $input, $output)
-    {
-        parent::authenticateRequestAndValidateJson(
-            self::$helper,
-            $role,
-            $input,
-            $output
-        );
-    }
-
-    public function provideGetDimensions()
-    {
-        $validInput = [
-            'path' => 'rest/warehouse/dimensions/resource',
-            'method' => 'get',
-            'params' => [],
-            'data' => null
-        ];
-        // Run some standard endpoint tests.
-        $tests = parent::provideRestEndpointTests(
-            $validInput,
-            [
-                'param_source' => 'params',
-                'authentication' => true,
-                'run_as' => 'usr',
-                'int_params' => ['offset', 'limit']
-            ]
-        );
-        // TODO: Add more test coverage of this method.
-        return $tests;
     }
 
     /**

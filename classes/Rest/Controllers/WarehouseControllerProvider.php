@@ -491,7 +491,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getSearchParams(Request $request)
     {
-        $data = $this->getStringParam($request, 'data', true);
+        $data = $request->get('data');
+
+        if (!isset($data)) {
+            throw new MissingMandatoryParametersException(
+                'Malformed request. Expected \'data\' to be present.',
+                400
+            );
+        }
 
         $decoded = json_decode($data, true);
 
