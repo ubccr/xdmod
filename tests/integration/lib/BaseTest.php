@@ -168,13 +168,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         );
 
         // Make assertions
-        $this->assertSame($output['status_code'], $actualStatusCode, $message);
-        $this->assertSame('application/json', $actualContentType, $message);
+        parent::assertSame($output['status_code'], $actualStatusCode, $message);
+        parent::assertSame('application/json', $actualContentType, $message);
         $output['body_validator']($actualBody, $message);
         if (isset($output['headers'])) {
             foreach ($output['headers'] as $key => $value) {
-                $this->assertArrayHasKey($key, $actualHeaders, $message);
-                $this->assertSame(
+                parent::assertArrayHasKey($key, $actualHeaders, $message);
+                parent::assertSame(
                     $value,
                     trim($actualHeaders[$key]),
                     $message
@@ -538,7 +538,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected function validateErrorResponseBody($message, $code)
     {
         return function ($body, $assertMessage) use ($message, $code) {
-            $this->assertEquals(
+            parent::assertEquals(
                 [
                     'success' => false,
                     'count' => 0,
@@ -574,10 +574,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $assertMessage
             ) use ($validator) {
                 if (is_callable($validator)) {
-                    $this->assertSame(true, $body['success'], $assertMessage);
+                    parent::assertSame(true, $body['success'], $assertMessage);
                     $validator($body, $assertMessage);
                 } else {
-                    $this->assertEquals($validator, $body, $assertMessage);
+                    parent::assertEquals($validator, $body, $assertMessage);
                 }
             }
         ];
@@ -591,7 +591,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function validateDate($date)
     {
-        $this->assertRegExp(
+        parent::assertRegExp(
             '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/',
             $date
         );
@@ -658,10 +658,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             try {
                 $schema->in($actualJson);
             } catch (Exception $e) {
-                $this->fail($message . $e->getMessage());
+                parent::fail($message . $e->getMessage());
             }
         } else {
-            $this->assertSame($expectedStr, $actualStr, $message);
+            parent::assertSame($expectedStr, $actualStr, $message);
         }
         return $actualJson;
     }
