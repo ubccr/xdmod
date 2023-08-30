@@ -14,10 +14,12 @@ transition from the [XD Metrics Service](https://www.nsf.gov/awardsearch/showAwa
  to [ACCESS Metrics](https://metrics.access-ci.org). The 10.0 release of
 Open XDMoD therefore has a longer than typical support time.
 
-| Version | Release Date       | End of Support     |
-|---------|--------------------|--------------------|
-| 10.0    | March 10, 2022     | September 10, 2023 |
-| 10.5    | September 01, 2023 | September 01, 2024 |
+| Version | Release Date       | End of Support      |
+|---------|--------------------|---------------------|
+| 10.0    | March 10, 2022     | September 10, 2023  |
+| 10.5    | September 03, 2023 | September 03, 2024* |
+
+**\* Note: CentOS 7 will officially be end of life on June 30, 2024 and as such so will our official support for el7 XDMoD.**
 
 Supported Operating Systems
 ---------------------------
