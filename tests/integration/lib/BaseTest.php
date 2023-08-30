@@ -307,8 +307,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         the return will include tests to make sure the
      *                         endpoint restricts access to just the admin
      *                         user. Note that this option and 'token_auth' are
-     *                         incompatible; 'token_auth' will already include
-     *                         authorization tests.
+     *                         incompatible; 'token_auth' assumes that the
+     *                         'usr' role has authorization.
      *                       - 'run_as' — if the value is a string role, any
      *                         tests in the return involving an an
      *                         authenticated user will use that role, e.g.,
