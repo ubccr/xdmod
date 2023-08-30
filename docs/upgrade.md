@@ -109,13 +109,14 @@ Included in these new features is official support for the Rocky 8 operating sys
 to migrate their XDMoD installations from the soon-to-be end-of-life CentOS 7 to a currently supported OS. The officially
 recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an Rocky 8 XDMoD 10.5 installation is as follows:
 1. Update the CentOS 7 XDMoD 10.0.X installation to XDMoD 10.5
-1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server.
-1. Copy the contents of `/etc/xdmod` from the CentOS 7 server to the Rocky 8 server.
+2. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server.
+3. Copy the contents of `/etc/xdmod` from the CentOS 7 server to the Rocky 8 server.
     1. Adjust database connection properties as appropriate.
-1. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
-1. Import the CentOS 7 exported database files into the Rocky 8 server's database.
-1. Ensure that you have added the `sql_mode=` line to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf` on the Rocky 8 server.
-1. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
+4. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server
+    1. For example using `mysqldump`
+5. Import the CentOS 7 exported database files into the Rocky 8 server's database.
+6. Ensure that you have added the `sql_mode=` line to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf` on the Rocky 8 server.
+7. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
 
 ### Configuration File Changes
 

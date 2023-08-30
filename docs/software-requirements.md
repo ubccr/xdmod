@@ -118,6 +118,8 @@ Add the following property to the `[server]` section of `/etc/my.cnf.d/mariadb-s
 ```shell
 sql_mode=
 ```
+This will instruct your database to operate in permissive SQL mode. We currently require this to be set as XDMoD still relies on 
+behaviors and features only present in older versions of MySQL.
 
 Additional Notes
 ----------------
