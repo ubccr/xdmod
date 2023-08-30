@@ -185,7 +185,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see requestAndValidateJson().
+     * Same as requestAndValidateJson() but authenticating as the given role
+     * first (except for 'pub') and logging out afterwards.
      */
     protected function authenticateRequestAndValidateJson(
         XdmodTestHelper $testHelper,
@@ -275,8 +276,51 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * 'params' needs to have the minimal set of required parameters with valid
-     * values.
+     * Data provider for tests involving REST endpoints.
+     *
+     * @param array $validInput an input array for the requestAndValidateJson()
+     *                          method in which the 'params' or 'data' key is
+     *                          mapped to an associative array in which the
+     *                          keys are all of the required endpoint
+     *                          parameters, and the values are valid values for
+     *                          those parameters.
+     * @param array $options an associative array that configures how this
+     *                       method should run. There is one required key:
+     *                       - 'param_source' — either 'params' or 'data',
+     *                         specifying whether request parameters are to be
+     *                         located in the query parameters ('params') or
+     *                         the POST data ('data'). The return will include
+     *                         tests of missing required parameters and invalid
+     *                         integer and date parameters.
+     *                       The other keys are optional:
+     *                       - 'authentication' — if the value is true, the
+     *                         return will include a test for failed
+     *                         authentication in which the endpoint is
+     *                         requested by the 'pub' role.
+     *                       - 'authorization' — if the value is a string role,
+     *                         the return will include tests of failed
+     *                         authorization of the endpoint by all roles
+     *                         except that one; e.g., if the value is 'mgr',
+     *                         tests to make sure you have to be authorized as
+     *                         an admin to use the endpoint.
+     *                       - 'run_as' — if the value is a string role, runs
+     *                         the tests for missing and invalid parameters as
+     *                         that role, e.g., 'usr'. This is overriden by
+     *                         setting 'authorization' key, in which case those
+     *                         tests will be run as that authorized role.
+     *                       - 'token_auth' — if the value is true, the return
+     *                         includes tests that can be fed into
+     *                         TokenAuthTest::runTokenAuthTest(); namely, each
+     *                         of the error tests from
+     *                         TokenAuthTest::provideTokenAuthTestData(), and
+     *                         specifying 'valid_token' as the token type for
+     *                         the tests of missing and invalid parameters.
+     * @return array of arrays of test data, each of which contains a string
+     *               ID of the test, a string role as whom the request will be
+     *               made, the value 'valid_token' if $tokenAuth is true
+     *               (otherwise this value is not included in the array), and
+     *               input and output arrays suitable for
+     *               requestAndValidateJson().
      */
     protected function provideRestEndpointTests(
         array $validInput,
@@ -533,7 +577,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * associative array, and a new associative array of parameters, make a
      * copy of the input array and merge the parameters into the associative
      * array at the given key.
-     * 
+     *
      * @param array $input the input array, e.g., one that could be passed into
      *                     @see requestAndValidateJson.
      * @param string $key, e.g., 'params' or 'data'.
@@ -614,6 +658,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @see provideRestEndpointTests().
+     */
     private static function getEndpointTestData(
         $id,
         $role,
