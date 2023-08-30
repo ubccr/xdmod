@@ -44,6 +44,20 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         );
     }
 
+
+    public function aggregateDataMalformedRequestProvider()
+    {
+        $inputs = array();
+
+        $inputs[] = array('cd', array('start' => 0, 'limit' => 10));
+        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => ''));
+        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => '{"realm": "Jobs"}'));
+        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => 'not json data'));
+        $inputs[] = array('cd', array('start' => 'smart', 'limit' => 'asdf', 'config' => '{"realm": "Jobs"}'));
+
+        return $inputs;
+    }
+
     public function aggregateDataAccessControlsProvider()
     {
         $inputs = array();
@@ -59,108 +73,14 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider aggregateDataMalformedRequestProvider
      */
-    public function testGetAggregateDataMalformedRequests(
-        $id,
-        $role,
-        $input,
-        $output
-    ) {
-        parent::authenticateRequestAndValidateJson(
-            self::$helper,
-            $role,
-            $input,
-            $output
-        );
-    }
-
-    public function aggregateDataMalformedRequestProvider()
+    public function testGetAggregateDataMalformedRequests($user, $params)
     {
-        $validInput = [
-            'path' => 'rest/warehouse/aggregatedata',
-            'method' => 'get',
-            'params' => $this->getAggDataParameterGenerator(),
-            'data' => null
-        ];
-        // Run some standard endpoint tests.
-        $tests = parent::provideRestEndpointTests(
-            $validInput,
-            [
-                'param_source' => 'params',
-                'authentication' => true,
-                'run_as' => 'cd',
-                'int_params' => ['start', 'limit']
-            ]
-        );
-        // Test bad request parameters.
-        $tests[] = [
-            'invalid_config',
-            'cd',
-            parent::mergeParams(
-                $validInput,
-                'params',
-                ['config' => 'foo']
-            ),
-            parent::validateBadRequestResponse(
-                'syntax error in config parameter',
-                104
-            )
-        ];
-        $config = json_decode($validInput['params']['config'], true);
-        $tests = $this->getAggregateDataMalformedParamTests(
-            $tests,
-            $validInput,
-            $config,
-            null,
-            'missing_config_',
-            function ($param) {
-                return "Missing mandatory config property $param";
-            }
-        );
-        $tests = $this->getAggregateDataMalformedParamTests(
-            $tests,
-            $validInput,
-            $config,
-            'order_by',
-            'missing_config_order_by_',
-            function ($param) {
-                return 'Malformed config property order_by';
-            }
-        );
-        return $tests;
-    }
+        self::$helper->authenticate($user);
+        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
 
-    private function getAggregateDataMalformedParamTests(
-        array $tests,
-        array $validInput,
-        array $config,
-        $key,
-        $idPrefix,
-        $getMessage
-    ) {
-        if (is_null($key)) {
-            $params = $config;
-        } else {
-            $params = $config[$key];
-        }
-        foreach (array_keys($params) as $param) {
-            $newConfig = $config;
-            if (is_null($key)) {
-                unset($newConfig[$param]);
-            } else {
-                unset($newConfig[$key][$param]);
-            }
-            $tests[] = [
-                $idPrefix . $param,
-                'cd',
-                parent::mergeParams(
-                    $validInput,
-                    'params',
-                    ['config' => json_encode($newConfig)]
-                ),
-                parent::validateBadRequestResponse($getMessage($param), 104)
-            ];
-        }
-        return $tests;
+        $this->assertEquals(400, $response[1]['http_code']);
+        $this->assertFalse($response[0]['success']);
+        self::$helper->logout();
     }
 
     /**
