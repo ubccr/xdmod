@@ -286,11 +286,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                          those parameters.
      * @param array $options an associative array that configures how this
      *                       method should run. There is one required key:
-     *                       - 'param_source' — either 'params' or 'data',
-     *                         specifying whether request parameters are to be
-     *                         located in the query parameters ('params') or
-     *                         the POST data ('data'). The return will include
-     *                         tests of missing required parameters.
      *                       The other keys are optional:
      *                       - 'authentication' — if the value is true, the
      *                         return will include a test for failed
@@ -310,11 +305,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         incompatible; 'token_auth' assumes that the
      *                         'usr' role has authorization.
      *                       - 'run_as' — if the value is a string role, any
-     *                         tests in the return involving an an
-     *                         authenticated user will use that role, e.g.,
-     *                         'usr'. This is overriden by setting the
-     *                         'authorization' key, in which case those tests
-     *                         will instead run as that authorized role.
+     *                         tests in the return involving an authenticated
+     *                         user will use that role, e.g., 'cd'. This is
+     *                         overriden by setting the 'authorization' key, in
+     *                         which case those tests will instead run as that
+     *                         authorized role. If both 'authorization' and
+     *                         'run_as' are not provided, the tests will be run
+     *                         as 'usr'.
      *                       - 'token_auth' — if the value is true, the tests
      *                         in the return will include 'valid_token' as
      *                         their token type. If $this is a TokenAuthTest,
@@ -324,7 +321,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         TokenAuthTest::provideTokenAuthTestData().
      *                       - 'additional_params' — array of parameters that
      *                         will be merged into either 'params' or 'data'
-     *                         (based on the value of 'param_source') of
+     *                         (based on the value of $validInput['method']) of
      *                         $validInput; e.g., if there are parameters that
      *                         are not required in all cases for the endpoint
      *                         (i.e., which shouldn't be tested here for
@@ -345,12 +342,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         array $validInput,
         array $options
     ) {
+        // Determine the source of parameters.
+        $paramSource = $validInput['method'] === 'get' ? 'params' : 'data';
         // Add any additional parameters.
         $validInputWithAdditionalParams = $validInput;
         if (array_key_exists('additional_params', $options)) {
             $validInputWithAdditionalParams = self::mergeParams(
                 $validInputWithAdditionalParams,
-                $options['param_source'],
+                $paramSource,
                 $options['additional_params']
             );
         }
@@ -369,7 +368,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
         // Test failed authorization.
         if (array_key_exists('authorization', $options)) {
-            $runAs = $options['authorization'];
             foreach (self::getBaseRoles() as $role) {
                 if ('pub' !== $role && $options['authorization'] !== $role) {
                     $tests[] = [
@@ -380,10 +378,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                     ];
                 }
             }
+            $runAs = $options['authorization'];
         }
         // Set the role for running the tests.
         if (!isset($runAs)) {
-            $runAs = $options['run_as'];
+            if (array_key_exists('run_as', $options)) {
+                $runAs = $options['run_as'];
+            } else {
+                $runAs = 'usr';
+            }
         }
         // Determine whether API token authorization is used on this endpoint.
         $tokenAuth = (
@@ -405,9 +408,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             }
         }
         // Test missing required parameters.
-        foreach (array_keys($validInput[$options['param_source']]) as $param) {
+        foreach (array_keys($validInput[$paramSource]) as $param) {
             $input = $validInput;
-            unset($input[$options['param_source']][$param]);
+            unset($input[$paramSource][$param]);
             $tests[] = self::getEndpointTestData(
                 'missing_' . $param,
                 $runAs,
@@ -425,7 +428,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
                     $input = $validInputWithAdditionalParams;
-                    $input[$options['param_source']][$param] = 'foo';
+                    $input[$paramSource][$param] = 'foo';
                     $tests[] = self::getEndpointTestData(
                         $param . '_string',
                         $runAs,
