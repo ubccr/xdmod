@@ -172,9 +172,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'token_auth' => true,
-                'run_as' => 'usr',
                 'int_params' => ['offset'],
                 'date_params' => ['start_date', 'end_date']
             ]
