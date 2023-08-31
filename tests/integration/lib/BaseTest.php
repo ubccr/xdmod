@@ -417,15 +417,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             );
         }
         // Test invalid parameters.
-        $validators = [
-            'int_params' => function ($param) {
-                return $this->validateInvalidIntParameterResponse($param);
-            },
-            'date_params' => function ($param) {
-                return $this->validateInvalidDateParameterResponse($param);
-            }
+        $types = [
+            'int_params' => 'integer',
+            'date_params' => 'ISO 8601 Date'
         ];
-        foreach ($validators as $key => $validator) {
+        foreach ($types as $key => $type) {
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
                     $input = $validInputWithAdditionalParams;
@@ -435,7 +431,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                         $runAs,
                         $tokenAuth,
                         $input,
-                        $validator($param)
+                        $this->validateInvalidParameterResponse($param, $type)
                     );
                 }
             }
@@ -457,32 +453,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             "$name is a required parameter.",
             0
         );
-    }
-
-    /**
-     * Return an output array for use in requestAndValidateJson() that
-     * validates 400 Bad Request responses in which a parameter with the given
-     * name was not a valid integer.
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function validateInvalidIntParameterResponse($name)
-    {
-        return $this->validateInvalidParameterResponse($name, 'integer');
-    }
-
-    /**
-     * Return an output array for use in requestAndValidateJson() that
-     * validates 400 Bad Request responses in which a parameter with the given
-     * name was not a valid ISO 8601 date.
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function validateInvalidDateParameterResponse($name)
-    {
-        return $this->validateInvalidParameterResponse($name, 'ISO 8601 Date');
     }
 
     /**
