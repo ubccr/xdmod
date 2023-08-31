@@ -78,7 +78,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'int_params' => ['recordid']
                 'int_params' => ['recordid'],
                 'string_params' => ['realm', 'data']
             ]

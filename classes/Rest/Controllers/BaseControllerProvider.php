@@ -293,7 +293,11 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         // Run the found parameter value through the given filter.
-        $filterOptions['flags'] |= FILTER_NULL_ON_FAILURE;
+        if (array_key_exists('flags', $filterOptions)) {
+            $filterOptions['flags'] |= FILTER_NULL_ON_FAILURE;
+        } else {
+            $filterOptions['flags'] = FILTER_NULL_ON_FAILURE;
+        }
         $value = filter_var($value, $filterId, $filterOptions);
 
         // If the value is invalid, throw an exception.
