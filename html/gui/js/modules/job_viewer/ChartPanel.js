@@ -154,7 +154,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 }
                 if (panel.chart) {
                     panel.chart = document.getElementById(this.id);
-                    panel.chart.on('plotly_click', function (data, event) {
+                    panel.chart.once('plotly_click', function (data, event) {
                         var userOptions = data.points[0].data.chartSeries;
                         if (!userOptions || !userOptions.dtype) {
                             return;
