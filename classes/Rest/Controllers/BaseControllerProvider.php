@@ -328,6 +328,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
                 "options" => array(
                     "default" => null,
                 ),
+                "flags" => FILTER_NULL_ON_FAILURE
             ),
             "integer"
         );
@@ -365,6 +366,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
                 "options" => array(
                     "default" => null,
                 ),
+                "flags" => FILTER_NULL_ON_FAILURE
             ),
             "float"
         );
