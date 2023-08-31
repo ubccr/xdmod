@@ -387,7 +387,7 @@ class Plotly2
         }
         $this->_chart['annotations'][1]['font']['color'] = '#5078a0';
         $this->_chart['annotations'][1]['font']['size'] = (12 + $font_size).'px';
-        $this->_chart['annotations'][1]['y'] = 28 + (2 * $font_size);
+        //$this->_chart['annotations'][1]['y'] = 28 + (2 * $font_size);
     } // setSubtitle()
 
     // ---------------------------------------------------------
@@ -407,16 +407,15 @@ class Plotly2
         switch($legend_location)
         {
             case 'top_center':
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $pad = 0;
-                if($this->_chart['title']['text'] != '')
+                $this->_chart['legend']['xanchor'] = 'center';
+                $this->_chart['legend']['yanchor'] = 'top';
+                $this->_chart['legend']['x'] = 0.5;
+                $this->_chart['legend']['y'] = 1.2;
+                $this->_chart['legend']['orientation'] = 'h';
+                $pad = 1.2;
+                if($this->_chart['annotations'][1]['text'] != '')
                 {
-                    $pad += 30;
-                }
-                if($this->_chart['subtitle']['text'] != '')
-                {
-                    $pad += 20;
+                    $pad = 1.0;
                 }
                 $this->_chart['legend']['y'] = $pad;
 
@@ -426,106 +425,121 @@ class Plotly2
             //case 'bottom_left':
             //break;
             case 'left_center':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'left';
+                $this->_chart['legend']['yanchor'] = 'center';
+                $this->_chart['legend']['x'] = -0.1;
+                $this->_chart['legend']['y'] = 0.5;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
 
             case 'left_top':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'left';
+                $this->_chart['legend']['yanchor'] = 'top';
+                $this->_chart['legend']['x'] = -0.1;
+                $this->_chart['legend']['y'] = 1.1;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'left_bottom':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'left';
+                $this->_chart['legend']['yanchor'] = 'bottom';
+                $this->_chart['legend']['x'] = -0.1;
+                $this->_chart['legend']['y'] = -0.1;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'right_center':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'right';
+                $this->_chart['legend']['yanchor'] = 'center';
+                $this->_chart['legend']['x'] = 1.1;
+                $this->_chart['legend']['y'] = 0.5;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'right_top':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'right';
+                $this->_chart['legend']['yanchor'] = 'top';
+                $this->_chart['legend']['x'] = 1.1;
+                $this->_chart['legend']['y'] = 1.1;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'right_bottom':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'right';
+                $this->_chart['legend']['yanchor'] = 'bottom';
+                $this->_chart['legend']['x'] = 1.1;
+                $this->_chart['legend']['y'] = -0.1;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'floating_bottom_center':
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['y'] = -100;
+                $this->_chart['legend']['xanchor'] = 'center';
+                $this->_chart['legend']['yanchor'] = 'bottom';
+                $this->_chart['legend']['x'] = 0.5;
+                $this->_chart['legend']['y'] = 0.1;
+                $this->_chart['legend']['orientation'] = 'h';
                 break;
             case 'floating_top_center':
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['y'] = 70;
+                $this->_chart['legend']['xanchor'] = 'center';
+                $this->_chart['legend']['yanchor'] = 'top';
+                $this->_chart['legend']['x'] = 0.5;
+                $this->_chart['legend']['y'] = 0.9;
+                $this->_chart['legend']['orientation'] = 'h';
                 break;
             case 'floating_left_center':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = 80;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'left';
+                $this->_chart['legend']['yanchor'] = 'center';
+                $this->_chart['legend']['x'] = 0.075;
+                $this->_chart['legend']['y'] = 0.5;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'floating_left_top':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = 80;
-                $this->_chart['legend']['y'] = 70;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'left';
+                $this->_chart['legend']['yanchor'] = 'top';
+                $this->_chart['legend']['x'] = 0.075;
+                $this->_chart['legend']['y'] = 1;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'floating_left_bottom':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = 80;
-                $this->_chart['legend']['y'] = -100;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'left';
+                $this->_chart['legend']['yanchor'] = 'bottom';
+                $this->_chart['legend']['x'] = 0.075;
+                $this->_chart['legend']['y'] = 0.1;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'floating_right_center':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = -10;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'right';
+                $this->_chart['legend']['yanchor'] = 'center';
+                $this->_chart['legend']['x'] = 1;
+                $this->_chart['legend']['y'] = 0.5;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'floating_right_top':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = -10;
-                $this->_chart['legend']['y'] = 70;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'right';
+                $this->_chart['legend']['yanchor'] = 'top';
+                $this->_chart['legend']['x'] = 1;
+                $this->_chart['legend']['y'] = 0.925;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case 'floating_right_bottom':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = -10;
-                $this->_chart['legend']['y'] = -100;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['legend']['xanchor'] = 'right';
+                $this->_chart['legend']['yanchor'] = 'bottom';
+                $this->_chart['legend']['x'] = 1;
+                $this->_chart['legend']['y'] = 0.075;
+                $this->_chart['legend']['orientation'] = 'v';
                 break;
             case '':
             case 'none':
             case 'off':
                 $this->_legend_location = 'off';
-                $this->_chart['legend']['enabled'] = false;
+                $this->_chart['legend']['visible'] = false;
                 break;
             case 'bottom_center':
             default:
-                $this->_legend_location = 'bottom_center';
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['margin'] = 15;
+                $this->_chart['legend']['xanchor'] = 'center';
+                $this->_chart['legend']['yanchor'] = 'bottom';
+                $this->_chart['legend']['x'] = 0.5;
+                $this->_chart['legend']['y'] = -0.2;
+                $this->_chart['legend']['orientation'] = 'h';
                 break;
         }
+
+        /* Look into where this should go for Plotly or if we even need it
         if($legend_location != 'bottom_center')
         {
             $this->_chart['chart']['spacingBottom'] = 25;
@@ -535,7 +549,7 @@ class Plotly2
              $legend_location != 'right_bottom')
         {
             $this->_chart['chart']['spacingRight'] = 20;
-        }
+        }*/
         $this->_hasLegend = $this->_legend_location != 'off';
 
     } // setLegend()
@@ -650,47 +664,46 @@ class Plotly2
         }
 
         // --- set xAxis in _chart object ---
-        $this->_chart['xAxis'] = array(
+        $this->_chart['xaxis'] = array(
                 'title' => array(
-                        'text' => $xAxisLabel,
-                        'margin' => 15 + $font_size,
-                        'style' => array(
+                        'text' => '<b>'. $xAxisLabel . '</b>',
+                        'standoff' => 15 + $font_size,
+                        'font' => array(
                                 'color'=> '#000000',
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
+                                'size' => (12 + $font_size).'px'
                         )
                 ),
                 'otitle' => $originalXAxisLabel,
                 'dtitle' => $defaultXAxisLabel,
-
-                // set chart labels:
-                'labels' => $this->_swapXY ? array(
-                        'enabled' => true,
-                        'staggerLines' => 1,
-                        'step' => $this->_xAxisDataObject->getCount() < 20 ? 0  :round($this->_xAxisDataObject->getCount() / 20 ),
-                        'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px'
-                        ),
-                        'settings' => array(
-                            'maxL' => floor($this->_width*20/580)
-                        )
-                ) // !($this->_swapXY)
-                : array(
-                        'enabled' => true,
-                        'staggerLines' => 1,
-                        'rotation' => $this->_xAxisDataObject->getCount()<= 8?0: -90,
-                        'align' => $this->_xAxisDataObject->getCount()<= 8?'center':'right',
-                        'step' => $this->_xAxisDataObject->getCount()< 20?0:round($this->_xAxisDataObject->getCount()/20),
-                        'style' => array('fontSize' => (11 + $font_size).'px'),
-                        'settings' => array(
-                            'maxL' => floor($this->_height*($this->limit<11?30:15)/400),
-                            'wrap' => floor($this->_height*($this->limit<11?18:18)/400)
-                        )
+                'tickfont' => array(
+                    'size' => (11 + $font_size)
                 ),
-                'lineWidth' => 2 + $font_size / 4,
-                'categories' => $this->_xAxisDataObject->getValues()
+                'linewidth' => 2 + $font_size / 4,
+                'categoryarray' => $this->_xAxisDataObject->getValues()
         );
+        
+        if (isset($this->_chart['xaxis']['categoryarray']))
+        {
+            $this->_chart['xaxis']['categoryorder'] = 'array';
+        }
+
+        $count = $this->_xAxisDataObject->getCount();
+        $this->_chart['xaxis']['dtick'] = $count < 20 ? 0 : round($count / 20);
+        if ($this->_swapXY) 
+        {
+            $this->_chart['xaxis']['settings'] = array(
+                'maxL' => floor($this->_width * 20 / 580);
+            );   
+        }
+        else
+        {
+            $this->_chart['xaxis']['tickangle'] = -90;
+            $this->_chart['xaxis']['ticklabelposition'] = 'outside left';
+            $this->_chart['xaxis']['settings'] = array(
+                'maxL' => floor($this->_height * ($this->limit < 11 ? 30 : 15) / 400),
+                'wrap' => floor($this->_height * ($this->limit < 1 ? 18 : 18) / 400) // Possible bug?
+            );
+        }
     }   // setXAxis()
 
     // ---------------------------------------------------------
