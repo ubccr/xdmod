@@ -421,18 +421,27 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             'int_params' => 'integer',
             'date_params' => 'ISO 8601 Date'
         ];
+        $invalidIntValues = [
+            'string' => 'foo',
+            'array' => ['foo' => 'bar']
+        ];
         foreach ($types as $key => $type) {
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
                     $input = $validInputWithAdditionalParams;
-                    $input[$options['param_source']][$param] = 'foo';
-                    $tests[] = self::getEndpointTestData(
-                        $param . '_string',
-                        $runAs,
-                        $tokenAuth,
-                        $input,
-                        $this->validateInvalidParameterResponse($param, $type)
-                    );
+                    foreach ($invalidIntValues as $id => $value) {
+                        $input[$options['param_source']][$param] = $value;
+                        $tests[] = self::getEndpointTestData(
+                            $param . '_' . $id,
+                            $runAs,
+                            $tokenAuth,
+                            $input,
+                            $this->validateInvalidParameterResponse(
+                                $param,
+                                $type
+                            )
+                        );
+                    }
                 }
             }
         }
