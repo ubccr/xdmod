@@ -581,25 +581,9 @@ EOF;
             [
                 'authentication' => true,
                 'string_params' => ['data'],
-                'error_body_validator' => function($message, $code) {
-                    return function (
-                        $body,
-                        $assertMessage
-                    ) use (
-                        $message,
-                        $code
-                    ) {
-                        return parent::assertEquals(
-                            [
-                                'success' => false,
-                                'message' => $message,
-                                'action' => 'creatQuery'
-                            ],
-                            $body,
-                            $assertMessage
-                        );
-                    };
-                }
+                'error_body_validator' => $this->validateQueryErrorBody(
+                    'creatQuery'
+                )
             ]
         );
         // TODO: Add more test coverage of this method, refactor
@@ -607,6 +591,25 @@ EOF;
         // authenticateRequestAndValidateJson(), combine with this method, and
         // rename to testCreateQuery().
         return $tests;
+    }
+
+    private function validateQueryErrorBody($action)
+    {
+        // This function is passed to parent::provideRestEndpointTests().
+        return function ($message) use ($action) {
+            // This function is passed to parent::validateErrorResponseBody().
+            return function ($body, $assertMessage) use ($message, $action) {
+                return parent::assertEquals(
+                    [
+                        'success' => false,
+                        'message' => $message,
+                        'action' => $action
+                    ],
+                    $body,
+                    $assertMessage
+                );
+            };
+        };
     }
 
     /**
@@ -644,7 +647,7 @@ EOF;
         );
         // Delete the query ID.
         $this->helper->authenticate('usr');
-        $cleanup = $this->helper->delete($path);
+        $this->helper->delete($path);
         $this->helper->logout();
     }
 
@@ -662,25 +665,9 @@ EOF;
             [
                 'authentication' => true,
                 'string_params' => ['data', 'name', 'config'],
-                'error_body_validator' => function($message, $code) {
-                    return function (
-                        $body,
-                        $assertMessage
-                    ) use (
-                        $message,
-                        $code
-                    ) {
-                        return parent::assertEquals(
-                            [
-                                'success' => false,
-                                'message' => $message,
-                                'action' => 'updateQuery'
-                            ],
-                            $body,
-                            $assertMessage
-                        );
-                    };
-                }
+                'error_body_validator' => $this->validateQueryErrorBody(
+                    'updateQuery'
+                )
             ]
         );
         // TODO: Add more test coverage of this method, refactor
