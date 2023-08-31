@@ -301,8 +301,9 @@ class XdmodTestHelper
         if ($data === null) {
             curl_setopt($this->curl, CURLOPT_POST, false);
         } else {
+            $postData = http_build_query($data);
             curl_setopt($this->curl, CURLOPT_POST, true);
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postData);
         }
 
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");

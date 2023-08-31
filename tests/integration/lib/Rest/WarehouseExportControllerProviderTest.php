@@ -266,6 +266,44 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
     }
 
     /**
+     * @dataProvider provideCreateRequestParamValidation
+     */
+    public function testCreateRequestParamValidation(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        parent::requestAndValidateJson(self::$helpers[$role], $input, $output);
+    }
+
+    public function provideCreateRequestParamValidation()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/export/request',
+            'method' => 'post',
+            'params' => null,
+            'data' => [
+                'realm' => 'Jobs',
+                'start_date' => '2017-01-01',
+                'end_date' => '2017-01-01'
+            ]
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm', 'format']
+            ]
+        );
+        // TODO: Add more test coverage of this method, refactor
+        // testCreateRequest() to use authenticateRequestAndValidateJson(),
+        // combine with this method, and rename to testCreateRequest().
+        return $tests;
+    }
+
+    /**
      * Test getting the list of export requests.
      *
      * @param string $role Role to use during test.

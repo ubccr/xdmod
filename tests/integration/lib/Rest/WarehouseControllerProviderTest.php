@@ -41,7 +41,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'int_params' => ['nodeid', 'infoid', 'jobid', 'recordid']
+                'int_params' => ['nodeid', 'infoid', 'jobid', 'recordid'],
+                'string_params' => ['tsid', 'realm', 'title']
             ]
         );
         // TODO: Add more test coverage of this method.
@@ -78,6 +79,143 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             [
                 'authentication' => true,
                 'int_params' => ['recordid']
+                'int_params' => ['recordid'],
+                'string_params' => ['realm', 'data']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideGetHistoryById
+     */
+    public function testGetHistoryById($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetHistoryById()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history/0',
+            'method' => 'get',
+            'params' => ['realm' => 'Jobs'],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideUpdateHistory
+     */
+    public function testUpdateHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideUpdateHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history/0',
+            'method' => 'post',
+            'params' => null,
+            'data' => [
+                'realm' => 'Jobs',
+                'data' => '{"text":"foo"}'
+            ]
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm', 'data']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideDeleteHistory
+     */
+    public function testDeleteHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideDeleteHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history/0',
+            'method' => 'delete',
+            'params' => null,
+            'data' => ['realm' => 'Jobs']
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideDeleteAllHistory
+     */
+    public function testDeleteAllHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideDeleteAllHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history',
+            'method' => 'delete',
+            'params' => null,
+            'data' => ['realm' => 'Jobs']
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
             ]
         );
         // TODO: Add more test coverage of this method.
@@ -117,7 +255,13 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'int_params' => ['start', 'limit']
+                'int_params' => ['start', 'limit'],
+                'string_params' => [
+                    'realm',
+                    'params',
+                    'start_date',
+                    'end_date'
+                ]
             ]
         );
         // TODO: Add more test coverage of this method.
@@ -153,7 +297,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'int_params' => ['jobid', 'start', 'limit']
+                'int_params' => ['jobid', 'start', 'limit'],
+                'string_params' => ['realm']
             ]
         );
         // TODO: Add more test coverage of this method.
@@ -199,6 +344,13 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     'width',
                     'height',
                     'font_size'
+                ],
+                'string_params' => [
+                    'realm',
+                    'tsid',
+                    'format',
+                    'scale',
+                    'show_title'
                 ]
             ]
         );
@@ -277,7 +429,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'int_params' => ['start', 'limit']
+                'int_params' => ['start', 'limit'],
+                'string_params' => ['config']
             ]
         );
         // Test bad request parameters.
@@ -408,6 +561,39 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     }
 
     /**
+     * @dataProvider provideGetDimensions
+     */
+    public function testGetDimensions($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetDimensions()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/dimensions',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
      * @dataProvider provideGetDimensionValues
      */
     public function testGetDimensionValues($id, $role, $input, $output)
@@ -433,7 +619,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'int_params' => ['offset', 'limit']
+                'int_params' => ['offset', 'limit'],
+                'string_params' => ['search_text', 'realm']
             ]
         );
         // TODO: Add more test coverage of this method.
@@ -476,6 +663,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             [
                 'token_auth' => true,
                 'int_params' => ['offset'],
+                'string_params' => ['realm', 'fields'],
                 'date_params' => ['start_date', 'end_date']
             ]
         );
