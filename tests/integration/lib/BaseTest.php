@@ -354,32 +354,16 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             );
         }
         $tests = [];
-        // Test failed authentication.
-        if (
-            array_key_exists('authentication', $options)
-            && $options['authentication']
-        ) {
-            $tests[] = [
-                'unauthenticated',
-                'pub',
-                $validInputWithAdditionalParams,
-                $this->validateAuthorizationErrorResponse(401)
-            ];
-        }
-        // Test failed authorization.
-        if (array_key_exists('authorization', $options)) {
-            foreach (self::getBaseRoles() as $role) {
-                if ('pub' !== $role && $options['authorization'] !== $role) {
-                    $tests[] = [
-                        'unauthorized',
-                        $role,
-                        $validInputWithAdditionalParams,
-                        $this->validateAuthorizationErrorResponse(403)
-                    ];
-                }
-            }
-            $runAs = $options['authorization'];
-        }
+        $this->provideRestEndpointAuthenticationTests(
+            $tests,
+            $options,
+            $validInputWithAdditionalParams
+        );
+        $runAs = $this->provideRestEndpointAuthorizationTests(
+            $tests,
+            $options,
+            $validInputWithAdditionalParams
+        );
         // Set the role for running the tests.
         if (!isset($runAs)) {
             if (array_key_exists('run_as', $options)) {
@@ -392,53 +376,26 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $tokenAuth = (
             array_key_exists('token_auth', $options) && $options['token_auth']
         );
-        // Test failed token authentication.
-        if ($tokenAuth && $this instanceof TokenAuthTest) {
-            foreach ($this->provideTokenAuthTestData() as $testData) {
-                list($role, $tokenType) = $testData;
-                if ('valid_token' !== $tokenType) {
-                    $tests[] = [
-                        $tokenType,
-                        $role,
-                        $tokenType,
-                        $validInputWithAdditionalParams,
-                        []
-                    ];
-                }
-            }
-        }
-        // Test missing required parameters.
-        foreach (array_keys($validInput[$paramSource]) as $param) {
-            $input = $validInput;
-            unset($input[$paramSource][$param]);
-            $tests[] = self::getEndpointTestData(
-                'missing_' . $param,
-                $runAs,
-                $tokenAuth,
-                $input,
-                $this->validateMissingRequiredParameterResponse($param)
-            );
-        }
-        // Test invalid parameters.
-        $types = [
-            'int_params' => 'integer',
-            'date_params' => 'ISO 8601 Date'
-        ];
-        foreach ($types as $key => $type) {
-            if (array_key_exists($key, $options)) {
-                foreach ($options[$key] as $param) {
-                    $input = $validInputWithAdditionalParams;
-                    $input[$paramSource][$param] = 'foo';
-                    $tests[] = self::getEndpointTestData(
-                        $param . '_string',
-                        $runAs,
-                        $tokenAuth,
-                        $input,
-                        $this->validateInvalidParameterResponse($param, $type)
-                    );
-                }
-            }
-        }
+        $this->provideRestEndpointTokenAuthenticationTests(
+            $tests,
+            $tokenAuth,
+            $validInputWithAdditionalParams
+        );
+        $this->provideRestEndpointMissingRequiredParamTests(
+            $tests,
+            $validInput,
+            $paramSource,
+            $runAs,
+            $tokenAuth
+        );
+        $this->provideRestEndpointInvalidParamTests(
+            $tests,
+            $options,
+            $validInputWithAdditionalParams,
+            $paramSource,
+            $runAs,
+            $tokenAuth
+        );
         return $tests;
     }
 
@@ -689,5 +646,129 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
         array_push($testData, $input, $output);
         return $testData;
+    }
+
+    /**
+     * @see provideRestEndpointTests().
+     */
+    private function provideRestEndpointAuthenticationTests(
+        array &$tests,
+        array $options,
+        array $validInputWithAdditionalParams
+    ) {
+        if (
+            array_key_exists('authentication', $options)
+            && $options['authentication']
+        ) {
+            $tests[] = [
+                'unauthenticated',
+                'pub',
+                $validInputWithAdditionalParams,
+                $this->validateAuthorizationErrorResponse(401)
+            ];
+        }
+    }
+
+    /**
+     * @see provideRestEndpointTests().
+     */
+    private function provideRestEndpointAuthorizationTests(
+        array &$tests,
+        array $options,
+        array $validInputWithAdditionalParams
+    ) {
+        if (array_key_exists('authorization', $options)) {
+            foreach (self::getBaseRoles() as $role) {
+                if ('pub' !== $role && $options['authorization'] !== $role) {
+                    $tests[] = [
+                        'unauthorized',
+                        $role,
+                        $validInputWithAdditionalParams,
+                        $this->validateAuthorizationErrorResponse(403)
+                    ];
+                }
+            }
+            return $options['authorization'];
+        }
+        return null;
+    }
+
+    /**
+     * @see provideRestEndpointTests().
+     */
+    private function provideRestEndpointTokenAuthenticationTests(
+        array &$tests,
+        $tokenAuth,
+        array $validInputWithAdditionalParams
+    ) {
+        if ($tokenAuth && $this instanceof TokenAuthTest) {
+            foreach ($this->provideTokenAuthTestData() as $testData) {
+                list($role, $tokenType) = $testData;
+                if ('valid_token' !== $tokenType) {
+                    $tests[] = [
+                        $tokenType,
+                        $role,
+                        $tokenType,
+                        $validInputWithAdditionalParams,
+                        []
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
+     * @see provideRestEndpointTests().
+     */
+    private function provideRestEndpointMissingRequiredParamTests(
+        array &$tests,
+        array $validInput,
+        $paramSource,
+        $runAs,
+        $tokenAuth
+    ) {
+        foreach (array_keys($validInput[$paramSource]) as $param) {
+            $input = $validInput;
+            unset($input[$paramSource][$param]);
+            $tests[] = self::getEndpointTestData(
+                'missing_' . $param,
+                $runAs,
+                $tokenAuth,
+                $input,
+                $this->validateMissingRequiredParameterResponse($param)
+            );
+        }
+    }
+
+    /**
+     * @see provideRestEndpointTests().
+     */
+    private function provideRestEndpointInvalidParamTests(
+        array &$tests,
+        array $options,
+        array $validInputWithAdditionalParams,
+        $paramSource,
+        $runAs,
+        $tokenAuth
+    ) {
+        $types = [
+            'int_params' => 'integer',
+            'date_params' => 'ISO 8601 Date'
+        ];
+        foreach ($types as $key => $type) {
+            if (array_key_exists($key, $options)) {
+                foreach ($options[$key] as $param) {
+                    $input = $validInputWithAdditionalParams;
+                    $input[$paramSource][$param] = 'foo';
+                    $tests[] = self::getEndpointTestData(
+                        $param . '_string',
+                        $runAs,
+                        $tokenAuth,
+                        $input,
+                        $this->validateInvalidParameterResponse($param, $type)
+                    );
+                }
+            }
+        }
     }
 }
