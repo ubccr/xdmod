@@ -359,7 +359,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             $options,
             $validInputWithAdditionalParams
         );
-        $this->provideRestEndpointAuthorizationTests(
+        $runAs = $this->provideRestEndpointAuthorizationTests(
             $tests,
             $options,
             $validInputWithAdditionalParams
@@ -688,8 +688,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                     ];
                 }
             }
-            $runAs = $options['authorization'];
+            return $options['authorization'];
         }
+        return null;
     }
 
     /**
