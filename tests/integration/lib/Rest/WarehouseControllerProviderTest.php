@@ -311,7 +311,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $config,
             'order_by',
             'missing_config_order_by_',
-            function ($param) {
+            function () {
                 return 'Malformed config property order_by';
             }
         );
