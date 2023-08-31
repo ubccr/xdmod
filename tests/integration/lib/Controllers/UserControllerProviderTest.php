@@ -13,41 +13,99 @@ use TestHarness\XdmodTestHelper;
 class UserControllerProviderTest extends BaseUserAdminTest
 {
     /**
-     * Tests the UserControllerProvider route: GET /users/current
-     *
      * @dataProvider provideGetCurrentUser
-     *
-     * @param array $options
-     * @throws Exception if unable to authenticate as the specified user role.
      */
-    public function testGetCurrentUser(array $options)
+    public function testGetCurrentUser($id, $role, $input, $output)
     {
-        $user = $options['user'];
-        $expected = $options['expected'];
-        $expectedFile = $expected['file'];
-        $expectedHttpCode = $expected['http_code'];
-        $expectedContentType = $expected['content_type'];
-
-
-        if ($user !== 'pub') {
-            $this->helper->authenticate($user);
-        }
-
-        $response = $this->helper->get('rest/v1/users/current');
-
-        $this->validateResponse($response, $expectedHttpCode, $expectedContentType);
-
-        $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('user_controller', $expectedFile)
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
         );
+    }
 
-        $actual = $response[0];
-
-        $this->assertEquals($expected, $actual);
-
-        if ($user !== 'pub') {
-            $this->helper->logout();
+    public function provideGetCurrentUser()
+    {
+        $validInput = [
+            'path' => 'rest/users/current',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        // Test authentication.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            ['authentication' => true]
+        );
+        // Test successful requests.
+        $expectedResultsByRole = [
+            'cd' => [
+                'first_name' => 'Reed',
+                'last_name' => 'Bunting',
+                'email_address' => 'centerdirector@example.com',
+                'active_role' => 'Center Director - screw',
+                'most_privileged_role' => 'Center Director - screw',
+                'person_id' => '97'
+            ],
+            'cs' => [
+                'first_name' => 'Turtle',
+                'last_name' => 'Dove',
+                'email_address' => 'centerstaff@example.com',
+                'active_role' => 'Center Staff - screw',
+                'most_privileged_role' => 'Center Staff - screw',
+                'person_id' => '111'
+            ],
+            'pi' => [
+                'first_name' => 'Caspian',
+                'last_name' => 'Tern',
+                'email_address' => 'principal@example.com',
+                'active_role' => 'Principal Investigator',
+                'most_privileged_role' => 'Principal Investigator',
+                'person_id' => '9'
+            ],
+            'usr' => [
+                'first_name' => '',
+                'last_name' => 'Whimbrel',
+                'email_address' => 'normaluser@example.com',
+                'active_role' => 'User',
+                'most_privileged_role' => 'User',
+                'person_id' => '114'
+            ],
+            'mgr' => [
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'email_address' => 'admin@localhost',
+                'active_role' => 'User',
+                'most_privileged_role' => 'User',
+                'person_id' => '-1'
+            ]
+        ];
+        foreach ($expectedResultsByRole as $role => $expectedResults) {
+            $expectedResults = array_merge(
+                $expectedResults,
+                [
+                    'is_sso_user' => false,
+                    'first_time_login' => false,
+                    'autoload_suppression' => false,
+                    'field_of_science' => '0',
+                    'raw_data_allowed_realms' => [
+                        'Jobs',
+                        'Cloud'
+                    ]
+                ]
+            );
+            $tests[] = [
+                'success_' . $role,
+                $role,
+                $validInput,
+                parent::validateSuccessResponse([
+                    'success' => true,
+                    'results' => $expectedResults
+                ])
+            ];
         }
+        return $tests;
     }
 
     /**
@@ -132,17 +190,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // tokens have now been invalidated and need to be regenerated.
             TokenAuthTest::nullifyTokens();
         }
-    }
-
-    /**
-     * @return array|object
-     * @throws Exception
-     */
-    public function provideGetCurrentUser()
-    {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_controller', 'get_current_user-8.0.0', 'input')
-        );
     }
 
     /**

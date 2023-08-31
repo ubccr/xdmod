@@ -42,7 +42,6 @@ class AdminControllerProviderTest extends BaseTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'data',
                 'authentication' => true,
                 'authorization' => 'mgr',
                 'int_params' => ['viewedTour', 'uid']

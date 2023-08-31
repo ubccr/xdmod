@@ -159,9 +159,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'data',
                 'authentication' => true,
-                'run_as' => 'usr',
                 'int_params' => ['viewedTour']
             ]
         );

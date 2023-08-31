@@ -40,9 +40,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'authentication' => true,
-                'run_as' => 'usr',
                 'int_params' => ['nodeid', 'infoid', 'jobid', 'recordid']
             ]
         );
@@ -78,9 +76,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'data',
                 'authentication' => true,
-                'run_as' => 'usr',
                 'int_params' => ['recordid']
             ]
         );
@@ -120,9 +116,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'authentication' => true,
-                'run_as' => 'usr',
                 'int_params' => ['start', 'limit']
             ]
         );
@@ -158,9 +152,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'authentication' => true,
-                'run_as' => 'usr',
                 'int_params' => ['jobid', 'start', 'limit']
             ]
         );
@@ -193,7 +185,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'authentication' => true,
                 'run_as' => 'cd',
                 'additional_params' => [
@@ -285,9 +276,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'authentication' => true,
-                'run_as' => 'cd',
                 'int_params' => ['start', 'limit']
             ]
         );
@@ -443,9 +432,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'authentication' => true,
-                'run_as' => 'usr',
                 'int_params' => ['offset', 'limit']
             ]
         );
@@ -487,9 +474,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $tests = parent::provideRestEndpointTests(
             $validInput,
             [
-                'param_source' => 'params',
                 'token_auth' => true,
-                'run_as' => 'usr',
                 'int_params' => ['offset'],
                 'date_params' => ['start_date', 'end_date']
             ]
