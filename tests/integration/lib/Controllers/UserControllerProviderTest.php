@@ -44,84 +44,57 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'first_name' => 'Reed',
                 'last_name' => 'Bunting',
                 'email_address' => 'centerdirector@example.com',
-                'is_sso_user' => false,
-                'first_time_login' => false,
-                'autoload_suppression' => false,
-                'field_of_science' => '0',
                 'active_role' => 'Center Director - screw',
                 'most_privileged_role' => 'Center Director - screw',
-                'person_id' => '97',
-                'raw_data_allowed_realms' => [
-                    'Jobs',
-                    'Cloud'
-                ]
+                'person_id' => '97'
             ],
             'cs' => [
                 'first_name' => 'Turtle',
                 'last_name' => 'Dove',
                 'email_address' => 'centerstaff@example.com',
-                'is_sso_user' => false,
-                'first_time_login' => false,
-                'autoload_suppression' => false,
-                'field_of_science' => '0',
                 'active_role' => 'Center Staff - screw',
                 'most_privileged_role' => 'Center Staff - screw',
-                'person_id' => '111',
-                'raw_data_allowed_realms' => [
-                    'Jobs',
-                    'Cloud'
-                ]
+                'person_id' => '111'
             ],
             'pi' => [
                 'first_name' => 'Caspian',
                 'last_name' => 'Tern',
                 'email_address' => 'principal@example.com',
-                'is_sso_user' => false,
-                'first_time_login' => false,
-                'autoload_suppression' => false,
-                'field_of_science' => '0',
                 'active_role' => 'Principal Investigator',
                 'most_privileged_role' => 'Principal Investigator',
-                'person_id' => '9',
-                'raw_data_allowed_realms' => [
-                    'Jobs',
-                    'Cloud'
-                ]
+                'person_id' => '9'
             ],
             'usr' => [
                 'first_name' => '',
                 'last_name' => 'Whimbrel',
                 'email_address' => 'normaluser@example.com',
-                'is_sso_user' => false,
-                'first_time_login' => false,
-                'autoload_suppression' => false,
-                'field_of_science' => '0',
                 'active_role' => 'User',
                 'most_privileged_role' => 'User',
-                'person_id' => '114',
-                'raw_data_allowed_realms' => [
-                    'Jobs',
-                    'Cloud'
-                ]
+                'person_id' => '114'
             ],
             'mgr' => [
                 'first_name' => 'Admin',
                 'last_name' => 'User',
                 'email_address' => 'admin@localhost',
-                'is_sso_user' => false,
-                'first_time_login' => false,
-                'autoload_suppression' => false,
-                'field_of_science' => '0',
                 'active_role' => 'User',
                 'most_privileged_role' => 'User',
-                'person_id' => '-1',
-                'raw_data_allowed_realms' => [
-                    'Jobs',
-                    'Cloud'
-                ]
+                'person_id' => '-1'
             ]
         ];
         foreach ($expectedResultsByRole as $role => $expectedResults) {
+            $expectedResults = array_merge(
+                $expectedResults,
+                [
+                    'is_sso_user' => false,
+                    'first_time_login' => false,
+                    'autoload_suppression' => false,
+                    'field_of_science' => '0',
+                    'raw_data_allowed_realms' => [
+                        'Jobs',
+                        'Cloud'
+                    ]
+                ]
+            );
             $tests[] = [
                 'success_' . $role,
                 $role,
