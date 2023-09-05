@@ -118,9 +118,17 @@ recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an
 6. Ensure that you have added the `sql_mode=` line to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf` on the Rocky 8 server.
 7. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
 
+Also included in the new features is the new [Data Analytics Framework](data-analytics-framework.md) that allows users to programmatically obtain data from the data warehouse via a Python API.
+
 ### Configuration File Changes
 
+The `xdmod-upgrade` script will add settings to `portal_settings.ini` to support the new [Data Analytics Framework](data-analytics-framework.md):
+* A new section `[api_token]` will be added with `expiration_interval = "6 months"`.
+* `rest_raw_row_limit = "10000"` will be added to the `[warehouse]` section.
+
 ### Database Changes
+
+The `xdmod-upgrade` script will create the new `moddb.user_tokens` table to support API tokens for the new [Data Analytics Framework](data-analytics-framework.md).
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
