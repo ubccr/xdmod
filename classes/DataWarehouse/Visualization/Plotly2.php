@@ -832,7 +832,7 @@ class Plotly2
                     {
                         // set to summarize, then break both loops.
                         $summarizeDataseries = true;
-                        continue 2;
+                        continue 2; // bug? comment above mentions break but uses continue
                     }
                 }
             } // foreach($yAxisArray ...
@@ -896,37 +896,31 @@ class Plotly2
 
             // populate the yAxis:
             $yAxis = array(
-                'title' => array(
-                    'text' => $yAxisLabel ,
-                    'style' => array(
-                        'color'=> $yAxisColor,
-                        'fontWeight'=> 'bold',
-                        'fontSize' => (12 + $font_size).'px'
-                    )
+                'title' => '<b>' . $yAxisLabel . '<\b>',
+                'titlefont' => array(
+                    'size' => (12 + $font_size),
+                    'color' => $yAxisColor
                 ),
                 'otitle' => $originalYAxisLabel,
                 'dtitle' => $defaultYAxisLabel,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => (11 + $font_size).'px'
-                    )
-                ),
-                'startOnTick' => $yAxisMin == null,
-                'endOnTick' => $yAxisMax == null,
-                'opposite' => $yAxisIndex % 2 == 1,
-                'min' => $yAxisMin,
-                'max' => $yAxisMax,
-                'type' => $yAxisObject->log_scale? 'logarithmic' : 'linear',
-                'showLastLabel' => $this->_chart['title']['text'] != '',
-                'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
-                'lineWidth' => 2 + $font_size/4,
-                'allowDecimals' => $yAxisObject->decimals > 0,
-                'tickInterval' => $yAxisObject->log_scale ?1:null,
-                'maxPadding' => max(0.05, ($yAxisObject->value_labels?0.25:0.0) + ($yAxisObject->std_err?.25:0))
+                'tickfont' => array(
+                    'size' => (11 + $font_size)
+                )
+                'tick0' => $yAxisMin == null,
+                'endTick' => $yAxisMax == null, // add support
+                'opposite' => $yAxisIndex % 2 == 1, // add support
+                'range' => [$yAxisMin, $yAxisMax],
+                'type' => $yAxisObject->log_scale ? 'log' : 'linear',
+                'showLastLabel' => $this->_chart['title'] != '', // Add support
+                'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
+                'linewidth' => 2 + $font_size / 4,
+                'allowDecimals' => $yAxisObject->decimals > 0, // Add support
+                'dtick' => $yAxisObject->log_scale ? 1 : null,
+                'maxPadding' => max(0.05, ($yAxisObject->value_lables ? 0.25 : 0.0) + ($yAxisObject->std_err ? .25 : 0)) // Add support
+                
             );
 
-            $this->_chart['yAxis'][] = $yAxis;
+            $this->_chart['yaxis'][] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
