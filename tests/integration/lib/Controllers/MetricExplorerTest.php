@@ -665,6 +665,7 @@ EOF;
             [
                 'authentication' => true,
                 'string_params' => ['data', 'name', 'config'],
+                'unix_ts_params' => ['ts'],
                 'error_body_validator' => $this->validateQueryErrorBody(
                     'updateQuery'
                 )

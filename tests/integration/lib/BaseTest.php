@@ -333,6 +333,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         will each be tested for invalid integer values.
      *                       - 'string_params' — array of parameters that
      *                         will each be tested for invalid string values.
+     *                       - 'unix_ts_params' — array of parameters that
+     *                         will each be tested for invalid Unix timestamp
+     *                         values.
      *                       - 'date_params' — array of parameters that will
      *                         each be tested for invalid ISO 8601 date values.
      * @return array of arrays of test data, each of which contains a string
@@ -816,6 +819,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $types = [
             'int_params' => 'integer',
             'string_params' => 'string',
+            'unix_ts_params' => 'Unix timestamp',
             'date_params' => 'ISO 8601 Date'
         ];
         $values = [
