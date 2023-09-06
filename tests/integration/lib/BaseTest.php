@@ -345,7 +345,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         array $options
     ) {
         // Determine the source of parameters.
-        $paramSource = $validInput['method'] === 'get' ? 'params' : 'data';
+        $paramSource = 'params';
+        if (
+            'post' === $validInput['method']
+            || 'patch' === $validInput['method']
+        ) {
+            $paramSource = 'data';
+        }
         // Add any additional parameters.
         $validInputWithAdditionalParams = $validInput;
         if (array_key_exists('additional_params', $options)) {
