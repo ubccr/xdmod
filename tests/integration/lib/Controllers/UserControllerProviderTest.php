@@ -120,6 +120,41 @@ class UserControllerProviderTest extends BaseUserAdminTest
     }
 
     /**
+     * @dataProvider provideUpdateCurrentUser
+     */
+    public function testUpdateCurrentUser($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideUpdateCurrentUser()
+    {
+        $validInput = [
+            'path' => 'rest/users/current',
+            'method' => 'patch',
+            'params' => null,
+            'data' => []
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            ['string_params' => [
+                'first_name',
+                'last_name',
+                'email_address',
+                'password'
+            ]]
+        );
+        // TODO: Add more test coverage of this method.
+        return $tests;
+    }
+
+    /**
      * Test expected successes and failures at creating, getting, and revoking
      * API tokens.
      *
