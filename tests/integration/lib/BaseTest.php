@@ -283,10 +283,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                          mapped to an associative array in which the
      *                          keys are all of the required endpoint
      *                          parameters, and the values are valid values for
-     *                          those parameters.
+     *                          those parameters. If the 'method' value is
+     *                          'post' or 'patch', the parameters will be
+     *                          pulled from the 'data' value; otherwise, they
+     *                          will be pulled from the 'params' value.
      * @param array $options an associative array that configures how this
-     *                       method should run. There is one required key:
-     *                       The other keys are optional:
+     *                       method should run. The keys are all optional:
      *                       - 'authentication' — if the value is true, the
      *                         return will include a test for failed
      *                         authentication in which the endpoint is
@@ -343,7 +345,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         array $options
     ) {
         // Determine the source of parameters.
-        $paramSource = $validInput['method'] === 'get' ? 'params' : 'data';
+        $paramSource = 'params';
+        if (
+            'post' === $validInput['method']
+            || 'patch' === $validInput['method']
+        ) {
+            $paramSource = 'data';
+        }
         // Add any additional parameters.
         $validInputWithAdditionalParams = $validInput;
         if (array_key_exists('additional_params', $options)) {
