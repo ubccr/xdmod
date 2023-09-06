@@ -294,7 +294,8 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
             $validInput,
             [
                 'authentication' => true,
-                'string_params' => ['realm', 'format']
+                'string_params' => ['realm', 'format'],
+                'date_params' => ['start_date', 'end_date']
             ]
         );
         // TODO: Add more test coverage of this method, refactor
