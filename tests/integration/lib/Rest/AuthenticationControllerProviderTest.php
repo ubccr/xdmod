@@ -26,6 +26,7 @@ class AuthenticationControllerProviderTest extends BaseTest
             $output
         );
     }
+
     public function provideGetIdpRedirect()
     {
         $validInput = [
