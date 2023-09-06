@@ -173,8 +173,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $validInput = [
             'path' => 'rest/warehouse/search/history/0',
             'method' => 'delete',
-            'params' => null,
-            'data' => ['realm' => 'Jobs']
+            'params' => ['realm' => 'Jobs'],
+            'data' => null
         ];
         // Run some standard endpoint tests.
         $tests = parent::provideRestEndpointTests(
@@ -206,8 +206,8 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $validInput = [
             'path' => 'rest/warehouse/search/history',
             'method' => 'delete',
-            'params' => null,
-            'data' => ['realm' => 'Jobs']
+            'params' => ['realm' => 'Jobs'],
+            'data' => null
         ];
         // Run some standard endpoint tests.
         $tests = parent::provideRestEndpointTests(
