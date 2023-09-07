@@ -567,6 +567,7 @@ EOF;
             $output
         );
     }
+
     public function provideCreateQueryParamValidation()
     {
         $validInput = [
