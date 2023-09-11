@@ -1,6 +1,78 @@
 # Open XDMoD Change Log
 
-## XXXX-XX-XX v10.5.0
+## 2023-09-11 v10.5.0
+- Bug Fixes
+    - Cloud
+        - Updates to how end times are set for instance types.
+    - Data Warehouse Export
+        - Exporting an empty timeseries dataset will no longer throw `undefined offset` errors.
+    - ETL
+       - Fixed a rare race condition that was causing processes to not exit has been fixed.
+       - Added variable substitution for hierarchy info used in ETL table definitions and `alias` used in raw statistics configuration.
+       - Updated the table definition for the `ReportTemplateCharts` table to include an index.
+    - General
+        - Additional conditions that will force a reconnect on database connection loss have been added.
+        - Prevent the MySQL CLI from using user-specific options as the presence of a `.my.cnf` file in a user's home directory can contain conflicting credentials.
+     - Job Viewer
+        - Fixed a bug that was causing the y-axis to go up to 120% ( even though the data only went to 100%).
+    - Metrics Explorer
+        - Updated the method by which dataset id's are calculated to use integers as opposed to floating point numbers.
+- Data Analytics Framework
+    - New Feature
+        - API Token authentication / authorization has been added to XDMoD.
+        - The My Profile UI component has been updated to allow for the management of API tokens.
+- Documentation
+    - Data Analytics Framework
+        - Documentation has been added for the Data Analytics Framework.
+    - Data Warehouse Export
+        - Documentation has been added that explains the data export batch process.
+    - Cloud
+        - FAQ has been updated with information about Rocky/RHEL 8 and PHP 7.2 information.
+    - General
+        - New NSF Grant numbers have been added.
+        - New XMS team members have been added.
+        - SimpleSAMLPHP links have been updated.
+        - Updated the text of the node_utilization How-To section to include language about needing to restart php-fpm in addition to httpd for changes to show up in the UI.
+        - Updated links to presentations stored in Google Drive/Docs.
+- Enhancements
+    - Cloud
+        - The Core Hour statistic has been changed to CPU Hours to match the Jobs realm.
+    - Data Warehouse Export
+        - Added a new configuration option to disable export for a realm.
+    - ETL
+        - Support for GPU count data in Grid Engine, specifically Univa Grid Engine now known as Altair® Grid Engine®
+        - the `mod_logger` db schema has been updated to be managed by the ETL framework.
+        - Added support for PBS logs that use `Resource_list.ngpus` to indicate the number of GPUs used by a job.
+        - Added an index to `mod_shredder.shredded_job` to speed up ingestion actions that depend on the `qos_name`
+    - General
+        - Updated the syntax for variable substitution in `rawstatistics.json`, this brings it inline with the format used by the ETL configuration code.
+    - Infrastructure
+        - REST request logging has been supplemented by including POST data and total elapsed processing time.
+    - Job Viewer
+        - All charts have been migrated from using HighCharts to Plotly.
+    - Metric Explorer
+        - Legend text generation has been updated and improved.
+        - Support for API token authentication hass been added to a number of contoller end points.
+- Internal Dashboard
+    - General
+        - ETL Overseer logs have been added to the `Logs` tab.
+- Maintenance / Code Quality
+    - General
+        - Removed dead code from the `xd_utilities` namespace.
+        - Updates to support Chrome 109
+- New Features
+    - ACL
+        - Added the ability to group by's to be hidden for a specific statistic instead of a whole realm.
+    - Cloud
+        - A new dimension has been added, `vm_state`.
+        - Inactive VMs have been added to cloud realm aggregation.
+    - Data Warehouse Export
+        - A new endpoint for retrieving raw data has been added.
+
+## 2023-08-04 v10.0.3
+- Bug Fixes
+    - General
+        - Fix handling of filters where the filter string has a quote character in it (#1749)
 
 ## 2023-04-03 v10.0.2
 - Bug Fixes
