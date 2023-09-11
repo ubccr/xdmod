@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.0/modules.html
+redirect_to: /10.5/modules.html
 ---

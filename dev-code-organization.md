@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.0/dev-code-organization.html
+redirect_to: /10.5/dev-code-organization.html
 ---
