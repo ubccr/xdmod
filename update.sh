@@ -3,8 +3,8 @@
 
 set -e
 
-branches="xdmod10.0 xdmod9.5"
-latest="xdmod10.0"
+branches="xdmod10.5"
+latest="xdmod10.5"
 
 SED=sed
 if command -v gsed > /dev/null;
@@ -57,4 +57,5 @@ done
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $BASEDIR
 python3 ./get_sitemap.py
+XMLLINT_INDENT='    ' xmllint --format sitemap.xml > tmp.xml && mv tmp.xml sitemap.xml
 cd -
