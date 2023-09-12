@@ -5,7 +5,7 @@ title: Source Installation Guide
 Install Source Package
 ----------------------
 
-    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    $ tar zxvf xdmod-{{ page.sw_version }}-el(7|8).tar.gz
     $ cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod
 
