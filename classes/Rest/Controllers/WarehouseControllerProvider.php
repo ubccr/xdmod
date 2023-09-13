@@ -2501,5 +2501,4 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
         return $ret;
     }
-
 }
