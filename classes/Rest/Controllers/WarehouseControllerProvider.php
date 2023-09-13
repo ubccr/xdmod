@@ -1999,6 +1999,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new NotFoundException();
         }
 
+        $results['series'] = $this->sanitize($results['series']);
+
         $format = $this->getStringParam($request, 'format', false, 'json');
 
         if (!in_array($format, array('json', 'png', 'svg', 'pdf', 'csv'))) {
@@ -2475,4 +2477,29 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $filterValuesArray = explode(',', $filterValuesStr);
         return $filterValuesArray;
     }
+
+    /**
+     *  Sanitize result data for charts. Replacing any non-numerical values from
+     *  the dataset result with the value of 0. It is expected that the series data
+     *  is passed in as sanitize($results['series']).
+     *
+     *  @param array $results['series']
+     *  TODO: Look into if this should be pass by reference instead
+     */
+    private function sanitize($results){
+        $ret = $results;
+        for ($i = 0; $i < count($ret); $i++) {
+            $trace = $ret[$i]['data'];
+            for ($j = 0; $j < count($trace); $j++) {
+                foreach ($trace[$j] as $key => $value) {
+                    // Found non-numeric value
+                    if (is_nan($value)) {
+                        $ret[$i]['data'][$j][$key] = 0;
+                    }
+                }
+            }
+        }
+        return $ret;
+    }
+
 }
