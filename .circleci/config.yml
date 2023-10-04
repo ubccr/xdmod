@@ -37,15 +37,15 @@ jobs:
       # Download and cache dependencies
       - run:
             name: install the composer dependencies
-            command: COMPOSER=composer-el8.json composer install
+            command: composer install
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
-            - v1-el8-dependencies-{{ checksum "composer-el8.json" }}
+            - v1-el8-dependencies-{{ checksum "composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-el8-dependencies-
       - save_cache:
-          key: v1-el8-dependencies-{{ checksum "composer-el8.json" }}
+          key: v1-el8-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
       - run:
@@ -62,7 +62,7 @@ jobs:
           command: ./tests/ci/validate.sh
       - run:
           name: Make sure that the Composer Test Depedencies are installed
-          command: COMPOSER=composer-el8.json composer install --no-progress
+          command: composer install --no-progress
       - run:
           name: Setup Configuration Files for Integration Tests
           command: |
