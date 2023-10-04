@@ -1,12 +1,11 @@
 <?php
 /**
- * Update config files from version 10.0.3 to 10.5.0.
+ * Update config files from version 10.5.0 to 11.0.0
  */
 
-namespace OpenXdmod\Migration\Version1003To1050;
+namespace OpenXdmod\Migration\Version1050To1100;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
-use OpenXdmod\Setup\Console;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
@@ -17,9 +16,6 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
     public function execute()
     {
         $this->assertPortalSettingsIsWritable();
-        $this->assertModulePortalSettingsAreWritable();
-
         $this->writePortalSettingsFile();
-        $this->writeModulePortalSettingsFiles();
     }
 }
