@@ -9,7 +9,7 @@ set -e
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Set default values for the environment variables we're going to use.
-    QA_BRANCH=${QA_BRANCH:-v1}
+    QA_BRANCH=${QA_BRANCH:-v2}
     QA_GIT_URL=${QA_GIT_URL:-https://github.com/ubccr/xdmod-qa.git}
 
     # Clone a current copy of the xdmod-qa repo.

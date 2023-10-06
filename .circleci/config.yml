@@ -71,9 +71,6 @@ jobs:
             cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
             cp /etc/xdmod/organization.json ./configuration/organization.json
       - run:
-          name: Downgrade composer for the qa tests
-          command: composer self-update --1
-      - run:
           name: Setup & Run QA Tests
           command: |
             ./tests/ci/scripts/qa-test-setup.sh
