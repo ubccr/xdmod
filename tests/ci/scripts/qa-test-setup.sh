@@ -15,6 +15,9 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     # Clone a current copy of the xdmod-qa repo.
     git clone --depth=1 --branch="$QA_BRANCH" "$QA_GIT_URL" $HOME/.qa
 
+    # Specify composer for xdmod-qa
+    export COMPOSER="$HOME/.qa/composer.json"
+
     # Switch to the repo root
     pushd $XDMOD_SOURCE_DIR >/dev/null || exit 1
 
@@ -25,4 +28,5 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     $HOME/.qa/scripts/build.sh
 
     popd >/dev/null || exit 1
+
 fi
