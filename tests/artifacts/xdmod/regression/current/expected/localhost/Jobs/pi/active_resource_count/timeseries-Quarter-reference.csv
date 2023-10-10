@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Flycatcher, Taiga] Number of Resources: Active","[Lark, Calandra] Number of Resources: Active","[Shearwater, Balearic] Number of Resources: Active","[Tern, Caspian] Number of Resources: Active","[Chiffchaff, Iberian] Number of Resources: Active","[Egret, Snowy] Number of Resources: Active","[Fieldfare] Number of Resources: Active","[Jackdaw] Number of Resources: Active","[Scaup, Lesser] Number of Resources: Active","[Warbler, Savi's] Number of Resources: Active","[Accentor, Alpine] Number of Resources: Active","[Bittern] Number of Resources: Active","[Blackbird] Number of Resources: Active","[Bluetail, Red-flanked] Number of Resources: Active","[Bufflehead] Number of Resources: Active","[Bunting, Ortolan] Number of Resources: Active","[Chaffinch] Number of Resources: Active","[Dotterel] Number of Resources: Active","[Dowitcher, Short-billed] Number of Resources: Active","[Dunlin] Number of Resources: Active","[Fulmar] Number of Resources: Active","[Goose, Red-breasted] Number of Resources: Active","[Gull, Glaucous-winged] Number of Resources: Active","[Gull, Yellow-legged] Number of Resources: Active","[Harrier, Hen] Number of Resources: Active","[Kestrel, Lesser] Number of Resources: Active","[Martin, Sand] Number of Resources: Active","[Moorhen] Number of Resources: Active","[Nuthatch] Number of Resources: Active","[Petrel, Fea's] Number of Resources: Active","[Shearwater, Great] Number of Resources: Active","[Shearwater, Macaronesian] Number of Resources: Active","[Smew] Number of Resources: Active","[Spotted, Great] Number of Resources: Active","[Swift, Little] Number of Resources: Active","[Thrush, Hermit] Number of Resources: Active","[Warbler, Blackpoll] Number of Resources: Active","[Warbler, Cetti's] Number of Resources: Active","[Warbler, Hooded] Number of Resources: Active","[White, Great] Number of Resources: Active","[Yellowthroat, Common] Number of Resources: Active"
+"2016 Q4",5,3,3,3,2,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+"2017 Q1",5,3,0,1,1,2,2,2,1,0,1,1,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,0
+---------

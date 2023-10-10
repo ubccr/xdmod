@@ -1,0 +1,10 @@
+title
+"Wall Hours: Per Session: by Department"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Department,"Wall Hours: Per Session"
+"Mechanical and Structural Systems",23.14924004
+---------

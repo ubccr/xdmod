@@ -1,0 +1,10 @@
+title
+"Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes): by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[setusca] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)","[yerwa] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)","[ylwwa] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)"
+2018,21474836480.0000,21474836480.0000,21474836480.0000
+---------

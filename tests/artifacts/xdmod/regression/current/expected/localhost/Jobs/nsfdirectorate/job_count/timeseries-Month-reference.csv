@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Social, Behavioral, and Economic Sciences] Number of Jobs Ended","[Mathematical and Physical Sciences] Number of Jobs Ended","[Computer and Information Science and Engineering] Number of Jobs Ended","[Geosciences] Number of Jobs Ended","[Engineering] Number of Jobs Ended","[Biological Sciences] Number of Jobs Ended","[Humanities/Arts] Number of Jobs Ended"
+2016-12,43748,7514,1701,1125,414,184,61
+2017-01,13956,469,986,818,159,173,5
+---------

@@ -1,0 +1,11 @@
+title
+"GPU Hours: Per Job: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[focaccia] GPU Hours: Per Job","[bannock] GPU Hours: Per Job","[barm] GPU Hours: Per Job","[black] GPU Hours: Per Job","[brioche] GPU Hours: Per Job","[brown] GPU Hours: Per Job","[chapti] GPU Hours: Per Job","[cornbread] GPU Hours: Per Job","[croutons] GPU Hours: Per Job","[crumpet] GPU Hours: Per Job","[nann] GPU Hours: Per Job","[panettone] GPU Hours: Per Job","[pikelet] GPU Hours: Per Job","[pita] GPU Hours: Per Job","[potbrood] GPU Hours: Per Job","[pumpernickel] GPU Hours: Per Job","[roti] GPU Hours: Per Job","[white] GPU Hours: Per Job"
+"2016 Q4",465.49277778,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000
+"2017 Q1",3.18615385,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0,0.00000000,0.00000000,0.00000000,0.00000000,0,0.00000000,0.00000000,0.00000000,0.00000000,0,0.00000000
+---------

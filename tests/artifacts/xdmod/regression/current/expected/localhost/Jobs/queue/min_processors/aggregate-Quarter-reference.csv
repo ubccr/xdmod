@@ -1,0 +1,27 @@
+title
+"Job Size: Min (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Job Size: Min (Core Count)"
+panettone,20
+chapti,12
+nann,12
+bannock,8
+croutons,8
+crumpet,8
+pumpernickel,5
+barm,2
+black,1
+brioche,1
+brown,1
+cornbread,1
+focaccia,1
+pikelet,1
+pita,1
+potbrood,1
+roti,1
+white,1
+---------

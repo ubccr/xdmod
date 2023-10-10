@@ -1,0 +1,11 @@
+title
+"Job Size: Normalized (% of Total Cores): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[frearson] Job Size: Normalized (% of Total Cores)","[pozidriv] Job Size: Normalized (% of Total Cores)","[phillips] Job Size: Normalized (% of Total Cores)","[mortorq] Job Size: Normalized (% of Total Cores)","[robertson] Job Size: Normalized (% of Total Cores)"
+2016-12,0.303754354,0.235121939,0.203622578,0.200428273,0.098214877
+2017-01,0.300170823,0.278763441,0.210092213,0.204778928,0.204465974
+---------

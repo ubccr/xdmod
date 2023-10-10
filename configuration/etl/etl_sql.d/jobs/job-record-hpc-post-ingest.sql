@@ -22,14 +22,14 @@ SET
         WHEN task.processor_count IS NULL OR 0 = task.processor_count
         THEN
             CASE
-                WHEN (task.node_count > rs.q_nodes) OR (task.node_count * rs.q_ppn > rs.q_nodes)
+                WHEN (task.node_count > rs.cpu_node_count) OR (task.node_count * rs.cpu_processor_count_per_node > rs.cpu_node_count)
                 THEN task.node_count
-                ELSE task.node_count * rs.q_ppn
+                ELSE task.node_count * rs.cpu_processor_count_per_node
             END
         ELSE task.processor_count
     END
 WHERE
-    rs.q_ppn IS NOT NULL
+    rs.cpu_processor_count_per_node IS NOT NULL
     AND task.last_modified >= ${LAST_MODIFIED}
 //
 

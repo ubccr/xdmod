@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Earth Sciences] Number of PIs: Active","[Social and Economic Science] Number of PIs: Active","[Astronomical Sciences] Number of PIs: Active","[Electrical and Communication Systems] Number of PIs: Active","[Mathematical Sciences] Number of PIs: Active","[Microelectronic Information Processing Systems] Number of PIs: Active","[Molecular Biosciences] Number of PIs: Active","[Polar Programs] Number of PIs: Active","[Chemistry] Number of PIs: Active","[Design and Manufacturing Systems] Number of PIs: Active","[Materials Research] Number of PIs: Active","[Mechanical and Structural Systems] Number of PIs: Active","[Arts] Number of PIs: Active","[Atmospheric Sciences] Number of PIs: Active","[Chemical, Thermal Systems] Number of PIs: Active","[Computer and Computation Research] Number of PIs: Active","[Environmental Biology] Number of PIs: Active","[Physics] Number of PIs: Active"
+"2016 Q4",5,4,3,3,3,3,3,3,2,2,2,2,1,1,1,1,1,1
+"2017 Q1",2,2,2,3,2,2,2,2,2,2,0,1,1,1,0,0,1,0
+---------

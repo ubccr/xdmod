@@ -1,0 +1,16 @@
+title
+"Node Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+sante,87.43875000,
+ovenb,82.76488889,
+ybsbu,38.73828704,
+swath,0.77236014,0.16956368955632173
+litst,0.33320707,0.09324722160395126
+savsp,0.02439103,0.001692897033294295
+---------

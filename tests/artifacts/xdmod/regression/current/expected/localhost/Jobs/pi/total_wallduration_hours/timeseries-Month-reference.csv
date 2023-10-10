@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Moorhen] Wall Hours: Total","[Flycatcher, Taiga] Wall Hours: Total","[Bufflehead] Wall Hours: Total","[Shearwater, Macaronesian] Wall Hours: Total","[Lark, Calandra] Wall Hours: Total","[Bluetail, Red-flanked] Wall Hours: Total","[Fieldfare] Wall Hours: Total","[Egret, Snowy] Wall Hours: Total","[Fulmar] Wall Hours: Total","[Tern, Caspian] Wall Hours: Total","[Shearwater, Balearic] Wall Hours: Total","[Jackdaw] Wall Hours: Total","[Warbler, Hooded] Wall Hours: Total","[Chiffchaff, Iberian] Wall Hours: Total","[Scaup, Lesser] Wall Hours: Total","[Kestrel, Lesser] Wall Hours: Total","[Chaffinch] Wall Hours: Total","[White, Great] Wall Hours: Total","[Smew] Wall Hours: Total","[Petrel, Fea's] Wall Hours: Total","[Accentor, Alpine] Wall Hours: Total","[Bunting, Ortolan] Wall Hours: Total","[Bittern] Wall Hours: Total","[Warbler, Blackpoll] Wall Hours: Total","[Nuthatch] Wall Hours: Total","[Harrier, Hen] Wall Hours: Total","[Dowitcher, Short-billed] Wall Hours: Total","[Warbler, Cetti's] Wall Hours: Total","[Shearwater, Great] Wall Hours: Total","[Martin, Sand] Wall Hours: Total","[Spotted, Great] Wall Hours: Total","[Goose, Red-breasted] Wall Hours: Total","[Warbler, Savi's] Wall Hours: Total","[Dotterel] Wall Hours: Total","[Thrush, Hermit] Wall Hours: Total","[Dunlin] Wall Hours: Total","[Swift, Little] Wall Hours: Total","[Gull, Yellow-legged] Wall Hours: Total","[Blackbird] Wall Hours: Total","[Gull, Glaucous-winged] Wall Hours: Total","[Yellowthroat, Common] Wall Hours: Total"
+2016-12,55820.4542,15567.1642,14099.6133,8590.5158,3243.4786,2246.7575,1602.7894,3.1458,1403.3639,1207.5433,1145.5708,1107.3767,776.2019,785.0175,656.8214,428.1250,332.7836,314.8414,255.4306,251.4806,149.5017,154.1667,134.0178,132.4094,126.2600,100.8417,54.4747,74.8000,72.0069,69.3242,59.8692,48.5792,50.3497,48.0067,46.3125,14.3053,14.0556,9.0064,1.1269,0.2606,0.0650
+2017-01,11183.6664,932.0322,1254.4625,0,588.6800,526.7989,60.2906,1590.0014,123.3775,23.2497,0,32.6561,120.3844,17.6292,1.7797,5.0458,60.8567,56.2572,0,0,79.9525,48.6856,1.7419,0,0,0,27.1514,0,0,0.9528,0,7.7075,0,0,0,30.9281,4.2811,0.0217,0,0,0
+---------

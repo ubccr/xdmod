@@ -1,0 +1,75 @@
+title
+"Number of Resources: Active: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Number of Resources: Active"
+Honey-buzzard,5
+"Bunting, Reed",3
+"Crane, Sandhill",3
+"Bunting, Yellow-breasted",2
+"Bunting, Yellow-browed",2
+"Plover, Caspian",2
+"Scoter, Velvet",2
+Shag,2
+"Shrike, Long-tailed",2
+"Stint, Little",2
+"Thrush, Grey-cheeked",2
+"Thrush, Swainson's",2
+"Warbler, Sardinian",2
+"Auk, Little",1
+"Bunting, Black-headed",1
+Chaffinch,1
+Coot,1
+Crane,1
+"Dove, Turtle",1
+"Duck, Ferruginous",1
+Dunlin,1
+"Egret, Cattle",1
+Fieldfare,1
+"Gallinule, Allen's",1
+"Goose, Egyptian",1
+"Grebe, Pied-billed",1
+"Grey, Great",1
+"Grey, Lesser",1
+"Grey, Southern",1
+"Grosbeak, Evening",1
+"Gull, Ring-billed",1
+"Harrier, Hen",1
+"Ibis, Glossy",1
+Jackdaw,1
+Lapwing,1
+"Martin, Crag",1
+"Martin, Purple",1
+Moorhen,1
+"Oriole, Baltimore",1
+Ovenbird,1
+"Partridge, Red-legged",1
+Peregrine,1
+"Pipit, Meadow",1
+"Plover, White-tailed",1
+"Redpoll, Lesser",1
+Roller,1
+"Sandpiper, Spotted",1
+"Sapsucker, Yellow-bellied",1
+"Scaup, Lesser",1
+"Shearwater, Cory's",1
+Siskin,1
+Smew,1
+"Sparrow, Savannah",1
+"Sparrow, White-throated",1
+"Swift, Alpine",1
+"Tern, Sandwich",1
+"Thrush, Mistle",1
+"Treecreeper, Short-toed",1
+"Warbler, Booted",1
+"Warbler, Dusky",1
+"Warbler, Garden",1
+"Warbler, Golden-winged",1
+"Warbler, Hooded",1
+"Warbler, Moltoni's",1
+"Warbler, Yellow-browed",1
+Whimbrel,1
+---------

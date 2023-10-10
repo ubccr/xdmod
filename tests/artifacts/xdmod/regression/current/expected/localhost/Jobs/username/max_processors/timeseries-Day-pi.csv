@@ -1,0 +1,20 @@
+title
+"Job Size: Max (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[swath] Job Size: Max (Core Count)","[litst] Job Size: Max (Core Count)","[ovenb] Job Size: Max (Core Count)","[ybsbu] Job Size: Max (Core Count)","[sante] Job Size: Max (Core Count)","[savsp] Job Size: Max (Core Count)"
+2016-12-23,0,0,0,0,1,0
+2016-12-24,0,0,0,0,1,0
+2016-12-25,0,0,0,0,1,0
+2016-12-26,0,0,0,0,1,0
+2016-12-27,0,0,16,16,1,0
+2016-12-28,0,0,16,16,1,0
+2016-12-29,64,0,16,16,1,0
+2016-12-30,64,16,16,16,1,1
+2016-12-31,64,16,16,8,0,1
+2017-01-01,0,0,16,0,0,1
+---------

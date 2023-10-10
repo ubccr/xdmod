@@ -1,0 +1,13 @@
+title
+"Node Hours: Total: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] Node Hours: Total"
+2016-12-30,56.9267
+2016-12-31,195.8258
+2017-01-01,157.1200
+---------

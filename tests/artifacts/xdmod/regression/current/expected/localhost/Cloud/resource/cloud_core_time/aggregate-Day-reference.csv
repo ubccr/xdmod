@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by Resource"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Resource,"CPU Hours: Total"
+openstack,1755.8894
+---------

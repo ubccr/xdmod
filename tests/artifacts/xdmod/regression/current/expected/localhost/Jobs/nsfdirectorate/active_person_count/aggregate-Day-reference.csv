@@ -1,0 +1,16 @@
+title
+"Number of Users: Active: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Number of Users: Active"
+"Mathematical and Physical Sciences",24
+Engineering,13
+Geosciences,9
+"Biological Sciences",6
+"Social, Behavioral, and Economic Sciences",6
+"Computer and Information Science and Engineering",5
+Humanities/Arts,3
+---------

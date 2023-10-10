@@ -1,0 +1,12 @@
+title
+"Wait Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[swath] Wait Hours: Per Job","[ovenb] Wait Hours: Per Job","[sante] Wait Hours: Per Job","[ybsbu] Wait Hours: Per Job","[litst] Wait Hours: Per Job","[savsp] Wait Hours: Per Job"
+2016,229.08833216,18.86933333,14.27555556,2.15912037,0.09015152,0.01434444
+2017,0,0.00000000,0,0,0,0.00666667
+---------

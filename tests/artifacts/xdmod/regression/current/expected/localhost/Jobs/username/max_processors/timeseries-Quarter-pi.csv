@@ -1,0 +1,12 @@
+title
+"Job Size: Max (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[swath] Job Size: Max (Core Count)","[litst] Job Size: Max (Core Count)","[ovenb] Job Size: Max (Core Count)","[ybsbu] Job Size: Max (Core Count)","[sante] Job Size: Max (Core Count)","[savsp] Job Size: Max (Core Count)"
+"2016 Q4",64,16,16,16,1,1
+"2017 Q1",0,0,16,0,0,1
+---------

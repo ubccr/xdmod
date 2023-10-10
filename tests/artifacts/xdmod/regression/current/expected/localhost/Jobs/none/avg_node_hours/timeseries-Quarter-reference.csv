@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Screwdriver] Node Hours: Per Job"
+"2016 Q4",2.46307856
+"2017 Q1",1.07790443
+---------

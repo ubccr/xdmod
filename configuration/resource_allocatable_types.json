@@ -1,0 +1,20 @@
+{
+    "resource_allocatable_types": {
+        "CPU": {
+            "description": "CPU Allocated",
+            "abbrev": "cpu"
+        },
+        "GPU": {
+            "description": "GPU Allocated",
+            "abbrev": "gpu"
+        },
+        "CPU Node": {
+            "description": "CPU Node Allocated",
+            "abbrev": "cpu_node"
+        },
+        "GPU Node": {
+            "description": "GPU Node Allocated",
+            "abbrev": "gpu_node"
+        }
+    }
+}

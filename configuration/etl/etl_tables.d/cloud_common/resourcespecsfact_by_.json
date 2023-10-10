@@ -32,6 +32,30 @@
                 "type": "bigint(42)",
                 "nullable": false,
                 "comment": "DIMENSION: Amount of core time in seconds available for a time period"
+            },
+            {
+                "name": "gpu_time_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of gpu core time in seconds available for a time period"
+            },
+            {
+                "name": "su_available",
+                "type": "int(11) unsigned",
+                "nullable": true,
+                "comment": "Total number of SU's available per day"
+            },
+            {
+                "name": "cpu_processors_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "DIMENSION: Number of CPU's available for a time period"
+            },
+            {
+                "name": "gpu_processors_available",
+                "type": "int(11) unsigned",
+                "nullable": true,
+                "comment": "Number of GPU's available for a time period"
             }
         ],
 

@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[robertson] CPU Hours: Total","[frearson] CPU Hours: Total","[mortorq] CPU Hours: Total","[pozidriv] CPU Hours: Total","[phillips] CPU Hours: Total"
+2016-12,416011.3800,210802.0658,67709.4597,66258.3922,9994.7011
+2017-01,45876.6008,6848.6758,9555.3900,5725.8842,1773.2872
+---------

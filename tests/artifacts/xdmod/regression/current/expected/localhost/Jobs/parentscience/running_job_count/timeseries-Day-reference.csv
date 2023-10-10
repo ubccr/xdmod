@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Social and Economic Science] Number of Jobs Running","[Chemistry] Number of Jobs Running","[Microelectronic Information Processing Systems] Number of Jobs Running","[Earth Sciences] Number of Jobs Running","[Polar Programs] Number of Jobs Running","[Astronomical Sciences] Number of Jobs Running","[Design and Manufacturing Systems] Number of Jobs Running","[Environmental Biology] Number of Jobs Running","[Electrical and Communication Systems] Number of Jobs Running","[Materials Research] Number of Jobs Running","[Molecular Biosciences] Number of Jobs Running","[Mechanical and Structural Systems] Number of Jobs Running","[Arts] Number of Jobs Running","[Mathematical Sciences] Number of Jobs Running","[Computer and Computation Research] Number of Jobs Running","[Chemical, Thermal Systems] Number of Jobs Running","[Physics] Number of Jobs Running","[Atmospheric Sciences] Number of Jobs Running"
+2016-12-22,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+2016-12-23,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
+2016-12-24,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
+2016-12-25,0,4,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
+2016-12-26,0,4,0,0,0,1,0,0,0,0,1,0,0,5,0,0,0,0
+2016-12-27,1,14,0,0,0,7,0,0,3,3,8,0,0,6,0,0,0,0
+2016-12-28,1,29,195,1,0,8,147,0,15,12,13,0,0,26,0,0,3,0
+2016-12-29,257,63,976,2,1,28,235,0,27,32,65,4,11,30,5,0,3,1
+2016-12-30,21034,3872,1660,738,70,751,252,90,40,103,85,36,65,32,20,3,3,1
+2016-12-31,23475,2753,1659,1008,41,48,264,10,129,84,22,32,27,49,1,1,0,0
+2017-01-01,13956,410,986,3,814,11,103,139,28,0,34,28,5,48,0,0,0,1
+---------

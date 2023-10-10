@@ -1,0 +1,16 @@
+title
+"Job Size: Max (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Job Size: Max (Core Count)"
+swath,64
+litst,16
+ovenb,16
+ybsbu,16
+sante,1
+savsp,1
+---------

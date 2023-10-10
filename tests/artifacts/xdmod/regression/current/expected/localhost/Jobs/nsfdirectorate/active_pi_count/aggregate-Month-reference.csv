@@ -1,0 +1,16 @@
+title
+"Number of PIs: Active: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Number of PIs: Active"
+"Mathematical and Physical Sciences",11
+Geosciences,9
+Engineering,8
+"Biological Sciences",4
+"Computer and Information Science and Engineering",4
+"Social, Behavioral, and Economic Sciences",4
+Humanities/Arts,1
+---------

@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[white] Wait Hours: Per Job","[nann] Wait Hours: Per Job","[brioche] Wait Hours: Per Job","[cornbread] Wait Hours: Per Job","[roti] Wait Hours: Per Job","[black] Wait Hours: Per Job","[pikelet] Wait Hours: Per Job","[croutons] Wait Hours: Per Job","[chapti] Wait Hours: Per Job","[focaccia] Wait Hours: Per Job","[barm] Wait Hours: Per Job","[panettone] Wait Hours: Per Job","[bannock] Wait Hours: Per Job","[potbrood] Wait Hours: Per Job","[brown] Wait Hours: Per Job","[crumpet] Wait Hours: Per Job","[pumpernickel] Wait Hours: Per Job","[pita] Wait Hours: Per Job"
+2016,25.71236872,0.02019097,4.57930556,4.12882576,3.71197531,1.06378499,0.68931866,0.22325159,0.16736111,0.00027778,0.00444444,0.00100000,0.00090278,0.00041219,0.00016493,0.00019231,0.00000000,0.00004630
+2017,3.20246045,10.26765258,0.00000000,0.00666667,0,0.71877513,0.00000000,0.11565476,0,0.10273148,0.00000000,0,0.00011111,0.00020531,0.00016865,0.00014550,0.00027778,0.00000000
+---------

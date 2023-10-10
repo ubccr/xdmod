@@ -1,0 +1,10 @@
+title
+"Wait Hours: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+"High-performance computing",4.29578563,0.08956571094180898
+---------

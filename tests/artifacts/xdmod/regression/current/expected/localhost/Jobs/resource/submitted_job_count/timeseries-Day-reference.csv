@@ -1,0 +1,20 @@
+title
+"Number of Jobs Submitted: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[mortorq] Number of Jobs Submitted","[frearson] Number of Jobs Submitted","[robertson] Number of Jobs Submitted","[pozidriv] Number of Jobs Submitted","[phillips] Number of Jobs Submitted"
+2016-12-22,0,0,0,0,1
+2016-12-23,0,0,0,1,0
+2016-12-24,0,0,0,0,0
+2016-12-25,0,0,0,1,0
+2016-12-26,5,0,0,0,0
+2016-12-27,0,1,9,7,1
+2016-12-28,12,9,358,0,0
+2016-12-29,100,85,952,69,0
+2016-12-30,12345,3924,3344,4994,1053
+2016-12-31,7738,8613,1818,4435,1507
+2017-01-01,4952,2715,4486,455,426
+---------

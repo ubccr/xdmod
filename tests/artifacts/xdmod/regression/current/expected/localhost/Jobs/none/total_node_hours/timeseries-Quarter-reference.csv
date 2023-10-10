@@ -1,0 +1,11 @@
+title
+"Node Hours: Total"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Screwdriver] Node Hours: Total"
+"2016 Q4",138447.1828
+"2017 Q1",17856.5647
+---------

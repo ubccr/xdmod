@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count)"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Screwdriver] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12,69.5398
+2017-01,22.2755
+---------

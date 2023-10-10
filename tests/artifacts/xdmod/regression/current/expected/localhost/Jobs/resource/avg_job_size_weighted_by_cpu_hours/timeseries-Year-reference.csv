@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[frearson] Job Size: Weighted By CPU Hours (Core Count)","[robertson] Job Size: Weighted By CPU Hours (Core Count)","[phillips] Job Size: Weighted By CPU Hours (Core Count)","[pozidriv] Job Size: Weighted By CPU Hours (Core Count)","[mortorq] Job Size: Weighted By CPU Hours (Core Count)"
+2016,117.0398,64.0089,47.9870,16.2321,10.9857
+2017,13.6596,26.4794,50.1956,10.0052,10.4389
+---------

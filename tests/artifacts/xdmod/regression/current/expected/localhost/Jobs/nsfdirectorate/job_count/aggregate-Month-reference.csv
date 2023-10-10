@@ -1,0 +1,16 @@
+title
+"Number of Jobs Ended: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Number of Jobs Ended"
+"Social, Behavioral, and Economic Sciences",57704
+"Mathematical and Physical Sciences",7983
+"Computer and Information Science and Engineering",2687
+Geosciences,1943
+Engineering,573
+"Biological Sciences",357
+Humanities/Arts,66
+---------

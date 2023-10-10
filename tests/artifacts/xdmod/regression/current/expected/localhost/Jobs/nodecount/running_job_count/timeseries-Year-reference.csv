@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[1] Number of Jobs Running","[2] Number of Jobs Running","[8] Number of Jobs Running","[4] Number of Jobs Running","[6] Number of Jobs Running","[12] Number of Jobs Running","[3] Number of Jobs Running","[7] Number of Jobs Running","[5] Number of Jobs Running","[16] Number of Jobs Running","[14] Number of Jobs Running","[20] Number of Jobs Running","[9] Number of Jobs Running","[24] Number of Jobs Running","[28] Number of Jobs Running"
+2016,55954,80,72,51,13,11,5,9,5,3,2,1,1,1,1
+2017,16379,77,44,48,8,0,5,0,2,2,0,1,0,0,0
+---------

@@ -1,0 +1,11 @@
+title
+"User Expansion Factor"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Screwdriver] User Expansion Factor"
+2016-12,3.1481
+2017-01,2.7546
+---------

@@ -1,0 +1,14 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Memory","Average Memory Reserved Weighted By Wall Hours (Bytes)"
+"32 - 64 GB",41943040000.0000
+"8 - 16 GB",17179869184.0000
+"4 - 8 GB",8589934592.0000
+"2 - 4 GB",4294967296.0000
+"< 2 GB",1073741824.0000
+---------

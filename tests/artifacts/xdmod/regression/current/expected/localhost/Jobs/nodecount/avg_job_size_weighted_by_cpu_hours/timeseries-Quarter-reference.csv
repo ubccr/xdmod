@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[28] Job Size: Weighted By CPU Hours (Core Count)","[24] Job Size: Weighted By CPU Hours (Core Count)","[12] Job Size: Weighted By CPU Hours (Core Count)","[16] Job Size: Weighted By CPU Hours (Core Count)","[20] Job Size: Weighted By CPU Hours (Core Count)","[7] Job Size: Weighted By CPU Hours (Core Count)","[9] Job Size: Weighted By CPU Hours (Core Count)","[8] Job Size: Weighted By CPU Hours (Core Count)","[6] Job Size: Weighted By CPU Hours (Core Count)","[5] Job Size: Weighted By CPU Hours (Core Count)","[14] Job Size: Weighted By CPU Hours (Core Count)","[4] Job Size: Weighted By CPU Hours (Core Count)","[3] Job Size: Weighted By CPU Hours (Core Count)","[2] Job Size: Weighted By CPU Hours (Core Count)","[1] Job Size: Weighted By CPU Hours (Core Count)"
+"2016 Q4",336.0000,288.0000,183.8058,184.9507,160.0000,112.0000,108.0000,94.6441,69.2300,60.0000,56.0000,40.9942,36.0000,30.8956,10.4497
+"2017 Q1",0,0,0,159.6952,160.0000,0,0,90.7975,69.7948,60.0000,0,35.8310,36.0000,22.6038,8.9607
+---------

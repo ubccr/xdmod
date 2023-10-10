@@ -1,0 +1,20 @@
+title
+"User Expansion Factor: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Tern, Caspian] User Expansion Factor","[Dunlin] User Expansion Factor","[Gull, Yellow-legged] User Expansion Factor","[Flycatcher, Taiga] User Expansion Factor","[Warbler, Cetti's] User Expansion Factor","[Chiffchaff, Iberian] User Expansion Factor","[Fulmar] User Expansion Factor","[Shearwater, Balearic] User Expansion Factor","[Egret, Snowy] User Expansion Factor","[Fieldfare] User Expansion Factor","[Warbler, Savi's] User Expansion Factor","[White, Great] User Expansion Factor","[Petrel, Fea's] User Expansion Factor","[Shearwater, Macaronesian] User Expansion Factor","[Goose, Red-breasted] User Expansion Factor","[Gull, Glaucous-winged] User Expansion Factor","[Thrush, Hermit] User Expansion Factor","[Jackdaw] User Expansion Factor","[Bunting, Ortolan] User Expansion Factor","[Kestrel, Lesser] User Expansion Factor","[Lark, Calandra] User Expansion Factor","[Bittern] User Expansion Factor","[Accentor, Alpine] User Expansion Factor","[Warbler, Blackpoll] User Expansion Factor","[Harrier, Hen] User Expansion Factor","[Smew] User Expansion Factor","[Swift, Little] User Expansion Factor","[Bluetail, Red-flanked] User Expansion Factor","[Blackbird] User Expansion Factor","[Warbler, Hooded] User Expansion Factor","[Moorhen] User Expansion Factor","[Martin, Sand] User Expansion Factor","[Spotted, Great] User Expansion Factor","[Bufflehead] User Expansion Factor","[Chaffinch] User Expansion Factor","[Dowitcher, Short-billed] User Expansion Factor","[Dotterel] User Expansion Factor","[Nuthatch] User Expansion Factor","[Scaup, Lesser] User Expansion Factor","[Shearwater, Great] User Expansion Factor","[Yellowthroat, Common] User Expansion Factor"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0495,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0000,0,0,0,0,0,0
+2016-12-23,1.0610,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0495,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0000,0,0,0,0,0,0
+2016-12-24,1.0610,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0495,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0000,0,0,0,0,0,0
+2016-12-25,1.0610,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.1562,0,0,0,0,0,0,0,0,0,0,0,0,0,1.0000,0,0,0,0,0,0
+2016-12-26,1.0610,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.2735,0,0,0,0,0,0,1.0000,0,0,0,0,0,0,1.0000,0,0,0,0,0,0
+2016-12-27,1.0280,0,0,1.0000,0,0,4.9152,1.9856,0,2.5533,0,2.0864,1.7260,0,0,0,0,0,0,0,1.2277,0,0,0,0,0,0,1.0000,0,0,0,0,0,0,1.0000,0,0,0,0,1.0000,0
+2016-12-28,1.0102,0,0,1.0000,0,0,4.8768,2.1159,0,2.5716,0,1.8919,1.7260,0,0,0,0,0,0,1.1095,1.0845,0,0,1.0866,0,0,0,1.0025,0,1.0107,1.0010,0,0,1.0013,1.0000,0,1.0000,0,1.0000,1.0000,0
+2016-12-29,7.2405,0,3.8567,3.7347,1.0394,1.0001,3.0140,2.7029,0,2.3072,1.0000,1.6613,1.7260,0,0,0,0,1.0436,1.2430,1.1207,1.1039,0,0,1.0866,1.0011,1.0379,0,1.0228,0,1.0095,1.0011,1.0000,0,1.0011,1.0000,0,1.0000,1.0000,1.0000,1.0000,0
+2016-12-30,244.8450,82.2879,3.8567,5.1450,5.9358,1.8025,2.9767,5.5485,0,2.2649,3.1975,1.5996,1.4078,1.1806,2.1933,1.3753,1.4992,1.4225,1.1539,1.1173,1.0974,1.1123,0,1.0801,1.0787,1.0500,1.0094,1.0292,1.0131,1.0076,1.0022,1.0000,1.0041,1.0011,1.0000,1.0001,1.0000,1.0000,1.0000,1.0000,1.0000
+2016-12-31,1.4459,30.3841,0,8.2387,38.4517,4.7123,7.3737,13.7412,1.0162,1.9038,1.0000,1.2381,1.2386,1.6099,1.2202,0,1.1213,1.1163,1.0513,1.0205,1.1361,1.0199,1.0760,0,1.0006,1.1462,1.0172,1.0100,0,1.0119,1.0187,1.0039,1.0018,1.0012,1.0000,1.0001,0,1.0000,1.0000,0,0
+2017-01-01,4.1617,66.3373,1677.0769,21.4660,0,1.0001,9.8468,0,3.5509,1.9022,0,1.1298,0,0,1.0524,0,0,1.1040,1.2473,1.0205,1.0606,1.0037,1.1002,0,0,0,1.0001,1.0058,0,1.0029,1.0088,1.0000,0,1.0013,1.0061,1.0002,0,0,1.0006,0,0
+---------

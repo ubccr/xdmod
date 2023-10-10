@@ -1,0 +1,20 @@
+title
+"Number of Jobs Submitted: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Sociology] Number of Jobs Submitted","[Physical Chemistry] Number of Jobs Submitted","[Decision, Risk, and Management Science] Number of Jobs Submitted","[Systems Prototyping and Fabrication] Number of Jobs Submitted","[Tectonics] Number of Jobs Submitted","[Polar Ocean and Climate Systems] Number of Jobs Submitted","[Operations Research and Production Systems] Number of Jobs Submitted","[Polar Meteorology] Number of Jobs Submitted","[Systematic and Population Biology] Number of Jobs Submitted","[Mechanics and Materials] Number of Jobs Submitted","[Economics] Number of Jobs Submitted","[Cell Biology] Number of Jobs Submitted","[Statistics and Probability] Number of Jobs Submitted","[Galactic Astronomy] Number of Jobs Submitted","[Experimental Systems] Number of Jobs Submitted","[Arts] Number of Jobs Submitted","[Biophysics] Number of Jobs Submitted","[Organic and Macromolecular Chemistry] Number of Jobs Submitted","[Quantum Electronics, Waves, and Beams] Number of Jobs Submitted","[Computer and Computation Theory] Number of Jobs Submitted","[Emerging Technologies Initiation] Number of Jobs Submitted","[Biochemistry and Molecular Structure and Function] Number of Jobs Submitted","[Geophysics] Number of Jobs Submitted","[Stellar Astronomy and Astrophysics] Number of Jobs Submitted","[Solid State Chemistry and Polymers] Number of Jobs Submitted","[Algebra and Number Theory] Number of Jobs Submitted","[Extragalactic Astronomy and Cosmology] Number of Jobs Submitted","[Seismology] Number of Jobs Submitted","[Design and Computer-Integrated Engineering] Number of Jobs Submitted","[Structures and Building Systems] Number of Jobs Submitted","[Metals, Ceramics, and Electronic Materials] Number of Jobs Submitted","[Geology and Paleontology] Number of Jobs Submitted","[Theoretical Physics] Number of Jobs Submitted","[Design, Tools, and Test] Number of Jobs Submitted","[Law and Social Sciences] Number of Jobs Submitted","[Polar Aeronomy and Astrophysics] Number of Jobs Submitted","[Solid-State and Microstructures] Number of Jobs Submitted","[Volcanology and Mantle Geochemistry] Number of Jobs Submitted","[Fluid, Particulate, and Hydraulic Systems] Number of Jobs Submitted","[Global Atmospheric Research] Number of Jobs Submitted"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,1,10,0,0,0,0,0,0,0,0,0,0,1,5,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-28,0,4,0,190,0,0,147,0,0,0,0,0,11,0,5,0,0,9,0,0,0,0,0,0,0,9,0,0,0,0,0,0,3,0,0,0,0,1,0,0
+2016-12-29,205,32,1,770,0,0,88,0,0,0,0,50,0,4,11,11,0,0,1,5,3,0,0,1,10,0,0,1,0,4,7,0,0,0,0,1,1,0,0,0
+2016-12-30,18462,3801,1699,675,719,0,17,68,50,28,20,5,0,15,8,19,0,4,5,15,5,14,14,1,1,2,4,0,0,4,0,3,0,1,1,0,0,0,0,0
+2016-12-31,19485,2699,933,747,0,16,37,24,9,28,26,0,33,21,5,1,4,4,4,0,4,0,0,7,2,0,6,7,9,0,0,0,0,0,0,0,0,0,0,0
+2017-01-01,11511,380,0,204,0,677,19,62,64,28,23,0,0,1,8,0,25,8,12,0,4,0,0,5,0,0,0,2,0,0,0,1,0,0,0,0,0,0,0,0
+---------

@@ -1,0 +1,50 @@
+title
+"Wait Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Wait Hours: Total"
+"Tern, Caspian",163477.1903
+"Flycatcher, Taiga",112939.7331
+Fulmar,5136.8678
+"Shearwater, Balearic",5128.4506
+"Egret, Snowy",4056.0075
+"Shearwater, Macaronesian",3927.5247
+Dunlin,3030.4719
+"Chiffchaff, Iberian",2704.6794
+Fieldfare,1959.9481
+"Warbler, Cetti's",1953.8047
+Moorhen,544.5967
+"Lark, Calandra",443.1597
+Jackdaw,321.4447
+"White, Great",184.2997
+"Petrel, Fea's",122.8625
+"Warbler, Savi's",105.4822
+"Gull, Yellow-legged",62.0436
+"Kestrel, Lesser",48.5308
+"Bluetail, Red-flanked",36.5339
+"Bunting, Ortolan",30.1542
+"Goose, Red-breasted",20.6675
+"Thrush, Hermit",20.0331
+"Accentor, Alpine",19.3700
+Bufflehead,17.6803
+Smew,13.9250
+Bittern,12.6592
+"Warbler, Blackpoll",11.1744
+"Warbler, Hooded",7.7419
+"Harrier, Hen",6.4781
+Chaffinch,1.2361
+"Martin, Sand",0.1747
+"Swift, Little",0.1614
+"Spotted, Great",0.1408
+"Gull, Glaucous-winged",0.0978
+Blackbird,0.0147
+"Dowitcher, Short-billed",0.0106
+Nuthatch,0.0047
+"Scaup, Lesser",0.0042
+Dotterel,0.0003
+"Shearwater, Great",0.0000
+"Yellowthroat, Common",0.0000
+---------

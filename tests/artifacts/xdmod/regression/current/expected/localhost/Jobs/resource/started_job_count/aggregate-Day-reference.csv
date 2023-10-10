@@ -1,0 +1,14 @@
+title
+"Number of Jobs Started: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Number of Jobs Started"
+mortorq,26240
+frearson,15347
+robertson,14395
+pozidriv,11285
+phillips,4046
+---------

@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Mathematical and Physical Sciences] User Expansion Factor","[Social, Behavioral, and Economic Sciences] User Expansion Factor","[Biological Sciences] User Expansion Factor","[Geosciences] User Expansion Factor","[Engineering] User Expansion Factor","[Humanities/Arts] User Expansion Factor","[Computer and Information Science and Engineering] User Expansion Factor"
+"2016 Q4",8.7685,6.7861,4.1471,1.4970,1.6127,1.2872,1.0081
+"2017 Q1",1.1019,21.0966,17.6377,3.9938,1.1558,1.1040,1.0087
+---------

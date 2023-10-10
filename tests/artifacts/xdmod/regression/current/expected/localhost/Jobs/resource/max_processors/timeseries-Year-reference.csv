@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[robertson] Job Size: Max (Core Count)","[frearson] Job Size: Max (Core Count)","[pozidriv] Job Size: Max (Core Count)","[phillips] Job Size: Max (Core Count)","[mortorq] Job Size: Max (Core Count)"
+2016,336,192,80,64,20
+2017,192,16,24,64,16
+---------

@@ -45,6 +45,7 @@ class ListResourcesSetup extends SetupItem
         }
 
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+        $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocatable_types.json', CONFIG_DIR)['resource_allocatable_types'];
 
         foreach ($resources as $resource) {
             $specs = $this->getSpecsForResource($resource['resource']);
@@ -60,11 +61,23 @@ class ListResourcesSetup extends SetupItem
                 }
             }
 
+            foreach ( $availableResourceAllocationTypes as $name => $type ) {
+                if ( $name === $resource['allocation_type'] ) {
+                    // Note that Console::prompt() expects lowercase values for options
+                    $resourceAllocatableType = strtolower($name);
+                    break;
+                }
+            }
+
             $this->console->displayMessage('Resource: ' . $resource['resource']);
             $this->console->displayMessage('Name: ' . $resource['name']);
             $this->console->displayMessage('Type: ' . $resourceType);
-            $this->console->displayMessage('Node count: ' . $specs['nodes']);
-            $this->console->displayMessage('Processor count: ' . $specs['processors']);
+            $this->console->displayMessage('Resource Allocation Type: ' . $resourceAllocatableType);
+            $this->console->displayMessage('CPU Node count: ' . $specs['cpu_node_count']);
+            $this->console->displayMessage('CPU Processor count: ' . $specs['cpu_processor_count']);
+            $this->console->displayMessage('GPU Node count: ' . $specs['gpu_node_count']);
+            $this->console->displayMessage('GPU Processor count: ' . $specs['gpu_processor_count']);
+            $this->console->displayMessage('Resource Start Date ' . $specs['start_date']);
             $this->console->displayMessage(str_repeat('-', 72));
             $this->console->displayBlankLine();
         }

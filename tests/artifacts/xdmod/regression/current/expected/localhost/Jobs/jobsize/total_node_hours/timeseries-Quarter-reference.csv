@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Node Hours: Total","[2] Node Hours: Total","[3 - 4] Node Hours: Total","[5 - 8] Node Hours: Total","[9 - 16] Node Hours: Total","[17 - 32] Node Hours: Total","[33 - 64] Node Hours: Total","[65 - 128] Node Hours: Total","[129 - 256] Node Hours: Total","[257 - 512] Node Hours: Total"
+"2016 Q4",80136.0169,741.6300,1137.5342,10703.4175,13027.7175,3508.8500,2661.5853,17512.9469,7959.4033,1058.0811
+"2017 Q1",12478.1586,17.6292,152.8497,1481.2039,2390.4992,259.1050,367.5908,708.6328,0.8956,0
+---------

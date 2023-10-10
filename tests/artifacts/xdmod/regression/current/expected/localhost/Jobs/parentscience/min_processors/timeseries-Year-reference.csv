@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Atmospheric Sciences] Job Size: Min (Core Count)","[Chemical, Thermal Systems] Job Size: Min (Core Count)","[Materials Research] Job Size: Min (Core Count)","[Physics] Job Size: Min (Core Count)","[Chemistry] Job Size: Min (Core Count)","[Environmental Biology] Job Size: Min (Core Count)","[Arts] Job Size: Min (Core Count)","[Astronomical Sciences] Job Size: Min (Core Count)","[Computer and Computation Research] Job Size: Min (Core Count)","[Design and Manufacturing Systems] Job Size: Min (Core Count)","[Earth Sciences] Job Size: Min (Core Count)","[Electrical and Communication Systems] Job Size: Min (Core Count)","[Mathematical Sciences] Job Size: Min (Core Count)","[Mechanical and Structural Systems] Job Size: Min (Core Count)","[Microelectronic Information Processing Systems] Job Size: Min (Core Count)","[Molecular Biosciences] Job Size: Min (Core Count)","[Polar Programs] Job Size: Min (Core Count)","[Social and Economic Science] Job Size: Min (Core Count)"
+2016,160,48,12,12,8,8,1,1,1,1,1,1,1,1,1,1,1,1
+2017,160,0,0,0,8,8,4,1,0,1,5,2,8,1,1,1,1,1
+---------

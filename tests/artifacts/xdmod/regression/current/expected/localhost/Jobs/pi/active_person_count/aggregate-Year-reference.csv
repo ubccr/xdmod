@@ -1,0 +1,50 @@
+title
+"Number of Users: Active: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Number of Users: Active"
+"Tern, Caspian",6
+Fieldfare,4
+"Lark, Calandra",4
+"White, Great",4
+"Dowitcher, Short-billed",3
+Jackdaw,3
+Chaffinch,2
+"Flycatcher, Taiga",2
+Fulmar,2
+"Scaup, Lesser",2
+"Shearwater, Balearic",2
+"Warbler, Cetti's",2
+"Warbler, Hooded",2
+"Accentor, Alpine",1
+Bittern,1
+Blackbird,1
+"Bluetail, Red-flanked",1
+Bufflehead,1
+"Bunting, Ortolan",1
+"Chiffchaff, Iberian",1
+Dotterel,1
+Dunlin,1
+"Egret, Snowy",1
+"Goose, Red-breasted",1
+"Gull, Glaucous-winged",1
+"Gull, Yellow-legged",1
+"Harrier, Hen",1
+"Kestrel, Lesser",1
+"Martin, Sand",1
+Moorhen,1
+Nuthatch,1
+"Petrel, Fea's",1
+"Shearwater, Great",1
+"Shearwater, Macaronesian",1
+Smew,1
+"Spotted, Great",1
+"Swift, Little",1
+"Thrush, Hermit",1
+"Warbler, Blackpoll",1
+"Warbler, Savi's",1
+"Yellowthroat, Common",1
+---------

@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[frearson] Number of Resources: Active","[mortorq] Number of Resources: Active","[phillips] Number of Resources: Active","[pozidriv] Number of Resources: Active","[robertson] Number of Resources: Active"
+"2016 Q4",1,1,1,1,1
+"2017 Q1",1,1,1,1,1
+---------

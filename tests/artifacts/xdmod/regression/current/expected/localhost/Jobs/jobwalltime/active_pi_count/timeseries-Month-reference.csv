@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Number of PIs: Active","[1 - 30s] Number of PIs: Active","[30s - 30min] Number of PIs: Active","[30 - 60min] Number of PIs: Active","[1 - 5hr] Number of PIs: Active","[5 - 10hr] Number of PIs: Active","[10 - 18hr] Number of PIs: Active","[18+hr] Number of PIs: Active"
+2016-12,0,16,22,11,21,15,19,28
+2017-01,1,8,13,12,11,4,10,15
+---------

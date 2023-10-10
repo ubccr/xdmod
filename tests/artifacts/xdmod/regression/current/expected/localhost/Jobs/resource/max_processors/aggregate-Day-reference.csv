@@ -1,0 +1,14 @@
+title
+"Job Size: Max (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Job Size: Max (Core Count)"
+robertson,336
+frearson,192
+pozidriv,80
+phillips,64
+mortorq,20
+---------

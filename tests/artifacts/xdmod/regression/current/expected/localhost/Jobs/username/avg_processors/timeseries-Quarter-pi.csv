@@ -1,0 +1,12 @@
+title
+"Job Size: Per Job (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[ovenb] Job Size: Per Job (Core Count)","[litst] Job Size: Per Job (Core Count)","[ybsbu] Job Size: Per Job (Core Count)","[swath] Job Size: Per Job (Core Count)","[sante] Job Size: Per Job (Core Count)","[savsp] Job Size: Per Job (Core Count)"
+"2016 Q4",16.0000,14.1818,9.3333,4.0842,1.0000,1.0000
+"2017 Q1",16.0000,0,0,0,0,1.0000
+---------

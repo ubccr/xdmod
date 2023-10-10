@@ -1,0 +1,20 @@
+title
+"Number of Jobs Submitted: by System Username"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[honbu] Number of Jobs Submitted","[reebu] Number of Jobs Submitted","[grgsh] Number of Jobs Submitted","[moorh] Number of Jobs Submitted","[turdo] Number of Jobs Submitted","[legsh] Number of Jobs Submitted","[caspl] Number of Jobs Submitted","[lapwi] Number of Jobs Submitted","[sogsh] Number of Jobs Submitted","[dunli] Number of Jobs Submitted","[vertera] Number of Jobs Submitted","[pibgr] Number of Jobs Submitted","[garwa] Number of Jobs Submitted","[sarwa] Number of Jobs Submitted","[proubis] Number of Jobs Submitted","[noror] Number of Jobs Submitted","[savsp] Number of Jobs Submitted","[sposa] Number of Jobs Submitted","[categ] Number of Jobs Submitted","[coot1] Number of Jobs Submitted","[hoowa] Number of Jobs Submitted","[henha] Number of Jobs Submitted","[alpsw] Number of Jobs Submitted","[corsh] Number of Jobs Submitted","[crane] Number of Jobs Submitted","[lanhach] Number of Jobs Submitted","[yebsa] Number of Jobs Submitted","[boowa] Number of Jobs Submitted","[crama] Number of Jobs Submitted","[sancr] Number of Jobs Submitted","[whimb] Number of Jobs Submitted","[litst] Number of Jobs Submitted","[misth] Number of Jobs Submitted","[blhbu] Number of Jobs Submitted","[litau] Number of Jobs Submitted","[shag1] Number of Jobs Submitted","[aytinis] Number of Jobs Submitted","[whtsp] Number of Jobs Submitted","[egygo] Number of Jobs Submitted","[smew1] Number of Jobs Submitted","[shttr] Number of Jobs Submitted","[ybsbu] Number of Jobs Submitted","[jackd] Number of Jobs Submitted","[ovenb] Number of Jobs Submitted","[rolle] Number of Jobs Submitted","[field] Number of Jobs Submitted","[whtpl] Number of Jobs Submitted","[evegr] Number of Jobs Submitted","[lesre] Number of Jobs Submitted","[meapi] Number of Jobs Submitted","[allga] Number of Jobs Submitted","[chaff] Number of Jobs Submitted","[ferdu] Number of Jobs Submitted","[gloib] Number of Jobs Submitted","[grath] Number of Jobs Submitted","[mamwa] Number of Jobs Submitted","[pereg] Number of Jobs Submitted","[relpa] Number of Jobs Submitted","[ribgu] Number of Jobs Submitted","[sante] Number of Jobs Submitted","[velsc] Number of Jobs Submitted","[yebbu] Number of Jobs Submitted","[duswa] Number of Jobs Submitted","[siski] Number of Jobs Submitted","[swath] Number of Jobs Submitted","[yebwa] Number of Jobs Submitted"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,1,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,4,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+2016-12-28,0,0,0,190,0,0,0,147,0,0,0,0,11,3,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,9,0,0,1,9,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-29,198,10,0,770,17,0,0,88,0,0,0,50,0,4,0,0,0,10,0,0,5,5,0,6,3,1,7,0,0,10,0,0,0,0,1,1,0,0,4,7,0,4,0,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0
+2016-12-30,18454,3437,1698,675,330,719,0,17,68,50,20,0,0,28,12,0,8,15,8,8,6,15,4,2,5,3,8,14,14,0,0,7,2,4,0,6,0,0,4,0,5,0,4,0,3,1,0,1,0,0,1,0,0,0,0,0,1,1,1,0,1,0,0,0,0,0
+2016-12-31,19485,2355,933,747,341,0,16,37,24,9,26,0,33,1,12,4,17,0,8,8,5,0,4,0,4,3,0,0,0,2,7,4,0,6,7,2,0,9,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2017-01-01,11511,80,0,204,292,0,677,19,62,64,23,0,0,8,12,25,1,0,8,8,0,0,8,8,4,9,0,0,0,0,5,0,0,0,2,0,0,0,0,0,0,0,0,0,1,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

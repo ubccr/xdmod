@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Tern, Caspian] Wait Hours: Total","[Flycatcher, Taiga] Wait Hours: Total","[Fulmar] Wait Hours: Total","[Shearwater, Balearic] Wait Hours: Total","[Egret, Snowy] Wait Hours: Total","[Shearwater, Macaronesian] Wait Hours: Total","[Dunlin] Wait Hours: Total","[Chiffchaff, Iberian] Wait Hours: Total","[Fieldfare] Wait Hours: Total","[Warbler, Cetti's] Wait Hours: Total","[Moorhen] Wait Hours: Total","[Lark, Calandra] Wait Hours: Total","[Jackdaw] Wait Hours: Total","[White, Great] Wait Hours: Total","[Petrel, Fea's] Wait Hours: Total","[Warbler, Savi's] Wait Hours: Total","[Gull, Yellow-legged] Wait Hours: Total","[Kestrel, Lesser] Wait Hours: Total","[Bluetail, Red-flanked] Wait Hours: Total","[Bunting, Ortolan] Wait Hours: Total","[Goose, Red-breasted] Wait Hours: Total","[Thrush, Hermit] Wait Hours: Total","[Accentor, Alpine] Wait Hours: Total","[Bufflehead] Wait Hours: Total","[Smew] Wait Hours: Total","[Bittern] Wait Hours: Total","[Warbler, Blackpoll] Wait Hours: Total","[Warbler, Hooded] Wait Hours: Total","[Harrier, Hen] Wait Hours: Total","[Chaffinch] Wait Hours: Total","[Martin, Sand] Wait Hours: Total","[Swift, Little] Wait Hours: Total","[Spotted, Great] Wait Hours: Total","[Gull, Glaucous-winged] Wait Hours: Total","[Blackbird] Wait Hours: Total","[Dowitcher, Short-billed] Wait Hours: Total","[Nuthatch] Wait Hours: Total","[Scaup, Lesser] Wait Hours: Total","[Dotterel] Wait Hours: Total","[Shearwater, Great] Wait Hours: Total","[Yellowthroat, Common] Wait Hours: Total"
+2016,163477.1836,93107.7492,5136.8678,5128.4506,0.3231,3927.5247,1203.9786,2704.6794,1941.5953,1953.8047,537.2208,406.8431,321.4447,177.0003,122.8625,105.4822,25.7286,48.5308,36.5339,18.1303,20.6628,20.0331,19.3700,17.3458,13.9250,12.6528,11.1744,7.5872,6.4781,0.0014,0.1747,0.1611,0.1408,0.0978,0.0147,0.0058,0.0047,0.0031,0.0003,0.0000,0.0000
+2017,0.0067,19831.9839,0.0000,0,4055.6844,0,1826.4933,0.0000,18.3528,0,7.3758,36.3167,0.0000,7.2994,0,0,36.3150,0.0000,0.0000,12.0239,0.0047,0,0.0000,0.3344,0,0.0064,0,0.1547,0,1.2347,0.0000,0.0003,0,0,0,0.0047,0,0.0011,0,0,0
+---------

@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Social, Behavioral, and Economic Sciences] Number of Jobs Running","[Mathematical and Physical Sciences] Number of Jobs Running","[Computer and Information Science and Engineering] Number of Jobs Running","[Geosciences] Number of Jobs Running","[Engineering] Number of Jobs Running","[Biological Sciences] Number of Jobs Running","[Humanities/Arts] Number of Jobs Running"
+2016-12-22,0,1,0,0,0,1,0
+2016-12-23,0,2,0,0,0,1,0
+2016-12-24,0,2,0,0,0,1,0
+2016-12-25,0,5,0,0,0,1,0
+2016-12-26,0,10,0,0,0,1,0
+2016-12-27,1,30,0,0,3,8,0
+2016-12-28,1,78,195,1,162,13,0
+2016-12-29,257,156,981,4,266,65,11
+2016-12-30,21034,4761,1680,809,331,175,65
+2016-12-31,23475,2934,1660,1049,426,32,27
+2017-01-01,13956,469,986,818,159,173,5
+---------

@@ -1,0 +1,27 @@
+title
+"Number of Resources: Active: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Number of Resources: Active"
+black,4
+bannock,1
+barm,1
+brioche,1
+brown,1
+chapti,1
+cornbread,1
+croutons,1
+crumpet,1
+focaccia,1
+nann,1
+panettone,1
+pikelet,1
+pita,1
+potbrood,1
+pumpernickel,1
+roti,1
+white,1
+---------

@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] Number of Jobs Running","[1 - 30s] Number of Jobs Running","[30s - 30min] Number of Jobs Running","[30 - 60min] Number of Jobs Running","[1 - 5hr] Number of Jobs Running","[5 - 10hr] Number of Jobs Running","[10 - 18hr] Number of Jobs Running","[18+hr] Number of Jobs Running"
+2016,0,7693,31346,8612,4477,1236,230,2615
+2017,1861,9113,2633,670,1188,72,101,928
+---------

@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by Department"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[Mechanical and Structural Systems] Average Cores Reserved Weighted By Wall Hours"
+"2018 Q2",1.4291
+---------

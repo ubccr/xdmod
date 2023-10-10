@@ -1,0 +1,17 @@
+title
+"Job Size: Max (Core Count): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Job Size: Max (Core Count)"
+"0 - 1s",192
+"1 - 30s",192
+"30s - 30min",108
+"30 - 60min",192
+"1 - 5hr",336
+"5 - 10hr",288
+"10 - 18hr",96
+18+hr,160
+---------

@@ -1,0 +1,12 @@
+title
+"CPU Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[ovenb] CPU Hours: Per Job","[ybsbu] CPU Hours: Per Job","[sante] CPU Hours: Per Job","[swath] CPU Hours: Per Job","[litst] CPU Hours: Per Job","[savsp] CPU Hours: Per Job"
+"2016 Q4",1249.92088889,405.12111111,87.43875000,6.35072152,4.48717172,0.02434444
+"2017 Q1",371.58666667,0,0,0,0,0.02555556
+---------

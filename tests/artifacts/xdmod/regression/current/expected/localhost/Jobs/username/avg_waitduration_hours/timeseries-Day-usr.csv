@@ -1,0 +1,13 @@
+title
+"Wait Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] Wait Hours: Per Job"
+2016-12-30,17.26194444
+2016-12-31,0.95052083
+2017-01-01,1.45988889
+---------

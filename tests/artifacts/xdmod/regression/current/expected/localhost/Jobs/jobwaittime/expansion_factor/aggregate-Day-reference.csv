@@ -1,0 +1,17 @@
+title
+"User Expansion Factor: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","User Expansion Factor"
+"0 - 1s",1.0000
+"1 - 30s",1.0005
+"30s - 30min",1.0322
+"30 - 60min",2.4872
+"1 - 5hr",2.8146
+"5 - 10hr",5.2710
+"10 - 18hr",10.0667
+18+hr,13.4785
+---------

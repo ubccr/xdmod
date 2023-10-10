@@ -1,0 +1,17 @@
+title
+"Number of Users: Active: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Number of Users: Active"
+"0 - 1s",1
+"1 - 30s",20
+"30s - 30min",32
+"30 - 60min",20
+"1 - 5hr",25
+"5 - 10hr",21
+"10 - 18hr",26
+18+hr,45
+---------

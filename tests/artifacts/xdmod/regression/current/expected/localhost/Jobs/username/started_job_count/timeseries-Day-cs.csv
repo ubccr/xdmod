@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by System Username"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[honbu] Number of Jobs Started","[reebu] Number of Jobs Started","[grgsh] Number of Jobs Started","[moorh] Number of Jobs Started","[legsh] Number of Jobs Started","[turdo] Number of Jobs Started","[caspl] Number of Jobs Started","[swath] Number of Jobs Started","[lapwi] Number of Jobs Started","[dunli] Number of Jobs Started","[sogsh] Number of Jobs Started","[sancr] Number of Jobs Started","[grath] Number of Jobs Started","[vertera] Number of Jobs Started","[sposa] Number of Jobs Started","[garwa] Number of Jobs Started","[pibgr] Number of Jobs Started","[sarwa] Number of Jobs Started","[proubis] Number of Jobs Started","[noror] Number of Jobs Started","[savsp] Number of Jobs Started","[categ] Number of Jobs Started","[coot1] Number of Jobs Started","[meapi] Number of Jobs Started","[shttr] Number of Jobs Started","[hoowa] Number of Jobs Started","[henha] Number of Jobs Started","[yebsa] Number of Jobs Started","[alpsw] Number of Jobs Started","[corsh] Number of Jobs Started","[crane] Number of Jobs Started","[lanhach] Number of Jobs Started","[boowa] Number of Jobs Started","[crama] Number of Jobs Started","[whimb] Number of Jobs Started","[litst] Number of Jobs Started","[misth] Number of Jobs Started","[shag1] Number of Jobs Started","[blhbu] Number of Jobs Started","[litau] Number of Jobs Started","[aytinis] Number of Jobs Started","[whtsp] Number of Jobs Started","[egygo] Number of Jobs Started","[smew1] Number of Jobs Started","[ybsbu] Number of Jobs Started","[ovenb] Number of Jobs Started","[jackd] Number of Jobs Started","[rolle] Number of Jobs Started","[duswa] Number of Jobs Started","[field] Number of Jobs Started","[pereg] Number of Jobs Started","[whtpl] Number of Jobs Started","[evegr] Number of Jobs Started","[lesre] Number of Jobs Started","[sante] Number of Jobs Started","[siski] Number of Jobs Started","[velsc] Number of Jobs Started","[yebbu] Number of Jobs Started","[yebwa] Number of Jobs Started","[allga] Number of Jobs Started","[chaff] Number of Jobs Started","[ferdu] Number of Jobs Started","[gloib] Number of Jobs Started","[mamwa] Number of Jobs Started","[relpa] Number of Jobs Started","[ribgu] Number of Jobs Started"
+2016-12-22,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,2,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,1,10,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,3,5,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,0,0
+2016-12-28,0,1,0,190,0,0,0,0,147,0,0,9,0,0,0,11,0,3,0,0,0,0,0,12,5,5,0,0,0,0,0,0,0,0,0,0,9,2,0,0,9,0,0,0,0,0,0,0,0,0,0,3,0,0,0,1,0,0,0,0,0,0,1,0,0,0
+2016-12-29,248,12,0,770,0,17,0,13,88,0,0,13,1,0,10,4,50,4,0,0,0,0,0,7,2,5,5,7,0,6,3,1,0,0,0,0,0,1,0,1,0,0,4,7,4,0,0,0,0,0,1,0,1,1,1,0,0,1,1,0,0,1,0,0,0,0
+2016-12-30,19049,3441,1698,675,719,330,0,700,17,90,68,70,3,20,50,0,0,28,12,0,8,8,8,0,6,6,15,8,4,2,5,3,14,14,1,7,2,6,4,0,0,0,4,0,1,0,4,3,3,1,2,0,1,0,0,0,1,1,0,1,0,0,0,0,1,1
+2016-12-31,22244,2359,933,790,281,341,16,0,37,10,24,50,97,26,0,33,0,2,12,4,17,8,8,0,4,5,0,3,4,0,4,3,0,0,8,4,0,2,6,7,0,9,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+2017-01-01,13441,81,0,204,0,292,740,0,19,139,62,0,0,23,0,0,0,8,12,25,1,8,8,2,0,0,0,0,8,8,4,9,0,0,5,0,0,0,0,2,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+---------

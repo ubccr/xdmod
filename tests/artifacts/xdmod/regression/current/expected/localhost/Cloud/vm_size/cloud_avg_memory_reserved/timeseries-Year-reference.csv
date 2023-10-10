@@ -1,0 +1,10 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[1] Average Memory Reserved Weighted By Wall Hours (Bytes)","[2 - 3] Average Memory Reserved Weighted By Wall Hours (Bytes)","[4 - 7] Average Memory Reserved Weighted By Wall Hours (Bytes)"
+2018,4276530145.1301,4299782600.4310,17179869184.0000
+---------

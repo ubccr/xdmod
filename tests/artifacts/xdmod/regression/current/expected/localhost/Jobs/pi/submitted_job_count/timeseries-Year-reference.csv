@@ -1,0 +1,11 @@
+title
+"Number of Jobs Submitted: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Flycatcher, Taiga] Number of Jobs Submitted","[Lark, Calandra] Number of Jobs Submitted","[Warbler, Cetti's] Number of Jobs Submitted","[Moorhen] Number of Jobs Submitted","[Shearwater, Macaronesian] Number of Jobs Submitted","[Tern, Caspian] Number of Jobs Submitted","[Egret, Snowy] Number of Jobs Submitted","[Bufflehead] Number of Jobs Submitted","[Dunlin] Number of Jobs Submitted","[Bittern] Number of Jobs Submitted","[Shearwater, Balearic] Number of Jobs Submitted","[Chiffchaff, Iberian] Number of Jobs Submitted","[Dowitcher, Short-billed] Number of Jobs Submitted","[Fulmar] Number of Jobs Submitted","[Goose, Red-breasted] Number of Jobs Submitted","[Jackdaw] Number of Jobs Submitted","[Bluetail, Red-flanked] Number of Jobs Submitted","[Fieldfare] Number of Jobs Submitted","[Warbler, Hooded] Number of Jobs Submitted","[Chaffinch] Number of Jobs Submitted","[Scaup, Lesser] Number of Jobs Submitted","[Harrier, Hen] Number of Jobs Submitted","[White, Great] Number of Jobs Submitted","[Bunting, Ortolan] Number of Jobs Submitted","[Petrel, Fea's] Number of Jobs Submitted","[Blackbird] Number of Jobs Submitted","[Kestrel, Lesser] Number of Jobs Submitted","[Martin, Sand] Number of Jobs Submitted","[Spotted, Great] Number of Jobs Submitted","[Accentor, Alpine] Number of Jobs Submitted","[Nuthatch] Number of Jobs Submitted","[Smew] Number of Jobs Submitted","[Swift, Little] Number of Jobs Submitted","[Thrush, Hermit] Number of Jobs Submitted","[Warbler, Blackpoll] Number of Jobs Submitted","[Warbler, Savi's] Number of Jobs Submitted","[Dotterel] Number of Jobs Submitted","[Gull, Glaucous-winged] Number of Jobs Submitted","[Gull, Yellow-legged] Number of Jobs Submitted","[Shearwater, Great] Number of Jobs Submitted","[Yellowthroat, Common] Number of Jobs Submitted"
+2016,41560,6563,2633,2425,1000,762,16,289,100,92,146,101,56,72,46,66,53,32,29,6,17,20,15,12,15,14,11,8,10,9,8,7,3,3,3,2,1,1,1,1,1
+2017,11511,380,0,204,0,1,677,19,64,62,0,0,28,0,23,0,0,12,8,25,8,0,5,4,0,0,0,2,0,0,0,0,1,0,0,0,0,0,0,0,0
+---------

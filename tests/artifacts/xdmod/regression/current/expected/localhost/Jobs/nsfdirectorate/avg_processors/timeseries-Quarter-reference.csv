@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Biological Sciences] Job Size: Per Job (Core Count)","[Engineering] Job Size: Per Job (Core Count)","[Humanities/Arts] Job Size: Per Job (Core Count)","[Social, Behavioral, and Economic Sciences] Job Size: Per Job (Core Count)","[Mathematical and Physical Sciences] Job Size: Per Job (Core Count)","[Geosciences] Job Size: Per Job (Core Count)","[Computer and Information Science and Engineering] Job Size: Per Job (Core Count)"
+"2016 Q4",27.5440,11.2471,11.0909,9.0258,8.4469,1.7194,1.1430
+"2017 Q1",32.0520,12.9811,10.4000,9.1618,11.5330,11.3386,1.0994
+---------

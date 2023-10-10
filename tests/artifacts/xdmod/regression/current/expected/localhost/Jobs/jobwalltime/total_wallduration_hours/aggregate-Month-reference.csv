@@ -1,0 +1,17 @@
+title
+"Wall Hours: Total: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Wall Hours: Total"
+"0 - 1s",0.0000
+"1 - 30s",71.5553
+"30s - 30min",4769.1372
+"30 - 60min",5607.3167
+"1 - 5hr",9742.1692
+"5 - 10hr",10535.8467
+"10 - 18hr",3965.5733
+18+hr,93285.2081
+---------

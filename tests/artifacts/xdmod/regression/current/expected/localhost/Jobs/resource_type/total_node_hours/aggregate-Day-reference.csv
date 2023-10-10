@@ -1,0 +1,10 @@
+title
+"Node Hours: Total: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Node Hours: Total"
+"High-performance computing",156303.7475
+---------

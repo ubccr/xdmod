@@ -361,7 +361,7 @@ class DataWarehouseInitializer
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
 
-        $this->aggregateCloudResourceSpecs($lastModifiedStartDate);
+        //$this->aggregateCloudResourceSpecs($lastModifiedStartDate);
 
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
@@ -447,7 +447,7 @@ class DataWarehouseInitializer
         }
 
         Utilities::runEtlPipeline(
-            array('jobs-xdw-aggregate'),
+            array('aggregate-resource-specs', 'jobs-xdw-aggregate'),
             $this->logger,
             array('last-modified-start-date' => $lastModifiedStartDate)
         );

@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[frearson] Job Size: Per Job (Core Count)","[pozidriv] Job Size: Per Job (Core Count)","[phillips] Job Size: Per Job (Core Count)","[mortorq] Job Size: Per Job (Core Count)","[robertson] Job Size: Per Job (Core Count)"
+2016,12.1502,9.4049,8.1449,8.0171,3.9286
+2017,12.0068,11.1505,8.4037,8.1912,8.1786
+---------

@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Node Hours: Total","[8] Node Hours: Total","[12] Node Hours: Total","[6] Node Hours: Total","[4] Node Hours: Total","[2] Node Hours: Total","[7] Node Hours: Total","[28] Node Hours: Total","[5] Node Hours: Total","[14] Node Hours: Total","[20] Node Hours: Total","[3] Node Hours: Total","[16] Node Hours: Total","[9] Node Hours: Total","[24] Node Hours: Total"
+"2016 Q4",106852.1672,14143.4178,8479.1100,2567.3283,1439.9289,1333.0483,1387.8297,1057.5678,659.8722,282.2633,180.1278,58.4275,3.2356,2.3450,0.5133
+"2017 Q1",16498.4856,776.4956,0,122.7267,100.9644,197.5100,0,0,108.2153,0,0.4333,50.5650,1.1689,0,0
+---------

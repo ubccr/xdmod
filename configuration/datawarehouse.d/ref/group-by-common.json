@@ -301,7 +301,7 @@
                 "short_name": "REPLACE(resourcefact.code, '-', ' ')"
             },
             "where": [
-                "resourcespecs.processors IS NOT NULL"
+                "resourcespecs.cpu_processor_count IS NOT NULL"
             ]
         },
         "category": "Administrative",

@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] CPU Hours: Per Job","[1 - 30s] CPU Hours: Per Job","[30s - 30min] CPU Hours: Per Job","[30 - 60min] CPU Hours: Per Job","[1 - 5hr] CPU Hours: Per Job","[5 - 10hr] CPU Hours: Per Job","[10 - 18hr] CPU Hours: Per Job","[18+hr] CPU Hours: Per Job"
+"2016 Q4",0,0.04744826,1.54736848,6.82270633,13.56120300,13.80149317,148.41040217,210.80056448
+"2017 Q1",0.00000000,0.02343898,1.44758820,6.64116915,19.32226478,46.44864583,87.24596810,28.22646522
+---------

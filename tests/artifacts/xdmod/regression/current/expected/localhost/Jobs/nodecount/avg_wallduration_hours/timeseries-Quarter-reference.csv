@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[12] Wall Hours: Per Job","[28] Wall Hours: Per Job","[5] Wall Hours: Per Job","[6] Wall Hours: Per Job","[7] Wall Hours: Per Job","[8] Wall Hours: Per Job","[14] Wall Hours: Per Job","[2] Wall Hours: Per Job","[20] Wall Hours: Per Job","[3] Wall Hours: Per Job","[4] Wall Hours: Per Job","[1] Wall Hours: Per Job","[9] Wall Hours: Per Job","[16] Wall Hours: Per Job","[24] Wall Hours: Per Job"
+"2016 Q4",64.23568182,37.77027778,26.39488889,32.91446581,22.02904321,24.55454475,10.08083333,8.33155208,9.00638889,3.89516667,7.05847495,1.90964305,0.26055556,0.06740741,0.02138889
+"2017 Q1",0,0,10.82152778,2.55680556,0,2.20595328,0,1.28253247,0.02166667,3.37100000,0.52585648,1.00729505,0,0.03652778,0
+---------

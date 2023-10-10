@@ -1,0 +1,20 @@
+title
+"Job Size: Per Job (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[ovenb] Job Size: Per Job (Core Count)","[litst] Job Size: Per Job (Core Count)","[ybsbu] Job Size: Per Job (Core Count)","[swath] Job Size: Per Job (Core Count)","[sante] Job Size: Per Job (Core Count)","[savsp] Job Size: Per Job (Core Count)"
+2016-12-23,0,0,0,0,1.0000,0
+2016-12-24,0,0,0,0,1.0000,0
+2016-12-25,0,0,0,0,1.0000,0
+2016-12-26,0,0,0,0,1.0000,0
+2016-12-27,16.0000,0,16.0000,0,1.0000,0
+2016-12-28,16.0000,0,16.0000,0,1.0000,0
+2016-12-29,16.0000,0,9.6000,8.6154,1.0000,0
+2016-12-30,16.0000,13.1429,9.3333,4.0842,1.0000,1.0000
+2016-12-31,16.0000,16.0000,8.0000,64.0000,0,1.0000
+2017-01-01,16.0000,0,0,0,0,1.0000
+---------

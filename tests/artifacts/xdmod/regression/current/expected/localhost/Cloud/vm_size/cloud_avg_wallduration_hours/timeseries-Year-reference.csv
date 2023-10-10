@@ -1,0 +1,10 @@
+title
+"Wall Hours: Per Session: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[1] Wall Hours: Per Session","[2 - 3] Wall Hours: Per Session","[4 - 7] Wall Hours: Per Session"
+2018,20.28904938,41.97077778,35.26453704
+---------

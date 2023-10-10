@@ -1,0 +1,14 @@
+title
+"Job Size: Min (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Job Size: Min (Core Count)"
+frearson,1
+mortorq,1
+phillips,1
+pozidriv,1
+robertson,1
+---------

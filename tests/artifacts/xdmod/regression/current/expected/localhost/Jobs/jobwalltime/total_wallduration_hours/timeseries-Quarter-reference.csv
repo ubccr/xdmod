@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Wall Hours: Total","[1 - 30s] Wall Hours: Total","[30s - 30min] Wall Hours: Total","[30 - 60min] Wall Hours: Total","[1 - 5hr] Wall Hours: Total","[5 - 10hr] Wall Hours: Total","[10 - 18hr] Wall Hours: Total","[18+hr] Wall Hours: Total"
+"2016 Q4",0,46.8369,4460.1744,5194.7856,7527.7242,10080.2467,2801.2078,81087.2400
+"2017 Q1",0.0000,24.7183,308.9628,412.5311,2214.4450,455.6000,1164.3656,12197.9681
+---------

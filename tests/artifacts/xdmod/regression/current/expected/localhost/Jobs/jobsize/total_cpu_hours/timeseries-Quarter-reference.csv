@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] CPU Hours: Total","[2] CPU Hours: Total","[3 - 4] CPU Hours: Total","[5 - 8] CPU Hours: Total","[9 - 16] CPU Hours: Total","[17 - 32] CPU Hours: Total","[33 - 64] CPU Hours: Total","[65 - 128] CPU Hours: Total","[129 - 256] CPU Hours: Total","[257 - 512] CPU Hours: Total"
+"2016 Q4",80136.0169,1483.2600,4550.1367,85540.3508,165392.6678,59504.9522,26059.7411,212969.7711,122442.1289,12696.9733
+"2017 Q1",12478.1586,35.2583,611.3989,11836.7878,29659.7367,3002.8122,3645.9056,8500.7667,9.0133,0
+---------

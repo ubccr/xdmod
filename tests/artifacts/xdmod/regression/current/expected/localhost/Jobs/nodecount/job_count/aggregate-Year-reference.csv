@@ -1,0 +1,24 @@
+title
+"Number of Jobs Ended: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Node Count","Number of Jobs Ended"
+1,70898
+2,147
+8,105
+4,97
+6,20
+12,11
+3,9
+7,9
+5,5
+16,5
+14,2
+20,2
+9,1
+24,1
+28,1
+---------

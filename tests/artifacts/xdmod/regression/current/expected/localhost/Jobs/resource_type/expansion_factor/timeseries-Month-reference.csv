@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[High-performance computing] User Expansion Factor"
+2016-12,3.1481
+2017-01,2.7546
+---------

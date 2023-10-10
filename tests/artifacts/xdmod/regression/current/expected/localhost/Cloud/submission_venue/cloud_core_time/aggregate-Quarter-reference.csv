@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by Submission Venue"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"Submission Venue","CPU Hours: Total"
+"OpenStack API",1755.8894
+---------

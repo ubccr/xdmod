@@ -1,0 +1,19 @@
+title
+"Job Size: Min (Core Count): by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Job Size: Min (Core Count)"
+1,1
+2,2
+"3 - 4",4
+"5 - 8",5
+"9 - 16",12
+"17 - 32",20
+"33 - 64",36
+"65 - 128",72
+"129 - 256",144
+"257 - 512",288
+---------

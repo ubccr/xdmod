@@ -1,0 +1,17 @@
+title
+"Number of Jobs Submitted: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Number of Jobs Submitted"
+"0 - 1s",12295
+"1 - 30s",18171
+"30s - 30min",17734
+"30 - 60min",2604
+"1 - 5hr",11469
+"5 - 10hr",1836
+"10 - 18hr",282
+18+hr,25
+---------

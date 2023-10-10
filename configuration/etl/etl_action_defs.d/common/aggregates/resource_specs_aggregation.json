@@ -1,0 +1,71 @@
+{
+    "#": "Aggregation of resource specification data",
+        "table_definition": {
+            "$ref": "${table_definition_dir}/cloud_common/resourcespecsfact_by_.json#/table_definition"
+        },
+        "aggregation_period_query": {
+            "overseer_restrictions": {
+                "last_modified_start_date": "last_modified >= ${VALUE}",
+                "last_modified_end_date": "last_modified <= ${VALUE}",
+                "include_only_resource_codes": "r.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
+            }
+        },
+        "destination_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "r.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
+            }
+        },
+        "source_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "r.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
+            },
+            "records": {
+                "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+                "year": "${:YEAR_VALUE}",
+                "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+                "resource_id": "r.resource_id",
+                "core_time_available": "COALESCE(SUM(${wallduration} * r.cpu_processor_count * ra.percent / 100.0), 0)",
+                "gpu_time_available": "COALESCE(SUM(${wallduration} * r.gpu_processor_count * ra.percent / 100.0), 0)",
+                "su_available": "SUM(r.su_available_per_day)",
+                "cpu_processors_available": "SUM(r.cpu_processor_count)",
+                "gpu_processors_available": "SUM(r.gpu_processor_count)"
+            },
+            "groupby": [
+              "${AGGREGATION_UNIT}_id",
+              "year",
+              "${AGGREGATION_UNIT}",
+              "resource_id"
+            ],
+            "joins":[
+              {
+                  "name": "resourcespecs",
+                  "alias": "r",
+                  "schema": "${SOURCE_SCHEMA}"
+              },
+              {
+                  "name": "resource_allocated",
+                  "alias": "ra",
+                  "schema": "${SOURCE_SCHEMA}",
+                  "on": "r.resource_id = ra.resource_id AND r.start_day_id = ra.start_day_id AND r.end_day_id = ra.end_day_id"
+              }
+            ],
+            "where": [
+              "(r.start_day_id <= ${:PERIOD_END_DAY_ID} AND r.end_day_id >= ${:PERIOD_START_DAY_ID})"
+          ],
+          "macros": [{
+              "name": "wallduration",
+              "file": "statistic_ratio_case.sql",
+              "args": {
+                  "statistic": "(r.end_date_ts - r.start_date_ts)",
+                  "max": "${:PERIOD_SECONDS}",
+                  "src_start_ts": "r.start_date_ts",
+                  "src_end_ts": "r.end_date_ts",
+                  "dest_start_ts": "${:PERIOD_START_TS}",
+                  "dest_end_ts": "${:PERIOD_END_TS}"
+              }
+          }]
+     }
+}

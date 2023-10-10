@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[24] User Expansion Factor","[16] User Expansion Factor","[20] User Expansion Factor","[2] User Expansion Factor","[1] User Expansion Factor","[4] User Expansion Factor","[8] User Expansion Factor","[9] User Expansion Factor","[6] User Expansion Factor","[3] User Expansion Factor","[5] User Expansion Factor","[12] User Expansion Factor","[28] User Expansion Factor","[14] User Expansion Factor","[7] User Expansion Factor"
+2016,411.3377,121.9382,3.8567,2.8687,3.5511,1.9658,2.2390,1.3753,1.3394,1.3338,1.2887,1.1237,1.1213,1.0980,1.0000
+2017,0,270.5209,1677.0769,7.3785,2.5092,21.0553,3.6678,0,1.1090,1.3084,1.0572,0,0,0,0
+---------

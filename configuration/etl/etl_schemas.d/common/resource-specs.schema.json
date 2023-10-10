@@ -9,19 +9,34 @@
             "description": "Resource name/code",
             "maxLength": 64
         },
-        "nodes": {
+        "cpu_node_count": {
             "type": "integer",
-            "description": "Number of nodes in resource",
+            "description": "Number of CPU nodes in resource",
             "minimum": 0
         },
-        "processors": {
+        "cpu_processor_count": {
             "type": "integer",
-            "description": "Number of processors/cores in resource",
+            "description": "Number of CPU processors/cores in resource",
             "minimum": 0
         },
-        "ppn": {
+        "cpu_ppn": {
             "type": "number",
-            "description": "Number of processors per node in resource",
+            "description": "Number of CPU processors per node in resource",
+            "minimum": 0
+        },
+        "gpu_node_count": {
+            "type": "integer",
+            "description": "Number of GPU nodes in resource",
+            "minimum": 0
+        },
+        "gpu_processor_count": {
+            "type": "integer",
+            "description": "Number of GPU processors/cores in resource",
+            "minimum": 0
+        },
+        "gpu_ppn": {
+            "type": "number",
+            "description": "Number of GPU processors per node in resource",
             "minimum": 0
         },
         "start_date": {
@@ -48,7 +63,7 @@
     },
     "required": [
         "resource",
-        "nodes",
-        "processors"
+        "cpu_node_count",
+        "cpu_processor_count"
     ]
 }

@@ -123,8 +123,11 @@ class ResourcesSetup extends SubMenuSetupItem
         // Look up the resource type id for the string that was entered
 
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+        $availableAllocatableTypes = XdmodConfiguration::assocArrayFactory('resource_allocatable_types.json', CONFIG_DIR)['resource_allocatable_types'];
 
         $typeAbbrev = 'UNK';
+        $allocatableTypeAbbrev = 'UNK';
+
         foreach($availableTypes as $abbrev => $type) {
             if (strtolower($abbrev) === $resource['type']) {
                 $typeAbbrev = $abbrev;
@@ -132,17 +135,29 @@ class ResourcesSetup extends SubMenuSetupItem
             }
         }
 
+        foreach($availableAllocatableTypes as $abbrev => $type) {
+            if (strtolower($abbrev) === $resource['allocatable_type']) {
+                $allocatableTypeAbbrev = $abbrev;
+                break;
+            }
+        }
+
         $this->resources[] = array(
             'resource'         => $resource['resource'],
-            'resource_type' => $typeAbbrev,
+            'resource_type'    => $typeAbbrev,
+            'allocation_type'  => $allocatableTypeAbbrev,
             'name'             => $resource['name'],
         );
 
         $this->resourceSpecs[] = array(
-            'resource'         => $resource['resource'],
-            'processors'       => $resource['processors'],
-            'nodes'            => $resource['nodes'],
-            'ppn'              => $resource['ppn'],
+            'resource'            => $resource['resource'],
+            'cpu_processor_count' => $resource['cpu_processor_count'],
+            'cpu_node_count'      => $resource['cpu_node_count'],
+            'cpu_ppn'             => $resource['cpu_ppn'],
+            'gpu_processor_count' => $resource['gpu_processor_count'],
+            'gpu_node_count'      => $resource['gpu_node_count'],
+            'gpu_ppn'             => $resource['gpu_ppn'],
+            'start_date'          => $resource['start_date']
         );
     }
 

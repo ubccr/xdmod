@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[2 - 4 GB] CPU Hours: Total","[8 - 16 GB] CPU Hours: Total","[< 2 GB] CPU Hours: Total","[4 - 8 GB] CPU Hours: Total","[32 - 64 GB] CPU Hours: Total"
+2018-04,1325.4892,423.1744,6.6347,0.4706,0.1206
+---------

@@ -1,0 +1,20 @@
+title
+"Number of Users: Active: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Galactic Astronomy] Number of Users: Active","[Physical Chemistry] Number of Users: Active","[Quantum Electronics, Waves, and Beams] Number of Users: Active","[Stellar Astronomy and Astrophysics] Number of Users: Active","[Arts] Number of Users: Active","[Mechanics and Materials] Number of Users: Active","[Biophysics] Number of Users: Active","[Cell Biology] Number of Users: Active","[Decision, Risk, and Management Science] Number of Users: Active","[Experimental Systems] Number of Users: Active","[Organic and Macromolecular Chemistry] Number of Users: Active","[Sociology] Number of Users: Active","[Solid State Chemistry and Polymers] Number of Users: Active","[Statistics and Probability] Number of Users: Active","[Algebra and Number Theory] Number of Users: Active","[Biochemistry and Molecular Structure and Function] Number of Users: Active","[Computer and Computation Theory] Number of Users: Active","[Design and Computer-Integrated Engineering] Number of Users: Active","[Design, Tools, and Test] Number of Users: Active","[Economics] Number of Users: Active","[Emerging Technologies Initiation] Number of Users: Active","[Extragalactic Astronomy and Cosmology] Number of Users: Active","[Fluid, Particulate, and Hydraulic Systems] Number of Users: Active","[Geology and Paleontology] Number of Users: Active","[Geophysics] Number of Users: Active","[Global Atmospheric Research] Number of Users: Active","[Law and Social Sciences] Number of Users: Active","[Metals, Ceramics, and Electronic Materials] Number of Users: Active","[Operations Research and Production Systems] Number of Users: Active","[Polar Aeronomy and Astrophysics] Number of Users: Active","[Polar Meteorology] Number of Users: Active","[Polar Ocean and Climate Systems] Number of Users: Active","[Seismology] Number of Users: Active","[Solid-State and Microstructures] Number of Users: Active","[Structures and Building Systems] Number of Users: Active","[Systematic and Population Biology] Number of Users: Active","[Systems Prototyping and Fabrication] Number of Users: Active","[Tectonics] Number of Users: Active","[Theoretical Physics] Number of Users: Active","[Volcanology and Mantle Geochemistry] Number of Users: Active"
+2016-12-22,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,1,2,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,1,2,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,3,2,1,1,0,0,2,1,0,0,0,1,2,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-28,3,4,1,1,0,0,2,1,0,1,1,1,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,1
+2016-12-29,4,4,2,3,2,0,2,2,1,2,1,2,2,2,1,1,1,0,0,0,1,0,0,0,0,1,0,1,1,1,0,0,1,1,1,0,1,0,1,1
+2016-12-30,6,4,4,4,3,3,2,2,2,2,2,2,2,2,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1
+2016-12-31,5,4,4,4,3,3,2,1,1,2,2,2,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0
+2017-01-01,2,4,3,3,2,3,2,1,0,1,1,2,0,1,1,0,0,1,0,1,1,0,0,1,0,1,0,0,1,0,1,1,1,1,0,1,1,0,0,0
+---------

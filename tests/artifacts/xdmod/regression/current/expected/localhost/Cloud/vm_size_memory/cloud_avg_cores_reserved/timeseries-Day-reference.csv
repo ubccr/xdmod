@@ -1,0 +1,22 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[8 - 16 GB] Average Cores Reserved Weighted By Wall Hours","[4 - 8 GB] Average Cores Reserved Weighted By Wall Hours","[2 - 4 GB] Average Cores Reserved Weighted By Wall Hours","[< 2 GB] Average Cores Reserved Weighted By Wall Hours","[32 - 64 GB] Average Cores Reserved Weighted By Wall Hours"
+2018-04-18,4.0000,2.0000,1.0214,1.0000,1.0000
+2018-04-19,0,0,1.1283,1.0000,0
+2018-04-20,0,0,1.3285,0,0
+2018-04-21,0,0,1.2500,0,0
+2018-04-22,0,0,1.2500,0,0
+2018-04-23,0,0,1.2500,0,0
+2018-04-24,0,0,1.2500,0,0
+2018-04-25,0,0,1.2500,0,0
+2018-04-26,4.0000,0,1.2488,0,0
+2018-04-27,4.0000,0,1.2159,1.0000,0
+2018-04-28,4.0000,0,1.0000,0,0
+2018-04-29,4.0000,0,1.0000,0,0
+2018-04-30,4.0000,0,1.0712,0,0
+---------

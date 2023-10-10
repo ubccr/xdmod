@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[20] Wait Hours: Per Job","[8] Wait Hours: Per Job","[2] Wait Hours: Per Job","[16] Wait Hours: Per Job","[4] Wait Hours: Per Job","[24] Wait Hours: Per Job","[12] Wait Hours: Per Job","[5] Wait Hours: Per Job","[6] Wait Hours: Per Job","[28] Wait Hours: Per Job","[1] Wait Hours: Per Job","[3] Wait Hours: Per Job","[14] Wait Hours: Per Job","[9] Wait Hours: Per Job","[7] Wait Hours: Per Job"
+2016-12,25.72861111,30.53449074,15.67293056,8.15212963,6.81899782,8.77666667,7.94618687,7.86661111,11.17309829,4.58277778,4.93919225,1.30061111,0.98805556,0.09777778,0.00055556
+2017-01,36.31500000,7.60545455,9.27791874,9.84500000,11.00233696,0,0,0.00000000,0.31769841,0,1.63219083,1.29909722,0,0,0
+---------

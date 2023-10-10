@@ -1,0 +1,75 @@
+title
+"Wall Hours: Per Job: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
+Chaffinch,120.00722222,
+"Tern, Sandwich",87.43875000,
+Ovenbird,82.76488889,
+"Warbler, Moltoni's",72.00694444,
+"Scaup, Lesser",72.00432099,
+Siskin,70.03500000,
+"Duck, Ferruginous",70.00777778,
+"Pipit, Meadow",63.57475694,
+"Warbler, Garden",52.33125262,
+Lapwing,49.85089556,
+"Sapsucker, Yellow-bellied",49.75942901,
+"Ibis, Glossy",48.00666667,
+"Treecreeper, Short-toed",46.66083333,
+"Plover, White-tailed",44.13648148,
+"Thrush, Mistle",39.37916667,
+"Bunting, Yellow-breasted",38.73828704,
+"Scoter, Velvet",37.18166667,
+Smew,36.49007937,
+"Gull, Ring-billed",31.90972222,
+"Shearwater, Cory's",27.37690972,
+"Sparrow, White-throated",25.49490741,
+Moorhen,25.48654262,
+"Bunting, Yellow-browed",25.17486111,
+Peregrine,24.84777778,
+Jackdaw,21.84694444,
+"Warbler, Hooded",21.83599206,
+Shag,20.71641414,
+"Redpoll, Lesser",18.89791667,
+"Sandpiper, Spotted",16.91415278,
+"Warbler, Booted",16.76537037,
+"Goose, Egyptian",15.78250000,
+"Warbler, Dusky",15.43750000,2.949516142225878
+Fieldfare,14.37398148,
+Crane,12.67826389,
+"Grosbeak, Evening",10.08083333,5.736664622204642
+"Grebe, Pied-billed",10.00406111,
+"Warbler, Sardinian",9.41403086,1.0834302290958004
+"Oriole, Baltimore",9.12110185,1.9524242496702076
+"Grey, Lesser",8.59051583,
+"Thrush, Grey-cheeked",7.94699670,0.252707620848999
+"Crane, Sandhill",7.43894097,0.6293211331105432
+"Auk, Little",7.02769444,1.7557857088278381
+Whimbrel,6.17696429,0.650411636248519
+"Bunting, Black-headed",5.98691667,0.9781127830854605
+"Harrier, Hen",5.04208333,1.412736659063767
+Roller,4.58416667,1.0571325984155044
+"Warbler, Yellow-browed",4.51402778,1.3866381241776238
+"Shrike, Long-tailed",3.89088542,1.5421931694132969
+"Plover, Caspian",2.10733760,0.04730850999433886
+"Dove, Turtle",1.44922324,0.09512756747619289
+Coot,0.97185185,0.0004785195136278676
+"Martin, Purple",0.97183642,0.0003786808428516845
+"Egret, Cattle",0.97148148,0.0005075905675059155
+"Grey, Southern",0.88155664,0.09909785167735996
+"Warbler, Golden-winged",0.81574879,0.33900408606509713
+"Swift, Alpine",0.66013889,0.2379191991153246
+"Thrush, Swainson's",0.56853008,0.041637228742746606
+"Stint, Little",0.33320707,0.09324722160395126
+"Bunting, Reed",0.29758033,0.026000891408928004
+Honey-buzzard,0.28378820,0.002129439336752145
+"Gallinule, Allen's",0.26055556,0
+Dunlin,0.18926081,0.027954377835160745
+"Martin, Crag",0.08049603,0.022331879009996006
+"Partridge, Red-legged",0.06500000,0
+"Sparrow, Savannah",0.02439103,0.001692897033294295
+"Grey, Great",0.02076714,0.0006447632527319155
+---------

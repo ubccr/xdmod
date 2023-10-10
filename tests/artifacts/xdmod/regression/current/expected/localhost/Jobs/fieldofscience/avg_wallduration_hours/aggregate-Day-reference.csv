@@ -1,0 +1,49 @@
+title
+"Wall Hours: Per Job: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
+"Statistics and Probability",52.69561728,
+"Operations Research and Production Systems",49.85089556,
+"Volcanology and Mantle Geochemistry",48.00666667,
+"Theoretical Physics",44.13648148,
+"Algebra and Number Theory",39.37916667,
+"Quantum Electronics, Waves, and Beams",37.79727273,
+"Metals, Ceramics, and Electronic Materials",36.49007937,
+"Organic and Macromolecular Chemistry",26.34404444,
+"Design and Computer-Integrated Engineering",25.49490741,
+"Systems Prototyping and Fabrication",25.48654262,
+"Polar Aeronomy and Astrophysics",25.17486111,
+"Experimental Systems",24.23206456,
+"Cell Biology",21.20474151,
+"Stellar Astronomy and Astrophysics",18.55493056,
+Arts,17.27322391,
+"Biochemistry and Molecular Structure and Function",16.76537037,
+"Structures and Building Systems",15.78250000,
+"Fluid, Particulate, and Hydraulic Systems",15.43750000,2.949516142225878
+Biophysics,12.69807348,1.9501880028878633
+"Emerging Technologies Initiation",12.67826389,
+Tectonics,8.59051583,
+"Solid-State and Microstructures",7.94699670,0.252707620848999
+"Solid State Chemistry and Polymers",7.84637557,0.6422820715080719
+Seismology,7.02769444,1.7557857088278381
+"Extragalactic Astronomy and Cosmology",5.98691667,0.9781127830854605
+"Computer and Computation Theory",5.04208333,1.412736659063767
+"Geology and Paleontology",4.58416667,1.0571325984155044
+"Global Atmospheric Research",4.51402778,1.3866381241776238
+"Polar Ocean and Climate Systems",2.10733760,0.04730850999433886
+"Galactic Astronomy",1.61309706,0.16764615169441738
+"Mechanics and Materials",0.97173942,0.00025764463006399947
+"Polar Meteorology",0.88155664,0.09909785167735996
+Economics,0.81574879,0.33900408606509713
+"Physical Chemistry",0.55186616,0.029985935034615736
+Sociology,0.29997993,0.003221245083552797
+"Design, Tools, and Test",0.26055556,0
+"Systematic and Population Biology",0.18926081,0.027954377835160745
+Geophysics,0.08049603,0.022331879009996006
+"Law and Social Sciences",0.06500000,0
+"Decision, Risk, and Management Science",0.02840866,0.006969739306507408
+---------

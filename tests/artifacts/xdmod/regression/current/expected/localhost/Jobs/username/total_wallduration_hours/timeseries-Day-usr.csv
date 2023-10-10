@@ -1,0 +1,13 @@
+title
+"Wall Hours: Total: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] Wall Hours: Total"
+2016-12-30,9.4878
+2016-12-31,42.3756
+2017-01-01,34.6142
+---------

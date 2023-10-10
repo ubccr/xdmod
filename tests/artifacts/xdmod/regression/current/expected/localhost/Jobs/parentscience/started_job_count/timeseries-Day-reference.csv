@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Social and Economic Science] Number of Jobs Started","[Chemistry] Number of Jobs Started","[Microelectronic Information Processing Systems] Number of Jobs Started","[Earth Sciences] Number of Jobs Started","[Polar Programs] Number of Jobs Started","[Astronomical Sciences] Number of Jobs Started","[Design and Manufacturing Systems] Number of Jobs Started","[Environmental Biology] Number of Jobs Started","[Electrical and Communication Systems] Number of Jobs Started","[Materials Research] Number of Jobs Started","[Molecular Biosciences] Number of Jobs Started","[Mechanical and Structural Systems] Number of Jobs Started","[Arts] Number of Jobs Started","[Mathematical Sciences] Number of Jobs Started","[Computer and Computation Research] Number of Jobs Started","[Chemical, Thermal Systems] Number of Jobs Started","[Physics] Number of Jobs Started","[Atmospheric Sciences] Number of Jobs Started"
+2016-12-22,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0
+2016-12-27,1,10,0,0,0,6,0,0,3,3,7,0,0,1,0,0,0,0
+2016-12-28,0,15,195,1,0,1,147,0,12,9,5,0,0,20,0,0,3,0
+2016-12-29,256,34,781,1,1,20,88,0,12,20,52,4,11,4,5,0,0,1
+2016-12-30,20777,3809,684,736,69,723,17,90,13,71,20,32,54,2,15,3,0,0
+2016-12-31,23206,2708,795,288,40,36,46,10,105,50,8,28,1,33,0,0,0,0
+2017-01-01,13464,389,212,3,802,6,19,139,16,0,25,28,0,0,0,0,0,1
+---------

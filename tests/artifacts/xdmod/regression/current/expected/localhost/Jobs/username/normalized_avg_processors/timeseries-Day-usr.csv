@@ -1,0 +1,13 @@
+title
+"Job Size: Normalized (% of Total Cores): by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] Job Size: Normalized (% of Total Cores)"
+2016-12-30,1.800000000
+2016-12-31,1.300000000
+2017-01-01,1.157142857
+---------

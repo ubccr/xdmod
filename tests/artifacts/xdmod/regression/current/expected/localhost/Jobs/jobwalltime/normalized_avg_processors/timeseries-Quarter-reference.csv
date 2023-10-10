@@ -1,0 +1,11 @@
+title
+"Job Size: Normalized (% of Total Cores): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Job Size: Normalized (% of Total Cores)","[1 - 30s] Job Size: Normalized (% of Total Cores)","[30s - 30min] Job Size: Normalized (% of Total Cores)","[30 - 60min] Job Size: Normalized (% of Total Cores)","[1 - 5hr] Job Size: Normalized (% of Total Cores)","[5 - 10hr] Job Size: Normalized (% of Total Cores)","[10 - 18hr] Job Size: Normalized (% of Total Cores)","[18+hr] Job Size: Normalized (% of Total Cores)"
+"2016 Q4",0,0.039014039,0.042910898,0.071625348,0.040512620,0.014461974,0.071440217,0.021374761
+"2017 Q1",0.050929608,0.043970701,0.053587163,0.055731343,0.051557239,0.061226852,0.060829208,0.014789871
+---------

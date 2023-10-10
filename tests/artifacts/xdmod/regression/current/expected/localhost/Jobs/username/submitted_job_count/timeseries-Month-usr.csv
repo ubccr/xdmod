@@ -1,0 +1,12 @@
+title
+"Number of Jobs Submitted: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[whimb] Number of Jobs Submitted"
+2016-12,9
+2017-01,5
+---------

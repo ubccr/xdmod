@@ -1,0 +1,10 @@
+title
+"Number of Jobs Submitted: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Number of Jobs Submitted"
+"High-performance computing",64416
+---------

@@ -1,0 +1,11 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/resource-allocatable-type.json"
+    },
+    "destination_record_map": {
+        "staging_resource_allocatable_type": {
+            "resource_allocatable_type_description": "description",
+            "resource_allocatable_type_abbrev": "abbrev"
+        }
+    }
+}

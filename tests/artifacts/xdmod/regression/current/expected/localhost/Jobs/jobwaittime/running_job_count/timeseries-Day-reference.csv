@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[0 - 1s] Number of Jobs Running","[1 - 30s] Number of Jobs Running","[30s - 30min] Number of Jobs Running","[30 - 60min] Number of Jobs Running","[1 - 5hr] Number of Jobs Running","[5 - 10hr] Number of Jobs Running","[10 - 18hr] Number of Jobs Running","[18+hr] Number of Jobs Running"
+2016-12-22,0,1,0,0,0,1,0,0
+2016-12-23,0,1,0,0,0,2,0,0
+2016-12-24,0,1,0,0,0,2,0,0
+2016-12-25,0,1,1,0,0,2,0,2
+2016-12-26,0,6,1,0,0,2,0,2
+2016-12-27,9,14,2,0,0,2,0,15
+2016-12-28,12,66,299,1,21,7,1,43
+2016-12-29,114,300,1122,5,65,9,4,121
+2016-12-30,5621,8420,5561,1204,6175,419,41,1414
+2016-12-31,4424,5067,8508,1373,6389,2735,183,924
+2017-01-01,2413,5059,5817,141,1277,966,427,466
+---------

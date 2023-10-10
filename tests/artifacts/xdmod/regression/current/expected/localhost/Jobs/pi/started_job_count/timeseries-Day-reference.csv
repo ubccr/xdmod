@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Flycatcher, Taiga] Number of Jobs Started","[Lark, Calandra] Number of Jobs Started","[Warbler, Cetti's] Number of Jobs Started","[Moorhen] Number of Jobs Started","[Shearwater, Macaronesian] Number of Jobs Started","[Tern, Caspian] Number of Jobs Started","[Egret, Snowy] Number of Jobs Started","[Bufflehead] Number of Jobs Started","[Dunlin] Number of Jobs Started","[Bittern] Number of Jobs Started","[Shearwater, Balearic] Number of Jobs Started","[Chiffchaff, Iberian] Number of Jobs Started","[Dowitcher, Short-billed] Number of Jobs Started","[Fulmar] Number of Jobs Started","[Goose, Red-breasted] Number of Jobs Started","[Jackdaw] Number of Jobs Started","[Bluetail, Red-flanked] Number of Jobs Started","[Fieldfare] Number of Jobs Started","[Warbler, Hooded] Number of Jobs Started","[Chaffinch] Number of Jobs Started","[Scaup, Lesser] Number of Jobs Started","[Harrier, Hen] Number of Jobs Started","[White, Great] Number of Jobs Started","[Bunting, Ortolan] Number of Jobs Started","[Petrel, Fea's] Number of Jobs Started","[Blackbird] Number of Jobs Started","[Kestrel, Lesser] Number of Jobs Started","[Martin, Sand] Number of Jobs Started","[Spotted, Great] Number of Jobs Started","[Accentor, Alpine] Number of Jobs Started","[Nuthatch] Number of Jobs Started","[Smew] Number of Jobs Started","[Swift, Little] Number of Jobs Started","[Thrush, Hermit] Number of Jobs Started","[Warbler, Blackpoll] Number of Jobs Started","[Gull, Yellow-legged] Number of Jobs Started","[Warbler, Savi's] Number of Jobs Started","[Dotterel] Number of Jobs Started","[Gull, Glaucous-winged] Number of Jobs Started","[Shearwater, Great] Number of Jobs Started","[Yellowthroat, Common] Number of Jobs Started"
+2016-12-22,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,1,10,0,0,0,5,0,0,0,0,3,0,0,5,0,0,0,3,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+2016-12-28,0,6,0,190,0,0,0,147,0,0,9,0,0,5,0,0,11,12,5,0,9,0,1,0,0,0,9,0,0,0,0,0,0,0,3,0,0,1,0,0,0
+2016-12-29,255,34,1,770,0,18,0,88,0,0,13,1,0,52,0,11,4,8,11,0,0,5,2,3,0,0,0,1,0,0,4,7,0,0,0,1,1,0,0,0,0
+2016-12-30,19057,3805,1699,675,719,716,0,17,90,68,71,3,28,6,20,54,0,5,8,0,4,15,3,5,14,14,2,0,4,0,4,0,3,3,0,0,1,0,1,0,1
+2016-12-31,22247,2704,933,790,281,22,16,37,10,24,50,97,28,4,26,1,33,4,5,4,4,0,8,4,0,0,0,7,6,9,0,0,0,0,0,0,0,0,0,0,0
+2017-01-01,13441,381,0,204,0,1,740,19,139,62,0,0,28,0,23,0,0,12,8,25,8,0,5,4,0,0,0,2,0,0,0,0,1,0,0,1,0,0,0,0,0
+---------

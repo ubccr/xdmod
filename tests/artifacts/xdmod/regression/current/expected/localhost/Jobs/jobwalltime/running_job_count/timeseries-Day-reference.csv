@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[0 - 1s] Number of Jobs Running","[1 - 30s] Number of Jobs Running","[30s - 30min] Number of Jobs Running","[30 - 60min] Number of Jobs Running","[1 - 5hr] Number of Jobs Running","[5 - 10hr] Number of Jobs Running","[10 - 18hr] Number of Jobs Running","[18+hr] Number of Jobs Running"
+2016-12-22,0,0,0,0,0,0,0,2
+2016-12-23,0,0,0,0,0,0,0,3
+2016-12-24,0,0,0,0,0,0,0,3
+2016-12-25,0,0,0,0,0,0,0,6
+2016-12-26,0,0,0,0,0,0,0,11
+2016-12-27,0,0,0,0,0,0,0,42
+2016-12-28,0,0,0,0,0,0,0,450
+2016-12-29,0,2,50,89,153,8,109,1329
+2016-12-30,0,4235,15622,3656,2404,791,167,1980
+2016-12-31,0,3459,15764,5065,2236,1161,97,1821
+2017-01-01,1861,9113,2633,670,1188,72,101,928
+---------

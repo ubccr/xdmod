@@ -1,0 +1,11 @@
+title
+"Number of Jobs Submitted: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[black] Number of Jobs Submitted","[white] Number of Jobs Submitted","[croutons] Number of Jobs Submitted","[nann] Number of Jobs Submitted","[brown] Number of Jobs Submitted","[potbrood] Number of Jobs Submitted","[pikelet] Number of Jobs Submitted","[cornbread] Number of Jobs Submitted","[crumpet] Number of Jobs Submitted","[brioche] Number of Jobs Submitted","[bannock] Number of Jobs Submitted","[roti] Number of Jobs Submitted","[panettone] Number of Jobs Submitted","[focaccia] Number of Jobs Submitted","[chapti] Number of Jobs Submitted","[pita] Number of Jobs Submitted","[pumpernickel] Number of Jobs Submitted","[barm] Number of Jobs Submitted"
+2016-12,46182,8978,717,16,64,62,53,44,13,20,8,18,15,1,8,6,3,1
+2017-01,8033,4462,293,150,28,23,0,1,21,0,10,0,0,12,0,0,1,0
+---------

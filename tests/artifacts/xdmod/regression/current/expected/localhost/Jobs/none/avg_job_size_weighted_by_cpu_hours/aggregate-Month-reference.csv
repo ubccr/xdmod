@@ -1,0 +1,10 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count)"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Summary,"Job Size: Weighted By CPU Hours (Core Count)"
+Screwdriver,65.6161
+---------

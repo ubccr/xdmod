@@ -81,6 +81,13 @@
                 "default": "UTC"
             },
             {
+                "name": "resource_allocatable_type_id",
+                "type": "int(10)",
+                "nullable": false,
+                "default": -1,
+                "comment": "What unit of allocation a resource is such as CPU, GPU or Node"
+            },
+            {
                 "name": "resource_origin_id",
                 "type": "int(11)",
                 "nullable": false,

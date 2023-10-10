@@ -1,0 +1,42 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "modw_aggregates",
+                    "create_schema_if_not_exists": true,
+                    "truncate_destination": false
+                }
+            }
+        },
+        "aggregate-resource-specs": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        }
+    },
+    "aggregate-resource-specs": [
+        {
+            "#": "Asset data must be aggregated post ingestion",
+            "name": "ResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "common/aggregates/resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": [
+                "day", "month", "quarter", "year"
+            ]
+        }
+  ]
+}

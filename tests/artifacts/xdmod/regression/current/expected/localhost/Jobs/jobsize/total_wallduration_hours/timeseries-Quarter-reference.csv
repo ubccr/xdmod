@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Wall Hours: Total","[2] Wall Hours: Total","[3 - 4] Wall Hours: Total","[5 - 8] Wall Hours: Total","[9 - 16] Wall Hours: Total","[17 - 32] Wall Hours: Total","[33 - 64] Wall Hours: Total","[65 - 128] Wall Hours: Total","[129 - 256] Wall Hours: Total","[257 - 512] Wall Hours: Total"
+"2016 Q4",80136.0169,741.6300,1137.5342,10703.4175,13009.7953,2032.6106,466.9928,2275.2042,657.2225,37.7917
+"2017 Q1",12478.1586,17.6292,152.8497,1481.2039,2366.7217,121.5400,67.4625,92.9747,0.0506,0
+---------

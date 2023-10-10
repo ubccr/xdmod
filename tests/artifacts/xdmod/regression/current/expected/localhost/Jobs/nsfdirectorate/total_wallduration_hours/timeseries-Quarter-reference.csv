@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Computer and Information Science and Engineering] Wall Hours: Total","[Engineering] Wall Hours: Total","[Social, Behavioral, and Economic Sciences] Wall Hours: Total","[Mathematical and Physical Sciences] Wall Hours: Total","[Geosciences] Wall Hours: Total","[Biological Sciences] Wall Hours: Total","[Humanities/Arts] Wall Hours: Total"
+"2016 Q4",56697.7583,17018.1358,15690.6083,9762.8542,8919.5489,2001.9333,1107.3767
+"2017 Q1",11304.0508,1488.1717,939.7397,1201.8114,1596.9989,215.1622,32.6561
+---------

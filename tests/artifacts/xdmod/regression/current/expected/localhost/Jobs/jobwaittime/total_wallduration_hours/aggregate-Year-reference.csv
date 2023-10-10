@@ -1,0 +1,17 @@
+title
+"Wall Hours: Total: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Wall Hours: Total"
+"0 - 1s",6063.3642
+"1 - 30s",16825.8508
+"30s - 30min",77716.7100
+"30 - 60min",931.0625
+"1 - 5hr",11729.0925
+"5 - 10hr",6341.2131
+"10 - 18hr",595.4839
+18+hr,7774.0294
+---------

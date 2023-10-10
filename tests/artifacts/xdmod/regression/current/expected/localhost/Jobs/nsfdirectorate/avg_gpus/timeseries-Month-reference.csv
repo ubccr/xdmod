@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Biological Sciences] GPU Count: Per Job","[Computer and Information Science and Engineering] GPU Count: Per Job","[Engineering] GPU Count: Per Job","[Geosciences] GPU Count: Per Job","[Humanities/Arts] GPU Count: Per Job","[Mathematical and Physical Sciences] GPU Count: Per Job","[Social, Behavioral, and Economic Sciences] GPU Count: Per Job"
+2016-12,0.0104,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017-01,0.0231,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+---------

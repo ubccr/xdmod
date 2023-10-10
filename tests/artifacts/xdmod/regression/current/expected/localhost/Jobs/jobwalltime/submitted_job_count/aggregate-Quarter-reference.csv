@@ -1,0 +1,17 @@
+title
+"Number of Jobs Submitted: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Number of Jobs Submitted"
+"0 - 1s",1337
+"1 - 30s",15936
+"30s - 30min",33355
+"30 - 60min",9040
+"1 - 5hr",5353
+"5 - 10hr",1304
+"10 - 18hr",293
+18+hr,2625
+---------

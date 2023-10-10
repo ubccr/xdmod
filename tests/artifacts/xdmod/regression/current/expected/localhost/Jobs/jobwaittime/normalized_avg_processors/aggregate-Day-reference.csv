@@ -1,0 +1,17 @@
+title
+"Job Size: Normalized (% of Total Cores): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Job Size: Normalized (% of Total Cores)"
+"0 - 1s",0.052710045
+"1 - 30s",0.048769260
+"30s - 30min",0.033964477
+"30 - 60min",0.034163534
+"1 - 5hr",0.053822880
+"5 - 10hr",0.056851782
+"10 - 18hr",0.081725888
+18+hr,0.073844376
+---------

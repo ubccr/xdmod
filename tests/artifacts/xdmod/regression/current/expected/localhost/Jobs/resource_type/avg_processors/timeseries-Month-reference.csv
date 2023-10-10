@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[High-performance computing] Job Size: Per Job (Core Count)"
+2016-12,8.5390
+2017-01,9.1326
+---------

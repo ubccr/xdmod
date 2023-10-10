@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Mathematical and Physical Sciences] Number of Users: Active","[Engineering] Number of Users: Active","[Geosciences] Number of Users: Active","[Biological Sciences] Number of Users: Active","[Social, Behavioral, and Economic Sciences] Number of Users: Active","[Computer and Information Science and Engineering] Number of Users: Active","[Humanities/Arts] Number of Users: Active"
+"2016 Q4",24,13,9,6,6,5,3
+"2017 Q1",12,10,5,4,3,2,2
+---------

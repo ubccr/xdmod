@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[white] Number of Users: Active","[potbrood] Number of Users: Active","[black] Number of Users: Active","[cornbread] Number of Users: Active","[brown] Number of Users: Active","[croutons] Number of Users: Active","[roti] Number of Users: Active","[bannock] Number of Users: Active","[crumpet] Number of Users: Active","[brioche] Number of Users: Active","[panettone] Number of Users: Active","[pita] Number of Users: Active","[pumpernickel] Number of Users: Active","[barm] Number of Users: Active","[chapti] Number of Users: Active","[focaccia] Number of Users: Active","[nann] Number of Users: Active","[pikelet] Number of Users: Active"
+"2016 Q4",40,8,6,6,4,4,4,3,3,2,2,2,2,1,1,1,1,1
+"2017 Q1",20,1,2,2,3,3,0,2,3,2,0,1,1,1,0,1,1,1
+---------

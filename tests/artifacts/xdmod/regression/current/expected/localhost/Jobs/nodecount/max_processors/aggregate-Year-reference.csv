@@ -1,0 +1,24 @@
+title
+"Job Size: Max (Core Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Node Count","Job Size: Max (Core Count)"
+28,336
+24,288
+12,192
+16,192
+20,160
+7,112
+9,108
+8,96
+4,80
+6,72
+5,60
+14,56
+2,40
+3,36
+1,32
+---------

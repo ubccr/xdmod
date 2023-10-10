@@ -314,7 +314,7 @@ function main()
                 $dwi->aggregateStorageData($lastModifiedStartDate);
             }
             if ($realmToAggregate == 'cloudresourcespecs' || $realmToAggregate === false) {
-                $dwi->aggregateCloudResourceSpecs($lastModifiedStartDate);
+                //$dwi->aggregateCloudResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {
             $logger->crit(array(

@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[1] Wall Hours: Per Job","[2] Wall Hours: Per Job","[3 - 4] Wall Hours: Per Job","[5 - 8] Wall Hours: Per Job","[9 - 16] Wall Hours: Per Job","[17 - 32] Wall Hours: Per Job","[33 - 64] Wall Hours: Per Job","[65 - 128] Wall Hours: Per Job","[129 - 256] Wall Hours: Per Job","[257 - 512] Wall Hours: Per Job"
+2016,12.08505760,7.56765306,1.55400842,0.33112911,0.80836307,11.41916042,8.05159962,28.44005208,54.76854167,18.89583333
+2017,10.68335498,17.62916667,12.73747685,0.14319450,0.48657929,1.30688172,1.40546875,2.73455065,0.02527778,0
+---------

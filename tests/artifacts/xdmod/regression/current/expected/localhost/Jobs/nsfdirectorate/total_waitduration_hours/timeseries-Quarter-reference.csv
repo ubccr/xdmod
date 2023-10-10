@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Mathematical and Physical Sciences] Wait Hours: Total","[Social, Behavioral, and Economic Sciences] Wait Hours: Total","[Biological Sciences] Wait Hours: Total","[Geosciences] Wait Hours: Total","[Engineering] Wait Hours: Total","[Computer and Information Science and Engineering] Wait Hours: Total","[Humanities/Arts] Wait Hours: Total"
+"2016 Q4",169299.7856,95082.2167,6463.7103,4072.0622,4721.1644,551.3839,321.4447
+"2017 Q1",43.6239,19831.9886,1827.7281,4092.0061,30.7158,7.5306,0.0000
+---------

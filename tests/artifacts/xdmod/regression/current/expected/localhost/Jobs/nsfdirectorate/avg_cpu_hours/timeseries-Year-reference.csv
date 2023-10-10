@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Engineering] CPU Hours: Per Job","[Humanities/Arts] CPU Hours: Per Job","[Biological Sciences] CPU Hours: Per Job","[Mathematical and Physical Sciences] CPU Hours: Per Job","[Computer and Information Science and Engineering] CPU Hours: Per Job","[Geosciences] CPU Hours: Per Job","[Social, Behavioral, and Economic Sciences] CPU Hours: Per Job"
+2016,404.22454684,183.58806397,96.23316926,39.87568906,25.19334377,12.64740448,3.49505680
+2017,67.15728861,59.98977778,20.54366410,32.64719972,12.31921090,23.37171659,0.62134448
+---------

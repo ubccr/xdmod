@@ -1,0 +1,20 @@
+title
+"Wall Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Moorhen] Wall Hours: Total","[Flycatcher, Taiga] Wall Hours: Total","[Bufflehead] Wall Hours: Total","[Shearwater, Macaronesian] Wall Hours: Total","[Lark, Calandra] Wall Hours: Total","[Bluetail, Red-flanked] Wall Hours: Total","[Fieldfare] Wall Hours: Total","[Egret, Snowy] Wall Hours: Total","[Fulmar] Wall Hours: Total","[Tern, Caspian] Wall Hours: Total","[Shearwater, Balearic] Wall Hours: Total","[Jackdaw] Wall Hours: Total","[Warbler, Hooded] Wall Hours: Total","[Chiffchaff, Iberian] Wall Hours: Total","[Scaup, Lesser] Wall Hours: Total","[Kestrel, Lesser] Wall Hours: Total","[Chaffinch] Wall Hours: Total","[White, Great] Wall Hours: Total","[Smew] Wall Hours: Total","[Petrel, Fea's] Wall Hours: Total","[Accentor, Alpine] Wall Hours: Total","[Bunting, Ortolan] Wall Hours: Total","[Bittern] Wall Hours: Total","[Warbler, Blackpoll] Wall Hours: Total","[Nuthatch] Wall Hours: Total","[Harrier, Hen] Wall Hours: Total","[Dowitcher, Short-billed] Wall Hours: Total","[Warbler, Cetti's] Wall Hours: Total","[Shearwater, Great] Wall Hours: Total","[Martin, Sand] Wall Hours: Total","[Spotted, Great] Wall Hours: Total","[Goose, Red-breasted] Wall Hours: Total","[Warbler, Savi's] Wall Hours: Total","[Dotterel] Wall Hours: Total","[Thrush, Hermit] Wall Hours: Total","[Dunlin] Wall Hours: Total","[Swift, Little] Wall Hours: Total","[Gull, Yellow-legged] Wall Hours: Total","[Blackbird] Wall Hours: Total","[Gull, Glaucous-winged] Wall Hours: Total","[Yellowthroat, Common] Wall Hours: Total"
+2016-12-22,0,0,0,0,16.9417,0,0,0,0,0,0,0,0,0,0,0,16.7464,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,24.0000,0,0,0,0,8.6036,0,0,0,0,0,0,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,24.0000,0,0,0,0,24.0000,0,0,0,0,0,0,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,32.5078,0,0,0,0,24.0000,0,0,0,0,0,0,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,96.0000,13.5208,0,0,0,24.0000,0,0,0,0,0,0,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0,3.2167,0,0,115.3094,120.0000,38.9522,0,69.8267,52.2964,61.4911,0,0,0,0,0,27.7997,20.6642,0,19.9056,0,0,0,0,0,0,0,0,4.7214,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-28,953.0369,24.0000,1962.8444,0,386.4281,144.4211,228.4575,0,176.3833,144.0000,169.2183,0,43.9492,0,160.7689,28.0381,48.0000,36.7781,0,24.0000,0,0,0,15.1192,0,0,0,0,24.0000,0,0,0,0,4.7006,0,0,0,0,0,0,0
+2016-12-29,12583.2597,301.8189,3901.6422,0,597.4011,477.7553,538.2222,0,479.3708,187.5622,356.3561,47.7900,168.7433,3.6200,216.0000,216.0000,48.0000,74.4400,80.8508,24.0000,0,19.1092,0,72.0000,14.6778,10.0983,0,1.9269,24.0000,10.4008,0,0,18.9747,24.0000,0,0,0,6.4889,0,0,0
+2016-12-30,21766.1511,6638.2006,5473.3125,3055.8617,1061.7603,378.4569,530.1600,0,498.0675,592.9178,394.3031,629.4331,321.9956,67.3875,216.5364,160.0869,48.0000,83.3264,152.4892,175.8633,0,63.8125,108.1047,45.2903,82.2439,82.1119,27.2308,59.0739,19.2856,13.6064,13.9453,9.6922,24.0006,19.3061,29.3436,12.8208,4.3656,2.5175,1.1269,0.2606,0.0650
+2016-12-31,20518.0064,8599.9281,2761.8142,5534.6542,889.1303,1112.6033,266.9975,3.1458,179.7156,150.1633,164.2022,430.1536,241.5139,714.0100,63.5161,24.0000,48.2375,99.6328,22.0906,7.7117,149.5017,71.2450,25.9131,0,29.3383,8.6314,27.2439,13.7992,0,45.3169,45.9239,38.8869,7.3744,0,16.9689,1.4844,9.6900,0,0,0,0
+2017-01-01,11183.6664,932.0322,1254.4625,0,588.6800,526.7989,60.2906,1590.0014,123.3775,23.2497,0,32.6561,120.3844,17.6292,1.7797,5.0458,60.8567,56.2572,0,0,79.9525,48.6856,1.7419,0,0,0,27.1514,0,0,0.9528,0,7.7075,0,0,0,30.9281,4.2811,0.0217,0,0,0
+---------

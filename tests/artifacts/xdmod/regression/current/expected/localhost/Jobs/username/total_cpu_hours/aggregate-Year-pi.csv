@@ -1,0 +1,16 @@
+title
+"CPU Hours: Total: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","CPU Hours: Total"
+ovenb,6621.1911
+swath,4528.0644
+ybsbu,2430.7267
+sante,174.8775
+litst,49.3589
+savsp,0.6342
+---------

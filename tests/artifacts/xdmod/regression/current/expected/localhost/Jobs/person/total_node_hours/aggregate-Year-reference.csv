@@ -1,0 +1,75 @@
+title
+"Node Hours: Total: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Node Hours: Total"
+Moorhen,67004.1206
+Honey-buzzard,15603.5267
+Lapwing,15354.0758
+"Pipit, Meadow",12206.3533
+"Grey, Lesser",8590.5158
+"Scaup, Lesser",7416.4597
+"Warbler, Garden",2773.5564
+"Warbler, Sardinian",2004.2244
+"Bunting, Reed",1757.5094
+Crane,1622.8178
+"Plover, Caspian",1593.1472
+Smew,1532.5833
+"Crane, Sandhill",1494.1239
+"Dove, Turtle",1423.1372
+"Warbler, Dusky",1092.1644
+"Treecreeper, Short-toed",1026.5661
+"Sandpiper, Spotted",1014.8492
+Chaffinch,960.0578
+"Sapsucker, Yellow-bellied",895.6697
+"Goose, Egyptian",883.8200
+"Scoter, Velvet",873.5178
+Siskin,840.4200
+"Thrush, Grey-cheeked",802.6467
+"Thrush, Swainson's",550.6928
+"Grebe, Pied-billed",500.2031
+"Sparrow, White-throated",458.9083
+"Warbler, Hooded",458.5558
+"Shearwater, Cory's",438.0306
+"Thrush, Mistle",433.1708
+Ovenbird,413.8244
+Whimbrel,409.8725
+Peregrine,372.7167
+"Duck, Ferruginous",350.0389
+"Grosbeak, Evening",282.2633
+"Oriole, Baltimore",273.8464
+"Warbler, Booted",251.4806
+"Bunting, Yellow-breasted",232.4297
+Shag,227.8806
+"Warbler, Yellow-browed",180.5611
+"Tern, Sandwich",174.8775
+Dunlin,150.5339
+"Grey, Southern",135.7597
+"Plover, White-tailed",132.4094
+"Warbler, Golden-winged",120.6086
+"Harrier, Hen",100.8417
+"Bunting, Yellow-browed",100.6989
+Jackdaw,87.3878
+"Swift, Alpine",76.3467
+"Warbler, Moltoni's",72.0069
+"Auk, Little",70.2769
+"Shrike, Long-tailed",62.2542
+"Bunting, Black-headed",59.8692
+"Grey, Great",54.6383
+Roller,54.6022
+"Ibis, Glossy",48.0067
+Fieldfare,43.1219
+"Redpoll, Lesser",37.7958
+"Martin, Purple",34.9861
+"Gull, Ring-billed",31.9097
+Coot,23.3244
+"Egret, Cattle",23.3156
+"Stint, Little",3.6653
+"Gallinule, Allen's",2.3450
+"Martin, Crag",1.1269
+"Sparrow, Savannah",0.6342
+"Partridge, Red-legged",0.0650
+---------

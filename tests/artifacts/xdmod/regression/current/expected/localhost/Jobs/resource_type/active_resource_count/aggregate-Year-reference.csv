@@ -1,0 +1,10 @@
+title
+"Number of Resources: Active: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Number of Resources: Active"
+"High-performance computing",5
+---------

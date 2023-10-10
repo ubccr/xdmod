@@ -1,0 +1,50 @@
+title
+"User Expansion Factor: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"User Expansion Factor"
+"Tern, Caspian",119.8923
+Dunlin,69.2703
+"Gull, Yellow-legged",7.8723
+"Flycatcher, Taiga",7.6469
+"Warbler, Cetti's",6.8756
+"Chiffchaff, Iberian",4.3697
+Fulmar,4.3693
+"Shearwater, Balearic",3.8702
+"Egret, Snowy",3.5459
+Fieldfare,2.2702
+"Warbler, Savi's",2.0475
+"White, Great",1.5228
+"Petrel, Fea's",1.4886
+"Shearwater, Macaronesian",1.4572
+"Goose, Red-breasted",1.4161
+"Gull, Glaucous-winged",1.3753
+"Thrush, Hermit",1.3348
+Jackdaw,1.2820
+"Bunting, Ortolan",1.1487
+"Kestrel, Lesser",1.1120
+"Lark, Calandra",1.1103
+Bittern,1.0932
+"Accentor, Alpine",1.0844
+"Warbler, Blackpoll",1.0844
+"Harrier, Hen",1.0642
+Smew,1.0545
+"Swift, Little",1.0148
+"Bluetail, Red-flanked",1.0132
+Blackbird,1.0131
+"Warbler, Hooded",1.0086
+Moorhen,1.0081
+"Martin, Sand",1.0025
+"Spotted, Great",1.0024
+Bufflehead,1.0012
+Chaffinch,1.0010
+"Dowitcher, Short-billed",1.0001
+Dotterel,1.0000
+Nuthatch,1.0000
+"Scaup, Lesser",1.0000
+"Shearwater, Great",1.0000
+"Yellowthroat, Common",1.0000
+---------

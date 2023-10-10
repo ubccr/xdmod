@@ -1,0 +1,50 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Job Size: Weighted By CPU Hours (Core Count)"
+"Thrush, Hermit",326.9898
+"Scaup, Lesser",185.9182
+"Gull, Yellow-legged",160.0000
+Nuthatch,112.0000
+"Gull, Glaucous-winged",108.0000
+"Bunting, Ortolan",96.0000
+Fieldfare,95.4997
+Smew,72.0000
+"Shearwater, Balearic",62.2411
+"White, Great",61.4597
+Dunlin,57.7053
+"Swift, Little",55.6816
+"Warbler, Cetti's",53.4612
+Chaffinch,48.6577
+"Warbler, Savi's",39.9999
+"Goose, Red-breasted",29.2166
+"Lark, Calandra",28.9482
+"Tern, Caspian",24.5939
+"Accentor, Alpine",23.2563
+Blackbird,20.0000
+Dotterel,20.0000
+"Yellowthroat, Common",16.0000
+"Bluetail, Red-flanked",13.8060
+"Egret, Snowy",12.0000
+"Kestrel, Lesser",12.0000
+"Warbler, Blackpoll",12.0000
+Jackdaw,11.8252
+"Flycatcher, Taiga",10.3886
+"Petrel, Fea's",10.0459
+"Martin, Sand",9.9744
+"Warbler, Hooded",8.3168
+Fulmar,7.5996
+"Chiffchaff, Iberian",4.5532
+Bittern,1.0000
+Bufflehead,1.0000
+"Dowitcher, Short-billed",1.0000
+"Harrier, Hen",1.0000
+Moorhen,1.0000
+"Shearwater, Great",1.0000
+"Shearwater, Macaronesian",1.0000
+"Spotted, Great",1.0000
+---------

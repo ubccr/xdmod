@@ -1,0 +1,16 @@
+title
+"Number of Jobs Submitted: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Number of Jobs Submitted"
+"Social, Behavioral, and Economic Sciences",52367
+"Mathematical and Physical Sciences",7107
+"Computer and Information Science and Engineering",2644
+Geosciences,1596
+Engineering,448
+"Biological Sciences",223
+Humanities/Arts,31
+---------

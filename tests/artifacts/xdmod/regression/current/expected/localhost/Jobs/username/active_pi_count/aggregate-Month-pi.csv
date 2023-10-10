@@ -1,0 +1,16 @@
+title
+"Number of PIs: Active: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Number of PIs: Active"
+litst,1
+ovenb,1
+sante,1
+savsp,1
+swath,1
+ybsbu,1
+---------

@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[black] Number of Jobs Started","[white] Number of Jobs Started","[croutons] Number of Jobs Started","[nann] Number of Jobs Started","[brown] Number of Jobs Started","[potbrood] Number of Jobs Started","[pikelet] Number of Jobs Started","[cornbread] Number of Jobs Started","[crumpet] Number of Jobs Started","[brioche] Number of Jobs Started","[bannock] Number of Jobs Started","[roti] Number of Jobs Started","[panettone] Number of Jobs Started","[focaccia] Number of Jobs Started","[chapti] Number of Jobs Started","[pita] Number of Jobs Started","[pumpernickel] Number of Jobs Started","[barm] Number of Jobs Started"
+2016-12-22,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,1,13,2,0,0,0,0,4,1,1,0,9,0,0,0,0,0,0
+2016-12-28,13,380,1,0,0,0,11,0,0,0,0,2,1,0,0,0,0,0
+2016-12-29,218,1026,17,0,4,0,4,6,0,8,0,3,0,0,1,1,1,1
+2016-12-30,22016,4630,345,0,32,35,0,11,4,8,5,4,14,0,5,4,2,0
+2016-12-31,23934,2929,348,16,28,27,33,22,8,3,3,0,0,0,2,1,0,0
+2017-01-01,9191,5310,294,213,28,23,0,1,21,0,10,0,0,12,0,0,1,0
+---------

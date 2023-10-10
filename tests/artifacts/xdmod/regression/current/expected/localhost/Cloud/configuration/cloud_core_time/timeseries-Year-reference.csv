@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by Instance Type"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[c1.m4] CPU Hours: Total","[c4.m16] CPU Hours: Total","[c2.m4] CPU Hours: Total","[c1.m1] CPU Hours: Total","[c2.m8] CPU Hours: Total","[m1.small] CPU Hours: Total"
+2018,906.3725,423.1744,419.2367,6.6347,0.4706,0.0006
+---------

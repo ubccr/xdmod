@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Wait Hours: Total","[2] Wait Hours: Total","[3 - 4] Wait Hours: Total","[5 - 8] Wait Hours: Total","[9 - 16] Wait Hours: Total","[17 - 32] Wait Hours: Total","[33 - 64] Wait Hours: Total","[65 - 128] Wait Hours: Total","[129 - 256] Wait Hours: Total","[257 - 512] Wait Hours: Total"
+"2016 Q4",6554.7308,2650.6039,163387.0994,87120.8106,14989.8625,3117.3628,412.6372,2154.8253,110.4758,13.3594
+"2017 Q1",35.9428,0.0000,0.0000,13931.1086,10783.2664,611.2172,295.2989,139.1514,37.6078,0
+---------

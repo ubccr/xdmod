@@ -1,0 +1,20 @@
+title
+"Number of Users: Active: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[1] Number of Users: Active","[4] Number of Users: Active","[2] Number of Users: Active","[8] Number of Users: Active","[6] Number of Users: Active","[5] Number of Users: Active","[12] Number of Users: Active","[7] Number of Users: Active","[3] Number of Users: Active","[9] Number of Users: Active","[14] Number of Users: Active","[16] Number of Users: Active","[20] Number of Users: Active","[24] Number of Users: Active","[28] Number of Users: Active"
+2016-12-22,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,11,0,1,2,1,0,1,0,0,0,0,0,0,0,0
+2016-12-28,19,1,1,2,1,0,2,1,0,0,0,0,0,0,0
+2016-12-29,30,2,2,3,2,2,2,2,0,0,1,0,1,0,0
+2016-12-30,48,7,6,5,3,3,3,2,0,1,1,1,1,1,1
+2016-12-31,40,5,3,5,3,3,2,2,1,0,0,1,0,0,1
+2017-01-01,28,4,4,4,2,2,0,0,1,0,0,1,1,0,0
+---------

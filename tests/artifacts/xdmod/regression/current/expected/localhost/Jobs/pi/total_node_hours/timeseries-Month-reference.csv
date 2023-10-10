@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Moorhen] Node Hours: Total","[Flycatcher, Taiga] Node Hours: Total","[Bufflehead] Node Hours: Total","[Fieldfare] Node Hours: Total","[Shearwater, Macaronesian] Node Hours: Total","[Scaup, Lesser] Node Hours: Total","[Lark, Calandra] Node Hours: Total","[Bluetail, Red-flanked] Node Hours: Total","[Shearwater, Balearic] Node Hours: Total","[White, Great] Node Hours: Total","[Bunting, Ortolan] Node Hours: Total","[Egret, Snowy] Node Hours: Total","[Smew] Node Hours: Total","[Fulmar] Node Hours: Total","[Tern, Caspian] Node Hours: Total","[Chaffinch] Node Hours: Total","[Jackdaw] Node Hours: Total","[Thrush, Hermit] Node Hours: Total","[Warbler, Hooded] Node Hours: Total","[Nuthatch] Node Hours: Total","[Chiffchaff, Iberian] Node Hours: Total","[Accentor, Alpine] Node Hours: Total","[Kestrel, Lesser] Node Hours: Total","[Warbler, Cetti's] Node Hours: Total","[Petrel, Fea's] Node Hours: Total","[Gull, Yellow-legged] Node Hours: Total","[Dunlin] Node Hours: Total","[Bittern] Node Hours: Total","[Warbler, Blackpoll] Node Hours: Total","[Goose, Red-breasted] Node Hours: Total","[Harrier, Hen] Node Hours: Total","[Warbler, Savi's] Node Hours: Total","[Dowitcher, Short-billed] Node Hours: Total","[Shearwater, Great] Node Hours: Total","[Martin, Sand] Node Hours: Total","[Spotted, Great] Node Hours: Total","[Swift, Little] Node Hours: Total","[Dotterel] Node Hours: Total","[Gull, Glaucous-winged] Node Hours: Total","[Blackbird] Node Hours: Total","[Yellowthroat, Common] Node Hours: Total"
+2016-12,55820.4542,15567.1642,14099.6133,12110.4544,8590.5158,7485.6875,4763.3942,2246.7575,2367.6417,1707.7128,1233.3333,3.1458,1532.5833,1403.3917,1352.8742,1031.5950,1107.3767,1092.1644,776.2019,883.8200,785.0175,299.0033,428.1250,336.9017,251.4806,180.1278,61.7047,134.0178,132.4094,103.4328,100.8417,100.6989,54.4747,72.0069,69.3242,59.8692,50.3211,48.0067,2.3450,1.1269,0.0650
+2017-01,11183.6664,932.0322,1254.4625,233.1847,0,7.1189,649.3575,526.7989,0,265.3353,389.4844,1590.0014,0,123.3775,23.2497,202.3092,32.6561,0,120.3844,0,17.6292,159.9050,5.0458,0,0,0.4333,88.8292,1.7419,0,17.1758,0,0,27.1514,0,0.9528,0,4.2811,0,0,0,0
+---------

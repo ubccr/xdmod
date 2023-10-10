@@ -1,0 +1,27 @@
+title
+"Wait Hours: Total: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Wait Hours: Total"
+white,247850.7114
+black,55733.9806
+nann,2187.3331
+croutons,194.0739
+cornbread,181.6750
+brioche,91.5861
+roti,66.8156
+pikelet,36.5339
+chapti,1.3389
+focaccia,1.2331
+potbrood,0.0303
+brown,0.0153
+panettone,0.0150
+bannock,0.0083
+crumpet,0.0056
+barm,0.0044
+pita,0.0003
+pumpernickel,0.0003
+---------

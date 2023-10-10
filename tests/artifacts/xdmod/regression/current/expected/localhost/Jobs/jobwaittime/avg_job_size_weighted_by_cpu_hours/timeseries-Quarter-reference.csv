@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Job Size: Weighted By CPU Hours (Core Count)","[1 - 30s] Job Size: Weighted By CPU Hours (Core Count)","[30s - 30min] Job Size: Weighted By CPU Hours (Core Count)","[30 - 60min] Job Size: Weighted By CPU Hours (Core Count)","[1 - 5hr] Job Size: Weighted By CPU Hours (Core Count)","[5 - 10hr] Job Size: Weighted By CPU Hours (Core Count)","[10 - 18hr] Job Size: Weighted By CPU Hours (Core Count)","[18+hr] Job Size: Weighted By CPU Hours (Core Count)"
+"2016 Q4",87.9399,90.5162,16.9717,22.4209,70.8622,27.1335,40.2722,76.3571
+"2017 Q1",23.2187,10.2392,14.7117,16.7924,27.9707,40.1235,18.8036,32.6534
+---------

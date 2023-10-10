@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Screwdriver] Number of Resources: Active"
+"2016 Q4",5
+"2017 Q1",5
+---------

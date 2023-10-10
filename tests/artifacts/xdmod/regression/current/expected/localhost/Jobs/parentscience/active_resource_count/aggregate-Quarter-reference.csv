@@ -1,0 +1,27 @@
+title
+"Number of Resources: Active: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Number of Resources: Active"
+"Social and Economic Science",5
+Chemistry,4
+"Astronomical Sciences",3
+"Materials Research",3
+"Polar Programs",3
+Arts,2
+"Earth Sciences",2
+"Electrical and Communication Systems",2
+"Mathematical Sciences",2
+"Molecular Biosciences",2
+"Atmospheric Sciences",1
+"Chemical, Thermal Systems",1
+"Computer and Computation Research",1
+"Design and Manufacturing Systems",1
+"Environmental Biology",1
+"Mechanical and Structural Systems",1
+"Microelectronic Information Processing Systems",1
+Physics,1
+---------

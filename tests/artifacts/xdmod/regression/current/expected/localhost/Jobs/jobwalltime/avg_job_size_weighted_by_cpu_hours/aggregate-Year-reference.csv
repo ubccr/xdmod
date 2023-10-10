@@ -1,0 +1,17 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Job Size: Weighted By CPU Hours (Core Count)"
+"0 - 1s",0.0000
+"1 - 30s",8.3761
+"30s - 30min",12.6150
+"30 - 60min",11.9980
+"1 - 5hr",10.6108
+"5 - 10hr",29.1064
+"10 - 18hr",70.9822
+18+hr,85.2054
+---------

@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[28] Job Size: Max (Core Count)","[24] Job Size: Max (Core Count)","[12] Job Size: Max (Core Count)","[16] Job Size: Max (Core Count)","[20] Job Size: Max (Core Count)","[7] Job Size: Max (Core Count)","[9] Job Size: Max (Core Count)","[8] Job Size: Max (Core Count)","[4] Job Size: Max (Core Count)","[6] Job Size: Max (Core Count)","[5] Job Size: Max (Core Count)","[14] Job Size: Max (Core Count)","[2] Job Size: Max (Core Count)","[3] Job Size: Max (Core Count)","[1] Job Size: Max (Core Count)"
+2016-12,336,288,192,192,160,112,108,96,80,72,60,56,40,36,32
+2017-01,0,0,0,192,160,0,0,96,48,72,60,0,24,36,24
+---------

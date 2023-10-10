@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[white] Wait Hours: Total","[black] Wait Hours: Total","[nann] Wait Hours: Total","[croutons] Wait Hours: Total","[cornbread] Wait Hours: Total","[brioche] Wait Hours: Total","[roti] Wait Hours: Total","[pikelet] Wait Hours: Total","[chapti] Wait Hours: Total","[focaccia] Wait Hours: Total","[potbrood] Wait Hours: Total","[brown] Wait Hours: Total","[panettone] Wait Hours: Total","[bannock] Wait Hours: Total","[crumpet] Wait Hours: Total","[barm] Wait Hours: Total","[pita] Wait Hours: Total","[pumpernickel] Wait Hours: Total"
+"2016 Q4",230845.6464,49127.7183,0.3231,160.0714,181.6683,91.5861,66.8156,36.5339,1.3389,0.0003,0.0256,0.0106,0.0150,0.0072,0.0025,0.0044,0.0003,0.0000
+"2017 Q1",17005.0650,6606.2622,2187.0100,34.0025,0.0067,0.0000,0,0.0000,0,1.2328,0.0047,0.0047,0,0.0011,0.0031,0.0000,0.0000,0.0003
+---------

@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Job Size: Max (Core Count)","[2] Job Size: Max (Core Count)","[3 - 4] Job Size: Max (Core Count)","[5 - 8] Job Size: Max (Core Count)","[9 - 16] Job Size: Max (Core Count)","[17 - 32] Job Size: Max (Core Count)","[33 - 64] Job Size: Max (Core Count)","[65 - 128] Job Size: Max (Core Count)","[129 - 256] Job Size: Max (Core Count)","[257 - 512] Job Size: Max (Core Count)"
+"2016 Q4",1,2,4,8,16,32,64,128,192,336
+"2017 Q1",1,2,4,8,16,32,64,128,192,0
+---------

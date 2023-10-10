@@ -1,0 +1,11 @@
+title
+"Job Size: Normalized (% of Total Cores): by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Job Size: Normalized (% of Total Cores)","[2] Job Size: Normalized (% of Total Cores)","[3 - 4] Job Size: Normalized (% of Total Cores)","[5 - 8] Job Size: Normalized (% of Total Cores)","[9 - 16] Job Size: Normalized (% of Total Cores)","[17 - 32] Job Size: Normalized (% of Total Cores)","[33 - 64] Job Size: Normalized (% of Total Cores)","[65 - 128] Job Size: Normalized (% of Total Cores)","[129 - 256] Job Size: Normalized (% of Total Cores)","[257 - 512] Job Size: Normalized (% of Total Cores)"
+2016-12,0.006250000,0.025000000,0.033333333,0.049998260,0.060177706,0.155196629,0.444827586,0.787916667,2.316666667,7.800000000
+2017-01,0.006250000,0.050000000,0.050000000,0.049998187,0.060489309,0.215412186,0.644791667,2.388235294,4.400000000,0
+---------

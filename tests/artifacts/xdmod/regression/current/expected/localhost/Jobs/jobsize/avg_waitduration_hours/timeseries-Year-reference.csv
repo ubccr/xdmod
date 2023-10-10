@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[1] Wait Hours: Per Job","[2] Wait Hours: Per Job","[3 - 4] Wait Hours: Per Job","[5 - 8] Wait Hours: Per Job","[9 - 16] Wait Hours: Per Job","[17 - 32] Wait Hours: Per Job","[33 - 64] Wait Hours: Per Job","[65 - 128] Wait Hours: Per Job","[129 - 256] Wait Hours: Per Job","[257 - 512] Wait Hours: Per Job"
+2016,0.98849809,27.04697846,223.20642001,2.69523606,0.93139446,17.51327403,7.11443487,26.93531597,9.20631944,6.67972222
+2017,0.11093450,0.00000000,0.00000000,1.38397662,2.36267888,7.45386856,6.86741602,6.05006039,18.80388889,0
+---------

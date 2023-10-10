@@ -1,0 +1,14 @@
+title
+"Number of PIs: Active: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Number of PIs: Active"
+robertson,34
+frearson,7
+pozidriv,7
+mortorq,6
+phillips,3
+---------

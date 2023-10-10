@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Resource types",
+    "type": "object",
+    "properties": {
+        "abbrev": {
+            "type": "string",
+            "description": "Resource allocatable type abbreviation",
+            "maxLength": 10
+        },
+        "description": {
+            "type": "string",
+            "description": "Resource allocatable type description",
+            "maxLength": 50
+        }
+    },
+    "required": [
+        "abbrev",
+        "description"
+    ]
+}

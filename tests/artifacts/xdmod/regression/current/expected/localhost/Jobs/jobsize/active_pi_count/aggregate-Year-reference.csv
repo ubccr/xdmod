@@ -1,0 +1,19 @@
+title
+"Number of PIs: Active: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Number of PIs: Active"
+1,18
+2,1
+"3 - 4",3
+"5 - 8",11
+"9 - 16",19
+"17 - 32",11
+"33 - 64",11
+"65 - 128",10
+"129 - 256",4
+"257 - 512",1
+---------

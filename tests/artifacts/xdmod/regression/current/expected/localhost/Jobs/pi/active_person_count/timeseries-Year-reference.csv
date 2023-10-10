@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Tern, Caspian] Number of Users: Active","[Fieldfare] Number of Users: Active","[Lark, Calandra] Number of Users: Active","[White, Great] Number of Users: Active","[Dowitcher, Short-billed] Number of Users: Active","[Jackdaw] Number of Users: Active","[Chaffinch] Number of Users: Active","[Flycatcher, Taiga] Number of Users: Active","[Fulmar] Number of Users: Active","[Scaup, Lesser] Number of Users: Active","[Shearwater, Balearic] Number of Users: Active","[Warbler, Cetti's] Number of Users: Active","[Warbler, Hooded] Number of Users: Active","[Accentor, Alpine] Number of Users: Active","[Bittern] Number of Users: Active","[Blackbird] Number of Users: Active","[Bluetail, Red-flanked] Number of Users: Active","[Bufflehead] Number of Users: Active","[Bunting, Ortolan] Number of Users: Active","[Chiffchaff, Iberian] Number of Users: Active","[Dotterel] Number of Users: Active","[Dunlin] Number of Users: Active","[Egret, Snowy] Number of Users: Active","[Goose, Red-breasted] Number of Users: Active","[Gull, Glaucous-winged] Number of Users: Active","[Gull, Yellow-legged] Number of Users: Active","[Harrier, Hen] Number of Users: Active","[Kestrel, Lesser] Number of Users: Active","[Martin, Sand] Number of Users: Active","[Moorhen] Number of Users: Active","[Nuthatch] Number of Users: Active","[Petrel, Fea's] Number of Users: Active","[Shearwater, Great] Number of Users: Active","[Shearwater, Macaronesian] Number of Users: Active","[Smew] Number of Users: Active","[Spotted, Great] Number of Users: Active","[Swift, Little] Number of Users: Active","[Thrush, Hermit] Number of Users: Active","[Warbler, Blackpoll] Number of Users: Active","[Warbler, Savi's] Number of Users: Active","[Yellowthroat, Common] Number of Users: Active"
+2016,6,4,4,4,3,3,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+2017,2,3,4,3,3,2,2,2,1,1,0,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,0
+---------

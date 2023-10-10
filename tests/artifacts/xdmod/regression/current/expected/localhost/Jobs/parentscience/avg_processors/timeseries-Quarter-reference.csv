@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Chemical, Thermal Systems] Job Size: Per Job (Core Count)","[Atmospheric Sciences] Job Size: Per Job (Core Count)","[Environmental Biology] Job Size: Per Job (Core Count)","[Electrical and Communication Systems] Job Size: Per Job (Core Count)","[Materials Research] Job Size: Per Job (Core Count)","[Physics] Job Size: Per Job (Core Count)","[Arts] Job Size: Per Job (Core Count)","[Mathematical Sciences] Job Size: Per Job (Core Count)","[Mechanical and Structural Systems] Job Size: Per Job (Core Count)","[Polar Programs] Job Size: Per Job (Core Count)","[Social and Economic Science] Job Size: Per Job (Core Count)","[Chemistry] Job Size: Per Job (Core Count)","[Astronomical Sciences] Job Size: Per Job (Core Count)","[Molecular Biosciences] Job Size: Per Job (Core Count)","[Design and Manufacturing Systems] Job Size: Per Job (Core Count)","[Earth Sciences] Job Size: Per Job (Core Count)","[Microelectronic Information Processing Systems] Job Size: Per Job (Core Count)","[Computer and Computation Research] Job Size: Per Job (Core Count)"
+"2016 Q4",224.0000,160.0000,48.8800,24.9310,21.3595,12.0000,11.0909,10.9231,14.8750,3.0909,9.0258,8.5125,5.1703,4.6022,1.6678,1.4181,1.1442,1.0000
+"2017 Q1",0,160.0000,37.8993,61.9286,0,0,10.4000,10.5833,1.0000,11.1622,9.1618,10.8293,41.9091,8.1471,2.9320,9.6667,1.0994,0
+---------

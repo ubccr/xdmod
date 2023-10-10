@@ -1,0 +1,27 @@
+title
+"CPU Hours: Total: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"CPU Hours: Total"
+white,438972.9878
+black,274691.9789
+pikelet,34825.7219
+roti,22393.2603
+croutons,22379.1533
+brown,14222.7461
+cornbread,11206.7450
+crumpet,8411.0733
+brioche,3726.6386
+nann,3173.5933
+focaccia,3079.9728
+bannock,1016.6144
+panettone,982.6722
+chapti,573.8767
+potbrood,355.3453
+pita,238.5711
+pumpernickel,166.3875
+barm,138.4983
+---------

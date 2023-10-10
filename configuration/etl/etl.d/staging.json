@@ -41,6 +41,7 @@
                 "common/staging/resource-config.json",
                 "common/staging/resource-spec.json",
                 "common/staging/resource-type.json",
+                "common/staging/resource-allocatable-type.json",
                 "common/staging/resource.json",
                 "common/staging/union-user-pi-resource.json",
                 "common/staging/union-user-pi.json",
@@ -97,6 +98,28 @@
             }
         },
         {
+            "name": "resource-allocatable-types",
+            "description": "Ingest resource allocation types file",
+            "definition_file": "common/staging/resource_allocatable_type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource types",
+                    "path": "${base_dir}/../resource_allocatable_types.json",
+                    "record_schema_path": "common/resource-allocatable-types.schema.json",
+                    "filters": [
+                        {
+                            "#": "Reformat config file for ETLs purposes.",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[ .resource_allocatable_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "name": "ResourceTypesStagingUnknown",
             "description": "Populates the resource types table w/ the Unknown resource",
             "namespace": "ETL\\Maintenance",
@@ -123,7 +146,8 @@
                         "pi_column",
                         "shared_jobs",
                         "timezone",
-                        "resource_type"
+                        "resource_type",
+                        "allocation_type"
                     ]
                 }
             }
@@ -148,9 +172,12 @@
                     "record_schema_path": "common/resource-specs.schema.json",
                     "field_names": [
                         "resource",
-                        "nodes",
-                        "processors",
-                        "ppn",
+                        "cpu_node_count",
+                        "cpu_processor_count",
+                        "cpu_ppn",
+                        "gpu_node_count",
+                        "gpu_processor_count",
+                        "gpu_ppn",
                         "start_date",
                         "end_date",
                         "percent_allocated",

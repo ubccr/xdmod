@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Wait Hours: Total","[1 - 30s] Wait Hours: Total","[30s - 30min] Wait Hours: Total","[30 - 60min] Wait Hours: Total","[1 - 5hr] Wait Hours: Total","[5 - 10hr] Wait Hours: Total","[10 - 18hr] Wait Hours: Total","[18+hr] Wait Hours: Total"
+"2016 Q4",0,12990.6906,156022.8342,42037.5775,52604.2369,6647.5614,596.1336,9612.7336
+"2017 Q1",3271.5997,9576.5181,5729.2503,2078.8122,5099.8364,41.2042,35.9667,0.4056
+---------

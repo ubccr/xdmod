@@ -1,0 +1,14 @@
+title
+"Wait Hours: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+robertson,17.22247708,0.4246558380962387
+phillips,4.65396173,0.0640574830554861
+pozidriv,1.85771176,0.04173360028194275
+mortorq,0.71003162,0.008170929830821188
+frearson,0.00015425,0.00000178664818571851
+---------

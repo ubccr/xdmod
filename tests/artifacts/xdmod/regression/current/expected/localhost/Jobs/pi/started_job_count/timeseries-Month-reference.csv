@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Flycatcher, Taiga] Number of Jobs Started","[Lark, Calandra] Number of Jobs Started","[Warbler, Cetti's] Number of Jobs Started","[Moorhen] Number of Jobs Started","[Shearwater, Macaronesian] Number of Jobs Started","[Tern, Caspian] Number of Jobs Started","[Egret, Snowy] Number of Jobs Started","[Bufflehead] Number of Jobs Started","[Dunlin] Number of Jobs Started","[Bittern] Number of Jobs Started","[Shearwater, Balearic] Number of Jobs Started","[Chiffchaff, Iberian] Number of Jobs Started","[Dowitcher, Short-billed] Number of Jobs Started","[Fulmar] Number of Jobs Started","[Goose, Red-breasted] Number of Jobs Started","[Jackdaw] Number of Jobs Started","[Bluetail, Red-flanked] Number of Jobs Started","[Fieldfare] Number of Jobs Started","[Warbler, Hooded] Number of Jobs Started","[Chaffinch] Number of Jobs Started","[Scaup, Lesser] Number of Jobs Started","[Harrier, Hen] Number of Jobs Started","[White, Great] Number of Jobs Started","[Bunting, Ortolan] Number of Jobs Started","[Petrel, Fea's] Number of Jobs Started","[Blackbird] Number of Jobs Started","[Kestrel, Lesser] Number of Jobs Started","[Martin, Sand] Number of Jobs Started","[Spotted, Great] Number of Jobs Started","[Accentor, Alpine] Number of Jobs Started","[Nuthatch] Number of Jobs Started","[Smew] Number of Jobs Started","[Swift, Little] Number of Jobs Started","[Thrush, Hermit] Number of Jobs Started","[Warbler, Blackpoll] Number of Jobs Started","[Gull, Yellow-legged] Number of Jobs Started","[Warbler, Savi's] Number of Jobs Started","[Dotterel] Number of Jobs Started","[Gull, Glaucous-winged] Number of Jobs Started","[Shearwater, Great] Number of Jobs Started","[Yellowthroat, Common] Number of Jobs Started"
+2016-12,41560,6563,2633,2425,1000,762,16,289,100,92,146,101,56,72,46,66,53,32,29,6,17,20,15,12,15,14,11,8,10,9,8,7,3,3,3,1,2,1,1,1,1
+2017-01,13441,381,0,204,0,1,740,19,139,62,0,0,28,0,23,0,0,12,8,25,8,0,5,4,0,0,0,2,0,0,0,0,1,0,0,1,0,0,0,0,0
+---------

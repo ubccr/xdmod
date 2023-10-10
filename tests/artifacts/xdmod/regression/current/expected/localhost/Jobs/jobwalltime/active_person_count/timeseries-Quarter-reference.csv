@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Number of Users: Active","[1 - 30s] Number of Users: Active","[30s - 30min] Number of Users: Active","[30 - 60min] Number of Users: Active","[1 - 5hr] Number of Users: Active","[5 - 10hr] Number of Users: Active","[10 - 18hr] Number of Users: Active","[18+hr] Number of Users: Active"
+"2016 Q4",0,18,28,16,24,18,23,45
+"2017 Q1",1,9,15,16,12,6,11,22
+---------

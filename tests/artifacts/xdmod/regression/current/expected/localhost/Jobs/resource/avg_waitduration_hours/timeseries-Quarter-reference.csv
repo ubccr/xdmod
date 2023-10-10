@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[robertson] Wait Hours: Per Job","[phillips] Wait Hours: Per Job","[pozidriv] Wait Hours: Per Job","[mortorq] Wait Hours: Per Job","[frearson] Wait Hours: Per Job"
+"2016 Q4",25.48421670,5.25252754,1.48979528,0.76737821,0.00015134
+"2017 Q1",3.18805212,0.25913116,4.44912351,0.47615030,0.00016779
+---------

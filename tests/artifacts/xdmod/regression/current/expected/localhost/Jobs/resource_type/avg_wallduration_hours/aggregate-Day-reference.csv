@@ -1,0 +1,10 @@
+title
+"Wall Hours: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
+"High-performance computing",1.79457892,0.017929611668507588
+---------

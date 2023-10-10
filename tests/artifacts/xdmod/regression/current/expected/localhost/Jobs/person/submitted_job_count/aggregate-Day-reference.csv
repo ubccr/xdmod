@@ -1,0 +1,75 @@
+title
+"Number of Jobs Submitted: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Number of Jobs Submitted"
+Honey-buzzard,49649
+"Bunting, Reed",5892
+"Grey, Great",2631
+Moorhen,2586
+"Dove, Turtle",981
+"Grey, Lesser",719
+"Plover, Caspian",693
+Lapwing,308
+"Grey, Southern",154
+Dunlin,123
+"Warbler, Golden-winged",69
+"Grebe, Pied-billed",50
+"Warbler, Garden",49
+"Warbler, Sardinian",44
+"Martin, Purple",36
+"Oriole, Baltimore",30
+"Sparrow, Savannah",26
+"Sandpiper, Spotted",25
+Coot,24
+"Egret, Cattle",24
+"Warbler, Hooded",21
+"Harrier, Hen",20
+Crane,16
+"Shearwater, Cory's",16
+"Shrike, Long-tailed",16
+"Swift, Alpine",16
+"Sapsucker, Yellow-bellied",15
+"Martin, Crag",14
+"Warbler, Booted",14
+"Crane, Sandhill",12
+Whimbrel,12
+"Stint, Little",11
+"Thrush, Mistle",11
+"Auk, Little",10
+"Bunting, Black-headed",10
+Shag,10
+"Scaup, Lesser",9
+"Sparrow, White-throated",9
+"Goose, Egyptian",8
+Smew,7
+"Bunting, Yellow-breasted",5
+"Treecreeper, Short-toed",5
+Jackdaw,4
+Ovenbird,4
+Roller,4
+Fieldfare,3
+"Plover, White-tailed",3
+"Grosbeak, Evening",2
+"Pipit, Meadow",2
+"Redpoll, Lesser",2
+"Bunting, Yellow-browed",1
+Chaffinch,1
+"Duck, Ferruginous",1
+"Gallinule, Allen's",1
+"Gull, Ring-billed",1
+"Ibis, Glossy",1
+"Partridge, Red-legged",1
+Peregrine,1
+"Scoter, Velvet",1
+"Tern, Sandwich",1
+"Thrush, Grey-cheeked",1
+"Warbler, Moltoni's",1
+Siskin,0
+"Thrush, Swainson's",0
+"Warbler, Dusky",0
+"Warbler, Yellow-browed",0
+---------

@@ -1,0 +1,14 @@
+title
+"Number of Jobs Submitted: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Number of Jobs Submitted"
+mortorq,26025
+frearson,15347
+robertson,13547
+pozidriv,10337
+phillips,3987
+---------

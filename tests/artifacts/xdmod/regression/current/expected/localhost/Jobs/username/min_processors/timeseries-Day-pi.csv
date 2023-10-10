@@ -1,0 +1,20 @@
+title
+"Job Size: Min (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[ovenb] Job Size: Min (Core Count)","[litst] Job Size: Min (Core Count)","[ybsbu] Job Size: Min (Core Count)","[swath] Job Size: Min (Core Count)","[sante] Job Size: Min (Core Count)","[savsp] Job Size: Min (Core Count)"
+2016-12-23,0,0,0,0,1,0
+2016-12-24,0,0,0,0,1,0
+2016-12-25,0,0,0,0,1,0
+2016-12-26,0,0,0,0,1,0
+2016-12-27,16,0,16,0,1,0
+2016-12-28,16,0,16,0,1,0
+2016-12-29,16,0,8,4,1,0
+2016-12-30,16,12,8,4,1,1
+2016-12-31,16,16,8,64,0,1
+2017-01-01,16,0,0,0,0,1
+---------

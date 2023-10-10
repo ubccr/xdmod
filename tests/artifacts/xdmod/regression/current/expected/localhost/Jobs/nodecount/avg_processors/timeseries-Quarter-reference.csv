@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[28] Job Size: Per Job (Core Count)","[24] Job Size: Per Job (Core Count)","[12] Job Size: Per Job (Core Count)","[16] Job Size: Per Job (Core Count)","[20] Job Size: Per Job (Core Count)","[7] Job Size: Per Job (Core Count)","[9] Job Size: Per Job (Core Count)","[8] Job Size: Per Job (Core Count)","[6] Job Size: Per Job (Core Count)","[5] Job Size: Per Job (Core Count)","[14] Job Size: Per Job (Core Count)","[4] Job Size: Per Job (Core Count)","[3] Job Size: Per Job (Core Count)","[2] Job Size: Per Job (Core Count)","[1] Job Size: Per Job (Core Count)"
+"2016 Q4",336.0000,288.0000,170.1818,170.6667,160.0000,112.0000,108.0000,88.0000,70.1538,60.0000,56.0000,41.4118,36.0000,23.9000,8.2893
+"2017 Q1",0,0,0,160.0000,160.0000,0,0,86.5455,54.0000,60.0000,0,39.3333,36.0000,21.8182,8.7126
+---------

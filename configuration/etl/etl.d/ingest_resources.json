@@ -46,7 +46,8 @@
                     "resource_type",
                     "pi_column",
                     "shared_jobs",
-                    "timezone"
+                    "timezone",
+                    "allocation_type"
                 ]
             },
             "destination": {

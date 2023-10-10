@@ -1,0 +1,75 @@
+title
+"Node Hours: Per Job: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+Chaffinch,960.05777778,
+"Scaup, Lesser",824.05108025,
+"Pipit, Meadow",508.59805556,
+"Scoter, Velvet",436.75888889,
+Siskin,420.21000000,
+"Warbler, Dusky",364.05481481,136.8440852046951
+"Duck, Ferruginous",350.03888889,
+Smew,218.94047619,
+"Grosbeak, Evening",141.13166667,80.31330471086498
+Peregrine,124.23888889,
+"Goose, Egyptian",110.47750000,
+Crane,101.42611111,
+"Warbler, Yellow-browed",90.28055556,27.732762483552477
+"Tern, Sandwich",87.43875000,
+Ovenbird,82.76488889,
+"Warbler, Moltoni's",72.00694444,
+"Warbler, Garden",52.33125262,
+"Sparrow, White-throated",50.98981481,
+"Bunting, Yellow-browed",50.34944444,
+Lapwing,49.85089556,
+"Sapsucker, Yellow-bellied",49.75942901,
+"Ibis, Glossy",48.00666667,
+"Treecreeper, Short-toed",46.66209596,
+"Warbler, Sardinian",44.53832099,8.988788032306655
+"Plover, White-tailed",44.13648148,
+"Thrush, Mistle",39.37916667,
+"Bunting, Yellow-breasted",38.73828704,
+"Gull, Ring-billed",31.90972222,
+Whimbrel,29.27660714,5.4837784053086
+"Shearwater, Cory's",27.37690972,
+Moorhen,25.48654262,
+Jackdaw,21.84694444,
+"Warbler, Hooded",21.83599206,
+Shag,20.71641414,
+"Redpoll, Lesser",18.89791667,
+"Sandpiper, Spotted",16.91415278,
+"Warbler, Booted",16.76537037,
+Fieldfare,14.37398148,
+Roller,13.65055556,7.948466682221146
+"Crane, Sandhill",10.37586034,1.124927661108179
+"Grebe, Pied-billed",10.00406111,
+"Oriole, Baltimore",9.12821296,1.9513258454156153
+"Grey, Lesser",8.59051583,
+"Thrush, Grey-cheeked",7.94699670,0.252707620848999
+"Auk, Little",7.02769444,1.7557857088278381
+"Bunting, Black-headed",5.98691667,0.9781127830854605
+"Harrier, Hen",5.04208333,1.412736659063767
+"Swift, Alpine",4.77166667,1.9283134887459636
+"Shrike, Long-tailed",3.89088542,1.5421931694132969
+"Gallinule, Allen's",2.34500000,0
+"Plover, Caspian",2.10733760,0.04730850999433886
+"Warbler, Golden-winged",1.74795089,0.6996960905360882
+"Dove, Turtle",1.44922324,0.09512756747619289
+Coot,0.97185185,0.0004785195136278676
+"Martin, Purple",0.97183642,0.0003786808428516845
+"Egret, Cattle",0.97148148,0.0005075905675059155
+"Grey, Southern",0.88155664,0.09909785167735996
+"Thrush, Swainson's",0.77236014,0.16956368955632173
+Dunlin,0.62984891,0.07224051664061484
+"Stint, Little",0.33320707,0.09324722160395126
+"Bunting, Reed",0.29758033,0.026000891408928004
+Honey-buzzard,0.28378820,0.002129439336752145
+"Martin, Crag",0.08049603,0.022331879009996006
+"Partridge, Red-legged",0.06500000,0
+"Sparrow, Savannah",0.02439103,0.001692897033294295
+"Grey, Great",0.02076714,0.0006447632527319155
+---------

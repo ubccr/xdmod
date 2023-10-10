@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Astronomical Sciences] Wait Hours: Per Job","[Molecular Biosciences] Wait Hours: Per Job","[Materials Research] Wait Hours: Per Job","[Atmospheric Sciences] Wait Hours: Per Job","[Electrical and Communication Systems] Wait Hours: Per Job","[Environmental Biology] Wait Hours: Per Job","[Chemical, Thermal Systems] Wait Hours: Per Job","[Arts] Wait Hours: Per Job","[Polar Programs] Wait Hours: Per Job","[Earth Sciences] Wait Hours: Per Job","[Physics] Wait Hours: Per Job","[Social and Economic Science] Wait Hours: Per Job","[Mathematical Sciences] Wait Hours: Per Job","[Computer and Computation Research] Wait Hours: Per Job","[Microelectronic Information Processing Systems] Wait Hours: Per Job","[Design and Manufacturing Systems] Wait Hours: Per Job","[Chemistry] Wait Hours: Per Job","[Mechanical and Structural Systems] Wait Hours: Per Job"
+2016-12,207.94704539,56.55625448,33.61029775,25.72861111,32.16831034,12.03978611,6.67768519,4.87037458,1.07689141,3.82833875,3.72481481,2.14923636,1.30868803,0.32390278,0.22195757,0.12320749,0.06183072,0.00016493
+2017-01,1.21768519,0.04938889,0,36.31500000,1.89854167,13.14023981,0,0.00000000,5.05697111,0.00009259,0,1.47296410,0.00000000,0,0.03552149,0.01760234,0.09336190,0.00016865
+---------

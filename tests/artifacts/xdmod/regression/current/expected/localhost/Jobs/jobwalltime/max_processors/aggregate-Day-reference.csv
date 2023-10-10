@@ -1,0 +1,17 @@
+title
+"Job Size: Max (Core Count): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Job Size: Max (Core Count)"
+"0 - 1s",12
+"1 - 30s",32
+"30s - 30min",288
+"30 - 60min",96
+"1 - 5hr",80
+"5 - 10hr",160
+"10 - 18hr",112
+18+hr,336
+---------

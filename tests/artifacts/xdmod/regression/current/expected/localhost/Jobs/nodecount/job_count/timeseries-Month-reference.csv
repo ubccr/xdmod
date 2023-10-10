@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Number of Jobs Ended","[2] Number of Jobs Ended","[8] Number of Jobs Ended","[4] Number of Jobs Ended","[6] Number of Jobs Ended","[12] Number of Jobs Ended","[3] Number of Jobs Ended","[7] Number of Jobs Ended","[5] Number of Jobs Ended","[16] Number of Jobs Ended","[14] Number of Jobs Ended","[20] Number of Jobs Ended","[9] Number of Jobs Ended","[24] Number of Jobs Ended","[28] Number of Jobs Ended"
+2016-12,54519,70,61,49,12,11,4,9,3,3,2,1,1,1,1
+2017-01,16379,77,44,48,8,0,5,0,2,2,0,1,0,0,0
+---------

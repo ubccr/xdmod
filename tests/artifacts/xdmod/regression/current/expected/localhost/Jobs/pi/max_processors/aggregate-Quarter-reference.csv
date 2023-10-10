@@ -1,0 +1,50 @@
+title
+"Job Size: Max (Core Count): by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Job Size: Max (Core Count)"
+"Thrush, Hermit",336
+Dunlin,192
+"Scaup, Lesser",192
+"Gull, Yellow-legged",160
+"Shearwater, Balearic",144
+Nuthatch,112
+"Gull, Glaucous-winged",108
+"Bunting, Ortolan",96
+Fieldfare,96
+"Lark, Calandra",96
+Smew,72
+"White, Great",72
+Chaffinch,64
+"Tern, Caspian",64
+"Swift, Little",60
+"Warbler, Cetti's",56
+"Goose, Red-breasted",48
+"Warbler, Savi's",40
+Fulmar,32
+"Accentor, Alpine",24
+Blackbird,20
+Dotterel,20
+"Bluetail, Red-flanked",16
+"Yellowthroat, Common",16
+"Chiffchaff, Iberian",12
+"Egret, Snowy",12
+"Flycatcher, Taiga",12
+Jackdaw,12
+"Kestrel, Lesser",12
+"Martin, Sand",12
+"Petrel, Fea's",12
+"Warbler, Blackpoll",12
+"Warbler, Hooded",12
+Bittern,1
+Bufflehead,1
+"Dowitcher, Short-billed",1
+"Harrier, Hen",1
+Moorhen,1
+"Shearwater, Great",1
+"Shearwater, Macaronesian",1
+"Spotted, Great",1
+---------

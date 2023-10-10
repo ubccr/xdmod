@@ -1,0 +1,27 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Job Size: Weighted By CPU Hours (Core Count)"
+brown,111.3630
+black,87.1590
+crumpet,62.9605
+white,61.7818
+roti,31.9003
+cornbread,28.1249
+bannock,27.0485
+potbrood,21.0567
+panettone,20.0000
+croutons,14.0785
+pikelet,13.8060
+chapti,12.0000
+nann,12.0000
+focaccia,11.9631
+pumpernickel,5.0000
+brioche,3.8841
+pita,2.9011
+barm,2.0000
+---------

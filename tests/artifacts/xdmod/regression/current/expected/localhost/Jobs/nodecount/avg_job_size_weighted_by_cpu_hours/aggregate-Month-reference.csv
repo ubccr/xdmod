@@ -1,0 +1,24 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Node Count","Job Size: Weighted By CPU Hours (Core Count)"
+28,336.0000
+24,288.0000
+12,183.8058
+16,179.0578
+20,160.0000
+7,112.0000
+9,108.0000
+8,94.4545
+6,69.2561
+5,60.0000
+14,56.0000
+4,40.6778
+3,36.0000
+2,30.0822
+1,10.2574
+---------

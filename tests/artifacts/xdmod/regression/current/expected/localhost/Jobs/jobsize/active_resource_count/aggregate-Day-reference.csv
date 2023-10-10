@@ -1,0 +1,19 @@
+title
+"Number of Resources: Active: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Number of Resources: Active"
+1,5
+2,2
+"3 - 4",3
+"5 - 8",4
+"9 - 16",5
+"17 - 32",4
+"33 - 64",3
+"65 - 128",3
+"129 - 256",2
+"257 - 512",1
+---------

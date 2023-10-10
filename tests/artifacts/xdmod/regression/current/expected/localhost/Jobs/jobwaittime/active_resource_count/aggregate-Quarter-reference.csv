@@ -1,0 +1,17 @@
+title
+"Number of Resources: Active: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Number of Resources: Active"
+"0 - 1s",5
+"1 - 30s",5
+"30s - 30min",5
+"30 - 60min",4
+"1 - 5hr",4
+"5 - 10hr",4
+"10 - 18hr",4
+18+hr,3
+---------
