@@ -39,9 +39,9 @@ class AddResourceSetup extends SetupItem
         $typeOptions = array();
         $typeDescriptionText = "";
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
-        $allocatableTypeOptions = array();
-        $allocatableTypeDescriptionText = "";
-        $availableAllocatableTypes = XdmodConfiguration::assocArrayFactory('resource_allocatable_types.json', CONFIG_DIR)['resource_allocatable_types'];
+        $resourceAllocationTypeOptions = array();
+        $resourceAllocationTypeDescriptionText = "";
+        $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
         $gpu_nodes = 0;
         $gpus = 0;
         $gpu_ppn = 0;
@@ -55,13 +55,13 @@ class AddResourceSetup extends SetupItem
             $typeDescriptionText .= sprintf("%-10s - %s", $abbrev, $type['description']) . PHP_EOL;
         }
 
-        foreach ( $availableAllocatableTypes as $abbrev => $type ) {
+        foreach ( $availableResourceAllocationTypes as $abbrev => $type ) {
             if ( 'UNK' == $abbrev ) {
                 continue;
             }
             // Note that Console::prompt() expects lowercase values for options
-            $allocatableTypeOptions[] = strtolower($abbrev);
-            $allocatableTypeDescriptionText .= sprintf("%-10s - %s", $abbrev, $type['description']) . PHP_EOL;
+            $resourceAllocationTypeOptions[] = strtolower($abbrev);
+            $resourceAllocationTypeDescriptionText .= sprintf("%-10s - %s", $abbrev, $type['description']) . PHP_EOL;
         }
 
         $this->console->displaySectionHeader('Add A New Resource');
@@ -76,7 +76,7 @@ Available resource types are:
 $typeDescriptionText
 
 Available resource allocation types are:
-$allocatableTypeDescriptionText
+$allocationTypeDescriptionText
 EOT
         );
         $this->console->displayBlankLine();
@@ -84,7 +84,7 @@ EOT
         $resource = $this->console->prompt('Resource Name:');
         $name     = $this->console->prompt('Formal Name:');
         $type     = $this->console->prompt('Resource Type:', 'hpc', $typeOptions);
-        $allocatable_type     = $this->console->prompt('Resource Allocation Type:', 'cpu', $allocatableTypeOptions);
+        $resource_allocation_type     = $this->console->prompt('Resource Allocation Type:', 'cpu', $resourceAllocationTypeOptions);
         $resource_start_date = $this->get_resource_start_date();
 
         $this->console->displayBlankLine();
@@ -106,7 +106,7 @@ EOT
 
         $ppn = $cpus / $nodes;
 
-        if ($allocatable_type == 'gpu' || $allocatable_type == 'gpu_node') {
+        if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpu_node') {
             $gpu_nodes = $this->console->prompt('How many GPU nodes does this resource have?');
             if (empty($gpu_nodes) || !is_numeric($gpu_nodes)) { $gpu_nodes = 0; }
 
@@ -121,7 +121,7 @@ EOT
                 'resource'   => $resource,
                 'name'       => $name,
                 'type'       => $type,
-                'allocatable_type'    => $allocatable_type,
+                'resource_allocation_type'    => $resource_allocation_type,
                 'cpu_processor_count' => (int)$cpus,
                 'cpu_node_count'      => (int)$nodes,
                 'cpu_ppn'             => (int)$ppn,

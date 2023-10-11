@@ -49,7 +49,7 @@
                 "default": "0"
             },
             {
-                "name": "resource_allocatable_type_id",
+                "name": "resource_allocation_type_id",
                 "type": "int(11)",
                 "nullable": true
             },

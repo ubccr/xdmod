@@ -45,7 +45,7 @@ class ListResourcesSetup extends SetupItem
         }
 
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
-        $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocatable_types.json', CONFIG_DIR)['resource_allocatable_types'];
+        $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
 
         foreach ($resources as $resource) {
             $specs = $this->getSpecsForResource($resource['resource']);
@@ -61,10 +61,11 @@ class ListResourcesSetup extends SetupItem
                 }
             }
 
+            $resourceAllocationType = 'UNK';
             foreach ( $availableResourceAllocationTypes as $name => $type ) {
-                if ( $name === $resource['allocation_type'] ) {
+                if ( $name === $resource['resource_allocation_type'] ) {
                     // Note that Console::prompt() expects lowercase values for options
-                    $resourceAllocatableType = strtolower($name);
+                    $resourceAllocationType = strtolower($name);
                     break;
                 }
             }
@@ -72,7 +73,7 @@ class ListResourcesSetup extends SetupItem
             $this->console->displayMessage('Resource: ' . $resource['resource']);
             $this->console->displayMessage('Name: ' . $resource['name']);
             $this->console->displayMessage('Type: ' . $resourceType);
-            $this->console->displayMessage('Resource Allocation Type: ' . $resourceAllocatableType);
+            $this->console->displayMessage('Resource Allocation Type: ' . $resourceAllocationType);
             $this->console->displayMessage('CPU Node count: ' . $specs['cpu_node_count']);
             $this->console->displayMessage('CPU Processor count: ' . $specs['cpu_processor_count']);
             $this->console->displayMessage('GPU Node count: ' . $specs['gpu_node_count']);

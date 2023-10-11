@@ -123,10 +123,10 @@ class ResourcesSetup extends SubMenuSetupItem
         // Look up the resource type id for the string that was entered
 
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
-        $availableAllocatableTypes = XdmodConfiguration::assocArrayFactory('resource_allocatable_types.json', CONFIG_DIR)['resource_allocatable_types'];
+        $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
 
         $typeAbbrev = 'UNK';
-        $allocatableTypeAbbrev = 'UNK';
+        $resourceAllocationTypeAbbrev = 'UNK';
 
         foreach($availableTypes as $abbrev => $type) {
             if (strtolower($abbrev) === $resource['type']) {
@@ -135,18 +135,18 @@ class ResourcesSetup extends SubMenuSetupItem
             }
         }
 
-        foreach($availableAllocatableTypes as $abbrev => $type) {
-            if (strtolower($abbrev) === $resource['allocatable_type']) {
-                $allocatableTypeAbbrev = $abbrev;
+        foreach($availableResourceAllocationTypes as $abbrev => $type) {
+            if (strtolower($abbrev) === $resource['resource_allocation_type']) {
+                $resourceAllocationTypeAbbrev = $abbrev;
                 break;
             }
         }
 
         $this->resources[] = array(
-            'resource'         => $resource['resource'],
-            'resource_type'    => $typeAbbrev,
-            'allocation_type'  => $allocatableTypeAbbrev,
-            'name'             => $resource['name'],
+            'resource'                  => $resource['resource'],
+            'resource_type'             => $typeAbbrev,
+            'resource_allocation_type'  => $resourceAllocationTypeAbbrev,
+            'name'                      => $resource['name'],
         );
 
         $this->resourceSpecs[] = array(

@@ -41,7 +41,7 @@
                 "common/staging/resource-config.json",
                 "common/staging/resource-spec.json",
                 "common/staging/resource-type.json",
-                "common/staging/resource-allocatable-type.json",
+                "common/staging/resource-allocation-type.json",
                 "common/staging/resource.json",
                 "common/staging/union-user-pi-resource.json",
                 "common/staging/union-user-pi.json",
@@ -98,22 +98,22 @@
             }
         },
         {
-            "name": "resource-allocatable-types",
+            "name": "resource-allocation-types",
             "description": "Ingest resource allocation types file",
-            "definition_file": "common/staging/resource_allocatable_type.json",
+            "definition_file": "common/staging/resource_allocation_type.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
                     "name": "Resource types",
-                    "path": "${base_dir}/../resource_allocatable_types.json",
-                    "record_schema_path": "common/resource-allocatable-types.schema.json",
+                    "path": "${base_dir}/../resource_allocation_types.json",
+                    "record_schema_path": "common/resource-allocation-types.schema.json",
                     "filters": [
                         {
                             "#": "Reformat config file for ETLs purposes.",
                             "type": "external",
                             "name": "jq",
                             "path": "jq",
-                            "arguments": "'[ .resource_allocatable_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
+                            "arguments": "'[ .resource_allocation_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
                         }
                     ]
                 }

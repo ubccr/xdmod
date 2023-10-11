@@ -1,39 +1,39 @@
 {
     "table_definition": {
-        "name": "staging_resource_allocatable_type",
+        "name": "staging_resource_allocation_type",
         "engine": "InnoDB",
-        "comment": "Staging table for resource allocatable types, i.e, CPU, GPU, or Node",
+        "comment": "Staging table for resource allocation types, i.e, CPU, GPU, or Node",
         "columns": [
             {
-                "name": "resource_allocatable_type_id",
+                "name": "resource_allocation_type_id",
                 "type": "int(11)",
                 "nullable": false,
                 "extra": "auto_increment"
             },
             {
-                "name": "resource_allocatable_type_description",
+                "name": "resource_allocation_type_description",
                 "type": "varchar(50)",
                 "nullable": false,
-                "comment": "Resource allocatable type description"
+                "comment": "Resource allocation type description"
             },
             {
-                "name": "resource_allocatable_type_abbrev",
+                "name": "resource_allocation_type_abbrev",
                 "type": "varchar(10)",
                 "nullable": false,
-                "comment": "Resource allocatable type abbreviation"
+                "comment": "Resource allocation type abbreviation"
             }
         ],
         "indexes": [
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "resource_allocatable_type_abbrev"
+                    "resource_allocation_type_abbrev"
                 ]
             },
             {
                 "name": "uk_resource_type_id",
                 "columns": [
-                    "resource_allocatable_type_id"
+                    "resource_allocation_type_id"
                 ],
                 "is_unique": true
             }

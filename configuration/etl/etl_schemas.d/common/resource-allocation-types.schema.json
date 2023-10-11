@@ -5,12 +5,12 @@
     "properties": {
         "abbrev": {
             "type": "string",
-            "description": "Resource allocatable type abbreviation",
+            "description": "Resource allocation type abbreviation",
             "maxLength": 10
         },
         "description": {
             "type": "string",
-            "description": "Resource allocatable type description",
+            "description": "Resource allocation type description",
             "maxLength": 50
         }
     },

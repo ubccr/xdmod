@@ -1,5 +1,5 @@
 {
-    "resource_allocatable_types": {
+    "resource_allocation_types": {
         "CPU": {
             "description": "CPU Allocated",
             "abbrev": "cpu"
