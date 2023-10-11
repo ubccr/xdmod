@@ -68,6 +68,10 @@ jobs:
             cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
             cp /etc/xdmod/organization.json ./configuration/organization.json
       - run:
+          name: Make sure that the Composer Test Dependencies are installed
+          command: |
+            composer install --no-progress
+      - run:
           name: Setup & Run QA Tests
           command: |
             ./tests/ci/scripts/qa-test-setup.sh
