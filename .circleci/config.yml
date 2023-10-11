@@ -61,9 +61,6 @@ jobs:
           name: Validate the newly installed / Upgraded XDMoD
           command: ./tests/ci/validate.sh
       - run:
-          name: Make sure that the Composer Test Depedencies are installed
-          command: composer install --no-progress
-      - run:
           name: Setup Configuration Files for Integration Tests
           command: |
             mv ./configuration/organization.json ./configuration/organization.json.old
