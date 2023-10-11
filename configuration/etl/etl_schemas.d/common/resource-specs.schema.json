@@ -64,6 +64,7 @@
     "required": [
         "resource",
         "cpu_node_count",
-        "cpu_processor_count"
+        "cpu_processor_count",
+        "start_date"
     ]
 }

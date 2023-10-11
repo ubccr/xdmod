@@ -5,7 +5,7 @@
     "source_query": {
         "records": {
             "resource_id": "r.resource_id",
-            "start_date_ts": "IF(ISNULL(rs.start_date), UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(rs.start_date))",
+            "start_date_ts": "UNIX_TIMESTAMP(rs.start_date)",
             "end_date_ts": "IF(ISNULL(rs.end_date), UNIX_TIMESTAMP(CONCAT(CURRENT_DATE(), ' 23:59:59')), UNIX_TIMESTAMP(CONCAT(rs.end_date, ' 23:59:59')))",
             "percent": "COALESCE(rs.percent_allocated, 100)"
         },
