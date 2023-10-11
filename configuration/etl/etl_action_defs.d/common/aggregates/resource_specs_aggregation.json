@@ -48,6 +48,13 @@
                   "alias": "ra",
                   "schema": "${SOURCE_SCHEMA}",
                   "on": "r.resource_id = ra.resource_id AND r.start_day_id = ra.start_day_id AND r.end_day_id = ra.end_day_id"
+              },
+              {
+                  "#": "Exclude non compute resources (Storage, User Support, etc) from the resources specifications aggregation. The ID's map to the modw.resourcetype table",
+                  "name": "resourcefact",
+                  "alias": "rf",
+                  "schema": "${SOURCE_SCHEMA}",
+                  "on": "r.resource_id = rf.id AND rf.resourcetype_id NOT IN (8,9,10,11,12)"
               }
             ],
             "where": [
