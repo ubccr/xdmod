@@ -1,0 +1,5 @@
+{
+    "module": "xdmod",
+    "defaults": {},
+    "migration-10_5_0-11_0_0": []
+}
