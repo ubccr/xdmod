@@ -197,7 +197,7 @@ function main()
     }
 
     if ($realmToAggregate !== false
-        && !in_array($realmToAggregate, ['job', 'cloud', 'storage', 'cloudresourcespecs'])) {
+        && !in_array($realmToAggregate, ['job', 'cloud', 'storage', 'resourcespecs'])) {
         $logger->crit("Invalid realm '$value' specified for aggregation");
         exit(1);
     }
@@ -313,8 +313,8 @@ function main()
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {
                 $dwi->aggregateStorageData($lastModifiedStartDate);
             }
-            if ($realmToAggregate == 'cloudresourcespecs' || $realmToAggregate === false) {
-                //$dwi->aggregateCloudResourceSpecs($lastModifiedStartDate);
+            if ($realmToAggregate == 'resourcespecs' || $realmToAggregate === false) {
+                $dwi->aggregateResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {
             $logger->crit(array(

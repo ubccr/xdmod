@@ -29,9 +29,7 @@
                 "resource_id": "r.resource_id",
                 "core_time_available": "COALESCE(SUM(${wallduration} * r.cpu_processor_count * ra.percent / 100.0), 0)",
                 "gpu_time_available": "COALESCE(SUM(${wallduration} * r.gpu_processor_count * ra.percent / 100.0), 0)",
-                "su_available": "SUM(r.su_available_per_day)",
-                "cpu_processors_available": "SUM(r.cpu_processor_count)",
-                "gpu_processors_available": "SUM(r.gpu_processor_count)"
+                "su_available": "COALESCE(SUM(r.su_available_per_day), 0)"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
