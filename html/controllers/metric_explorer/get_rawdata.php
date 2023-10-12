@@ -8,8 +8,11 @@ use DataWarehouse\Query\TimeAggregationUnit;
 // 5 minute exec time max
 ini_set('max_execution_time', 300);
 
+$logger = new \CCR\RequestLogger();
+
 $returnData = array();
 
+$start = microtime(true);
 try {
     if (isset($_REQUEST['config'])) {
         $config = json_decode($_REQUEST['config'], true);
@@ -166,6 +169,9 @@ try {
         $ret['data'] = $dataset->getResults($limit, $offset);
         $ret['totalCount'] = $totalCount;
 
+        $end = microtime(true);
+        $logger->log($start, $end);
+
         print json_encode($ret);
         exit(0);
 
@@ -173,7 +179,11 @@ try {
 } catch (SessionExpiredException $see) {
     // TODO: Refactor generic catch block below to handle specific exceptions,
     //       which would allow this block to be removed.
+    $end = microtime(true);
+    $logger->log($start, $end);
     throw $see;
 } catch (Exception $ex) {
+    $end = microtime(true);
+    $logger->log($start, $end);
     \xd_response\presentError($ex);
 }

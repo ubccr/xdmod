@@ -14,21 +14,20 @@ transition from the [XD Metrics Service](https://www.nsf.gov/awardsearch/showAwa
  to [ACCESS Metrics](https://metrics.access-ci.org). The 10.0 release of
 Open XDMoD therefore has a longer than typical support time.
 
-| Version | Release Date       | End of Support     |
-| ------- | ------------------ | ------------------ |
-| 10.0    | March 10, 2022     | September 10, 2023     |
+| Version | Release Date       | End of Support      |
+|---------|--------------------|---------------------|
+| 10.0    | March 10, 2022     | September 10, 2023  |
+| 10.5    | September 03, 2023 | September 03, 2024* |
+
+**\* Note: CentOS 7 will officially reach end of life on June 30, 2024, and as such so will our official support for el7 XDMoD.**
 
 Supported Operating Systems
 ---------------------------
 
-CentOS 7 is the officially supported operating system for Open XDMoD.  If you
-are using a different operating system and encounter an issue, install Open
-XDMoD on CentOS 7 and reproduce the issue in that environment before requesting
+Rocky 8 and CentOS 7 are the officially supported operating systems for Open XDMoD.  If you
+are using a different operating system and encounter an issue, please install Open
+XDMoD on either of these operating systems and reproduce the issue in that environment before requesting
 support.
-
-Rocky 8 packages are available in 'beta' release.  We aim to provide the same level
- of support for Rocky 8 as we do for Centos 7, but some issues may not be fixed until
-the planned 10.5 release, which will have full support for Rocky 8.
 
 Requesting Support
 ------------------

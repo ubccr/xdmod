@@ -142,7 +142,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "The project associated with a running session of a virtual machine.",
+        "description_html": "The project associated with a VM.",
         "name": "Project"
     },
     "quarter": {
@@ -247,7 +247,7 @@
             }
         },
         "data_sort_order": null,
-        "description_html": "A categorization of sessions into discrete groups based on the number of cores used by each VM.",
+        "description_html": "A categorization of VM's into discrete groups based on the number of cores used by each VM.",
         "name": "VM Size: Cores"
     },
     "vm_size_memory": {
@@ -274,7 +274,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.",
+        "description_html": "A categorization of VM's into discrete groups based on the amount of memory reserved by each VM.",
         "name": "VM Size: Memory"
     },
     "instance_state": {
