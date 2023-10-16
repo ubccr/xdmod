@@ -62,8 +62,7 @@ jobs:
           command: ./tests/ci/validate.sh
       - run:
           name: Make sure that the Composer Test Dependencies are installed
-          command: |
-            composer install --no-progress
+          command: composer install --no-progress
       - run:
           name: Setup Configuration Files for Integration Tests
           command: |
