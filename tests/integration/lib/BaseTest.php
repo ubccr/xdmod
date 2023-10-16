@@ -90,8 +90,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @return array the test artifact as an associative array.
      * @throws Exception if there is an error loading the file.
      */
-    protected function loadJsonTestArtifact($testGroup, $fileName, $fileType)
-    {
+    protected static function loadJsonTestArtifact(
+        $testGroup,
+        $fileName,
+        $fileType
+    ) {
         $filePath = self::getTestFiles()->getFile(
             $testGroup,
             $fileName,
