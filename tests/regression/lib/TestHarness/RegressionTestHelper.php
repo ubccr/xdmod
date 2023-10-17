@@ -1,8 +1,4 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage TestHarness
- */
 
 namespace TestHarness;
 

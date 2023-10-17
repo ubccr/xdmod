@@ -34,8 +34,6 @@ use IntegrationTests\BaseTest;
  *     - fetch_report_data.php
  *     - get_preview_data.php
  *     - send_report.php
- *
- * @package IntegrationTests\Controllers
  */
 class ReportBuilderTest extends BaseTest
 {

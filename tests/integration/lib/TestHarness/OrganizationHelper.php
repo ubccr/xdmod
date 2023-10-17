@@ -9,8 +9,6 @@ use CCR\DB;
  *
  * A Test Helper class that provides convenience methods related to Organizations
  * ( from the table `modw.organization` ).
- *
- * @package TestHarness
  */
 class OrganizationHelper
 {

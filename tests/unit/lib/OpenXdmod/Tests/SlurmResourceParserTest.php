@@ -8,8 +8,6 @@ use Xdmod\SlurmResourceParser;
 /**
  * SlurmResourceParser test class.
  *
- * @package OpenXdmod
- * @subpackage Tests
  * @coversDefaultClass \Xdmod\SlurmResourceParser
  */
 class SlurmResourceParserTest extends \PHPUnit_Framework_TestCase

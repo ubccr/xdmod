@@ -9,9 +9,6 @@ use Xdmod\NodeSet;
 
 /**
  * NodeSet test class
- *
- * @package OpenXdmod
- * @subpackage Tests
  */
 class NodeSetTest extends \PHPUnit_Framework_TestCase
 {

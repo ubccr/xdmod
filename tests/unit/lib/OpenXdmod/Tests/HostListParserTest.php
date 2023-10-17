@@ -9,9 +9,6 @@ use Xdmod\HostListParser;
 
 /**
  * HostListParser test class.
- *
- * @package OpenXdmod
- * @subpackage Tests
  */
 class HostListTest extends \PHPUnit_Framework_TestCase
 {

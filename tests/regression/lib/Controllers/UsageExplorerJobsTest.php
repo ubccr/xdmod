@@ -1,8 +1,4 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage Tests
- */
 
 namespace Controllers;
 

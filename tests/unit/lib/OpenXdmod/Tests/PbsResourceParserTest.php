@@ -8,8 +8,6 @@ use Xdmod\PbsResourceParser;
 /**
  * PbsResourceParser test class.
  *
- * @package OpenXdmod
- * @subpackage Tests
  * @coversDefaultClass \Xdmod\PbsResourceParser
  */
 class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
