@@ -1,6 +1,6 @@
 <?php
 
-namespace TestHelpers\mock;
+namespace UnitTests\TestHelpers\mock;
 
 class MockXDUser
 {

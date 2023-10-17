@@ -6,7 +6,7 @@
  * @date 2018-01-24
  */
 
-namespace UnitTesting\ETL\SqlParser;
+namespace UnitTests\ETL\SqlParser;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;

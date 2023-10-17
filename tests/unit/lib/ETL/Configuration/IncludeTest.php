@@ -7,7 +7,7 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\Configuration;
+namespace UnitTests\ETL\Configuration;
 
 use CCR\Log;
 use Configuration\Configuration;

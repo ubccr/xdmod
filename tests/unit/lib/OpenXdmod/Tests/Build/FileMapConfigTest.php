@@ -3,7 +3,7 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests\Build;
+namespace UnitTests\OpenXdmod\Tests\Build;
 
 use OpenXdmod\Build\Config;
 

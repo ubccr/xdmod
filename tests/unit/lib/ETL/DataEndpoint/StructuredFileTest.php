@@ -32,7 +32,7 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\DataEndpoint;
+namespace UnitTests\ETL\DataEndpoint;
 
 use CCR\Log;
 use ETL\DataEndpoint;

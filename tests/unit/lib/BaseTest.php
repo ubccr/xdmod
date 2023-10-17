@@ -3,7 +3,7 @@
  * Abstract base class to encapsulate funcationality common to unit tests.
  */
 
-namespace UnitTesting;
+namespace UnitTests;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
