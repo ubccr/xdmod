@@ -5,7 +5,7 @@ namespace IntegrationTests;
 use CCR\DB;
 use Exception;
 use Models\Services\Tokens;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**
  * Provides methods for testing API token authentication for HTTP endpoints.

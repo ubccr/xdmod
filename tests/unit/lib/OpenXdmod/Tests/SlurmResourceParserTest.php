@@ -1,14 +1,14 @@
 <?php
 
-namespace OpenXdmod\Tests;
+namespace UnitTests\OpenXdmod\Tests;
 
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 use Xdmod\SlurmResourceParser;
 
 /**
  * SlurmResourceParser test class.
  *
- * @coversDefaultClass \Xdmod\SlurmResourceParser
+ * @coversDefaultClass SlurmResourceParser
  */
 class SlurmResourceParserTest extends \PHPUnit_Framework_TestCase
 {

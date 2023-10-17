@@ -1,14 +1,14 @@
 <?php
 
-namespace OpenXdmod\Tests;
+namespace UnitTests\OpenXdmod\Tests;
 
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 use Xdmod\PbsResourceParser;
 
 /**
  * PbsResourceParser test class.
  *
- * @coversDefaultClass \Xdmod\PbsResourceParser
+ * @coversDefaultClass PbsResourceParser
  */
 class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
 {

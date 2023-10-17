@@ -3,7 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 use IntegrationTests\BaseTest;
 
 /**

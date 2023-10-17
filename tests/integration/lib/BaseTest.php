@@ -5,9 +5,9 @@ namespace IntegrationTests;
 use CCR\Json;
 use Exception;
 use Swaggest\JsonSchema\Schema;
-use TestHarness\TestFiles;
-use TestHarness\Utilities;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\TestFiles;
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**
  * This class serves as a base for test classes.
