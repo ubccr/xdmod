@@ -5,41 +5,26 @@ $dir = __DIR__;
 // Autoloader for test classes.
 spl_autoload_register(
     function ($className) use ($dir) {
-
-        // We want to treat all classes residing in 'lib' as belonging to the
-        // 'ComponentTests' namespace. Therefor, if ComponentTests is found in
-        // $className we strip it from $className and look for that file instead.
-        if (strpos($className, 'ComponentTests') !== false) {
-            $parts = explode('\\', $className);
-            if ($parts[0] === 'ComponentTests') {
-                unset($parts[0]);
-                $className = implode('\\', $parts);
-            }
-        }
-
-        if (strpos($className, 'TestHarness') !== false) {
-            $classPath = implode(
-                DIRECTORY_SEPARATOR,
-                array(
-                    $dir,
-                    '../integration',
-                    'lib',
-                    str_replace('\\', '/', $className) . '.php'
-                )
-            );
-        } else {
+        // Replace the ComponentTests namespace prefix with the path to the
+        // component tests lib directory.
+        $classPath = preg_replace(
+            '/ComponentTests\\\\?/',
+            "$dir/lib/",
+            $className
+        );
+        // Replace the IntegrationTests namespace prefix with the path to the
+        // integration tests lib directory.
+        $classPath = preg_replace(
+            '/IntegrationTests\\\\?/',
+            "$dir/../integration/lib/",
             $classPath
-                = $dir
-                . '/lib/'
-                . str_replace('\\', '/', $className)
-                . '.php';
-        }
-
+        );
+        // Replace namespace separators with directory separators.
+        $classPath = str_replace('\\', '/', $classPath) . '.php';
         if (is_readable($classPath)) {
             return require_once $classPath;
-        } else {
-            return false;
         }
+        return false;
     }
 );
 
