@@ -6,6 +6,7 @@ ini_set('memory_limit', '2048M');
 
 use CCR\Json;
 use DataWarehouse\Access\MetricExplorer;
+use IntegrationTests\TestHarness\Utilities;
 use Models\Services\Acls;
 use User\Elements\QueryDescripter;
 use XDUser;
@@ -355,7 +356,7 @@ TXT;
             )
         );
 
-        foreach(\TestHarness\Utilities::getCombinations($base) as $settings)
+        foreach(Utilities::getCombinations($base) as $settings)
         {
             $settings['expected'] = array(
                 "_realm_name" => 'Jobs',

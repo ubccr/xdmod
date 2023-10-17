@@ -4,11 +4,11 @@ namespace ComponentTests\Roles;
 
 use CCR\Json;
 use ComponentTests\BaseTest;
+use IntegrationTests\TestHarness\OrganizationHelper;
+use IntegrationTests\TestHarness\PeopleHelper;
+use IntegrationTests\TestHarness\UserHelper;
 use Models\Services\Parameters;
 use Models\Services\Users;
-use TestHarness\OrganizationHelper;
-use TestHarness\PeopleHelper;
-use TestHarness\UserHelper;
 use XDUser;
 
 class RoleParametersTest extends BaseTest
