@@ -27,15 +27,21 @@
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
                 "resource_id": "r.resource_id",
+                "cpu_cores_available": "SUM(r.cpu_processor_count)",
+                "gpu_cores_available": "SUM(r.gpu_processor_count)",
+                "cpu_nodes_available": "SUM(r.cpu_node_count)",
+                "gpu_nodes_available": "SUM(r.gpu_node_count)",
                 "core_time_available": "COALESCE(SUM(${wallduration} * r.cpu_processor_count * ra.percent / 100.0), 0)",
                 "gpu_time_available": "COALESCE(SUM(${wallduration} * r.gpu_processor_count * ra.percent / 100.0), 0)",
-                "su_available": "COALESCE(SUM(r.su_available_per_day), 0)"
+                "su_available": "COALESCE(SUM(r.su_available_per_day), 0)",
+                "resource_allocation_type_id": "COALESCE(rf.resource_allocation_type_id, -1)"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
               "year",
               "${AGGREGATION_UNIT}",
-              "resource_id"
+              "resource_id",
+              "resource_allocation_type_id"
             ],
             "joins":[
               {

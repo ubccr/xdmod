@@ -28,6 +28,27 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
             },{
+                "name": "cpu_cores_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },{
+                "name": "gpu_cores_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },{
+                "name": "cpu_nodes_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },{
+                "name": "gpu_nodes_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
                 "name": "core_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
@@ -44,6 +65,12 @@
                 "type": "int(11) unsigned",
                 "nullable": true,
                 "comment": "Total number of SU's available per day"
+            },
+            {
+                "name": "resource_allocation_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
             }
         ],
 
