@@ -39,7 +39,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
 
         var self = this;
 
-        this.baseChartOptions = XDMoD.utils.deepExtend({}, {
+        XDMoD.utils.deepExtend(this.baseChartOptions, {
             chart: {
                 renderTo: this.id,
                 width: this.width,
@@ -88,7 +88,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
                     if (t.getCount() <= 0) {
                         return;
                     }
-                    this.chartOptions = XDMoD.utils.deepExtend({}, this.baseChartOptions, t.getAt(0).data);
+                    XDMoD.utils.deepExtend(this.chartOptions, this.baseChartOptions, t.getAt(0).data);
 
                     this.chartOptions.exporting.enabled = (this.exporting === true);
                     this.chartOptions.credits.enabled = (this.credits === true);
