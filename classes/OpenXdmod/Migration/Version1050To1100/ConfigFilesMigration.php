@@ -63,9 +63,9 @@ EOT
 
         foreach ($resource_specs_data as $key => $value) {
             if (!array_key_exists('start_date', $value)) {
-              // Some entries may not have a start_date property. This is needed when array_multisort is called below.
-              $resource_specs_data[$key]['start_date'] = NULL;
-              $resources_get_start_dates[] = $this->resource_types_map[strtolower($resource_to_resource_type_map[$value['resource']])];
+                // Some entries may not have a start_date property. This is needed when array_multisort is called below.
+                $resource_specs_data[$key]['start_date'] = null;
+                $resources_get_start_dates[] = $this->resource_types_map[strtolower($resource_to_resource_type_map[$value['resource']])];
             }
         }
 
@@ -75,8 +75,8 @@ EOT
         $start_date_sql = $this->getStartDateSql($resources_get_start_dates);
 
         if (!empty($start_date_sql)) {
-          $resource_specs_start_times_stmt = $dbh->query($start_date_sql, array(), true);
-          $resource_specs_start_times = $resource_specs_start_times_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            $resource_specs_start_times_stmt = $dbh->query($start_date_sql, array(), true);
+            $resource_specs_start_times = $resource_specs_start_times_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         }
 
         // Set the start and end dates for each resource_specs record as best we can. Also, change the nodes, processors, and ppn field names and add fields for
@@ -87,15 +87,15 @@ EOT
 
             // If this is the first entry for a resource, there are different methods and checks to get the start and end dates.
             if (!in_array($value['resource'], $seen)) {
-              $seen[] = $value['resource'];
+                $seen[] = $value['resource'];
 
-              if (empty($resource_specs_data[$key]['start_date']) && (array_key_exists($value['resource'], $resource_specs_start_times))) {
-                  $resource_specs_data[$key]['start_date'] = $resource_specs_start_times[$value['resource']];
-              }
+                if (empty($resource_specs_data[$key]['start_date']) && (array_key_exists($value['resource'], $resource_specs_start_times))) {
+                    $resource_specs_data[$key]['start_date'] = $resource_specs_start_times[$value['resource']];
+                }
 
-              if ((!array_key_exists('end_date', $value) || empty($resource_specs_data[$key]['end_date'])) && $next['resource'] === $resource_specs_data[$key]['resource']) {
-                  $resource_specs_data[$key]['end_date'] = $next['start_date'];
-              }
+                if ((!array_key_exists('end_date', $value) || empty($resource_specs_data[$key]['end_date'])) && $next['resource'] === $resource_specs_data[$key]['resource']) {
+                    $resource_specs_data[$key]['end_date'] = $next['start_date'];
+                }
             }
 
             if (empty($resource_specs_data[$key]['start_date']) && $prev['resource'] === $resource_specs_data[$key]['resource']) {
@@ -168,6 +168,7 @@ EOT
 
         foreach ($resource_types_unique as $key => $value) {
             $variable_name = 'resource_specs_start_times_'.$value.'_sql';
+            // The $$ is not a typo. It is used to use a string as a variable name
             $sql_array[] = $$variable_name;
         }
 

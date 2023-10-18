@@ -376,12 +376,12 @@ class DataWarehouseInitializer
      */
     public function aggregateResourceSpecs($lastModifiedStartDate)
     {
-      $this->logger->notice('Aggregating Resource Specification data');
-      Utilities::runEtlPipeline(
-          array('aggregate-resource-specs'),
-          $this->logger,
-          array('last-modified-start-date' => $lastModifiedStartDate)
-      );
+        $this->logger->notice('Aggregating Resource Specification data');
+        Utilities::runEtlPipeline(
+            array('aggregate-resource-specs'),
+            $this->logger,
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
     }
 
     /**

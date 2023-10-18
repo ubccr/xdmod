@@ -76,7 +76,7 @@ Available resource types are:
 $typeDescriptionText
 
 Available resource allocation types are:
-$allocationTypeDescriptionText
+$resourceAllocationTypeDescriptionText
 EOT
         );
         $this->console->displayBlankLine();
@@ -85,7 +85,7 @@ EOT
         $name     = $this->console->prompt('Formal Name:');
         $type     = $this->console->prompt('Resource Type:', 'hpc', $typeOptions);
         $resource_allocation_type     = $this->console->prompt('Resource Allocation Type:', 'cpu', $resourceAllocationTypeOptions);
-        $resource_start_date = $this->get_resource_start_date();
+        $resource_start_date = $this->getResourceStartDate();
 
         $this->console->displayBlankLine();
         $this->console->displayMessage(<<<"EOT"
@@ -108,10 +108,14 @@ EOT
 
         if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpu_node') {
             $gpu_nodes = $this->console->prompt('How many GPU nodes does this resource have?');
-            if (empty($gpu_nodes) || !is_numeric($gpu_nodes)) { $gpu_nodes = 0; }
+            if (empty($gpu_nodes) || !is_numeric($gpu_nodes)) {
+                $gpu_nodes = 0;
+            }
 
             $gpus = $this->console->prompt('How many total GPU processors (gpu cores) does this resource have?');
-            if (empty($gpus) || !is_numeric($gpus)) { $gpus = 0; }
+            if (empty($gpus) || !is_numeric($gpus)) {
+                $gpus = 0;
+            }
 
             $gpu_ppn = $gpus / $gpu_nodes;
         }
@@ -139,7 +143,7 @@ EOT
     *
     * @return string $resource_start_date string
     */
-    public function get_resource_start_date()
+    public function getResourceStartDate()
     {
         $resource_start_date  = $this->console->prompt('Resource Start Date, in YYYY-mm-dd format', date('Y-m-d'));
         $resource_start_date_parsed = DateTime::createFromFormat("Y-m-d", $resource_start_date);
@@ -147,9 +151,9 @@ EOT
         if (empty($resource_start_date)) {
           $resource_start_date_parsed = DateTime::createFromFormat("Y-m-d", date('Y-m-d'));
         }
-        else if ($resource_start_date_parsed === false) {
+        elseif ($resource_start_date_parsed === false) {
             $this->console->displayMessage("The date you entered is in the wrong format. Please enter the date in YYYY-mm-dd format.");
-            $this->get_resource_start_date();
+            $this->getResourceStartDate();
         }
 
         return $resource_start_date_parsed->format('Y-m-d');
