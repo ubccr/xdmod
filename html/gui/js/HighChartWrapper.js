@@ -2,7 +2,8 @@
 
 Ext.namespace('XDMoD.utils');
 
-// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery
+// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery, which
+// is available under the MIT license.
 // Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
 XDMoD.utils.deepExtend = function extend(out, ...arguments_) { // eslint-disable-line
   if (!out) {
