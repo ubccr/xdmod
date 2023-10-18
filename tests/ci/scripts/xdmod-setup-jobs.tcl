@@ -9,11 +9,11 @@
 set resources [list]
 
 # Job Resources
-lappend resources [list frearson Frearson hpc cpu 2016-12-21 400 4000]
-lappend resources [list mortorq Mortorq hpc cpu 2016-12-21 400 4000]
-lappend resources [list phillips Phillips hpc cpu 2016-12-21 400 4000]
+lappend resources [list frearson Frearson hpc cpu 2016-12-27 400 4000]
+lappend resources [list mortorq Mortorq hpc cpu 2016-12-26 400 4000]
+lappend resources [list phillips Phillips hpc cpu 2016-12-22 400 4000]
 lappend resources [list pozidriv Posidriv hpc cpu 2016-12-21 400 4000]
-lappend resources [list robertson Robertson hpc cpu 2016-12-21 400 4000]
+lappend resources [list robertson Robertson hpc cpu 2016-12-12 400 4000]
 # -------------
 
 #-------------------------------------------------------------------------------

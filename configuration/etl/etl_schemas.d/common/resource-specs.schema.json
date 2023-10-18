@@ -46,7 +46,7 @@
         },
         "end_date": {
             "type": "string",
-            "format": "date",
+            "format": ["date", "null"],
             "description": "Resource specifications end date (YYYY-MM-DD)"
         },
         "percent_allocated": {

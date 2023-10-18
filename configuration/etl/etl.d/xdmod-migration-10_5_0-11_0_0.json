@@ -1,5 +1,323 @@
 {
-    "module": "xdmod",
-    "defaults": {},
-    "migration-10_5_0-11_0_0": []
+   "module":"xdmod",
+   "defaults":{
+      "migration-10_5_0-11_0_0":{
+         "namespace":"ETL\\Ingestor",
+         "class":"DatabaseIngestor",
+         "options_class":"IngestorOptions"
+      }
+   },
+   "migration-10_5_0-11_0_0":[
+      {
+         "name":"resource-allocation-types",
+         "description":"Ingest resource allocation types file",
+         "definition_file":"common/staging/resource-allocation-type.json",
+         "class": "StructuredFileIngestor",
+         "stop_on_exception": true,
+         "endpoints":{
+            "source":{
+               "type":"jsonfile",
+               "name":"Resource types",
+               "path":"${base_dir}/../resource_allocation_types.json",
+               "record_schema_path":"common/resource-allocation-types.schema.json",
+               "filters":[
+                  {
+                     "#":"Reformat config file for ETLs purposes.",
+                     "type":"external",
+                     "name":"jq",
+                     "path":"jq",
+                     "arguments":"'[ .resource_allocation_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
+                  }
+               ]
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Shredder/Staging Database",
+                "config": "database",
+                "schema": "mod_shredder"
+            }
+         }
+      },
+      {
+         "name":"staging-resource-config",
+         "description":"Ingest resource configuration file",
+         "definition_file":"common/staging/resource-config.json",
+         "class": "StructuredFileIngestor",
+         "stop_on_exception": true,
+         "endpoints":{
+            "source":{
+               "type":"jsonfile",
+               "name":"Resources configuration",
+               "path":"${base_dir}/../resources.json",
+               "record_schema_path":"common/resources.schema.json",
+               "field_names":[
+                  "resource",
+                  "name",
+                  "description",
+                  "pi_column",
+                  "shared_jobs",
+                  "timezone",
+                  "resource_type",
+                  "allocation_type"
+               ]
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Shredder/Staging Database",
+                "config": "database",
+                "schema": "mod_shredder"
+            }
+         }
+      },
+      {
+         "class":"DatabaseIngestor",
+         "name":"staging-resources",
+         "description":"Ingest resource names from resource config",
+         "definition_file":"common/staging/resource.json",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_shredder"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"mod_shredder"
+            }
+         }
+      },
+      {
+         "name":"staging-resource-specs",
+         "description":"Ingest resource specifications file",
+         "definition_file":"common/staging/resource-spec.json",
+         "class": "StructuredFileIngestor",
+         "truncate_destination": true,
+         "stop_on_exception": true,
+         "endpoints":{
+            "source":{
+               "type":"jsonfile",
+               "name":"Resource specifications",
+               "path":"${base_dir}/../resource_specs.json",
+               "record_schema_path":"common/resource-specs.schema.json",
+               "field_names":[
+                  "resource",
+                  "cpu_node_count",
+                  "cpu_processor_count",
+                  "cpu_ppn",
+                  "gpu_node_count",
+                  "gpu_processor_count",
+                  "gpu_ppn",
+                  "start_date",
+                  "end_date",
+                  "percent_allocated",
+                  "comments"
+               ]
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Shredder/Staging Database",
+                "config": "database",
+                "schema": "mod_shredder"
+            }
+         }
+      },
+      {
+         "name":"hpcdb-resources",
+         "description":"Ingest resources",
+         "definition_file":"common/hpcdb/resources.json",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_shredder"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"mod_hpcdb"
+            }
+         }
+      },
+      {
+          "name": "delete-hpcdb-resource-specs",
+          "namespace": "ETL\\Maintenance",
+          "options_class": "MaintenanceOptions",
+          "description": "Delete resource specs for resources in mod_shredder.staging_resource_spec",
+          "class": "ExecuteSql",
+          "sql_file_list": [
+              "migration/delete_hpcdb_resource_specs.sql"
+          ],
+          "endpoints":{
+             "source":{
+                "type":"mysql",
+                "name":"Shredder/Staging Database",
+                "config":"database",
+                "schema":"mod_shredder"
+             },
+             "destination":{
+                "type":"mysql",
+                "name":"Database",
+                "config":"database",
+                "schema":"mod_hpcdb"
+             }
+          }
+      },
+      {
+         "name":"hpcdb-resource-specs",
+         "description":"Ingest resource specifications",
+         "definition_file":"common/hpcdb/resource-specs.json",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_shredder"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"mod_hpcdb"
+            }
+         }
+      },
+      {
+         "name":"hpcdb-resource-allocated",
+         "description":"Ingest resource allocated data",
+         "definition_file":"common/hpcdb/resource-allocated.json",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_shredder"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"mod_hpcdb"
+            }
+         }
+      },
+      {
+          "name": "delete-modw-resource-specs",
+          "namespace": "ETL\\Maintenance",
+          "options_class": "MaintenanceOptions",
+          "description": "Delete resource specs for resources in mod_shredder.staging_resource_spec",
+          "class": "ExecuteSql",
+          "sql_file_list": [
+              "migration/delete_modw_resource_specs.sql"
+          ],
+          "endpoints":{
+             "source":{
+                "type":"mysql",
+                "name":"Shredder/Staging Database",
+                "config":"database",
+                "schema":"mod_hpcdb"
+             },
+             "destination":{
+                "type":"mysql",
+                "name":"Database",
+                "config":"database",
+                "schema":"modw"
+             }
+          }
+      },
+      {
+         "name":"modw-resource",
+         "definition_file":"jobs/xdw/resource-fact.json",
+         "description":"resource records",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_hpcdb"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"modw"
+            }
+         }
+      },
+      {
+         "name":"modw-resource-spec",
+         "definition_file":"jobs/xdw/resource-spec.json",
+         "description":"resource spec records",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_hpcdb"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"modw"
+            }
+         }
+      },
+      {
+         "name":"modw-resource-allocated",
+         "definition_file":"jobs/xdw/resource-allocated.json",
+         "description":"resource allocated records",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"Shredder/Staging Database",
+               "config":"database",
+               "schema":"mod_hpcdb"
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"Database",
+               "config":"database",
+               "schema":"modw"
+            }
+         }
+      },
+      {
+         "#":"Asset data must be aggregated post ingestion",
+         "name":"ResourceSpecsAggregator",
+         "class":"SimpleAggregator",
+         "namespace":"ETL\\Aggregator",
+         "options_class":"AggregatorOptions",
+         "endpoints":{
+            "source":{
+               "type":"mysql",
+               "name":"XDMoD Database",
+               "config":"database",
+               "schema":"modw",
+               "create_schema_if_not_exists":true
+            },
+            "destination":{
+               "type":"mysql",
+               "name":"XDMoD Database",
+               "config":"database",
+               "schema":"modw_aggregates",
+               "create_schema_if_not_exists":true,
+               "truncate_destination":false
+            }
+         },
+         "description":"Aggregate cloud records.",
+         "definition_file":"common/aggregates/resource_specs_aggregation.json",
+         "table_prefix":"resourcespecsfact_by_",
+         "aggregation_units":[
+            "day",
+            "month",
+            "quarter",
+            "year"
+         ]
+      }
+   ]
 }

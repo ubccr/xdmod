@@ -31,7 +31,7 @@
                 "name": "core_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of core time in seconds available for a time period"
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
             },
             {
                 "name": "gpu_time_available",

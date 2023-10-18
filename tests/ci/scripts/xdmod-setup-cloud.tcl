@@ -9,8 +9,8 @@
 set resources [list]
 
 # Cloud Resources
-lappend resources [list openstack OpenStack cloud cpu 2018-04-01 6 336]
-lappend resources [list nutsetters NutSetters cloud cpu 2018-04-01 123 234]
+lappend resources [list openstack OpenStack cloud cpu 2018-04-18 123 234]
+lappend resources [list nutsetters NutSetters cloud cpu 2019-06-26 123 234]
 
 #-------------------------------------------------------------------------------
 

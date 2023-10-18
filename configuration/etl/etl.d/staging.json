@@ -100,7 +100,7 @@
         {
             "name": "resource-allocation-types",
             "description": "Ingest resource allocation types file",
-            "definition_file": "common/staging/resource_allocation_type.json",
+            "definition_file": "common/staging/resource-allocation-type.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
