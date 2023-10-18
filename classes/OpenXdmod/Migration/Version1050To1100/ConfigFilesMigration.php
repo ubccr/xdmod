@@ -133,10 +133,10 @@ EOT
      */
     private function getStartDateSql($resource_realms)
     {
-        $sql_array = array();
+        $realm_sql_statements = [];
         $resource_types_unique = array_unique($resource_realms);
 
-        $resource_specs_start_times_jobs_sql = "SELECT
+        $realm_sql_statements['jobs'] = "SELECT
               r.code,
               DATE(FROM_UNIXTIME(MIN(jr.submit_time_ts))) as `start_time`
           FROM
@@ -146,7 +146,7 @@ EOT
           GROUP BY
               r.id";
 
-        $resource_specs_start_times_cloud_sql = "SELECT
+        $realm_sql_statements['cloud'] = "SELECT
               r.code,
               MIN(DATE(sr.start_time)) as `start_time`
           FROM
@@ -156,7 +156,7 @@ EOT
           GROUP BY
               r.id";
 
-        $resource_specs_start_times_storage_sql = "SELECT
+        $realm_sql_statements['storage'] = "SELECT
               r.code,
               DATE(MIN(sf.dt)) as `start_time`
           FROM
@@ -166,11 +166,7 @@ EOT
           GROUP BY
               r.id";
 
-        foreach ($resource_types_unique as $key => $value) {
-            $variable_name = 'resource_specs_start_times_'.$value.'_sql';
-            // The $$ is not a typo. It is used to use a string as a variable name
-            $sql_array[] = $$variable_name;
-        }
+        $sql_array = array_intersect_key($realm_sql_statements, array_flip(array_unique($resource_realms)));
 
         return (!empty($sql_array)) ? implode(' UNION ', $sql_array) : '';
     }
