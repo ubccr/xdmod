@@ -133,8 +133,7 @@ EOT
      */
     private function getStartDateSql($resource_realms)
     {
-        $realm_sql_statements = [];
-        $resource_types_unique = array_unique($resource_realms);
+        $realm_sql_statements = array();
 
         $realm_sql_statements['jobs'] = "SELECT
               r.code,
