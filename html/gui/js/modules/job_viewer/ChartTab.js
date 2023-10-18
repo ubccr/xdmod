@@ -66,8 +66,8 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
                                     },
                                     x: 0.5,
                                     y: 0.5,
-                                    showarrow: false,
-                                },
+                                    showarrow: false
+                                }
                             ],
                             images: [
                                 {
@@ -78,25 +78,25 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
                                     x: 0.45,
                                     y: 0.55,
                                     sizex: 0.1,
-                                    sizey: 0.1,
-                                },
+                                    sizey: 0.1
+                                }
                             ],
                             xaxis: {
                                 showgrid: false,
                                 showline: false,
                                 showticklabels: false,
-                                zeroline: false,
+                                zeroline: false
                             },
                             yaxis: {
                                 showgrid: false,
                                 showline: false,
                                 showticklabels: false,
-                                zeroline: false,
-                            },
+                                zeroline: false
+                            }
                         };
                         this.chart = Plotly.react(this.id, [], update, { staticPlot: true });
-                    },
-                },
+                    }
+                }
             }),
             baseParams: this.panelSettings.baseParams,
             autoLoad: false,
