@@ -9,7 +9,7 @@ set -e
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Set default values for the environment variables we're going to use.
-    QA_BRANCH=${QA_BRANCH:-v1}
+    QA_BRANCH=${QA_BRANCH:-v2}
     QA_GIT_URL=${QA_GIT_URL:-https://github.com/ubccr/xdmod-qa.git}
 
     # Clone a current copy of the xdmod-qa repo.
@@ -17,6 +17,9 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Switch to the repo root
     pushd $XDMOD_SOURCE_DIR >/dev/null || exit 1
+
+    # Specify composer.json for xdmod-qa so xdmod dev-dependencies aren't removed.
+    export COMPOSER="$HOME/.qa/composer.json"
 
     # Setup the xdmod-qa environment / requirements.
     $HOME/.qa/scripts/install.sh
