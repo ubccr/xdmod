@@ -149,7 +149,7 @@ EOT
         $resource_start_date_parsed = DateTime::createFromFormat("Y-m-d", $resource_start_date);
 
         if (empty($resource_start_date)) {
-          $resource_start_date_parsed = DateTime::createFromFormat("Y-m-d", date('Y-m-d'));
+            $resource_start_date_parsed = DateTime::createFromFormat("Y-m-d", date('Y-m-d'));
         }
         elseif ($resource_start_date_parsed === false) {
             $this->console->displayMessage("The date you entered is in the wrong format. Please enter the date in YYYY-mm-dd format.");
