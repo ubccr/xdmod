@@ -207,6 +207,25 @@
          }
       },
       {
+          "name": "hpcdb-resource-allocation-type",
+          "description": "Ingest resource allocated data",
+          "definition_file": "common/hpcdb/resource-allocation-type.json",
+          "endpoints":{
+             "source":{
+                "type":"mysql",
+                "name":"Shredder/Staging Database",
+                "config":"database",
+                "schema":"mod_shredder"
+             },
+             "destination":{
+                "type":"mysql",
+                "name":"Database",
+                "config":"database",
+                "schema":"mod_hpcdb"
+             }
+          }
+      },
+      {
           "name": "delete-modw-resource-specs",
           "namespace": "ETL\\Maintenance",
           "options_class": "MaintenanceOptions",
@@ -267,6 +286,25 @@
                "schema":"modw"
             }
          }
+      },
+      {
+          "name": "modw-resource-allocation-type",
+          "definition_file": "jobs/xdw/resource-allocation-type.json",
+          "description": "resource allocated records",
+          "endpoints":{
+             "source":{
+                "type":"mysql",
+                "name":"Shredder/Staging Database",
+                "config":"database",
+                "schema":"mod_hpcdb"
+             },
+             "destination":{
+                "type":"mysql",
+                "name":"Database",
+                "config":"database",
+                "schema":"modw"
+             }
+          }
       },
       {
          "name":"modw-resource-allocated",

@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/resource-allocation-type.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_allocation_type_id": "srat.resource_allocation_type_id",
+            "resource_allocation_type_description": "srat.resource_allocation_type_description",
+            "resource_allocation_type_abbrev": "srat.resource_allocation_type_abbrev"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_allocation_type",
+                "alias": "srat"
+            }
+        ]
+    }
+}
