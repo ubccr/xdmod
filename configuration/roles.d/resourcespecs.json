@@ -1,0 +1,60 @@
+{
+    "+roles": {
+        "+default": {
+            "+query_descripters": [
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "state"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "country"
+                }
+            ]
+        },
+        "+pub": {
+            "+query_descripters": [
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "state"
+                },
+                {
+                    "realm": "Resource Specifications",
+                    "group_by": "country"
+                }
+            ]
+        }
+    }
+}

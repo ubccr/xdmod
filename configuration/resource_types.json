@@ -3,19 +3,22 @@
         "HPC": {
             "description": "High-performance computing",
             "realms": [
-                "Jobs"
+                "Jobs",
+                "Resource Specifications"
             ]
         },
         "HTC": {
             "description": "High-throughput computing",
             "realms": [
-                "Jobs"
+                "Jobs",
+                "Resource Specifications"
             ]
         },
         "DIC": {
             "description": "Data-intensive computing",
             "realms": [
-                "Jobs"
+                "Jobs",
+                "Resource Specifications"
             ]
         },
         "Grid": {
@@ -26,37 +29,43 @@
         "Cloud": {
             "description": "Cloud resource",
             "realms": [
-                "Cloud"
+                "Cloud",
+                "Resource Specifications"
             ]
         },
         "Vis": {
             "description": "Visualization system",
             "realms": [
-                "Jobs"
+                "Jobs",
+                "Resource Specifications"
             ]
         },
         "VM": {
             "description": "Virtual Machine system",
             "realms": [
-                "Cloud"
+                "Cloud",
+                "Resource Specifications"
             ]
         },
         "Tape": {
             "description": "Tape storage resource",
             "realms": [
-                "Storage"
+                "Storage",
+                "Resource Specifications"
             ]
         },
         "Disk": {
             "description": "Disk storage resource",
             "realms": [
-                "Storage"
+                "Storage",
+                "Resource Specifications"
             ]
         },
         "StGrid": {
             "description": "Storage grid",
             "realms": [
-                "Storage"
+                "Storage",
+                "Resource Specifications"
             ]
         },
         "US": {

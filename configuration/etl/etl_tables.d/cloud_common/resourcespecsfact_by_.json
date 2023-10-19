@@ -23,7 +23,7 @@
                 "nullable": false,
                 "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
             },{
-                "name": "resource_id",
+                "name": "record_resource_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
@@ -71,7 +71,38 @@
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "resource_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "resource_country_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "organizationtype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
             }
+
         ],
 
         "#": "Note that the primary key is (resource, type, identifier, create_time) rather than",
@@ -81,7 +112,7 @@
         "indexes": [
             {
                 "name": "index_resource",
-                "columns": [ "resource_id" ]
+                "columns": [ "record_resource_id" ]
             },{
                 "name": "index_period_value",
                 "columns": [ "${AGGREGATION_UNIT}" ]
