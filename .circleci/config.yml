@@ -25,7 +25,7 @@ jobs:
       XDMOD_IS_CORE: yes
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
-      steps:
+    steps:
       - run:
           name: Generate OpenSSL Key
           command: openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
