@@ -106,7 +106,11 @@
     },
     "commands": {
         "pre_build": [
-	    "user_manual_builder/setup_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open"
+        "python -m venv user_manual_builder/sphinx_venv",
+        "source user_manual_builder/sphinx_venv/bin/activate",
+        "python -m pip install -r user_manual_builder/requirements.txt",
+	    "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open",
+        "deactivate"
         ]
     }
 }

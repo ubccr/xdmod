@@ -49,7 +49,7 @@ done
 #
 
 if [ -z "$BASE_BUILD_DIR" ] || [ -z "$DEST_DIR" ] || [ -z "$MANUAL_VERSION" ]; then
-	echo "Must specify build_dir, dest_dir and manual_version" >&2 
+	echo "Must specify build_dir, dest_dir and manual_version" >&2
 	exit 1
 elif [ ! -d "$BASE_BUILD_DIR" ]; then
 	mkdir -p $BASE_BUILD_DIR
@@ -69,7 +69,7 @@ fi
 cp $BASE_BUILD_DIR/index.rst.in $BASE_BUILD_DIR/index.rst
 
 if [ "$MANUAL_VERSION" = "XSEDE" ]; then
-    sed -i "s/<XSEDE>//g" "$BASE_BUILD_DIR/index.rst" 
+    sed -i "s/<XSEDE>//g" "$BASE_BUILD_DIR/index.rst"
 else
     sed -i "/<XSEDE>/d" "$BASE_BUILD_DIR/index.rst"
 fi
@@ -110,4 +110,3 @@ else
     fi
 fi
 
-exit 0
