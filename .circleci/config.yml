@@ -18,12 +18,14 @@ jobs:
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
+      QA_BRANCH: "user-manual"
+      QA_GIT_URL: "https://github.com/connersaeli/xdmod-qa.git"
       XDMOD_REALMS: 'jobs,storage,cloud'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
       XDMOD_IS_CORE: yes
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
-    steps:
+      steps:
       - run:
           name: Generate OpenSSL Key
           command: openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
