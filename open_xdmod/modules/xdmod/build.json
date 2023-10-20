@@ -109,8 +109,7 @@
         "python3 -m venv user_manual_builder/sphinx_venv",
         "source user_manual_builder/sphinx_venv/bin/activate",
         "python3 -m pip install -r user_manual_builder/requirements.txt",
-	    "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open",
-        "source deactivate"
+	    "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open"
         ]
     }
 }
