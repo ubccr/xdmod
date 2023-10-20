@@ -39,7 +39,7 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "name": "staging_resource_allocation_type",
                 "alias": "srat",
-                "on": "rc.allocation_unit_type_abbrev = srat.resource_allocation_type_abbrev"
+                "on": "rc.resource_allocation_type_abbrev = srat.resource_allocation_type_abbrev"
             }
 
         ]

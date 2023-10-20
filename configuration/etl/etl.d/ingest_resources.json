@@ -47,7 +47,7 @@
                     "pi_column",
                     "shared_jobs",
                     "timezone",
-                    "allocation_type"
+                    "resource_allocation_type"
                 ]
             },
             "destination": {
@@ -64,6 +64,35 @@
         "description": "Ingest resource names from staging table. Modeled after action in staging-ingest-common.resources",
         "definition_file": "common/staging/resource.json",
         "endpoints": {
+            "destination": {
+                "type": "mysql",
+                "name": "Shredder/Staging Database",
+                "config": "database",
+                "schema": "mod_shredder"
+            }
+        }
+    },
+    {
+        "name": "resource-allocation-types",
+        "description": "Ingest resource allocation types file",
+        "definition_file": "common/staging/resource-allocation-type.json",
+        "class": "StructuredFileIngestor",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "Resource types",
+                "path": "${base_dir}/../resource_allocation_types.json",
+                "record_schema_path": "common/resource-allocation-types.schema.json",
+                "filters": [
+                    {
+                        "#": "Reformat config file for ETLs purposes.",
+                        "type": "external",
+                        "name": "jq",
+                        "path": "jq",
+                        "arguments": "'[ .resource_allocation_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
+                    }
+                ]
+            },
             "destination": {
                 "type": "mysql",
                 "name": "Shredder/Staging Database",
