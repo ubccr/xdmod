@@ -23,7 +23,7 @@
             "description": "Resource type",
             "maxLength": 10
         },
-        "allocation_type": {
+        "resource_allocation_type": {
             "type": "string",
             "description": "Resource allocation unit type",
             "maxLength": 10

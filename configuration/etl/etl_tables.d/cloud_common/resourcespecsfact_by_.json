@@ -76,31 +76,31 @@
                 "name": "organization_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+                "comment": "DIMENSION: Organization the resource belongs to"
             },
             {
                 "name": "resource_state_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+                "comment": "DIMENSION: State the organiazation the resource belongs to is in"
             },
             {
                 "name": "resource_country_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+                "comment": "DIMENSION: Country the organization the resource belongs to is in"
             },
             {
                 "name": "organizationtype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+                "comment": "DIMENSION: The type of organization"
             },
             {
                 "name": "resourcetype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+                "comment": "DIMENSION: The type of resource this is"
             }
 
         ],

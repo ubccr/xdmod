@@ -58,7 +58,7 @@
                   "shared_jobs",
                   "timezone",
                   "resource_type",
-                  "allocation_type"
+                  "resource_allocation_type"
                ]
             },
             "destination": {

@@ -54,7 +54,7 @@ EOT
 
         foreach ($resource_config as $key => $value) {
             // Add the allocation type property to the resources.json file. The default is cpu.
-            $resource_config[$key]['allocation_type'] = 'cpu';
+            $resource_config[$key]['resource_allocation_type'] = 'cpu';
             $resource_to_resource_type_map[$value['resource']] = $value['resource_type'];
         }
 
