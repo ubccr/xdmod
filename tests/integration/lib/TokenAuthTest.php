@@ -39,7 +39,7 @@ abstract class TokenAuthTest extends BaseTest
      * user and for testing invalid, valid, expired, and revoked tokens for
      * each of the base roles (@see BaseTest::getBaseRoles()).
      */
-    public function provideTokenAuthTestData()
+    public static function provideTokenAuthTestData()
     {
         $testData = [
             ['pub', 'empty_token'],
