@@ -18,8 +18,6 @@ jobs:
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
-      QA_BRANCH: "user-manual"
-      QA_GIT_URL: "https://github.com/connersaeli/xdmod-qa.git"
       XDMOD_REALMS: 'jobs,storage,cloud'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
       XDMOD_IS_CORE: yes
