@@ -8,9 +8,6 @@ export XDMOD_REALMS
 
 cd $(dirname $0)
 
-python3 -c "import sys; print('\n'.join(sys.path))"
-python3 -c "import imagehash; print(imagehash.__version__)"
-
 if [ ! -e ../ci/testing.json ];
 then
     echo "ERROR missing testing.json file." >&2
