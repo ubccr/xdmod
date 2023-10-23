@@ -31,7 +31,7 @@ fi
 yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
 pip3 install imagehash==4.2.1
 cp $REPODIR/tests/ci/scripts/imagehash /root/bin
-python3 -c "import imagehash; print(imagehash.__file__)"
+pip3 show imagehash
 
 # ensure php error logging is set to E_ALL (recommended setting for development)
 sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini
