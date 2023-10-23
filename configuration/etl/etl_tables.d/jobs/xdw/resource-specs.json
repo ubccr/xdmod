@@ -4,6 +4,12 @@
         "engine": "InnoDB",
         "columns": [
             {
+                "name": "resourcespec_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false
@@ -90,6 +96,13 @@
                     "start_date_ts"
                 ],
                 "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "increment_key",
+                "columns": [
+                    "resourcespec_id"
+                ],
                 "is_unique": true
             },
             {

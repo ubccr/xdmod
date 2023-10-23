@@ -27,16 +27,44 @@
     "aggregate-resource-specs": [
         {
             "#": "Asset data must be aggregated post ingestion",
+            "name": "ResourceSpecsAggregatorByDay",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate cloud records.",
+            "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": ["day"]
+        },
+        {
+            "#": "Asset data must be aggregated post ingestion",
             "name": "ResourceSpecsAggregator",
             "class": "SimpleAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
             "description": "Aggregate cloud records.",
-            "definition_file": "common/aggregates/resource_specs_aggregation.json",
+            "definition_file": "resource_specifications/resource_specs_aggregation.json",
             "table_prefix": "resourcespecsfact_by_",
-            "aggregation_units": [
-                "day", "month", "quarter", "year"
-            ]
+            "aggregation_units": ["month", "quarter", "year"]
+        },
+        {
+            "name": "ResourcespecsAggregatorlist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "resource_specifications/resourcespecs_by_day_resourcespecslist.json",
+            "description": "Populate the resourcespecs list table, which contains the back references from the resource specs aggregates table to the resourcespecs table",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "modw_aggregates",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates"
+                }
+            },
+            "explode_column": {
+                "resourcespecs_id_list": "resourcespec_id"
+            }
         }
   ]
 }
