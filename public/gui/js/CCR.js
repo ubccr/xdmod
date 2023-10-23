@@ -1075,19 +1075,17 @@ CCR.BrowserWindow = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-var logoutCallback = function () {
-    location.href = 'index.php';
-};
-
 CCR.xdmod.ui.actionLogout = function () {
     if (CCR.xdmod.ui.isImpersonating) {
         CCR.xdmod.ui.stopImpersonation();
-    } else {
-        XDMoD.TrackEvent("Portal", "logout link clicked");
-        XDMoD.REST.Call({
-            action: './../logout',
+    } else {        XDMoD.TrackEvent("Portal", "logout link clicked");
+        Ext.Ajax.request({
+            url: '/logout',
             method: 'POST',
-            callback: logoutCallback
+            success: function () {
+                location.href = "/";
+
+            }
         });
     }
 }; //actionLogout
@@ -1325,14 +1323,13 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             id: 'SSOLoginLink',
             handler: function () {
                 Ext.Ajax.request({
-                    url: '/rest/auth/idpredirect',
+                    url: '/auth/idpredirect',
                     method: 'GET',
                     params: {
                         returnTo: '/gui/general/login.php' + document.location.hash
                     },
                     success: function (response) {
-                        var destination = Ext.decode(response.responseText);
-                        document.location = destination;
+                        document.location = response.responseText;
                     },
                     failure: function (response, opts) {
                         var message = 'Please contact the XDMoD administrator.';

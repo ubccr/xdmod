@@ -72,7 +72,7 @@ class TokenAuthenticator extends AbstractAuthenticator implements AuthenticatorI
 
         $this->logger->debug('Checking that TokenAuthenticator supports a request', ['has_token' => $hasToken, 'request_path' => $requestPath]);
 
-        return $hasToken;
+        return $hasToken && $requestPath;
     }
 
     /**

@@ -172,6 +172,14 @@
         CCR.xdmod.captcha_sitekey = '{{ captcha_site_key }}';
         CCR.xdmod.features = {{ xdmod_features | raw}};
         CCR.xdmod.timezone = '{{ timezone }}';
+        CCR.xdmod.org_name = '{{ org_name }}';
+
+        {% if is_sso_configured %}
+        CCR.xdmod.isSSOConfigured = {{ is_sso_configured }};
+        CCR.xdmod.SSOLoginLink = {{ sso_login_link | raw}};
+        CCR.xdmod.SSOShowLocalLogin = {% if sso_show_local_login %} true {% else %} false {% endif %};
+        CCR.xdmod.SSODirectLInk = {% if sso_direct_link %} true {% else %} false {% endif %};
+        {% endif %}
 
         {% if is_granted('IS_IMPERSONATOR') %}
         CCR.xdmod.ui.isImpersonating = true;

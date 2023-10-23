@@ -14,6 +14,7 @@
         "google/recaptcha": "^1.2",
         "greenlion/php-sql-parser": "^4.5",
         "highsoft/highcharts": "^4.2.5",
+        "hslavich/oneloginsaml-bundle": "^2.10",
         "ircmaxell/password-compat": "^1.0",
         "jquery/jquery-min-file": "^1.12.4",
         "justinrainbow/json-schema": "^5.2",

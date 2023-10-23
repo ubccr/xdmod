@@ -134,6 +134,7 @@ class XDSessionManager
             ));
         }
 
+        $session->invalidate();
         // Drop the session so that any REST calls requiring
         // authentication (via tokens) trip the first Exception as the
         // result of invoking resolveUserFromToken($token)

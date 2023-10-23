@@ -122,6 +122,9 @@
     "highsoft/highcharts": {
         "version": "4.2.5"
     },
+    "hslavich/oneloginsaml-bundle": {
+        "version": "v2.10.0"
+    },
     "ircmaxell/password-compat": {
         "version": "v1.0.4"
     },
@@ -240,6 +243,9 @@
     },
     "robrichards/xmlseclibs": {
         "version": "3.1.1"
+    },
+    "ryanrath/oneloginsaml-bundle": {
+        "version": "2.x-dev"
     },
     "sebastian/code-unit-reverse-lookup": {
         "version": "1.0.2"

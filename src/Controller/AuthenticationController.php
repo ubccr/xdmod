@@ -7,10 +7,13 @@ namespace Access\Controller;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use xd_security\SessionSingleton;
 
 
@@ -30,11 +33,22 @@ class AuthenticationController extends AbstractController
     private $logger;
 
     /**
-     * @param LoggerInterface $logger
+     * @var ContainerBagInterface
      */
-    public function __construct(LoggerInterface $logger)
+    private $parameters;
+
+    /**
+     * @var Security
+     */
+
+    /**
+     * @param LoggerInterface $logger
+     * @param ContainerBagInterface $parameters
+     */
+    public function __construct(LoggerInterface $logger, ContainerBagInterface $parameters)
     {
         $this->logger = $logger;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -92,7 +106,7 @@ class AuthenticationController extends AbstractController
         ]);
 
         // This cookie will tell the HomeController that we have a currently logged in user.
-        $response->headers->setCookie(new Cookie('xdmod_token', $token ));
+        $response->headers->setCookie(new Cookie('xdmod_token', $token));
 
         $this->logger->info(sprintf('Successful login by %s', $user->getUsername()));
 
@@ -103,15 +117,19 @@ class AuthenticationController extends AbstractController
      * This route is responsible for any logic that may need to be executed when a user is logged out. Currently, the
      * actual heavy lifting of logging out is done by the configuration in `config/packages/security.yaml`.
      *
-     * @Route("/logout", methods={"POST"}, name="xdmod_logout")
+     * @Route("/logout", methods={"POST", "GET"}, name="xdmod_logout")
      *
+     * @param Request $request
      * @return Response
      */
     public function formLogout(Request $request): Response
     {
+        $this->logger->info('*** FormLogout ***');
         $token = $request->getSession()->get('xdmod_token');
         \XDSessionManager::logoutUser($token);
-        $response = $this->json(['success' => true]);
+        $request->getSession()->invalidate();
+
+        $response = $this->redirectToRoute('xdmod_home');
         $response->headers->removeCookie('xdmod_token');
         return $response;
     }
@@ -177,6 +195,24 @@ class AuthenticationController extends AbstractController
     {
         session_destroy();
         throw new Exception("Don't forget to activate logout.");
+    }
+
+    /**
+     * @Route("/auth/idpredirect", name="idp_redirect", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function idpRedirect(Request $request): Response
+    {
+        $returnTo = $request->get('returnTo');
+        $ssoUrl = $this->parameters->get('sso')['login_link'];
+
+        if (!empty($returnTo)) {
+            $value = "$ssoUrl?returnTo=$returnTo";
+        }
+        return new Response($ssoUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 }
 

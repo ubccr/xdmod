@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Access\Controller;
 
+use Access\Security\Helpers\Tokens;
 use Exception;
 use Models\Services\Acls;
 use Models\Services\Realms;
@@ -11,29 +12,67 @@ use Models\Realm;
 use OpenXdmod\Assets;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Twig\Environment;
 use xd_security\SessionSingleton;
 use XDUser;
 
 class HomeController extends BaseController
 {
+    const REQUIRED_SAML_SETTINGS = [
+        'idp' => [
+            'entityId',
+            'singleSignOnService' => [
+                'url',
+                'binding'
+            ],
+            'singleLogoutService' => [
+                'url',
+                'binding'
+            ]
+        ],
+        'sp' => [
+            'entityId',
+            'assertionConsumerService' => [
+                'url',
+                'binding'
+            ],
+            'singleLogoutService' => [
+                'url',
+                'binding'
+            ]
+        ]
+    ];
+    private $parameters;
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper,  ContainerBagInterface $parameters)
+    {
+        parent::__construct($logger, $twig, $tokenHelper);
+        $this->parameters = $parameters;
+    }
 
     /**
      * This route serves XDMoD
      *
-     * @Route("/", methods={"GET"}, name="xdmod_home")
+     * @Route("/", methods={"GET", "OPTIONS"}, name="xdmod_home")
      * @param Request $request
      * @return Response
      * @throws Exception
      */
     public function index(Request $request): Response
     {
-        $session = $request->getSession();
 
+        if ($request->getMethod() === 'OPTIONS') {
+            // We don't need to send anything back for a CORS pre-flight
+            return new Response();
+        }
+
+        $session = $request->getSession();
         $user = $this->getXDUser($session);
 
         $session->set('xdUser', $user->getUserID());
@@ -44,6 +83,23 @@ class HomeController extends BaseController
         }, []);
 
         $features = $this->getFeatures();
+        $samlSettings = $this->getParameter('hslavich_onelogin_saml.settings');
+        $isSSOConfigured = $this->isSSOSetup($samlSettings);
+
+        $ssoSettings = $this->getParameter('sso');
+        if ($isSSOConfigured && empty($ssoSettings)) {
+            // NOTIFY the user that SSO is not setup correctly and only local login is available.
+        }
+
+        $ssoIcon = array_key_exists('icon', $samlSettings['organization']['en']) && !empty($samlSettings['organization']['en']['icon'])
+            ? $samlSettings['organization']['en']['icon']
+            : '';
+        $ssoLoginLink = [
+            "organization" => [
+                'en' => $samlSettings['organization']['en']['displayname'],
+                'icon' => $ssoIcon
+            ]
+        ];
         $params = [
             'user' => $user,
             'title' => \xd_utilities\getConfiguration('general', 'title'),
@@ -52,7 +108,7 @@ class HomeController extends BaseController
             'extjs_path' => 'gui/lib',
             'extjs_version' => 'extjs',
             'rest_token' => $user->getToken(),
-            'colors' => json_encode(json_decode(file_get_contents(CONFIG_DIR.'/colors1.json'), true)),
+            'colors' => json_encode(json_decode(file_get_contents(CONFIG_DIR . '/colors1.json'), true)),
             'rest_url' => sprintf(
                 '%s%s',
                 \xd_utilities\getConfiguration('rest', 'base'),
@@ -68,7 +124,7 @@ class HomeController extends BaseController
             'captcha_site_key' => $this->getCaptchaSiteKey($user),
             'xdmod_features' => json_encode($features),
             'timezone' => date_default_timezone_get(),
-            'isCenterDirector'=> $user->hasAcl('cd'),
+            'isCenterDirector' => $user->hasAcl('cd'),
             'is_logged_in' => !$user->isPublicUser(),
             'is_public_user' => $user->isPublicUser(),
             'user_dashboard' => isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN),
@@ -77,7 +133,12 @@ class HomeController extends BaseController
             'use_center_logo' => false,
             'asset_paths' => Assets::generateAssetTags('portal'),
             'profile_editor_init_flag' => $this->getProfileEditorInitFlag($user),
-            'no_script_message' => $this->getNoScriptMessage('XDMoD requires JavaScript, which is currently disabled in your browser.')
+            'no_script_message' => $this->getNoScriptMessage('XDMoD requires JavaScript, which is currently disabled in your browser.'),
+            'org_name' => ORGANIZATION_NAME,
+            'is_sso_configured' => $isSSOConfigured,
+            'sso_login_link' => json_encode($ssoLoginLink),
+            'sso_show_local_login' => $ssoSettings['show_local_login'],
+            'sso_direct_link' => $ssoSettings['direct_link']
         ];
 
         $logoData = $this->getLogoData();
@@ -208,6 +269,56 @@ class HomeController extends BaseController
         return $message;
     }
 
+    /**
+     * SSO is considered setup
+     * @return bool
+     */
+    private function isSSOSetup(array $ssoSettings): bool
+    {
+        return $this->validate(
+            self::REQUIRED_SAML_SETTINGS,
+            $ssoSettings
+        );
+    }
 
+    /**
+     * Validates the provided $settings against the $required structure. This function only validates that
+     * keys are present and have non-empty values.
+     *
+     * @param array $required
+     * @param array $settings
+     * @return bool
+     */
+    private function validate(array $required, array $settings): bool
+    {
+        foreach ($required as $key => $values) {
+            // We need to account for PHP's wonderful dual-index arrays, and since $settings is expected
+            // to be indexed by string we translate the $required indexes to their string counterpart here.
+            if (is_numeric($key) && is_string($values)) {
+                $key = $values;
+            }
+
+            // the following logic goes something like:
+            //   If:
+            //     -     The required key exists in $settings
+            //     - AND The required key is a string
+            //     - AND The value for the given key in $settings is non-empty
+            //  - OR -
+            //   If:
+            //     -     The required key exists in $settings
+            //     - AND the $required values are an array ( aka, we must go deeper )
+            //     - AND and it's value in $settings is non-empty
+            //     - AND the validation of the levels below this one are valid
+            // THEN continue the validation
+            // ELSE it's invalid
+            if (array_key_exists($key, $settings) && is_string($values) && !empty($settings[$key]) ||
+                (array_key_exists($key, $settings) && is_array($values) && !empty($settings[$key]) && $this->validate($values, $settings[$key]))) {
+                continue;
+            }
+            return false;
+        }
+        // If we've gotten this far then the settings must be valid.
+        return true;
+    }
 }
 

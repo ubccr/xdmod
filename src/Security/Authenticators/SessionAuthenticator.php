@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Access\Security\Authenticators;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,6 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
 class SessionAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface
 {
@@ -34,11 +36,17 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticato
     private $options;
 
     /**
+     * @var UrlGeneratorInterface
+     */
+    private $urlGenerator;
+
+    /**
      * @param LoggerInterface $logger
      * @param HttpUtils $httpUtils
      * @param array $options
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, array $options)
+    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, array $options, UrlGeneratorInterface $urlGenerator)
     {
         $this->logger = $logger;
         $this->httpUtils = $httpUtils;
@@ -47,6 +55,7 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticato
             'dashboard_session' => 'xdDashboardUser',
             'check_path' => '/login',
         ], $options);
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -79,8 +88,6 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticato
     public function authenticate(Request $request)
     {
         $this->logger->debug('Initiating Session Authenticator');
-
-
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
@@ -93,8 +100,5 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticato
         return null;
     }
 
-    private function getUser(Request $request, string $sessionProperty): \XDUser
-    {
 
-    }
 }

@@ -4,6 +4,29 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    sso:
+        login_link: https://localhost:7000
+        show_local_login: true
+        direct_link: false
+        parameters:
+            username:
+                attribute:
+                    - 'itname'
+                    - 'system_username'
+            first_name:
+                attribute: 'firstName'
+                default: 'UNKNOWN'
+            middle_name:
+                attribute: 'middleName'
+            last_name:
+                attribute: 'lastName'
+            organization:
+                attribute: 'orgId'
+            email_address:
+                attribute: 'email'
+            system_username:
+                attribute: 'system_username'
+                default: '$username'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
     center_related_acls:
         - cd
@@ -16,7 +39,10 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $sectionName: 'database'
-
+    db.default:
+        class: CCR\DB\iDatabase
+        autowire: false
+        factory: [ 'CCR\DB', 'factory' ]
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     Access\:
@@ -30,7 +56,7 @@ services:
     CCR\:
         resource: '../classes/CCR/'
     CCR\DB\iDatabase:
-        factory: ['CCR\DB', 'factory']
+        factory: [ 'CCR\DB', 'factory' ]
     Access\Security\Authenticators\FormLoginAuthenticator:
         arguments:
             $options:
@@ -52,11 +78,8 @@ services:
               dispatcher: security.event_dispatcher.main
               method: onLogout
     Access\Errors\ErrorController:
-        tags: ['controller.service_arguments']
+        tags: [ 'controller.service_arguments' ]
         arguments:
             - '@http_kernel'
             - 'error_controller'
             - '@error_renderer'
-
-
-

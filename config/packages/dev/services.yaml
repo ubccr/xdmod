@@ -1,6 +1,0 @@
-services:
-    db.default:
-        class: CCR\DB\iDatabase
-        autowire: false
-        factory: ['CCR\DB', 'factory']
-

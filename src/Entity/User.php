@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Access\Entity;
 
 use DateTime;
+use Hslavich\OneloginSamlBundle\Security\User\SamlUserInterface;
 use Models\DBObject;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  *
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyPasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyPasswordAuthenticatedUserInterface, SamlUserInterface
 {
     /**
      * @var string
@@ -25,6 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     protected $roles;
 
     protected $userId;
+
+    protected $samlAttributes;
 
     protected $token;
 
@@ -44,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
      * @param string|null $password
      * @param string|null $salt
      */
-    public function __construct(string $username, array $roles, string $userId = '', string $token = '', string $password = '', string $salt = '')
+    public function __construct(string $username, array $roles, string $userId = '', string $token = '', ?string $password = '', ?string $salt = '')
     {
         $this->username = $username;
         $this->roles = $roles;
@@ -74,7 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     /**
      * @inheritDoc
      **/
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -133,5 +136,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     public static function fromXDUser(\XDUser $xdUser): User
     {
         return new User($xdUser->getUsername(), $xdUser->getRoles(), $xdUser->getUserID(), $xdUser->getToken(), $xdUser->getPassword());
+    }
+
+    public function setSamlAttributes(array $attributes)
+    {
+        $this->samlAttributes = $attributes;
     }
 }

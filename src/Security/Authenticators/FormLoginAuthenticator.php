@@ -21,12 +21,13 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\ParameterBagUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use XDUser;
 
-class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements AuthenticatorInterface
+class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
     use TargetPathTrait;
 
@@ -65,6 +66,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
             'username_parameter' => 'username',
             'password_parameter' => 'password',
             'check_path' => '/login',
+            'failure_path' => 'xdmod_home',
             'post_only' => true,
             'form_only' => true,
         ], $options);
@@ -201,5 +203,26 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
     protected function getLoginUrl(Request $request): string
     {
         return $this->httpUtils->generateUri($request, $this->options['check_path']);
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    {
+        if ($request->hasSession()) {
+            $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        }
+        return new JsonResponse([], 401);
+    }
+
+    /**
+     * This is required for the Authenticator to be set as an entrypoint. We need to set an entrypoint because we have
+     * multiple authenticators setup for our main firewall ( FormLoginAuthenticator, TokenAuthenticator, SSOAuthenticator )
+     *
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return RedirectResponse
+     */
+    public function start(Request $request, AuthenticationException $authException = null): Response
+    {
+        return new RedirectResponse($this->urlGenerator->generate('xdmod_home'));
     }
 }

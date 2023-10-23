@@ -4,6 +4,8 @@ namespace Access\Security;
 
 use Access\Entity\User;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -56,12 +58,21 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
      */
     public function loadUserByIdentifier(string $identifier): ?UserInterface
     {
+
         $this->logger->debug("Loading User By Identifier: $identifier");
-        $user = XDUser::getUserByUserName($identifier);
-        if (!isset($user)) {
-            // Symfony code expects that an exception is thrown when loadUserByIdentifier fails.
+        $isSamlUser = $this->classesContains('saml', (new \Exception())->getTrace());
+        try {
+            $user = XDUser::getUserByUserName($identifier);
+
+            if ($isSamlUser && $user->getUserType() !== SSO_USER_TYPE) {
+                $this->logger->error('SSO User attempted to log in as a local user.');
+                throw new InsufficientAuthenticationException();
+            }
+        } catch (\Exception $e) {
+            $this->logger->debug(sprintf('User %s not found', $identifier));
             throw new UserNotFoundException("Unable to find User identified by $identifier");
         }
+
         $this->logger->debug("XDUser found by username: {$user->getUserID()} {$user->getUsername()}");
         $foundUser = User::fromXDUser($user);
         $this->logger->debug(sprintf('Final User Found:  %s %s', $foundUser->getUserIdentifier(), $foundUser->getPassword()));
@@ -80,5 +91,30 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     public function upgradePassword(UserInterface $user, string $newHashedPassword): void
     {
         $this->logger->debug('Attempting to upgrade password');
+    }
+
+    private function classesContains($classPart, $trace): bool
+    {
+        $classes = $this->getCallingClasses($trace);
+        foreach($classes as $class) {
+            $pos = strpos(strtolower($class), strtolower($classPart));
+            if ($pos !== false && is_numeric($pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getCallingClasses($trace): array
+    {
+        return array_reduce(
+            $trace,
+            function ($carry, $item) {
+                $value = array_key_exists('class', $item) ? $item['class'] : null;
+                $carry[] = $value;
+                return $carry;
+            },
+            []
+        );
     }
 }
