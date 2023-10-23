@@ -8,7 +8,7 @@ export XDMOD_REALMS
 
 cd $(dirname $0)
 
-ls /root/bin
+cat /root/bin/imagehash
 
 if [ ! -e ../ci/testing.json ];
 then
