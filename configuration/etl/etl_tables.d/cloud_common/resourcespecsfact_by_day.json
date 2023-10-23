@@ -1,0 +1,149 @@
+{
+    "#": "Record types are global to all cloud resources",
+
+    "table_definition": {
+        "name": "resourcespecsfact_by_",
+        "table_prefix": "resourcespecsfact_by_",
+        "engine": "InnoDB",
+        "comment": "Record type: accounting, administrative, derived, etc.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },{
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },{
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },{
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },{
+                "name": "record_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
+            },{
+                "name": "cpu_cores_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },{
+                "name": "gpu_cores_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },{
+                "name": "cpu_nodes_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },{
+                "name": "gpu_nodes_available",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "core_time_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "gpu_time_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of gpu core time in seconds available for a time period"
+            },
+            {
+                "name": "su_available",
+                "type": "int(11) unsigned",
+                "nullable": true,
+                "comment": "Total number of SU's available per day"
+            },
+            {
+                "name": "resource_allocation_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of cpu core time in seconds available for a time period"
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Organization the resource belongs to"
+            },
+            {
+                "name": "resource_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: State the organiazation the resource belongs to is in"
+            },
+            {
+                "name": "resource_country_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Country the organization the resource belongs to is in"
+            },
+            {
+                "name": "organizationtype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The type of organization"
+            },
+            {
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The type of resource this is"
+            },
+            {
+                "name": "resourcespecs_id_list",
+                "type": "mediumtext",
+                "nullable": false,
+                "comment": "METADATA: the ids in the fact table for the rows that went into this row"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "default": "CURRENT_TIMESTAMP",
+                "nullable": false,
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+
+        "#": "Note that the primary key is (resource, type, identifier, create_time) rather than",
+        "#": "asset_id so we can take advantage of ON DUPLICATE KEY UPDATE to update existing entries",
+        "#": "and still use auto_increment for new entries.",
+
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },{
+                "name": "index_resource",
+                "columns": [ "record_resource_id" ]
+            },{
+                "name": "index_period_value",
+                "columns": [ "${AGGREGATION_UNIT}" ]
+            },{
+                "name": "index_period",
+                "columns": [ "${AGGREGATION_UNIT}_id" ]
+            }
+        ]
+    }
+}
