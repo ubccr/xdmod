@@ -8,7 +8,8 @@ export XDMOD_REALMS
 
 cd $(dirname $0)
 
-cat /root/bin/imagehash
+python3 -c "import sys; print('\n'.join(sys.path))"
+python3 -c "import imagehash; print(imagehash.__version__)"
 
 if [ ! -e ../ci/testing.json ];
 then
