@@ -22,5 +22,17 @@
     "StringUtilities": false,
     "Plotly": false,
     "generateChartOptions": false
-  }
+  },
+  "ignorePatterns": [
+    "lib/extjs/**/*.js",
+    "lib/highcharts/**/*.js",
+    "lib/jquery/*.js",
+    "lib/jquery-plugins/**/*.js",
+    "lib/moment/*.js",
+    "lib/moment-timezone/*.js",
+    "lib/plotly/*.js",
+    "lib/printer/*.js",
+    "lib/rsvp/*.js"
+  ]
 }
+
