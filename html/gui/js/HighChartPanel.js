@@ -1,3 +1,4 @@
+
 /*
  * JavaScript Document
  * @author Amin Ghadersohi
@@ -9,23 +10,14 @@
  *
  * Component for integrating with high charts api
  */
-CCR.xdmod.ui.HighChartPanel = function (config) {
-    CCR.xdmod.ui.HighChartPanel.superclass.constructor.call(this, config);
-}; // CCR.xdmod.ui.HighChartPanel
+//TODO: Look into loading screens (involves plotly_afterplot)
+//TODO: Add lisenter for 'timeseries_zoom' (involves plotly_click)
 
+CCR.xdmod.ui.PlotlyPanel = function (config) {
+    CCR.xdmod.ui.PlotlyPanel.superclass.constructor.call(this, config);
+};
 
-// Set options globally for all charts instantiated afterwards: 
-Highcharts.setOptions ({
-    lang: {
-        // commas for thousands separators
-        thousandsSep: '\u002c' // the humble comma
-    },
-    global: {
-        timezone: CCR.xdmod.timezone
-    }
-});
-
-Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
+Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
     credits: true,
     isEmpty: true,
 
@@ -35,42 +27,18 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
         Ext.apply(this, {
             layout: 'fit'
         });
-        CCR.xdmod.ui.HighChartPanel.superclass.initComponent.apply(this, arguments);
+        CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments);
 
         var self = this;
+        var defaultOptions = getDefaultLayout();
 
-        this.baseChartOptions = jQuery.extend(true, {}, {
-            chart: {
-                renderTo: this.id,
-                width: this.width,
-                height: this.height,
-                animation: false,
-                events: {
+        defaultOptions.renderTo = this.id;
+        defaultOptions.width = this.width;
+        defaultOptions.height = this.height;
+        defaultOptions.exporting.enabled = false;
+        defaultOptions.credits.enabled = true;
 
-                    selection: function (event) {
-                        self.fireEvent('timeseries_zoom', event);
-                    }
-                }
-            },
-            plotOptions: {
-              series: {
-                animation: false,
-                turboThreshold: 0
-              }
-            },
-            title: '',
-            loading: {
-                labelStyle: {
-                    top: '45%'
-                }
-            },
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: true
-            }
-        }, this.baseChartOptions);
+        this.baseChartOptions = jQuery.extend(true, {}, defaultOptions, this.baseChartOptions);
 
         this.on('render', function () {
             this.initNewChart.call(this);
@@ -79,12 +47,12 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
                 if (this.chart) {
                     this.chart.setSize(adjWidth, adjHeight);
                 }
-                this.baseChartOptions.chart.width = adjWidth;
-                this.baseChartOptions.chart.height = adjHeight;
+                this.baseChartOptions.width = adjWidth;
+                this.baseChartOptions.height = adjHeight;
             });
 
             if (this.store) {
-                this.store.on('load', function (t, records, options) {
+                this.store.on('load', function (t, records, opitons) {
                     if (t.getCount() <= 0) {
                         return;
                     }
@@ -93,13 +61,13 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
                     this.chartOptions.exporting.enabled = (this.exporting === true);
                     this.chartOptions.credits.enabled = (this.credits === true);
 
-                    this.chartOptions.title.text = this.highChartsTextEncode(this.chartOptions.title.text);
-                    this.isEmpty = this.chartOptions.series && this.chartOptions.series.length === 0;
+                    this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.title.text);
+                    this.isEmpty = this.chartOptions.data && this.chartOptions.data.length === 0;
 
                     this.initNewChart.call(this);
                     if (this.isEmpty) {
-                        var ch_width = this.chartOptions.chart.width * 0.8;
-                        var ch_height = this.chartOptions.chart.height * 0.8;
+                        var ch_width = this.chartOptions.layout.width * 0.8;
+                        var ch_height = this.chartOptions.layout.height * 0.8;
 
                         this.chart.renderer.image('gui/images/report_thumbnail_no_data.png', 53, 30, ch_width, ch_height).add();
                     }
@@ -122,7 +90,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
      */
     initNewChart: function (chartOptions) {
         if (this.chart) {
-            this.chart.destroy();
+            Plotly.purge(this.chart.id);
             this.chart = null;
         }
         var finalChartOptions = {};
@@ -140,6 +108,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
      * @param  {String} mainMessage The main error message to display.
      * @param  {String} detailMessage (Optional) A secondary error message
      *                                to display.
+	 * TODO:error display for plotly charts
      */
     displayError: function (mainMessage, detailMessage) {
         var errorChartOptions = {
@@ -167,7 +136,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
  * @param {String} text the text to be encoded for use in a HighChart title.
  * @return {String} the encoded text.
  **/
-CCR.xdmod.ui.HighChartPanel.prototype.highChartsTextEncode = function(text) {
+CCR.xdmod.ui.PlotlyPanel.prototype.plotlyTextEncode = function(text) {
     if (!text) {
         return text;
     }
