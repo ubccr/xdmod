@@ -155,6 +155,8 @@ class Plotly2
 					'autorange' = $this->_swapXY ? 'reversed' : false
 				),
 				'hovermode' => $this->_hideTooltip ? false: 'x unified',
+                'bargap' => 0.05,
+                'bargroupgap' => 0,
             ),
             'data' => array(),
             'dimensions' => array(),
@@ -991,12 +993,11 @@ class Plotly2
                 $points = array();
                 $xValues = array();
                 $yValues = array();
-                $trace = array();
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
                 {
-                    $this->_chart['chart']['inverted'] = false;
+                    $this->_chart['chart']['inverted'] = false; // Need to confirm if same as 'autorange: reversed'
 
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
@@ -1040,19 +1041,14 @@ class Plotly2
                     $tooltipConfig = array_merge(
                         $tooltipConfig,
                         array(
-                            'pointFormat' => "{series.name}: {point.y} <b>({point.percentage:.1f}%)</b>",
+                            'hovertemplate' => '%{x}' . '<br> <span style="color:' .
+                         $color . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:}</b> <extra></extra>',,
                             'percentageDecimals' => 1,
                             'valueDecimals' => $decimals
                         )
                     );
 
-                    $this->_chart['tooltip']['shared'] = false;
-
-                    //Trace for Pie Chart
-                    $trace = array(
-                        'values' => $yValues,
-                        'labels' => $xValues,
-                    );
+                    $this->_chart['layout']['hovermode'] = 'closest';
 
                 }
                 else // ($data_description->display_type !== 'pie')
@@ -1158,35 +1154,41 @@ class Plotly2
                     ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                     $values_count == 1;
 
-                $data_series_desc = array(
+                $trace = array(
                     'name' => $lookupDataSeriesName,
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
-                    'zIndex' => $zIndex,
-                    'color'=> $data_description->display_type == 'pie' ?
-                                                        null : $color,
-                    'type' => $data_description->display_type,
-                    'trackByArea'=>  $data_description->display_type == 'area' ||
-                                                        $data_description->display_type == 'areaspline',
-                    'dashStyle' => $data_description->line_type,
-                    'shadow' => $data_description->shadow,
-                    'groupPadding' => 0.05,
-                    'pointPadding' => 0,
-                    'borderWidth' => 0,
-                    'yAxis' => $yAxisIndex,
-                    'lineWidth' => $data_description->display_type !== 'scatter' ?
-                                                        $data_description->line_width + $font_size / 4 : 0,
+                    'zIndex' => $zIndex, //Frontend support
                     'marker' => array(
-                        'enabled' => $showMarker,
-                        'lineWidth' => 1,
-                        'lineColor' => $lineColor,
-                        'radius' => $font_size / 4 + 5
+                        'size' => $font_size / 4 + 5 //Formula may need tweaked for marker radius
+                        'color' => $color,
+                        'line' => array(
+                            'width' => 1,
+                            'color' => $lineColor
+                        ),
                     ),
-                    'tooltip' => $tooltipConfig,
-                    'showInLegend' => true,
-                    'dataLabels' => $dataLabelsConfig,
-                    'data' => $values,
-                    'cursor' => 'pointer',
+                    'line' => array(
+                        'color' => $data_description->display_type == 'pie' ?
+                                                        null : $color,
+                        'dash' => $data_description->line_type,
+                        'width' => $data_description->display_type !== 'scatter' ?
+                                                        $data_description->line_width + $font_size / 4 : 0, //Double check bar charts have correct width
+                    ),
+                    'type' => $data_description->display_type,
+                    'mode' => $showMarker ? 'lines+marker' : 'lines',
+                    'hoveron'=>  $data_description->display_type == 'area' ||
+                                                        $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                    'shadow' => $data_description->shadow, //Add support
+                    'yaxis' => "y{$yAxisIndex}",
+                    'hovertemplate' => $tooltipConfig['hovertemplate'], //Needs more work to support old highcharts features
+                    'showLegend' => true,
+                    'dataLabels' => $dataLabelsConfig, // Add support for some additional highcharts settings
+                    'text' => $xValues,
+                    'x' => $xValues,
+                    'y' => $yValues,
+                    'data' => $points,
+                    'error_y' => array(), 
+                    'cursor' => 'pointer', //Add support, may have to be in frontend
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                 ); // $data_series_desc
@@ -1196,13 +1198,13 @@ class Plotly2
                 {
                     if(     $data_description->combine_type=='stack')
                     {
-                        // ask the highcharts library to connect nulls for stacking
-                        $data_series_desc['stacking'] = 'normal';
-                        $data_series_desc['connectNulls'] = true;
+                        // ask the plotly library to connect nulls for stacking
+                        $trace['stackgroup'] = 'one';
+                        $trace['stackgaps'] = 'interpolate';
                     }
                     elseif($data_description->combine_type=='percent' && !$data_description->log_scale)
                     {
-                        $data_series_desc['stacking'] = 'percent';
+                        $data_series_desc['stacking'] = 'percent'; //Need to look into stacking by percentage
                     }
                 }
                 $this->_chart['data'][] = $data_series_desc;
@@ -1236,6 +1238,8 @@ class Plotly2
     //
     // @param ...
     //
+    // TODO: Two main implementations, need to choose which one would be better.
+    // Most likely will be to create line plot and configure it into an error plot
     // for Timeseries, questions include: drilldown?
     // ---------------------------------------------------------
     protected function buildErrorDataSeries(
@@ -1288,7 +1292,7 @@ class Plotly2
             }
 
             // create the data series description:
-            $err_data_series_desc = array(
+            $err_data_y = array(
                 //'name' => $dsn,
                 'name' => $lookupDataSeriesName,
                 'showInLegend' => true,
@@ -1296,7 +1300,8 @@ class Plotly2
                 'datasetId' => $data_description->id,
                 'zIndex' => $zIndex,
                 'color'=> $error_color,
-                'type' => 'errorbar',
+                'type' => 'data',
+                'symmetric' => false,
                 'shadow' => $data_description->shadow,
                 'groupPadding' => 0.05,
                 'pointPadding' => 0,
@@ -1312,7 +1317,8 @@ class Plotly2
                 );
             if(! $data_description->log_scale)
             {
-                $this->_chart['series'][] = $err_data_series_desc;
+                return $err_data_y
+                //$this->_chart['series'][] = $err_data_series_desc;
             }
         } // if not pie
     } // function buildErrorDataSeries
@@ -1328,7 +1334,6 @@ class Plotly2
 
         $this->_chart['alignedLabels']['items'][] = array(
             'html' => implode('<br />', $roleRestrictionsStrings),
-
             'align' => 'left',
             'backgroundColor' => '#DFDFDF',
             'verticalAlign' => 'bottom',
@@ -1345,9 +1350,9 @@ class Plotly2
     protected function setChartTitleSubtitle($font_size)
     {
         // set title and subtitle for chart
-        if($this->_chart['title']['text'] == '' && $this->_chart['subtitle']['text'] != '')
+        if($this->_chart['layout']['title']['text'] == '' && $this->_chart['layout']['annotations'][1]['text'] != '')
         {
-            $this->setTitle($this->_chart['subtitle']['text'], $font_size);
+            $this->setTitle($this->_chart['layout']['annotations'][1]['text'], $font_size);
             $this->setSubtitle('', $font_size);
         }
     } // function setChartTitleSubtitle
