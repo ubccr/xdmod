@@ -1,29 +1,11 @@
 /* eslint no-param-reassign: ["error", { "props": false }]*/
-
+// TODO: Convert label and axis formatters for Plotly
 Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {
         chart: {
             events: {
-                load: function () {
-                    var eventHandlers = this.options.chart.events.loadHandlers;
-                    if (!eventHandlers) {
-                        return;
-                    }
-                    for (var i = 0; i < eventHandlers.length; i++) {
-                        eventHandlers[i].apply(this, arguments);
-                    }
-                },
-                redraw: function () {
-                    var eventHandlers = this.options.chart.events.redrawHandlers;
-                    if (!eventHandlers) {
-                        return;
-                    }
-                    for (var i = 0; i < eventHandlers.length; i++) {
-                        eventHandlers[i].apply(this, arguments);
-                    }
-                },
                 helperFunctions: {
                     // Add function to add a background color to a chart element.
                     // (This is for chart elements that don't support this natively.)
@@ -224,5 +206,26 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         };
     }
 
-    return new Plotly.newPlot(baseChartOptions.id, baseChartOptions.layout, baseChartOptions.data, {displayModeBar: false});
-};
+    graphDiv = Plotly.newPlot(baseChartOptions.id, baseChartOptions.layout, baseChartOptions.data, {displayModeBar: false});
+
+    graphDiv.on('plotly_afterplot', function() {
+		var eventHandlers = this.options.chart.events.loadHandlers;
+        if (!eventHandlers) {
+        	return;
+        }
+        for (var i = 0; i < eventHandlers.length; i++) {
+        	eventHandlers[i].apply(this, arguments);
+        }
+    });
+
+    graphDiv.on('plotly_redraw', function() {
+    	var eventHandlers = this.options.chart.events.redrawHandlers;
+        if (!eventHandlers) {
+        	return;
+        }
+        for (var i = 0; i < eventHandlers.length; i++) {
+        	eventHandlers[i].apply(this, arguments);
+        }
+    });
+
+    return graphDiv;
