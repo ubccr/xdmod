@@ -224,5 +224,5 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         };
     }
 
-    return new Highcharts.Chart(baseChartOptions);
+    return new Plotly.newPlot(baseChartOptions.id, baseChartOptions.layout, baseChartOptions.data, {displayModeBar: false});
 };
