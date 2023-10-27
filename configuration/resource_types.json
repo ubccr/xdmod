@@ -4,21 +4,21 @@
             "description": "High-performance computing",
             "realms": [
                 "Jobs",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "HTC": {
             "description": "High-throughput computing",
             "realms": [
                 "Jobs",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "DIC": {
             "description": "Data-intensive computing",
             "realms": [
                 "Jobs",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "Grid": {
@@ -30,42 +30,42 @@
             "description": "Cloud resource",
             "realms": [
                 "Cloud",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "Vis": {
             "description": "Visualization system",
             "realms": [
                 "Jobs",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "VM": {
             "description": "Virtual Machine system",
             "realms": [
                 "Cloud",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "Tape": {
             "description": "Tape storage resource",
             "realms": [
                 "Storage",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "Disk": {
             "description": "Disk storage resource",
             "realms": [
                 "Storage",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "StGrid": {
             "description": "Storage grid",
             "realms": [
                 "Storage",
-                "Resource Specifications"
+                "ResourceSpecifications"
             ]
         },
         "US": {

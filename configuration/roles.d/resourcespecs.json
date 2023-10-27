@@ -3,56 +3,48 @@
         "+default": {
             "+query_descripters": [
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "none"
                 },
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "resource"
                 },
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "resource_type"
                 },
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "provider"
                 },
                 {
-                    "realm": "Resource Specifications",
-                    "group_by": "state"
-                },
-                {
-                    "realm": "Resource Specifications",
-                    "group_by": "country"
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource_allocation_type"
                 }
             ]
         },
         "+pub": {
             "+query_descripters": [
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "none"
                 },
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "resource"
                 },
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "resource_type"
                 },
                 {
-                    "realm": "Resource Specifications",
+                    "realm": "ResourceSpecifications",
                     "group_by": "provider"
                 },
                 {
-                    "realm": "Resource Specifications",
-                    "group_by": "state"
-                },
-                {
-                    "realm": "Resource Specifications",
-                    "group_by": "country"
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource_allocation_type"
                 }
             ]
         }

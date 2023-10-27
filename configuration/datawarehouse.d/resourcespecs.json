@@ -1,12 +1,12 @@
 {
-    "Resource Specifications": {
+    "ResourceSpecifications": {
         "name": "Resource Specifications",
         "datasource": "file",
         "aggregate_schema": "modw_aggregates",
         "aggregate_table_prefix": "resourcespecsfact_by_",
         "aggregate_table_alias": "agg",
         "min_aggregation_unit": "day",
-        "order": 40,
+        "order": 90,
         "group_bys": {
             "$ref": "datawarehouse.d/ref/Resourcespecs-group-bys.json"
         },

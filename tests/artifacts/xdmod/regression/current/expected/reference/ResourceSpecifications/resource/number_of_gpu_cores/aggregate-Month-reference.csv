@@ -1,0 +1,14 @@
+title
+"Number of GPU Cores: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Number of GPU Cores"
+frearson,0
+mortorq,0
+phillips,0
+pozidriv,0
+robertson,0
+---------

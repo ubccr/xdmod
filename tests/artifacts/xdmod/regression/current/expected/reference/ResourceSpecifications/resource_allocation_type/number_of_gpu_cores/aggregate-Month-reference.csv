@@ -1,0 +1,10 @@
+title
+"Number of GPU Cores: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Allocation Type","Number of GPU Cores"
+"CPU Allocated",0
+---------

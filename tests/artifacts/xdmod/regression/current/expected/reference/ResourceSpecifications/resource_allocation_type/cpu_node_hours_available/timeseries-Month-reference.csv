@@ -1,0 +1,11 @@
+title
+"CPU Node Hours Available: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[CPU Allocated] CPU Node Hours Available"
+2016-12,2496.00000000
+2017-01,7440.00000000
+---------

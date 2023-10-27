@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "name": "resourcespecs_by_day_resourcespecslist",
+        "name": "resourcespecsfact_by_day_resourcespecslist",
         "engine": "InnoDB",
         "columns": [
             {

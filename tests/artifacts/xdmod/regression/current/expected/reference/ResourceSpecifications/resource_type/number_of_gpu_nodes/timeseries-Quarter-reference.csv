@@ -1,0 +1,11 @@
+title
+"Number of GPU Nodes: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[High-performance computing] Number of GPU Nodes"
+"2016 Q4",0
+"2017 Q1",0
+---------

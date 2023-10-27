@@ -14,7 +14,7 @@ function copy_template_httpd_conf {
 }
 
 if [ -z $XDMOD_REALMS ]; then
-    export XDMOD_REALMS=jobs,storage,cloud
+    export XDMOD_REALMS=jobs,storage,cloud,resourcespecifications
 fi
 
 cp -r $REF_SOURCE /var/tmp/

@@ -1,0 +1,11 @@
+title
+"CPU Node Hours Available: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] CPU Node Hours Available"
+"2016 Q4",2496.00000000
+"2017 Q1",21600.00000000
+---------

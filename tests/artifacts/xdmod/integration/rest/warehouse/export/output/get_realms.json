@@ -14,20 +14,21 @@
                     "data": {
                         "type": "array",
                         "items": { "$ref": "#/$defs/realm" },
-                        "minItems": 2,
-                        "maxItems": 2,
+                        "minItems": 3,
+                        "maxItems": 3,
                         "uniqueItems": true
                     },
                     "total": {
                         "type": "number",
-                        "enum": [ 2 ]
+                        "enum": [ 3 ]
                     }
                 },
                 "required": [ "success", "data", "total" ],
                 "additionalProperties": false
             },
             { "$ref": "#/$defs/jobs_realm" },
-            { "$ref": "#/$defs/cloud_realm" }
+            { "$ref": "#/$defs/cloud_realm" },
+            { "$ref": "#/$defs/resourcespecifications_realm" }
         ],
         "$defs": {
             "realm": {
@@ -68,6 +69,24 @@
                                 "fields": {
                                     "minItems": 16,
                                     "maxItems": 16
+                                }
+                            }
+                        },
+                        "minContains": 1,
+                        "maxContains": 1
+                    }
+                }
+            },
+            "resourcespecifications_realm": {
+                "properties": {
+                    "data": {
+                        "contains": {
+                            "properties": {
+                                "id": { "enum": [ "ResourceSpecifications" ] },
+                                "name": { "enum": [ "Resource Specifications" ] },
+                                "fields": {
+                                    "minItems": 11,
+                                    "maxItems": 11
                                 }
                             }
                         },

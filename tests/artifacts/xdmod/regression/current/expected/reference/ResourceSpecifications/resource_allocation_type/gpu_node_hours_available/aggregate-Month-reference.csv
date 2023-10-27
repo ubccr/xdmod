@@ -1,0 +1,10 @@
+title
+"GPU Node Hours Available: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Allocation Type","GPU Node Hours Available"
+"CPU Allocated",0.00000000
+---------

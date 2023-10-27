@@ -1,0 +1,11 @@
+title
+"Number of CPU Cores: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[High-performance computing] Number of CPU Cores"
+2016-12,20000
+2017-01,20000
+---------

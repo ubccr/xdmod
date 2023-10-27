@@ -20,6 +20,13 @@
         "precision": 0,
         "unit": "Hours"
     },
+    "gpu_node_hours_available": {
+        "description_html": "The total number of CPU Node hours that are avilable.",
+        "formula": "COALESCE(SUM(agg.gpu_time_available) / SUM(agg.gpu_nodes_available),0)/3600.0",
+        "name": "GPU Node Hours Available",
+        "precision": 0,
+        "unit": "Hours"
+    },
     "number_of_cpu_nodes": {
         "description_html": "The total number of CPU Node hours that are avilable.",
         "formula": "SUM(agg.cpu_nodes_available)",

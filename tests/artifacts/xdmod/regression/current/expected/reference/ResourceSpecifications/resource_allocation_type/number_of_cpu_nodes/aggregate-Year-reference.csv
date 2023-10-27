@@ -1,0 +1,10 @@
+title
+"Number of CPU Nodes: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Allocation Type","Number of CPU Nodes"
+"CPU Allocated",4000
+---------

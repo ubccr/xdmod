@@ -1,0 +1,11 @@
+title
+"Number of CPU Cores: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[frearson] Number of CPU Cores","[mortorq] Number of CPU Cores","[phillips] Number of CPU Cores","[pozidriv] Number of CPU Cores","[robertson] Number of CPU Cores"
+2016-12,4000,4000,4000,4000,4000
+2017-01,4000,4000,4000,4000,4000
+---------

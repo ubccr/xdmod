@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "${table_definition_dir}/cloud_common/resourcespecs_by_day_resourcespecslist.json#/table_definition"
+        "$ref": "${table_definition_dir}/cloud_common/resourcespecsfact_by_day_resourcespecslist.json#/table_definition"
     },
     "source_query": {
         "overseer_restrictions": {
@@ -21,7 +21,7 @@
         ]
     },
     "destination_record_map": {
-        "resourcespecs_by_day_resourcespecslist": {
+        "resourcespecsfact_by_day_resourcespecslist": {
             "agg_id": "agg_id",
             "resourcespec_id": "resourcespec_id"
         }

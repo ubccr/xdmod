@@ -1,0 +1,14 @@
+title
+"CPU Node Hours Available: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"CPU Node Hours Available"
+robertson,46200.00000000
+pozidriv,45120.00000000
+phillips,45000.00000000
+mortorq,44520.00000000
+frearson,44400.00000000
+---------

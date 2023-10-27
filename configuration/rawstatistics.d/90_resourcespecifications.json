@@ -1,0 +1,169 @@
+{
+    "+realms": [
+      {
+        "name": "ResourceSpecifications",
+        "display": "Resource Specifications"
+      }
+    ],
+    "ResourceSpecifications": {
+        "tables": [
+          {
+            "schema": "modw_aggregates",
+            "name": "resourcespecsfact_by_day_resourcespecslist",
+            "alias": "rsa",
+            "join": {
+                "primaryKey": "agg_id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "id"
+            }
+          },
+          {
+            "schema": "modw",
+            "name": "resourcespecs",
+            "alias": "rs",
+            "join": {
+                "primaryKey": "resourcespec_id",
+                "foreignTableAlias": "rsa",
+                "foreignKey": "resourcespec_id"
+            }
+          },
+          {
+              "schema": "modw",
+              "name": "resourcefact",
+              "alias": "rf",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "rs",
+                  "foreignKey": "resource_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "resourcetype",
+              "alias": "rt",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "resourcetype_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "organization",
+              "alias": "org",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "organization_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "resource_allocated",
+              "alias": "ra",
+              "join": {
+                  "primaryKey": "resource_id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "id"
+              }
+          }
+        ],
+        "fields": [
+          {
+              "name": "Resource ID",
+              "tableAlias": "rf",
+              "column": "id",
+              "group": "Administration",
+              "documentation": "ID of the Resource",
+              "batchExport": true
+          },
+          {
+              "name": "Resource",
+              "tableAlias": "rf",
+              "column": "name",
+              "group": "Administration",
+              "documentation": "The resource that ran the job.",
+              "batchExport": true
+          },
+          {
+              "name": "CPU Processor Count",
+              "tableAlias": "rs",
+              "column": "cpu_processor_count",
+              "group": "Administration",
+              "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource."
+          },
+          {
+              "name": "CPU Node Count",
+              "tableAlias": "rs",
+              "column": "cpu_node_count",
+              "group": "Administration",
+              "documentation": "The name of the job owner.",
+              "batchExport": true
+          },
+          {
+              "name": "CPU Processors Per Node",
+              "tableAlias": "rs",
+              "column": "cpu_processor_count_per_node",
+              "group": "Administration",
+              "documentation": "CPU Processors Per Node",
+              "batchExport": true
+          },
+          {
+              "name": "GPU Processor Count",
+              "tableAlias": "rs",
+              "column": "gpu_processor_count",
+              "group": "Requested Resource",
+              "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
+              "batchExport": true
+          },
+          {
+              "name": "GPU Node Count",
+              "tableAlias": "rs",
+              "column": "gpu_node_count",
+              "group": "Requested Resource",
+              "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
+              "batchExport": true
+          },
+          {
+              "name": "GPU Processors Per Node",
+              "tableAlias": "rs",
+              "column": "gpu_processor_count_per_node",
+              "group": "Administration",
+              "documentation": "The name of the project the VM is assigned to.",
+              "batchExport": true
+          },
+          {
+              "name": "SUs Available",
+              "tableAlias": "rs",
+              "column": "su_available_per_day",
+              "group": "Administration",
+              "documentation": "The name of the PI assigned to the VM.",
+              "batchExport": true
+          },
+          {
+              "name": "Resource Type",
+              "tableAlias": "rt",
+              "column": "description",
+              "group": "Administration",
+              "documentation": "The instance type for the VM.",
+              "batchExport": true
+          },
+          {
+              "name": "Organization",
+              "tableAlias": "org",
+              "column": "name",
+              "group": "Administration",
+              "documentation": "The amount of cores a VM has.",
+              "batchExport": true
+          },
+          {
+              "name": "Percent Allocated",
+              "tableAlias": "ra",
+              "column": "percent_allocated",
+              "group": "Administration",
+              "documentation": "The amount of cores a VM has.",
+              "batchExport": true
+          }
+        ]
+    }
+}

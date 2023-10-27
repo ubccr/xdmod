@@ -1,0 +1,10 @@
+title
+"Number of CPU Cores: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","Number of CPU Cores"
+"screw - Screwdriver",184000
+---------

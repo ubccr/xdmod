@@ -46,7 +46,7 @@
       "description_html": "A service provider is an institution that hosts resources.",
       "name": "Service Provider"
   },
-  "provider": {
+  "resource_allocation_type": {
       "attribute_table_schema": "modw",
       "attribute_to_aggregate_table_key_map": [
           {

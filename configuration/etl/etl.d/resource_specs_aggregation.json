@@ -52,7 +52,7 @@
             "namespace": "ETL\\Ingestor",
             "class": "ExplodeTransformIngestor",
             "options_class": "IngestorOptions",
-            "definition_file": "resource_specifications/resourcespecs_by_day_resourcespecslist.json",
+            "definition_file": "resource_specifications/resourcespecsfact_by_day_resourcespecslist.json",
             "description": "Populate the resourcespecs list table, which contains the back references from the resource specs aggregates table to the resourcespecs table",
             "endpoints": {
                 "source": {

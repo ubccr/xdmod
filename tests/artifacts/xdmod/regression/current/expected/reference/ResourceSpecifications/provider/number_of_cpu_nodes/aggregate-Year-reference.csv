@@ -1,0 +1,10 @@
+title
+"Number of CPU Nodes: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","Number of CPU Nodes"
+"screw - Screwdriver",4000
+---------

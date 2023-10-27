@@ -1,0 +1,10 @@
+title
+"CPU Node Hours Available: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","CPU Node Hours Available"
+"High-performance computing",12048.00000000
+---------

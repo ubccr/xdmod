@@ -1,0 +1,14 @@
+title
+"CPU Hours Available: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"CPU Hours Available"
+phillips,1056000.0000
+pozidriv,1056000.0000
+robertson,1056000.0000
+mortorq,672000.0000
+frearson,576000.0000
+---------

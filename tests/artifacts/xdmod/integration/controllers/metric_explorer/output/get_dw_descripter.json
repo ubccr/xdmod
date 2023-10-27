@@ -48,9 +48,15 @@
                             { "$ref": "#/$defs/realm" },
                             { "$ref": "#/$defs/storage_realm" }
                         ]
+                    },
+                    "ResourceSpecifications": {
+                        "allOf" : [
+                            { "$ref": "#/$defs/realm" },
+                            { "$ref": "#/$defs/resourcespecifications_realm" }
+                        ]
                     }
                 },
-                "required": [ "Cloud", "Jobs", "Storage" ],
+                "required": [ "Cloud", "Jobs", "Storage", "ResourceSpecifications" ],
                 "additionalProperties": false
             },
             "realm": {
@@ -115,6 +121,24 @@
                     },
                     "category": {
                         "enum": [ "Storage" ]
+                    }
+                }
+            },
+            "resourcespecifications_realm": {
+                "properties": {
+                    "metrics": {
+                        "minProperties": 8,
+                        "maxProperties": 8
+                    },
+                    "dimensions": {
+                        "minProperties": 5,
+                        "maxProperties": 5
+                    },
+                    "text": {
+                        "enum": [ "ResourceSpecifications" ]
+                    },
+                    "category": {
+                        "enum": [ "Resource Specifications" ]
                     }
                 }
             },
