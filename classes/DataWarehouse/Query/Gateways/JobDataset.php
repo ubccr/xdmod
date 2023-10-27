@@ -91,7 +91,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 $endDate['day'],
                 $endDate['year']
             );
-            if ($startDateTs === false) {
+            if ($endDateTs === false) {
                 throw new Exception('invalid "end_date" query parameter');
             }
 
