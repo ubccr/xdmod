@@ -213,3 +213,41 @@ function getDefaultLayout() {
         }
     };
 }
+
+function getErrorConfig(){
+	var errorImage = [
+		{
+			source: 'gui/images/report_thumbnail_no_data.png',
+			align: 'center',
+			xref: 'paper',
+			yref: 'paper',
+			sizex: 0.5,
+			sizey: 0.5,
+			x: 0.5,
+			y: 0.5
+		}
+ 	];
+
+	var errorText = [
+		{
+			text: '',
+			align: 'center',
+			xref: 'paper',
+			yref: 'paper',
+			font: {
+				size: 12,
+				family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+			},
+			x: 0.5,
+			y: 0.2,
+			showarrow: false
+		}
+	 ];
+
+    var ret = {
+        image: errorImage,
+        text: errorText
+    };
+
+	return ret;
+}

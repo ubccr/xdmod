@@ -8,7 +8,7 @@
  * @date 2013-Jun-23 (version 2)
  *
  *
- * Component for integrating with high charts api
+ * Component for integrating with plotly api
  */
 //TODO: Look into loading screens (involves plotly_afterplot)
 //TODO: Add lisenter for 'timeseries_zoom' (involves plotly_click)
@@ -68,8 +68,10 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     if (this.isEmpty) {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
-
-                        this.chart.renderer.image('gui/images/report_thumbnail_no_data.png', 53, 30, ch_width, ch_height).add();
+                        
+                        var errorObj = getErrorConfig();
+                        this.chartOptions.layout.images.push(errorObj.image);
+                        this.chartOptions.layout.annotations.push(errorObj.text);
                     }
 
                 }, this);
@@ -86,13 +88,9 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      * Instantiates a new chart, optionally with given parameters instead of
      * the settings stored in this panel's configuration.
      *
-     * @param  {Object} chartOptions (Optional) A set of HighCharts options.
+     * @param  {Object} chartOptions (Optional) A set of Plotly options.
      */
     initNewChart: function (chartOptions) {
-        if (this.chart) {
-            Plotly.purge(this.chart.id);
-            this.chart = null;
-        }
         var finalChartOptions = {};
         if (chartOptions) {
             jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
@@ -114,15 +112,22 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         var errorChartOptions = {
             title: {
                 text: mainMessage,
-                verticalAlign: 'middle'
+                yref: 'paper',
+                yanchor: 'center',
+                y: 0.5
             }
         };
 
         if (detailMessage) {
-            errorChartOptions.subtitle = {
+            errorChartOptions.annotations = {
                 text: detailMessage,
-                verticalAlign: 'middle',
-                y: 32
+                xref: 'paper',
+                yref: 'paper',
+                xanchor: 'center',
+                yanchor: 'top',
+                x: 0.5,
+                y: 0.8,
+                showarrow: false
             };
         }
 
@@ -131,9 +136,9 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 });
 
 /**
- * Properly encodes a string for use as the title value in a HighChart instance.
+ * Properly encodes a string for use as the title value in a Plotly instance.
  *
- * @param {String} text the text to be encoded for use in a HighChart title.
+ * @param {String} text the text to be encoded for use in a Plotly title.
  * @return {String} the encoded text.
  **/
 CCR.xdmod.ui.PlotlyPanel.prototype.plotlyTextEncode = function(text) {
