@@ -615,7 +615,7 @@ class Usage extends Common
             $usageTitleFontSizeInPixels = 16 + $usageFontSize;
             $usageTitleStyle = array(
                 'color' => '#000000',
-                'fontSize' => "${usageTitleFontSizeInPixels}px",
+                'size' => "${usageTitleFontSizeInPixels}px",
             );
 
             // Get the user's report generator chart pool.
@@ -680,17 +680,17 @@ class Usage extends Common
                 // If a thumbnail was requested, do not use an in-chart title or subtitle.
                 // Otherwise, use one.
                 if ($thumbnailRequested) {
-                    $meChart['title']['text'] = '';
-                    $meChart['subtitle']['text'] = '';
+                    $meChart['layout']['title']['text'] = '';
+                    $meChart['layout']['annotations'][1]['text'] = '';
                 } else {
                     // If a title was provided, display that. Otherwise, use the
                     // generated title.
-                    $meChart['title']['text'] = $usageChartTitle;
-                    $meChart['subtitle']['text'] = $usageChartSubtitle;
+                    $meChart['layout']['title']['text'] = $usageChartTitle;
+                    $meChart['layout']['annotations'][1]['text'] = $usageChartSubtitle;
                 }
 
                 // Set the title style.
-                $meChart['title']['style'] = $usageTitleStyle;
+                $meChart['layout']['title']['font'] = $usageTitleStyle;
 
                 // If the "Show Title" checkbox on the Export Dialog has not been ticked,
                 // do not show a chart title. However, the Metric Explorer promotes the
@@ -703,11 +703,11 @@ class Usage extends Common
                     // parameter isn't present. Keep this check in here in case that
                     // changes.
 
-                    if ( isset($meChart['subtitle']['text']) && '' != $meChart['subtitle']['text'] ) {
-                        $meChart['title']['text'] = $meChart['subtitle']['text'];
-                        $meChart['subtitle']['text'] = '';
+                    if ( isset($meChart['layout']['annotations'][1]['text']) && '' != $meChart['layout']['annotations'][1]['text'] ) {
+                        $meChart['layout']['title']['text'] = $meChart['subtitle']['text'];
+                        $meChart['layout']['annotations'][1]['text'] = '';
                     } else {
-                        $meChart['title']['text'] = '';
+                        $meChart['layout']['title']['text'] = '';
                     }
                 }
 
@@ -718,55 +718,42 @@ class Usage extends Common
 
                 // Remove extraneous x-axis properties.
                 if ($meRequestIsTimeseries) {
-                    unset($meChart['xAxis']['title']);
+                    unset($meChart['layout']['xaxis']['title']);
                 } else {
-                    unset($meChart['xAxis']['title']['text']);
-                    unset($meChart['xAxis']['labels']['staggerLines']);
+                    unset($meChart['layout']['xaxis']['title']);
                 }
-                unset($meChart['xAxis']['otitle']);
-                unset($meChart['xAxis']['dtitle']);
-
-                // set x-axis title, if any, bold:
-                if (isset($meChart['xAxis']['title']['style'])) {
-                    $meChart['xAxis']['title']['style']['fontWeight'] = 'bold';
-                }
+                //unset($meChart['xaxis']['otitle']);
+                //unset($meChart['xaxis']['dtitle']);
 
                 // If there is a y-axis...
-                if (isset($meChart['yAxis'][0])) {
+                if (isset($meChart['layout']['yaxis'])) {
                     // Remove extraneous y-axis properties.
-                    unset($meChart['yAxis'][0]['otitle']);
-                    unset($meChart['yAxis'][0]['dtitle']);
-                    unset($meChart['yAxis'][0]['opposite']);
-                    unset($meChart['yAxis'][0]['max']);
-                    unset($meChart['yAxis'][0]['startOnTick']);
+                    //unset($meChart['layout']['yaxis']['otitle']);
+                    //unset($meChart['layout']['yaxis']['dtitle']);
+                    //unset($meChart['layout']['yaxis']['opposite']);
+                    //Unset yaxis max but keep min
+                    $min = $meChart['layout']['yaxis']['range'][0];
+                    $meChart['layout']['yaxis']['range'] = [$min, null];
+                    unset($meChart['layout']['yaxis']['tick0']);
 
                     // If a thumbnail was requested, remove the y-axis label.
                     if ($thumbnailRequested) {
-                        $meChart['yAxis'][0]['title']['text'] = '';
-                    }
-
-                    // set y-axis title, if any, bold:
-                    if (isset($meChart['yAxis'][0]['title']['style'])) {
-                        $meChart['yAxis'][0]['title']['style']['fontWeight'] = 'bold';
+                        $meChart['layout']['yaxis']['title'] = '';
                     }
 
                     // Fix the x-axis labels to be the same size as the y-axis labels.
-                    $meChart['xAxis']['labels']['style']['fontSize'] =
-                        $meChart['yAxis'][0]['labels']['style']['fontSize'];
-
-                    // Restore the last y-axis label.
-                    $meChart['yAxis'][0]['showLastLabel'] = true;
-
+                    $meChart['layout']['xaxis']['tickfont']['size'] =
+                        $meChart['layout']['yaxis']['tickfont']['size'];
                     // Set the y-axis grid line dash style and color.
                     if ($meRequestIsTimeseries) {
-                        $meChart['yAxis'][0]['gridLineDashStyle'] = 'Solid';
-                        $meChart['yAxis'][0]['gridLineColor'] = '#C0C0C0';
+                        //$meChart['layout']['yaxis']['gridLineDashStyle'] = 'Solid';
+                        $meChart['layout']['yaxis']['gridcolor'] = '#C0C0C0';
                     } else {
-                        unset($meChart['yAxis'][0]['gridLineDashStyle']);
-                        unset($meChart['yAxis'][0]['gridLineColor']);
+                        //unset($meChart['layout']['yaxis']['gridLineDashStyle']);
+                        unset($meChart['layout']['yaxis']['gridcolor']);
                     }
                     if ($usageChartSettings['show_guide_lines'] === 'n') {
-                        $meChart['yAxis'][0]['gridLineWidth'] = 0;
+                        $meChart['layout']['yaxis']['gridwidth'] = 0;
                     }
                 }
 
@@ -777,18 +764,18 @@ class Usage extends Common
                     'value'
                 );
                 if (
-                    isset($meChart['xAxis']['categories'])
+                    isset($meChart['layout']['xaxis']['categoryarray'])
                     && $chartSortedByValue
                     && $usageGroupBy !== 'none'
                 ) {
-                    $meChartCategories = $meChart['xAxis']['categories'];
+                    $meChartCategories = $meChart['layout']['xaxis']['categoryarray'];
                     $usageChartCategories = array();
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
                         $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
                         $currentCategoryRank++;
                     }
-                    $meChart['xAxis']['categories'] = $usageChartCategories;
+                    $meChart['layout']['xaxis']['categoryarray'] = $usageChartCategories;
                 }
 
                 // Generate the chart arguments string for the report generator.
@@ -828,7 +815,7 @@ class Usage extends Common
                 // For each data series...
                 $primaryDataSeriesRank = $usageOffset;
 
-                array_walk($meChart['series'], function (
+                array_walk($meChart['data'], function (
                     &$meDataSeries,
                     $meDataSeriesIndex
                 ) use (
@@ -868,10 +855,10 @@ class Usage extends Common
                     // and don't specify the line style. Otherwise, just remove
                     // the data labels.
                     if ($isPrimaryDataSeries) {
-                        $meDataSeries['dataLabels']['y'] = -90;
-                        unset($meDataSeries['dashStyle']);
+                        //$meDataSeries['dataLabels']['y'] = -90;
+                        unset($meDataSeries['line']['dash']);
                     } else {
-                        unset($meDataSeries['dataLabels']);
+                        //unset($meDataSeries['dataLabels']);
                     }
 
                     // If this is the primary data series and the chart is not a
@@ -881,8 +868,8 @@ class Usage extends Common
                     if ($isPrimaryDataSeries && !$thumbnailRequested) {
                         // is there a single y data point?
                         $y_values_count = 0;
-                        foreach ($meDataSeries['data'] as $value) {
-                            if ($value['y'] !== null ) {
+                        foreach ($meDataSeries['y'] as $value) {
+                            if ($value !== null ) {
                                 ++$y_values_count;
                             }
                             // we are only interested in the == 1 case
@@ -890,14 +877,14 @@ class Usage extends Common
                                 break;
                             }
                         }
-                        $meDataSeries['marker']['enabled'] = $y_values_count == 1 ||
-                                            count($meDataSeries['data']) <= 30;
+                        $meDataSeries['mode'] = $y_values_count == 1 ||
+                                            count($meDataSeries['data']) <= 30 ? 'marker' : 'lines+marker';
                     }
 
                     // If this is a trend line data series...
                     if ($isTrendLineSeries) {
                         // Change the line style to a dotted line.
-                        $meDataSeries['dashStyle'] = 'ShortDot';
+                        $meDataSeries['line']['dash'] = 'dashdot';
                     }
 
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
@@ -913,14 +900,14 @@ class Usage extends Common
                     unset($meDataSeries['otitle']);
                     unset($meDataSeries['datasetId']);
                     unset($meDataSeries['visible']);
-                    unset($meDataSeries['events']);
+                    //unset($meDataSeries['events']);
 
                     // Note: keep dataLabels color param set, else we lose some of the pie datalabels
                     // in the Usage chart only.
-                    if ($meDataSeries['type'] === 'pie') {
+                    /*if ($meDataSeries['type'] === 'pie') {
                         unset($meDataSeries['dataLabels']['y']);
                         unset($meDataSeries['dataLabels']['style']['color']);
-                    }
+                    }*/
                 });
 
                 if ('n' == $usageGroupByObject->getDefaultEnableErrors()) {
@@ -982,7 +969,7 @@ class Usage extends Common
         }
 
         // Get the file name to use for the results.
-        $usageFileNameTitle = $usageCharts[0]['hc_jsonstore']['title']['text'];
+        $usageFileNameTitle = $usageCharts[0]['hc_jsonstore']['layout']['title']['text'];
         if (empty($usageFileNameTitle)) {
             $usageFileNameTitle = 'untitled';
         }

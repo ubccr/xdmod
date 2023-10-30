@@ -974,25 +974,15 @@ class Plotly2
                 }
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                /*$dataLabelsConfig = array(
-                    'enabled' => $data_description->value_labels || $std_err_labels_enabled,
-                    'settings' => array(
-                        'value_labels' => $data_description->value_labels,
-                        'error_labels' => $std_err_labels_enabled,
-                        'decimals' => $decimals
-                    ),
-                    'style' => array(
-                        'fontSize' => (11 + $font_size).'px',
-                        'fontWeight' => 'normal',
-                        'color' => $color,
-                        'textShadow' => false
-                    )
-                );*/
-
+                $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
+                $trace = array();
                 $tooltipConfig = array();
                 $points = array();
                 $xValues = array();
                 $yValues = array();
+                $colors = array();
+                $tooltip = '%{x}' . '<br> <span style="color:' . $color
+                            . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:}</b> <extra></extra>';
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
@@ -1005,48 +995,22 @@ class Plotly2
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
                         $xValues[] = $this->_xAxisDataObject->getValues($index);
-                        
-                        $point = array(
-                            'name' => $this->_xAxisDataObject->getValue($index),
-                            'y' => $value,
-                            'color' => ($index == 0) ? $yAxisColor
-                                    : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT)
-                        );
-
+                        $colors[] = ($index == 0) ? $yAxisColor
+                                     : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);                   
                         // N.B.: These are drilldown labels.
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
                         // See setXAxis() and _xAxisDataObject.
-                        $point['drilldown'] = array(
-                            'id' => $yAxisDataObject->getXId($index),
-                            'label' => $yAxisDataObject->getXValue($index)
+                        $point = array(
+                            'drilldown' => array(
+                                'id' => $yAxisDataObject->getXId($index),
+                                'label' => $yAxisDataObject->getXValue($index)
+                            )
                         );
                         $points[] = $point;
 
                     } // foreach
 
-                    $dataLabelsConfig  = array_merge(
-                        $dataLabelsConfig,
-                        array(
-                            'color' => '#000000',
-                            'padding' => 10,
-                            'settings' => array(
-                                'maxL' => floor($this->_width*($this->limit<11?30:15)/580),
-                                'wrap' => floor($this->_width*($this->limit<11?15:15)/580),
-                                'decimals' => $decimals
-                            )
-                         )
-                    );
-
-                    $tooltipConfig = array_merge(
-                        $tooltipConfig,
-                        array(
-                            'hovertemplate' => '%{x}' . '<br> <span style="color:' .
-                         $color . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:}</b> <extra></extra>',,
-                            'percentageDecimals' => 1,
-                            'valueDecimals' => $decimals
-                        )
-                    );
 
                     $this->_chart['layout']['hovermode'] = 'closest';
 
@@ -1055,24 +1019,13 @@ class Plotly2
                 {
                     if($this->_swapXY)
                     {
-                        $dataLabelsConfig  = array_merge(
-                            $dataLabelsConfig,
-                            array(
-                                'x' => 70
-                            )
-                        );
+                        //TODO: Ajust data labels
+                        $trace['textangle'] = 90;
                         $this->_chart['layout']['xaxis']['tickangle'] = 0;
                     }
                     else // (!$this->_swapXY)
                     {
-                        $dataLabelsConfig  = array_merge(
-                            $dataLabelsConfig,
-                            array(
-                                'rotation' => -90,
-                                'align' => 'center',
-                                'y' => -70,
-                            )
-                        );
+                        //TODO: Normal data labels
                     } // _swapXY
 
                     // set the label for each value:
@@ -1081,16 +1034,14 @@ class Plotly2
                         $yValues[] = $value;
                         $xValues[] = $yAxisObject->getXValue($index);
 
-                        $point = array(
-                            'y' => $yAxisObject->log_scale && $value == 0 ? null : $value//,
-                        );
-
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
                         // (Though they are the same labels...)
-                        $point['drilldown'] = array(
-                            'id' => $yAxisDataObject->getXId($index),
-                            'label' => $yAxisDataObject->getXValue($index)
+                        $point = array(
+                            'drilldown' => array(
+                                'id' => $yAxisDataObject->getXId($index),
+                                'label' => $yAxisDataObject->getXValue($index)
+                            )
                         );
 
                         try {
@@ -1182,12 +1133,11 @@ class Plotly2
                     'yaxis' => "y{$yAxisIndex}",
                     'hovertemplate' => $tooltipConfig['hovertemplate'], //Needs more work to support old highcharts features
                     'showLegend' => true,
-                    'dataLabels' => $dataLabelsConfig, // Add support for some additional highcharts settings
-                    'text' => $xValues,
+                    'text' => $data_labels_enabled ? $yValues : null,
                     'x' => $xValues,
                     'y' => $yValues,
+                    'yaxis' => "y{$yAxisIndex}",
                     'data' => $points,
-                    'error_y' => array(), 
                     'cursor' => 'pointer', //Add support, may have to be in frontend
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -1210,7 +1160,7 @@ class Plotly2
                 $this->_chart['data'][] = $data_series_desc;
 
                 // build error data series and add it to chart
-                $this->buildErrorDataSeries(
+                $trace['error_y'] = $this->buildErrorDataSeries(
                     $data_description,
                     $legend,
                     $lineColor,
