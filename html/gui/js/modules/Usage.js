@@ -2680,7 +2680,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 credits: {
                                     enabled: true
                                 }
-                            }; //baseChartOptions
+                            };
 
                             var chartOptions = r.get('hc_jsonstore');
 
@@ -2688,10 +2688,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
-
                             this.chart = XDMoD.utils.createChart(chartOptions);
 
-                            this.chart.on('plotly_click', function (data, event) {
+                            this.chart.on('plotly_click', (data, event) => {
                                 var drillId;
                                 var label;
                                 console.log(data);

@@ -108,53 +108,52 @@ class Plotly2
                 'dateFormat' => $this->_getDateFormat()
             ),
             'layout' => array(
-				'title' => array(
-					'text' => ''
-				),
-				'annotations' => array(
-					// Credits    
-					array(
-						'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly',
-						'font' => array(
-							'color' => '#909090',
-							'size' => 10,
-							'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
-						),
-						'xref' => 'paper',
-						'yref' => 'paper',
-						'xanchor' => 'right',
-						'yanchor' => 'bottom',
-						'x' => 1,
-						'y' => 0,
-						'yshift' => -80,
-						'showarrow' => false
-					),
-					// Subtitle
-					array(
-						'text' => '',
-						'xref' => 'paper',
-						'yref' => 'paper',
-						'xanchor' => 'center',
-						'yanchor' => 'top',
-						'x' => 0.5,
-						'y' => 0.8,
-						'showarrow' => false
-
-					)
-				),
-				'legend' => array(
-					'itemwidth' => 40,
-					'bgcolor' => '#FFFFFF',
-					'borderwidth' => 0
-				),
-				'xaxis' => array(
-					'autorange' = $this->_swapXY ? 'reversed' : false
-				),
-				'yaxis' => array(
-					'overlaying' => 'y',
-					'autorange' = $this->_swapXY ? 'reversed' : false
-				),
-				'hovermode' => $this->_hideTooltip ? false: 'x unified',
+            'title' => array(
+                'text' => ''
+            ),
+            'annotations' => array(
+            // Credits
+            array(
+                'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly',
+                'font' => array(
+                'color' => '#909090',
+                'size' => 10,
+                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                ),
+                'xref' => 'paper',
+                'yref' => 'paper',
+                'xanchor' => 'right',
+                'yanchor' => 'bottom',
+                'x' => 1,
+                'y' => 0,
+                'yshift' => -80,
+                'showarrow' => false
+            ),
+            // Subtitle
+            array(
+                'text' => '',
+                'xref' => 'paper',
+                'yref' => 'paper',
+                'xanchor' => 'center',
+                'yanchor' => 'top',
+                'x' => 0.5,
+                'y' => 0.8,
+                'showarrow' => false
+                )
+            ),
+            'legend' => array(
+                'itemwidth' => 40,
+                'bgcolor' => '#FFFFFF',
+                'borderwidth' => 0
+            ),
+            'xaxis' => array(
+                'autorange' = $this->_swapXY ? 'reversed' : false
+            ),
+            'yaxis' => array(
+                'overlaying' => 'y',
+                'autorange' = $this->_swapXY ? 'reversed' : false
+            ),
+            'hovermode' => $this->_hideTooltip ? false: 'x unified',
                 'bargap' => 0.05,
                 'bargroupgap' => 0,
             ),
@@ -601,29 +600,29 @@ class Plotly2
     // @param x_axis
     // ---------------------------------------------------------
     /*
-	protected function setXAxisLabel($x_axis)
-	{
-			if (!isset($this->_xAxisDataObject) )  {
-					throw new \Exception( get_class($this)." _xAxisDataObject not set ");
-			}
+    protected function setXAxisLabel($x_axis)
+    {
+        if (!isset($this->_xAxisDataObject) )  {
+            throw new \Exception( get_class($this)." _xAxisDataObject not set ");
+        }
 
-			$defaultXAxisLabel = 'xAxis';
-			$xAxisLabel = $this->_xAxisDataObject->getName() == ORGANIZATION_NAME ? '' :
-										$this->_xAxisDataObject->getName();
+        $defaultXAxisLabel = 'xAxis';
+        $xAxisLabel = $this->_xAxisDataObject->getName() == ORGANIZATION_NAME ? '' :
+                        $this->_xAxisDataObject->getName();
 
-			if($xAxisLabel == '') $xAxisLabel = $defaultXAxisLabel;
-			$originalXAxisLabel = $xAxisLabel;
+        if($xAxisLabel == '') $xAxisLabel = $defaultXAxisLabel;
+        $originalXAxisLabel = $xAxisLabel;
 
-			if(isset($x_axis->{$xAxisLabel}))
-			{
-					$config = $x_axis->{$xAxisLabel};
-					if(isset($config->title)) $xAxisLabel = $config->title;
-			}
-			if($xAxisLabel == $defaultXAxisLabel) $xAxisLabel = '';
+        if(isset($x_axis->{$xAxisLabel}))
+        {
+            $config = $x_axis->{$xAxisLabel};
+            if(isset($config->title)) $xAxisLabel = $config->title;
+        }
+        if($xAxisLabel == $defaultXAxisLabel) $xAxisLabel = '';
 
-			$this->_xAxisLabel = $xAxisLabel;
-	} // setXAxisLabel()
-	*/
+        $this->_xAxisLabel = $xAxisLabel;
+    } // setXAxisLabel()
+    */
 
     // ---------------------------------------------------------
     // setXAxis()
@@ -685,7 +684,7 @@ class Plotly2
                 'linewidth' => 2 + $font_size / 4,
                 'categoryarray' => $this->_xAxisDataObject->getValues()
         );
-        
+
         if (isset($this->_chart['layout']['xaxis']['categoryarray']))
         {
             $this->_chart['layout']['xaxis']['categoryorder'] = 'array';
@@ -693,20 +692,16 @@ class Plotly2
 
         $count = $this->_xAxisDataObject->getCount();
         $this->_chart['layout']['xaxis']['dtick'] = $count < 20 ? 0 : round($count / 20);
-        if ($this->_swapXY) 
+        if ($this->_swapXY)
         {
-            $this->_chart['layout']['xaxis']['settings'] = array(
+            /*$this->_chart['layout']['xaxis']['settings'] = array(
                 'maxL' => floor($this->_width * 20 / 580); // need support
-            );   
+            );*/
         }
         else
         {
             $this->_chart['layout']['xaxis']['tickangle'] = -90;
             $this->_chart['layout']['xaxis']['ticklabelposition'] = 'outside left';
-            $this->_chart['xaxis']['settings'] = array( //need support
-                'maxL' => floor($this->_height * ($this->limit < 11 ? 30 : 15) / 400),
-                'wrap' => floor($this->_height * ($this->limit < 1 ? 18 : 18) / 400) // Possible bug?
-            );
         }
     }   // setXAxis()
 
@@ -921,7 +916,6 @@ class Plotly2
                 'allowDecimals' => $yAxisObject->decimals > 0, // Add support
                 'dtick' => $yAxisObject->log_scale ? 1 : null,
                 'maxPadding' => max(0.05, ($yAxisObject->value_lables ? 0.25 : 0.0) + ($yAxisObject->std_err ? .25 : 0)) // Add support
-                
             );
 
             $this->_chart['layout']["yaxis{$yAxisIndex}"] = $yAxis;
@@ -996,7 +990,7 @@ class Plotly2
                         $yValues[] = $value;
                         $xValues[] = $this->_xAxisDataObject->getValues($index);
                         $colors[] = ($index == 0) ? $yAxisColor
-                                     : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);                   
+                                     : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
                         // N.B.: These are drilldown labels.
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
@@ -1364,4 +1358,4 @@ class Plotly2
 
         return array($color, $lineColor);
     }
-} // class Plotly2 
+} // class Plotly2

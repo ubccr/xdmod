@@ -722,15 +722,10 @@ class Usage extends Common
                 } else {
                     unset($meChart['layout']['xaxis']['title']);
                 }
-                //unset($meChart['xaxis']['otitle']);
-                //unset($meChart['xaxis']['dtitle']);
 
                 // If there is a y-axis...
                 if (isset($meChart['layout']['yaxis'])) {
                     // Remove extraneous y-axis properties.
-                    //unset($meChart['layout']['yaxis']['otitle']);
-                    //unset($meChart['layout']['yaxis']['dtitle']);
-                    //unset($meChart['layout']['yaxis']['opposite']);
                     //Unset yaxis max but keep min
                     $min = $meChart['layout']['yaxis']['range'][0];
                     $meChart['layout']['yaxis']['range'] = [$min, null];
@@ -746,7 +741,6 @@ class Usage extends Common
                         $meChart['layout']['yaxis']['tickfont']['size'];
                     // Set the y-axis grid line dash style and color.
                     if ($meRequestIsTimeseries) {
-                        //$meChart['layout']['yaxis']['gridLineDashStyle'] = 'Solid';
                         $meChart['layout']['yaxis']['gridcolor'] = '#C0C0C0';
                     } else {
                         //unset($meChart['layout']['yaxis']['gridLineDashStyle']);
@@ -855,11 +849,8 @@ class Usage extends Common
                     // and don't specify the line style. Otherwise, just remove
                     // the data labels.
                     if ($isPrimaryDataSeries) {
-                        //$meDataSeries['dataLabels']['y'] = -90;
                         unset($meDataSeries['line']['dash']);
-                    } else {
-                        //unset($meDataSeries['dataLabels']);
-                    }
+                    } 
 
                     // If this is the primary data series and the chart is not a
                     // thumbnail, use line markers if and only if the number of
@@ -904,10 +895,6 @@ class Usage extends Common
 
                     // Note: keep dataLabels color param set, else we lose some of the pie datalabels
                     // in the Usage chart only.
-                    /*if ($meDataSeries['type'] === 'pie') {
-                        unset($meDataSeries['dataLabels']['y']);
-                        unset($meDataSeries['dataLabels']['style']['color']);
-                    }*/
                 });
 
                 if ('n' == $usageGroupByObject->getDefaultEnableErrors()) {

@@ -68,7 +68,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     if (this.isEmpty) {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
-                        
+
                         var errorObj = getErrorConfig();
                         this.chartOptions.layout.images.push(errorObj.image);
                         this.chartOptions.layout.annotations.push(errorObj.text);
