@@ -88,11 +88,11 @@ Ext.apply(XDMoD.Module.Usage, {
         var groupByUnit = groupByNameAndUnit[1];
 
 
-        XDMoD.TrackEvent('Usage', 'Clicked on chart to access drill-down menu', Ext.encode({
+        /*XDMoD.TrackEvent('Usage', 'Clicked on chart to access drill-down menu', Ext.encode({
            'x-axis': point.ts ? Highcharts.dateFormat('%Y-%m-%d', point.ts) : point.series.data[point.x].category,
            'y-axis': point.y,
            'label': (groupByName == 'none') ? '' : groupByUnit + '=' + groupByValue
-        }));
+        }));*/
 
         function drillDown(drillDown) {
             var drillDownGroupByName = drillDown[0];
@@ -1491,39 +1491,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
 
                                 var baseChartOptions = {
-
-                                    chart: {
-
-                                        renderTo: id,
+                                    renderTo: id,
+                                    layout: {
                                         width: CCR.xdmod.ui.thumbWidth * chartThumbScale,
                                         height: CCR.xdmod.ui.thumbHeight * chartThumbScale,
-                                        animation: false,
-                                        events: {
-
-                                            load: function (e) {
-
-                                                if (this.series.length == 0) {
-
-                                                    this.renderer.image('gui/images/report_thumbnail_no_data.png', 0, 0, this.chartWidth, this.chartHeight).add();
-
-                                                } //if (this.series.length == 0)
-
-                                            } //load
-
-                                        } //events
-
                                     },
-                                    plotOptions:{
-                                      series: {
-                                        animation: false
-                                      }
-                                    },
-                                    loading: {
-                                        labelStyle: {
-                                            top: '45%'
-                                        }
-                                    },
-
                                     exporting: {
                                         enabled: false
                                     },
@@ -1531,7 +1503,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     credits: {
                                         enabled: true
                                     }
-
                                 }; //baseChartOptions
 
                                 var chartOptions = {};
@@ -1543,7 +1514,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;
 
-                                this.charts.push(new Highcharts.Chart(chartOptions));
+                                this.charts.push(Plotly.newPlot(chartOptions.renderTo, chartOptions.layout, chartOptions.data, { displayModeBar: false, doubleClick: 'reset' }));
                             };
 
                             deferStore.load({
@@ -2698,57 +2669,17 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             }
 
                             var baseChartOptions = {
-
-                                chart: {
-
-                                    renderTo: id,
+                                renderTo: id,
+                                layout: {
                                     width: chartWidth * chartScale,
                                     height: chartHeight * chartScale,
-                                    animation: false
-
                                 },
-
-                                loading: {
-                                    labelStyle: {
-                                        top: '45%'
-                                    }
-                                },
-
                                 exporting: {
                                     enabled: false
                                 },
-
                                 credits: {
                                     enabled: true
-                                },
-
-                                plotOptions: {
-                                    series: {
-                                        events: {
-                                            click: function (evt) {
-                                                var drillId;
-                                                var label;
-                                                var drillInfo = evt.point.series.userOptions.drilldown;
-
-                                                if (!drillInfo) {
-                                                    // dataseries such as the trend line do not have a drilldown
-                                                    return;
-                                                }
-
-                                                if (evt.point.drilldown) {
-                                                    drillId = evt.point.drilldown.id;
-                                                    label = evt.point.drilldown.label;
-                                                } else {
-                                                    evt.point.ts = evt.point.x; // eslint-disable-line no-param-reassign
-                                                    drillId = drillInfo.id;
-                                                    label = drillInfo.label;
-                                                }
-                                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
-                                            }
-                                        }
-                                    }
                                 }
-
                             }; //baseChartOptions
 
                             var chartOptions = r.get('hc_jsonstore');
@@ -2757,29 +2688,31 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
-                            var extraChartHandlers = {
-                                loadHandlers: [],
-                                redrawHandlers: []
-                            };
-                            extraChartHandlers.loadHandlers.push(function () {
-                                this.checkSeries = function () {
-                                    if (this.series.length === 0) {
-                                        if (this.placeholder_element) {
-                                            this.placeholder_element.destroy();
-                                        }
-                                        this.placeholder_element = this.renderer.image('gui/images/report_thumbnail_no_data.png', (this.chartWidth - 400) / 2, (this.chartHeight - 300) / 2, 400, 300).add();
-                                    }
-                                };
 
-                                this.checkSeries();
-                            });
-                            extraChartHandlers.redrawHandlers.push(function () {
-                                if (this.checkSeries) {
-                                    this.checkSeries();
+                            this.chart = XDMoD.utils.createChart(chartOptions);
+
+                            this.chart.on('plotly_click', function (data, event) {
+                                var drillId;
+                                var label;
+                                console.log(data);
+                                /*
+                                var drillInfo = evt.point.series.userOptions.drilldown;
+
+                                if (!drillInfo) {
+                                // dataseries such as the trend line do not have a drilldown
+                                    return;
                                 }
-                            });
 
-                            this.chart = XDMoD.utils.createChart(chartOptions, extraChartHandlers);
+                                if (evt.point.drilldown) {
+                                    drillId = evt.point.drilldown.id;
+                                    label = evt.point.drilldown.label;
+                                } else {
+                                    evt.point.ts = evt.point.x; // eslint-disable-line no-param-reassign
+                                    drillId = drillInfo.id;
+                                    label = drillInfo.label;
+                                }
+                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);*/
+                            });
 
                         }, this); //task
 

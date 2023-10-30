@@ -1451,7 +1451,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     var decoded = Ext.util.Format.htmlDecode(text);
                     instance.chartTitleField.setValue(decoded);
                     event.target.setTitle({
-                        text: instance.highChartPanel.highChartsTextEncode(decoded)
+                        text: instance.plotlyPanel.plotlyChartsTextEncode(decoded)
                     });
                     event.target.setSize(event.target.chartWidth, event.target.chartHeight);
 
@@ -5548,7 +5548,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             }
 
             this.mask('Loading...');
-            highChartPanel.un('resize', onResize, this);
+            plotlyPanel.un('resize', onResize, this);
 
             initBaseParams.call(this);
 
@@ -5593,7 +5593,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             var has_title = reportGeneratorMeta.title && reportGeneratorMeta.title.length > 0;
             self.setExportDefaults(has_title);
 
-            highChartPanel.on('resize', onResize, this); //re-register this after loading/its unregistered beforeload
+            plotlyPanel.on('resize', onResize, this); //re-register this after loading/its unregistered beforeload
 
             this.chartPagingToolbar.setPagingEnabled(!this.show_remainder);
 
@@ -5661,11 +5661,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 responseMessage = 'Unknown Error';
             }
 
-            highChartPanel.displayError(
+            plotlyPanel.displayError(
                 'An error occurred while loading the chart.',
                 responseMessage
             );
-            this.chartViewPanel.getLayout().setActiveItem(this.highChartPanel.getId());
+            this.chartViewPanel.getLayout().setActiveItem(this.plotlyPanel.getId());
 
             this.unmask();
 
@@ -5985,66 +5985,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var highChartPanel = new CCR.xdmod.ui.HighChartPanel({
-            id: 'hc-panel' + this.id,
-            baseChartOptions: {
-                chart: {
-                    events: {
-                        titleClick: function (event) {
-                            return XDMoD.Module.MetricExplorer.titleContextMenu(event);
-                        },
-                        subtitleClick: function (event) {
-                            return XDMoD.Module.MetricExplorer.subtitleContextMenu(event);
-                        },
-                        xAxisClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.xAxisContextMenu(axis);
-                        },
-                        yAxisClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.yAxisContextMenu(axis);
-                        },
-                        xAxisTitleClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(axis);
-                        },
-                        yAxisTitleClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(axis);
-                        },
-                        xAxisLabelClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.xAxisLabelContextMenu(axis);
-                        },
-                        yAxisLabelClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.yAxisLabelContextMenu(axis);
-                        },
-                        click: function (event) {
-                            return XDMoD.Module.MetricExplorer.chartContextMenu.call(this, event);
-                        }
-                    }
-                },
-                plotOptions: {
-                    series: {
-                        events: {
-                            legendItemClick: function () {
-                                XDMoD.Module.MetricExplorer.seriesContextMenu(this, true, this.userOptions.datasetId);
-                                return false;
-                            }
-                        },
-                        point: {
-                            events: {
-                                click: function () {
-                                    if (this.options.x) {
-                                        this.ts = this.options.x;
-                                    }
-
-                                    XDMoD.Module.MetricExplorer.pointContextMenu(this, this.series.userOptions.datasetId);
-                                }
-                            }
-                        }
-                    }
-                }
-            },
+        var plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
+            id: 'plotly-panel' + this.id,
             store: chartStore
         }); //assistPanel
 
-        this.highChartPanel = highChartPanel;
+        this.plotlyPanel = plotlyPanel;
 
         // ---------------------------------------------------------
 
@@ -6149,7 +6095,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             region: 'center',
             border: true,
             items: [
-                highChartPanel,
+                plotlyPanel,
                 assistPanel
             ]
         }); //chartViewPanel
