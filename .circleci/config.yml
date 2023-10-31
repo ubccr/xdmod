@@ -32,7 +32,7 @@ jobs:
           name: Docker Compose corresponding OS file
           command: docker compose -f tests/playwright/Docker/docker-compose.yml up -d
       - run:
-          name: Copy Files for Playwright and XDMoD container
+          name: Copy Files for Playwright and XDMoD containers
           command: |
             docker cp ~/project xdmod:/xdmod
             docker cp ~/project playwright:/xdmod
@@ -51,8 +51,8 @@ jobs:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /xdmod xdmod composer install
       - run:
-         name: Build XDMoD RPM
-         command: docker exec -w /xdmod xdmod /root/bin/buildrpm xdmod
+          name: Build XDMoD RPM
+          command: docker exec -w /xdmod xdmod /root/bin/buildrpm xdmod
       - run:
           name: Verify that the build went alright
           command: |
@@ -60,7 +60,7 @@ jobs:
             docker exec xdmod find /xdmod/open_xdmod/build/
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
-          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -e XDMOD_REALMS=jobs,storage,cloud xdmod /xdmod/tests/ci/bootstrap.sh
+          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -e XDMOD_REALMS=$XDMOD_REALMS xdmod /xdmod/tests/ci/bootstrap.sh
       - run:
           name: Validate that the install / upgrade went as expected
           command: docker exec -w /xdmod xdmod /xdmod/tests/ci/validate.sh
