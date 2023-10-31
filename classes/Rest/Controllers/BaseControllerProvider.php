@@ -170,8 +170,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @param Application $app that will be used to facilitate returning a
      *                         json response if information is found to be
      *                         missing.
-     * @return \Symfony\Component\HttpFoundation\JsonResponse if and only if
-     *                         the user is missing a token or an ip.
      *
      * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
@@ -744,7 +742,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     /**
      * @param Request $request
-     * @return \XDUser
      * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
      * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
@@ -778,6 +775,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         $userId = substr($rawToken, 0, $delimPosition);
         $token = substr($rawToken, $delimPosition + 1);
 
-        return Tokens::authenticate($userId, $token);
+        $user = Tokens::authenticate($userId, $token);
+        $request->attributes->set(BaseControllerProvider::_USER, $user);
     }
 }

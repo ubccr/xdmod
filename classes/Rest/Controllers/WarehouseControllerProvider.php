@@ -2140,7 +2140,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRawData(Request $request, Application $app)
     {
-        $user = parent::authenticateToken($request);
+        parent::authenticateToken($request);
+        $user = parent::getUserFromRequest($request);
         $params = $this->validateRawDataParams($request, $user);
         $query = $this->getRawDataQuery($params);
         $logger = $this->getRawDataLogger();
