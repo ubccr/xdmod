@@ -17,12 +17,7 @@ jobs:
         type: string
     executor: default
     environment:
-      COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
-      TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
-      XDMOD_IS_CORE: yes
-      XDMOD_INSTALL_DIR: /xdmod
-      XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
       - setup_remote_docker
@@ -46,7 +41,6 @@ jobs:
           command: |
             docker exec xdmod mkdir /root/phpunit
             docker exec xdmod mkdir /tmp/screenshots
-
       - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /xdmod xdmod composer install
@@ -60,7 +54,7 @@ jobs:
             docker exec xdmod find /xdmod/open_xdmod/build/
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
-          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -e XDMOD_REALMS=$XDMOD_REALMS xdmod /xdmod/tests/ci/bootstrap.sh
+          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /xdmod/tests/ci/bootstrap.sh
       - run:
           name: Validate that the install / upgrade went as expected
           command: docker exec -w /xdmod xdmod /xdmod/tests/ci/validate.sh
@@ -72,7 +66,7 @@ jobs:
           command: docker exec xdmod /xdmod/tests/ci/samlSetup.sh
       - run:
           name: Setup & Run QA Tests
-          command: docker exec xdmod /xdmod/tests/ci/scripts/qa-test-setup.sh
+          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /xdmod/tests/ci/scripts/qa-test-setup.sh
       - run:
           name: Make sure that the Test Dependencies are installed
           command: docker exec -w /xdmod xdmod composer install --no-progress
