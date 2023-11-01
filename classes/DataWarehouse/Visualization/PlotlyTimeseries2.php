@@ -22,7 +22,7 @@ use DataWarehouse\Data\TimeseriesDataset;
 * use them here in configure()
 *
 */
-class HighChartTimeseries2 extends HighChart2
+class PlotlyTimeseries2 extends Plotly2
 {
     // ---------------------------------------------------------
     // __construct()

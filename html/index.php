@@ -208,7 +208,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/lib/MessageWindow.js"></script>
 
     <script type="text/javascript" src="gui/js/CCR.js"></script>
-    <script type="text/javascript" src="gui/js/HighChartWrapper.js"></script>
+    <script type="text/javascript" src="gui/js/PlotlyChartWrapper.js"></script>
 
     <script type="text/javascript" src="gui/lib/printer/Printer-all.js"></script>
 
@@ -433,7 +433,7 @@ JS;
     <script type="text/javascript" src="gui/lib/highchartsDottedLineNullPlot.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/modules/exporting.src.js"></script>
 
-    <script type="text/javascript" src="gui/js/HighChartPanel.js"></script>
+    <script type="text/javascript" src="gui/js/PlotlyPanel.js"></script>
 
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/ChartDragDrop.css"/>

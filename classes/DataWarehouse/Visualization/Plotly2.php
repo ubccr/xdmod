@@ -105,7 +105,7 @@ class Plotly2
         $this->_chart = array(
             'chart' => array(
                 'showWarnings' => $this->_showWarnings,
-                'dateFormat' => $this->_getDateFormat()
+                'dateFormat' => $this->getDateFormat()
             ),
             'layout' => array(
             'title' => array(
@@ -147,11 +147,11 @@ class Plotly2
                 'borderwidth' => 0
             ),
             'xaxis' => array(
-                'autorange' = $this->_swapXY ? 'reversed' : false
+                'autorange' => $this->_swapXY ? 'reversed' : false
             ),
             'yaxis' => array(
                 'overlaying' => 'y',
-                'autorange' = $this->_swapXY ? 'reversed' : false
+                'autorange' => $this->_swapXY ? 'reversed' : false
             ),
             'hovermode' => $this->_hideTooltip ? false: 'x unified',
                 'bargap' => 0.05,
@@ -1103,9 +1103,9 @@ class Plotly2
                     'name' => $lookupDataSeriesName,
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
-                    'zIndex' => $zIndex, //Frontend support
+                    'zIndex' => $zIndex,
                     'marker' => array(
-                        'size' => $font_size / 4 + 5 //Formula may need tweaked for marker radius
+                        'size' => $font_size / 4 + 5, 
                         'color' => $color,
                         'line' => array(
                             'width' => 1,
@@ -1117,22 +1117,22 @@ class Plotly2
                                                         null : $color,
                         'dash' => $data_description->line_type,
                         'width' => $data_description->display_type !== 'scatter' ?
-                                                        $data_description->line_width + $font_size / 4 : 0, //Double check bar charts have correct width
+                                                        $data_description->line_width + $font_size / 4 : 0,
                     ),
                     'type' => $data_description->display_type,
                     'mode' => $showMarker ? 'lines+marker' : 'lines',
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
-                    'shadow' => $data_description->shadow, //Add support
+                    'shadow' => $data_description->shadow,
                     'yaxis' => "y{$yAxisIndex}",
-                    'hovertemplate' => $tooltipConfig['hovertemplate'], //Needs more work to support old highcharts features
+                    'hovertemplate' => $tooltipConfig['hovertemplate'],
                     'showLegend' => true,
                     'text' => $data_labels_enabled ? $yValues : null,
                     'x' => $xValues,
                     'y' => $yValues,
                     'yaxis' => "y{$yAxisIndex}",
                     'data' => $points,
-                    'cursor' => 'pointer', //Add support, may have to be in frontend
+                    'cursor' => 'pointer',
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                 ); // $data_series_desc
@@ -1261,7 +1261,7 @@ class Plotly2
                 );
             if(! $data_description->log_scale)
             {
-                return $err_data_y
+                return $err_data_y;
                 //$this->_chart['series'][] = $err_data_series_desc;
             }
         } // if not pie

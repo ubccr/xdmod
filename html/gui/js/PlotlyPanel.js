@@ -30,13 +30,13 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments);
 
         var self = this;
-        var defaultOptions = getDefaultLayout();
+        var defaultOptions = {};
 
         defaultOptions.renderTo = this.id;
         defaultOptions.width = this.width;
         defaultOptions.height = this.height;
-        defaultOptions.exporting.enabled = false;
-        defaultOptions.credits.enabled = true;
+        //defaultOptions.exporting.enabled = false;
+        //defaultOptions.credits.enabled = true;
 
         this.baseChartOptions = jQuery.extend(true, {}, defaultOptions, this.baseChartOptions);
 
@@ -58,8 +58,8 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     }
                     this.chartOptions = jQuery.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
 
-                    this.chartOptions.exporting.enabled = (this.exporting === true);
-                    this.chartOptions.credits.enabled = (this.credits === true);
+                    //this.chartOptions.exporting.enabled = (this.exporting === true);
+                    //this.chartOptions.credits.enabled = (this.credits === true);
 
                     this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.title.text);
                     this.isEmpty = this.chartOptions.data && this.chartOptions.data.length === 0;
