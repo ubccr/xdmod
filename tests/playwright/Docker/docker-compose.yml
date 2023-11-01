@@ -2,7 +2,7 @@ version: '3'
 
 services:
     xdmod:
-        image: tools-ext-01.ccr.xdmod.org/xdmod-10.5.0-x86_64:rockylinux8.5-0.3
+        image: tools-int-01.ccr.xdmod.org/xdmod-arm64:v10.5.0-1.0
         container_name: xdmod
         hostname: xdmod
         networks:
@@ -13,6 +13,7 @@ services:
             - 7000:7000
         environment:
             XDMOD_REALMS: 'jobs,storage,cloud'
+            XDMOD_IS_CORE: true
         stdin_open: true
         tty: true
         command: sleep infinity
