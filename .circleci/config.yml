@@ -81,7 +81,7 @@ jobs:
                 command: docker exec -w /xdmod xdmod composer install
             - run:
                 name: Copy portal_settings.ini into place
-                command: docker exec -w /xdmod xdmod \cp /etc/xdmod/portal_settings.ini /xdmod/configuration/portal_settings.ini
+                command: docker exec xdmod cp /etc/xdmod/portal_settings.ini /xdmod/configuration/portal_settings.ini
             - run:
                 name: Run QA Tests
                 command: docker exec -w /xdmod xdmod /root/.qa/scripts/build.sh
