@@ -30,7 +30,7 @@ test.describe('Usage', async () => {
                 // on the page.
                 await page.reload();
                 await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
-            }); 
+            });
             await test.step('Set a known start and end date', async () => {
                 await usg.setStartDate(baselineDate.start);
                 await usg.setEndDate(baselineDate.end);

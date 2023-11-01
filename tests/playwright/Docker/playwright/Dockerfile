@@ -18,4 +18,3 @@ RUN npm install -D @playwright/test
 RUN npx playwright install --with-deps chromium
 ENTRYPOINT /root/bin/entrypoint.sh
 
-
