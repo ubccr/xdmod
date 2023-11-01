@@ -22,14 +22,14 @@ test.describe('My Profile Tests', async () => {
                     await page.click(MyProfile.toolbarButton);
                     await page.isVisible(MyProfile.container);
                 });
-                
+
                 await test.step('Check User Information', async () => {
                     await test.step('First Name', async () => {
                         // the normal user does not have a first name so the value returned from
                         // // the first name field is the default empty text ( 1 min, 50 max ).
                         let givenname = role !== 'usr' ? roles[role].givenname : '1 min, 50 max';
                         let firstNameControl = selectors.general.user_information.first_name();
-                        
+
                         await page.isVisible(firstNameControl);
                         const computed = await page.locator(firstNameControl).inputValue();
                         await expect(computed).toEqual(givenname);
