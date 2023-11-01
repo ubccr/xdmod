@@ -115,10 +115,7 @@ jobs:
           command: docker exec xdmod /root/bin/services restart
       - run:
           name: Run Playwright Tests
-          command: docker exec -w "/xdmod/tests/playwright" playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
-      - run:
-          name: Test to make sure that we don't have any unexpected apache errors
-          command: docker exec xdmod test '\$\(fgrep -v \" [ssl:warn] \" /var/log/xdmod/apache-error.log | wc -l\) = 0'
+          command: docker exec -w /xdmod/tests/playwright playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
       - run:
           name: Copy Test Results into Unit
           command: |
@@ -133,6 +130,9 @@ jobs:
           command: |
             docker cp xdmod:/var/log/php-fpm/www-error.log ~/project/log
             docker cp xdmod:/var/log/xdmod/. ~/project/log
+      - run:
+          name: Test to make sure that we don't have any unexpected apache errors
+          command: docker exec xdmod test '\$\(fgrep -v \" [ssl:warn] \" /var/log/xdmod/apache-error.log | wc -l\) = 0'
       - run:
           name: Ensure that no unexpected Apache errors were generated
           command: test ! -e ~/project/log/www-error.log
@@ -159,5 +159,5 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: ['rocky8']
+              os: ["rocky8"]
               install-type: ["fresh_install", "upgrade"]
