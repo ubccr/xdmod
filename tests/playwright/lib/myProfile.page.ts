@@ -3,12 +3,12 @@ import selectors from './myProfile.selectors'
 
 class MyProfile extends BasePage{
     static readonly selectors = selectors;
-    
+
     static readonly toolbarButton = this.selectors.buttons.toolbar;
     static readonly container = this.selectors.container;
     static readonly general = this.selectors.general;
     static readonly tabs = this.selectors.tabs;
-    
+
     /**
      * Retrieve an XPath for a tab that contains the parameter text within the
      * My Profile window. Values can be found within `this.names.tabs`.

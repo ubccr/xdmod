@@ -9,7 +9,7 @@ class XDMoD extends BasePage{
     async selectTab(tabId:string){
         const tabLocator = this.page.locator(this.selectors.tab(tabId));
         const panel = this.page.locator(this.selectors.panel(tabId));
-        
+
         await tabLocator.click();
         await panel.waitFor({state:'visible'});
         await expect(this.maskLocator).toBeHidden();

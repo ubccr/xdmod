@@ -188,7 +188,7 @@ class MetricExplorer extends BasePage{
         await expect(this.page.locator(this.checkbox).length).toEqual(checkboxes.length);
         await this.clickLogo();
     }
-    
+
     /**
      * Select first data point in chart and open data information
      */
@@ -296,7 +296,7 @@ class MetricExplorer extends BasePage{
     }
 
     /**
-     * Select options and check cursor position to check pressing the up arrow key 
+     * Select options and check cursor position to check pressing the up arrow key
      */
     async arrowKeys() {
         await this.page.locator(this.optionsButton).waitFor({state:'visible'}).click();
