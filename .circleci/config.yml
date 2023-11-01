@@ -49,11 +49,6 @@ jobs:
           name: Build XDMoD RPM
           command: docker exec -w /xdmod xdmod /root/bin/buildrpm xdmod
       - run:
-          name: Verify that the build went alright
-          command: |
-            docker exec xdmod find /root/rpmbuild/RPMS
-            docker exec xdmod find /xdmod/open_xdmod/build/
-      - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /xdmod/tests/ci/bootstrap.sh
       - run:
@@ -71,10 +66,19 @@ jobs:
           steps:
             - run:
                 name: Checkout QA Repo
-                command: docker exec -w /root xdmod git clone --depth=1 --branch="$QA_BRANCH" https://github.com/ubccr/xdmod-qa.git /root/.qa
+                command: docker exec -w /root xdmod git clone --depth=1 --branch="v2" https://github.com/ubccr/xdmod-qa.git /root/.qa
             - run:
                 name: Install QA dependencies
                 command: docker exec -w /xdmod xdmod /root/.qa/scripts/install.sh
+            - run:
+                name:
+                command: docker exec -w /xdmod xdmod git config --global --add safe.directory /xdmod
+            - run:
+                name: Setup remote upstream
+                command: docker exec -w /xdmod xdmod git remote add upstream https://github.com/ubccr/xdmod.git
+            - run:
+                name:
+                command: docker exec -w /xdmod xdmod composer install
             - run:
                 name: Run QA Tests
                 command: docker exec -w /xdmod xdmod /root/.qa/scripts/build.sh
