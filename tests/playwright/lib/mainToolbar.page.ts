@@ -13,7 +13,7 @@ class MainToolbar extends BasePage{
   readonly headerLocator = this.page.locator(selectors.header);
   readonly floatlayerLocator = this.page.locator(selectors.floatlayer);
   readonly noteLocator = this.page.locator(selectors.note);
-  
+
   async helpFunc(type, mainTab){
     const helpTypesLoc = this.page.locator(selectors.helpTypes[type]);
     await this.helpLocator.click();
@@ -32,10 +32,10 @@ class MainToolbar extends BasePage{
     await newPage.close();
     await expect(context.pages().length).toEqual(1);
   }
-  
+
   async contactFunc(type){
     const contactTypesLocator = this.page.locator(selectors.contactTypes[type]);
-    await this.noteLocator.waitFor({state:'hidden'});  
+    await this.noteLocator.waitFor({state:'hidden'});
     await this.contactusLocator.click();
     await this.floatlayerLocator.waitFor({state:'visible'});
     await contactTypesLocator.waitFor({state:'visible'});
@@ -48,7 +48,7 @@ class MainToolbar extends BasePage{
     await this.toolbarCloseLocator.click();
     await expect(this.aboutLocator).toBeVisible();
   }
-  
+
   async checkAbout(){
     await this.toolbarAboutLocator.isVisible();
     await this.toolbarAboutLocator.click();
