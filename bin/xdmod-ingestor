@@ -277,10 +277,6 @@ function main()
                 if ($datatypeValue == 'storage') {
                     $dwi->ingestStorageData();
                 }
-
-                if ($datatypeValue == 'cloudresourcespecs') {
-                    $dwi->ingestCloudResourceSpecs();
-                }
             }
 
             $aclstatus = 0;
@@ -351,7 +347,7 @@ Usage: xdmod-ingestor [-v]
         Output debug level and above log messages.
 
     --aggregate[=*realm*]
-        If a *realm* (job, cloud, storage) is specified aggregate that realm
+        If a *realm* (job, cloud, storage, resourcespecs) is specified aggregate that realm
         otherwise aggregate all realms.
 
     --datatype *type*

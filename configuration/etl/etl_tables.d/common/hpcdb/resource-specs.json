@@ -59,7 +59,7 @@
             },
             {
                 "name": "su_available_per_day",
-                "type": "int(10) unsigned",
+                "type": "int(11)",
                 "nullable": true,
                 "comment": "Total number of SU's available per day"
             },

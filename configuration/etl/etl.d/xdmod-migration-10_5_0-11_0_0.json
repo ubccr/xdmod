@@ -17,7 +17,7 @@
          "endpoints":{
             "source":{
                "type":"jsonfile",
-               "name":"Resource types",
+               "name":"Resource allocation types",
                "path":"${base_dir}/../resource_allocation_types.json",
                "record_schema_path":"common/resource-allocation-types.schema.json",
                "filters":[
@@ -208,7 +208,7 @@
       },
       {
           "name": "hpcdb-resource-allocation-type",
-          "description": "Ingest resource allocated data",
+          "description": "Ingest resource allocation type data",
           "definition_file": "common/hpcdb/resource-allocation-type.json",
           "endpoints":{
              "source":{
@@ -229,7 +229,7 @@
           "name": "delete-modw-resource-specs",
           "namespace": "ETL\\Maintenance",
           "options_class": "MaintenanceOptions",
-          "description": "Delete resource specs for resources in mod_shredder.staging_resource_spec",
+          "description": "Delete resource specs for resources in mod_hpcdb.hpcdb_resource_specs and resource allocations for resources in mod_hpcdb.hpcdb_resource_allocated",
           "class": "ExecuteSql",
           "sql_file_list": [
               "migration/delete_modw_resource_specs.sql"
@@ -290,7 +290,7 @@
       {
           "name": "modw-resource-allocation-type",
           "definition_file": "jobs/xdw/resource-allocation-type.json",
-          "description": "resource allocated records",
+          "description": "resource allocation type records",
           "endpoints":{
              "source":{
                 "type":"mysql",
@@ -326,12 +326,11 @@
          }
       },
       {
-         "#":"Asset data must be aggregated post ingestion",
          "name": "ResourceSpecsAggregatorByDay",
          "class": "SimpleAggregator",
          "namespace": "ETL\\Aggregator",
          "options_class": "AggregatorOptions",
-         "description": "Aggregate cloud records.",
+         "description": "Aggregate resource specification records.",
          "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
          "table_prefix": "resourcespecsfact_by_",
          "aggregation_units": ["day"],
@@ -354,12 +353,11 @@
          }
       },
       {
-         "#":"Asset data must be aggregated post ingestion",
          "name": "ResourceSpecsAggregator",
          "class": "SimpleAggregator",
          "namespace": "ETL\\Aggregator",
          "options_class": "AggregatorOptions",
-         "description": "Aggregate cloud records.",
+         "description": "Aggregate resource specification records.",
          "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
          "table_prefix": "resourcespecsfact_by_",
          "aggregation_units": ["month", "quarter", "year"],

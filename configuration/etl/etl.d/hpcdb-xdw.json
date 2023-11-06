@@ -96,7 +96,7 @@
     }, {
         "name": "resource-allocation-type",
         "definition_file": "jobs/xdw/resource-allocation-type.json",
-        "description": "resource allocated records"
+        "description": "resource allocation type records"
     }, {
         "name": "resource-spec",
         "definition_file": "jobs/xdw/resource-spec.json",

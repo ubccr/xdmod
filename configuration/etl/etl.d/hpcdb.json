@@ -109,7 +109,7 @@
         },
         {
             "name": "resource-allocation-type",
-            "description": "Ingest resource allocated data",
+            "description": "Ingest resource allocation type data",
             "definition_file": "common/hpcdb/resource-allocation-type.json"
         },
         {
