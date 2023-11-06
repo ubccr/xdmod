@@ -104,7 +104,7 @@ EOT
         $cpus = $this->console->prompt('How many total CPU processors (cpu cores) does this resource have?');
         if (empty($cpus) || !is_numeric($cpus)) { $cpus = 1; }
 
-        $ppn = $cpus / $nodes;
+        $ppn = ($nodes == 0) ? 0 : $cpus / $nodes;
 
         if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpu_node') {
             $gpu_nodes = $this->console->prompt('How many GPU nodes does this resource have?');
@@ -117,7 +117,7 @@ EOT
                 $gpus = 0;
             }
 
-            $gpu_ppn = $gpus / $gpu_nodes;
+            $gpu_ppn = ($gpu_nodes == 0) ? 0 : $gpus / $gpu_nodes;
         }
 
         $this->parent->addResource(
