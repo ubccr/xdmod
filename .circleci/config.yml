@@ -84,9 +84,6 @@ jobs:
                 name: Setup remote upstream
                 command: docker exec -w /xdmod xdmod git remote add upstream https://github.com/ubccr/xdmod.git
             - run:
-                name: Install unit test dependencies
-                command: docker exec -w /xdmod xdmod composer install
-            - run:
                 name: Copy portal_settings.ini into place
                 command: docker exec xdmod cp /etc/xdmod/portal_settings.ini /xdmod/configuration/portal_settings.ini
             - run:
