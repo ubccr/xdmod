@@ -69,8 +69,10 @@ EOT
                 // Some entries may not have a start_date property. This is needed when array_multisort is called below.
                 $resource_specs_config[$key]['start_date'] = null;
                 $resource_type = strtolower($resource_to_resource_type_map[$value['resource']]);
-                $realm = self::$RESOURCE_TYPE_REALM_MAP[$resource_type];
-                $resource_realms[$realm] = true;
+                if (array_key_exists($resource_type, self::$RESOURCE_TYPE_REALM_MAP)) {
+                    $realm = self::$RESOURCE_TYPE_REALM_MAP[$resource_type];
+                    $resource_realms[$realm] = true;
+                }
             }
         }
 
@@ -122,7 +124,6 @@ EOT
             unset($resource_specs_config[$key]['processors']);
             unset($resource_specs_config[$key]['ppn']);
         }
-
 
         $this->writeJsonConfigFile('resource_specs', $resource_specs_config);
         $this->writePortalSettingsFile();

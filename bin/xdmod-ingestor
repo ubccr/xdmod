@@ -309,7 +309,8 @@ function main()
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {
                 $dwi->aggregateStorageData($lastModifiedStartDate);
             }
-            if ($realmToAggregate == 'resourcespecs' || $realmToAggregate === false) {
+            
+            if ($realmToAggregate == 'resourcespecs' || $realmToAggregate == 'job' || $realmToAggregate == 'cloud' || $realmToAggregate === false) {
                 $dwi->aggregateResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {

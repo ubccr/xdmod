@@ -1,7 +1,7 @@
 {
     "#": "Aggregation of resource specification data",
         "table_definition": {
-            "$ref": "${table_definition_dir}/cloud_common/resourcespecsfact_by_day.json#/table_definition"
+            "$ref": "${table_definition_dir}/resource_specifications/resourcespecsfact_by_day.json#/table_definition"
         },
         "aggregation_period_query": {
             "overseer_restrictions": {

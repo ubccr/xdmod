@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "name": "hpcdb_resource_allocation_type",
+        "name": "hpcdb_resource_allocation_types",
         "engine": "InnoDB",
         "comment": "Staging table for resource allocation types, i.e, CPU, GPU, or Node",
         "columns": [

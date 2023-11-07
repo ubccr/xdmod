@@ -206,7 +206,7 @@
         {
             "name": "hpcdb-resource-allocation-type",
             "description": "Ingest resource allocation type data",
-            "definition_file": "common/hpcdb/resource-allocation-type.json",
+            "definition_file": "common/hpcdb/resource-allocation-types.json",
             "endpoints": {
                 "source": {
                     "type": "mysql",
