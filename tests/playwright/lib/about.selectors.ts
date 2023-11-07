@@ -1,7 +1,3 @@
-function navEntry(name){
-    return '//div[@class="x-tree-root-node"]//div[contains(@class,"x-tree-node-el")]//span[contains(text(),"' + String(name) + '")]';
-}
-
 const selectors = {
     tab: '//ul[contains(@class, "x-tab-strip x-tab-strip-top")]',
     container: '//div[@id="about_xdmod"]',
@@ -10,7 +6,7 @@ const selectors = {
     myProfile: '//button[contains(@class, "x-btn-text user_profile_16")]',
     role: '//div[@id="user_profile_most_privileged_role"]',
     navEntryPath: function (name) {
-        return navEntry(name);
+        return '//div[@class="x-tree-root-node"]//div[contains(@class,"x-tree-node-el")]//span[contains(text(),"' + String(name) + '")]';
     },
     roadMapFrame: '//iframe[@id="about_roadmap"]',
     trelloBoard: '//div[contains(@class,"full-bleed-trello-board")]',
