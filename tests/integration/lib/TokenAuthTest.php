@@ -3,6 +3,7 @@
 namespace IntegrationTests;
 
 use CCR\DB;
+use Exception;
 use Models\Services\Tokens;
 use TestHarness\XdmodTestHelper;
 
@@ -58,19 +59,22 @@ abstract class TokenAuthTest extends BaseTest
      * @param string $role the user role to use when authenticating.
      * @param string $tokenType the type of token being provided
      *                          (@see provideTokenAuthTestData()).
-     * @param array input @see BaseTest::requestAndValidateJson(). Must have
-     *                    additional required keys 'endpoint_type', whose value
-     *                    is either 'controller' or 'rest', and
-     *                    'authentication_type', whose value is either
-     *                    'token_optional' or 'token_required'.
+     * @param array $input @see BaseTest::requestAndValidateJson(). Must have
+     *                     additional required keys 'endpoint_type', whose value
+     *                     is either 'controller' or 'rest', and
+     *                     'authentication_type', whose value is either
+     *                     'token_optional' or 'token_required'.
      * @param array $output @see BaseTest::requestAndValidateJson(). If
      *                      $tokenType is not 'valid_token', this will be
      *                      ignored and instead the relevant
      *                      authentication/authorization error testing will be
      *                      performed.
      * @return mixed the decoded JSON response body of the request.
-     * @throws Exception if the role is unrecognized or there is an error
-     *                   making the HTTP request or validating the response.
+     * @throws Exception if the role is unrecognized, if there is an error
+     *                   making the HTTP request or validating the response, or
+     *                   if there is an invalid value for $tokenType,
+     *                   $input['endpoint_type'], or
+     *                   $input['authentication_type'].
      */
     public function runTokenAuthTest(
         $role,
@@ -98,10 +102,7 @@ abstract class TokenAuthTest extends BaseTest
             } elseif ('expired_token' === $tokenType) {
                 // Expire the token (it will be unexpired at the end of this
                 // test).
-                self::updateTokenExpirationDate(
-                    self::$userIds[$role],
-                    'SUBDATE(NOW(), 1)'
-                );
+                self::expireToken($role);
                 // Load the token for use in this test.
                 $token = self::getToken('valid_token', $role);
             } elseif ('revoked_token' === $tokenType) {
@@ -220,10 +221,7 @@ abstract class TokenAuthTest extends BaseTest
         );
         // If the token is expired, unexpire it.
         if ('expired_token' === $tokenType) {
-            self::updateTokenExpirationDate(
-                self::$userIds[$role],
-                'DATE_ADD(NOW(), INTERVAL 1 DAY)'
-            );
+            self::unexpireToken($role);
         }
         return $actualBodies['token_in_header'];
     }
@@ -316,10 +314,43 @@ abstract class TokenAuthTest extends BaseTest
     }
 
     /**
-     * Set the new expiration date of the given role's token.
+     * Expire the given role's token.
+     *
+     * @param string $role
+     * @throws Exception if there is an error establishing the database
+     *                   connection or executing the SQL statement.
+     */
+    private static function expireToken($role)
+    {
+        self::updateTokenExpirationDate(
+            self::$userIds[$role],
+            'SUBDATE(NOW(), 1)'
+        );
+    }
+
+    /**
+     * Unexpire the given role's token.
+     *
+     * @param string $role
+     * @throws Exception if there is an error establishing the database
+     *                   connection or executing the SQL statement.
+     */
+    private static function unexpireToken($role)
+    {
+        self::updateTokenExpirationDate(
+            self::$userIds[$role],
+            'DATE_ADD(NOW(), INTERVAL 1 DAY)'
+        );
+    }
+
+    /**
+     * Set the new expiration date of the given role's token. Intended to be
+     * called only by expireToken() and unexpireToken().
      *
      * @param string $userId the ID of the role.
      * @param string $newDate the new date's SQL value.
+     * @throws Exception if there is an error establishing the database
+     *                   connection or executing the SQL statement.
      */
     private static function updateTokenExpirationDate($userId, $newDate)
     {
