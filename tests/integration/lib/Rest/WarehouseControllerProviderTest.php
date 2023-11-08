@@ -7,11 +7,6 @@ use TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends TokenAuthTest
 {
-    /**
-     * Directory containing test artifact files.
-     */
-    const TEST_GROUP = 'integration/rest/warehouse';
-
     private static $helper;
 
     public static function setUpBeforeClass()
@@ -146,14 +141,13 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetRawData
      */
-    public function testGetRawData($role, $tokenType, $testKey)
+    public function testGetRawData($id, $role, $tokenType, $input, $output)
     {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_raw_data',
-            $testKey
+            $input,
+            $output
         );
     }
 
@@ -162,27 +156,150 @@ class WarehouseControllerProviderTest extends TokenAuthTest
      */
     public function provideGetRawData()
     {
-        $testData = TokenAuthTest::provideTokenAuthTestDataWithMultipleKeys(
-            self::TEST_GROUP,
-            'get_raw_data'
+        $validInput = [
+            'path' => 'rest/warehouse/raw-data',
+            'method' => 'get',
+            'params' => [
+                'start_date' => '2017-01-01',
+                'end_date' => '2017-01-01',
+                'realm' => 'Jobs'
+            ],
+            'data' => null,
+            'endpoint_type' => 'rest',
+            'authentication_type' => 'token_required'
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'token_auth' => true,
+                'int_params' => ['offset'],
+                'date_params' => ['start_date', 'end_date']
+            ]
         );
-        // Only run the non-default valid token tests for one non-public user
-        // to make the tests take less time overall.
-        $testNames = array_keys($testData);
-        foreach ($testNames as $testName) {
-            if (
-                // If the user is other than 'usr',
-                1 !== preg_match('/^usr-/', $testName)
-                // and the token type is 'valid_token',
-                && 1 === preg_match('/-valid_token-/', $testName)
-                // and the test key is not 'defaults',
-                && 1 !== preg_match('/-defaults$/', $testName)
-            ) {
-                // Remove the test from the list.
-                unset($testData[$testName]);
-            }
+        $testData = [];
+        // Test bad request parameters.
+        array_push(
+            $testData,
+            [
+                'end_before_start',
+                ['end_date' => '2016-01-01'],
+                parent::validateBadRequestResponse(
+                    'End date cannot be less than start date.',
+                    104
+                )
+            ],
+            [
+                'invalid_realm',
+                ['realm' => 'foo'],
+                parent::validateBadRequestResponse(
+                    'Invalid realm.',
+                    104
+                )
+            ],
+            [
+                'invalid_fields',
+                ['fields' => 'foo,bar;'],
+                parent::validateBadRequestResponse(
+                    "Invalid fields specified: 'foo', 'bar;'.",
+                    104
+                )
+            ],
+            [
+                'invalid_filter_key',
+                ['filters[foo]' => '177'],
+                parent::validateBadRequestResponse(
+                    "Invalid filter key 'foo'.",
+                    104
+                )
+            ],
+            [
+                'negative_offset',
+                ['offset' => -1],
+                parent::validateBadRequestResponse(
+                    "Offset must be non-negative.",
+                    104
+                )
+            ],
+            [
+                'success_0',
+                [],
+                $this->validateGetDataSuccessResponse(10000, null)
+            ],
+            [
+                'success_16500',
+                ['offset' => 16500],
+                $this->validateGetDataSuccessResponse(66, null)
+            ],
+            [
+                'success_fields_and_filters',
+                [
+                    'fields' => 'Nodes,Wall Time',
+                    'filters[resource]' => '1,2',
+                    'filters[fieldofscience]' => '10,91'
+                ],
+                $this->validateGetDataSuccessResponse(
+                    29,
+                    ['Nodes', 'Wall Time']
+                )
+            ]
+        );
+        foreach ($testData as $t) {
+            list($id, $params, $output) = $t;
+            $tests[] = [
+                $id,
+                'usr',
+                'valid_token',
+                parent::mergeParams(
+                    $validInput,
+                    'params',
+                    $params
+                ),
+                $output
+            ];
         }
-        return $testData;
+        return $tests;
+    }
+
+    private function validateGetDataSuccessResponse(
+        $count,
+        $expectedFields
+    ) {
+        return parent::validateSuccessResponse(
+            function ($body, $assertMessage) use ($count, $expectedFields) {
+                $this->assertCount($count, $body['data'], $assertMessage);
+                if (!is_null($expectedFields)) {
+                    $this->assertEquals(
+                        $expectedFields,
+                        $body['fields'],
+                        $assertMessage
+                    );
+                }
+                foreach ($body['fields'] as $field) {
+                    $this->assertInternalType(
+                        'string',
+                        $field,
+                        $assertMessage
+                    );
+                }
+                foreach ($body['data'] as $dataRow) {
+                    foreach ($dataRow as $field) {
+                        $this->assertInternalType(
+                            'string',
+                            $field,
+                            $assertMessage
+                        );
+                    }
+                    if (!is_null($expectedFields)) {
+                        $this->assertSame(
+                            count($expectedFields),
+                            count($dataRow),
+                            $assertMessage
+                        );
+                    }
+                }
+            }
+        );
     }
 
     /**
@@ -193,8 +310,21 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_raw_data_limit'
+            [
+                'path' => 'rest/warehouse/raw-data/limit',
+                'method' => 'get',
+                'params' => null,
+                'data' => null,
+                'endpoint_type' => 'rest',
+                'authentication_type' => 'token_required'
+            ],
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
+                $this->assertGreaterThan(
+                    0,
+                    $body['data'],
+                    $assertMessage
+                );
+            })
         );
     }
 }

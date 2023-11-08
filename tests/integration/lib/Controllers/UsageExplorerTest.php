@@ -29,8 +29,6 @@ function arrayRecursiveDiff($a1, $a2) {
 
 class UsageExplorerTest extends TokenAuthTest
 {
-    const TEST_GROUP = 'integration/controllers/user_interface';
-
     private static $publicView;
 
     public static function setUpBeforeClass()
@@ -1217,8 +1215,21 @@ END;
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_data'
+            [
+                'path' => 'controllers/user_interface.php',
+                'method' => 'post',
+                'params' => null,
+                'data' => ['operation' => 'get_data'],
+                'endpoint_type' => 'controller',
+                'authentication_type' => 'token_optional'
+            ],
+            [
+                'status_code' => 500,
+                'body_validator' => parent::validateErrorResponseBody(
+                    'One or more realms must be specified.',
+                    0
+                )
+            ]
         );
     }
 }
