@@ -66,6 +66,8 @@ function getDefaultLayout() {
             t: 50
         }
     };
+
+    return layout;
 }
 
 function getErrorConfig() {

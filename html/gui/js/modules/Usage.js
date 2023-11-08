@@ -2559,7 +2559,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
 
             maximizeScale.call(this);
-            if (this.chart) this.chart.setSize(adjWidth, adjHeight);
+            if (this.chart) {
+                Plotly.relayout(this.chart.chartId, { 'width': adjWidth, 'height': adjHeight });
+            }
 
         } //onResize
 
@@ -2674,6 +2676,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     width: chartWidth * chartScale,
                                     height: chartHeight * chartScale,
                                 },
+                                data: [],
                                 exporting: {
                                     enabled: false
                                 },
@@ -2683,19 +2686,25 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             };
 
                             var chartOptions = r.get('hc_jsonstore');
+                            console.log(chartStore);
+                            console.log('Chart Options from hc_jsonstore');
+                            console.log(chartOptions);
 
                             jQuery.extend(true, chartOptions, baseChartOptions);
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
-                            this.chart = XDMoD.utils.createChart(chartOptions);
+                            this.chart = {};
+                            this.chart.chartDiv = XDMoD.utils.createChart(chartOptions);
+                            this.chart.chartId = id;
+                            var chartDiv = document.getElementById(baseChartOptions.renderTo);
 
-                            this.chart.on('plotly_click', (data, event) => {
+                            chartDiv.on('plotly_click', (data, event) => {
                                 var drillId;
                                 var label;
                                 console.log(data);
-                                /*
-                                var drillInfo = evt.point.series.userOptions.drilldown;
+                                
+                                /*var drillInfo = evt.point.series.userOptions.drilldown;
 
                                 if (!drillInfo) {
                                 // dataseries such as the trend line do not have a drilldown

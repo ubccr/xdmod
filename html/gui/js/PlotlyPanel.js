@@ -30,7 +30,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments);
 
         var self = this;
-        var defaultOptions = {};
+        var defaultOptions = getDefaultLayout();
 
         defaultOptions.renderTo = this.id;
         defaultOptions.width = this.width;
@@ -44,8 +44,9 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
             this.initNewChart.call(this);
 
             this.on('resize', function (t, adjWidth, adjHeight, rawWidth, rawHeight) {
-                if (this.chart) {
-                    this.chart.setSize(adjWidth, adjHeight);
+                if (this.chart.plot) {
+                    Plotly.relayout(this.chart.renderTo, { 'layout.width' : adjWidth, 'layout.height': adjHeight});
+                    //this.chart.setSize(adjWidth, adjHeight);
                 }
                 this.baseChartOptions.width = adjWidth;
                 this.baseChartOptions.height = adjHeight;
@@ -61,7 +62,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     //this.chartOptions.exporting.enabled = (this.exporting === true);
                     //this.chartOptions.credits.enabled = (this.credits === true);
 
-                    this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.title.text);
+                    this.chartOptions.title.text = this.plotlyTextEncode(this.chartOptions.title.text);
                     this.isEmpty = this.chartOptions.data && this.chartOptions.data.length === 0;
 
                     this.initNewChart.call(this);
@@ -70,8 +71,8 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         var ch_height = this.chartOptions.layout.height * 0.8;
 
                         var errorObj = getErrorConfig();
-                        this.chartOptions.layout.images.push(errorObj.image);
-                        this.chartOptions.layout.annotations.push(errorObj.text);
+                        this.chartOptions.images.push(errorObj.image);
+                        this.chartOptions.annotations.push(errorObj.text);
                     }
 
                 }, this);
@@ -115,11 +116,17 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                 yref: 'paper',
                 yanchor: 'center',
                 y: 0.5
+            },
+            xaxis: {
+                showticklabels: false,
+                zeroline: false,
+                showgrid: false,
+                showline: false
             }
         };
 
         if (detailMessage) {
-            errorChartOptions.annotations = {
+            errorChartOptions.annotations = [{
                 text: detailMessage,
                 xref: 'paper',
                 yref: 'paper',
@@ -128,7 +135,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                 x: 0.5,
                 y: 0.8,
                 showarrow: false
-            };
+            }];
         }
 
         this.initNewChart.call(this, errorChartOptions);

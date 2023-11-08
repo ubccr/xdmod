@@ -114,11 +114,11 @@ class Plotly2
             'annotations' => array(
             // Credits
             array(
-                'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly',
+                'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly. This is test',
                 'font' => array(
-                'color' => '#909090',
-                'size' => 10,
-                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                    'color' => '#909090',
+                    'size' => 10,
+                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                 ),
                 'xref' => 'paper',
                 'yref' => 'paper',
@@ -128,10 +128,10 @@ class Plotly2
                 'y' => 0,
                 'yshift' => -80,
                 'showarrow' => false
-            ),
+                ),
             // Subtitle
             array(
-                'text' => '',
+                'text' => 'Placeholder Subtitle text',
                 'xref' => 'paper',
                 'yref' => 'paper',
                 'xanchor' => 'center',
@@ -139,7 +139,7 @@ class Plotly2
                 'x' => 0.5,
                 'y' => 0.8,
                 'showarrow' => false
-                )
+                ),
             ),
             'legend' => array(
                 'itemwidth' => 40,
@@ -335,7 +335,7 @@ class Plotly2
     {
         $src = count($source) > 0? ' Src: '.implode(', ', $source).'.':'';
         $this->_chart['layout']['annotations'][0]['text'] = $this->_startDate.' to '.
-            $this->_endDate.' '.$src.' Powered by XDMoD/Highcharts';
+            $this->_endDate.' '.$src.' Powered by XDMoD/Plotly';
     } // setDataSource()
 
     // ---------------------------------------------------------
@@ -777,7 +777,7 @@ class Plotly2
     ) {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
-
+        throw new \Exception('hi');
         $this->limit = $limit;
         $this->show_filters = $show_filters;
         $this->setMultiCategory($data_series);
@@ -988,7 +988,7 @@ class Plotly2
                         // If the first value, give it the yAxisColor so we don't skip
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
-                        $xValues[] = $this->_xAxisDataObject->getValues($index);
+                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $colors[] = ($index == 0) ? $yAxisColor
                                      : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
                         // N.B.: These are drilldown labels.
@@ -1026,7 +1026,7 @@ class Plotly2
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
                         $yValues[] = $value;
-                        $xValues[] = $yAxisObject->getXValue($index);
+                        $xValues[] = $yAxisDataObject->getXValue($index);
 
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
@@ -1131,7 +1131,7 @@ class Plotly2
                     'x' => $xValues,
                     'y' => $yValues,
                     'yaxis' => "y{$yAxisIndex}",
-                    'data' => $points,
+                    'points' => $points,
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -1151,10 +1151,10 @@ class Plotly2
                         $data_series_desc['stacking'] = 'percent'; //Need to look into stacking by percentage
                     }
                 }
-                $this->_chart['data'][] = $data_series_desc;
-
+                $this->_chart['data'][] = $trace;
+                throw new \Exception(json_encode($trace));
                 // build error data series and add it to chart
-                $trace['error_y'] = $this->buildErrorDataSeries(
+                /*$trace['error_y'] = $this->buildErrorDataSeries(
                     $data_description,
                     $legend,
                     $lineColor,
@@ -1163,14 +1163,14 @@ class Plotly2
                     $yAxisIndex,
                     $semDecimals,
                     $zIndex
-                );
+                );*/
 
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
         }
 
-        if ($this->_showWarnings) {
+        /*if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
-        }
+        }*/
 
         // set title and subtitle for chart
         $this->setChartTitleSubtitle($font_size);

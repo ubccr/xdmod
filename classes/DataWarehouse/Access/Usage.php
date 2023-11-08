@@ -625,6 +625,7 @@ class Usage extends Common
             foreach ($meResponses as $meResponseIndex => $meResponse) {
                 // If the response indicates failure, skip this response.
                 $meResponseContent = $meResponse['results'];
+                //throw new \Exception(json_encode($meRequests));
                 if (!$meResponseContent['success']) {
                     continue;
                 }
@@ -808,6 +809,8 @@ class Usage extends Common
 
                 // For each data series...
                 $primaryDataSeriesRank = $usageOffset;
+
+                //throw new \Exception(json_encode($meChart));
 
                 array_walk($meChart['data'], function (
                     &$meDataSeries,

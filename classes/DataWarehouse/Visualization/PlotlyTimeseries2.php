@@ -270,38 +270,26 @@ class PlotlyTimeseries2 extends Plotly2
                     $yAxisColorUsedBySeries = false;
 
                     $yAxis = array(
-                        'title' => array(
-                            'text' => $yAxisLabel,
-                            'style' => array(
+                        'title' => '<b>' . $yAxisLabel . '</b>', 
+                        'titlefont' => array(
                                 'color'=> $yAxisColor,
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                            )
+                                'size' => (12 + $font_size).'px'
                         ),
                         'otitle' => $originalYAxisLabel,
                         'dtitle' => $defaultYAxisLabel,
-                        'labels' =>
-                        array(
-                            'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px'
-                            )
+                        'tickfont' => array(
+                            'size' => (11 + $font_size).'px'
                         ),
                         'opposite' => $yAxisIndex % 2 == 1,
-                        'min' => $yAxisMin,
-                        'max' => $yAxisMax,
-                        'startOnTick' => $yAxisMin == null,
-                        'endOnTick' => $yAxisMax == null,
+                        'range' => [$yAxisMin, $yAxisMax],
+                        'tick0' => $yAxisMin == null,
                         'type' => $data_description->log_scale? 'logarithmic' : 'linear',
-                        'showLastLabel' =>  $this->_chart['title']['text'] != '',
-                        'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
-                        'lineWidth' => 2 + $font_size/4,
-                        'allowDecimals' => $decimals > 0,
-                        'tickInterval' => $data_description->log_scale ?1:null,
-                        'maxPadding' =>  max(0.05, ($data_description->value_labels?0.25:0) + ($data_description->std_err?.25:0))
+                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
+                        'linewidth' => 2 + $font_size/4,
+                        'dtick' => $data_description->log_scale ?1:null,
                     );
 
-                    $this->_chart['yAxis'][] = $yAxis;
+                    $this->_chart['layout']["yaxis${$yAxisIndex}"] = $yAxis;
                 } // if($yAxis == null)
 
                 $dataset = new TimeseriesDataset($query);
@@ -341,42 +329,22 @@ class PlotlyTimeseries2 extends Plotly2
 
                     $xAxis = array(
                         'type' => 'datetime',
-                        'tickLength' => 0,
+                        'ticklen' => 0,
                         'title' => array(
-                            'text' => $xAxisLabel,
-                            'style' => array(
+                            'text' => '<b>' . $xAxisLabel . '</b>',
+                            'font' => array(
                                 'color'=> '#000000',
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
+                                'size' => (12 + $font_size).'px'
                             )
                         ),
                         'otitle' => $originalXAxisLabel,
                         'dtitle' => $defaultXAxisLabel,
-                        'labels' => $this->_swapXY ? array(
-                            'enabled' => true,
-                            'staggerLines' => 1,
-                            'format' => $xAxisLabelFormat,
-                            'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px',
-                                'marginTop' => $font_size * 2
-                            )
-                        )
-                        : array(
-                            'enabled' => true,
-                            'staggerLines' => 1,
-                            'rotation' => $xAxisData->getName() != 'Year'  && $expectedDataPointCount > 25 ? -90 : 0,
-                            'format' => $xAxisLabelFormat,
-                            'style' => array(
-                                'fontSize' => (8 + $font_size).'px',
-                                'marginTop' => $font_size * 2
-                            )
+                        'tickfont' => array(
+                            'size' => (11 + $font_size).'px'
                         ),
-                        'minTickInterval' => $pointInterval,
-                        'minRange' => $pointInterval,
-                        'lineWidth' => 2 + $font_size / 4
+                        'linewidth' => 2 + $font_size / 4
                     );
-                     $this->_chart['xAxis'] = $xAxis;
+                     $this->_chart['layout']['xaxis'] = $xAxis;
                 } // if(!isset($xAxis))
 
                 //  ----------- set up yAxis, assign to chart ... eventually -----------
@@ -399,6 +367,7 @@ class PlotlyTimeseries2 extends Plotly2
 
                 foreach($yAxisDataObjectsArray as $yAxisDataObject)
                 {
+                    //throw new \Exception(json_encode($yAxisDataObject));
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -430,7 +399,6 @@ class PlotlyTimeseries2 extends Plotly2
                         {
                             continue;
                         }
-
                         $values = $yAxisDataObject->getValues();
 
                         // Decide whether to show data point markers:
@@ -462,23 +430,11 @@ class PlotlyTimeseries2 extends Plotly2
 
                         // --- set up $dataLabelsConfig, $seriesValues, $tooltipConfig ---
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                        $dataLabelsConfig = array(
-                            'enabled' => $data_description->value_labels || $std_err_labels_enabled,
-                            'settings' => array(
-                                'value_labels' => $data_description->value_labels,
-                                'error_labels' => $std_err_labels_enabled,
-                                'decimals' => $decimals
-                            ),
-                            'style' => array(
-                                'fontSize' => (11 + $font_size).'px',
-                                'fontWeight'=> 'normal',
-                                // this appears to fix a Highcharts bug that
-                                // makes text fuzzy in the color #0053b9
-                                'textShadow' => false,
-                                'color' => $color
-                             )
-                        );
+                        //throw new \Exception('hi');
                         $tooltipConfig = array();
+                        $xValues = array();
+                        $yValues = array();
+                        $trace = array();
                         $seriesValues = array();
                         if($data_description->display_type == 'pie')
                         {
@@ -486,29 +442,19 @@ class PlotlyTimeseries2 extends Plotly2
                         } else {
                             if($this->_swapXY)
                             {
-                                $dataLabelsConfig  = array_merge(
-                                    $dataLabelsConfig,
-                                    array(
-                                        'x' => 70
-                                    )
-                                );
-                                $this->_chart['xAxis']['labels']['rotation'] = 0;
+                                $trace['textangle'] = 90;
+                                $this->_chart['layout']['xaxis']['tickangle'] = 0;
                             }
                             else // !($this->_swapXY)
                             {
-                                $dataLabelsConfig  = array_merge(
-                                    $dataLabelsConfig,
-                                    array(
-                                        'rotation' => -90,
-                                        'align' => 'center',
-                                        'y' => -70,
-                                    )
-                                );
+                                $trace['textangle'] = -90;
                             } // if($this->_swapXY)
 
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
+                                $xValues[] = date('y-m-d', $start_ts_array[$i]/1000);
+                                $yValues[] = $v;
                                 $seriesValue = array(
                                     'x' => $start_ts_array[$i],
                                     'y' => $v,
@@ -522,12 +468,6 @@ class PlotlyTimeseries2 extends Plotly2
 
                                 $seriesValues[] = $seriesValue;
                             }
-                            $tooltipConfig = array_merge(
-                                $tooltipConfig,
-                                array(
-                                    'valueDecimals' => $decimals
-                                )
-                            );
                         } // ($data_description->display_type == 'pie')
 
                         $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
@@ -573,57 +513,63 @@ class PlotlyTimeseries2 extends Plotly2
                             $visible = $data_description->visibility->{$formattedDataSeriesName};
                         }
 
+                        $tooltip = '%{x}' . '<br> <span style="color:' . $color
+                            . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:}</b> <extra></extra>';
+
+                        $tooltip = $formattedDataSeriesName . ': <b>%{y:}</b> <extra></extra>';
+
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
 
-                        $data_series_desc = array(
+                        $trace = array(
                             'name' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
                             'drilldown' => $drilldown,
-                            'color'=> $data_description->display_type == 'pie'? null: $color,
-                            'trackByArea'=>  $data_description->display_type == 'area' ||  $data_description->display_type == 'areaspline',
-                            'type' => $data_description->display_type,
-                            'dashStyle' => $data_description->line_type,
-                            'shadow' => $data_description->shadow,
-                            'groupPadding' => 0.1,
-                            'pointPadding' => 0,
-                            'borderWidth' => 0,
-                            'yAxis' => $yAxisIndex,
-                            'lineWidth' =>  $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
-                            'showInLegend' => $data_description->display_type != 'pie',
-                            'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline',
                             'marker' => array(
-                                'enabled' => $showMarker,
-                                'lineWidth' => 1,
-                                'lineColor' => $lineColor,
-                                'radius' => $font_size/4 + 5
+                                'size' => 8,
+                                'color' => $color,
+                                'line' => array(
+                                    'width' => 1,
+                                    'color' => $lineColor
+                                )
                             ),
-                            'tooltip' => $tooltipConfig,
-                            'dataLabels' => $dataLabelsConfig,
-                            'data' => $seriesValues,
-                            'cursor' => 'pointer',
+                            'line' => array(
+                                'color' => $data_description->display_type == 'pie'? null: $color,
+                                'dash' => $data_description->line_type,
+                                'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0
+                            ),
+                            'type' => $data_description->display_type,
+                            'mode' => $showMarker ? 'lines+markers' : 'lines',
+                            'hoveron' => $data_description->display_type == 'area' ||
+                                            $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                            'yaxis' => "y${$yAxisIndex}",
+                            'showLegend' => true,
+                            'hovertemplate' => $tooltip,
+                            'text' => $data_labels_enabled ? $yValues : null,
+                            'x' => $xValues,
+                            'y' => $yValues,
+                            'seriesPoints' => $seriesValues,
                             'visible' => $visible,
-                            'pointRange' => $pointInterval,
                             'isRemainder' => $isRemainder,
                             'isRestrictedByRoles' => $data_description->restrictedByRoles
                         ); // $data_series_desc
-
+                        //throw new \Exception(json_encode($trace));
                         if($data_description->display_type!=='line')
                         {
                             if($data_description->combine_type=='stack')
                             {
                                 // ask the highcharts library to connect nulls for stacking
-                                $data_series_desc['stacking'] = 'normal';
-                                $data_series_desc['connectNulls'] = true;
+                                $trace['stackgroup'] = 'one';
+                                $trace['stackgaps'] = 'interpolate';
                             }
                             elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
-                                $data_series_desc['stacking'] = 'percent';
+                                //$data_series_desc['stacking'] = 'percent';
                             }
                         }
-                        $this->_chart['series'][] = $data_series_desc;
+                        $this->_chart['data'][] = $trace;
 
                         // REMOVED: Add percent allocated to XSEDE line if the metric
                         // being displayed is XSEDE Utilization.

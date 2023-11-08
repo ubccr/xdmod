@@ -6,7 +6,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {};
 
     jQuery.extend(true, baseChartOptions, chartOptions);
-    console.log(baseChartOptions);
-    return baseChartOptions;
-    //return Plotly.newPlot(baseChartOptions.id, baseChartOptions.layout, baseChartOptions.data, {displayModeBar: false});
+    //console.log(baseChartOptions);
+    return Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, {displayModeBar: false});
+
 }
