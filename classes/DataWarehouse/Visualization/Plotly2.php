@@ -135,9 +135,9 @@ class Plotly2
                 'xref' => 'paper',
                 'yref' => 'paper',
                 'xanchor' => 'center',
-                'yanchor' => 'top',
+                'yanchor' => 'bottom',
                 'x' => 0.5,
-                'y' => 0.8,
+                'y' => 1.035,
                 'showarrow' => false
                 ),
             ),
@@ -154,8 +154,9 @@ class Plotly2
                 'autorange' => $this->_swapXY ? 'reversed' : false
             ),
             'hovermode' => $this->_hideTooltip ? false: 'x unified',
-                'bargap' => 0.05,
-                'bargroupgap' => 0,
+            'bargap' => 0.05,
+            'bargroupgap' => 0,
+            'images' => array(),
             ),
             'data' => array(),
             'dimensions' => array(),
@@ -777,7 +778,7 @@ class Plotly2
     ) {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
-        throw new \Exception('hi');
+        //throw new \Exception('hi');
         $this->limit = $limit;
         $this->show_filters = $show_filters;
         $this->setMultiCategory($data_series);
@@ -1152,7 +1153,7 @@ class Plotly2
                     }
                 }
                 $this->_chart['data'][] = $trace;
-                throw new \Exception(json_encode($trace));
+                //throw new \Exception(json_encode($trace));
                 // build error data series and add it to chart
                 /*$trace['error_y'] = $this->buildErrorDataSeries(
                     $data_description,

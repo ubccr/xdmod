@@ -30,26 +30,29 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments);
 
         var self = this;
-        var defaultOptions = getDefaultLayout();
+        var defaultOptions = {
+            renderTo: this.id,
+            layout: getDefaultLayout(),
+        }; 
 
         defaultOptions.renderTo = this.id;
-        defaultOptions.width = this.width;
-        defaultOptions.height = this.height;
+        defaultOptions.layout.width = this.width;
+        defaultOptions.layout.height = this.height;
         //defaultOptions.exporting.enabled = false;
         //defaultOptions.credits.enabled = true;
 
         this.baseChartOptions = jQuery.extend(true, {}, defaultOptions, this.baseChartOptions);
 
+
         this.on('render', function () {
             this.initNewChart.call(this);
 
             this.on('resize', function (t, adjWidth, adjHeight, rawWidth, rawHeight) {
-                if (this.chart.plot) {
-                    Plotly.relayout(this.chart.renderTo, { 'layout.width' : adjWidth, 'layout.height': adjHeight});
-                    //this.chart.setSize(adjWidth, adjHeight);
+                if (this.chart) {
+                    Plotly.relayout(this.chart.renderTo, { width: adjWidth, height: adjHeight });
                 }
-                this.baseChartOptions.width = adjWidth;
-                this.baseChartOptions.height = adjHeight;
+                this.baseChartOptions.layout.width = adjWidth;
+                this.baseChartOptions.layout.height = adjHeight;
             });
 
             if (this.store) {
@@ -62,7 +65,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     //this.chartOptions.exporting.enabled = (this.exporting === true);
                     //this.chartOptions.credits.enabled = (this.credits === true);
 
-                    this.chartOptions.title.text = this.plotlyTextEncode(this.chartOptions.title.text);
+                    this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.layout.title.text);
                     this.isEmpty = this.chartOptions.data && this.chartOptions.data.length === 0;
 
                     this.initNewChart.call(this);
@@ -71,8 +74,24 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         var ch_height = this.chartOptions.layout.height * 0.8;
 
                         var errorObj = getErrorConfig();
-                        this.chartOptions.images.push(errorObj.image);
-                        this.chartOptions.annotations.push(errorObj.text);
+                        var errorLayout = {
+                            annotations: errorObj.text,
+                            images: errorObj.image,
+                            xaxis: {
+                                showticklabels: false,
+                                zeroline: false,
+                                showgrid: false,
+                                showline: false
+                            },
+                            yaxis: {
+                                showticklabels: false,
+                                zeroline: false,
+                                showgrid: false,
+                                showline: false
+                            }
+                        };
+                        console.log(errorLayout);
+                        Plotly.relayout(this.baseChartOptions.renderTo, errorLayout);
                     }
 
                 }, this);

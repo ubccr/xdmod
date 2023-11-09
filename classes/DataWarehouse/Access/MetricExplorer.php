@@ -88,7 +88,7 @@ class MetricExplorer extends Common
             ? '\DataWarehouse\Data\TimeseriesDataset'
             : '\DataWarehouse\Data\SimpleDataset';
 
-        $plotly_classname
+        $chart_classname
             = $timeseries
             ? '\DataWarehouse\Visualization\PlotlyTimeseries2'
             : '\DataWarehouse\Visualization\Plotly2';
@@ -159,7 +159,7 @@ class MetricExplorer extends Common
 
             $font_size = $this->getFontSize();
 
-            $plotly_chart = new $plotly_classname(
+            $chart = new $chart_classname(
                 $aggregation_unit,
                 $start_date,
                 $end_date,
@@ -176,13 +176,12 @@ class MetricExplorer extends Common
             );
 
             if ($show_title) {
-                $plotly_chart->setTitle($title, $font_size);
+                $chart->setTitle($title, $font_size);
             }
-
             // Called before and after configure.
-            $plotly_chart->setLegend($legend_location, $font_size);
+            $chart->setLegend($legend_location, $font_size);
 
-            $plotly_chart->configure(
+            $chart->configure(
                 $data_series,
                 $x_axis,
                 $y_axis,
@@ -195,9 +194,9 @@ class MetricExplorer extends Common
                 $showRemainder
             );
 
-            $plotly_chart->setLegend($legend_location, $font_size);
+            $chart->setLegend($legend_location, $font_size);
 
-            $returnData = $plotly_chart->exportJsonStore($limit, $offset);
+            $returnData = $chart->exportJsonStore($limit, $offset);
 
             $requestDescripter = new \User\Elements\RequestDescripter($this->request);
             $chartIdentifier = $requestDescripter->__toString();
@@ -211,7 +210,7 @@ class MetricExplorer extends Common
             $returnData['data'][0]['reportGeneratorMeta'] = array(
                 'chart_args'         => $chartIdentifier,
                 'title'              => $title,
-                'params_title'       => $plotly_chart->getSubtitleText(),
+                'params_title'       => $chart->getSubtitleText(),
                 'start_date'         => $start_date,
                 'end_date'           => $end_date,
                 'included_in_report' => $includedInReport ? 'y' : 'n',
@@ -343,7 +342,6 @@ class MetricExplorer extends Common
                     "headers" => \DataWarehouse\ExportBuilder::getHeader($format),
                     "results" => $exportedDatas,
                 );
-
                 return $result;
             } // elseif($format === 'jsonstore')
 

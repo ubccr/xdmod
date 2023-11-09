@@ -5987,6 +5987,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         var plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
             id: 'plotly-panel' + this.id,
+            baseChartOptions: {},
             store: chartStore
         }); //assistPanel
 

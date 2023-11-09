@@ -6,7 +6,11 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {};
 
     jQuery.extend(true, baseChartOptions, chartOptions);
-    //console.log(baseChartOptions);
-    return Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, {displayModeBar: false});
 
+    // Wait for Plotly promise to fullfil due to race condition from 'resize' listener in Extjs
+    const chartPromise = Promise.resolve(Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, {displayModeBar: false}));
+
+    chartPromise.then((chart) => {
+        return chart;
+    });
 }

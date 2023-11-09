@@ -705,7 +705,7 @@ class Usage extends Common
                     // changes.
 
                     if ( isset($meChart['layout']['annotations'][1]['text']) && '' != $meChart['layout']['annotations'][1]['text'] ) {
-                        $meChart['layout']['title']['text'] = $meChart['subtitle']['text'];
+                        $meChart['layout']['title']['text'] = $meChart['layout']['annotations'][1]['text'];
                         $meChart['layout']['annotations'][1]['text'] = '';
                     } else {
                         $meChart['layout']['title']['text'] = '';

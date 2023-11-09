@@ -76,11 +76,13 @@ function getErrorConfig() {
         source: 'gui/images/report_thumbnail_no_data.png',
         align: 'center',
         xref: 'paper',
+        xanchor: 'top',
+        yanchor: 'bottom',
         yref: 'paper',
-        sizex: 0.5,
-        sizey: 0.5,
-        x: 0.5,
-        y: 0.5
+        sizex: 1.0,
+        sizey: 1.0,
+        x: 0.15,
+        y: 0.0
     }
     ];
 
