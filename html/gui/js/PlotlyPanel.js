@@ -73,25 +73,8 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
 
-                        var errorObj = getErrorConfig();
-                        var errorLayout = {
-                            annotations: errorObj.text,
-                            images: errorObj.image,
-                            xaxis: {
-                                showticklabels: false,
-                                zeroline: false,
-                                showgrid: false,
-                                showline: false
-                            },
-                            yaxis: {
-                                showticklabels: false,
-                                zeroline: false,
-                                showgrid: false,
-                                showline: false
-                            }
-                        };
-                        console.log(errorLayout);
-                        Plotly.relayout(this.baseChartOptions.renderTo, errorLayout);
+                        var errorChartLayout = getNoDataErrorConfig();
+                        Plotly.relayout(this.baseChartOptions.renderTo, errorChartLayout);
                     }
 
                 }, this);

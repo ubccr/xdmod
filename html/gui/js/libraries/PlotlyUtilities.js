@@ -70,44 +70,53 @@ function getDefaultLayout() {
     return layout;
 }
 
-function getErrorConfig() {
-    var errorImage = [
-    {
-        source: 'gui/images/report_thumbnail_no_data.png',
-        align: 'center',
-        xref: 'paper',
-        xanchor: 'top',
-        yanchor: 'bottom',
-        yref: 'paper',
-        sizex: 1.0,
-        sizey: 1.0,
-        x: 0.15,
-        y: 0.0
-    }
-    ];
+function getNoDataErrorConfig() {
 
-    var errorText = [
-    {
-        text: '',
-        align: 'center',
-        xref: 'paper',
-        yref: 'paper',
-        font: {
-            size: 12,
-            family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+    let errorLayout = {
+        images: [
+        {
+            source: 'gui/images/report_thumbnail_no_data.png',
+            align: 'center',
+            xref: 'paper',
+            xanchor: 'top',
+            yanchor: 'bottom',
+            yref: 'paper',
+            sizex: 1.0,
+            sizey: 1.0,
+            x: 0.15,
+            y: 0.0
+        }
+        ],
+        annotations: [
+        {
+            text: '',
+            align: 'center',
+            xref: 'paper',
+            yref: 'paper',
+            font: {
+                size: 12,
+                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+            },
+            x: 0.5,
+            y: 0.2,
+            showarrow: false
+        }
+        ],
+        xaxis: {
+            showticklabels: false,
+            zeroline: false,
+            showgrid: false,
+            showline: false
         },
-        x: 0.5,
-        y: 0.2,
-        showarrow: false
-    }
-    ];
-
-    var ret = {
-        image: errorImage,
-        text: errorText
+        yaxis: {
+            showticklabels: false,
+            zeroline: false,
+            showgrid: false,
+            showline: false
+        }
     };
 
-    return ret;
+    return errorLayout;
 }
 /* generateChartOptions - Generates data array and layout dict for Plotly Chart
  *                        ** Currently assumes that data is in format of a record returned in the JobViewer **

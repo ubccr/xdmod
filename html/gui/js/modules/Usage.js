@@ -2560,7 +2560,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             maximizeScale.call(this);
             if (this.chart) {
-                Plotly.relayout(this.chart.chartId, { 'width': adjWidth, 'height': adjHeight });
+                Plotly.relayout(this.chart.chartId, { width: adjWidth, height: adjHeight });
             }
 
         } //onResize
@@ -2686,13 +2686,17 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             };
 
                             var chartOptions = r.get('hc_jsonstore');
-                            console.log(chartStore);
-                            console.log('Chart Options from hc_jsonstore');
-                            console.log(chartOptions);
 
                             jQuery.extend(true, chartOptions, baseChartOptions);
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
+
+                            if (chartOptions.data && chartOptions.data.length === 0){
+                                chartOptions.layout = getNoDataErrorConfig();
+                                chartOptions.layout.width = baseChartOptions.layout.width;
+                                chartOptions.layout.height = baseChartOptions.layout.height;
+                                chartOptions.layout.images[0].x = 0.25;
+                            }
 
                             this.chart = {};
                             this.chart.chartDiv = XDMoD.utils.createChart(chartOptions);

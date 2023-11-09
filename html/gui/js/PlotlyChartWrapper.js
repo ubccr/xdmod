@@ -7,7 +7,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
     jQuery.extend(true, baseChartOptions, chartOptions);
 
-    // Wait for Plotly promise to fullfil due to race condition from 'resize' listener in Extjs
+    // Wait for Plotly promise to fullfil due to race condition from 'resize' listener in PlotlyPanel.js resize listener
     const chartPromise = Promise.resolve(Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, {displayModeBar: false}));
 
     chartPromise.then((chart) => {
