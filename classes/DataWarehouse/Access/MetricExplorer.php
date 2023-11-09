@@ -104,7 +104,7 @@ class MetricExplorer extends Common
         $filename = substr($filename, 0, 250);
 
         $all_data_series = $this->getDataSeries();
-
+         
         $data_series = array();
 
         // Discard disabled datasets.
@@ -180,7 +180,7 @@ class MetricExplorer extends Common
             }
             // Called before and after configure.
             $chart->setLegend($legend_location, $font_size);
-
+            //throw new \Exception(json_encode($data_series));
             $chart->configure(
                 $data_series,
                 $x_axis,
@@ -363,7 +363,6 @@ class MetricExplorer extends Common
         if (!isset($this->request['data_series']) || empty($this->request['data_series'])) {
             return json_decode(0);
         }
-
         if (
             is_array($this->request['data_series'])
             && is_array($this->request['data_series']['data'])

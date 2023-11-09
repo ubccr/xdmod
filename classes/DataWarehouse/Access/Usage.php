@@ -872,9 +872,11 @@ class Usage extends Common
                             }
                         }
                         $meDataSeries['mode'] = $y_values_count == 1 ||
-                                            count($meDataSeries['data']) <= 30 ? 'marker' : 'lines+marker';
+                                            count($meDataSeries['data']) <= 30 ? 'lines+markers' : 'lines';
                     }
-
+                    if (isset($meDataSeries['text'])) {
+                        $meDataSeries['mode'] .= '+text';
+                    }
                     // If this is a trend line data series...
                     if ($isTrendLineSeries) {
                         // Change the line style to a dotted line.
@@ -1047,10 +1049,8 @@ class Usage extends Common
         // Get the display type and axis layout from the Usage display type.
         $usageDisplayType = \xd_utilities\array_get($usageRequest, 'display_type');
         $meRequestDataOptions['display_type'] = (
-            $usageDisplayType === 'bar'
-            || $usageDisplayType === 'h_bar'
-            || $usageDisplayType === 'auto'
-        ) ? 'column' : $usageDisplayType;
+            $usageDisplayType === 'auto'
+        ) ? 'bar' : $usageDisplayType;
         $meRequest['swap_xy'] = $usageDisplayType === 'h_bar';
 
         // Get the data combine type from the Usage combine type.

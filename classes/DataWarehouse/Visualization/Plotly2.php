@@ -149,11 +149,7 @@ class Plotly2
             'xaxis' => array(
                 'autorange' => $this->_swapXY ? 'reversed' : false
             ),
-            'yaxis' => array(
-                'overlaying' => 'y',
-                'autorange' => $this->_swapXY ? 'reversed' : false
-            ),
-            'hovermode' => $this->_hideTooltip ? false: 'x unified',
+            'hovermode' => $this->_hideTooltip ? false : 'x unified',
             'bargap' => 0.05,
             'bargroupgap' => 0,
             'images' => array(),
@@ -909,14 +905,16 @@ class Plotly2
                 'tick0' => $yAxisMin == null,
                 'endTick' => $yAxisMax == null, // add support
                 'opposite' => $yAxisIndex % 2 == 1, // add support
-                'range' => [$yAxisMin, $yAxisMax],
+                //'range' => [$yAxisMin, $yAxisMax],
                 'type' => $yAxisObject->log_scale ? 'log' : 'linear',
                 'showLastLabel' => $this->_chart['title'] != '', // Add support
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
                 'linewidth' => 2 + $font_size / 4,
                 'allowDecimals' => $yAxisObject->decimals > 0, // Add support
                 'dtick' => $yAxisObject->log_scale ? 1 : null,
-                'maxPadding' => max(0.05, ($yAxisObject->value_lables ? 0.25 : 0.0) + ($yAxisObject->std_err ? .25 : 0)) // Add support
+                'separatethousands' => $yAxisObject->decimals > 0,
+                'overlaying' => 'y',
+                'autorange' => $this->_swapXY ? 'reversed' : false
             );
 
             $this->_chart['layout']["yaxis{$yAxisIndex}"] = $yAxis;
@@ -976,8 +974,6 @@ class Plotly2
                 $xValues = array();
                 $yValues = array();
                 $colors = array();
-                $tooltip = '%{x}' . '<br> <span style="color:' . $color
-                            . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:}</b> <extra></extra>';
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
@@ -1003,6 +999,17 @@ class Plotly2
                             )
                         );
                         $points[] = $point;
+
+                        $trace = array(
+                            'labels' => $xValues,
+                            'values' => $yValues,
+                            'text' => array_map(function($label, $value) {
+                                $text = '<b>' . $label . '</b><br>' . $value;
+                                return $text;
+                            }, $xValues, $yValues),
+                            'textinfo' => 'text',
+                            'textposition' => 'outside'
+                        );
 
                     } // foreach
 
@@ -1094,19 +1101,35 @@ class Plotly2
                     $visible = $data_description->visibility->{$formattedDataSeriesName};
                 }
 
+                if (in_array($data_description->display_type, array('h_bar', 'bar', 'pie')))
+                {
+                    $this->_chart['layout']['hovermode'] = 'closest';   
+                }
+
                 // Display markers for scatter plots, non-thumbnail plots
                 // with fewer than 21 points, or for plots with a single y value.
                 $showMarker = $data_description->display_type == 'scatter' ||
                     ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                     $values_count == 1;
+                if ($data_description->display_type == 'pie') 
+                {
+                    $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName . 
+                               ': %{value:,} <b>(%{percent})</b> <extra></extra>';
+                }
+                else
+                {
+                    $tooltip = '%{x}' . '<br> <span style="color:' . $color
+                            . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
+                }
 
-                $trace = array(
+
+                $trace = array_merge($trace, array(
                     'name' => $lookupDataSeriesName,
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
                     'zIndex' => $zIndex,
                     'marker' => array(
-                        'size' => $font_size / 4 + 5, 
+                        'size' => 10, 
                         'color' => $color,
                         'line' => array(
                             'width' => 1,
@@ -1120,25 +1143,36 @@ class Plotly2
                         'width' => $data_description->display_type !== 'scatter' ?
                                                         $data_description->line_width + $font_size / 4 : 0,
                     ),
-                    'type' => $data_description->display_type,
+                    'type' => $data_description->display_type == 'h_bar' ? 'bar' : $data_description->display_type,
                     'mode' => $showMarker ? 'lines+marker' : 'lines',
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'shadow' => $data_description->shadow,
                     'yaxis' => "y{$yAxisIndex}",
-                    'hovertemplate' => $tooltipConfig['hovertemplate'],
-                    'showLegend' => true,
-                    'text' => $data_labels_enabled ? $yValues : null,
-                    'x' => $xValues,
-                    'y' => $yValues,
+                    'hovertemplate' => $tooltip,
+                    'hoverlabel' => array(
+                        'bgcolor' => '#FFF'
+                    ),
+                    'showlegend' => true,
+                    //'text' => $data_labels_enabled ? $yValues : null,
+                    'x' => $data_description->display_type == 'pie' ? null : $xValues,
+                    'y' => $data_description->display_type == 'pie' ? null : $yValues,
                     'yaxis' => "y{$yAxisIndex}",
                     'points' => $points,
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                ); // $data_series_desc
+                )); // $data_series_desc
 
-                                // set stacking
+
+                if ($data_description->display_type == 'h_bar') {
+                    $trace = array_merge($trace, array('orientation' => 'h'));
+                    $tmp = $trace['x'];
+                    $trace['x'] = $trace['y'];
+                    $trace['y'] = $tmp;
+                    $trace['hovertemplate'] = '%{y}' . '<br>'. $lookupDataSeriesName . ': <b>%{x:,}</b> <extra></extra>'; 
+                }
+                // set stacking
                 if($data_description->display_type!=='line')
                 {
                     if(     $data_description->combine_type=='stack')
@@ -1251,7 +1285,7 @@ class Plotly2
                 'groupPadding' => 0.05,
                 'pointPadding' => 0,
                 'lineWidth' => 2,
-                'yAxis' => $yAxisIndex,
+                'yaxis' => $yAxisIndex,
                 'tooltip' => array(
                         'valueDecimals' => $semDecimals
                     ),

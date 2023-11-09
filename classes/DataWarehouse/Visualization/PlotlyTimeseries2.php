@@ -281,15 +281,16 @@ class PlotlyTimeseries2 extends Plotly2
                             'size' => (11 + $font_size).'px'
                         ),
                         'opposite' => $yAxisIndex % 2 == 1,
-                        'range' => [$yAxisMin, $yAxisMax],
+                        //'range' => [$yAxisMin, $yAxisMax],
                         'tick0' => $yAxisMin == null,
                         'type' => $data_description->log_scale? 'logarithmic' : 'linear',
                         'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
+                        'separatethousands' => true,
                         'linewidth' => 2 + $font_size/4,
                         'dtick' => $data_description->log_scale ?1:null,
                     );
 
-                    $this->_chart['layout']["yaxis${$yAxisIndex}"] = $yAxis;
+                    $this->_chart['layout']["yaxis{$yAxisIndex}"] = $yAxis;
                 } // if($yAxis == null)
 
                 $dataset = new TimeseriesDataset($query);
@@ -299,7 +300,7 @@ class PlotlyTimeseries2 extends Plotly2
                 $start_ts_array = array();
                 foreach($xAxisData->getStartTs() as $st)
                 {
-                    $start_ts_array[] = $st*1000;
+                    $start_ts_array[] = $st;
                 }
                 $pointInterval = $this->getPointInterval();
 
@@ -453,10 +454,10 @@ class PlotlyTimeseries2 extends Plotly2
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
-                                $xValues[] = date('d-m-y', $start_ts_array[$i]/1000);
+                                $xValues[] = date('m-d-Y', $start_ts_array[$i]);
                                 $yValues[] = $v;
                                 $seriesValue = array(
-                                    'x' => $start_ts_array[$i],
+                                    'x' => date('m-d-Y', $start_ts_array[$i]),
                                     'y' => $v,
                                 );
 
@@ -514,10 +515,10 @@ class PlotlyTimeseries2 extends Plotly2
                         }
 
                         $tooltip = '%{x}' . '<br> <span style="color:' . $color
-                            . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:}</b> <extra></extra>';
+                            . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
 
-                        $tooltip = $formattedDataSeriesName . ': <b>%{y:}</b> <extra></extra>';
-
+                        $tooltip = $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
+                        $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
 
@@ -528,7 +529,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'zIndex' => $zIndex,
                             'drilldown' => $drilldown,
                             'marker' => array(
-                                'size' => 8,
+                                'size' => 10,
                                 'color' => $color,
                                 'line' => array(
                                     'width' => 1,
@@ -540,14 +541,15 @@ class PlotlyTimeseries2 extends Plotly2
                                 'dash' => $data_description->line_type,
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0
                             ),
-                            'type' => $data_description->display_type,
-                            'mode' => $showMarker ? 'lines+markers' : 'lines',
+                            'type' => $data_description->display_type == 'line' ? 'scatter' : $data_description->display_type,
+                            'mode' => $data_description->display_type == 'line' ? 'lines' : 'lines+markers',
                             'hoveron' => $data_description->display_type == 'area' ||
                                             $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
-                            'yaxis' => "y${$yAxisIndex}",
-                            'showLegend' => true,
+                            'yaxis' => "y{$yAxisIndex}",
+                            'showlegend' => $data_description->display_type != 'pie',
                             'hovertemplate' => $tooltip,
                             'text' => $data_labels_enabled ? $yValues : null,
+                            'textposition' => 'top center',
                             'x' => $xValues,
                             'y' => $yValues,
                             'seriesPoints' => $seriesValues,
@@ -586,13 +588,15 @@ class PlotlyTimeseries2 extends Plotly2
                             if($new_values_count > 1)
                             {
                                 list($m,$b,$r, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
-                                $trend_points = array();
+                                $trendX = array();
+                                $trendY = array();
                                 foreach($newValues as $ii => $value) //first first positive point on trend line since when logscale negative values make it barf
                                 {
                                     $y = ($m*$ii)+$b;
                                     if(!$data_description->log_scale || $y > 0)
                                     {
-                                        $trend_points[] = array($start_ts_array[$ii], $y);
+                                        $trendX[] = date('m-d-Y', $start_ts_array[$ii]);
+                                        $trendY[] = $y;
                                     }
                                 }
 
@@ -614,37 +618,33 @@ class PlotlyTimeseries2 extends Plotly2
                                 {
                                     $visible = $data_description->visibility->{$dsn};
                                 }
-                                $data_series_desc = array(
+                                $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
                                     'otitle' => $dsn,
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,
                                     'drilldown' => $drilldown,
                                     'color'=> $color,
-                                    'type' => $data_description->log_scale?'spline':'line',
-                                    'shadow' => $data_description->shadow,
-                                    'groupPadding' => 0.05,
-                                    'pointPadding' => 0,
-                                    'borderWidth' => 0,
-                                    'enableMouseTracking' => false,
-                                    'yAxis' => $yAxisIndex,
+                                    'type' => 'scatter',
+                                    'yaxis' => "y{$yAxisIndex}",
                                     'lineWidth' => 2 + $font_size/4.0,
-                                    'showInLegend' => true,
+                                    'showlegend' => true,
+                                    'hoverinfo' => 'skip',
                                     'marker' => array(
-                                        'enabled' => false,
-                                        'hover' => array(
-                                            'enabled' => false
-                                        )
+                                        'size' => 0
+                                    ),
+                                    'line' => array(
+                                        'shape' => $data_description->log_scale ? 'spline' : 'line',
+                                        'dash' => 'dot' 
                                     ),
                                     'visible' => $visible,
-                                    'dashStyle' => 'ShortDot',
                                     'm' => $m,
                                     'b' => $b,
-                                    'data' => $trend_points,
-                                    'isRemainder' => $isRemainder,
+                                    'x' => $trendX,
+                                    'y' => $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
-                                $this->_chart['series'][] = $data_series_desc;
+                                $this->_chart['data'][] = $trendline_trace;
                             } // if($new_values_count > 1)
 
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
@@ -665,7 +665,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $e = $yAxisDataObject->getError($i);
                                 $has_value = ( isset($v) && ($v != 0) );
                                 $error_series[] = array(
-                                    'x' => $start_ts_array[$i],
+                                    'x' => $date('m-d-Y', start_ts_array[$i]),
                                     'low' => $has_value ? $v-$e : null,
                                     'high' => $has_value ? $v+$e : null,
                                     'stderr' => $e
