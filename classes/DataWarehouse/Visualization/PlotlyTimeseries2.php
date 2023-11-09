@@ -453,7 +453,7 @@ class PlotlyTimeseries2 extends Plotly2
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
-                                $xValues[] = date('y-m-d', $start_ts_array[$i]/1000);
+                                $xValues[] = date('d-m-y', $start_ts_array[$i]/1000);
                                 $yValues[] = $v;
                                 $seriesValue = array(
                                     'x' => $start_ts_array[$i],

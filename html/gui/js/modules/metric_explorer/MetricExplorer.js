@@ -5479,19 +5479,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             messageProperty: 'message',
             fields: [
                 'chart',
-                'credits',
-                'title',
-                'subtitle',
-                'xAxis',
-                'yAxis',
-                'tooltip',
-                'legend',
-                'series',
                 'plotOptions',
-                'alignedLabels',
-                'credits',
                 'dimensions',
                 'metrics',
+                'layout',
+                'data',
                 'exporting',
                 'reportGeneratorMeta'
             ],
@@ -6316,8 +6308,9 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        function onResize( /*t*/ ) {
+        function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
+            Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
         } //onResize
 
         // ---------------------------------------------------------
