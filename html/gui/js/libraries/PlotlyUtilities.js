@@ -253,12 +253,12 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
         }],
     };
 
-    let defaultLayout = getDefaultLayout();
-    XDMoD.utils.deepExtend(layout, defaultLayout);
+    /*let defaultLayout = getDefaultLayout();
+    XDMoD.utils.deepExtend(layout, defaultLayout);*/
 
     let ret = {
-        chartData: data,
-        chartLayout: layout
+        data: data,
+        layout: layout
     };
 
     return ret;

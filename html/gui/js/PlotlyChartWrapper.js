@@ -6,7 +6,9 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {};
 
     jQuery.extend(true, baseChartOptions, chartOptions);
-
+    if (baseChartOptions.data && baseChartOptions.data.length === 0) {
+        baseChartOptions.layout = getNoDataErrorConfig();
+    }
     // Wait for Plotly promise to fullfil due to race condition from 'resize' listener in PlotlyPanel.js resize listener
     const chartPromise = Promise.resolve(Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, {displayModeBar: false}));
     let el = Ext.get(baseChartOptions.renderTo);

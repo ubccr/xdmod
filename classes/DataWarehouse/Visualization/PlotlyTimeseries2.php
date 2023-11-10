@@ -665,7 +665,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $e = $yAxisDataObject->getError($i);
                                 $has_value = ( isset($v) && ($v != 0) );
                                 $error_series[] = array(
-                                    'x' => $date('m-d-Y', start_ts_array[$i]),
+                                    'x' => date('m-d-Y', start_ts_array[$i]),
                                     'low' => $has_value ? $v-$e : null,
                                     'high' => $has_value ? $v+$e : null,
                                     'stderr' => $e

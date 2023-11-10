@@ -30,18 +30,35 @@
         $(document).ready(function () {
         // _ chartOptions _ is a macro that is substituted by \xd_charting\exportHighchart()
         var inputChartOptions = _chartOptions_;
-        var args = {
+        var chartOptions = {};
+        // Chart will be fully configured if export call came from non-supremm module tab
+        if (inputChartOptions.layout) {
+            chartOptions = inputChartOptions;
+            /*// Update chart layout with export settings
+            chartOptions.layout.title.font.size = args.mainTitleFontSize;
+            chartOptions.layout.xaxis.titlefont.size = args.axisTitleFontSize;
+            chartOptions.layout.xaxis.tickfont.size = args.LabelFontSize;
+            chartOptions.layout.yaxis.titlefont.size = args.axisTitleFontSize;
+            chartOptions.layout.yaxis.tickfont.size = args.LabelFontSize;
+            // Loop through data to adjust line width
+            for (trace in chartOptions.data) {
+                trace.line.width = args.lineWidth;
+            }*/
+        }
+        else {
+            var args = {
             mainTitleFontSize: inputChartOptions.chartTitleSize,
             axisTitleFontSize: inputChartOptions.axisTitleSize,
             axisLabelFontSize: inputChartOptions.axisTickSize,
             lineWidth: inputChartOptions.lineWidth
-        };
-        var chartOptions = generateChartOptions(inputChartOptions, args);
+            };
+            chartOptions = generateChartOptions(inputChartOptions, args);
+        }
 
-        chartOptions.chartLayout['width'] = _width_;
-        chartOptions.chartLayout['height'] = _height_;
+        chartOptions.layout['width'] = _width_;
+        chartOptions.layout['height'] = _height_;
 
-        Plotly.newPlot('container', chartOptions.chartData, chartOptions.chartLayout, { staticPlot: true } );
+        Plotly.newPlot('container', chartOptions.data, chartOptions.layout, { staticPlot: true } );
         });
 
         </script>

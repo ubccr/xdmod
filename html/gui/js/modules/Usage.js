@@ -1514,7 +1514,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;
 
-                                this.charts.push(Plotly.newPlot(chartOptions.renderTo, chartOptions.layout, chartOptions.data, { displayModeBar: false, doubleClick: 'reset' }));
+                                this.charts.push(XDMoD.utils.createChart(chartOptions));
                             };
 
                             deferStore.load({
