@@ -1008,7 +1008,6 @@ class Plotly2
                                 return $text;
                             }, $xValues, $yValues),
                             'textinfo' => 'text',
-                            'textposition' => 'outside'
                         );
 
                     } // foreach
@@ -1054,7 +1053,7 @@ class Plotly2
 
                         $points[] = $point;
                     } // foreach
-
+                    $trace = array_merge($trace, array('text' => $yValues));
                     $tooltipConfig = array_merge(
                         $tooltipConfig,
                         array(
@@ -1122,7 +1121,6 @@ class Plotly2
                             . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
                 }
 
-
                 $trace = array_merge($trace, array(
                     'name' => $lookupDataSeriesName,
                     'otitle' => $formattedDataSeriesName,
@@ -1154,7 +1152,7 @@ class Plotly2
                         'bgcolor' => '#FFF'
                     ),
                     'showlegend' => true,
-                    //'text' => $data_labels_enabled ? $yValues : null,
+                    'textposition' => $data_description->display_type == 'pie' ? 'outside' : 'top center',
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
                     'yaxis' => "y{$yAxisIndex}",
@@ -1164,6 +1162,9 @@ class Plotly2
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                 )); // $data_series_desc
 
+                if (!$data_labels_enabled){
+                    unset($trace['text']);
+                }
 
                 if ($data_description->display_type == 'h_bar') {
                     $trace = array_merge($trace, array('orientation' => 'h'));
