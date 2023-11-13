@@ -40,14 +40,14 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
 
         $console = Console::factory();
         $proceed = $console->promptBool(<<<"EOT"
-Open XDMoD 11.0 includes changes to how your resource's specifications 
-are tracked. Implementing these changes may take some time. In some
-cases it may be as long as 20-30 minutes. Before continuing, please check
-your resource_specs.json file and make sure it is accurate. This will make
-the implementation process much quicker. If you have multiple entries for a
-resource, please make sure the start_date and end_date for each entry are
-accurate. Also note that if a resource has multiple entries, you may omit the
-end_date from the last entry.
+Open XDMoD 11.0 includes changes to how your resource's specifications
+ are tracked. Implementing these changes may take some time. In some
+ cases it may be as long as 20-30 minutes. Before continuing, please check
+ your resource_specs.json file and make sure it is accurate. This will make
+ the implementation process much quicker. If you have multiple entries for a
+ resource, please make sure the start_date and end_date for each entry are
+ accurate. Also note that if a resource has multiple entries, you may omit the
+ end_date from the last entry.
 EOT
         );
 
