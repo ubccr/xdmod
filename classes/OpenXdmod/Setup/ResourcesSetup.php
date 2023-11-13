@@ -145,8 +145,8 @@ class ResourcesSetup extends SubMenuSetupItem
         $this->resources[] = array(
             'resource'                  => $resource['resource'],
             'resource_type'             => $typeAbbrev,
-            'resource_allocation_type'  => $resourceAllocationTypeAbbrev,
             'name'                      => $resource['name'],
+            'resource_allocation_type'  => $resourceAllocationTypeAbbrev
         );
 
         $this->resourceSpecs[] = array(

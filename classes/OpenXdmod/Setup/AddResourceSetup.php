@@ -99,14 +99,14 @@ EOT
         $this->console->displayBlankLine();
 
         $nodes = $this->console->prompt('How many CPU nodes does this resource have?');
-        if (empty($nodes) || !is_numeric($nodes)) { $nodes = 1; }
+        if (strlen($nodes) === 0 || !is_numeric($nodes)) { $nodes = 1; }
 
         $cpus = $this->console->prompt('How many total CPU processors (cpu cores) does this resource have?');
-        if (empty($cpus) || !is_numeric($cpus)) { $cpus = 1; }
+        if (strlen($cpus) === 0 || !is_numeric($cpus)) { $cpus = 1; }
 
         $ppn = ($nodes == 0) ? 0 : $cpus / $nodes;
 
-        if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpu_node') {
+        if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpu node') {
             $gpu_nodes = $this->console->prompt('How many GPU nodes does this resource have?');
             if (empty($gpu_nodes) || !is_numeric($gpu_nodes)) {
                 $gpu_nodes = 0;
@@ -153,7 +153,7 @@ EOT
         }
         elseif ($resource_start_date_parsed === false) {
             $this->console->displayMessage("The date you entered is in the wrong format. Please enter the date in YYYY-mm-dd format.");
-            $this->getResourceStartDate();
+            return $this->getResourceStartDate();
         }
 
         return $resource_start_date_parsed->format('Y-m-d');

@@ -9,8 +9,9 @@ use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use OpenXdmod\Setup\Console;
 use CCR\DB;
 use CCR\Json;
-use ETL\Utilities;
+use CCR\Log;
 use PDO;
+use DateTime;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
@@ -38,14 +39,22 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         $this->assertPortalSettingsIsWritable();
 
         $console = Console::factory();
-        $console->promptBool(<<<"EOT"
-Open XDMoD 11.0 includes changes to how your resource's specifications are tracked. Implementing these changes may take some time.
-In some cases it may be as long as 20-30 minutes. Before continuing, please check your resource_specs.json file and make sure it is accurate.
-This will make the implementation process much quicker. If you have multiple entries for a resource, please make sure the start and end times
-for each entry are accurate. Also note that if a resource has multiple entries, you may omit the end_date from the last entry.
-Are you ready to continue?
+        $proceed = $console->promptBool(<<<"EOT"
+Open XDMoD 11.0 includes changes to how your resource's specifications 
+are tracked. Implementing these changes may take some time. In some
+cases it may be as long as 20-30 minutes. Before continuing, please check
+your resource_specs.json file and make sure it is accurate. This will make
+the implementation process much quicker. If you have multiple entries for a
+resource, please make sure the start_date and end_date for each entry are
+accurate. Also note that if a resource has multiple entries, you may omit the
+end_date from the last entry.
 EOT
         );
+
+        if (!$proceed) {
+            $console->displayMessage("You have chosen not to proceed with the Open XDMoD upgrade. You have exited the XDMoD Upgrade process.");
+            exit();
+        }
 
         $dbh = DB::factory('datawarehouse');
         $seen = array();
@@ -89,28 +98,15 @@ EOT
         // Set the start and end dates for each resource_specs record as best we can. Also, change the nodes, processors, and ppn field names and add fields for
         // new gpu information.
         foreach ($resource_specs_config as $key => $value) {
-            $next = (array_key_exists($key + 1, $resource_specs_config)) ? $resource_specs_config[$key + 1] : null;
-            $prev = (array_key_exists($key - 1, $resource_specs_config)) ? $resource_specs_config[$key - 1] : null;
-
-            // If this is the first entry for a resource, there are different methods and checks to get the start and end dates.
+            // Check if this is the first entry for a resource
             if (!in_array($value['resource'], $seen)) {
                 $seen[] = $value['resource'];
 
+                // If the start date for the first entry for a resource is empty, get the date of the first entry in it's associated
+                // fact table.
                 if (empty($resource_specs_config[$key]['start_date']) && (array_key_exists($value['resource'], $resource_specs_start_dates))) {
                     $resource_specs_config[$key]['start_date'] = $resource_specs_start_dates[$value['resource']];
                 }
-
-                if ((!array_key_exists('end_date', $value) || empty($resource_specs_config[$key]['end_date'])) && $next['resource'] === $resource_specs_config[$key]['resource']) {
-                    $resource_specs_config[$key]['end_date'] = $next['start_date'];
-                }
-            }
-
-            if (empty($resource_specs_config[$key]['start_date']) && $prev['resource'] === $resource_specs_config[$key]['resource']) {
-                $resource_specs_config[$key]['start_date'] = $prev['end_date'];
-            }
-
-            if (empty($resource_specs_config[$key]['end_date']) && $next['resource'] === $resource_specs_config[$key]['resource']) {
-                $resource_specs_config[$key]['end_date'] = $next['start_date'];
             }
 
             $resource_specs_config[$key]['cpu_node_count'] = $value['nodes'];
