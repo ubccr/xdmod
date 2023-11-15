@@ -7,14 +7,83 @@ use TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
-    /**
-     * Directory containing test artifact files.
-     */
-    const TEST_GROUP = 'integration/controllers/metric_explorer';
-
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
+    }
+
+    /**
+     * This method is used by a few methods in this class and in the
+     * UserAdminTest class.
+     */
+    public static function getDefaultRequestInput()
+    {
+        return [
+            'path' => 'controllers/metric_explorer.php',
+            'method' => 'post',
+            'params' => null,
+            'endpoint_type' => 'controller',
+            'authentication_type' => 'token_optional'
+        ];
+    }
+
+    /**
+     * This method is used by both testGetDwDescripterTokenAuth() and
+     * UserAdminTest::testGetDwDescripters().
+     */
+    public static function getDwDescriptersBodyValidator($testInstance)
+    {
+        return function ($body, $assertMessage) use ($testInstance) {
+            $testInstance->assertSame(
+                1,
+                $body['totalCount'],
+                $assertMessage
+            );
+            $testInstance->assertCount(
+                1,
+                $body['data'],
+                $assertMessage
+            );
+            foreach (['Cloud', 'Jobs', 'Storage'] as $realmName) {
+                $realm = $body['data'][0]['realms'][$realmName];
+                foreach (['metrics', 'dimensions'] as $property) {
+                    $testInstance->assertNotCount(
+                        0,
+                        $realm[$property],
+                        $assertMessage
+                    );
+                    foreach ($realm[$property] as $item) {
+                        $testInstance->assertInternalType(
+                            'string',
+                            $item['text'],
+                            $assertMessage
+                        );
+                        $testInstance->assertInternalType(
+                            'string',
+                            $item['info'],
+                            $assertMessage
+                        );
+                        if ('metrics' === $property) {
+                            $testInstance->assertInternalType(
+                                'bool',
+                                $item['std_err'],
+                                $assertMessage
+                            );
+                        }
+                    }
+                }
+                $testInstance->assertSame(
+                    $realmName,
+                    $realm['text'],
+                    $assertMessage
+                );
+                $testInstance->assertSame(
+                    $realmName,
+                    $realm['category'],
+                    $assertMessage
+                );
+            }
+        };
     }
 
     /**
@@ -141,8 +210,14 @@ class MetricExplorerTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_dw_descripter'
+            array_replace(
+                self::getDefaultRequestInput(),
+                ['data' => ['operation' => 'get_dw_descripter']]
+            ),
+            [
+                'status_code' => 200,
+                'body_validator' => self::getDwDescriptersBodyValidator($this)
+            ]
         );
     }
 
@@ -155,21 +230,69 @@ class MetricExplorerTest extends TokenAuthTest
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        $responseBody = parent::runTokenAuthTest(
+        parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_dimensions'
+            array_replace(
+                self::getDefaultRequestInput(),
+                [
+                    'data' => [
+                        'operation' => 'get_dimension',
+                        'dimension_id' => 'username',
+                        'realm' => 'Jobs',
+                        'public_user' => false,
+                        'start' => '',
+                        'limit' => '10',
+                        'selectedFilterIds' => ''
+                    ]
+                ]
+            ),
+            [
+                'status_code' => 200,
+                'body_validator' => function (
+                    $body,
+                    $assertMessage
+                ) use (
+                    $tokenType,
+                    $expectedCount
+                ) {
+                    $this->assertGreaterThanOrEqual(
+                        0,
+                        $body['totalCount'],
+                        $assertMessage
+                    );
+                    $this->assertGreaterThanOrEqual(
+                        0,
+                        $body['data'],
+                        $assertMessage
+                    );
+                    foreach ($body['data'] as $item) {
+                        foreach (['id', 'name', 'short_name'] as $property) {
+                            $this->assertInternalType(
+                                'string',
+                                $item[$property],
+                                $assertMessage
+                            );
+                        }
+                        $this->assertInternalType(
+                            'bool',
+                            $item['checked'],
+                            $assertMessage
+                        );
+                    }
+                    if (
+                        'valid_token' === $tokenType
+                        && !is_null($expectedCount)
+                    ) {
+                        $this->assertSame(
+                            $expectedCount,
+                            $body['totalCount'],
+                            $assertMessage
+                        );
+                    }
+                }
+            ]
         );
-        if ('valid_token' === $tokenType && !is_null($expectedCount)) {
-            $this->assertSame(
-                $expectedCount,
-                $responseBody->totalCount,
-                parent::getJsonStringForExceptionMessage(
-                    json_decode(json_encode($responseBody), true)
-                )
-            );
-        }
     }
 
     /**
@@ -177,21 +300,24 @@ class MetricExplorerTest extends TokenAuthTest
      */
     public function getDimensionFiltersProvider()
     {
+        $tests = [];
+        foreach (parent::provideTokenAuthTestData() as $testData) {
+            list($role, $tokenType) = $testData;
+            if ('valid_token' !== $tokenType) {
+                $tests[] = [$role, $tokenType, null];
+            }
+        }
         $expectedCounts = [
-            'pub' => null,
             'cd' => 66,
             'cs' => 66,
             'usr' => 1,
             'pi' => 6,
             'mgr' => 0
         ];
-        return array_map(
-            function ($testData) use ($expectedCounts) {
-                list($role, $tokenType) = $testData;
-                return [$role, $tokenType, $expectedCounts[$role]];
-            },
-            parent::provideTokenAuthTestData()
-        );
+        foreach ($expectedCounts as $role => $count) {
+            $tests[] = [$role, 'valid_token', $count];
+        }
+        return $tests;
     }
 
     public function rawDataProvider()
