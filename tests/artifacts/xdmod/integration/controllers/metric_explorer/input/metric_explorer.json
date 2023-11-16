@@ -1,7 +1,0 @@
-{
-    "path": "controllers/metric_explorer.php",
-    "method": "post",
-    "params": null,
-    "endpoint_type": "controller",
-    "authentication_type": "token_optional"
-}

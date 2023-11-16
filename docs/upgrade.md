@@ -103,11 +103,32 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 Open XDMoD 10.5.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-You may upgrade directly from 10.0.0.
+You may upgrade directly from 10.0.X.
+
+Included in these new features is official support for the Rocky 8 operating system. This will allow organizations
+to migrate their XDMoD installations from the soon-to-be end-of-life CentOS 7 to a currently supported OS. The officially
+recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an Rocky 8 XDMoD 10.5 installation is as follows:
+1. Update the CentOS 7 XDMoD 10.0.X installation to XDMoD 10.5
+2. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server.
+3. Copy the contents of `/etc/xdmod` from the CentOS 7 server to the Rocky 8 server.
+    1. Adjust database connection properties as appropriate.
+4. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
+    1. For example, using `mysqldump`.
+5. Import the CentOS 7 exported database files into the Rocky 8 server's database.
+6. Ensure that you have added the `sql_mode=` line to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf` on the Rocky 8 server.
+7. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
+
+Also included in the new features is the new [Data Analytics Framework](data-analytics-framework.md) that allows users to programmatically obtain data from the data warehouse via a Python API.
 
 ### Configuration File Changes
 
+The `xdmod-upgrade` script will add settings to `portal_settings.ini` to support the new [Data Analytics Framework](data-analytics-framework.md):
+* A new section `[api_token]` will be added with `expiration_interval = "6 months"`.
+* `rest_raw_row_limit = "10000"` will be added to the `[warehouse]` section.
+
 ### Database Changes
+
+The `xdmod-upgrade` script will create the new `moddb.user_tokens` table to support API tokens for the new [Data Analytics Framework](data-analytics-framework.md).
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration

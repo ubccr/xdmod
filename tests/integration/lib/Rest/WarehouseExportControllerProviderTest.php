@@ -192,8 +192,58 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_realms'
+            [
+                'path' => 'rest/warehouse/export/realms',
+                'method' => 'get',
+                'params' => null,
+                'data' => null,
+                'endpoint_type' => 'rest',
+                'authentication_type' => 'token_optional'
+            ],
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
+                $this->assertSame(2, $body['total'], $assertMessage);
+                $index = 0;
+                foreach (['Jobs', 'Cloud'] as $realmName) {
+                    $realm = $body['data'][$index];
+                    foreach (['id', 'name'] as $property) {
+                        $this->assertSame(
+                            $realmName,
+                            $realm[$property],
+                            $assertMessage
+                        );
+                    }
+                    foreach ($realm['fields'] as $field) {
+                        foreach ([
+                            'name',
+                            'alias',
+                            'display',
+                            'documentation'
+                        ] as $string) {
+                            $this->assertInternalType(
+                                'string',
+                                $field[$string],
+                                $assertMessage
+                            );
+                        }
+                        $this->assertInternalType(
+                            'bool',
+                            $field['anonymize'],
+                            $assertMessage
+                        );
+                    }
+                    $index++;
+                }
+                $this->assertCount(
+                    28,
+                    $body['data'][0]['fields'],
+                    $assertMessage
+                );
+                $this->assertCount(
+                    16,
+                    $body['data'][1]['fields'],
+                    $assertMessage
+                );
+            })
         );
     }
 

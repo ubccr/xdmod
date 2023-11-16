@@ -43,6 +43,12 @@ if [ "$REG_TEST_ALL" = "1" ]; then
 else
     pids=()
 
+    # Make Ctrl-C interrupt all subprocesses.
+    function interrupt_all_subprocesses {
+        kill ${pids[@]}
+    }
+    trap interrupt_all_subprocesses SIGINT
+
     if [[ "$XDMOD_REALMS" == *"jobs"* ]];
     then
         $phpunit $(log_opts "regression-subset" "Charts-pub") --filter ChartsTest . & #TODO: Implement UsageChartsTest for Cloud and Storage realms

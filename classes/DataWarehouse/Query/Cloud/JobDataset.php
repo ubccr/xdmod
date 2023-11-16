@@ -67,7 +67,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             $endDate = date_parse_from_format('Y-m-d', $parameters['end_date']);
             $endDateTs = mktime(23, 59, 59, $endDate['month'], $endDate['day'], $endDate['year']);
 
-            if ($startDateTs === false) {
+            if ($endDateTs === false) {
                 throw new Exception('invalid "end_date" query parameter');
             }
 

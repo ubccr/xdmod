@@ -6,15 +6,15 @@ The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure s
 
 ## Available metrics
 - Average Memory Reserved Weighted By Wall Hours (Bytes)
-  - The average amount of memory (in bytes) reserved by running sessions, weighted by wall hours.
+  - The average amount of memory (in bytes) reserved by VM's, weighted by wall hours.
 - Average Root Volume Storage Reserved Weighed By Wall Hours (Bytes)
-  - The average amount of root volume disk space (in bytes) reserved by running sessions, weighted by wall hours.
+  - The average amount of root volume disk space (in bytes) reserved by VM's, weighted by wall hours.
 - Average Wall Hours per Session
   - The average wall time that a session was running, in hours.
 - Core Hour Utilization: %
   - A percentage that shows how many core hours were allocated to VM's that were running over a time period against how many core hours a resource had available during that time period.
 - Core Hours: Total
-  - The total number of core hours consumed by running sessions.
+  - The total number of core hours consumed by VM's.
 - Number of Sessions Ended
   - The  total  number  of  sessions  that  were  ended  on  a  cloud  resource.  A  session  is  ended  when  a  VM  is  paused,  shelved,  stopped,  or  terminated  on  a  cloud  resource.
 - Number of Active Sessions
@@ -22,15 +22,15 @@ The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure s
 - Number of Sessions Started
   - The  total  number  of  sessions  started  on  a  cloud  resource.  A  session  begins  when  a  VM  is  created,  unshelved,  or  resumes  running  on  a  cloud  resource.
 - Wall Hours: Total
-  - The total wall time in which a sessions was running, in hours.
+  - The total wall time in which VM's were running, in hours.
 
 ## Dimensions available for grouping
 - Instance Type
   - The instance type of the virtual machines.
 - Project
-  - The  project  associated  with  a  running  session  of  a virtual  machine.
+  - The  project  associated  with a virtual  machine.
 - PI
-  - The principal investigator of a project has a valid allocation, which can be used by him/her or the members of the project to run VM's on.
+  - The principal investigator of a project has a valid allocation, which can be used by the PI or the members of their project to run VM's on.
 - Resource
   - A  resource  is  defined  as  any remote  infrastructure  that  hosts  cloud  instances.
 - User
@@ -38,9 +38,11 @@ The Cloud realm in Open XDMoD tracks events that occur in cloud infrastructure s
 - System Username
   - The specific system username associated with a running session of a virtual machine.
 - VM Size: Cores
-  - A categorization of sessions into discrete groups based on the number of cores used by each VM.
+  - A categorization of VM's into discrete groups based on the number of cores used by each VM.
 - VM Size: Memory
-  - A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.
+  - A categorization of VM's into discrete groups based on the amount of memory reserved by each VM.
+- VM State
+  - A categorization of VM's based on their state, ex. Active, Inactve, etc.
 - Domain
   - A domain is a high-level container for projects, users and groups in Open Stack.
 - Submission Venue
