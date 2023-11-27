@@ -63,7 +63,6 @@ class ListResourcesSetup extends SetupItem
 
             $resourceAllocationType = 'UNK';
             foreach ( $availableResourceAllocationTypes as $name => $type ) {
-                $resource_allocation_type_name = strtolower($name);
                 if ( $name === $resource['resource_allocation_type'] ) {
                     // Note that Console::prompt() expects lowercase values for options
                     $resourceAllocationType = strtolower($name);
