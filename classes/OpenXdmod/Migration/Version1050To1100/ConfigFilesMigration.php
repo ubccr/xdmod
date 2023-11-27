@@ -39,17 +39,21 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         $this->assertPortalSettingsIsWritable();
 
         $console = Console::factory();
-        $proceed = $console->promptBool(<<<"EOT"
+        echo <<<"EOT"
 Open XDMoD 11.0 includes changes to how your resource's specifications
- are tracked. Implementing these changes may take some time. In some
- cases it may be as long as 20-30 minutes. Before continuing, please check
- your resource_specs.json file and make sure it is accurate. This will make
- the implementation process much quicker. If you have multiple entries for a
- resource, please make sure the start_date and end_date for each entry are
- accurate. Also note that if a resource has multiple entries, you may omit the
- end_date from the last entry.
-EOT
-        );
+are tracked. Implementing these changes may take some time. In some
+cases it may be as long as 20-30 minutes. Before continuing, please check
+your resource_specs.json file and make sure it is accurate. This will make
+the implementation process much quicker. If you have multiple entries for a
+resource, please make sure the start_date and end_date for each entry are
+accurate. Also note that if a resource has multiple entries, you may omit the
+end_date from the last entry. The first entry for each resource needs a start
+date; if you have not provided one, one will be automatically set based on
+the earliest database fact for the resource (e.g., earliest submitted job,
+earliest cloud VM start time, earliest storage entry start date, etc.).
+
+EOT;
+        $proceed = $console->promptBool('Are you ready to continue?');
 
         if (!$proceed) {
             $console->displayMessage("You have chosen not to proceed with the Open XDMoD upgrade. You have exited the XDMoD Upgrade process.");
@@ -67,7 +71,7 @@ EOT
 
         foreach ($resource_config as $key => $value) {
             // Add the allocation type property to the resources.json file. The default is cpu.
-            $resource_config[$key]['resource_allocation_type'] = 'cpu';
+            $resource_config[$key]['resource_allocation_type'] = 'CPU';
             $resource_to_resource_type_map[$value['resource']] = $value['resource_type'];
         }
 

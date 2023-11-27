@@ -29,32 +29,32 @@
                 "name": "cpu_cores_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Amount of cpu core time in seconds available for a time period"
+                "comment": "FACT: Number of cpu cores available for a time period"
             },{
                 "name": "gpu_cores_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Amount of cpu core time in seconds available for a time period"
+                "comment": "FACT: Number of gpu cores available for a time period"
             },{
                 "name": "cpu_nodes_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Amount of cpu core time in seconds available for a time period"
+                "comment": "FACT: Number of cpu nodes available for a time period"
             },{
                 "name": "gpu_nodes_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Amount of cpu core time in seconds available for a time period"
+                "comment": "FACT: Number of gpu nodes available for a time period"
             },{
                 "name": "core_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Amount of cpu core time in seconds available for a time period"
+                "comment": "FACT: Number of cpu cores available for a time period, in seconds"
             },{
                 "name": "gpu_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Amount of gpu core time in seconds available for a time period"
+                "comment": "FACT: Number of gpu cores available for a time period, in seconds"
             },{
                 "name": "su_available",
                 "type": "int(11) unsigned",
@@ -79,7 +79,7 @@
                 "name": "resource_country_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Country of the organization which resource belongs"
+                "comment": "DIMENSION: Country of the organization to which the resource belongs"
             },{
                 "name": "organizationtype_id",
                 "type": "int(11)",

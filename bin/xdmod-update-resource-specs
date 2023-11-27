@@ -40,8 +40,10 @@ function main()
         array('r:', 'resource:'),
         array('',   'start-date:'),
         array('',   'end-date:'),
-        array('',   'node-count:'),
+        array('',   'cpu-node-count:'),
         array('',   'cpu-count:'),
+        array('',   'gpu-node-count:'),
+        array('',   'gpu-count:'),
         array('',   'percent-allocated:'),
       );
 
@@ -60,8 +62,8 @@ function main()
 
     $help = $force = false;
 
-    $resource = $startDate = $endDate = $nodes = $processors
-        = $percentAllocated = null;
+    $resource = $startDate = $endDate = $cpuNodes = $cpuProcessors
+        = $gpuNodes = $gpuProcessors = $percentAllocated = null;
 
     $logLevel = -1;
 
@@ -100,11 +102,17 @@ function main()
             case 'end-date':
                 $endDate = $value;
                 break;
-            case 'node-count':
-                $nodes = $value;
+            case 'cpu-node-count':
+                $cpuNodes = $value;
                 break;
             case 'cpu-count':
-                $processors = $value;
+                $cpuProcessors = $value;
+                break;
+            case 'gpu-node-count':
+                $gpuNodes = $value;
+                break;
+            case 'gpu-count':
+                $gpuProcessors = $value;
                 break;
             case 'percent-allocated':
                 $percentAllocated = $value;
@@ -155,6 +163,38 @@ function main()
         exit(1);
     }
 
+    if (
+        $cpuNodes !== null
+        && filter_var($cpuNodes, FILTER_VALIDATE_INT) === false
+    ) {
+        $logger->crit("The cpu-node-count value must be an integer");
+        exit(1);
+    }
+
+    if (
+        $gpuNodes !== null
+        && filter_var($gpuNodes, FILTER_VALIDATE_INT) === false
+    ) {
+        $logger->crit("The gpu-node-count value must be an integer");
+        exit(1);
+    }
+
+    if (
+        $cpuProcessors !== null
+        && filter_var($cpuProcessors, FILTER_VALIDATE_INT) === false
+    ) {
+        $logger->crit("The cpu-count value must be an integer");
+        exit(1);
+    }
+
+    if (
+        $gpuProcessors !== null
+        && filter_var($gpuProcessors, FILTER_VALIDATE_INT) === false
+    ) {
+        $logger->crit("The gpu-count value must be an integer");
+        exit(1);
+    }
+
     $resourceSpecsFile = implode(
         DIRECTORY_SEPARATOR,
         array(
@@ -202,12 +242,20 @@ function main()
     if (count($resourceData) > 0) {
         $lastEntry = $resourceData[count($resourceData) - 1];
 
-        if ($nodes === null) {
-            $nodes = $lastEntry['nodes'];
+        if ($cpuNodes === null) {
+            $cpuNodes = $lastEntry['cpu_node_count'];
         }
 
-        if ($processors === null) {
-            $processors = $lastEntry['processors'];
+        if ($cpuProcessors === null) {
+            $cpuProcessors = $lastEntry['cpu_processor_count'];
+        }
+
+        if ($gpuNodes === null) {
+            $gpuNodes = $lastEntry['gpu_node_count'];
+        }
+
+        if ($gpuProcessors === null) {
+            $gpuProcessors = $lastEntry['gpu_processor_count'];
         }
 
         if (
@@ -242,21 +290,21 @@ function main()
         }
     }
 
-    $ppn = (int)($processors / $nodes);
+    $cpuPpn = ($cpuNodes == 0) ? 0 : $cpuProcessors / $cpuNodes;
+    $gpuPpn = ($gpuNodes == 0) ? 0 : $gpuProcessors / $gpuNodes;
 
     $newEntry = array(
-        'resource'          => $resource,
-        'start_date'        => $startDate,
-        'end_date'          => $endDate,
-        'nodes'             => $nodes,
-        'processors'        => $processors,
-        'ppn'               => $ppn,
-        'percent_allocated' => $percentAllocated,
+        'resource'              => $resource,
+        'start_date'            => $startDate,
+        'end_date'              => $endDate,
+        'cpu_node_count'        => $cpuNodes,
+        'cpu_processor_count'   => $cpuProcessors,
+        'cpu_ppn'               => $cpuPpn,
+        'gpu_node_count'        => $gpuNodes,
+        'gpu_processor_count'   => $gpuProcessors,
+        'gpu_ppn'               => $gpuPpn,
+        'percent_allocated'     => $percentAllocated,
     );
-
-    if ($startDate === null) {
-        unset($newEntry['start_date']);
-    }
 
     if ($endDate === null) {
         unset($newEntry['end_date']);
@@ -333,36 +381,32 @@ function verifyResourceSpecs(array $resourceData)
             $logger->err("Invalid end date '$endDate'");
         }
 
-        // The first entry doesn't require a start date.
-        if ($i === 0 && $startDate !== null) {
-            $logger->debug('First entry has a start date');
-        }
-
         // The last entry doesn't require an end date.
         if ($i === $lastIdx && $endDate !== null) {
             $logger->debug('Last entry has an end date');
         }
 
-        if ($i > 0) {
+        // All entries require a start date.
+        if ($startDate === null) {
+            $valid = false;
+            $msg = 'Entry is missing required start date: '
+                . json_encode($datum);
+            $logger->err($msg);
+        }
 
-            // All entries other than the first require a start date.
-            if ($startDate === null) {
-                $valid = false;
-                $msg = 'Entry is missing required start date: '
-                    . json_encode($datum);
+        // Check that the start date for an entry is one day ahead of the end date
+        // for the previous entry
+        if ($i > 0 && $endDate !== null) {
+            $expectedStartDt = clone $lastEndDt;
+            $expectedStartDt->add($oneDay);
+
+            $expectedStartDate = $expectedStartDt->format('Y-m-d');
+
+            if ($startDate !== $expectedStartDate) {
+                $msg = "Expected start_date '$expectedStartDate', but"
+                    . " found '$startDate': " . json_encode($datum);
                 $logger->err($msg);
-            } elseif ($endDate !== null) {
-                $expectedStartDt = clone $lastEndDt;
-                $expectedStartDt->add($oneDay);
-
-                $expectedStartDate = $expectedStartDt->format('Y-m-d');
-
-                if ($startDate !== $expectedStartDate) {
-                    $msg = "Expected start_date '$expectedStartDate', but"
-                        . " found '$startDate': " . json_encode($datum);
-                    $logger->err($msg);
-                    $valid = false;
-                }
+                $valid = false;
             }
         }
 
@@ -425,13 +469,21 @@ Usage: xdmod-update-resource-specs -r *resource* ...
     --end-date *end-date*
         Specify the resource spec end date (YYYY-MM-DD).
 
-    --node-count *node-count*
-        Specify the resource spec node count.  Defaults to the most
-        recent node count for the resource.
+    --cpu-node-count *cpu-node-count*
+        Specify the resource spec cpu node count.  Defaults to the most
+        recent cpu node count for the resource.
 
     --cpu-count *cpu-count*
         Specify the resource spec cpu count.  Defaults to the most
         recent cpu count for the resource.
+
+    --gpu-node-count *gpu-node-count*
+        Specify the resource spec gpu node count.  Defaults to the most
+        recent gpu node count for the resource.
+
+    --gpu-count *gpu-count*
+        Specify the resource spec gpu count.  Defaults to the most
+        recent gpu count for the resource.
 
     --percent-allocated *percent*
         Specify the resource spec percent allocated.  Defaults to the
