@@ -88,11 +88,11 @@ Ext.apply(XDMoD.Module.Usage, {
         var groupByUnit = groupByNameAndUnit[1];
 
 
-        /*XDMoD.TrackEvent('Usage', 'Clicked on chart to access drill-down menu', Ext.encode({
-           'x-axis': point.ts ? Highcharts.dateFormat('%Y-%m-%d', point.ts) : point.series.data[point.x].category,
-           'y-axis': point.y,
+        XDMoD.TrackEvent('Usage', 'Clicked on chart to access drill-down menu', Ext.encode({
+           'x-axis': point.data.type === 'pie' ? point.label : point.x,
+           'y-axis': point.data.type === 'pie' ? point.value : point.y,
            'label': (groupByName == 'none') ? '' : groupByUnit + '=' + groupByValue
-        }));*/
+        }));
 
         function drillDown(drillDown) {
             var drillDownGroupByName = drillDown[0];
@@ -2703,27 +2703,38 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             this.chart.chartId = id;
                             var chartDiv = document.getElementById(baseChartOptions.renderTo);
 
-                            chartDiv.on('plotly_click', (data, event) => {
-                                var drillId;
-                                var label;
-                                console.log(data);
-                                
-                                /*var drillInfo = evt.point.series.userOptions.drilldown;
+                            chartDiv.on('plotly_click', (evt) => {
+                                let drillId;
+                                let label;
+                                let point;
 
-                                if (!drillInfo) {
-                                // dataseries such as the trend line do not have a drilldown
-                                    return;
+                                if (evt.points.length > 1) {
+                                    const cursorY = evt.event.pointerY;
+                                    evt.points.forEach(function (trace) {
+                                        if (cursorY > trace.bbox.y0 && cursorY < trace.bbox.y1) {
+                                            //Might need to add a check for trend line
+                                            point = trace;
+                                        }
+                                    });
+                                }
+                                else {
+                                    point = evt.points[0];
                                 }
 
-                                if (evt.point.drilldown) {
-                                    drillId = evt.point.drilldown.id;
-                                    label = evt.point.drilldown.label;
-                                } else {
-                                    evt.point.ts = evt.point.x; // eslint-disable-line no-param-reassign
+                                if (!point) {
+                                    return;
+                                }
+                                const drillInfo = point.data.drilldown;
+                                if (drillInfo[0]) {
+                                    drillId = drillInfo[point.i].id;
+                                    label = drillInfo[point.i].label;
+                                }
+                                else {
                                     drillId = drillInfo.id;
                                     label = drillInfo.label;
                                 }
-                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);*/
+
+                                XDMoD.Module.Usage.drillChart(point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
                             });
 
                         }, this); //task

@@ -147,7 +147,7 @@ class Plotly2
                 'borderwidth' => 0
             ),
             'xaxis' => array(
-                'autorange' => $this->_swapXY ? 'reversed' : false
+                'automargin' => true
             ),
             'hovermode' => $this->_hideTooltip ? false : 'x unified',
             'bargap' => 0.05,
@@ -664,7 +664,7 @@ class Plotly2
         }
 
         // --- set xAxis in _chart object ---
-        $this->_chart['layout']['xaxis'] = array(
+        $this->_chart['layout']['xaxis'] = array_merge($this->_chart['layout']['xaxis'] ,array(
                 'title' => array(
                         'text' => '<b>'. $xAxisLabel . '</b>',
                         'standoff' => 15 + $font_size,
@@ -680,7 +680,7 @@ class Plotly2
                 ),
                 'linewidth' => 2 + $font_size / 4,
                 'categoryarray' => $this->_xAxisDataObject->getValues()
-        );
+        ));
 
         if (isset($this->_chart['layout']['xaxis']['categoryarray']))
         {
@@ -892,6 +892,7 @@ class Plotly2
 
             // populate the yAxis:
             $yAxis = array(
+                'automargin' => true,
                 'title' => '<b>' . $yAxisLabel . '<\b>',
                 'titlefont' => array(
                     'size' => (12 + $font_size),
@@ -902,19 +903,13 @@ class Plotly2
                 'tickfont' => array(
                     'size' => (11 + $font_size)
                 ),
-                'tick0' => $yAxisMin == null,
-                'endTick' => $yAxisMax == null, // add support
-                'opposite' => $yAxisIndex % 2 == 1, // add support
-                //'range' => [$yAxisMin, $yAxisMax],
+//                'tick0' => $yAxisMin !== null ?,
                 'type' => $yAxisObject->log_scale ? 'log' : 'linear',
-                'showLastLabel' => $this->_chart['title'] != '', // Add support
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
                 'linewidth' => 2 + $font_size / 4,
-                'allowDecimals' => $yAxisObject->decimals > 0, // Add support
-                'dtick' => $yAxisObject->log_scale ? 1 : null,
+                //'dtick' => $yAxisObject->log_scale ? 1 : null,
                 'separatethousands' => $yAxisObject->decimals > 0,
                 'overlaying' => 'y',
-                'autorange' => $this->_swapXY ? 'reversed' : false
             );
 
             $this->_chart['layout']["yaxis{$yAxisIndex}"] = $yAxis;
@@ -970,7 +965,7 @@ class Plotly2
                 $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                 $trace = array();
                 $tooltipConfig = array();
-                $points = array();
+                $drilldown = array();
                 $xValues = array();
                 $yValues = array();
                 $colors = array();
@@ -992,13 +987,10 @@ class Plotly2
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
                         // See setXAxis() and _xAxisDataObject.
-                        $point = array(
-                            'drilldown' => array(
-                                'id' => $yAxisDataObject->getXId($index),
-                                'label' => $yAxisDataObject->getXValue($index)
-                            )
+                        $drilldown[] = array(
+                            'id' => $yAxisDataObject->getXId($index),
+                            'label' => $yAxisDataObject->getXValue($index)
                         );
-                        $points[] = $point;
 
                         $trace = array(
                             'labels' => $xValues,
@@ -1038,11 +1030,9 @@ class Plotly2
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
                         // (Though they are the same labels...)
-                        $point = array(
-                            'drilldown' => array(
-                                'id' => $yAxisDataObject->getXId($index),
-                                'label' => $yAxisDataObject->getXValue($index)
-                            )
+                        $drilldown[] = array(
+                            'id' => $yAxisDataObject->getXId($index),
+                            'label' => $yAxisDataObject->getXValue($index)
                         );
 
                         try {
@@ -1051,7 +1041,6 @@ class Plotly2
 
                         }
 
-                        $points[] = $point;
                     } // foreach
                     $trace = array_merge($trace, array('text' => $yValues));
                     $tooltipConfig = array_merge(
@@ -1125,6 +1114,7 @@ class Plotly2
                     'name' => $lookupDataSeriesName,
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
+                    'drilldown' => $drilldown,
                     'zIndex' => $zIndex,
                     'marker' => array(
                         'size' => 10, 
@@ -1156,7 +1146,6 @@ class Plotly2
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
                     'yaxis' => "y{$yAxisIndex}",
-                    'points' => $points,
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -1172,19 +1161,24 @@ class Plotly2
                     $trace['x'] = $trace['y'];
                     $trace['y'] = $tmp;
                     $trace['hovertemplate'] = '%{y}' . '<br>'. $lookupDataSeriesName . ': <b>%{x:,}</b> <extra></extra>'; 
+                    $this->_chart['layout']['margin'] = array(
+                        'l' => 200
+                    );
                 }
                 // set stacking
                 if($data_description->display_type!=='line')
                 {
-                    if(     $data_description->combine_type=='stack')
+                    if ($data_description->combine_type=='side' && $data_description->display_type=='area') {
+                        $trace['fill'] = 'tonexty';
+                    }
+                    elseif($data_description->combine_type=='stack')
                     {
-                        // ask the plotly library to connect nulls for stacking
                         $trace['stackgroup'] = 'one';
-                        $trace['stackgaps'] = 'interpolate';
+                        $trace['stackgaps'] = 'interpolate'; //connect nulls
                     }
                     elseif($data_description->combine_type=='percent' && !$data_description->log_scale)
                     {
-                        $data_series_desc['stacking'] = 'percent'; //Need to look into stacking by percentage
+                        $trace['groupnorm'] = 'percent';
                     }
                 }
                 $this->_chart['data'][] = $trace;

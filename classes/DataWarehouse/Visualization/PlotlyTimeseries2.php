@@ -329,7 +329,7 @@ class PlotlyTimeseries2 extends Plotly2
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
 
                     $xAxis = array(
-                        'type' => 'datetime',
+                        //'type' => 'datetime',
                         'ticklen' => 0,
                         'title' => array(
                             'text' => '<b>' . $xAxisLabel . '</b>',
@@ -560,7 +560,10 @@ class PlotlyTimeseries2 extends Plotly2
                         //throw new \Exception(json_encode($trace));
                         if($data_description->display_type!=='line')
                         {
-                            if($data_description->combine_type=='stack')
+                            if ($data_description->combine_type=='side' && $data_description->display_type=='area'){
+                                $trace['fill'] = $yAxisIndex == 0 ? 'tozeroy' : 'tonexty';
+                            }
+                            elseif($data_description->combine_type=='stack')
                             {
                                 // ask the highcharts library to connect nulls for stacking
                                 $trace['stackgroup'] = 'one';
@@ -568,7 +571,9 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                             elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
-                                //$data_series_desc['stacking'] = 'percent';
+                                $trace['stackgroup'] = 'one';
+                                $trace['stackgaps'] = 'interpolate';
+                                $trace['groupnorm'] = 'percent';
                             }
                         }
                         $this->_chart['data'][] = $trace;
