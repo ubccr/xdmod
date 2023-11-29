@@ -290,6 +290,11 @@ function main()
         }
     }
 
+    if ($startDate === null) {
+        $startDate = date('Y-m-d');
+        $logger->debug("Using calculated start date '$startDate'");
+    }
+
     $cpuPpn = ($cpuNodes == 0) ? 0 : $cpuProcessors / $cpuNodes;
     $gpuPpn = ($gpuNodes == 0) ? 0 : $gpuProcessors / $gpuNodes;
 
@@ -297,21 +302,20 @@ function main()
         'resource'              => $resource,
         'start_date'            => $startDate,
         'end_date'              => $endDate,
-        'cpu_node_count'        => $cpuNodes,
-        'cpu_processor_count'   => $cpuProcessors,
-        'cpu_ppn'               => $cpuPpn,
-        'gpu_node_count'        => $gpuNodes,
-        'gpu_processor_count'   => $gpuProcessors,
-        'gpu_ppn'               => $gpuPpn,
-        'percent_allocated'     => $percentAllocated,
+        'cpu_node_count'        => (int)$cpuNodes,
+        'cpu_processor_count'   => (int)$cpuProcessors,
+        'cpu_ppn'               => (int)$cpuPpn,
+        'gpu_node_count'        => (int)$gpuNodes,
+        'gpu_processor_count'   => (int)$gpuProcessors,
+        'gpu_ppn'               => (int)$gpuPpn
     );
 
     if ($endDate === null) {
         unset($newEntry['end_date']);
     }
 
-    if ($percentAllocated === null) {
-        unset($newEntry['percent_allocated']);
+    if (!is_null($percentAllocated)) {
+        $newEntry['percent_allocated'] = (int)$percentAllocated;
     }
 
     $resourceData[] = $newEntry;
@@ -350,6 +354,10 @@ function verifyResourceSpecs(array $resourceData)
 
     $lastEndDt = null;
 
+    $lastStartDt = null;
+
+    $prevEntry = null;
+
     $oneDay = new DateInterval('P1D');
 
     $lastIdx = count($resourceData) - 1;
@@ -386,10 +394,33 @@ function verifyResourceSpecs(array $resourceData)
             $logger->debug('Last entry has an end date');
         }
 
+        // Check if the entry has the same start date as the previous entry
+        if (
+            $lastStartDt !== null
+            && $lastStartDt->format('Y-m-d') == $startDate)
+        {
+            $valid = false;
+            $logger->err("The start time for this entry matches the start time for the previous entry.");
+            $logger->err("Previous entry: " . json_encode($prevEntry));
+            $logger->err("Current entry: " . json_encode($datum));
+        }
+
         // All entries require a start date.
         if ($startDate === null) {
             $valid = false;
             $msg = 'Entry is missing required start date: '
+                . json_encode($datum);
+            $logger->err($msg);
+        }
+
+        // End date should not be before start date.
+        if (
+            !is_null($startDate)
+            && !is_null($endDate)
+            && $endDate < $startDate
+        ) {
+            $valid = false;
+            $msg = 'End date is before start date: '
                 . json_encode($datum);
             $logger->err($msg);
         }
@@ -424,6 +455,12 @@ function verifyResourceSpecs(array $resourceData)
         if ($endDate !== null) {
             $lastEndDt = new DateTime($endDate);
         }
+
+        if ($startDate !== null) {
+            $lastStartDt = new DateTime($startDate);
+        }
+
+        $prevEntry = $datum;
     }
 
     return $valid;
@@ -493,7 +530,7 @@ Examples:
 
 Update the node count to 10 and cpu count to 160 for "myresource":
 
-    xdmod-update-resource-specs -r myresource --node-count 10 --cpu-count 160
+    xdmod-update-resource-specs -r myresource --cpu-node-count 10 --cpu-count 160
 
 EOF;
 }

@@ -24,7 +24,7 @@
                         "type": "external",
                         "name": "jq",
                         "path": "jq",
-                        "arguments": "'[ .resource_allocation_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
+                        "arguments": "'[ .resource_allocation_types | to_entries[]| {abbrev: .key, description: .value.description} ] '"
                     }]
                 },
                 "destination": {

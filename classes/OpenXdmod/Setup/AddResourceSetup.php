@@ -106,7 +106,7 @@ EOT
 
         $ppn = ($nodes == 0) ? 0 : $cpus / $nodes;
 
-        if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpu node') {
+        if ($resource_allocation_type == 'gpu' || $resource_allocation_type == 'gpunode') {
             $gpu_nodes = $this->console->prompt('How many GPU nodes does this resource have?');
             if (empty($gpu_nodes) || !is_numeric($gpu_nodes)) {
                 $gpu_nodes = 0;
