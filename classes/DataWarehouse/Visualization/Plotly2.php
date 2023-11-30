@@ -108,51 +108,51 @@ class Plotly2
                 'dateFormat' => $this->getDateFormat()
             ),
             'layout' => array(
-            'title' => array(
-                'text' => ''
-            ),
-            'annotations' => array(
-            // Credits
-            array(
-                'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly. This is test',
-                'font' => array(
-                    'color' => '#909090',
-                    'size' => 10,
-                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                'title' => array(
+                    'text' => '',
                 ),
-                'xref' => 'paper',
-                'yref' => 'paper',
-                'xanchor' => 'right',
-                'yanchor' => 'bottom',
-                'x' => 1,
-                'y' => 0,
-                'yshift' => -80,
-                'showarrow' => false
+                'annotations' => array(
+                // Credits
+                    array(
+                        'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly. This is test',
+                        'font' => array(
+                        'color' => '#909090',
+                        'size' => 10,
+                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                    ),
+                    'xref' => 'paper',
+                    'yref' => 'paper',
+                    'xanchor' => 'right',
+                    'yanchor' => 'bottom',
+                    'x' => 1,
+                    'y' => 0,
+                    'yshift' => -80,
+                    'showarrow' => false
+                    ),
+                    // Subtitle
+                    array(
+                        'text' => 'Placeholder Subtitle text',
+                        'xref' => 'paper',
+                        'yref' => 'paper',
+                        'xanchor' => 'center',
+                        'yanchor' => 'bottom',
+                        'x' => 0.5,
+                        'y' => 1.035,
+                        'showarrow' => false
+                    ),
                 ),
-            // Subtitle
-            array(
-                'text' => 'Placeholder Subtitle text',
-                'xref' => 'paper',
-                'yref' => 'paper',
-                'xanchor' => 'center',
-                'yanchor' => 'bottom',
-                'x' => 0.5,
-                'y' => 1.035,
-                'showarrow' => false
+                'legend' => array(
+                    'itemwidth' => 40,
+                    'bgcolor' => '#FFFFFF',
+                    'borderwidth' => 0
                 ),
-            ),
-            'legend' => array(
-                'itemwidth' => 40,
-                'bgcolor' => '#FFFFFF',
-                'borderwidth' => 0
-            ),
-            'xaxis' => array(
-                'automargin' => true
-            ),
-            'hovermode' => $this->_hideTooltip ? false : 'x unified',
-            'bargap' => 0.05,
-            'bargroupgap' => 0,
-            'images' => array(),
+                'xaxis' => array(
+                    'automargin' => true
+                ),
+                'hovermode' => $this->_hideTooltip ? false : 'x unified',
+                'bargap' => 0.05,
+                'bargroupgap' => 0,
+                'images' => array(),
             ),
             'data' => array(),
             'dimensions' => array(),
@@ -355,9 +355,9 @@ class Plotly2
     public function setTitle($title, $font_size = 3)
     {
         $this->_chart['layout']['title']['text'] = $title;
-        $this->_chart['layout']['titlefont'] = array(
+        $this->_chart['layout']['title']['font'] = array(
             'color'=> '#000000',
-            'size' => (16 + $font_size).'px'
+            'size' => (16 + $font_size)
         );
     } // setTitle()
 
@@ -386,7 +386,7 @@ class Plotly2
             $this->_chart['layout']['annotations'][1]['text'] = '';
         }
         $this->_chart['layout']['annotations'][1]['font']['color'] = '#5078a0';
-        $this->_chart['layout']['annotations'][1]['font']['size'] = (12 + $font_size).'px';
+        $this->_chart['layout']['annotations'][1]['font']['size'] = (12 + $font_size);
         //$this->_chart['layout']['annotations'][1]['y'] = 28 + (2 * $font_size);
     } // setSubtitle()
 
@@ -401,7 +401,7 @@ class Plotly2
     {
         $this->_chart['layout']['legend']['font'] = array(
             'color' => '#274b6d',
-            'size' => (12  + $font_size).'px'
+            'size' => (12  + $font_size)
         );
         $this->_legend_location = $legend_location;
         switch($legend_location)
@@ -670,7 +670,7 @@ class Plotly2
                         'standoff' => 15 + $font_size,
                         'font' => array(
                                 'color'=> '#000000',
-                                'size' => (12 + $font_size).'px'
+                                'size' => (12 + $font_size)
                         )
                 ),
                 'otitle' => $originalXAxisLabel,
@@ -903,16 +903,15 @@ class Plotly2
                 'tickfont' => array(
                     'size' => (11 + $font_size)
                 ),
-//                'tick0' => $yAxisMin !== null ?,
                 'type' => $yAxisObject->log_scale ? 'log' : 'linear',
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
                 'linewidth' => 2 + $font_size / 4,
-                //'dtick' => $yAxisObject->log_scale ? 1 : null,
                 'separatethousands' => $yAxisObject->decimals > 0,
-                'overlaying' => 'y',
+                'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            $this->_chart['layout']["yaxis{$yAxisIndex}"] = $yAxis;
+            $yIndex = $yAxisIndex + 1;
+            $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
@@ -1115,7 +1114,6 @@ class Plotly2
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
                     'drilldown' => $drilldown,
-                    'zIndex' => $zIndex,
                     'marker' => array(
                         'size' => 10, 
                         'color' => $color,
@@ -1135,8 +1133,6 @@ class Plotly2
                     'mode' => $showMarker ? 'lines+marker' : 'lines',
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
-                    'shadow' => $data_description->shadow,
-                    'yaxis' => "y{$yAxisIndex}",
                     'hovertemplate' => $tooltip,
                     'hoverlabel' => array(
                         'bgcolor' => '#FFF'
@@ -1145,7 +1141,7 @@ class Plotly2
                     'textposition' => $data_description->display_type == 'pie' ? 'outside' : 'top center',
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
-                    'yaxis' => "y{$yAxisIndex}",
+                    'yaxis' => "y{$yIndex}",
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -1280,7 +1276,7 @@ class Plotly2
                 'groupPadding' => 0.05,
                 'pointPadding' => 0,
                 'lineWidth' => 2,
-                'yaxis' => $yAxisIndex,
+                'yaxis' => $yAxisIndex == 0 ? null : $yAxisIndex,
                 'tooltip' => array(
                         'valueDecimals' => $semDecimals
                     ),

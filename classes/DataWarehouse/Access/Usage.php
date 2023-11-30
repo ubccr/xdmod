@@ -615,7 +615,7 @@ class Usage extends Common
             $usageTitleFontSizeInPixels = 16 + $usageFontSize;
             $usageTitleStyle = array(
                 'color' => '#000000',
-                'size' => "${usageTitleFontSizeInPixels}px",
+                'size' => "${usageTitleFontSizeInPixels}",
             );
 
             // Get the user's report generator chart pool.

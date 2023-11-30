@@ -268,29 +268,47 @@ class PlotlyTimeseries2 extends Plotly2
                                 : $colorGenerator->getConfigColor(hexdec($data_description->color) );
                     $yAxisColor = '#'.str_pad(dechex($yAxisColorValue), 6, '0', STR_PAD_LEFT);
                     $yAxisColorUsedBySeries = false;
+                    $yAxisLeftBoundStart = 0.175;
+                    $yAxisRightBoundStart = 0.825;
+                    $yAxisStep = 0.175;
 
                     $yAxis = array(
                         'title' => '<b>' . $yAxisLabel . '</b>', 
                         'titlefont' => array(
                                 'color'=> $yAxisColor,
-                                'size' => (12 + $font_size).'px'
+                                'size' => (12 + $font_size)
                         ),
                         'otitle' => $originalYAxisLabel,
                         'dtitle' => $defaultYAxisLabel,
                         'tickfont' => array(
-                            'size' => (11 + $font_size).'px'
+                            'size' => (11 + $font_size)
                         ),
-                        'opposite' => $yAxisIndex % 2 == 1,
-                        //'range' => [$yAxisMin, $yAxisMax],
-                        'tick0' => $yAxisMin == null,
                         'type' => $data_description->log_scale? 'logarithmic' : 'linear',
-                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
                         'separatethousands' => true,
-                        'linewidth' => 2 + $font_size/4,
-                        'dtick' => $data_description->log_scale ?1:null,
+                        'overlaying' => $yAxisIndex == 0 ? null : 'y',
+                        'linewidth' => 2 + $font_size / 4,
+                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/4),
                     );
 
-                    $this->_chart['layout']["yaxis{$yAxisIndex}"] = $yAxis;
+                    if ($yAxisIndex > 0){
+                        if ($yAxisIndex % 2 == 0) {
+                            $yAxis = array_merge($yAxis, array(
+                                'side' => 'left',
+                                'anchor' => 'free',
+                                'position' => $yAxisLeftBoundStart - ($yAxisStep * ($yAxisIndex/2))
+                            ));
+                        }
+                        else {
+                            $yAxis = array_merge($yAxis, array(
+                                'side' => 'right',
+                                'anchor' => $yAxisIndex > 1 ? 'free' : 'x',
+                                'position' => $yAxisIndex > 1 ? $yAxisRightBoundStart + ($yAxisStep * (floor($yAxisIndex/2))) : null
+                            ));
+                        }
+                    } 
+
+                    $yIndex = $yAxisIndex + 1;
+                    $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
                 } // if($yAxis == null)
 
                 $dataset = new TimeseriesDataset($query);
@@ -335,15 +353,16 @@ class PlotlyTimeseries2 extends Plotly2
                             'text' => '<b>' . $xAxisLabel . '</b>',
                             'font' => array(
                                 'color'=> '#000000',
-                                'size' => (12 + $font_size).'px'
+                                'size' => (12 + $font_size)
                             )
                         ),
                         'otitle' => $originalXAxisLabel,
                         'dtitle' => $defaultXAxisLabel,
                         'tickfont' => array(
-                            'size' => (11 + $font_size).'px'
+                            'size' => (11 + $font_size)
                         ),
-                        'linewidth' => 2 + $font_size / 4
+                        'linewidth' => 2 + $font_size / 4,
+                        'showgrid' => false,
                     );
                      $this->_chart['layout']['xaxis'] = $xAxis;
                 } // if(!isset($xAxis))
@@ -529,7 +548,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'zIndex' => $zIndex,
                             'drilldown' => $drilldown,
                             'marker' => array(
-                                'size' => 10,
+                                'size' => $font_size + 7,
                                 'color' => $color,
                                 'line' => array(
                                     'width' => 1,
@@ -537,7 +556,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 )
                             ),
                             'line' => array(
-                                'color' => $data_description->display_type == 'pie'? null: $color,
+                                'color' => $data_description->display_type == 'pie'? null: $lineColor,
                                 'dash' => $data_description->line_type,
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0
                             ),
@@ -545,17 +564,20 @@ class PlotlyTimeseries2 extends Plotly2
                             'mode' => $data_description->display_type == 'line' ? 'lines' : 'lines+markers',
                             'hoveron' => $data_description->display_type == 'area' ||
                                             $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
-                            'yaxis' => "y{$yAxisIndex}",
+                            'yaxis' => "y{$yIndex}",
                             'showlegend' => $data_description->display_type != 'pie',
                             'hovertemplate' => $tooltip,
                             'text' => $data_labels_enabled ? $yValues : null,
-                            'textposition' => 'top center',
+                            'textposition' => 'top right',
+                            'textfont' => array(
+                                'color' => $color
+                            ),
                             'x' => $xValues,
                             'y' => $yValues,
                             'seriesPoints' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
-                            'isRestrictedByRoles' => $data_description->restrictedByRoles
+                            'isRestrictedByRoles' => $data_description->restrictedByRoles,
                         ); // $data_series_desc
                         //throw new \Exception(json_encode($trace));
                         if($data_description->display_type!=='line')
