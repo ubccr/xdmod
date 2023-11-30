@@ -180,7 +180,6 @@ class MetricExplorer extends Common
             }
             // Called before and after configure.
             $chart->setLegend($legend_location, $font_size);
-            //throw new \Exception(json_encode($data_series));
             $chart->configure(
                 $data_series,
                 $x_axis,
@@ -481,7 +480,6 @@ class MetricExplorer extends Common
         if (!isset($this->request['x_axis']) || empty($this->request['x_axis'])) {
             return array();
         }
-
         if (is_array($this->request['x_axis'])) {
             $ret = new stdClass;
 

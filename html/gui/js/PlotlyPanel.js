@@ -32,7 +32,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         var self = this;
         var defaultOptions = {
             renderTo: this.id,
-            layout: getDefaultLayout(),
+            layout: {},
         }; 
 
         defaultOptions.renderTo = this.id;
@@ -73,8 +73,8 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
 
-                        var errorChartLayout = getNoDataErrorConfig();
-                        Plotly.relayout(this.baseChartOptions.renderTo, errorChartLayout);
+                        this.chartOptions.layout = getNoDataErrorConfig();
+                        Plotly.relayout(this.baseChartOptions.renderTo, this.chartOptions);
                     }
 
                 }, this);

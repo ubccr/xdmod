@@ -131,7 +131,7 @@ class Plotly2
                     ),
                     // Subtitle
                     array(
-                        'text' => 'Placeholder Subtitle text',
+                        'text' => '',
                         'xref' => 'paper',
                         'yref' => 'paper',
                         'xanchor' => 'center',

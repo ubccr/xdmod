@@ -665,7 +665,7 @@ class Usage extends Common
                 //
                 // Because the function doesn't receive a custom title, if any,
                 // from this adapter, the chart's subtitle is placed in the title.
-                $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['title']['text'];
+                $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['layout']['title']['text'];
 
                 // Generate the title and short title of this chart.
                 $usageChartShortTitle = $meRequestMetric->getName();

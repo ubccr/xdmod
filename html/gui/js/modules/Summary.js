@@ -653,6 +653,13 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                             if (help && help.dom) {
                                 help.dom.qtip = '<ul>' + dims + '</ul><hr/>' + '<ul>' + mets + '</ul>';
                             }
+
+                            const chart = store.getAt(0).get('data');
+
+                            if (chart.length === 0) {
+                                var errorConfig = getNoDataErrorConfig();
+                                Plotly.relayout(this.portlet.id, errorConfig);
+                            }
                         }, // load
 
                         exception: function (thisProxy, type, action, options, response, arg) {
