@@ -144,7 +144,9 @@ class Plotly2
                 'legend' => array(
                     'itemwidth' => 40,
                     'bgcolor' => '#FFFFFF',
-                    'borderwidth' => 0
+                    'borderwidth' => 0,
+                    'xref' => 'paper',
+                    'yref' => 'paper'
                 ),
                 'xaxis' => array(
                     'automargin' => true
@@ -534,7 +536,7 @@ class Plotly2
                 $this->_chart['layout']['legend']['xanchor'] = 'center';
                 $this->_chart['layout']['legend']['yanchor'] = 'bottom';
                 $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = -0.2;
+                $this->_chart['layout']['legend']['y'] = -0.5;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
         }
@@ -673,6 +675,7 @@ class Plotly2
                                 'size' => (12 + $font_size)
                         )
                 ),
+                'automargin' => true,
                 'otitle' => $originalXAxisLabel,
                 'dtitle' => $defaultXAxisLabel,
                 'tickfont' => array(
@@ -1164,6 +1167,24 @@ class Plotly2
                 // set stacking
                 if($data_description->display_type!=='line')
                 {
+                    if ($data_description->display_type=='area' && $traceIndex == 0) {
+                        $hidden_trace = array(
+                            'x' => $xValues,
+                            'y' => array_fill(0, count($xValues) , 0),
+                            'showlegend' => false,
+                            'marker' => array(
+                                'color' => '#FFFFFF'
+                            ),
+                            'line' => array(
+                                'color' => '#FFFFFF'
+                            ),
+                            'hoverinfo' => 'skip',
+                            'type' => 'scatter',
+                        );
+
+                        $this->_chart['data'][] = $hidden_trace;
+                    }
+
                     if ($data_description->combine_type=='side' && $data_description->display_type=='area') {
                         $trace['fill'] = 'tonexty';
                     }

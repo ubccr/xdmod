@@ -273,6 +273,7 @@ class PlotlyTimeseries2 extends Plotly2
                     $yAxisStep = 0.175;
 
                     $yAxis = array(
+                        'automargin' => true,
                         'title' => '<b>' . $yAxisLabel . '</b>', 
                         'titlefont' => array(
                                 'color'=> $yAxisColor,
@@ -347,7 +348,7 @@ class PlotlyTimeseries2 extends Plotly2
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
 
                     $xAxis = array(
-                        //'type' => 'datetime',
+                        'automargin' => true,
                         'ticklen' => 0,
                         'title' => array(
                             'text' => '<b>' . $xAxisLabel . '</b>',
@@ -385,7 +386,7 @@ class PlotlyTimeseries2 extends Plotly2
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 // @refer HighChart2 line 866
 
-                foreach($yAxisDataObjectsArray as $yAxisDataObject)
+                foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
                     //throw new \Exception(json_encode($yAxisDataObject));
                     if( $yAxisDataObject != null)
@@ -560,8 +561,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 'dash' => $data_description->line_type,
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0
                             ),
-                            'type' => $data_description->display_type == 'line' ? 'scatter' : $data_description->display_type,
-                            'mode' => $data_description->display_type == 'line' ? 'lines' : 'lines+markers',
+                            'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                             'hoveron' => $data_description->display_type == 'area' ||
                                             $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                             'yaxis' => "y{$yIndex}",
@@ -579,11 +579,35 @@ class PlotlyTimeseries2 extends Plotly2
                             'isRemainder' => $isRemainder,
                             'isRestrictedByRoles' => $data_description->restrictedByRoles,
                         ); // $data_series_desc
-                        //throw new \Exception(json_encode($trace));
+
+                        // Check type to adjust plot for current settings
+                        //if (
+
+
                         if($data_description->display_type!=='line')
                         {
+
+                            if ($data_description->display_type=='area' && $traceIndex == 0) {
+                                $hidden_trace = array(
+                                    'x' => $xValues,
+                                    'y' => array_fill(0, count($xValues) , 0),
+                                    'showlegend' => false,
+                                    'marker' => array(
+                                        'color' => '#FFFFFF'
+                                    ),
+                                    'line' => array(
+                                        'color' => '#FFFFFF'
+                                    ),
+                                    'hoverinfo' => 'skip',
+                                    'type' => 'scatter',
+                                );
+
+                                $this->_chart['data'][] = $hidden_trace;
+
+                            }
+
                             if ($data_description->combine_type=='side' && $data_description->display_type=='area'){
-                                $trace['fill'] = $yAxisIndex == 0 ? 'tozeroy' : 'tonexty';
+                                $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tonexty';
                             }
                             elseif($data_description->combine_type=='stack')
                             {
@@ -748,6 +772,8 @@ class PlotlyTimeseries2 extends Plotly2
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
+
+
 
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();

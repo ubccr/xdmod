@@ -120,7 +120,6 @@ class MetricExplorer extends Common
                 $data_series[] = $data_description;
             }
         }
-
         // Check that the user is allowed to view the datasets they have
         // requested. If they are not allowed to view any of them, throw an
         // exception indicating access is denied.
