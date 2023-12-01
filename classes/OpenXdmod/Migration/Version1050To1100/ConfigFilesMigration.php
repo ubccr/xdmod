@@ -53,7 +53,7 @@ the earliest database fact for the resource (e.g., earliest submitted job,
 earliest cloud VM start time, earliest storage entry start date, etc.).
 
 EOT;
-        $proceed = $console->promptBool('Are you ready to continue?');
+        $proceed = $console->promptBool('Are you ready to continue?', false);
 
         if (!$proceed) {
             $console->displayMessage("You have chosen not to proceed with the Open XDMoD upgrade. You have exited the XDMoD Upgrade process.");

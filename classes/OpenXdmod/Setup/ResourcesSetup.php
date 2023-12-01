@@ -151,13 +151,13 @@ class ResourcesSetup extends SubMenuSetupItem
 
         $this->resourceSpecs[] = array(
             'resource'            => $resource['resource'],
-            'cpu_processor_count' => $resource['cpu_processor_count'],
+            'start_date'          => $resource['start_date'],
             'cpu_node_count'      => $resource['cpu_node_count'],
+            'cpu_processor_count' => $resource['cpu_processor_count'],
             'cpu_ppn'             => $resource['cpu_ppn'],
-            'gpu_processor_count' => $resource['gpu_processor_count'],
             'gpu_node_count'      => $resource['gpu_node_count'],
-            'gpu_ppn'             => $resource['gpu_ppn'],
-            'start_date'          => $resource['start_date']
+            'gpu_processor_count' => $resource['gpu_processor_count'],
+            'gpu_ppn'             => $resource['gpu_ppn']
         );
     }
 

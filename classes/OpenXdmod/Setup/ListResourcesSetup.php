@@ -85,7 +85,7 @@ class ListResourcesSetup extends SetupItem
             $this->console->displayMessage('CPU Processor count: ' . $cpu_processors_message);
             $this->console->displayMessage('GPU Node count: ' . $gpu_nodes_message);
             $this->console->displayMessage('GPU Processor count: ' . $gpu_processors_message);
-            $this->console->displayMessage('Resource Start Date ' . $start_date_message);
+            $this->console->displayMessage('Resource Start Date: ' . $start_date_message);
             $this->console->displayMessage(str_repeat('-', 72));
             $this->console->displayBlankLine();
         }
@@ -107,8 +107,6 @@ class ListResourcesSetup extends SetupItem
         // end date timestamp is added to the specs for ease of
         // comparing the end date with that of other specs.
         $currentSpecs = array(
-            'cpu_node_count' => '',
-            'cpu_processor_count' => '',
             'end_date_ts' => 0,
         );
 

@@ -31,8 +31,8 @@
                 "gpu_cores_available": "SUM(r.gpu_processor_count)",
                 "cpu_nodes_available": "SUM(r.cpu_node_count)",
                 "gpu_nodes_available": "SUM(r.gpu_node_count)",
-                "core_time_available": "COALESCE(SUM(${wallduration} * r.cpu_processor_count * ra.percent / 100.0), 0)",
-                "gpu_time_available": "COALESCE(SUM(${wallduration} * r.gpu_processor_count * ra.percent / 100.0), 0)",
+                "core_time_available": "COALESCE(SUM(GREATEST(0, 1 + LEAST(r.end_date_ts, ${:PERIOD_END_TS}) - GREATEST(r.start_date_ts, ${:PERIOD_START_TS})) * r.cpu_processor_count * ra.percent / 100.0), 0)",
+                "gpu_time_available": "COALESCE(SUM(GREATEST(0, 1 + LEAST(r.end_date_ts, ${:PERIOD_END_TS}) - GREATEST(r.start_date_ts, ${:PERIOD_START_TS})) * r.gpu_processor_count * ra.percent / 100.0), 0)",
                 "su_available": "COALESCE(SUM(r.su_available_per_day), 0)",
                 "resourcetype_id": "COALESCE(rf.resourcetype_id, -1)",
                 "organization_id": "COALESCE(rf.organization_id, -1)",
@@ -82,18 +82,6 @@
             ],
             "where": [
               "(r.start_day_id <= ${:PERIOD_END_DAY_ID} AND r.end_day_id >= ${:PERIOD_START_DAY_ID})"
-          ],
-          "macros": [{
-              "name": "wallduration",
-              "file": "statistic_ratio_case.sql",
-              "args": {
-                  "statistic": "(r.end_date_ts - r.start_date_ts)",
-                  "max": "${:PERIOD_SECONDS}",
-                  "src_start_ts": "r.start_date_ts",
-                  "src_end_ts": "r.end_date_ts",
-                  "dest_start_ts": "${:PERIOD_START_TS}",
-                  "dest_end_ts": "${:PERIOD_END_TS}"
-              }
-          }]
+          ]
      }
 }
