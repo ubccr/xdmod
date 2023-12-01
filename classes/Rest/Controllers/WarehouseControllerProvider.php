@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use XDUser;
 use DataWarehouse\Access\MetricExplorer;
@@ -487,25 +487,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * throws and exception if the parameters are missing.
      * @param Request $request The request.
      * @return array decoded search parameters.
-     * @throws MissingMandatoryParametersException If the required parameters are absent.
+     * @throws BadRequestHttpException If the required 'data' parameter is
+     *                                 absent.
+     * @throws BadRequestException If the required 'data.text' parameter is
+     *                             absent.
      */
     private function getSearchParams(Request $request)
     {
-        $data = $request->get('data');
-
-        if (!isset($data)) {
-            throw new MissingMandatoryParametersException(
-                'Malformed request. Expected \'data\' to be present.',
-                400
-            );
-        }
+        $data = $this->getStringParam($request, 'data', true);
 
         $decoded = json_decode($data, true);
 
         if ($decoded === null || !isset($decoded['text']) ) {
-            throw new MissingMandatoryParametersException(
-                'Malformed request. Expected \'data.text\' to be present.',
-                400
+            throw new BadRequestException(
+                'Malformed request. Expected \'data.text\' to be present.'
             );
         }
 
@@ -576,7 +571,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app that will be used to complete the requested operation
      * @param int $id of the Search History Record to be updated.
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function updateHistory(Request $request, Application $app, $id)
@@ -617,7 +613,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app that will be used to complete the requested operation
      * @param int $id of the Search History Record to be removed.
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function deleteHistory(Request $request, Application $app, $id)
@@ -646,7 +643,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request $request that will be used to complete the requested operation
      * @param Application $app that will be used to complete the requested operation
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function deleteAllHistory(Request $request, Application $app)
@@ -705,7 +703,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function searchJobsByAction(Request $request, Application $app, $action)
