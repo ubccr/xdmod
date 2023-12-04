@@ -277,10 +277,6 @@ function main()
                 if ($datatypeValue == 'storage') {
                     $dwi->ingestStorageData();
                 }
-
-                if ($datatypeValue == 'cloudresourcespecs') {
-                    $dwi->ingestCloudResourceSpecs();
-                }
             }
 
             $aclstatus = 0;
@@ -313,7 +309,8 @@ function main()
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {
                 $dwi->aggregateStorageData($lastModifiedStartDate);
             }
-            if ($realmToAggregate == 'resourcespecs' || $realmToAggregate === false) {
+
+            if ($realmToAggregate == 'resourcespecs' || $realmToAggregate == 'job' || $realmToAggregate == 'cloud' || $realmToAggregate === false) {
                 $dwi->aggregateResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {
@@ -351,7 +348,7 @@ Usage: xdmod-ingestor [-v]
         Output debug level and above log messages.
 
     --aggregate[=*realm*]
-        If a *realm* (job, cloud, storage) is specified aggregate that realm
+        If a *realm* (job, cloud, storage, resourcespecs) is specified aggregate that realm
         otherwise aggregate all realms.
 
     --datatype *type*

@@ -70,15 +70,22 @@ class ListResourcesSetup extends SetupItem
                 }
             }
 
+            $cpu_nodes_message = isset($specs['cpu_node_count']) ? $specs['cpu_node_count'] : "No value available for CPU Node Count. Please update the resource_specs.json file";
+            $cpu_processors_message = isset($specs['cpu_processor_count']) ? $specs['cpu_processor_count'] : "No value available for CPU Processor Count. Please update the resource_specs.json file";
+            $gpu_nodes_message = isset($specs['gpu_node_count']) ? $specs['gpu_node_count'] : "No value available for GPU Node Count. Please update the resource_specs.json file";
+            $gpu_processors_message = isset($specs['gpu_processor_count']) ? $specs['gpu_processor_count'] : "No value available for GPU Processor Count. Please update the resource_specs.json file";
+            $start_date_message = isset($specs['start_date']) ? $specs['start_date'] : "No value available for Start Date. Please update the resource_specs.json file";
+
+
             $this->console->displayMessage('Resource: ' . $resource['resource']);
             $this->console->displayMessage('Name: ' . $resource['name']);
             $this->console->displayMessage('Type: ' . $resourceType);
             $this->console->displayMessage('Resource Allocation Type: ' . $resourceAllocationType);
-            $this->console->displayMessage('CPU Node count: ' . $specs['cpu_node_count']);
-            $this->console->displayMessage('CPU Processor count: ' . $specs['cpu_processor_count']);
-            $this->console->displayMessage('GPU Node count: ' . $specs['gpu_node_count']);
-            $this->console->displayMessage('GPU Processor count: ' . $specs['gpu_processor_count']);
-            $this->console->displayMessage('Resource Start Date ' . $specs['start_date']);
+            $this->console->displayMessage('CPU Node count: ' . $cpu_nodes_message);
+            $this->console->displayMessage('CPU Processor count: ' . $cpu_processors_message);
+            $this->console->displayMessage('GPU Node count: ' . $gpu_nodes_message);
+            $this->console->displayMessage('GPU Processor count: ' . $gpu_processors_message);
+            $this->console->displayMessage('Resource Start Date: ' . $start_date_message);
             $this->console->displayMessage(str_repeat('-', 72));
             $this->console->displayBlankLine();
         }
@@ -100,8 +107,6 @@ class ListResourcesSetup extends SetupItem
         // end date timestamp is added to the specs for ease of
         // comparing the end date with that of other specs.
         $currentSpecs = array(
-            'nodes' => '',
-            'processors' => '',
             'end_date_ts' => 0,
         );
 

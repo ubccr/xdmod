@@ -45,8 +45,8 @@
             "description": "Resource specifications start date (YYYY-MM-DD)"
         },
         "end_date": {
-            "type": "string",
-            "format": ["date", "null"],
+            "type": ["string", "null"],
+            "format": "date",
             "description": "Resource specifications end date (YYYY-MM-DD)"
         },
         "percent_allocated": {

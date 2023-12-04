@@ -72,7 +72,6 @@
                 "name": "percent_allocated",
                 "type": "int(10) unsigned",
                 "nullable": true,
-                "default": 100,
                 "comment": "Percentage of resource to include in utilization metric calculation"
             },
             {

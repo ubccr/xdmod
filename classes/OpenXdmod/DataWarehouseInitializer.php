@@ -361,8 +361,6 @@ class DataWarehouseInitializer
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
 
-        $this->aggregateResourceSpecs($lastModifiedStartDate);
-
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
         $filterListBuilder->buildRealmLists('Cloud');
@@ -444,8 +442,6 @@ class DataWarehouseInitializer
             $this->logger->notice('Jobs realm not enabled, not aggregating');
             return;
         }
-
-        $this->aggregateResourceSpecs($lastModifiedStartDate);
 
         Utilities::runEtlPipeline(
             array('jobs-xdw-aggregate'),

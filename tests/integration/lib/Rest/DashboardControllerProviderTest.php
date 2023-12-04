@@ -133,4 +133,67 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
 
         return $data;
     }
+
+    /**
+     * @dataProvider provideSetViewedUserTour
+     */
+    public function testSetViewedUserTour($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideSetViewedUserTour()
+    {
+        $validInput = [
+            'path' => 'rest/dashboard/viewedUserTour',
+            'method' => 'post',
+            'params' => null,
+            'data' => ['viewedTour' => '0']
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['viewedTour']
+            ]
+        );
+        // Test bad request parameters.
+        $tests[] = [
+            'invalid_data_parameter',
+            'usr',
+            parent::mergeParams(
+                $validInput,
+                'data',
+                ['viewedTour' => '-1']
+            ),
+            parent::validateBadRequestResponse('Invalid data parameter', 0)
+        ];
+        // Test successful requests.
+        foreach ([1, 0] as $viewedTour) {
+            $tests[] = [
+                'success_' . $viewedTour,
+                'usr',
+                parent::mergeParams(
+                    $validInput,
+                    'data',
+                    ['viewedTour' => "$viewedTour"]
+                ),
+                parent::validateSuccessResponse([
+                    'success' => true,
+                    'total' => 1,
+                    'msg' => [
+                        'viewedTour' => $viewedTour,
+                        'recordid' => 0
+                    ]
+                ])
+            ];
+        }
+        return $tests;
+    }
 }

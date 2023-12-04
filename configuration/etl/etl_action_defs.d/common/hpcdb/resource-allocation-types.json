@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "${table_definition_dir}/common/hpcdb/resource-allocation-type.json#/table_definition"
+        "$ref": "${table_definition_dir}/common/hpcdb/resource-allocation-types.json#/table_definition"
     },
     "source_query": {
         "records": {

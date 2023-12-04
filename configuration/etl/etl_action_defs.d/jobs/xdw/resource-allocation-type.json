@@ -11,7 +11,7 @@
         "joins": [
             {
                 "schema": "${SOURCE_SCHEMA}",
-                "name": "hpcdb_resource_allocation_type",
+                "name": "hpcdb_resource_allocation_types",
                 "alias": "rat"
             }
         ]
