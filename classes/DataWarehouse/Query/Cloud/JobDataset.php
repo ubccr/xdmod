@@ -56,7 +56,6 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'resource_id'), '=', $parameters['resource_id']));
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'provider_identifier'), '=', $parameters['job_identifier']));
         } elseif (isset($parameters['start_date']) && isset($parameters['end_date'])) {
-            date_default_timezone_set('UTC');
             $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
             $startDateTs = mktime(0, 0, 0, $startDate['month'], $startDate['day'], $startDate['year']);
 
