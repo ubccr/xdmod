@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\ComponentTests
  * @author Greg Dean <gmdean@buffalo.edu>
  */
 

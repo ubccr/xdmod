@@ -3,7 +3,7 @@
 namespace IntegrationTests\Rest;
 
 use IntegrationTests\BaseTest;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class AdminControllerProviderTest extends BaseTest
 {

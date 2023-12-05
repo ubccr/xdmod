@@ -1,10 +1,9 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage TestHarness
- */
 
-namespace TestHarness;
+namespace RegressionTests\TestHarness;
+
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**
  * Everything you need to test for regressions.
@@ -199,7 +198,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * If no role is specified the role from the environment variable
      * REG_TEST_USER_ROLE will be used.
      *
-     * @see \TestHarness\XdmodTestHelper::authenticate()
+     * @see XdmodTestHelper::authenticate()
      * @param string $userrole The user's role.
      */
     public function authenticate($userrole = null)

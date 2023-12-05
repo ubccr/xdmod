@@ -1,8 +1,9 @@
 <?php
 
-namespace IntegrationTests\Controllers;
+namespace IntegrationTests\Rest;
 
 use CCR\Json;
+use IntegrationTests\Controllers\BaseUserAdminTest;
 use Models\Services\Realms;
 
 class DashboardControllerProviderTest extends BaseUserAdminTest
