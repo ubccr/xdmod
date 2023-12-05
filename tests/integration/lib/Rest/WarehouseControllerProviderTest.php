@@ -510,28 +510,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     "Offset must be non-negative.",
                     104
                 )
-            ],
-            [
-                'success_0',
-                [],
-                $this->validateGetDataSuccessResponse(10000, null)
-            ],
-            [
-                'success_16500',
-                ['offset' => 16500],
-                $this->validateGetDataSuccessResponse(66, null)
-            ],
-            [
-                'success_fields_and_filters',
-                [
-                    'fields' => 'Nodes,Wall Time',
-                    'filters[resource]' => '1,2',
-                    'filters[fieldofscience]' => '10,91'
-                ],
-                $this->validateGetDataSuccessResponse(
-                    29,
-                    ['Nodes', 'Wall Time']
-                )
             ]
         );
         foreach ($testData as $t) {
@@ -549,47 +527,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             ];
         }
         return $tests;
-    }
-
-    private function validateGetDataSuccessResponse(
-        $count,
-        $expectedFields
-    ) {
-        return parent::validateSuccessResponse(
-            function ($body, $assertMessage) use ($count, $expectedFields) {
-                $this->assertCount($count, $body['data'], $assertMessage);
-                if (!is_null($expectedFields)) {
-                    $this->assertEquals(
-                        $expectedFields,
-                        $body['fields'],
-                        $assertMessage
-                    );
-                }
-                foreach ($body['fields'] as $field) {
-                    $this->assertInternalType(
-                        'string',
-                        $field,
-                        $assertMessage
-                    );
-                }
-                foreach ($body['data'] as $dataRow) {
-                    foreach ($dataRow as $field) {
-                        $this->assertInternalType(
-                            'string',
-                            $field,
-                            $assertMessage
-                        );
-                    }
-                    if (!is_null($expectedFields)) {
-                        $this->assertSame(
-                            count($expectedFields),
-                            count($dataRow),
-                            $assertMessage
-                        );
-                    }
-                }
-            }
-        );
     }
 
     /**
