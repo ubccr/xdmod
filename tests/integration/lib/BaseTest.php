@@ -135,6 +135,49 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Make an HTTP request and return data about the response.
+     *
+     * @param XdmodTestHelper $testHelper used to make the request.
+     * @param array $input describes the HTTP request. Required keys:
+     *                     - 'path': the URL path to the HTTP endpoint (e.g.,
+     *                               '/rest/...').
+     *                     - 'method': the HTTP method, either 'get', 'post',
+     *                                 'delete', or 'patch'.
+     *                     - 'params': associative array of query parameters.
+     *                     - 'data': associative array of request body data.
+     * @return array element 0 is the response body, element 1 is the return of
+     *               curl_getinfo(), and element 2 is the array of response
+     *               headers.
+     * @throws Exception if the input array does not contain all of the
+     *                   required keys or if there is an error making the
+     *                   request.
+     */
+    public static function makeHttpRequest(
+        XdmodTestHelper $testHelper,
+        array $input
+    ) {
+        $method = $input['method'];
+        switch ($method) {
+            case 'get':
+                $response = $testHelper->$method(
+                    $input['path'],
+                    $input['params']
+                );
+                break;
+            case 'post':
+            case 'delete':
+            case 'patch':
+                $response = $testHelper->$method(
+                    $input['path'],
+                    $input['params'],
+                    $input['data']
+                );
+                break;
+        }
+        return $response;
+    }
+
+    /**
      * Make an HTTP request and make assertions about the JSON response's
      * status code, content type, body, and possibly headers.
      *
@@ -180,24 +223,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $actualHeaders = [];
 
         // Make HTTP request.
-        $method = $input['method'];
-        switch ($method) {
-            case 'get':
-                $response = $testHelper->$method(
-                    $input['path'],
-                    $input['params']
-                );
-                break;
-            case 'post':
-            case 'delete':
-            case 'patch':
-                $response = $testHelper->$method(
-                    $input['path'],
-                    $input['params'],
-                    $input['data']
-                );
-                break;
-        }
+        $response = self::makeHttpRequest($testHelper, $input);
 
         // Set response variables.
         if (isset($response)) {

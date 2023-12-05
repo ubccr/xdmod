@@ -53,6 +53,23 @@ abstract class TokenAuthTest extends BaseTest
     }
 
     /**
+     * Same as BaseTest::makeHttpRequest() but with an API token for the
+     * given user role added to the request header.
+     */
+    public static function makeHttpRequestWithValidToken(
+        XdmodTestHelper $testHelper,
+        array $input,
+        $role
+    ) {
+        $token = self::getToken('valid_token', $role);
+        $testHelper->addheader(
+            'Authorization',
+            Tokens::HEADER_KEY . ' ' . $token
+        );
+        return BaseTest::makeHttpRequest($testHelper, $input);
+    }
+
+    /**
      * Make an HTTP request to an endpoint involving API token authentication
      * and validate the response.
      *
