@@ -7,7 +7,7 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\Configuration;
+namespace UnitTests\ETL\JsonPointer;
 
 use CCR\Log;
 use ETL\JsonPointer;

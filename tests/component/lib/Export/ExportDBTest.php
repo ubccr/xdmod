@@ -1,8 +1,9 @@
 <?php
 
-namespace ComponentTests;
+namespace ComponentTests\Export;
 
 use CCR\DB;
+use ComponentTests\BaseTest;
 use \Exception;
 use \DataWarehouse\Export\QueryHandler;
 use \XDUser;

@@ -1,6 +1,6 @@
 <?php
 
-namespace TestHarness;
+namespace IntegrationTests\TestHarness;
 
 class UsageExplorerHelper
 {

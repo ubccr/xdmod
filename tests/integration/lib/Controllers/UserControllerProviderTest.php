@@ -7,8 +7,8 @@ use Exception;
 use IntegrationTests\TokenAuthTest;
 use Models\Services\Tokens;
 use stdClass;
-use TestHarness\Utilities;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class UserControllerProviderTest extends BaseUserAdminTest
 {

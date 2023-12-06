@@ -1,10 +1,11 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage TestHarness
- */
 
-namespace TestHarness;
+namespace RegressionTests\TestHarness;
+
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
+
+use IntegrationTests\TokenAuthTest;
 
 /**
  * Everything you need to test for regressions.
@@ -199,7 +200,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * If no role is specified the role from the environment variable
      * REG_TEST_USER_ROLE will be used.
      *
-     * @see \TestHarness\XdmodTestHelper::authenticate()
+     * @see XdmodTestHelper::authenticate()
      * @param string $userrole The user's role.
      */
     public function authenticate($userrole = null)
@@ -421,7 +422,42 @@ class RegressionTestHelper extends XdmodTestHelper
         }
 
         // Artifact generation mode below (REG_TEST_FORCE_GENERATION=1).
+        return $this->generateArtifact(
+            $testName,
+            $fullTestName,
+            $csvdata,
+            (
+                "$datasetType-$aggUnit-"
+                . ($userRole == 'public' ? 'reference' : $userRole)
+                . '.csv'
+            ),
+            "$datasetType-$aggUnit-reference.csv"
+        );
+    }
 
+    /**
+     * Output a test artifact file containing the given data.
+     *
+     * @param string $testName directory containing the test artifact file.
+     * @param string $fullTestName name of the test, output by PHPUnit when it
+     *                             throws the SkippedTestError.
+     * @param string $data data to print to the file.
+     * @param string $outputFileName name of the test artifact file.
+     * @param string|null $referenceFileName name of the reference file.
+     * @return bool true if the reference file exists and already contains the
+     *              specified data.
+     * @throws \PHPUnit_Framework_SkippedTestError if the reference file does
+     *                                             not exist or does not
+     *                                             already contain the
+     *                                             specified data.
+     */
+    private function generateArtifact(
+        $testName,
+        $fullTestName,
+        $data,
+        $outputFileName,
+        $referenceFileName = null
+    ) {
         // Using host name in output directory for federation.
         $endpoint = parse_url(self::getSiteUrl());
         $outputDir = implode(
@@ -434,18 +470,241 @@ class RegressionTestHelper extends XdmodTestHelper
         }
 
         $outputDir = realpath($outputDir);
-        $referenceFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-reference.csv';
+        $referenceFile = implode(
+            DIRECTORY_SEPARATOR,
+            [$outputDir, $referenceFileName]
+        );
 
         if (file_exists($referenceFile)) {
             $reference = file_get_contents($referenceFile);
-            if ($reference === $csvdata) {
+            if ($reference === $data) {
                 return true;
             }
         }
 
-        $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . ($userRole == 'public' ? 'reference' : $userRole) . '.csv';
-        file_put_contents($outputFile, $csvdata);
-        throw new \PHPUnit_Framework_SkippedTestError('Created Expected output for ' . $fullTestName);
+        $outputFile = implode(
+            DIRECTORY_SEPARATOR,
+            [$outputDir, $outputFileName]
+        );
+        file_put_contents($outputFile, $data);
+        throw new \PHPUnit_Framework_SkippedTestError(
+            "Created Expected output for $fullTestName"
+        );
+    }
+
+    /**
+     * Get an array of parameters that can be passed to a raw data regression
+     * test so that multiple realms can be tested, both with and without
+     * filters.
+     *
+     * @param array $realmParams associative array of realms (values from the
+     *                           XDMOD_REALMS environment variable), each of
+     *                           whose value is an associative array with two
+     *                           required keys, each of whose values are query
+     *                           parameters for HTTP requests to the raw data
+     *                           endpoint: 'base' which does not contain
+     *                           'fields' or 'filters' parameters, and
+     *                           'fields_and_filters' which contains the
+     *                           'fields' and 'filters' parameters that are
+     *                           added onto the base parameters.
+     * @return array of arrays, each of which contains a string test name and
+     *         an associative array that can be used as an input to the
+     *         self::checkRawData() method.
+     */
+    public static function getRawDataTestParams(array $realmParams)
+    {
+        $baseInput = [
+            'path' => 'rest/warehouse/raw-data',
+            'method' => 'get',
+            'data' => null
+        ];
+        $realms = Utilities::getRealmsToTest();
+        $testParams = [];
+        foreach ($realmParams as $realm => $params) {
+            if (in_array($realm, $realms)) {
+                $testParams[] = [
+                    "$realm.json",
+                    array_merge(
+                        $baseInput,
+                        ['params' => $params['base']]
+                    )
+                ];
+                $testParams[] = [
+                    "$realm-fields-and-filters.json",
+                    array_merge(
+                        $baseInput,
+                        ['params' => array_merge(
+                            $params['base'],
+                            $params['fields_and_filters']
+                        )]
+                    )
+                ];
+            }
+        }
+        return $testParams;
+    }
+
+    /**
+     * Make a request to the warehouse raw data endpoint, and either save the
+     * result in a test artifact file (if REG_TEST_FORCE_GENERATION is set) or
+     * otherwise compare the result to an existing test artifact file.
+     *
+     * @param string $testName name of test artifact file not including the
+     *                         `.json` extension.
+     * @param array $input describes the HTTP request,
+     *                     @see BaseTest::makeHttpRequest().
+     * @return bool true if the test artifact file already exists and
+     *              contains the response body from the HTTP request.
+     * @throws \PHPUnit_Framework_SkippedTestError if REG_TEST_USER_ROLE is
+     *                                             not set or if
+     *                                             REG_TEST_FORCE_GENERATION is
+     *                                             set and the test artifact
+     *                                             file was successfully
+     *                                             created.
+     * @throws \PHPUnit_Framework_ExpectationFailedException
+     *                                             if REG_TEST_FORCE_GENERATION
+     *                                             is not set and the HTTP
+     *                                             response body does not match
+     *                                             the contents of the test
+     *                                             artifact file.
+     */
+    public function checkRawData($testName, array $input)
+    {
+        $role = self::getEnvUserrole();
+        if ('public' === $role) {
+            throw new \PHPUnit_Framework_SkippedTestError(
+                'Raw data test cannot be performed with public user.'
+            );
+        }
+        $response = TokenAuthTest::makeHttpRequestWithValidToken(
+            $this,
+            $input,
+            $role
+        );
+        $data = json_encode($response[0]) . "\n";
+        $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
+        if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
+            return $this->generateArtifact(
+                'raw-data',
+                $testName,
+                $data,
+                $testName
+            );
+        } else {
+            $expectedFile = implode(
+                DIRECTORY_SEPARATOR,
+                [
+                    self::getBaseDir(),
+                    'expected',
+                    'reference',
+                    'raw-data',
+                    $testName
+                ]
+            );
+            $expected = file_get_contents($expectedFile);
+            $expected = preg_replace(
+                self::$replaceRegex,
+                self::$replacements,
+                $expected
+            );
+            if ($expected === $data) {
+                return true;
+            }
+            $differences = [];
+            self::compareJsonData(
+                $differences,
+                '/',
+                json_decode($expected, true),
+                json_decode($data, true)
+            );
+            throw new \PHPUnit_Framework_ExpectationFailedException(
+                sprintf(
+                    (
+                        "%d difference"
+                        . (1 === count($differences) ? '' : 's')
+                        . ":\n\t%s"
+                    ),
+                    count($differences),
+                    implode("\n\t", $differences)
+                )
+            );
+        }
+    }
+
+    /**
+     * Recursively compare an expected JSON value to an actual JSON value,
+     * updating a list of differences between the two.
+     *
+     * @param array $differences list of differences.
+     * @param string $path used to refer to the JSON value relative to the root
+     *                     JSON object, e.g., if '/' refers to the root,
+     *                     '/->foo' refers to a property within the object
+     *                     called 'foo', '/->foo->bar' refers to a 'bar'
+     *                     property of the 'foo' object, etc.
+     * @param mixed $expected the expected JSON value.
+     * @param mixed $actual the actual JSON value.
+     * @return null
+     */
+    private static function compareJsonData(
+        array &$differences,
+        $path,
+        $expected,
+        $actual
+    ) {
+        if (is_array($expected) && is_array($actual)) {
+            self::compareJsonArrays($differences, $path, $expected, $actual);
+        } elseif (is_array($expected) && !is_array($actual)) {
+            $differences[] = (
+                "Expected array but got value '"
+                . var_export($actual, true) . "' for property: $path"
+            );
+        } elseif (!is_array($expected) && is_array($actual)) {
+            $differences[] = (
+                "Expected value '" . var_export($expected, true)
+                . "' but got array for property: $path"
+            );
+        } elseif ($expected !== $actual) {
+            $differences[] = (
+                "Expected value '" . var_export($expected, true)
+                . "' but got value '" . var_export($actual, true)
+                . "' for property: $path"
+            );
+        }
+    }
+
+    /**
+     * Same as self::compareJsonData() but specifically for the case where both
+     * the expected and actual values are known to be arrays.
+     */
+    private static function compareJsonArrays(
+        array &$differences,
+        $path,
+        array $expected,
+        array $actual
+    ) {
+        foreach ($expected as $key => $value) {
+            if (!array_key_exists($key, $actual)) {
+                $differences[] = (
+                    'Missing ' . (is_numeric($key) ? 'item' : 'key')
+                    . ": $path->$key"
+                );
+            } else {
+                self::compareJsonData(
+                    $differences,
+                    "$path->$key",
+                    $value,
+                    $actual[$key]
+                );
+            }
+        }
+        foreach ($actual as $key => $value) {
+            if (!array_key_exists($key, $expected)) {
+                $differences[] = (
+                    'Extra ' . (is_numeric($key) ? 'item' : 'key')
+                    . ": $path->$key"
+                );
+            }
+        }
     }
 
     /**

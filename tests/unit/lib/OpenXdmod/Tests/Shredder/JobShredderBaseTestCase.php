@@ -3,14 +3,14 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests\Shredder;
+namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
 use Exception;
 use CCR\Log;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Base class for job shredder test classes.
@@ -18,12 +18,12 @@ use TestHarness\TestFiles;
 abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \TestHarness\TestFiles
+     * @var TestFiles
      */
     private $testFiles;
 
     /**
-     * @var \CCR\DB\NullDB
+     * @var NullDB
      */
     protected $db;
 
@@ -42,7 +42,7 @@ abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \TestHarness\TestFiles
+     * @return TestFiles
      */
     protected function getTestFiles()
     {

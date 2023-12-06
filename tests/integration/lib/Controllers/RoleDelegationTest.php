@@ -13,8 +13,6 @@ use CCR\Json;
  *     their center.
  *   - demote users that are 'Center Staff' for their center via removing the
  *     'Center Staff' acl that is affiliated with their center.
- *
- * @package IntegrationTests\Controllers
  */
 class RoleDelegationTest extends BaseUserAdminTest
 {

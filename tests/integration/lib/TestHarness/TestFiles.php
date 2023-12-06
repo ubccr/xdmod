@@ -1,6 +1,6 @@
 <?php
 
-namespace TestHarness;
+namespace IntegrationTests\TestHarness;
 
 use CCR\Json;
 
