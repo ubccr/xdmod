@@ -1,10 +1,6 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage Tests
- */
 
-namespace Rest;
+namespace RegressionTests\Rest;
 
 use IntegrationTests\BaseTest;
 use RegressionTests\TestHarness\RegressionTestHelper;
