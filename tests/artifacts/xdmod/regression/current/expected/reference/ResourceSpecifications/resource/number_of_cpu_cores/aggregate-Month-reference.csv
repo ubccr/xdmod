@@ -6,9 +6,9 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Resource,"Number of CPU Cores"
-frearson,8000
-mortorq,8000
-phillips,8000
-pozidriv,8000
-robertson,8000
+robertson,204000
+pozidriv,168000
+phillips,164000
+mortorq,148000
+frearson,144000
 ---------

@@ -2,7 +2,7 @@
     "+realms": [
       {
         "name": "ResourceSpecifications",
-        "display": "Resource Specifications"
+        "display": "ResourceSpecifications"
       }
     ],
     "ResourceSpecifications": {

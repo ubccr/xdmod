@@ -26,14 +26,14 @@
                 "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
-                "resource_id": "r.resource_id",
-                "cpu_cores_available": "SUM(r.cpu_processor_count)",
-                "gpu_cores_available": "SUM(r.gpu_processor_count)",
-                "cpu_nodes_available": "SUM(r.cpu_node_count)",
-                "gpu_nodes_available": "SUM(r.gpu_node_count)",
-                "core_time_available": "COALESCE(SUM(GREATEST(0, 1 + LEAST(r.end_date_ts, ${:PERIOD_END_TS}) - GREATEST(r.start_date_ts, ${:PERIOD_START_TS})) * r.cpu_processor_count * ra.percent / 100.0), 0)",
-                "gpu_time_available": "COALESCE(SUM(GREATEST(0, 1 + LEAST(r.end_date_ts, ${:PERIOD_END_TS}) - GREATEST(r.start_date_ts, ${:PERIOD_START_TS})) * r.gpu_processor_count * ra.percent / 100.0), 0)",
-                "su_available": "COALESCE(SUM(r.su_available_per_day), 0)",
+                "record_resource_id": "r.resource_id",
+                "cpu_cores_available": "SUM(IF((${resource_specs_duration}) / 86400 > 0, (${resource_specs_duration}) / 86400, 1) * r.cpu_processor_count)",
+                "gpu_cores_available": "SUM(IF((${resource_specs_duration}) / 86400 > 0, (${resource_specs_duration}) / 86400, 1) * r.gpu_processor_count)",
+                "cpu_nodes_available": "SUM(IF((${resource_specs_duration}) / 86400 > 0, (${resource_specs_duration}) / 86400, 1) * r.cpu_node_count)",
+                "gpu_nodes_available": "SUM(IF((${resource_specs_duration}) / 86400 > 0, (${resource_specs_duration}) / 86400, 1) * r.gpu_node_count)",
+                "core_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_processor_count * ra.percent / 100.0), 0)",
+                "gpu_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_processor_count * ra.percent / 100.0), 0)",
+                "su_available": "COALESCE(SUM(IF((${resource_specs_duration}) / 86400 > 0, (${resource_specs_duration}) / 86400, 1) * r.su_available_per_day), 0)",
                 "resourcetype_id": "COALESCE(rf.resourcetype_id, -1)",
                 "organization_id": "COALESCE(rf.organization_id, -1)",
                 "resource_state_id": "COALESCE(org.state_id, -1)",
@@ -46,7 +46,7 @@
               "${AGGREGATION_UNIT}_id",
               "year",
               "${AGGREGATION_UNIT}",
-              "resource_id",
+              "record_resource_id",
               "resourcetype_id",
               "organization_id",
               "resource_state_id",
@@ -82,6 +82,10 @@
             ],
             "where": [
               "(r.start_day_id <= ${:PERIOD_END_DAY_ID} AND r.end_day_id >= ${:PERIOD_START_DAY_ID})"
-          ]
-     }
+            ],
+            "macros": [{
+                "name": "resource_specs_duration",
+                "file": "resource_specs_time_diff.sql"
+            }]
+        }
 }

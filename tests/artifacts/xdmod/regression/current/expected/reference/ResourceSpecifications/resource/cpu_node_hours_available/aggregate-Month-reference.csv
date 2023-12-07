@@ -6,9 +6,9 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Resource,"CPU Node Hours Available"
-robertson,6120.00000000
-pozidriv,5040.00000000
-phillips,4920.00000000
-mortorq,4440.00000000
-frearson,4320.00000000
+robertson,489600
+pozidriv,403200
+phillips,393600
+mortorq,355200
+frearson,345600
 ---------

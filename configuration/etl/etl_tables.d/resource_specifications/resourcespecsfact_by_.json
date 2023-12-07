@@ -21,7 +21,7 @@
                 "nullable": false,
                 "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
             },{
-                "name": "resource_id",
+                "name": "record_resource_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: The resource the specification is for."
@@ -96,7 +96,7 @@
         "indexes": [
             {
                 "name": "index_resource",
-                "columns": [ "resource_id" ]
+                "columns": [ "record_resource_id" ]
             },{
                 "name": "index_period_value",
                 "columns": [ "${AGGREGATION_UNIT}" ]

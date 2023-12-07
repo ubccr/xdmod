@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[frearson] Number of CPU Nodes","[mortorq] Number of CPU Nodes","[phillips] Number of CPU Nodes","[pozidriv] Number of CPU Nodes","[robertson] Number of CPU Nodes"
-2016-12,400,400,400,400,400
-2017-01,400,400,400,400,400
+Month,"[robertson] Number of CPU Nodes","[pozidriv] Number of CPU Nodes","[phillips] Number of CPU Nodes","[mortorq] Number of CPU Nodes","[frearson] Number of CPU Nodes"
+2016-12,8000,4400,4000,2400,2000
+2017-01,12400,12400,12400,12400,12400
 ---------

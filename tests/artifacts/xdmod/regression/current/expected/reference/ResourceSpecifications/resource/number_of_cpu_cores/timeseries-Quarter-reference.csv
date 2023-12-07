@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[frearson] Number of CPU Cores","[mortorq] Number of CPU Cores","[phillips] Number of CPU Cores","[pozidriv] Number of CPU Cores","[robertson] Number of CPU Cores"
-"2016 Q4",4000,4000,4000,4000,4000
-"2017 Q1",4000,4000,4000,4000,4000
+Quarter,"[robertson] Number of CPU Cores","[pozidriv] Number of CPU Cores","[phillips] Number of CPU Cores","[mortorq] Number of CPU Cores","[frearson] Number of CPU Cores"
+"2016 Q4",80000,44000,40000,24000,20000
+"2017 Q1",360000,360000,360000,360000,360000
 ---------

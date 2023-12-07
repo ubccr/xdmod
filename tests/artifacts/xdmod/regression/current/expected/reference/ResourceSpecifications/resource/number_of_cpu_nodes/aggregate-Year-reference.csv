@@ -6,9 +6,9 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Resource,"Number of CPU Nodes"
-frearson,800
-mortorq,800
-phillips,800
-pozidriv,800
-robertson,800
+robertson,154000
+pozidriv,150400
+phillips,150000
+mortorq,148400
+frearson,148000
 ---------

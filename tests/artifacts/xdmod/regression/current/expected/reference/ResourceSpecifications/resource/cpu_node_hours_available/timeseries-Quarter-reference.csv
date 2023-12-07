@@ -6,6 +6,6 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Quarter,"[robertson] CPU Node Hours Available","[pozidriv] CPU Node Hours Available","[phillips] CPU Node Hours Available","[mortorq] CPU Node Hours Available","[frearson] CPU Node Hours Available"
-"2016 Q4",4800.00000000,2640.00000000,2400.00000000,1440.00000000,1200.00000000
-"2017 Q1",21600.00000000,21600.00000000,21600.00000000,21600.00000000,21600.00000000
+"2016 Q4",192000,105600,96000,57600,48000
+"2017 Q1",864000,864000,864000,864000,864000
 ---------
