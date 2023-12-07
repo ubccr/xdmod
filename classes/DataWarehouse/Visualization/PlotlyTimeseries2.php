@@ -284,7 +284,9 @@ class PlotlyTimeseries2 extends Plotly2
                         'tickfont' => array(
                             'size' => (11 + $font_size)
                         ),
-                        'type' => $data_description->log_scale? 'logarithmic' : 'linear',
+                        'type' => $data_description->log_scale? 'log' : 'linear',
+                        'rangemode' => 'tozero',
+                        'autorange' => true,
                         'separatethousands' => true,
                         'overlaying' => $yAxisIndex == 0 ? null : 'y',
                         'linewidth' => 2 + $font_size / 4,
@@ -346,7 +348,6 @@ class PlotlyTimeseries2 extends Plotly2
                     $start_ts = strtotime($this->_startDate)*1000;
                     $end_ts = strtotime($this->_endDate)*1000;
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
-
                     $xAxis = array(
                         'automargin' => true,
                         'ticklen' => 0,
@@ -362,6 +363,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'tickfont' => array(
                             'size' => (11 + $font_size)
                         ),
+                        'rangemode' => 'tozero',
                         'linewidth' => 2 + $font_size / 4,
                         'showgrid' => false,
                     );
@@ -547,6 +549,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
+                            'cliponaxis' => false,
                             'drilldown' => $drilldown,
                             'marker' => array(
                                 'size' => $font_size + 7,
@@ -556,6 +559,7 @@ class PlotlyTimeseries2 extends Plotly2
                                     'color' => $lineColor
                                 )
                             ),
+                            'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                             'line' => array(
                                 'color' => $data_description->display_type == 'pie'? null: $lineColor,
                                 'dash' => $data_description->line_type,
@@ -614,11 +618,13 @@ class PlotlyTimeseries2 extends Plotly2
                                 // ask the highcharts library to connect nulls for stacking
                                 $trace['stackgroup'] = 'one';
                                 $trace['stackgaps'] = 'interpolate';
+                                $this->_chart['layout']['barmode'] = 'stack';
                             }
                             elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
                                 $trace['stackgroup'] = 'one';
                                 $trace['stackgaps'] = 'interpolate';
+                                $this->_chart['layout']['barmode'] = 'relative';
                                 $trace['groupnorm'] = 'percent';
                             }
                         }

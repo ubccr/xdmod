@@ -2726,8 +2726,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
                                 const drillInfo = point.data.drilldown;
                                 if (drillInfo[0]) {
-                                    drillId = drillInfo[point.i].id;
-                                    label = drillInfo[point.i].label;
+                                    drillId = drillInfo[point.pointIndex].id;
+                                    label = drillInfo[point.pointIndex].label;
                                 }
                                 else {
                                     drillId = drillInfo.id;
