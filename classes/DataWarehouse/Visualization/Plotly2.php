@@ -1109,8 +1109,7 @@ class Plotly2
                 }
                 else
                 {
-                    $tooltip = '%{x}' . '<br> <span style="color:' . $color
-                            . ';">●</span> ' . $lookupDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
+                    $tooltip = '%{x} ' . $lookupDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
                 }
 
                 $trace = array_merge($trace, array(
@@ -1143,7 +1142,10 @@ class Plotly2
                         'bgcolor' => '#FFF'
                     ),
                     'showlegend' => true,
-                    'textposition' => $data_description->display_type == 'pie' ? 'outside' : 'top center',
+                    'textposition' => $data_description->display_type == 'pie' ? 'auto' : 'top right',
+                    'textfont' => array(
+                        'color' => $data_description->display_type == 'pie' ? '#fff' : $color
+                    ),
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
                     'yaxis' => "y{$yIndex}",
@@ -1152,7 +1154,7 @@ class Plotly2
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                 )); // $data_series_desc
 
-                if (!$data_labels_enabled){
+                if (!$data_description->value_labels){
                     unset($trace['text']);
                 }
 
@@ -1206,10 +1208,11 @@ class Plotly2
                         $trace['groupnorm'] = 'percent';
                     }
                 }
+
                 $this->_chart['data'][] = $trace;
-                //throw new \Exception(json_encode($trace));
-                // build error data series and add it to chart
-                /*$trace['error_y'] = $this->buildErrorDataSeries(
+
+                $this->buildErrorDataSeries(
+                    $trace,
                     $data_description,
                     $legend,
                     $lineColor,
@@ -1218,7 +1221,11 @@ class Plotly2
                     $yAxisIndex,
                     $semDecimals,
                     $zIndex
-                );*/
+                );
+
+                //$this->_chart['data'][] = $trace;
+                //throw new \Exception(json_encode($trace));
+                // build error data series and add it to chart
 
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
         }
@@ -1226,8 +1233,34 @@ class Plotly2
         /*if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }*/
-
-
+        if (!$this->_chart['data']) {
+            $this->_chart['layout'] = array(
+                'images' => array(
+                    'source' => 'gui/images/report_thumbnail_no_data.png',
+                    'align' => 'center',
+                    'xref' => 'paper',
+                    'xanchor' => 'top',
+                    'yanchor' => 'bottom',
+                    'yref' => 'paper',
+                    'sizex' => 1.0,
+                    'sizey' => 1.0,
+                    'x' => 0.15,
+                    'y' => 0.0
+                ),
+                'xaxis' => array(
+                    'showticklabels' => false,
+                    'zeroline' => false,
+                    'showgrid' => false,
+                    'showline' => false
+                ),
+                'yaxis' => array(
+                    'showticklabels' => false,
+                    'zeroline' => false,
+                    'showgrid' => false,
+                    'showline' => false
+                )
+            );
+        }
         // set title and subtitle for chart
         $this->setChartTitleSubtitle($font_size);
 
@@ -1243,6 +1276,7 @@ class Plotly2
     // for Timeseries, questions include: drilldown?
     // ---------------------------------------------------------
     protected function buildErrorDataSeries(
+        $trace,
         &$data_description,
         &$legend,
         $error_color,
@@ -1256,7 +1290,9 @@ class Plotly2
         // build error data series and add it to chart
         if($data_description->std_err == 1 && $data_description->display_type != 'pie')
         {
-            $error_series = array();
+            $high = array();
+            $low = array();
+            $stderr = array();
             $errorCount = $yAxisDataObject->getErrorCount();
             for($i = 0; $i < $errorCount; $i++)
             {
@@ -1264,12 +1300,9 @@ class Plotly2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $has_value = isset($v) && $v != 0;
-                $error_series[] = array(
-                            'x' => $i,
-                            'low' => $has_value ? $v-$e : null,
-                            'high' => $has_value ? $v+$e : null,
-                            'stderr' => $e
-                );
+                $low[] = $has_value ? $v-$e : null;
+                $high[] = $has_value ? $v+$e : null;
+                $stderr[] = $e;
             }
 
             // -- set error dataseries name and visibility --
@@ -1291,34 +1324,48 @@ class Plotly2
                 $visible = $data_description->visibility->{$dsn};
             }
 
+            $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
+
+            $error_trace = $trace;
+
             // create the data series description:
-            $err_data_y = array(
-                //'name' => $dsn,
-                'name' => $lookupDataSeriesName,
-                'showInLegend' => true,
+            $error_trace = array_merge($error_trace, array(
+                'name' => $dsn,
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
                 'zIndex' => $zIndex,
                 'color'=> $error_color,
-                'type' => 'data',
-                'symmetric' => false,
-                'shadow' => $data_description->shadow,
-                'groupPadding' => 0.05,
-                'pointPadding' => 0,
-                'lineWidth' => 2,
-                'yaxis' => $yAxisIndex == 0 ? null : $yAxisIndex,
-                'tooltip' => array(
-                        'valueDecimals' => $semDecimals
-                    ),
-                'data' => $error_series,
-                'cursor' => 'pointer',
-                'visible' => $visible,
+                'marker' => array(
+                    'color' => $error_color, 
+                ),
+                'hovertext' => $stderr,
+                'mode' => 'lines',
+                'hovertemplate' => '<b> +/- </b>' . '%{hovertext}',
+                'error_y' => array(
+                    'type' => 'data',
+                    'array' => $high,
+                    'arrayminus' => $low,
+                    'symmetric' => false,
+                    'color' => $error_color
+                ),
                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                );
+            ));
+
+            if ($trace['type'] == 'bar') {
+                //$error_trace['color'] = $trace['color'];
+                $error_trace['marker']['color'] = $trace['marker']['color'];
+                $this->_chart['layout']['barmode'] = 'overlay';
+                $this->_chart['layout']['hovermode'] = 'x unified';
+                if ($data_description->display_type == 'h_bar') {
+                    $error_trace['error_x'] = $error_trace['error_y'];
+                    $this->_chart['layout']['hovermode'] = 'y unified';
+                    unset($error_trace['error_y']);
+                }
+            }
+
             if(! $data_description->log_scale)
             {
-                return $err_data_y;
-                //$this->_chart['series'][] = $err_data_series_desc;
+                $this->_chart['data'][] = $error_trace;
             }
         } // if not pie
     } // function buildErrorDataSeries

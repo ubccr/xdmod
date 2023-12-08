@@ -578,6 +578,10 @@ class PlotlyTimeseries2 extends Plotly2
                             ),
                             'x' => $xValues,
                             'y' => $yValues,
+                            //'base' => 0.0,
+                            //'width' => 0.1,
+                            //'offset' => 0.1 * $traceIndex,
+                            'offsetgroup' => "group{$traceIndex}",
                             'seriesPoints' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -712,22 +716,21 @@ class PlotlyTimeseries2 extends Plotly2
                             $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
                             $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
 
+                            $high = array();
+                            $low = array();
+                            $stderr = array();
                             $errorCount = $yAxisDataObject->getErrorCount();
-                            $error_series = array();
-
                             for($i = 0; $i < $errorCount; $i++)
                             {
                                 // build the error bar and set for display
                                 $v = $yAxisDataObject->getValue($i);
                                 $e = $yAxisDataObject->getError($i);
-                                $has_value = ( isset($v) && ($v != 0) );
-                                $error_series[] = array(
-                                    'x' => date('m-d-Y', start_ts_array[$i]),
-                                    'low' => $has_value ? $v-$e : null,
-                                    'high' => $has_value ? $v+$e : null,
-                                    'stderr' => $e
-                                );
-                            } // for $i ...
+                                $has_value = isset($v) && $v != 0;
+                                $low[] = $has_value ? $v-$e : null;
+                                $high[] = $has_value ? $v+$e : null;
+                                $stderr[] = $e;
+                            }
+
                             $dsn = 'Std Err: '.$formattedDataSeriesName;
 
                             $lookupDataSeriesName = $dsn;
@@ -744,42 +747,91 @@ class PlotlyTimeseries2 extends Plotly2
                                 {
                                 $visible = $data_description->visibility->{$dsn};
                             }
+                            $error_trace = $trace;
 
-                            $err_data_series_desc = array(
-                                'name' => $lookupDataSeriesName,
-                                'showInLegend' => true,
+                            // create the data series description:
+                            $error_trace = array_merge($error_trace, array(
+                                'name' => $dsn,
                                 'otitle' => $dsn,
-                                'zIndex' => $zIndex,
                                 'datasetId' => $data_description->id,
-                                'drilldown' => $drilldown,
+                                'zIndex' => $zIndex,
                                 'color'=> $error_color,
-                                'type' => 'errorbar',
-                                'shadow' => $data_description->shadow,
-                                'groupPadding' => 0.05,
-                                'lineWidth' =>2 + $font_size/4,
-                                'pointPadding' => 0,
-                                'yAxis' => $yAxisIndex,
-                                'tooltip' => array(
-                                    'valueDecimals' => $semDecimals
+                                'marker' => array(
+                                    'color' => $error_color,
                                 ),
-                                'data' => $error_series,
-                                'cursor' => 'pointer',
-                                'visible' => $visible,
-                                'isRemainder' => $isRemainder,
+                                'hovertext' => $stderr,
+                                'mode' => 'lines',
+                                'hovertemplate' => '<b> +/- </b>' . '%{hovertext}',
+                                'error_y' => array(
+                                    'type' => 'data',
+                                    'array' => $high,
+                                    'arrayminus' => $low,
+                                    'symmetric' => false,
+                                    'color' => $error_color
+                                ),
                                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                            );
+                            ));
+
+                            if ($trace['type'] == 'bar') {
+                                //$error_trace['color'] = $trace['color'];
+                                $error_trace['marker']['color'] = $trace['marker']['color'];
+                                $this->_chart['layout']['barmode'] = 'overlay';
+                                $this->_chart['layout']['hovermode'] = 'x unified';
+
+                                if ($data_description->display_type == 'h_bar') {
+                                    $error_trace['error_x'] = $error_trace['error_y'];
+                                    $this->_chart['layout']['hovermode'] = 'y unified';
+                                    unset($error_trace['error_y']);
+                                }
+
+                                if ($data_description->combine_type=='side') {
+                                    $error_trace['offsetgroup'] = "group{$traceIndex}";
+                                    //$error_trace['base'] = 0.0;
+                                    //$error_trace['width'] = 0.1;
+                                    //$error_trace['offset'] = 0.1 * $traceIndex; 
+                                    $this->_chart['layout']['barmode'] = 'group';
+                                    
+                                }
+                            }
 
                             if(! $data_description->log_scale)
                             {
-                                $this->_chart['series'][] = $err_data_series_desc;
-                            } // if ! log_scale
+                                $this->_chart['data'][] = $error_trace;
+                            }
                         } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
                     } // if( $yAxisDataObject != NULL)
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
 
-
+        if (!$this->_chart['data']) {
+            $this->_chart['layout'] = array(
+                'images' => array(
+                    'source' => 'gui/images/report_thumbnail_no_data.png',
+                    'align' => 'center',
+                    'xref' => 'paper',
+                    'xanchor' => 'top',
+                    'yanchor' => 'bottom',
+                    'yref' => 'paper',
+                    'sizex' => 1.0,
+                    'sizey' => 1.0,
+                    'x' => 0.15,
+                    'y' => 0.0
+                ),
+                'xaxis' => array(
+                    'showticklabels' => false,
+                    'zeroline' => false,
+                    'showgrid' => false,
+                    'showline' => false
+                ),
+                'yaxis' => array(
+                    'showticklabels' => false,
+                    'zeroline' => false,
+                    'showgrid' => false,
+                    'showline' => false
+                )
+            );
+        }
 
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();

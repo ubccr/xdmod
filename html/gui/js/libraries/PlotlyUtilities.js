@@ -87,21 +87,6 @@ function getNoDataErrorConfig() {
             y: 0.0
         }
         ],
-        annotations: [
-        {
-            text: '',
-            align: 'center',
-            xref: 'paper',
-            yref: 'paper',
-            font: {
-                size: 12,
-                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
-            },
-            x: 0.5,
-            y: 0.2,
-            showarrow: false
-        }
-        ],
         xaxis: {
             showticklabels: false,
             zeroline: false,

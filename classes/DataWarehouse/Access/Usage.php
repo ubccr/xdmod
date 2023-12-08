@@ -830,7 +830,7 @@ class Usage extends Common
                 ) {
                     // Determine the type of this data series.
                     $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
-                    $isStdErrSeries = \xd_utilities\array_get($meDataSeries, 'type') === 'errorbar';
+                    $isStdErrSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Std Err: ');
                     $isPrimaryDataSeries = !($isTrendLineSeries || $isStdErrSeries);
 
                     // If this is a primary data series, increment the rank of the

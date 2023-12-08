@@ -64,17 +64,22 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 
                     //this.chartOptions.exporting.enabled = (this.exporting === true);
                     //this.chartOptions.credits.enabled = (this.credits === true);
-
-                    this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.layout.title.text);
+                    
+                    if (this.chartOptions.layout.title) {
+                        this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.layout.title.text);
+                    }
                     this.isEmpty = this.chartOptions.data && this.chartOptions.data.length === 0;
 
-                    this.initNewChart.call(this);
+//                    this.initNewChart.call(this);
                     if (this.isEmpty) {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
 
                         this.chartOptions.layout = getNoDataErrorConfig();
-                        Plotly.relayout(this.baseChartOptions.renderTo, this.chartOptions);
+                    //    Plotly.relayout(this.baseChartOptions.renderTo, this.chartOptions);
+                    }
+                    else {
+                        this.initNewChart.call(this);
                     }
 
                 }, this);
