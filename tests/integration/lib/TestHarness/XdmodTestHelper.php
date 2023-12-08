@@ -361,6 +361,35 @@ class XdmodTestHelper
         return $this->docurl();
     }
 
+    public function put($path, $params, $data, $isurl = false)
+    {
+        if ($isurl) {
+            $url = $path;
+        } else {
+            $url = $this->siteurl . $path;
+        }
+
+        if ($params !== null) {
+            $url .= "?" . http_build_query($params);
+        }
+        if (isset($this->verbose)) {
+            echo "$url\n";
+        }
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+        $putData = '';
+        if (isset($data)) {
+            $putData = http_build_query($data);
+        }
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $putData);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
+
+        $response = $this->docurl();
+        $this->resetCurlSession();
+
+        return $response;
+    }
+
     public function patch($path, $params = null, $data = null)
     {
         $url = $this->siteurl . $path;

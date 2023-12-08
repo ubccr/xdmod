@@ -146,7 +146,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                     - 'path': the URL path to the HTTP endpoint (e.g.,
      *                               '/rest/...').
      *                     - 'method': the HTTP method, either 'get', 'post',
-     *                                 'delete', or 'patch'.
+     *                                 'put', 'delete', or 'patch'.
      *                     - 'params': associative array of query parameters.
      *                     - 'data': associative array of request body data.
      * @return array element 0 is the response body, element 1 is the return of
@@ -169,6 +169,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 );
                 break;
             case 'post':
+            case 'put':
             case 'delete':
             case 'patch':
                 $response = $testHelper->$method(
@@ -363,8 +364,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                          'params' or 'data' key is mapped to an associative array in which
      *                          the keys are all of the required endpoint parameters, and the values
      *                          are valid values for those parameters. If the 'method' value is
-     *                          'post' or 'patch', the parameters will be pulled from the 'data'
-     *                          value; otherwise, they will be pulled from the 'params' value.
+     *                          'post', 'put', or 'patch', the parameters will be pulled from the
+     *                          'data' value; otherwise, they will be pulled from the 'params' value.
      * @param array $options an associative array that configures how this method should run.
      *                       The keys are all optional:
      *                       - 'authentication' — if the value is true, the return will include a
@@ -418,6 +419,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $paramSource = 'params';
         if (
             'post' === $validInput['method']
+            || 'put' === $validInput['method']
             || 'patch' === $validInput['method']
         ) {
             $paramSource = 'data';
