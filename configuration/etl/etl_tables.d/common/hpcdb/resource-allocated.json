@@ -31,8 +31,10 @@
             {
                 "name": "idx_resource",
                 "columns": [
-                    "resource_id"
-                ]
+                    "resource_id",
+                    "start_date_ts"
+                ],
+                "is_unique": true
             }
         ],
         "foreign_key_constraints": [

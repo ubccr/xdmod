@@ -1,10 +1,10 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Export;
+namespace UnitTests\DataWarehouse\Export;
 
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export file.
@@ -23,7 +23,7 @@ class FileWriterTest extends PHPUnit_Framework_TestCase
     private static $fileWriterFactory;
 
     /**
-     * @var \TestHarness\TestFiles
+     * @var TestFiles
      */
     private $testFiles;
 
@@ -36,7 +36,7 @@ class FileWriterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \TestHarness\TestFiles
+     * @return TestFiles
      */
     private function getTestFiles()
     {

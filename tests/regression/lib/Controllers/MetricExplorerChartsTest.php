@@ -2,7 +2,8 @@
 
 namespace RegressionTests\Controllers;
 
-use TestHarness\Utilities;
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 {
@@ -163,7 +164,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      */
     public function testChartData($requestData, $expected)
     {
-        $helper = new \TestHarness\XdmodTestHelper();
+        $helper = new XdmodTestHelper();
         $helper->authenticate('cd');
 
         $response = $helper->post('controllers/metric_explorer.php', null, $requestData);
@@ -432,7 +433,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         $output = array();
 
-        $helper = new \TestHarness\XdmodTestHelper();
+        $helper = new XdmodTestHelper();
         $helper->authenticate('cd');
 
         foreach ($baseConfig as $config)
@@ -487,7 +488,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             $inputs = $this->generateFilterTests();
         }
 
-        $helper = new \TestHarness\XdmodTestHelper();
+        $helper = new XdmodTestHelper();
         $helper->authenticate('cd');
 
         $enabledRealms = Utilities::getRealmsToTest();

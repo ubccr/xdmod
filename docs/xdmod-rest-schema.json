@@ -71,7 +71,7 @@ layout: null
                 "name": "start_date",
                 "in": "query",
                 "required": true,
-                "description": "Start date of requested data",
+                "description": "Start date of requested data in the portal's local time zone in YYYY-MM-DD format.",
                 "schema": {
                     "type": "string",
                     "format": "date"
@@ -81,7 +81,7 @@ layout: null
                 "name": "end_date",
                 "in": "query",
                 "required": true,
-                "description": "End date of requested data",
+                "description": "End date of requested data in the portal's local time zone in YYYY-MM-DD format.",
                 "schema": {
                     "type": "string",
                     "format": "date"
@@ -3052,7 +3052,7 @@ layout: null
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid realm.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "invalid-fields": {
@@ -3064,7 +3064,7 @@ layout: null
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid fields specified: 'foo', 'bar'.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "invalid-filter-key": {
@@ -3076,7 +3076,7 @@ layout: null
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid filter key 'foo'.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "negative-offset": {
@@ -3088,7 +3088,7 @@ layout: null
                                             "results": [],
                                             "data": [],
                                             "message": "Offset must be non-negative.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     }
                                 }

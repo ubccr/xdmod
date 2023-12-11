@@ -2,6 +2,8 @@
 
 namespace DataWarehouse\Access;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 class Common
 {
     protected $request = null;
@@ -46,7 +48,7 @@ class Common
     protected function checkDateParameters()
     {
         if (!isset($this->request['start_date'])) {
-            throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+            throw new BadRequestHttpException(
                 'missing required start_date parameter'
             );
         }
@@ -57,13 +59,13 @@ class Common
         );
 
         if ($start_date_parsed['error_count'] !== 0) {
-            throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+            throw new BadRequestHttpException(
                 'start_date param is not in the correct format of Y-m-d.'
             );
         }
 
         if (!isset($this->request['end_date'])) {
-            throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+            throw new BadRequestHttpException(
                 'missing required end_date parameter'
             );
         }
@@ -71,7 +73,7 @@ class Common
         $end_date_parsed = date_parse_from_format('Y-m-d', $this->request['end_date']);
 
         if ($end_date_parsed['error_count'] !== 0) {
-            throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+            throw new BadRequestHttpException(
                 'end_date param is not in the correct format of Y-m-d.'
             );
         }

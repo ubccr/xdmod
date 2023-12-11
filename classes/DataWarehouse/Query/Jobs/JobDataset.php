@@ -68,7 +68,6 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 throw new Exception('invalid "job_identifier" query parameter');
             }
         } elseif (isset($parameters['start_date']) && isset($parameters['end_date'])) {
-            date_default_timezone_set('UTC');
             $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
             $startDateTs = mktime(
                 0,

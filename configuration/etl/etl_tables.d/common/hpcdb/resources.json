@@ -49,6 +49,11 @@
                 "default": "0"
             },
             {
+                "name": "resource_allocation_type_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "resource_timezone",
                 "type": "varchar(30)",
                 "charset": "utf8",
