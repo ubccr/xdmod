@@ -31,8 +31,10 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
  * authentication failures give the correct response, failing to authorize as a
  * center director gives the correct response, requests in which the 'limit' or
  * 'start_date' parameters are missing give the correct response, and requests
- * in which the value of 'limit' is not a valid integer or 'start_date' is not
- * a valid ISO 8601 date give the correct response.
+ * give the correct response for which the value of 'limit' is not a valid
+ * integer, the values of 'realm' or 'dimension' are not valid strings, the
+ * value of 'ts' is not a valid Unix timestamp, or the value of 'start_date' is
+ * not a valid ISO 8601 date.
  *
  *   public function testGetData($id, $role, $input, $output)
  *   {
@@ -62,7 +64,9 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
  *              'authentication' => true,
  *              'authorization' => 'cd',
  *              'int_params' => ['limit'],
- *              'date_params' => ['start_date']
+ *              'string_params' => ['realm', 'dimension'],
+ *              'unix_ts_params' => ['ts'],
+ *              'date_params' => ['start_date'],
  *          ]
  *      );
  *  }
@@ -142,7 +146,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                     - 'path': the URL path to the HTTP endpoint (e.g.,
      *                               '/rest/...').
      *                     - 'method': the HTTP method, either 'get', 'post',
-     *                                 'delete', or 'patch'.
+     *                                 'put', 'delete', or 'patch'.
      *                     - 'params': associative array of query parameters.
      *                     - 'data': associative array of request body data.
      * @return array element 0 is the response body, element 1 is the return of
@@ -165,6 +169,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 );
                 break;
             case 'post':
+            case 'put':
             case 'delete':
             case 'patch':
                 $response = $testHelper->$method(
@@ -359,8 +364,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                          'params' or 'data' key is mapped to an associative array in which
      *                          the keys are all of the required endpoint parameters, and the values
      *                          are valid values for those parameters. If the 'method' value is
-     *                          'post' or 'patch', the parameters will be pulled from the 'data'
-     *                          value; otherwise, they will be pulled from the 'params' value.
+     *                          'post', 'put', or 'patch', the parameters will be pulled from the
+     *                          'data' value; otherwise, they will be pulled from the 'params' value.
      * @param array $options an associative array that configures how this method should run.
      *                       The keys are all optional:
      *                       - 'authentication' — if the value is true, the return will include a
@@ -394,6 +399,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         need to be present for other tests here to succeed.
      *                       - 'int_params' — array of parameters that will each be tested for
      *                         invalid integer values.
+     *                       - 'string_params' — array of parameters that will each be tested for
+     *                         invalid string values.
+     *                       - 'unix_ts_params' — array of parameters that will each be tested for
+     *                         invalid Unix timestamp values.
      *                       - 'date_params' — array of parameters that will each be tested for
      *                         invalid ISO 8601 date values.
      * @return array of arrays of test data, each of which contains a string ID of the test, a
@@ -410,6 +419,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $paramSource = 'params';
         if (
             'post' === $validInput['method']
+            || 'put' === $validInput['method']
             || 'patch' === $validInput['method']
         ) {
             $paramSource = 'data';
@@ -423,6 +433,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $options['additional_params']
             );
         }
+        // Set up the custom error body validator.
+        $errorBodyValidator = null;
+        if (array_key_exists('error_body_validator', $options)) {
+            $errorBodyValidator = $options['error_body_validator'];
+        }
         $tests = [];
         // Provide authentication tests.
         if (
@@ -433,7 +448,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 'unauthenticated',
                 'pub',
                 $validInputWithAdditionalParams,
-                $this->validateAuthorizationErrorResponse(401)
+                $this->validateAuthorizationErrorResponse(
+                    401,
+                    $errorBodyValidator
+                )
             ];
         }
         // Provide authorization tests.
@@ -444,7 +462,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                         'unauthorized',
                         $role,
                         $validInputWithAdditionalParams,
-                        $this->validateAuthorizationErrorResponse(403)
+                        $this->validateAuthorizationErrorResponse(
+                            403,
+                            $errorBodyValidator
+                        )
                     ];
                 }
             }
@@ -488,30 +509,48 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             array_push(
                 $testData,
                 $input,
-                $this->validateMissingRequiredParameterResponse($param)
+                $this->validateMissingRequiredParameterResponse(
+                    $param,
+                    $errorBodyValidator
+                )
             );
             $tests[] = $testData;
         }
         // Provide tests of invalid parameters.
         $types = [
             'int_params' => 'integer',
+            'string_params' => 'string',
+            'unix_ts_params' => 'Unix timestamp',
             'date_params' => 'ISO 8601 Date'
+        ];
+        $values = [
+            'string' => 'foo',
+            'array' => ['foo' => 'bar']
         ];
         foreach ($types as $key => $type) {
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
                     $input = $validInputWithAdditionalParams;
-                    $input[$paramSource][$param] = 'foo';
-                    $testData = ["{$param}_string", $runAs];
-                    if ($tokenAuth) {
-                        $testData[] = 'valid_token';
+                    foreach ($values as $id => $value) {
+                        // Strings can be strings, so skip that test.
+                        if ('string_params' !== $key || 'string' !== $id) {
+                            $input[$paramSource][$param] = $value;
+                            $testData = ["{$param}_$id", $runAs];
+                            if ($tokenAuth) {
+                                $testData[] = 'valid_token';
+                            }
+                            array_push(
+                                $testData,
+                                $input,
+                                $this->validateInvalidParameterResponse(
+                                    $param,
+                                    $type,
+                                    $errorBodyValidator
+                                )
+                            );
+                            $tests[] = $testData;
+                        }
                     }
-                    array_push(
-                        $testData,
-                        $input,
-                        $this->validateInvalidParameterResponse($param, $type)
-                    );
-                    $tests[] = $testData;
                 }
             }
         }
@@ -524,13 +563,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * the given name was not provided in the request.
      *
      * @param string $name
+     * @param callable|null $bodyValidator if provided, overrides the default
+     *                                     body validator.
      * @return array
      */
-    protected function validateMissingRequiredParameterResponse($name)
-    {
+    protected function validateMissingRequiredParameterResponse(
+        $name,
+        $bodyValidator = null
+    ) {
         return $this->validateBadRequestResponse(
             "$name is a required parameter.",
-            0
+            0,
+            $bodyValidator
         );
     }
 
@@ -541,13 +585,19 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $name
      * @param string $type
+     * @param callable|null $bodyValidator if provided, overrides the default
+     *                                     body validator.
      * @return array
      */
-    protected function validateInvalidParameterResponse($name, $type)
-    {
+    protected function validateInvalidParameterResponse(
+        $name,
+        $type,
+        $bodyValidator = null
+    ) {
         return $this->validateBadRequestResponse(
             "Invalid value for $name. Must be a(n) $type.",
-            0
+            0,
+            $bodyValidator
         );
     }
 
@@ -558,15 +608,21 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $message
      * @param int $code
+     * @param callable|null $bodyValidator if provided, overrides the default
+     *                                     body validator.
      * @return array
      */
-    protected function validateBadRequestResponse($message, $code)
-    {
+    protected function validateBadRequestResponse(
+        $message,
+        $code,
+        $bodyValidator = null
+    ) {
         return [
             'status_code' => 400,
             'body_validator' => $this->validateErrorResponseBody(
                 $message,
-                $code
+                $code,
+                $bodyValidator
             )
         ];
     }
@@ -576,10 +632,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * validates authorization error responses with the given HTTP status code.
      *
      * @param int $statusCode
+     * @param callable|null $bodyValidator if provided, overrides the default
+     *                                     body validator.
      * @return array
      */
-    protected function validateAuthorizationErrorResponse($statusCode)
-    {
+    protected function validateAuthorizationErrorResponse(
+        $statusCode,
+        $bodyValidator = null
+    ) {
         return [
             'status_code' => $statusCode,
             'body_validator' => $this->validateErrorResponseBody(
@@ -587,7 +647,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                     'An error was encountered while attempting to process the'
                     . ' requested authorization procedure.'
                 ),
-                0
+                0,
+                $bodyValidator
             )
         ];
     }
@@ -599,10 +660,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $message
      * @param int $code
+     * @param callable|null $bodyValidator if provided, overrides the default
+     *                                     body validator.
      * @return callable
      */
-    protected function validateErrorResponseBody($message, $code)
-    {
+    protected function validateErrorResponseBody(
+        $message,
+        $code,
+        $bodyValidator = null
+    ) {
+        if (!is_null($bodyValidator)) {
+            return $bodyValidator($message, $code);
+        }
         return function ($body, $assertMessage) use ($message, $code) {
             parent::assertEquals(
                 [
