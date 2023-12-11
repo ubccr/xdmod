@@ -573,7 +573,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     ) {
         return $this->validateBadRequestResponse(
             "$name is a required parameter.",
-            0,
             $bodyValidator
         );
     }
@@ -596,7 +595,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     ) {
         return $this->validateBadRequestResponse(
             "Invalid value for $name. Must be a(n) $type.",
-            0,
             $bodyValidator
         );
     }
@@ -604,24 +602,46 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     /**
      * Return an output array for use in requestAndValidateJson() that
      * validates 400 Bad Request responses expected to have the given message
-     * and code in their JSON.
+     * in their JSON.
      *
      * @param string $message
-     * @param int $code
      * @param callable|null $bodyValidator if provided, overrides the default
      *                                     body validator.
      * @return array
      */
     protected function validateBadRequestResponse(
         $message,
-        $code,
         $bodyValidator = null
     ) {
         return [
             'status_code' => 400,
             'body_validator' => $this->validateErrorResponseBody(
                 $message,
-                $code,
+                0,
+                $bodyValidator
+            )
+        ];
+    }
+
+    /**
+     * Return an output array for use in requestAndValidateJson() that
+     * validates 404 Not Found responses expected to have the given message
+     * in their JSON.
+     *
+     * @param string $message
+     * @param callable|null $bodyValidator if provided, overrides the default
+     *                                     body validator.
+     * @return array
+     */
+    protected function validateNotFoundResponse(
+        $message,
+        $bodyValidator = null
+    ) {
+        return [
+            'status_code' => 404,
+            'body_validator' => $this->validateErrorResponseBody(
+                $message,
+                0,
                 $bodyValidator
             )
         ];
