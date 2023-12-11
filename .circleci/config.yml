@@ -31,6 +31,24 @@ jobs:
           name: Generate Certificate
           command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
+      - run:
+          name: Make sure test namespaces are consistent
+          command: >
+            result=0;
+            for test_type in {unit,component,integration,regression}; do
+                for file in $(find tests/$test_type/lib -type f); do
+                    prefix="$(tr '[:lower:]' '[:upper:]' \<<< ${test_type:0:1})${test_type:1}Tests";
+                    expected_namespace="namespace $(dirname $file | sed "s/tests\/$test_type\/lib/$prefix/" | sed 's/\//\\/g');";
+                    actual_namespace="$(grep namespace $file)";
+                    if [[ "$expected_namespace" != "$actual_namespace" ]]; then
+                        echo -e "$file";
+                        echo -e "\tExpected: $expected_namespace";
+                        echo -e "\tActual: $actual_namespace";
+                        result=1;
+                    fi;
+                done;
+            done;
+            exit $result;
       # We need to update our acct before we can enable docker layer caching
       #- setup_remote_docker:
       #    docker_layer_caching: true
