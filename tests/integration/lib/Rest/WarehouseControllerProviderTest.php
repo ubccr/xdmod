@@ -116,7 +116,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             ]
         ];
         // Run some standard endpoint tests.
-        return parent::provideRestEndpointTests(
+        $tests = parent::provideRestEndpointTests(
             $validInput,
             [
                 'authentication' => true,
@@ -124,6 +124,34 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 'string_params' => ['realm', 'data']
             ]
         );
+        $tests = $this->provideSearchParamsMalformedDataTests(
+            $tests,
+            $validInput
+        );
+        return $tests;
+    }
+
+    private function provideSearchParamsMalformedDataTests($tests, $validInput)
+    {
+        $paramSets = [
+            ['id' => 'data_invalid_json', 'data' => 'foo'],
+            ['id' => 'data_missing_text', 'data' => '{}']
+        ];
+        foreach ($paramSets as $paramSet) {
+            $tests[] = [
+                $paramSet['id'],
+                'usr',
+                parent::mergeParams(
+                    $validInput,
+                    'data',
+                    ['data' => $paramSet['data']]
+                ),
+                parent::validateBadRequestResponse(
+                    'Malformed request. Expected \'data.text\' to be present.'
+                )
+            ];
+        }
+        return $tests;
     }
 
     /**
@@ -182,13 +210,18 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             ]
         ];
         // Run some standard endpoint tests.
-        return parent::provideRestEndpointTests(
+        $tests = parent::provideRestEndpointTests(
             $validInput,
             [
                 'authentication' => true,
                 'string_params' => ['realm', 'data']
             ]
         );
+        $tests = $this->provideSearchParamsMalformedDataTests(
+            $tests,
+            $validInput
+        );
+        return $tests;
     }
 
     /**
