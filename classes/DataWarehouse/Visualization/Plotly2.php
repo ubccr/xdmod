@@ -110,7 +110,10 @@ class Plotly2
             'layout' => array(
                 'title' => array(
                     'text' => '',
-                    'automarign' => true
+                    'automarign' => true,
+                    'font' => array(
+                        'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
+                    ),
                 ),
                 'annotations' => array(
                 // Credits
@@ -144,12 +147,20 @@ class Plotly2
                 ),
                 'legend' => array(
                     'itemwidth' => 40,
+                    'itemsizing' => 'constant',
                     'bgcolor' => '#FFFFFF',
                     'borderwidth' => 0,
                     'xref' => 'container',
-                    'yref' => 'container'
+                    'yref' => 'container',
+                    'traceorder' => 'normal'
                 ),
                 'hovermode' => $this->_hideTooltip ? false : 'x unified',
+                'hoverlabel' => array(
+                    'bgcolor' => 'rgba(255, 255, 255, 0.65)',
+                    'font' => array(
+                        'color' => '#000000'
+                    ),
+                ),
                 'bargap' => 0.15,
                 'bargroupgap' => 0.1,
                 'images' => array(),
@@ -355,9 +366,11 @@ class Plotly2
     public function setTitle($title, $font_size = 3)
     {
         $this->_chart['layout']['title']['text'] = $title;
-        $this->_chart['layout']['title']['font'] = array(
-            'color'=> '#000000',
-            'size' => (16 + $font_size)
+        $this->_chart['layout']['title']['font'] = array_merge($this->_chart['layout']['title']['font'],
+            array(
+                'color'=> '#000000',
+                'size' => (16 + $font_size),
+            )
         );
     } // setTitle()
 
@@ -664,22 +677,27 @@ class Plotly2
         // --- set xAxis in _chart object ---
         //throw new \Exception($xAxisLabel);
         $this->_chart['layout']['xaxis'] = array(
-                'automargin' => true,
-                'title' => array(
-                            'text' => $xAxisLabel,
-                            'font' => array(
-                                'color'=> '#000000',
-                                'size' => (12 + $font_size)
-                            )
-                ),
-                'otitle' => $originalXAxisLabel,
-                'dtitle' => $defaultXAxisLabel,
-                'tickfont' => array(
-                    'size' => (11 + $font_size)
-                ),
-                'linewidth' => 2 + $font_size / 4,
-                'rangemode' => 'tozero',
-                'categoryarray' => $this->_xAxisDataObject->getValues()
+            'automargin' => true,
+            'cliponaxis' => false,
+            'layer' => 'below traces',
+            'title' => array(
+                        'text' => $xAxisLabel,
+                        'font' => array(
+                            'color'=> '#000000',
+                            'size' => (12 + $font_size),
+                            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                        )
+            ),
+            'otitle' => $originalXAxisLabel,
+            'dtitle' => $defaultXAxisLabel,
+            'tickfont' => array(
+                'size' => (11 + $font_size),
+                'color' => '#606060',
+            ),
+            'linewidth' => 2 + $font_size / 4,
+            'linecolor' => '#c0d0e0',
+            'rangemode' => 'tozero',
+            'categoryarray' => $this->_xAxisDataObject->getValues()
         );
 
         if (isset($this->_chart['layout']['xaxis']['categoryarray']))
@@ -893,6 +911,8 @@ class Plotly2
             // populate the yAxis:
             $yAxis = array(
                 'automargin' => true,
+                'cliponaxis' => false,
+                'layer' => 'below traces',
                 'title' => array(
                     'text' => '<b>' . $yAxisLabel . '</b>',
                     'standoff' => 5,
@@ -900,16 +920,19 @@ class Plotly2
                 'titlefont' => array(
                     'size' => (12 + $font_size),
                     'color' => $yAxisColor,
+                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                 ),
                 'otitle' => $originalYAxisLabel,
                 'dtitle' => $defaultYAxisLabel,
                 'tickfont' => array(
-                    'size' => (11 + $font_size)
+                    'size' => (11 + $font_size),
+                    'color' => '#606060',
                 ),
                 'type' => $yAxisObject->log_scale ? 'log' : 'linear',
                 'rangemode' => 'tozero',
-                'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
+                'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 6),
                 'linewidth' => 2 + $font_size / 4,
+                'linecolor' => '#c0d0e0',
                 'separatethousands' => $yAxisObject->decimals > 0,
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
@@ -971,6 +994,7 @@ class Plotly2
                 $drilldown = array();
                 $xValues = array();
                 $yValues = array();
+                $text = array();
                 $colors = array();
 
                 // to display as pie chart:
@@ -984,6 +1008,7 @@ class Plotly2
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
                         $xValues[] = $yAxisDataObject->getXValue($index);
+                        $text[] = round($value, 2);
                         $colors[] = ($index == 0) ? $yAxisColor
                                      : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
                         // N.B.: These are drilldown labels.
@@ -1029,6 +1054,7 @@ class Plotly2
                     {
                         $yValues[] = $value;
                         $xValues[] = $yAxisDataObject->getXValue($index);
+                        $text[] = round($value, 2);
 
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
@@ -1109,11 +1135,14 @@ class Plotly2
                 }
                 else
                 {
-                    $tooltip = '%{x} ' . $lookupDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
+                    $tooltip = '%{x} ' . $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
                 }
+
+                $this->_chart['layout']['hoverlabel']['bordercolor'] = $color;
 
                 $trace = array_merge($trace, array(
                     'name' => $lookupDataSeriesName,
+                    'cliponaxis' => false,
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
                     'cliponaxis' => false,
@@ -1138,13 +1167,11 @@ class Plotly2
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,
-                    'hoverlabel' => array(
-                        'bgcolor' => '#FFF'
-                    ),
                     'showlegend' => true,
-                    'textposition' => $data_description->display_type == 'pie' ? 'auto' : 'top right',
+                    'text' => $data_description->value_labels ? $text : null,
+                    'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
                     'textfont' => array(
-                        'color' => $data_description->display_type == 'pie' ? '#fff' : $color
+                        'color' => $color
                     ),
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
@@ -1163,12 +1190,16 @@ class Plotly2
                     $tmp = $trace['x'];
                     $trace['x'] = $trace['y'];
                     $trace['y'] = $tmp;
-                    $trace['hovertemplate'] = '%{y}' . '<br>'. $lookupDataSeriesName . ': <b>%{x:,}</b> <extra></extra>'; 
+                    $trace['hovertemplate'] = '%{y}' . '<br>'. $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>'; 
                     $this->_chart['layout']['margin'] = array(
                         'l' => 200
                     );
+                    $trace['textangle'] = 0;
                     $this->_chart['layout']["yaxis{$yIndex}"]['type'] = null; 
-                    $this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : 'linear';
+                    //$this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : 'linear';
+                    $tmp = $this->_chart['layout']['xaxis'];
+                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
+                    $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
                 }
                 // set stacking
                 if($data_description->display_type!=='line')
@@ -1288,21 +1319,27 @@ class Plotly2
     ) {
 
         // build error data series and add it to chart
-        if($data_description->std_err == 1 && $data_description->display_type != 'pie')
+        if($data_description->std_err == 1 || $data_description->std_err_labels && $data_description->display_type != 'pie')
         {
-            $high = array();
-            $low = array();
             $stderr = array();
+            $dataLabels = array();
+            $errorLabels = array();
+            $hoverText = array();
             $errorCount = $yAxisDataObject->getErrorCount();
             for($i = 0; $i < $errorCount; $i++)
             {
                 // build the error bar and set for display
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
-                $has_value = isset($v) && $v != 0;
-                $low[] = $has_value ? $v-$e : null;
-                $high[] = $has_value ? $v+$e : null;
                 $stderr[] = $e;
+                $hoverText[] = round($e, 2);
+                $dataLabels[] = round($v, 2) . ' [+/- ' . round($e, 2) . ']';
+                $errorLabels[] = '+/- ' . round($e, 2);
+            }
+
+            if ($data_description->std_err_labels && !$data_description->std_err) {
+                $this->_chart['data'][max($traceIndex * 2 - 1,0)]['text'] = $errorLabels;
+                return;
             }
 
             // -- set error dataseries name and visibility --
@@ -1338,13 +1375,14 @@ class Plotly2
                 'marker' => array(
                     'color' => $error_color, 
                 ),
-                'hovertext' => $stderr,
+                'text' => !$data_description->value_labels && $std_err_labels_enabled ? $errorLabels : array(),
+                'hovertext' => $hoverText,
                 'mode' => 'lines',
-                'hovertemplate' => '<b> +/- </b>' . '%{hovertext}',
+                'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
                 'error_y' => array(
                     'type' => 'data',
-                    'array' => $high,
-                    'arrayminus' => $low,
+                    'array' => $stderr,
+                    'arrayminus' => $stderr,
                     'symmetric' => false,
                     'color' => $error_color
                 ),
@@ -1361,6 +1399,11 @@ class Plotly2
                     $this->_chart['layout']['hovermode'] = 'y unified';
                     unset($error_trace['error_y']);
                 }
+            }
+
+            if ($data_description->value_labels && $data_description->std_err_labels) {
+                $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = array();
+                $error_trace['text'] = $dataLabels;
             }
 
             if(! $data_description->log_scale)

@@ -2707,13 +2707,21 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 let drillId;
                                 let label;
                                 let point;
-
+                                console.log(evt);
                                 if (evt.points.length > 1) {
                                     const cursorY = evt.event.pointerY;
+                                    const cursorX = evt.event.pointerX;
                                     evt.points.forEach(function (trace) {
                                         if (cursorY > trace.bbox.y0 && cursorY < trace.bbox.y1) {
                                             //Might need to add a check for trend line
                                             point = trace;
+                                        }
+                                        console.log(trace);
+                                        if (trace.type === 'bar') {
+                                            console.log('bar chart');
+                                            if (cursorX > trace.bbox.x0 && cursorX < trace.bbox.x1) {
+                                                point = trace;
+                                            }
                                         }
                                     });
                                 }
@@ -2735,6 +2743,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
 
                                 XDMoD.Module.Usage.drillChart(point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
+                            });
+
+                            chartDiv.on('plotly_legendclick', (evt) => {
+                                console.log(evt);
+
                             });
 
                         }, this); //task

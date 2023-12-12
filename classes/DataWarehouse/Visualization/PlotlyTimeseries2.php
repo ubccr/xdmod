@@ -274,15 +274,19 @@ class PlotlyTimeseries2 extends Plotly2
 
                     $yAxis = array(
                         'automargin' => true,
+                        'cliponaxis' => false,
+                        'layer' => 'below traces',
                         'title' => '<b>' . $yAxisLabel . '</b>', 
                         'titlefont' => array(
                                 'color'=> $yAxisColor,
-                                'size' => (12 + $font_size)
+                                'size' => (12 + $font_size),
+                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                         ),
                         'otitle' => $originalYAxisLabel,
                         'dtitle' => $defaultYAxisLabel,
                         'tickfont' => array(
-                            'size' => (11 + $font_size)
+                            'size' => (11 + $font_size),
+                            'color' => '#606060',
                         ),
                         'type' => $data_description->log_scale? 'log' : 'linear',
                         'rangemode' => 'tozero',
@@ -290,7 +294,8 @@ class PlotlyTimeseries2 extends Plotly2
                         'separatethousands' => true,
                         'overlaying' => $yAxisIndex == 0 ? null : 'y',
                         'linewidth' => 2 + $font_size / 4,
-                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/4),
+                        'linecolor' => '#c0d0e0',
+                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/7),
                     );
 
                     if ($yAxisIndex > 0){
@@ -350,21 +355,26 @@ class PlotlyTimeseries2 extends Plotly2
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
                     $xAxis = array(
                         'automargin' => true,
+                        'cliponaxis' => false,
+                        'layer' => 'below traces',
                         'ticklen' => 0,
                         'title' => array(
                             'text' => '<b>' . $xAxisLabel . '</b>',
                             'font' => array(
                                 'color'=> '#000000',
-                                'size' => (12 + $font_size)
+                                'size' => (12 + $font_size),
+                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                             )
                         ),
                         'otitle' => $originalXAxisLabel,
                         'dtitle' => $defaultXAxisLabel,
                         'tickfont' => array(
-                            'size' => (11 + $font_size)
+                            'size' => (11 + $font_size),
+                            'color' => '#606060',
                         ),
                         'rangemode' => 'tozero',
                         'linewidth' => 2 + $font_size / 4,
+                        'linecolor' => '#c0d0e0',
                         'showgrid' => false,
                     );
                      $this->_chart['layout']['xaxis'] = $xAxis;
@@ -457,6 +467,7 @@ class PlotlyTimeseries2 extends Plotly2
                         $tooltipConfig = array();
                         $xValues = array();
                         $yValues = array();
+                        $text = array();
                         $trace = array();
                         $seriesValues = array();
                         if($data_description->display_type == 'pie')
@@ -478,6 +489,7 @@ class PlotlyTimeseries2 extends Plotly2
                             {
                                 $xValues[] = date('m-d-Y', $start_ts_array[$i]);
                                 $yValues[] = $v;
+                                $text[] = round($v, 2);
                                 $seriesValue = array(
                                     'x' => date('m-d-Y', $start_ts_array[$i]),
                                     'y' => $v,
@@ -539,7 +551,7 @@ class PlotlyTimeseries2 extends Plotly2
                         $tooltip = '%{x}' . '<br> <span style="color:' . $color
                             . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
 
-                        $tooltip = $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
+                        $tooltip = $formattedDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
                         $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
@@ -561,7 +573,7 @@ class PlotlyTimeseries2 extends Plotly2
                             ),
                             'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                             'line' => array(
-                                'color' => $data_description->display_type == 'pie'? null: $lineColor,
+                                'color' => $data_description->display_type == 'pie'? null: $color,
                                 'dash' => $data_description->line_type,
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0
                             ),
@@ -571,15 +583,15 @@ class PlotlyTimeseries2 extends Plotly2
                             'yaxis' => "y{$yIndex}",
                             'showlegend' => $data_description->display_type != 'pie',
                             'hovertemplate' => $tooltip,
-                            'text' => $data_labels_enabled ? $yValues : null,
-                            'textposition' => 'top right',
+                            'text' => $data_description->value_labels ? $text : null,
+                            'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
                             'textfont' => array(
                                 'color' => $color
                             ),
                             'x' => $xValues,
                             'y' => $yValues,
                             //'base' => 0.0,
-                            //'width' => 0.1,
+                            //'width' => 0.4,
                             //'offset' => 0.1 * $traceIndex,
                             'offsetgroup' => "group{$traceIndex}",
                             'seriesPoints' => $seriesValues,
@@ -637,6 +649,121 @@ class PlotlyTimeseries2 extends Plotly2
                         // REMOVED: Add percent allocated to XSEDE line if the metric
                         // being displayed is XSEDE Utilization.
 
+                        if(($data_description->std_err == 1 || $data_description->std_err_labels) && $data_description->display_type != 'pie')
+                        {
+                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
+                            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
+
+                            $stderr = array();
+                            $hoverText = array();
+                            $dataLabels = array();
+                            $errorLabels = array();
+                            $errorCount = $yAxisDataObject->getErrorCount();
+                            for($i = 0; $i < $errorCount; $i++)
+                            {
+                                // build the error bar and set for display
+                                $v = $yAxisDataObject->getValue($i);
+                                $e = $yAxisDataObject->getError($i);
+                                $stderr[] = $e;
+                                $hoverText[] = round($e, 2);
+                                $dataLabels[] = round($v, 2) . ' [+/- ' . round($e, 2) . ']';
+                                $errorLabels[] = '+/- ' . round($e, 2);
+                            }
+
+                            if ($data_description->std_err_labels && !$data_description->std_err) {
+                                if ($data_description->display_type=='area') {
+                                    $this->_chart['data'][max($traceIndex * 2 - 1,0) + 1]['text'] = $errorLabels;
+                                }
+                                else {
+                                    $this->_chart['data'][max($traceIndex * 2 - 1,0)]['text'] = $errorLabels;
+                                }
+                                return;
+                            }
+
+                            $dsn = 'Std Err: '.$formattedDataSeriesName;
+
+                            $lookupDataSeriesName = $dsn;
+                            if(isset($legend->{$dsn}))
+                            {
+                                $config = $legend->{$dsn};
+                                if(isset($config->title))
+                                {
+                                    $lookupDataSeriesName = $config->title;
+                                }
+                            }
+                            $visible = true;
+                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
+                                {
+                                $visible = $data_description->visibility->{$dsn};
+                            }
+                            $error_trace = $trace;
+
+                            // create the data series description:
+                            $error_trace = array_merge($error_trace, array(
+                                'name' => $dsn,
+                                'otitle' => $dsn,
+                                'datasetId' => $data_description->id,
+                                'zIndex' => $zIndex,
+                                'color'=> $error_color,
+                                'marker' => array(
+                                    'color' => $error_color,
+                                ),
+                                'text' => !$data_description->value_labels && $data_description->std_err_labels ? $errorLabels : array(),
+                                'hovertext' => $hoverText,
+                                'mode' => 'lines',
+                                'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
+                                'error_y' => array(
+                                    'type' => 'data',
+                                    'array' => $stderr,
+                                    'arrayminus' => $stderr,
+                                    'symmetric' => false,
+                                    'color' => $error_color
+                                ),
+                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
+                            ));
+
+                            if ($trace['type'] == 'bar') {
+                                //$error_trace['color'] = $trace['color'];
+                                $error_trace['marker']['color'] = $trace['marker']['color'];
+                                $this->_chart['layout']['barmode'] = 'overlay';
+                                $this->_chart['layout']['hovermode'] = 'x unified';
+
+                                if ($data_description->display_type == 'h_bar') {
+                                    $error_trace['error_x'] = $error_trace['error_y'];
+                                    $this->_chart['layout']['hovermode'] = 'y unified';
+                                    unset($error_trace['error_y']);
+                                }
+
+                                if ($data_description->combine_type=='side') {
+                                    $error_trace['offsetgroup'] = "group{$traceIndex}";
+                                    //$error_trace['base'] = 0.0;
+                                    //$error_trace['width'] = 0.1;
+                                    //$error_trace['offset'] = 0.1 * $traceIndex; 
+                                    $this->_chart['layout']['barmode'] = 'group';
+                                    
+                                }
+                            }
+
+                            if ($data_description->value_labels && $data_description->std_err_labels) {
+                                if (\xd_utilities\string_begins_with($this->_chart['data'][$traceIndex]['name'], 'Trend Line: ')){
+                                    $this->_chart['data'][$traceIndex-1]['text'] = array();
+                                    $error_trace['text'] = $dataLabels;
+                                }
+                                else {
+                                    $this->_chart['data'][$traceIndex]['text'] = array();
+                                    $error_trace['text'] = $dataLabels;
+                                }
+                                if (!$data_description->display_type == 'line') {
+                                    $error_trace['textposition'] = 'auto';
+                                } 
+                            }
+
+                            if(! $data_description->log_scale)
+                            {
+                                $this->_chart['data'][] = $error_trace;
+                            }
+                        } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
+
                         // ---- Add a trend line on the dataset ----
                         if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
                         {
@@ -685,18 +812,19 @@ class PlotlyTimeseries2 extends Plotly2
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,
                                     'drilldown' => $drilldown,
-                                    'color'=> $color,
+                                    'color' => $color,
                                     'type' => 'scatter',
                                     'yaxis' => "y{$yAxisIndex}",
                                     'lineWidth' => 2 + $font_size/4.0,
                                     'showlegend' => true,
                                     'hoverinfo' => 'skip',
                                     'marker' => array(
-                                        'size' => 0
+                                        'size' => 0.0
                                     ),
                                     'line' => array(
                                         'shape' => $data_description->log_scale ? 'spline' : 'line',
-                                        'dash' => 'dot' 
+                                        'dash' => 'dot',
+                                        'color' => $color,
                                     ),
                                     'visible' => $visible,
                                     'm' => $m,
@@ -710,95 +838,7 @@ class PlotlyTimeseries2 extends Plotly2
 
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
 
-
-                        if($data_description->std_err == 1 && $data_description->display_type != 'pie')
-                        {
-                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
-                            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
-
-                            $high = array();
-                            $low = array();
-                            $stderr = array();
-                            $errorCount = $yAxisDataObject->getErrorCount();
-                            for($i = 0; $i < $errorCount; $i++)
-                            {
-                                // build the error bar and set for display
-                                $v = $yAxisDataObject->getValue($i);
-                                $e = $yAxisDataObject->getError($i);
-                                $has_value = isset($v) && $v != 0;
-                                $low[] = $has_value ? $v-$e : null;
-                                $high[] = $has_value ? $v+$e : null;
-                                $stderr[] = $e;
-                            }
-
-                            $dsn = 'Std Err: '.$formattedDataSeriesName;
-
-                            $lookupDataSeriesName = $dsn;
-                            if(isset($legend->{$dsn}))
-                            {
-                                $config = $legend->{$dsn};
-                                if(isset($config->title))
-                                {
-                                    $lookupDataSeriesName = $config->title;
-                                }
-                            }
-                            $visible = true;
-                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
-                                {
-                                $visible = $data_description->visibility->{$dsn};
-                            }
-                            $error_trace = $trace;
-
-                            // create the data series description:
-                            $error_trace = array_merge($error_trace, array(
-                                'name' => $dsn,
-                                'otitle' => $dsn,
-                                'datasetId' => $data_description->id,
-                                'zIndex' => $zIndex,
-                                'color'=> $error_color,
-                                'marker' => array(
-                                    'color' => $error_color,
-                                ),
-                                'hovertext' => $stderr,
-                                'mode' => 'lines',
-                                'hovertemplate' => '<b> +/- </b>' . '%{hovertext}',
-                                'error_y' => array(
-                                    'type' => 'data',
-                                    'array' => $high,
-                                    'arrayminus' => $low,
-                                    'symmetric' => false,
-                                    'color' => $error_color
-                                ),
-                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                            ));
-
-                            if ($trace['type'] == 'bar') {
-                                //$error_trace['color'] = $trace['color'];
-                                $error_trace['marker']['color'] = $trace['marker']['color'];
-                                $this->_chart['layout']['barmode'] = 'overlay';
-                                $this->_chart['layout']['hovermode'] = 'x unified';
-
-                                if ($data_description->display_type == 'h_bar') {
-                                    $error_trace['error_x'] = $error_trace['error_y'];
-                                    $this->_chart['layout']['hovermode'] = 'y unified';
-                                    unset($error_trace['error_y']);
-                                }
-
-                                if ($data_description->combine_type=='side') {
-                                    $error_trace['offsetgroup'] = "group{$traceIndex}";
-                                    //$error_trace['base'] = 0.0;
-                                    //$error_trace['width'] = 0.1;
-                                    //$error_trace['offset'] = 0.1 * $traceIndex; 
-                                    $this->_chart['layout']['barmode'] = 'group';
-                                    
-                                }
-                            }
-
-                            if(! $data_description->log_scale)
-                            {
-                                $this->_chart['data'][] = $error_trace;
-                            }
-                        } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
+ 
                     } // if( $yAxisDataObject != NULL)
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex

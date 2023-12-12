@@ -691,7 +691,7 @@ class Usage extends Common
                 }
 
                 // Set the title style.
-                $meChart['layout']['title']['font'] = $usageTitleStyle;
+                $meChart['layout']['title']['font'] = array_merge($meChart['layout']['title']['font'], $usageTitleStyle);
 
                 // If the "Show Title" checkbox on the Export Dialog has not been ticked,
                 // do not show a chart title. However, the Metric Explorer promotes the
@@ -725,30 +725,30 @@ class Usage extends Common
                 }
 
                 // If there is a y-axis...
-                if (isset($meChart['layout']['yaxis'])) {
+                if (isset($meChart['layout']['yaxis1'])) {
                     // Remove extraneous y-axis properties.
                     //Unset yaxis max but keep min
-                    $min = $meChart['layout']['yaxis']['range'][0];
-                    $meChart['layout']['yaxis']['range'] = [$min, null];
-                    unset($meChart['layout']['yaxis']['tick0']);
+                    $min = $meChart['layout']['yaxis1']['range'][0];
+                    $meChart['layout']['yaxis1']['range'] = [$min, null];
+                    unset($meChart['layout']['yaxis1']['tick0']);
 
                     // If a thumbnail was requested, remove the y-axis label.
                     if ($thumbnailRequested) {
-                        $meChart['layout']['yaxis']['title'] = '';
+                        $meChart['layout']['yaxis1']['title'] = '';
                     }
 
                     // Fix the x-axis labels to be the same size as the y-axis labels.
                     $meChart['layout']['xaxis']['tickfont']['size'] =
-                        $meChart['layout']['yaxis']['tickfont']['size'];
+                        $meChart['layout']['yaxis1']['tickfont']['size'];
                     // Set the y-axis grid line dash style and color.
                     if ($meRequestIsTimeseries) {
-                        $meChart['layout']['yaxis']['gridcolor'] = '#C0C0C0';
+                        $meChart['layout']['yaxis1']['gridcolor'] = '#c0c0c0';
                     } else {
                         //unset($meChart['layout']['yaxis']['gridLineDashStyle']);
-                        unset($meChart['layout']['yaxis']['gridcolor']);
+                        unset($meChart['layout']['yaxis1']['gridcolor']);
                     }
                     if ($usageChartSettings['show_guide_lines'] === 'n') {
-                        $meChart['layout']['yaxis']['gridwidth'] = 0;
+                        $meChart['layout']['yaxis1']['showgrid'] = false;
                     }
                 }
 
@@ -844,7 +844,13 @@ class Usage extends Common
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
-                            $meDataSeries['name'] = "${primaryDataSeriesRank}. " . $meDataSeries['name'];
+                            if ($meDataSeries['type'] == 'area'){ 
+                                $traceIndex = $primaryDataSeriesRank - 1;
+                                $meDataSeries['name'] = "${traceIndex}. " . $meDataSeries['name'];
+                            }
+                            else {
+                                $meDataSeries['name'] = "${primaryDataSeriesRank}. " . $meDataSeries['name'];
+                            }
                         }
                     }
 
