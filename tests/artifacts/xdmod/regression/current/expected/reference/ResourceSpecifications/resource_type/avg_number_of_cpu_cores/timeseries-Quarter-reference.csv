@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Cores Available: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[High-performance computing] Average Number of CPU Cores Available"
+"2016 Q4",4000.0000
+"2017 Q1",4000.0000
+---------

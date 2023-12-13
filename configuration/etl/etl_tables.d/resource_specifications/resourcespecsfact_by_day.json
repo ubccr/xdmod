@@ -31,6 +31,11 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource the specification is for."
             },{
+                "name": "wallduration",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Wall duration for a specification during the time period"
+            },{
                 "name": "cpu_cores_available",
                 "type": "int(11)",
                 "nullable": false,

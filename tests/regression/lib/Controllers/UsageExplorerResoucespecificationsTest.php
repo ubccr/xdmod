@@ -4,9 +4,9 @@
  * @subpackage Tests
  */
 
-namespace Controllers;
+ namespace RegressionTests\Controllers;
 
-use TestHarness\RegressionTestHelper;
+ use RegressionTests\TestHarness\RegressionTestHelper;
 
 /**
  * Test the usage explorer for jobs realm regressions.
@@ -55,10 +55,10 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
             'gpu_hours_available',
             'cpu_node_hours_available',
             'gpu_node_hours_available',
-            'number_of_cpu_nodes',
-            'number_of_gpu_nodes',
-            'number_of_cpu_cores',
-            'number_of_gpu_cores'
+            'avg_number_of_cpu_nodes',
+            'avg_number_of_gpu_nodes',
+            'avg_number_of_cpu_cores',
+            'avg_number_of_gpu_cores'
         ];
 
         $groupBys = [

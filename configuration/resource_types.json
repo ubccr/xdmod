@@ -50,22 +50,19 @@
         "Tape": {
             "description": "Tape storage resource",
             "realms": [
-                "Storage",
-                "ResourceSpecifications"
+                "Storage"
             ]
         },
         "Disk": {
             "description": "Disk storage resource",
             "realms": [
-                "Storage",
-                "ResourceSpecifications"
+                "Storage"
             ]
         },
         "StGrid": {
             "description": "Storage grid",
             "realms": [
-                "Storage",
-                "ResourceSpecifications"
+                "Storage"
             ]
         },
         "US": {

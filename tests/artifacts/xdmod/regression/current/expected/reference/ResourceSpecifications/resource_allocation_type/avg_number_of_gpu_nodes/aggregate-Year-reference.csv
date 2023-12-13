@@ -1,0 +1,10 @@
+title
+"Average Number of GPU Nodes Available: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Allocation Type","Average Number of GPU Nodes Available"
+"CPU Allocated",0.0000
+---------

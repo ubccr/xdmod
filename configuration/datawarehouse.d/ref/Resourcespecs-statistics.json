@@ -27,31 +27,31 @@
         "precision": 0,
         "unit": "Hours"
     },
-    "number_of_cpu_nodes": {
-        "description_html": "The total aggregate number of CPU Nodes available for a time period.",
-        "formula": "COALESCE(SUM(agg.cpu_nodes_available), 0)",
-        "name": "Number of CPU Nodes",
+    "avg_number_of_cpu_nodes": {
+        "description_html": "The average number of CPU Nodes available for a time period.",
+        "formula": "COALESCE(SUM(agg.cpu_nodes_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "name": "Average Number of CPU Nodes Available",
         "precision": 0,
         "unit": "Nodes"
     },
-    "number_of_gpu_nodes": {
-        "description_html": "The total aggregate number of GPU Nodes available for a time period.",
-        "formula": "COALESCE(SUM(agg.gpu_nodes_available), 0)",
-        "name": "Number of GPU Nodes",
+    "avg_number_of_gpu_nodes": {
+        "description_html": "The average number of GPU Nodes available for a time period.",
+        "formula": "COALESCE(SUM(agg.gpu_nodes_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "name": "Average Number of GPU Nodes Available",
         "precision": 0,
         "unit": "Nodes"
     },
-    "number_of_cpu_cores": {
-        "description_html": "The total aggregate number of CPU Cores available for a time period.",
-        "formula": "COALESCE(SUM(agg.cpu_cores_available), 0)",
-        "name": "Number of CPU Cores",
+    "avg_number_of_cpu_cores": {
+        "description_html": "The average number of CPU Cores available for a time period.",
+        "formula": "COALESCE(SUM(agg.cpu_cores_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "name": "Average Number of CPU Cores Available",
         "precision": 0,
         "unit": "Cores"
     },
-    "number_of_gpu_cores": {
-        "description_html": "The total aggregate number of GPU Cores available for a time period.",
-        "formula": "COALESCE(SUM(agg.gpu_cores_available), 0)",
-        "name": "Number of GPU Cores",
+    "avg_number_of_gpu_cores": {
+        "description_html": "The average number of GPU Cores available for a time period.",
+        "formula": "COALESCE(SUM(agg.gpu_cores_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "name": "Average Number of GPU Cores Available",
         "precision": 0,
         "unit": "Cores"
     }

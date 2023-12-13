@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Nodes Available: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[High-performance computing] Average Number of CPU Nodes Available"
+2016-12,400.0000
+2017-01,400.0000
+---------

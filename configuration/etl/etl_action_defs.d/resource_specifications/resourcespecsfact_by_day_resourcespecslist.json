@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "${table_definition_dir}/resource_specifications/resourcespecs_by_day_resourcespecslist.json#/table_definition"
+        "$ref": "${table_definition_dir}/resource_specifications/resourcespecsfact_by_day_resourcespecslist.json#/table_definition"
     },
     "source_query": {
         "overseer_restrictions": {

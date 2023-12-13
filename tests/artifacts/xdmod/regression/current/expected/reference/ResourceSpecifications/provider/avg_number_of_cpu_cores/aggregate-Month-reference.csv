@@ -1,0 +1,10 @@
+title
+"Average Number of CPU Cores Available: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","Average Number of CPU Cores Available"
+"screw - Screwdriver",4000.0000
+---------

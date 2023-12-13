@@ -1,0 +1,11 @@
+title
+"Average Number of GPU Cores Available: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[frearson] Average Number of GPU Cores Available","[mortorq] Average Number of GPU Cores Available","[phillips] Average Number of GPU Cores Available","[pozidriv] Average Number of GPU Cores Available","[robertson] Average Number of GPU Cores Available"
+"2016 Q4",0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",0.0000,0.0000,0.0000,0.0000,0.0000
+---------
