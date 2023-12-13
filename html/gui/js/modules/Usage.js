@@ -1495,6 +1495,12 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     layout: {
                                         width: CCR.xdmod.ui.thumbWidth * chartThumbScale,
                                         height: CCR.xdmod.ui.thumbHeight * chartThumbScale,
+                                        margin: {
+                                            t: 20,
+                                            l: 5,
+                                            r: 5,
+                                            b: 35 
+                                        },
                                     },
                                     exporting: {
                                         enabled: false
@@ -1510,6 +1516,39 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     chartOptions = chartRecords[0].get('hc_jsonstore');
                                 }
                                 jQuery.extend(true, chartOptions, baseChartOptions);
+
+                                chartOptions.layout.annotations = [];
+
+                                //Add ellipsis to labels longer than 15 characters
+                                chartOptions.data.forEach((trace, traceIndex) => {
+                                    if (trace.type != 'pie') {
+                                        let isSwapXY = false;
+                                        let labels = trace.x;
+                                        let tickText = [];
+
+                                        if ('orientation' in trace) {
+                                            isSwapXY = true;
+                                            labels = trace.y;
+                                        }
+                                        
+                                        labels.forEach((label, labelIndex) => {
+                                            if (label.length > 15) {
+                                                label = label.substring(0,13) + '...';
+                                            }
+                                            tickText.push(label);
+                                        });
+
+                                        if (isSwapXY) {
+                                            chartOptions.layout.yaxis1.tickmode = 'array';
+                                            chartOptions.layout.yaxis1.tickvals = trace.y;
+                                            chartOptions.layout.yaxis1.ticktext = tickText;
+                                        } else {
+                                            chartOptions.layout.xaxis.tickmode = 'array';
+                                            chartOptions.layout.xaxis.tickvals = trace.x;
+                                            chartOptions.layout.xaxis.ticktext = tickText;
+                                        }
+                                    }
+                                });
 
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;

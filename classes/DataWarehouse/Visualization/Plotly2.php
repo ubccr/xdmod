@@ -681,12 +681,12 @@ class Plotly2
             'cliponaxis' => false,
             'layer' => 'below traces',
             'title' => array(
-                        'text' => $xAxisLabel,
-                        'font' => array(
-                            'color'=> '#000000',
-                            'size' => (12 + $font_size),
-                            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
-                        )
+                'text' => $xAxisLabel,
+            ),
+            'titlefont' => array(
+                'size' => (12 + $font_size),
+                'color' => '#000000',
+                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
             ),
             'otitle' => $originalXAxisLabel,
             'dtitle' => $defaultXAxisLabel,
@@ -697,6 +697,7 @@ class Plotly2
             'linewidth' => 2 + $font_size / 4,
             'linecolor' => '#c0d0e0',
             'rangemode' => 'tozero',
+            'showgrid' => false,
             'categoryarray' => $this->_xAxisDataObject->getValues()
         );
 
@@ -1196,10 +1197,12 @@ class Plotly2
                     );
                     $trace['textangle'] = 0;
                     $this->_chart['layout']["yaxis{$yIndex}"]['type'] = null; 
-                    //$this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : 'linear';
                     $tmp = $this->_chart['layout']['xaxis'];
                     $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
                     $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
+                    $this->_chart['layout']["yaxis{$yIndex}"]['titlefont']['color'] = $yAxisColor;
+                    $this->_chart['layout']["yaxis{$yIndex}"]['title']['text'] = '<b>' . $this->_chart['layout']["yaxis{$yIndex}"]['title']['text'] . '</b>';
+                    $this->_chart['layout']["yaxis{$yIndex}"]['title']['standoff'] = 5;
                 }
                 // set stacking
                 if($data_description->display_type!=='line')
