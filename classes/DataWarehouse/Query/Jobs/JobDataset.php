@@ -94,8 +94,28 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 throw new Exception('invalid "end_date" query parameter');
             }
 
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), ">=", $startDateTs));
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_time_ts'), "<=", $endDateTs));
+            $startDayId = (
+                date('Y', $startDateTs) * 100000
+                + date('z', $startDateTs) + 1
+            );
+            $endDayId = (
+                date('Y', $endDateTs) * 100000
+                + date('z', $endDateTs) + 1
+            );
+            $factEndIdField = new TableField($factTable, 'end_day_id');
+            $this->addWhereCondition(
+                new WhereCondition($factEndIdField, '>=', $startDayId)
+            );
+            $this->addWhereCondition(
+                new WhereCondition($factEndIdField, '<=', $endDayId)
+            );
+            if ($startDayId === $endDayId) {
+                // In this case, only jobs that ended on a single specific day
+                // are being requested, so there will not be any duplicate rows
+                // from jobs spanning multiple days. Thus, remove the DISTINCT
+                // constraint and thereby speed up the query.
+                $this->setDistinct(false);
+            }
         } else {
             throw new Exception('invalid query parameters');
         }
