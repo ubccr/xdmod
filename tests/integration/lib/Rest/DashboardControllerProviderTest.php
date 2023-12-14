@@ -9,6 +9,36 @@ use Models\Services\Realms;
 class DashboardControllerProviderTest extends BaseUserAdminTest
 {
     /**
+     * @dataProvider provideSetLayout
+     */
+    public function testSetLayout($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+    public function provideSetLayout()
+    {
+        $validInput = [
+            'path' => 'rest/dashboard/layout',
+            'method' => 'post',
+            'params' => null,
+            'data' => ['data' => 'foo']
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['data']
+            ]
+        );
+    }
+
+    /**
      * Exercises the `dashboard/statistics` REST endpoint.
      *
      * @dataProvider provideTestGetStatistics
@@ -122,6 +152,39 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
         );
     }
 
+    /**
+     * @dataProvider provideGetStatisticsParamValidation
+     */
+    public function testGetStatisticsParamValidation(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        parent::requestAndValidateJson($this->helper, $input, $output);
+    }
+
+    public function provideGetStatisticsParamValidation()
+    {
+        $validInput = [
+            'path' => 'rest/dashboard/statistics',
+            'method' => 'get',
+            'params' => [
+                'start_date' => 'foo',
+                'end_date' => 'foo'
+            ],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'run_as' => 'pub',
+                'string_params' => ['start_date', 'end_date']
+            ]
+        );
+    }
+
     private function recursivelyFilter(array $data, array $keys)
     {
         foreach ($data as $key => $value) {
@@ -173,7 +236,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                 'data',
                 ['viewedTour' => '-1']
             ),
-            parent::validateBadRequestResponse('Invalid data parameter', 0)
+            parent::validateBadRequestResponse('Invalid data parameter')
         ];
         // Test successful requests.
         foreach ([1, 0] as $viewedTour) {

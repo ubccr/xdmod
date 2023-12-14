@@ -58,16 +58,13 @@ class AdminControllerProviderTest extends BaseTest
                     'data',
                     ['viewedTour' => '-1']
                 ),
-                parent::validateBadRequestResponse(
-                    'Invalid data parameter',
-                    104
-                )
+                parent::validateBadRequestResponse('Invalid data parameter')
             ],
             [
                 'user_not_found',
                 'mgr',
                 parent::mergeParams($validInput, 'data', ['uid' => '-1']),
-                parent::validateBadRequestResponse('User not found', 104)
+                parent::validateBadRequestResponse('User not found')
             ]
         );
         // Test successful requests.

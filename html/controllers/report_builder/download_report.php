@@ -1,7 +1,7 @@
 <?php
 
 use \DataWarehouse\Access\ReportGenerator;
-use DataWarehouse\Query\Exceptions\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 $filters = array(
     'format' => array(
@@ -35,7 +35,7 @@ try {
     }
 
     if ($get['report_loc'] === null) {
-        throw new BadRequestException('Invalid filename');
+        throw new BadRequestHttpException('Invalid filename');
     }
 
     $output_format = $get['format'];
