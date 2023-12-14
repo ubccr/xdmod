@@ -39,6 +39,8 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         $factTable = $tables['rs'];
 
+        $this->setDistinct(true);
+
         if (isset($parameters['start_date']) && isset($parameters['end_date'])) {
             $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
             $startDateTs = mktime(0, 0, 0, $startDate['month'], $startDate['day'], $startDate['year']);
@@ -54,8 +56,15 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 throw new Exception('invalid "end_date" query parameter');
             }
 
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_date_ts'), ">=", $startDateTs));
-            $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'end_date_ts'), "<=", $endDateTs));
+            $startDayId = (date('Y', $startDateTs) * 100000 + date('z', $startDateTs) + 1);
+            $endDayId = (date('Y', $endDateTs) * 100000 + date('z', $endDateTs) + 1);
+
+            $factEndIdField = new TableField($factTable, 'end_day_id');
+            $factStartIdField = new TableField($factTable, 'start_day_id');
+
+            $this->addWhereCondition(new WhereCondition($factEndIdField, '>=', $startDayId));
+            $this->addWhereCondition(new WhereCondition($factStartIdField, '<=', $endDayId));
+
         } else {
             throw new Exception('invalid query parameters');
         }

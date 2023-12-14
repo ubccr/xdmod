@@ -40,8 +40,6 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
             $parameters
         );
 
-        // The same fact table row may correspond to multiple rows in the
-        // aggregate table (e.g. a job that runs over two days).
         $this->setDistinct(true);
 
         // Override values set in Query::__construct() to use the fact table rather than the
@@ -63,6 +61,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $resourceTypeTable = new Table(new Schema('modw'), 'resourcetype', 'rt');
         $organizationTable = new Table(new Schema('modw'), 'organization', 'org');
         $percentAllocated = new Table(new Schema('modw'), 'resource_allocated', 'rs');
+        $resourceAllocationType = new Table(new Schema('modw'), 'resource_allocation_type', 'rat');
 
         $this->addTable($resourcespecsListTable);
         $this->addWhereCondition(new WhereCondition(
@@ -106,9 +105,17 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
             new TableField($percentAllocated, "resource_id")
         ));
 
+        $this->addTable($resourceAllocationType);
+        $this->addWhereCondition(new WhereCondition(
+            new TableField($resourcefactTable, "id"),
+            '=',
+            new TableField($resourceAllocationType, "resource_id")
+        ));
+
         $this->addField(new TableField($resourcefactTable, "code", 'resource'));
         $this->addField(new TableField($resourceTypeTable, "description", "resource_type"));
-
+        $this->addField(new TableField($factTable, "start_time_ts", "start_time_ts"));
+        $this->addField(new TableField($factTable, "end_time_ts", "end_time_ts"));
         $this->addField(new TableField($factTable, "cpu_processor_count", "cpu_processor_count"));
         $this->addField(new TableField($factTable, "cpu_node_count", "cpu_node_count"));
         $this->addField(new TableField($factTable, "cpu_processor_count_per_node", "cpu_processor_count_per_node"));
@@ -118,6 +125,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $this->addField(new TableField($organizationTable, "name", "organization_name"));
         $this->addField(new TableField($factTable, "su_available_per_day", "su_available"));
         $this->addField(new TableField($percentAllocated, "percent_allocated", "percent_allocated"));
+        $this->addField(new TableField($resourceAllocationType, "resource_allocation_type_description", "resource_allocation_type_description"));
 
         $this->prependOrder(
             new \DataWarehouse\Query\Model\OrderBy(

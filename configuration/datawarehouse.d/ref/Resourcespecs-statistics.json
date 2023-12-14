@@ -1,27 +1,27 @@
 {
     "cpu_hours_available": {
-        "description_html": "The total aggregate number of CPU hours available for a time period.",
+        "description_html": "The total number of CPU hours available for a time period.",
         "formula": "COALESCE(SUM(agg.core_time_available),0)/3600.0",
         "name": "CPU Hours Available",
         "precision": 0,
         "unit": "Hours"
     },
     "gpu_hours_available": {
-        "description_html": "The total aggregate number of GPU hours available for a time period.",
+        "description_html": "The total number of GPU hours available for a time period.",
         "formula": "COALESCE(SUM(agg.gpu_time_available),0)/3600.0",
         "name": "GPU Hours Available",
         "precision": 0,
         "unit": "Hours"
     },
     "cpu_node_hours_available": {
-        "description_html": "The total aggregate number of CPU Node hours available for a time period.",
+        "description_html": "The total number of CPU Node hours available for a time period.",
         "formula": "COALESCE(SUM(agg.cpu_nodes_available), 0) * 24",
         "name": "CPU Node Hours Available",
         "precision": 0,
         "unit": "Hours"
     },
     "gpu_node_hours_available": {
-        "description_html": "The total aggregate number of GPU Node hours available for a selected time period.",
+        "description_html": "The total number of GPU Node hours available for a selected time period.",
         "formula": "COALESCE(SUM(agg.gpu_nodes_available), 0) * 24",
         "name": "GPU Node Hours Available",
         "precision": 0,
