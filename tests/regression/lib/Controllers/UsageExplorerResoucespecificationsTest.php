@@ -1,8 +1,8 @@
 <?php
 
- namespace RegressionTests\Controllers;
+namespace RegressionTests\Controllers;
 
- use RegressionTests\TestHarness\RegressionTestHelper;
+use RegressionTests\TestHarness\RegressionTestHelper;
 
 /**
  * Test the usage explorer for jobs realm regressions.
