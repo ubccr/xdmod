@@ -16,7 +16,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 {
     private $documentation = array();
 
-    public function __construct(array $parameters,$stat = "all")
+    public function __construct(array $parameters)
     {
         parent::__construct('ResourceSpecifications', 'modw_aggregates', 'resourcespecsfact_by_day', array());
 
@@ -72,7 +72,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         foreach ($config->getQueryFieldDefinitions('ResourceSpecifications') as $field) {
             $alias = $field['name'];
             if (isset($field['tableAlias']) && isset($field['column'])) {
-                $this->addField(new TableField($tables[$field['tableAlias']],$field['column'],$alias));
+                $this->addField(new TableField($tables[$field['tableAlias']], $field['column'], $alias));
             } elseif (isset($field['formula'])) {
                 $this->addField(new FormulaField($field['formula'], $alias));
             } else {
