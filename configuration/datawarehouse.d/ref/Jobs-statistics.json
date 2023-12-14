@@ -263,23 +263,11 @@
         "unit": "Hour"
     },
     "utilization": {
-        "aggregate_formula": {
-            "$include": "datawarehouse.d/include/Jobs-util-agg.sql"
-        },
-        "description_html": "The percentage of core time that a resource has been running jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by jobs over a given time period divided by the maximum CPU hours that the system could deliver (based on the number of cores present on the resources). This value does not take into account downtimes or outages. It is just calculated based on the number of cores in the resource specifications.",
-        "name": "${ORGANIZATION_NAME} Utilization",
-        "precision": 2,
-        "timeseries_formula": {
-            "$include": "datawarehouse.d/include/Jobs-util-time.sql"
-        },
-        "unit": "%"
-    },
-    "utilization_new": {
-      "description_html": "A percentage that shows how many core hours were reserved over a time period against how many core hours a resource had available during that time period.<br/><b>Core Hours</b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br/><b>Core Hours Available:</b> The total number of core hours available for a time period. Calculated by taking the product of the number of cores available over a time period, number of days in a time period and the number of hours in a day.",
       "aggregate_formula": "COALESCE((SUM(agg.cpu_time) / (SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} as rsa WHERE rsa.${AGGREGATION_UNIT}_id BETWEEN ${MIN_DATE_ID} AND ${MAX_DATE_ID} AND FIND_IN_SET(rsa.resource_id, GROUP_CONCAT(DISTINCT agg.task_resource_id)) <> 0)) * 100, 0)",
+      "description_html": "The percentage of core time that a resource has been running jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by jobs over a given time period divided by the maximum CPU hours that the system could deliver (based on the number of cores present on the resources). This value does not take into account downtimes or outages. It is just calculated based on the number of cores in the resource specifications.",
+      "name": "${ORGANIZATION_NAME} Utilization",
+      "precision": 2,
       "timeseries_formula": "COALESCE((SUM(agg.cpu_time) / (SELECT SUM(rf.core_time_available) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} rf WHERE rf.${AGGREGATION_UNIT}_id = agg.${AGGREGATION_UNIT}_id AND FIND_IN_SET(rf.resource_id, GROUP_CONCAT(DISTINCT agg.task_resource_id)) <> 0)) * 100, 0)",
-      "name": "${ORGANIZATION_NAME} Utilization new",
       "unit": "%",
-      "precision": 2
     }
 }
