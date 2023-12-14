@@ -2748,19 +2748,35 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 let point;
                                 console.log(evt);
                                 if (evt.points.length > 1) {
+                                    console.log(evt);
                                     const cursorY = evt.event.pointerY;
                                     const cursorX = evt.event.pointerX;
                                     evt.points.forEach(function (trace) {
+                                        //console.log(trace);
+                                        /*console.log(cursorX);
+                                        console.log(cursorY);
+                                        console.log(trace.bbox.y0);
+                                        console.log(trace.bbox.x0);*/
                                         if (cursorY > trace.bbox.y0 && cursorY < trace.bbox.y1) {
                                             //Might need to add a check for trend line
                                             point = trace;
                                         }
-                                        console.log(trace);
-                                        if (trace.type === 'bar') {
-                                            console.log('bar chart');
-                                            if (cursorX > trace.bbox.x0 && cursorX < trace.bbox.x1) {
-                                                point = trace;
-                                            }
+                                        if (trace.data.type === 'bar') {
+                                            var xa = evt.points[0].xaxis;
+                                            var ya = evt.points[0].yaxis;
+
+                                            var marginL = chartDiv._fullLayout.margin.l;
+                                            var marginT = chartDiv._fullLayout.margin.t;
+
+                                            var x = cursorX - marginL;
+                                            var y = cursorY - marginT;
+                                            /*console.log(chartDiv);
+                                            console.log(xa.p2d(x));
+                                            console.log(ya.p2d(y));*/
+                                            //console.log(evt.event);
+                                            console.log(document.getElementsByClassName('point'));
+                                            var point = document.getElementsByClassName('point')[0];
+                                            console.log(point.getBoundingClientRect());
                                         }
                                     });
                                 }

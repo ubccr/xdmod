@@ -280,7 +280,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'titlefont' => array(
                                 'color'=> $yAxisColor,
                                 'size' => (12 + $font_size),
-                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                         ),
                         'otitle' => $originalYAxisLabel,
                         'dtitle' => $defaultYAxisLabel,
@@ -363,7 +363,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'font' => array(
                                 'color'=> '#000000',
                                 'size' => (12 + $font_size),
-                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                             )
                         ),
                         'otitle' => $originalXAxisLabel,
@@ -447,6 +447,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 break;
                             }
                         }
+
                         // Display markers for scatter plots, non-thumbnail plots of data series
                         // with fewer than 21 points, or for any data series with a single y value.
                         $showMarker = $data_description->display_type == 'scatter' ||
@@ -551,7 +552,11 @@ class PlotlyTimeseries2 extends Plotly2
                         $tooltip = '%{x}' . '<br> <span style="color:' . $color
                             . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
 
+                        $this->_chart['layout']['xaxis']['hoverformat'] = $tooltip;
                         $tooltip = $formattedDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
+                        if ($traceIndex == 0) {
+                            $this->_chart['layout']['hoverlabel']['bordercolor'] = $color;
+                        }
                         $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
@@ -722,8 +727,15 @@ class PlotlyTimeseries2 extends Plotly2
                                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
                             ));
 
+                            if ($error_trace['type'] == 'area') {
+                                $error_trace['fill'] = 'toself';
+                                if ($data_description->combine_type=='stack') {
+                                    $error_trace['stackgroup'] = 'two';
+                                    $error_trace['stackgaps'] = 'interpolate';
+                                }
+                            }
+
                             if ($trace['type'] == 'bar') {
-                                //$error_trace['color'] = $trace['color'];
                                 $error_trace['marker']['color'] = $trace['marker']['color'];
                                 $this->_chart['layout']['barmode'] = 'overlay';
                                 $this->_chart['layout']['hovermode'] = 'x unified';
@@ -736,11 +748,7 @@ class PlotlyTimeseries2 extends Plotly2
 
                                 if ($data_description->combine_type=='side') {
                                     $error_trace['offsetgroup'] = "group{$traceIndex}";
-                                    //$error_trace['base'] = 0.0;
-                                    //$error_trace['width'] = 0.1;
-                                    //$error_trace['offset'] = 0.1 * $traceIndex; 
                                     $this->_chart['layout']['barmode'] = 'group';
-                                    
                                 }
                             }
 

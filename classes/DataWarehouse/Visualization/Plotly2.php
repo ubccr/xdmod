@@ -122,14 +122,14 @@ class Plotly2
                     'font' => array(
                         'color' => '#909090',
                         'size' => 10,
-                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                        'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                     ),
                     'xref' => 'paper',
                     'yref' => 'paper',
                     'xanchor' => 'right',
                     'yanchor' => 'top',
                     'x' => 1.0,
-                    'y' => -0.175,
+                    'y' => -0.05,
                     //'yshift' => -60,
                     'showarrow' => false
                     ),
@@ -147,7 +147,6 @@ class Plotly2
                 ),
                 'legend' => array(
                     'itemwidth' => 40,
-                    'itemsizing' => 'constant',
                     'bgcolor' => '#FFFFFF',
                     'borderwidth' => 0,
                     'xref' => 'container',
@@ -158,11 +157,13 @@ class Plotly2
                 'hoverlabel' => array(
                     'bgcolor' => 'rgba(255, 255, 255, 0.65)',
                     'font' => array(
-                        'color' => '#000000'
+                        'color' => '#000000',
+                        'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                     ),
+                    'namelength' => -1,
                 ),
-                'bargap' => 0.15,
-                'bargroupgap' => 0.1,
+                //'bargap' => 0.15,
+                //'bargroupgap' => 0.1,
                 'images' => array(),
             ),
             'data' => array(),
@@ -686,7 +687,7 @@ class Plotly2
             'titlefont' => array(
                 'size' => (12 + $font_size),
                 'color' => '#000000',
-                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
             ),
             'otitle' => $originalXAxisLabel,
             'dtitle' => $defaultXAxisLabel,
@@ -921,7 +922,7 @@ class Plotly2
                 'titlefont' => array(
                     'size' => (12 + $font_size),
                     'color' => $yAxisColor,
-                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                    'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                 ),
                 'otitle' => $originalYAxisLabel,
                 'dtitle' => $defaultYAxisLabel,
@@ -1033,7 +1034,6 @@ class Plotly2
 
                     } // foreach
 
-
                     $this->_chart['layout']['hovermode'] = 'closest';
 
                 }
@@ -1053,8 +1053,9 @@ class Plotly2
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
+                        $dataRank = $index + 1;
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
+                        $xValues[] = "{$dataRank}. " . $yAxisDataObject->getXValue($index);
                         $text[] = round($value, 2);
 
                         // N.B.: The following are drilldown labels.
@@ -1072,6 +1073,7 @@ class Plotly2
                         }
 
                     } // foreach
+
                     $trace = array_merge($trace, array('text' => $yValues));
                     $tooltipConfig = array_merge(
                         $tooltipConfig,
@@ -1131,15 +1133,17 @@ class Plotly2
                     $values_count == 1;
                 if ($data_description->display_type == 'pie') 
                 {
-                    $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName . 
-                               ': %{value:,} <b>(%{percent})</b> <extra></extra>';
+                    $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName 
+                               . ': %{value:,} <b>(%{percent})</b> <extra></extra>';
                 }
                 else
                 {
-                    $tooltip = '%{x} ' . $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
+                    $tooltip = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
+                               . $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
                 }
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $color;
+                $this->_chart['layout']['hovermode'] = 'closest';
 
                 $trace = array_merge($trace, array(
                     'name' => $lookupDataSeriesName,
@@ -1165,6 +1169,7 @@ class Plotly2
                     ),
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                     'mode' => $showMarker ? 'lines+marker' : 'lines',
+                    'hovertext' => $data_description->display_type == 'h_bar' ? array_reverse($xValues) : $yValues,
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,
@@ -1188,10 +1193,11 @@ class Plotly2
 
                 if ($data_description->display_type == 'h_bar') {
                     $trace = array_merge($trace, array('orientation' => 'h'));
-                    $tmp = $trace['x'];
-                    $trace['x'] = $trace['y'];
+                    $tmp = array_reverse($trace['x']);
+                    $trace['x'] = array_reverse($trace['y']);
                     $trace['y'] = $tmp;
-                    $trace['hovertemplate'] = '%{y}' . '<br>'. $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>'; 
+                    $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
+                                             . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>'; 
                     $this->_chart['layout']['margin'] = array(
                         'l' => 200
                     );
@@ -1295,6 +1301,7 @@ class Plotly2
                 )
             );
         }
+
         // set title and subtitle for chart
         $this->setChartTitleSubtitle($font_size);
 
