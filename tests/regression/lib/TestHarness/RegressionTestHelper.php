@@ -520,17 +520,32 @@ class RegressionTestHelper extends XdmodTestHelper
         ];
         $realms = Utilities::getRealmsToTest();
         $testParams = [];
+        $testMode = getenv('XDMOD_TEST_MODE');
         foreach ($realmParams as $realm => $params) {
             if (in_array($realm, $realms)) {
+                $testFileName = "$realm.json";
+                // In fresh_install mode, the jobs are re-ingested, which
+                // reorders some of them from the Posidriv resource, producing
+                // differently-ordered results than in upgrade mode. To work
+                // around this, each mode has its own artifact file for the
+                // Jobs and SUPREMM realms.
+                if ('jobs' === $realm || 'supremm' === $realm) {
+                    $testFileName = "$realm-$testMode.json";
+                }
                 $testParams[] = [
-                    "$realm.json",
+                    $testFileName,
                     array_merge(
                         $baseInput,
                         ['params' => $params['base']]
                     )
                 ];
+                // See above.
+                $testFileName = "$realm-fields-and-filters.json";
+                if ('supremm' === $realm) {
+                    $testFileName = "$realm-$testMode-fields-and-filters.json";
+                }
                 $testParams[] = [
-                    "$realm-fields-and-filters.json",
+                    $testFileName,
                     array_merge(
                         $baseInput,
                         ['params' => array_merge(
