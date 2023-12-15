@@ -79,6 +79,7 @@ class EtlOverseerTest extends \PHPUnit\Framework\TestCase
             self::$overseerOptions->setIncludeOnlyResourceCodes('resource1');
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
@@ -89,6 +90,7 @@ class EtlOverseerTest extends \PHPUnit\Framework\TestCase
             self::$overseerOptions->setIncludeOnlyResourceCodes(array('resource1', 'resource2'));
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
@@ -99,6 +101,7 @@ class EtlOverseerTest extends \PHPUnit\Framework\TestCase
             self::$overseerOptions->setExcludeResourceCodes('resource1');
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
@@ -109,6 +112,7 @@ class EtlOverseerTest extends \PHPUnit\Framework\TestCase
             self::$overseerOptions->setExcludeResourceCodes(array('resource1', 'resource2'));
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
