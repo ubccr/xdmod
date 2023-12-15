@@ -11,7 +11,7 @@ namespace UnitTests;
 
 use CCR\Log;
 
-class LogTest extends \PHPUnit_Framework_TestCase
+class LogTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test various log levels including the newly added TRACE.

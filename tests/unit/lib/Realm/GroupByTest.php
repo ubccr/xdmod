@@ -10,17 +10,18 @@
 namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
+use Exception;
 use Psr\Log\LoggerInterface;
 use \Realm\Realm;
 
-class GroupByTest extends \PHPUnit_Framework_TestCase
+class GroupByTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoggerInterface|null
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -46,11 +47,12 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
     /**
      * (1) Invalid realm name.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testInvalidGroupBy()
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Jobs', self::$logger);
         $realm->getGroupByObject('DoesNotExist');
     }
@@ -336,11 +338,12 @@ SQL;
      * (11) Test an unknown dataset type when querying the default chart display type for that
      *      dataset.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testUnknownDatasetType()
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('configuration');
 
