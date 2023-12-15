@@ -5,7 +5,7 @@ namespace ComponentTests;
 use IntegrationTests\TestHarness\TestFiles;
 use Models\Services\Realms;
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
 
@@ -54,7 +54,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     private static $ENV;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::setupEnvironment();
         self::setupPaths();

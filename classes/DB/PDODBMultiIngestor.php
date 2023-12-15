@@ -41,7 +41,7 @@ class PDODBMultiIngestor implements Ingestor
     function __construct(
         $dest_db,
         $source_db,
-        $pre_ingest_update_statements = array(),
+        $pre_ingest_update_statements,
         $source_query,
         $insert_table,
         $insert_fields = array(),

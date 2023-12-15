@@ -4,7 +4,7 @@ namespace UnitTests\DataWarehouse\Access;
 
 use \DataWarehouse\Access\ReportGenerator;
 
-class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
+class ReportGeneratorTest extends \PHPUnit\Framework\TestCase
 {
 
     public function reportTmpProvider() {

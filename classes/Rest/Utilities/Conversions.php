@@ -17,6 +17,11 @@ class Conversions
      */
     public static function toString($value)
     {
+        // If no value was provided, then return an empty string.
+        if (is_null($value)) {
+            return '';
+        }
+
         $isObject = is_object($value);
         $hasToString = method_exists($value, '__toString');
         $isArray = is_array($value);

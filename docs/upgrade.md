@@ -24,6 +24,58 @@ General Upgrade Notes
 RPM Upgrade Process
 -------------------
 
+# !!! XDMoD 11.0 Upgrade Process Changes !!!
+Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 8.0. Due to this there are a few additional steps required
+that are outside the normal installation of the rpm and `xdmod-upgrade`. Below you will find the different upgrade scenarios
+that exist with steps to accommodate all of them:
+
+### Server: EL7, XDMoD: 10.5, PHP: 7.2
+Included in these new features is official support for the Rocky 8 operating system. This will allow organizations
+to migrate their XDMoD installations from the soon-to-be end-of-life CentOS 7 to a currently supported OS. The officially
+recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an Rocky 8 XDMoD 10.5 installation is as follows:
+1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server.
+2. Copy the contents of `/etc/xdmod` from the CentOS 7 server to the Rocky 8 server.
+    1. Adjust database connection properties as appropriate.
+3. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
+    1. For example, using `mysqldump`.
+4. Import the CentOS 7 exported database files into the Rocky 8 server's database.
+5. Ensure that you have added the `sql_mode=` line to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf` on the Rocky 8 server.
+6. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
+7. Next, follow the upgrade process detailed below on the Rocky 8 Server.
+
+### Server: EL8, XDMoD: 10.5, PHP: 7.2
+The steps to accommodate this scenario are fairly straightforward:
+
+*NOTE: There may be some PHP Warning messages generated during this process, they can be safely ignored. Once the 
+process is complete then*
+
+Update the PHP module to 8.0
+```shell
+$ dnf module -y reset php
+$ dnf module -y enable php:8.0
+```
+
+Install PHP 8.0 and some require pre-reqs for PHP Pear packages
+```shell
+$ dnf install -y php libzip-devel php-pear
+```
+
+Install the mongodb PHP Pear package
+```shell
+$ yes '' | pecl install mongodb 
+```
+
+Upgrade XDMoD 11.0 from RPM ( or source ) 
+```shell
+$ dnf install -y xdmod-{{ page.sw_version}}-1.0.el8.noarch.rpm
+```
+
+Finally, run the XDMoD upgrade process
+```shell
+$ xdmod-upgrade
+```
+
+
 ### Download Latest Open XDMoD RPM package
 
 Download available at [GitHub][github-latest-release].
@@ -103,7 +155,7 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 Open XDMoD 11.0.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](notices.md) for more information about the open source licenses bundled with Open XDMoD. For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0.
+Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](notices.md) for more information about the open source licenses bundled with Open XDMoD. For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0.
 
 ### Configuration File Changes
 

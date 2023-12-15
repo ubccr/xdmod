@@ -1,33 +1,19 @@
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
-         backupGlobals="true"
-         backupStaticAttributes="false"
-         bootstrap="bootstrap.php"
-         cacheTokens="true"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         forceCoversAnnotation="false"
-         mapTestClassNameToCoveredClassName="false"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         stopOnIncomplete="false"
-         stopOnSkipped="false"
-         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
-         verbose="true">
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="true" bootstrap="bootstrap.php" colors="true" testSuiteLoaderFile="phpunit/src/Runner/StandardTestSuiteLoader.php" verbose="true">
+  <coverage/>
+  <testsuites>
     <testsuite name="Export">
-        <directory>lib/Export</directory>
-        <exclude>lib/ETL</exclude>
-        <exclude>lib/Roles</exclude>
+      <directory>lib/Export</directory>
+      <exclude>lib/ETL</exclude>
+      <exclude>lib/Roles</exclude>
     </testsuite>
     <testsuite name="Roles">
-        <directory>lib/Roles</directory>
-        <exclude>lib/ETL</exclude>
+      <directory>lib/Roles</directory>
+      <exclude>lib/ETL</exclude>
     </testsuite>
     <testsuite name="non-roles">
-        <directory>lib</directory>
-        <exclude>lib/Roles</exclude>
+      <directory>lib</directory>
+      <exclude>lib/Roles</exclude>
     </testsuite>
+  </testsuites>
 </phpunit>

@@ -46,9 +46,9 @@ class RealmManagerTest extends BaseTest
 
     /**
      */
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
 
         self::$realmManager = new RealmManager();
 
@@ -65,7 +65,7 @@ class RealmManagerTest extends BaseTest
      * Only includes the relevant properties from the realm that are used by
      * the realm manager class.
      *
-     * @param \Model\Realm $realm
+     * @param \Models\Realm $realm
      * @return array
      */
     private function convertRealmToArray(Realm $realm)
@@ -84,13 +84,14 @@ class RealmManagerTest extends BaseTest
      */
     public function testGetRealms($realms)
     {
+        $actual = array_map(
+            fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
+            self::$realmManager->getRealms()
+        );
         $this->assertEquals(
             $realms,
-            array_map(
-                [$this, 'convertRealmToArray'],
-                self::$realmManager->getRealms()
-            ),
-            'getRealms returns expected realms'
+            $actual,
+            sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
         );
     }
 
@@ -102,13 +103,14 @@ class RealmManagerTest extends BaseTest
      */
     public function testGetRealmsForUser($role, $realms)
     {
+        $actual = array_map(
+            fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
+            self::$realmManager->getRealmsForUser(self::$users[$role])
+        );
         $this->assertEquals(
             $realms,
-            array_map(
-                [$this, 'convertRealmToArray'],
-                self::$realmManager->getRealmsForUser(self::$users[$role])
-            ),
-            "getRealmsForUser returns expected realms for role $role"
+            $actual,
+            sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
         );
     }
 

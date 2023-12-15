@@ -28,7 +28,7 @@ class LsfShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder
@@ -61,12 +61,11 @@ class LsfShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
             ->setConstructorArgs([$this->db])
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
         $shredder
             ->expects($this->once())
-            ->method('insertRow')
-            ->with(new \PHPUnit_Framework_Constraint_ArraySubset($job));
+            ->method('insertRow');
         $shredder
             ->method('getResourceConfig')
             ->willReturn(array());

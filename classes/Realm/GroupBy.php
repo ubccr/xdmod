@@ -374,7 +374,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                                 break;
                             case 'dataset_display_type':
                                 if ( ! is_object($optionValue) ) {
-                                    continue;
+                                    continue 2;
                                 }
                                 foreach ($optionValue as $datasetType => $chartDisplayValue ) {
                                     if ( ! array_key_exists($datasetType, $this->chartOptions[$optionKey]) ) {
@@ -388,7 +388,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                                 break;
                             case 'limit':
                                 if ( ! is_object($optionValue) ) {
-                                    continue;
+                                    continue 2;
                                 }
                                 foreach ($optionValue as $pageType => $limitValue ) {
                                     if ( ! array_key_exists($pageType, $this->chartOptions[$optionKey]) ) {
