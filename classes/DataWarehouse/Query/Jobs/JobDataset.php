@@ -102,12 +102,19 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
                 date('Y', $endDateTs) * 100000
                 + date('z', $endDateTs) + 1
             );
-            $factEndIdField = new TableField($factTable, 'end_day_id');
+            $aggDayIdField = new TableField($tables['agg'], 'day_id');
             $this->addWhereCondition(
-                new WhereCondition($factEndIdField, '>=', $startDayId)
+                new WhereCondition($aggDayIdField, '>=', $startDayId)
             );
             $this->addWhereCondition(
-                new WhereCondition($factEndIdField, '<=', $endDayId)
+                new WhereCondition($aggDayIdField, '<=', $endDayId)
+            );
+            $factEndDayIdField = new TableField($factTable, 'end_day_id');
+            $this->addWhereCondition(
+                new WhereCondition($factEndDayIdField, '>=', $startDayId)
+            );
+            $this->addWhereCondition(
+                new WhereCondition($factEndDayIdField, '<=', $endDayId)
             );
             if ($startDayId === $endDayId) {
                 // In this case, only jobs that ended on a single specific day
