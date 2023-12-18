@@ -1532,8 +1532,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         }
                                         
                                         labels.forEach((label, labelIndex) => {
-                                            if (label.length > 15) {
-                                                label = label.substring(0,13) + '...';
+                                            if (label.length > 20) {
+                                                label = label.substring(0,18) + '...';
                                             }
                                             tickText.push(label);
                                         });
@@ -2746,37 +2746,31 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 let drillId;
                                 let label;
                                 let point;
-                                console.log(evt);
                                 if (evt.points.length > 1) {
-                                    console.log(evt);
-                                    const cursorY = evt.event.pointerY;
-                                    const cursorX = evt.event.pointerX;
                                     evt.points.forEach(function (trace) {
-                                        //console.log(trace);
-                                        /*console.log(cursorX);
-                                        console.log(cursorY);
-                                        console.log(trace.bbox.y0);
-                                        console.log(trace.bbox.x0);*/
-                                        if (cursorY > trace.bbox.y0 && cursorY < trace.bbox.y1) {
-                                            //Might need to add a check for trend line
-                                            point = trace;
-                                        }
                                         if (trace.data.type === 'bar') {
-                                            var xa = evt.points[0].xaxis;
-                                            var ya = evt.points[0].yaxis;
+                                            const points = document.getElementsByClassName('point');
+                                            for (let i = 0; i < points.length; i++) {
+                                                const dimensions = points[i].getBoundingClientRect();
+                                                if ('stackgroup' in trace.data) {
+                                                    if (evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom &&
+                                                        evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
+                                                        const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
+                                                        point = evt.points[pointIndex];
+                                                    }
+                                                }
+                                                else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
+                                                    const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
+                                                    point = evt.points[pointIndex];
+                                                }
 
-                                            var marginL = chartDiv._fullLayout.margin.l;
-                                            var marginT = chartDiv._fullLayout.margin.t;
-
-                                            var x = cursorX - marginL;
-                                            var y = cursorY - marginT;
-                                            /*console.log(chartDiv);
-                                            console.log(xa.p2d(x));
-                                            console.log(ya.p2d(y));*/
-                                            //console.log(evt.event);
-                                            console.log(document.getElementsByClassName('point'));
-                                            var point = document.getElementsByClassName('point')[0];
-                                            console.log(point.getBoundingClientRect());
+                                            }
+                                        }
+                                        else {
+                                            if (evt.event.pointerY > trace.bbox.y0 && evt.event.pointerY < trace.bbox.y1) {
+                                                //Might need to add a check for trend line
+                                                point = trace;
+                                            }
                                         }
                                     });
                                 }
@@ -2787,10 +2781,10 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 if (!point) {
                                     return;
                                 }
-                                const drillInfo = point.data.drilldown;
+                                let drillInfo = point.data.drilldown;
                                 if (drillInfo[0]) {
-                                    drillId = drillInfo[point.pointIndex].id;
-                                    label = drillInfo[point.pointIndex].label;
+                                    drillId = drillInfo[point.pointNumber].id;
+                                    label = drillInfo[point.pointNumber].label;
                                 }
                                 else {
                                     drillId = drillInfo.id;

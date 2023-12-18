@@ -748,7 +748,11 @@ class Usage extends Common
                         unset($meChart['layout']['yaxis1']['gridcolor']);
                     }
                     if ($usageChartSettings['show_guide_lines'] === 'n') {
-                        $meChart['layout']['yaxis1']['showgrid'] = false;
+                        if ($usageChartSettings['display_type'] == 'h_bar') {
+                            $meChart['layout']['xaxis']['showgrid'] = false;
+                        } else {
+                            $meChart['layout']['yaxis1']['showgrid'] = false;
+                        }
                     }
                 }
 
@@ -759,18 +763,26 @@ class Usage extends Common
                     'value'
                 );
                 if (
-                    isset($meChart['layout']['xaxis']['categoryarray'])
+                    (isset($meChart['layout']['xaxis']['ticktext']) || isset($meChart['layout']['yaxis1']['ticktext']))
                     && $chartSortedByValue
                     && $usageGroupBy !== 'none'
                 ) {
-                    $meChartCategories = $meChart['layout']['xaxis']['categoryarray'];
+                    $meChartCategories = $meChart['layout']['xaxis']['ticktext'];
+                    if (isset($meChart['layout']['yaxis1']['ticktext'])) {
+                        $meChartCategories = $meChart['layout']['yaxis1']['ticktext'];
+                    }
                     $usageChartCategories = array();
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
                         $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
                         $currentCategoryRank++;
                     }
-                    $meChart['layout']['xaxis']['categoryarray'] = $usageChartCategories;
+                    if (isset($meChart['layout']['yaxis1']['ticktext'])) {
+                        $meChart['layout']['yaxis1']['ticktext'] = $usageChartCategories;
+                    }
+                    else {
+                        $meChart['layout']['xaxis']['ticktext'] = $usageChartCategories;
+                    }
                 }
 
                 // Generate the chart arguments string for the report generator.
@@ -809,8 +821,6 @@ class Usage extends Common
 
                 // For each data series...
                 $primaryDataSeriesRank = $usageOffset;
-
-                //throw new \Exception(json_encode($meChart));
 
                 array_walk($meChart['data'], function (
                     &$meDataSeries,

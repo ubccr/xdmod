@@ -1010,7 +1010,6 @@ class Plotly2
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
                         $xValues[] = $yAxisDataObject->getXValue($index);
-                        $text[] = round($value, 2);
                         $colors[] = ($index == 0) ? $yAxisColor
                                      : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
                         // N.B.: These are drilldown labels.
@@ -1025,12 +1024,12 @@ class Plotly2
                         $trace = array(
                             'labels' => $xValues,
                             'values' => $yValues,
-                            'text' => array_map(function($label, $value) {
-                                $text = '<b>' . $label . '</b><br>' . $value;
-                                return $text;
-                            }, $xValues, $yValues),
-                            'textinfo' => 'text',
                         );
+                        
+                        $text = array_map(function($label, $value) {
+                                $text = '<b>' . $label . '</b><br>' . round($value, 2);
+                                return $text;
+                                }, $xValues, $yValues);
 
                     } // foreach
 
@@ -1053,9 +1052,8 @@ class Plotly2
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
-                        $dataRank = $index + 1;
                         $yValues[] = $value;
-                        $xValues[] = "{$dataRank}. " . $yAxisDataObject->getXValue($index);
+                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $text[] = round($value, 2);
 
                         // N.B.: The following are drilldown labels.
@@ -1169,7 +1167,7 @@ class Plotly2
                     ),
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                     'mode' => $showMarker ? 'lines+marker' : 'lines',
-                    'hovertext' => $data_description->display_type == 'h_bar' ? array_reverse($xValues) : $yValues,
+                    'hovertext' => $xValues,
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,
@@ -1177,8 +1175,9 @@ class Plotly2
                     'text' => $data_description->value_labels ? $text : null,
                     'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
                     'textfont' => array(
-                        'color' => $color
+                        'color' => $data_description->display_type == 'pie' ? '#000000' : $color 
                     ),
+                    'textinfo' => $data_description->display_type == 'pie' ? 'text' : null,
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
                     'yaxis' => "y{$yIndex}",
@@ -1190,25 +1189,25 @@ class Plotly2
                 if (!$data_description->value_labels){
                     unset($trace['text']);
                 }
-
+                
                 if ($data_description->display_type == 'h_bar') {
                     $trace = array_merge($trace, array('orientation' => 'h'));
-                    $tmp = array_reverse($trace['x']);
-                    $trace['x'] = array_reverse($trace['y']);
+                    $tmp = $trace['x'];
+                    $trace['x'] = $trace['y'];
                     $trace['y'] = $tmp;
                     $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
                                              . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>'; 
-                    $this->_chart['layout']['margin'] = array(
-                        'l' => 200
-                    );
                     $trace['textangle'] = 0;
+                    //$this->_chart['layout']['xaxis']['type'] = $this->_chart['layout']["yaxis{$yIndex}"]['type'];
                     $this->_chart['layout']["yaxis{$yIndex}"]['type'] = null; 
                     $tmp = $this->_chart['layout']['xaxis'];
                     $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
+                    $this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : 'linear';
                     $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
                     $this->_chart['layout']["yaxis{$yIndex}"]['titlefont']['color'] = $yAxisColor;
                     $this->_chart['layout']["yaxis{$yIndex}"]['title']['text'] = '<b>' . $this->_chart['layout']["yaxis{$yIndex}"]['title']['text'] . '</b>';
                     $this->_chart['layout']["yaxis{$yIndex}"]['title']['standoff'] = 5;
+                    $this->_chart['layout']["yaxis{$yIndex}"]['autorange'] = 'reversed';
                 }
                 // set stacking
                 if($data_description->display_type!=='line')
@@ -1262,6 +1261,23 @@ class Plotly2
                     $semDecimals,
                     $zIndex
                 );
+
+                if(!($data_description->display_type == 'pie')) {
+                    $categoryLabels = array();
+                    for ($i = 0; $i < count($xValues); $i++) {
+                        $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                    }
+                    if ($data_description->display_type == 'h_bar') {
+                        $this->_chart['layout']["yaxis{$yIndex}"]['tickmode'] = 'array';
+                        $this->_chart['layout']["yaxis{$yIndex}"]['tickvals'] = $xValues;
+                        $this->_chart['layout']["yaxis{$yIndex}"]['ticktext'] = $categoryLabels;
+                    }
+                    else {
+                        $this->_chart['layout']['xaxis']['tickmode'] = 'array';
+                        $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
+                        $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
+                    }
+                }
 
                 //$this->_chart['data'][] = $trace;
                 //throw new \Exception(json_encode($trace));
