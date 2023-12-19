@@ -761,6 +761,10 @@ class PlotlyTimeseries2 extends Plotly2
                                         $error_trace['offsetgroup'] = "group{$traceIndex}";
                                         $this->_chart['layout']['barmode'] = 'group';
                                     }
+                                    if ($data_description->combine_type=='stack') {
+                                        $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
+                                        $this->_chart['layout']['barmode'] = 'stack';
+                                    }
                                 }
 
                                 

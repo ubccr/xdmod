@@ -2759,9 +2759,14 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                                         point = evt.points[pointIndex];
                                                     }
                                                 }
-                                                else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
-                                                    const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
-                                                    point = evt.points[pointIndex];
+                                                else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
+                                                         evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
+                                                    if (evt.points.length == 2) {
+                                                        point = evt.points[0];
+                                                    } else {
+                                                        const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
+                                                        point = evt.points[pointIndex];
+                                                    }
                                                 }
 
                                             }

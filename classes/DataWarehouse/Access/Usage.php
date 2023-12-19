@@ -721,7 +721,9 @@ class Usage extends Common
                 if ($meRequestIsTimeseries) {
                     unset($meChart['layout']['xaxis']['title']);
                 } else {
-                    unset($meChart['layout']['xaxis']['title']);
+                    if ($usageChartSettings['display_type'] != 'h_bar'){
+                        unset($meChart['layout']['xaxis']['title']['text']);
+                    }
                 }
 
                 // If there is a y-axis...

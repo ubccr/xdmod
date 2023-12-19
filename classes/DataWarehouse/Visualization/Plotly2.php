@@ -1204,9 +1204,7 @@ class Plotly2
                     $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
                     $this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : 'linear';
                     $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
-                    $this->_chart['layout']["yaxis{$yIndex}"]['titlefont']['color'] = $yAxisColor;
-                    $this->_chart['layout']["yaxis{$yIndex}"]['title']['text'] = '<b>' . $this->_chart['layout']["yaxis{$yIndex}"]['title']['text'] . '</b>';
-                    $this->_chart['layout']["yaxis{$yIndex}"]['title']['standoff'] = 5;
+                    unset($this->_chart['layout']["yaxis{$yIndex}"]['title']['text']);
                     $this->_chart['layout']["yaxis{$yIndex}"]['autorange'] = 'reversed';
                 }
                 // set stacking
@@ -1265,14 +1263,17 @@ class Plotly2
                 if(!($data_description->display_type == 'pie')) {
                     $categoryLabels = array();
                     for ($i = 0; $i < count($xValues); $i++) {
-                        $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                        if ($data_description->display_type == 'h_bar') {
+                            $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');
+                        } else {
+                            $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                        }
                     }
                     if ($data_description->display_type == 'h_bar') {
-                        $this->_chart['layout']["yaxis{$yIndex}"]['tickmode'] = 'array';
-                        $this->_chart['layout']["yaxis{$yIndex}"]['tickvals'] = $xValues;
-                        $this->_chart['layout']["yaxis{$yIndex}"]['ticktext'] = $categoryLabels;
-                    }
-                    else {
+                        $this->_chart['layout']['yaxis1']['tickmode'] = 'array';
+                        $this->_chart['layout']['yaxis1']['tickvals'] = $xValues;
+                        $this->_chart['layout']['yaxis1']['ticktext'] = $categoryLabels;
+                    } else {
                         $this->_chart['layout']['xaxis']['tickmode'] = 'array';
                         $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
                         $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
