@@ -46,9 +46,9 @@
                 "license": "GPL-3.0",
                 "homepage": "https://www.sencha.com/products/extjs",
                 "dist": {
-                    "url": "https://cdn.sencha.com/ext/gpl/ext-3.4.1.1-gpl.zip",
+                    "url": "https://tools-int-01.ccr.xdmod.org/ext/gpl/ext-3.4.1.1-gpl.zip",
                     "type": "zip",
-                    "shasum": "26734b47eae909ff7f8cd7de4cadfb3531bd3cdc"
+                    "shasum": "b0cd8f5524a0076e78b9c230dc7ec4150908c74f"
                 },
                 "require": {
                     "composer/installers": "~1.0"

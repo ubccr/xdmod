@@ -1852,8 +1852,8 @@
             "version": "3.4.1.1",
             "dist": {
                 "type": "zip",
-                "url": "https://cdn.sencha.com/ext/gpl/ext-3.4.1.1-gpl.zip",
-                "shasum": "26734b47eae909ff7f8cd7de4cadfb3531bd3cdc"
+                "url": "https://tools-int-01.ccr.xdmod.org/ext/gpl/ext-3.4.1.1-gpl.zip",
+                "shasum": "b0cd8f5524a0076e78b9c230dc7ec4150908c74f"
             },
             "require": {
                 "composer/installers": "~1.0"
