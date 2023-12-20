@@ -1852,7 +1852,7 @@
             "version": "3.4.1.1",
             "dist": {
                 "type": "zip",
-                "url": "https://tools-int-01.ccr.xdmod.org/ext/gpl/ext-3.4.1.1-gpl.zip",
+                "url": "https://tools-ext-01.ccr.xdmod.org/ext/gpl/ext-3.4.1.1-gpl.zip",
                 "shasum": "b0cd8f5524a0076e78b9c230dc7ec4150908c74f"
             },
             "require": {
