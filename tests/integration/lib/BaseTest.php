@@ -8,6 +8,7 @@ use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
+use InvalidArgumentException;
 
 /**
  * This class serves as a base for test classes.
@@ -32,9 +33,12 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
  * center director gives the correct response, requests in which the 'limit' or
  * 'start_date' parameters are missing give the correct response, and requests
  * give the correct response for which the value of 'limit' is not a valid
- * integer, the values of 'realm' or 'dimension' are not valid strings, the
- * value of 'ts' is not a valid Unix timestamp, or the value of 'start_date' is
- * not a valid ISO 8601 date.
+ * integer, the value of 'scale' is not a valid floating point number, the
+ * value of 'debug' is not a valid Boolean value, the values of 'realm' or
+ * 'dimension' are not valid strings, the value of 'ts' is not a valid Unix
+ * timestamp, or the value of 'start_date' is not a valid ISO 8601 date. It
+ * also tests that the response body of an error response with a given message
+ * matches an expected JSON array.
  *
  *   public function testGetData($id, $role, $input, $output)
  *   {
@@ -64,9 +68,23 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
  *              'authentication' => true,
  *              'authorization' => 'cd',
  *              'int_params' => ['limit'],
+ *              'float_params' => ['scale'],
  *              'string_params' => ['realm', 'dimension'],
+ *              'bool_params' => ['debug'],
  *              'unix_ts_params' => ['ts'],
  *              'date_params' => ['start_date'],
+ *              'error_body_validator' => function ($message) {
+ *                  return function ($body, $assertMessage) use ($message) {
+ *                      parent::assertEquals(
+ *                          [
+ *                              'success' => false,
+ *                              'message' => $message
+ *                          ],
+ *                          $body,
+ *                          $assertMessage
+ *                      );
+ *                  }
+ *              }
  *          ]
  *      );
  *  }
@@ -399,22 +417,55 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *                         need to be present for other tests here to succeed.
      *                       - 'int_params' — array of parameters that will each be tested for
      *                         invalid integer values.
+     *                       - 'float_params' — array of parameters that will each be tested for
+     *                         invalid floating point values.
      *                       - 'string_params' — array of parameters that will each be tested for
      *                         invalid string values.
+     *                       - 'bool_params' — array of parameters that will each be tested for
+     *                         invalid Boolean values.
      *                       - 'unix_ts_params' — array of parameters that will each be tested for
      *                         invalid Unix timestamp values.
      *                       - 'date_params' — array of parameters that will each be tested for
      *                         invalid ISO 8601 date values.
+     *                       - 'error_body_validator' — callable function that is used for
+     *                         validating the response body of a request that has an error. Takes
+     *                         a message as an argument and returns a function that has body and
+     *                         assert message arguments and makes assertions about the body.
+     *                         @see validateErrorResponseBody() for an example of the default
+     *                         error body validator.
      * @return array of arrays of test data, each of which contains a string ID of the test, a
      *                         string role as whom the request will be made, the value
      *                         'valid_token' if $tokenAuth is true (otherwise this value is not
      *                         included in the array), and input and output arrays suitable for
      *                         requestAndValidateJson().
+     * @throws InvalidArgumentException if a key in $options is unrecognized.
      */
     protected function provideRestEndpointTests(
         array $validInput,
         array $options
     ) {
+        // Validate options
+        $validOptions = [
+             'authentication',
+             'authorization',
+             'run_as',
+             'token_auth',
+             'additional_params',
+             'int_params',
+             'float_params',
+             'string_params',
+             'bool_params',
+             'unix_ts_params',
+             'date_params',
+             'error_body_validator'
+        ];
+        foreach (array_keys($options) as $key) {
+            if (!in_array($key, $validOptions)) {
+                throw new InvalidArgumentException(
+                    "Unrecognized option '$key'."
+                );
+            }
+        }
         // Determine the source of parameters.
         $paramSource = 'params';
         if (
@@ -519,7 +570,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         // Provide tests of invalid parameters.
         $types = [
             'int_params' => 'integer',
+            'float_params' => 'float',
             'string_params' => 'string',
+            'bool_params' => 'boolean',
             'unix_ts_params' => 'Unix timestamp',
             'date_params' => 'ISO 8601 Date'
         ];
