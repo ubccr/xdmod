@@ -80,7 +80,7 @@ if ($userLoggedIn) {
     try {
         $user = XDUser::getPublicUser();
     } catch (PDOException $e) {
-        xd_web_message\displayMessage('XDMoD is currently under maintenance and access is temporarily disabled.', 'Status: code=' . $e->getCode(), true);
+        xd_web_message\displayMessage('XDMoD is currently experiencing a temporary outage.', 'Status: session=false code=' . $e->getCode(), true);
         exit;
     }
 }
