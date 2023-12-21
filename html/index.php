@@ -42,7 +42,7 @@ if ($userLoggedIn) {
         //       which would allow this block to be removed.
         throw $see;
     } catch (PDOException $e) {
-        xd_web_message\displayMessage('XDMoD is currently under maintenance and access is temporarily disabled.', 'Status: session=true code=' . $e->getCode(), true);
+        xd_web_message\displayMessage('XDMoD is currently experiencing a temporary outage.', 'Status: session=true code=' . $e->getCode(), true);
         exit;
     } catch (Exception $e) {
         xd_web_message\displayMessage('There was a problem initializing your account.', $e->getMessage(), true);
