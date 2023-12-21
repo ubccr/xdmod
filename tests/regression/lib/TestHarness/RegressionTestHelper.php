@@ -528,8 +528,8 @@ class RegressionTestHelper extends XdmodTestHelper
                 // reorders some of them from the Posidriv resource, producing
                 // differently-ordered results than in upgrade mode. To work
                 // around this, each mode has its own artifact file for the
-                // Jobs and SUPREMM realms.
-                if ('jobs' === $realm || 'supremm' === $realm) {
+                // Jobs realm.
+                if ('jobs' === $realm) {
                     $testFileName = "$realm-$testMode.json";
                 }
                 $testParams[] = [
@@ -539,13 +539,8 @@ class RegressionTestHelper extends XdmodTestHelper
                         ['params' => $params['base']]
                     )
                 ];
-                // See above.
-                $testFileName = "$realm-fields-and-filters.json";
-                if ('supremm' === $realm) {
-                    $testFileName = "$realm-$testMode-fields-and-filters.json";
-                }
                 $testParams[] = [
-                    $testFileName,
+                    "$realm-fields-and-filters.json",
                     array_merge(
                         $baseInput,
                         ['params' => array_merge(
@@ -568,6 +563,8 @@ class RegressionTestHelper extends XdmodTestHelper
      *                         `.json` extension.
      * @param array $input describes the HTTP request,
      *                     @see BaseTest::makeHttpRequest().
+     * @param bool $sort whether to sort the result before saving or comparing
+     *                   it.
      * @return bool true if the test artifact file already exists and
      *              contains the response body from the HTTP request.
      * @throws \PHPUnit_Framework_SkippedTestError if REG_TEST_USER_ROLE is
@@ -583,7 +580,7 @@ class RegressionTestHelper extends XdmodTestHelper
      *                                             the contents of the test
      *                                             artifact file.
      */
-    public function checkRawData($testName, array $input)
+    public function checkRawData($testName, array $input, $sort = false)
     {
         $role = self::getEnvUserrole();
         if ('public' === $role) {
@@ -596,6 +593,13 @@ class RegressionTestHelper extends XdmodTestHelper
             $input,
             $role
         );
+        if ($sort) {
+            array_multisort(
+                array_column($response[0]['data'], 0),
+                SORT_ASC,
+                $response[0]['data']
+            );
+        }
         $data = json_encode($response[0]) . "\n";
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
