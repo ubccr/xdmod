@@ -1532,10 +1532,26 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         }
                                         
                                         labels.forEach((label, labelIndex) => {
-                                            if (label.length > 20) {
+                                            /*if (label.length > 35) {
                                                 label = label.substring(0,18) + '...';
+                                                tickText.push(label);
+                                            }*/
+                                            if (label.length > 15) {
+                                                const words = label.split(' ');
+                                                let chars = 0;
+                                                let formattedLabel = '';
+                                                for (const word of words) {
+                                                    chars += word.length;
+                                                    if (chars >= 15) {
+                                                        formattedLabel += '<br> ';
+                                                    }
+                                                    formattedLabel += (word + ' ');
+                                                }
+                                                tickText.push(formattedLabel);
                                             }
-                                            tickText.push(label);
+                                            else {
+                                                tickText.push(label);
+                                            }
                                         });
 
                                         if (isSwapXY) {

@@ -118,7 +118,7 @@ class Plotly2
                 'annotations' => array(
                 // Credits
                     array(
-                    'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly. This is test',
+                    'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly.',
                     'font' => array(
                         'color' => '#909090',
                         'size' => 10,
@@ -129,8 +129,8 @@ class Plotly2
                     'xanchor' => 'right',
                     'yanchor' => 'top',
                     'x' => 1.0,
-                    'y' => -0.05,
-                    //'yshift' => -60,
+                    'y' => 1.1,
+                    'xshift' => 65,
                     'showarrow' => false
                     ),
                     // Subtitle
@@ -165,6 +165,9 @@ class Plotly2
                 //'bargap' => 0.15,
                 //'bargroupgap' => 0.1,
                 'images' => array(),
+                'margin' => array(
+                    't' => 50 
+                )
             ),
             'data' => array(),
             'dimensions' => array(),
@@ -699,6 +702,7 @@ class Plotly2
             'linecolor' => '#c0d0e0',
             'rangemode' => 'tozero',
             'showgrid' => false,
+            'standoff' => 25,
             'categoryarray' => $this->_xAxisDataObject->getValues()
         );
 
@@ -913,6 +917,11 @@ class Plotly2
             // populate the yAxis:
             $yAxis = array(
                 'automargin' => true,
+                'autorange' => true,
+                'autorangeoptions' => array(
+                    'maxallowed' => $yAxisMax,
+                    'minallowed' => $yAxisMin
+                ),
                 'cliponaxis' => false,
                 'layer' => 'below traces',
                 'title' => array(
@@ -930,6 +939,7 @@ class Plotly2
                     'size' => (11 + $font_size),
                     'color' => '#606060',
                 ),
+                'ticksuffix' => ' ',
                 'type' => $yAxisObject->log_scale ? 'log' : 'linear',
                 'rangemode' => 'tozero',
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 6),
@@ -1026,12 +1036,12 @@ class Plotly2
                             'values' => $yValues,
                         );
                         
-                        $text = array_map(function($label, $value) {
-                                $text = '<b>' . $label . '</b><br>' . round($value, 2);
-                                return $text;
-                                }, $xValues, $yValues);
-
                     } // foreach
+
+                     $text = array_map(function($label, $value) {
+                                $text = '<b>' . $label . '</b><br>' . number_format($value, 2, '.', ',');
+                                return $text;
+                     }, $xValues, $yValues);
 
                     $this->_chart['layout']['hovermode'] = 'closest';
 
@@ -1054,7 +1064,7 @@ class Plotly2
                     {
                         $yValues[] = $value;
                         $xValues[] = $yAxisDataObject->getXValue($index);
-                        $text[] = round($value, 2);
+                        $text[] = number_format($value, 2, '.', ',');
 
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
@@ -1132,7 +1142,7 @@ class Plotly2
                 if ($data_description->display_type == 'pie') 
                 {
                     $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName 
-                               . ': %{value:,} <b>(%{percent})</b> <extra></extra>';
+                               . ': %{value:,.2f} <b>(%{percent})</b> <extra></extra>';
                 }
                 else
                 {
@@ -1166,17 +1176,20 @@ class Plotly2
                                                         $data_description->line_width + $font_size / 4 : 0,
                     ),
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
-                    'mode' => $showMarker ? 'lines+marker' : 'lines',
+                    'mode' => 'lines+markers',
                     'hovertext' => $xValues,
                     'hoveron'=>  $data_description->display_type == 'area' ||
                                                         $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,
                     'showlegend' => true,
-                    'text' => $data_description->value_labels ? $text : null,
+                    'text' => $data_description->value_labels ? $text : array(),
                     'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
                     'textfont' => array(
-                        'color' => $data_description->display_type == 'pie' ? '#000000' : $color 
+                        'color' => $data_description->display_type == 'pie' ? '#000000' : $color,
+                        'size' => (8 + $font_size),
+                        'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif" 
                     ),
+                    'textangle' => $data_description->display_type == 'h_bar' ? 0 : 90,
                     'textinfo' => $data_description->display_type == 'pie' ? 'text' : null,
                     'x' => $data_description->display_type == 'pie' ? null : $xValues,
                     'y' => $data_description->display_type == 'pie' ? null : $yValues,
@@ -1186,10 +1199,6 @@ class Plotly2
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                 )); // $data_series_desc
 
-                if (!$data_description->value_labels){
-                    unset($trace['text']);
-                }
-                
                 if ($data_description->display_type == 'h_bar') {
                     $trace = array_merge($trace, array('orientation' => 'h'));
                     $tmp = $trace['x'];
@@ -1227,6 +1236,11 @@ class Plotly2
 
                         $this->_chart['data'][] = $hidden_trace;
                     }
+
+                    if ($trace['type'] == 'bar' && $data_description->display_type != 'h_bar') {
+                        $trace['textposition'] = 'outside';
+                        $trace['textangle'] = -90;
+                    } 
 
                     if ($data_description->combine_type=='side' && $data_description->display_type=='area') {
                         $trace['fill'] = 'tonexty';
@@ -1280,8 +1294,6 @@ class Plotly2
                     }
                 }
 
-                //$this->_chart['data'][] = $trace;
-                //throw new \Exception(json_encode($trace));
                 // build error data series and add it to chart
 
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
@@ -1346,7 +1358,7 @@ class Plotly2
     ) {
 
         // build error data series and add it to chart
-        if($data_description->std_err == 1 || $data_description->std_err_labels && $data_description->display_type != 'pie')
+        if(($data_description->std_err == 1 || $data_description->std_err_labels) && $data_description->display_type != 'pie')
         {
             $stderr = array();
             $dataLabels = array();
@@ -1359,13 +1371,18 @@ class Plotly2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $stderr[] = $e;
-                $hoverText[] = round($e, 2);
-                $dataLabels[] = round($v, 2) . ' [+/- ' . round($e, 2) . ']';
-                $errorLabels[] = '+/- ' . round($e, 2);
+                $hoverText[] = number_format($e, 2, '.', ',');
+                $dataLabels[] = number_format($v, 2, '.', ',') . ' [+/- ' . number_format($e, 2, '.', ',') . ']';
+                $errorLabels[] = '+/- ' . number_format($e, 2, '.', ',');;
             }
 
             if ($data_description->std_err_labels && !$data_description->std_err) {
-                $this->_chart['data'][max($traceIndex * 2 - 1,0)]['text'] = $errorLabels;
+                if ($data_description->value_labels && $data_description->std_err_labels) {
+                    $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = $dataLabels;
+                }
+                else { 
+                    $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = $errorLabels;
+                }
                 return;
             }
 
@@ -1426,11 +1443,6 @@ class Plotly2
                     $this->_chart['layout']['hovermode'] = 'y unified';
                     unset($error_trace['error_y']);
                 }
-            }
-
-            if ($data_description->value_labels && $data_description->std_err_labels) {
-                $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = array();
-                $error_trace['text'] = $dataLabels;
             }
 
             if(! $data_description->log_scale)

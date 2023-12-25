@@ -277,6 +277,10 @@ class PlotlyTimeseries2 extends Plotly2
 
                     $yAxis = array(
                         'automargin' => true,
+                        'autorangeoptions' => array(
+                            'maxallowed' => $yAxisMax,
+                            'minallowed' => $yAxisMin
+                        ),
                         'cliponaxis' => false,
                         'layer' => 'below traces',
                         'title' => '<b>' . $yAxisLabel . '</b>', 
@@ -293,7 +297,6 @@ class PlotlyTimeseries2 extends Plotly2
                         ),
                         'type' => $data_description->log_scale? 'log' : 'linear',
                         'rangemode' => 'tozero',
-                        'autorange' => true,
                         'separatethousands' => true,
                         'overlaying' => $yAxisIndex == 0 ? null : 'y',
                         'linewidth' => 2 + $font_size / 4,
@@ -493,7 +496,7 @@ class PlotlyTimeseries2 extends Plotly2
                             {
                                 $xValues[] = date('m-d-Y', $start_ts_array[$i]);
                                 $yValues[] = $v;
-                                $text[] = round($v, 2);
+                                $text[] = number_format($v, 2, '.', ','); 
                                 $seriesValue = array(
                                     'x' => date('m-d-Y', $start_ts_array[$i]),
                                     'y' => $v,
@@ -592,10 +595,11 @@ class PlotlyTimeseries2 extends Plotly2
                             'showlegend' => $data_description->display_type != 'pie',
                             'hovertext' => $text,
                             'hovertemplate' => $tooltip,
-                            'text' => $data_description->value_labels ? $text : null,
+                            'text' => $data_description->value_labels ? $yValues : null,
                             'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
                             'textfont' => array(
-                                'color' => $color
+                                'color' => $color,
+                                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                             ),
                             'x' => $xValues,
                             'y' => $yValues,
@@ -635,6 +639,11 @@ class PlotlyTimeseries2 extends Plotly2
 
                             }
 
+                            if ($trace['type'] == 'bar') {
+                                $trace['textposition'] = 'outside';
+                                $trace['textangle'] = -90;
+                            }
+
                             if ($data_description->combine_type=='side' && $data_description->display_type=='area'){
                                 $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tonexty';
                             }
@@ -658,6 +667,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
                             }
                         }
+
                         $this->_chart['data'][] = $trace;
 
                         // REMOVED: Add percent allocated to XSEDE line if the metric
@@ -679,9 +689,9 @@ class PlotlyTimeseries2 extends Plotly2
                                 $v = $yAxisDataObject->getValue($i);
                                 $e = $yAxisDataObject->getError($i);
                                 $stderr[] = $e;
-                                $hoverText[] = round($e, 2);
-                                $dataLabels[] = round($v, 2) . ' [+/- ' . round($e, 2) . ']';
-                                $errorLabels[] = '+/- ' . round($e, 2);
+                                $hoverText[] = number_format($e, 2, '.', ',');
+                                $dataLabels[] = number_format($v, 2, '.', ',') . ' [+/- ' . number_format($e, 2, '.', ',') . ']';
+                                $errorLabels[] = '+/- ' . number_format($e, 2, '.', ',');
                             }
 
                             

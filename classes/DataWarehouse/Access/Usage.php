@@ -730,8 +730,8 @@ class Usage extends Common
                 if (isset($meChart['layout']['yaxis1'])) {
                     // Remove extraneous y-axis properties.
                     //Unset yaxis max but keep min
-                    $min = $meChart['layout']['yaxis1']['range'][0];
-                    $meChart['layout']['yaxis1']['range'] = [$min, null];
+                    //$min = $meChart['layout']['yaxis1']['range'][0];
+                    //$meChart['layout']['yaxis1']['range'] = [$min, null];
                     unset($meChart['layout']['yaxis1']['tick0']);
 
                     // If a thumbnail was requested, remove the y-axis label.
@@ -892,6 +892,7 @@ class Usage extends Common
                         $meDataSeries['mode'] = $y_values_count == 1 ||
                                             count($meDataSeries['data']) <= 30 ? 'lines+markers' : 'lines';
                     }
+
                     if (isset($meDataSeries['text'])) {
                         $meDataSeries['mode'] .= '+text';
                     }
