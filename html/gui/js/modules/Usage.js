@@ -2615,7 +2615,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             maximizeScale.call(this);
             if (this.chart) {
-                Plotly.relayout(this.chart.chartId, { width: adjWidth, height: adjHeight });
+                Plotly.relayout(this.chart.chartId, { width: adjWidth, height: adjHeight, 'annotations[0].yshift': (adjHeight * -1) * 0.825 });
             }
 
         } //onResize

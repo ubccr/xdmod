@@ -83,21 +83,21 @@ function getNoDataErrorConfig() {
             yref: 'paper',
             sizex: 1.0,
             sizey: 1.0,
-            x: 0.15,
-            y: 0.0
+            x: 0.5,
+            y: 0.5,
         }
         ],
         xaxis: {
             showticklabels: false,
             zeroline: false,
             showgrid: false,
-            showline: false
+            showline: false,
         },
         yaxis: {
             showticklabels: false,
             zeroline: false,
             showgrid: false,
-            showline: false
+            showline: false,
         }
     };
 

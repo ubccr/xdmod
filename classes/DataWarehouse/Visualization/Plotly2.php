@@ -129,8 +129,8 @@ class Plotly2
                     'xanchor' => 'right',
                     'yanchor' => 'top',
                     'x' => 1.0,
-                    'y' => 1.1,
-                    'xshift' => 65,
+                    'y' => 1.0,
+                    'xshift' => 75,
                     'showarrow' => false
                     ),
                     // Subtitle
@@ -165,9 +165,6 @@ class Plotly2
                 //'bargap' => 0.15,
                 //'bargroupgap' => 0.1,
                 'images' => array(),
-                'margin' => array(
-                    't' => 50 
-                )
             ),
             'data' => array(),
             'dimensions' => array(),
@@ -1043,7 +1040,7 @@ class Plotly2
                                 return $text;
                      }, $xValues, $yValues);
 
-                    $this->_chart['layout']['hovermode'] = 'closest';
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
 
                 }
                 else // ($data_description->display_type !== 'pie')
@@ -1131,7 +1128,7 @@ class Plotly2
 
                 if (in_array($data_description->display_type, array('h_bar', 'bar', 'pie')))
                 {
-                    $this->_chart['layout']['hovermode'] = 'closest';   
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';   
                 }
 
                 // Display markers for scatter plots, non-thumbnail plots
@@ -1151,7 +1148,7 @@ class Plotly2
                 }
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $color;
-                $this->_chart['layout']['hovermode'] = 'closest';
+                $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
 
                 $trace = array_merge($trace, array(
                     'name' => $lookupDataSeriesName,
@@ -1183,7 +1180,7 @@ class Plotly2
                     'hovertemplate' => $tooltip,
                     'showlegend' => true,
                     'text' => $data_description->value_labels ? $text : array(),
-                    'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
+                    'textposition' => $data_description->display_type == 'pie' ? 'auto' : 'top right',
                     'textfont' => array(
                         'color' => $data_description->display_type == 'pie' ? '#000000' : $color,
                         'size' => (8 + $font_size),
@@ -1302,35 +1299,6 @@ class Plotly2
         /*if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }*/
-        if (!$this->_chart['data']) {
-            $this->_chart['layout'] = array(
-                'images' => array(
-                    'source' => 'gui/images/report_thumbnail_no_data.png',
-                    'align' => 'center',
-                    'xref' => 'paper',
-                    'xanchor' => 'top',
-                    'yanchor' => 'bottom',
-                    'yref' => 'paper',
-                    'sizex' => 1.0,
-                    'sizey' => 1.0,
-                    'x' => 0.15,
-                    'y' => 0.0
-                ),
-                'xaxis' => array(
-                    'showticklabels' => false,
-                    'zeroline' => false,
-                    'showgrid' => false,
-                    'showline' => false
-                ),
-                'yaxis' => array(
-                    'showticklabels' => false,
-                    'zeroline' => false,
-                    'showgrid' => false,
-                    'showline' => false
-                )
-            );
-        }
-
         // set title and subtitle for chart
         $this->setChartTitleSubtitle($font_size);
 
@@ -1376,14 +1344,11 @@ class Plotly2
                 $errorLabels[] = '+/- ' . number_format($e, 2, '.', ',');;
             }
 
-            if ($data_description->std_err_labels && !$data_description->std_err) {
-                if ($data_description->value_labels && $data_description->std_err_labels) {
-                    $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = $dataLabels;
-                }
-                else { 
-                    $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = $errorLabels;
-                }
-                return;
+            if ($data_description->value_labels && $data_description->std_err_labels) {
+                $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = $dataLabels;
+            }
+            else if (!$data_description->value_labels && $data_description->std_err_labels) {
+                $this->_chart['data'][count($this->_chart['data']) - 1]['text'] = $errorLabels;
             }
 
             // -- set error dataseries name and visibility --
@@ -1419,7 +1384,7 @@ class Plotly2
                 'marker' => array(
                     'color' => $error_color, 
                 ),
-                'text' => !$data_description->value_labels && $std_err_labels_enabled ? $errorLabels : array(),
+                'text' => array(),
                 'hovertext' => $hoverText,
                 'mode' => 'lines',
                 'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
@@ -1434,18 +1399,17 @@ class Plotly2
             ));
 
             if ($trace['type'] == 'bar') {
-                //$error_trace['color'] = $trace['color'];
                 $error_trace['marker']['color'] = $trace['marker']['color'];
                 $this->_chart['layout']['barmode'] = 'overlay';
-                $this->_chart['layout']['hovermode'] = 'x unified';
+                $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
                 if ($data_description->display_type == 'h_bar') {
                     $error_trace['error_x'] = $error_trace['error_y'];
-                    $this->_chart['layout']['hovermode'] = 'y unified';
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
                     unset($error_trace['error_y']);
                 }
             }
 
-            if(! $data_description->log_scale)
+            if(!$data_description->log_scale && $data_description->std_err)
             {
                 $this->_chart['data'][] = $error_trace;
             }

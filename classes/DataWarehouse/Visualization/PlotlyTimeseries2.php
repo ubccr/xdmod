@@ -595,7 +595,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'showlegend' => $data_description->display_type != 'pie',
                             'hovertext' => $text,
                             'hovertemplate' => $tooltip,
-                            'text' => $data_description->value_labels ? $yValues : null,
+                            'text' => $data_description->value_labels ? $text : null,
                             'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
                             'textfont' => array(
                                 'color' => $color,
@@ -694,108 +694,89 @@ class PlotlyTimeseries2 extends Plotly2
                                 $errorLabels[] = '+/- ' . number_format($e, 2, '.', ',');
                             }
 
-                            
-                            if (!$data_description->std_err) {
-                                $idx = $data_description->display_type=='area' ? $traceIndex+1 : $traceIndex; 
-                                if (!$data_description->value_labels && $data_description->std_err_labels) {
-                                    $this->_chart['data'][ceil($idx*2)]['text'] = $errorLabels;
-                                }
+                            $dsn = 'Std Err: '.$formattedDataSeriesName;
+                            $lookupDataSeriesName = $dsn;
 
-                                if ($data_description->value_labels && $data_description->std_err_labels) {
-                                        $this->_chart['data'][ceil($idx*2)]['text'] = $dataLabels;
+                            if(isset($legend->{$dsn}))
+                            {
+                                $config = $legend->{$dsn};
+                                if(isset($config->title))
+                                {
+                                    $lookupDataSeriesName = $config->title;
                                 }
                             }
-                            else {
-                                $dsn = 'Std Err: '.$formattedDataSeriesName;
-                                $lookupDataSeriesName = $dsn;
-
-                                if(isset($legend->{$dsn}))
+                            $visible = true;
+                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
                                 {
-                                    $config = $legend->{$dsn};
-                                    if(isset($config->title))
-                                    {
-                                        $lookupDataSeriesName = $config->title;
-                                    }
+                                $visible = $data_description->visibility->{$dsn};
+                            }
+                            //$error_trace = $trace;
+
+                            // create the data series description:
+                            $error_trace = array_merge($trace, array(
+                                'name' => $dsn,
+                                'otitle' => $dsn,
+                                'datasetId' => $data_description->id,
+                                'zIndex' => $zIndex,
+                                'color'=> $error_color,
+                                'marker' => array(
+                                    'color' => $error_color,
+                                ),
+                                'hovertext' => $hoverText,
+                                'mode' => 'lines',
+                                'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
+                                'error_y' => array(
+                                    'type' => 'data',
+                                    'array' => $stderr,
+                                    'arrayminus' => $stderr,
+                                    'symmetric' => false,
+                                    'color' => $error_color
+                                ),
+                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
+                            ));
+                            $error_trace['text'] = array();
+
+                            if ($error_trace['type'] == 'area') {
+                                $error_trace['fill'] = 'toself';
+                                if ($data_description->combine_type=='stack') {
+                                    $error_trace['stackgroup'] = 'two';
+                                    $error_trace['stackgaps'] = 'interpolate';
                                 }
-                                $visible = true;
-                                if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
-                                    {
-                                    $visible = $data_description->visibility->{$dsn};
-                                }
-                                //$error_trace = $trace;
+                            }
 
-                                // create the data series description:
-                                $error_trace = array_merge($trace, array(
-                                    'name' => $dsn,
-                                    'otitle' => $dsn,
-                                    'datasetId' => $data_description->id,
-                                    'zIndex' => $zIndex,
-                                    'color'=> $error_color,
-                                    'marker' => array(
-                                        'color' => $error_color,
-                                    ),
-                                    'hovertext' => $hoverText,
-                                    'mode' => 'lines',
-                                    'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
-                                    'error_y' => array(
-                                        'type' => 'data',
-                                        'array' => $stderr,
-                                        'arrayminus' => $stderr,
-                                        'symmetric' => false,
-                                        'color' => $error_color
-                                    ),
-                                    'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                                ));
-                                $error_trace['text'] = array();
+                            if ($trace['type'] == 'bar') {
+                                $error_trace['marker']['color'] = $trace['marker']['color'];
+                                $this->_chart['layout']['barmode'] = 'overlay';
+                                $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
 
-                                if ($error_trace['type'] == 'area') {
-                                    $error_trace['fill'] = 'toself';
-                                    if ($data_description->combine_type=='stack') {
-                                        $error_trace['stackgroup'] = 'two';
-                                        $error_trace['stackgaps'] = 'interpolate';
-                                    }
-                                }
-
-                                if ($trace['type'] == 'bar') {
-                                    $error_trace['marker']['color'] = $trace['marker']['color'];
-                                    $this->_chart['layout']['barmode'] = 'overlay';
-                                    $this->_chart['layout']['hovermode'] = 'x unified';
-
-                                    if ($data_description->display_type == 'h_bar') {
-                                        $error_trace['error_x'] = $error_trace['error_y'];
-                                        $this->_chart['layout']['hovermode'] = 'y unified';
-                                        unset($error_trace['error_y']);
-                                    }
-
-                                    if ($data_description->combine_type=='side') {
-                                        $error_trace['offsetgroup'] = "group{$traceIndex}";
-                                        $this->_chart['layout']['barmode'] = 'group';
-                                    }
-                                    if ($data_description->combine_type=='stack') {
-                                        $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
-                                        $this->_chart['layout']['barmode'] = 'stack';
-                                    }
+                                if ($data_description->display_type == 'h_bar') {
+                                    $error_trace['error_x'] = $error_trace['error_y'];
+                                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
+                                    unset($error_trace['error_y']);
                                 }
 
-                                
-                                if (!$data_description->value_labels && $data_description->std_err_labels) {
-                                   if ($traceIndex == 0 && $data_description->display_type == 'area') {
-                                       $this->_chart['data'][1]['text'] = $errorLabels; 
-                                   }
-                                   $this->_chart['data'][$traceIndex*2]['text'] = $errorLabels;
+                                if ($data_description->combine_type=='side') {
+                                    $error_trace['offsetgroup'] = "group{$traceIndex}";
+                                    $this->_chart['layout']['barmode'] = 'group';
                                 }
+                                if ($data_description->combine_type=='stack') {
+                                    $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
+                                    $this->_chart['layout']['barmode'] = 'stack';
+                                }
+                            }
 
-                                if ($data_description->value_labels && $data_description->std_err_labels) {
-                                    if ($traceIndex == 0 && $data_description->display_type == 'area') {
-                                       $this->_chart['data'][1]['text'] = $errorLabels;
-                                    }
-                                    $this->_chart['data'][$traceIndex*2]['text'] = $dataLabels;
-                                }
+                            $idx = count($this->_chart['data']) - 1;
+                            if (!$data_description->value_labels && $data_description->std_err_labels) {
+                               $this->_chart['data'][$idx]['text'] = $errorLabels;
+                            }
 
-                                if(! $data_description->log_scale)
-                                {
-                                    $this->_chart['data'][] = $error_trace;
-                                }
+                            if ($data_description->value_labels && $data_description->std_err_labels) {
+                                $this->_chart['data'][$idx]['text'] = $dataLabels;
+                            }
+
+                            if(! $data_description->log_scale)
+                            {
+                                $this->_chart['data'][] = $error_trace;
                             }
                         } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
 
@@ -854,6 +835,7 @@ class PlotlyTimeseries2 extends Plotly2
                                     'showlegend' => true,
                                     'hoverinfo' => 'skip',
                                     'text' => array(),
+                                    'mode' => 'lines',
                                     'marker' => array(
                                         'size' => 0.0
                                     ),
@@ -880,44 +862,15 @@ class PlotlyTimeseries2 extends Plotly2
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
 
-        if (!$this->_chart['data']) {
-            $this->_chart['layout'] = array(
-                'images' => array(
-                    'source' => 'gui/images/report_thumbnail_no_data.png',
-                    'align' => 'center',
-                    'xref' => 'paper',
-                    'xanchor' => 'top',
-                    'yanchor' => 'bottom',
-                    'yref' => 'paper',
-                    'sizex' => 1.0,
-                    'sizey' => 1.0,
-                    'x' => 0.15,
-                    'y' => 0.0
-                ),
-                'xaxis' => array(
-                    'showticklabels' => false,
-                    'zeroline' => false,
-                    'showgrid' => false,
-                    'showline' => false
-                ),
-                'yaxis' => array(
-                    'showticklabels' => false,
-                    'zeroline' => false,
-                    'showgrid' => false,
-                    'showline' => false
-                )
-            );
-        }
-
         if ($percentBar) {
             $xCount = count($this->_chart['data'][0]['y']);
             for ($i = 0; $i < $xCount; $i++) {
                 $sum = 0;
                 foreach ($this->_chart['data'] as $trace) {
-                    $sum += $trace['y'][$i];
+                    $sum += is_null($trace['y'][$i]) ? 0 : $trace['y'][$i];
                 }
                 foreach ($this->_chart['data'] as $traceIndex => $trace) {
-                    $this->_chart['data'][$traceIndex]['y'][$i] = ($trace['y'][$i] / $sum) * 100;
+                    $this->_chart['data'][$traceIndex]['y'][$i] = is_null($trace['y'][$i]) ? 0 : (($trace['y'][$i] / $sum) * 100);
                 }
             }
         }
@@ -936,6 +889,5 @@ class PlotlyTimeseries2 extends Plotly2
         $this->setDataSource(array_keys($dataSources));
 
         $this->setChartTitleSubtitle($font_size);
-
     } // function configure()
 } // class HighChartTimeseries2

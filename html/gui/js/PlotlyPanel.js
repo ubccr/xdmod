@@ -74,13 +74,11 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     if (this.isEmpty) {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
-
-                        this.chartOptions.layout = getNoDataErrorConfig();
+                        const errorConfig = getNoDataErrorConfig();
+                        this.baseChartOptions = jQuery.extend(true, {}, this.baseChartOptions, errorConfig);
                     //    Plotly.relayout(this.baseChartOptions.renderTo, this.chartOptions);
                     }
-                    else {
                         this.initNewChart.call(this);
-                    }
 
                 }, this);
             }

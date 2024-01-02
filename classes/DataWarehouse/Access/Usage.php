@@ -683,6 +683,7 @@ class Usage extends Common
                 if ($thumbnailRequested) {
                     $meChart['layout']['title']['text'] = '';
                     $meChart['layout']['annotations'][1]['text'] = '';
+                    $meChart['layout']['thumbtnail'] = true;
                 } else {
                     // If a title was provided, display that. Otherwise, use the
                     // generated title.

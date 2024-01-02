@@ -629,6 +629,11 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                 credits: false,
                 baseChartOptions: {
                     chart: {},
+                    layout: {
+                        width: portletWidth,
+                        height: portletWidth * portletAspect,
+                        thumbnail: true,
+                    },
                     data: []
                 },
                 store: new CCR.xdmod.CustomJsonStore({
@@ -654,17 +659,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                 help.dom.qtip = '<ul>' + dims + '</ul><hr/>' + '<ul>' + mets + '</ul>';
                             }
 
-                            const chart = store.getAt(0).get('data');
-
-                            /*if (chart.length === 0) {
-                                var errorConfig = getNoDataErrorConfig();
-                                Plotly.relayout(this.portlet.id, errorConfig);
-                            }
-                            else {
-                                if (chart[0].type === 'pie') {
-                                    //Plotly.restyle(this.portlet.id, { 'textposition': 'outside' });
-                                }
-                            }*/
                         }, // load
 
                         exception: function (thisProxy, type, action, options, response, arg) {
