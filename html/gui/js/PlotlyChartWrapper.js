@@ -18,11 +18,13 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
         baseChartOptions.layout = errorConfig;
     } else {
-        // Check for thumbnail because plot for summary charts fit more towards bottom of portlet
-        if (!baseChartOptions.layout.title || baseChartOptions.layout.title.text === '') {
-            baseChartOptions.layout.annotations[0].yshift = (baseChartOptions.layout.height * -1) * 0.675;
-        } else {
-            baseChartOptions.layout.annotations[0].yshift = (baseChartOptions.layout.height * -1) * 0.825;
+        if ('annotations' in baseChartOptions.layout && baseChartOptions.layout.annotations.length != 0) {
+            // Check for thumbnail because plot for summary charts fit more towards bottom of portlet
+            if (!baseChartOptions.layout.title || baseChartOptions.layout.title.text === '') {
+                baseChartOptions.layout.annotations[0].yshift = (baseChartOptions.layout.height * -1) * 0.675;
+            } else {
+                baseChartOptions.layout.annotations[0].yshift = (baseChartOptions.layout.height * -1) * 0.825;
+            }
         }
     }
     // Wait for Plotly promise to fullfil due to race condition from 'resize' listener in PlotlyPanel.js resize listener
