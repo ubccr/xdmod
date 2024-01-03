@@ -255,7 +255,9 @@
         "secure-http": false,
         "allow-plugins": {
             "composer/installers": true,
-            "simplesamlphp/composer-module-installer": true
+            "simplesamlphp/composer-module-installer": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
         }
     },
     "autoload": {
