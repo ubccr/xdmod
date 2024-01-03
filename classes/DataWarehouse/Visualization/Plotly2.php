@@ -547,6 +547,7 @@ class Plotly2
                 $this->_chart['layout']['legend']['xanchor'] = 'center';
                 $this->_chart['layout']['legend']['yanchor'] = 'bottom';
                 $this->_chart['layout']['legend']['x'] = 0.5;
+                $this->_chart['layout']['legend']['y'] = 0.02;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
         }

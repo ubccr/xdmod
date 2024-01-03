@@ -168,12 +168,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             instance = CCR.xdmod.ui.metricExplorer;
         }
 
-        if (event && event.target &&
-            ((event.target.innerHTML && event.target.innerHTML === "Reset zoom") ||
-                (event.target.firstChild && event.target.firstChild.data && event.target.firstChild.data === "Reset zoom"))) {
-            return; //if reset zoom button, return
-        }
-
         var x, y;
 
         if (event && event.xAxis && event.yAxis && event.xAxis[0] && event.yAxis[0]) {
@@ -466,12 +460,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }
 
         XDMoD.TrackEvent('Metric Explorer', 'Clicked on chart data point to access context menu', Ext.encode({
-            'x-axis': point.ts ? Highcharts.dateFormat('%Y-%m-%d', point.ts) : point.series.data[point.x].category,
-            'y-axis': point.y,
-            'series': point.series.name
+            'x-axis': point.data.type === 'pie' ? point.label : point.x,
+            'y-axis': point.data.type === 'pie' ? point.label : point.y,
+            'series': point.data.name
         }));
 
-        XDMoD.Module.MetricExplorer.seriesContextMenu(point.series, false, datasetId, point, instance);
+        XDMoD.Module.MetricExplorer.seriesContextMenu(point.data, false, datasetId, point, instance);
     },
     // ------------------------------------------------------------------
 
@@ -499,17 +493,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             drillLabel;
 
         var isRemainder =
-            (point && point.options.isRemainder) ||
-            (series && series.options.isRemainder);
+            (series && series.isRemainder);
 
         if (!isRemainder) {
-            if (point && point.drilldown) {
-                drillId = point.drilldown.id;
-                drillLabel = point.drilldown.label;
-            } else if (series && series.options.drilldown) {
-                drillId = series.options.drilldown.id;
-                drillLabel = series.options.drilldown.label;
-            }
+            let drillInfo = series.drilldown;
+            drillId = drillInfo.id;
+            label = drillInfo.label;
         }
         var isPie = instance.isPie();
 
@@ -908,7 +897,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }); //menu
         if (series) {
             var visibility = Ext.apply({}, record.get('visibility')),
-                originalTitle = series.options.otitle;
+                originalTitle = series.otitle;
             if (!visibility) {
                 visibility = {};
             }
@@ -1350,7 +1339,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             });
         }
         if (series) {
-            var originalTitle = series.options.otitle;
+            var originalTitle = series.otitle;
             var resetLegendItemTitle = function() {
                 XDMoD.TrackEvent('Metric Explorer', 'Clicked on reset legend item name option in series context menu');
 
@@ -1398,7 +1387,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 instance.saveQuery();
                             }
                             menu.hide();
-                        }, originalTitle !== series.options.name ? {
+                        }, originalTitle !== series.name ? {
                             xtype: 'button',
                             text: 'Reset',
                             handler: function() {
@@ -1411,7 +1400,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                 }
             });
-            if (originalTitle !== series.options.name) {
+            if (originalTitle !== series.name) {
                 menu.addItem({
                     text: 'Reset Legend Item Name',
                     iconCls: 'reset_legend_item_name',
@@ -5979,12 +5968,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         var plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
             id: 'plotly-panel' + this.id,
-            baseChartOptions: {},
+            baseChartOptions: {
+                metricExplorer: true 
+            },
             store: chartStore
         }); //assistPanel
 
         this.plotlyPanel = plotlyPanel;
-
         // ---------------------------------------------------------
 
         var quickFilterButton = XDMoD.DataWarehouse.createQuickFilterButton({

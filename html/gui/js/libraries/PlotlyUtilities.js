@@ -248,3 +248,48 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
 
     return ret;
 }
+function getClickedPoint(evt) {
+    let point;
+    if (evt.points.length > 1) {
+        evt.points.forEach(function (trace) {
+            if (trace.data.type === 'bar') {
+                const points = document.getElementsByClassName('point');
+                for (let i = 0; i < points.length; i++) {
+                    const dimensions = points[i].getBoundingClientRect();
+                    if ('stackgroup' in trace.data) {
+                        if (evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom &&
+                            evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
+                            const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
+                            point = evt.points[pointIndex];
+                        }
+                    }
+                    else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
+                             evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
+                        if (evt.points.length == 2) {
+                            point = evt.points[0];
+                        } else {
+                            const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
+                            point = evt.points[pointIndex];
+                        }
+                    }
+
+                }
+            }
+            else {
+                if (evt.event.pointerY > trace.bbox.y0 && evt.event.pointerY < trace.bbox.y1) {
+                    //Might need to add a check for trend line
+                    point = trace;
+                }
+            }
+        });
+    }
+    else {
+        if (evt.points && evt.points.length != 0) {
+            point = evt.points[0];
+        }
+        else {
+            point = null;
+        }
+    }
+    return point;
+}

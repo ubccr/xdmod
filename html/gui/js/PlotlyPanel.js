@@ -61,24 +61,49 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         return;
                     }
                     this.chartOptions = jQuery.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
-
-                    //this.chartOptions.exporting.enabled = (this.exporting === true);
-                    //this.chartOptions.credits.enabled = (this.credits === true);
                     
                     if (this.chartOptions.layout.title) {
                         this.chartOptions.layout.title.text = this.plotlyTextEncode(this.chartOptions.layout.title.text);
                     }
                     this.isEmpty = this.chartOptions.data && this.chartOptions.data.length === 0;
 
-//                    this.initNewChart.call(this);
                     if (this.isEmpty) {
                         var ch_width = this.chartOptions.layout.width * 0.8;
                         var ch_height = this.chartOptions.layout.height * 0.8;
                         const errorConfig = getNoDataErrorConfig();
                         this.baseChartOptions = jQuery.extend(true, {}, this.baseChartOptions, errorConfig);
-                    //    Plotly.relayout(this.baseChartOptions.renderTo, this.chartOptions);
                     }
-                        this.initNewChart.call(this);
+                    this.initNewChart.call(this);
+
+                    if (this.chartOptions.metricExplorer) {
+                        const chartDiv = document.getElementById(this.chartOptions.renderTo);
+                        // Point Menu
+                        chartDiv.on('plotly_click', (evt) => {
+                            const point = getClickedPoint(evt);
+                            XDMoD.Module.MetricExplorer.pointContextMenu(point, point.data.datasetId, undefined);
+                        });
+                        // Context Menu
+                        const plotAreaDiv = document.getElementsByClassName('xy')[0];
+                        if (plotAreaDiv) {
+                            plotAreaDiv.addEventListener('click', (event) => {
+                                let hoverDiv = document.getElementsByClassName('hoverlayer')[0];
+                                if (hoverDiv && hoverDiv.children.length === 0) {
+                                    XDMoD.Module.MetricExplorer.chartContextMenu.call(event, false, undefined);
+                                }
+                            });
+                        }
+                        // Series Menu
+                        chartDiv.on('plotly_legendclick', (evt) => {
+                            const series = evt.data[evt.curveNumber];
+                            XDMoD.Module.MetricExplorer.seriesContextMenu(series, true, series.datasetId);
+                            return false;
+                        });
+                        // Axis Menu
+                        //
+                        // Title Menu
+                        //
+                        // Legend Menu
+                    }
 
                 }, this);
             }
