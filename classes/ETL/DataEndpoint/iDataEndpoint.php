@@ -41,7 +41,7 @@ interface iDataEndpoint
     public function getName();
 
     /**
-     * @return A unique key that can be used to identify this endpoint. Typically some combination of
+     * @return string A unique key that can be used to identify this endpoint. Typically some combination of
      *   type and name.
      */
 

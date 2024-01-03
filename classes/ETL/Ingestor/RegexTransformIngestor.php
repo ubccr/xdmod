@@ -71,7 +71,7 @@ class RegexTransformIngestor extends pdoIngestor implements iAction
     /**
      * @see ETL\Ingestor\pdoIngestor::transform()
      */
-    protected function transform(array $srcRecord, $orderId)
+    protected function transform(array $srcRecord, &$orderId)
     {
         $transformedRecord = array();
 

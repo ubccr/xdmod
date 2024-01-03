@@ -24,9 +24,9 @@ $iniData = null;
  * first time that this function is called unless the $cache is set to
  * false.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param string $option Desired option within the section
+ * @param bool $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -84,9 +84,8 @@ function getConfigurationUrlBase($section, $option, $useCachedOptions = true)
  * Same as getConfiguration however it returns the whole section as
  * an associative array.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param bool $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *

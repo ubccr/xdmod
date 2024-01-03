@@ -97,7 +97,7 @@ abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
         // output is a JSON object and not an array.
         $testCases = [];
         $i = 0;
-        while ((list($testName, $outputTestCase) = each($outputData))) {
+        foreach($outputData as $testName => $outputTestCase) {
             $testCases[$testName] = [$inputData[$i], $outputTestCase];
             ++$i;
         }

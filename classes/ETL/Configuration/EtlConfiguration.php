@@ -628,11 +628,11 @@ class EtlConfiguration extends Configuration
      *
      * @see Configuration::addSection()
      *
-     * @param $name The name of the new section
-     * @param $data The data associated with the new section
+     * @param $name string The name of the new section
+     * @param $data mixed The data associated with the new section
      * @param $overwrite TRUE if any existing data for the given section should be overwritten
      *
-     * @return This object for method chaining
+     * @return object This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -829,10 +829,10 @@ class EtlConfiguration extends Configuration
     /** -----------------------------------------------------------------------------------------
      * Add an action to the list of actions for the specified section.
      *
-     * @param $sectionName The name of the section that we are adding the action to
-     * @param $options The options for the action
+     * @param $sectionName string The name of the section that we are adding the action to
+     * @param $options aOptions The options for the action
      *
-     * @returns This object to support method chaining
+     * @returns object This object to support method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -887,9 +887,9 @@ class EtlConfiguration extends Configuration
      * Get the list of enabled action names. This includes actions that are properly configured
      * and enabled.
      *
-     * @param $sectionName The name of the section to examine.
+     * @param string $sectionName The name of the section to examine.
      *
-     * @return The list of enabled actions for the specified section, or FALSE if the section was
+     * @return array The list of enabled actions for the specified section, or FALSE if the section was
      *   not found.
      * ------------------------------------------------------------------------------------------
      */
@@ -914,10 +914,10 @@ class EtlConfiguration extends Configuration
     }  // getEnabledActionNames()
 
     /** -----------------------------------------------------------------------------------------
-     * @param $actionName The name of the action to search for.
-     * @param $sectionName Optional section name to look for the action
+     * @param string $actionName The name of the action to search for.
+     * @param string $sectionName Optional section name to look for the action
      *
-     * @return TRUE if the action exists in the specified section name, or any section if
+     * @return bool TRUE if the action exists in the specified section name, or any section if
      *   no section name was provided. False otherwise.
      * ------------------------------------------------------------------------------------------
      */
@@ -937,9 +937,9 @@ class EtlConfiguration extends Configuration
      * Get the list of configured action names. This includes all actions that are properly
      * configured whether they are enabled or disabled.
      *
-     * @param $sectionName The name of the section to examine.
+     * @param string $sectionName The name of the section to examine.
      *
-     * @return The list of configured actions for the specified section, or FALSE if the section was
+     * @return array The list of configured actions for the specified section, or FALSE if the section was
      *   not found.
      * ------------------------------------------------------------------------------------------
      */
@@ -958,9 +958,9 @@ class EtlConfiguration extends Configuration
      * Get the list of disabled action names. These are actions that are configured, but have been
      * marked as disabled.
      *
-     * @param $sectionName The name of the section to examine.
+     * @param string $sectionName The name of the section to examine.
      *
-     * @return The list of disabled actions for the specified section, or FALSE if the section was
+     * @return array The list of disabled actions for the specified section, or FALSE if the section was
      *   not found.
      * ------------------------------------------------------------------------------------------
      */
@@ -979,9 +979,9 @@ class EtlConfiguration extends Configuration
      * Get the list of option objects for the specified section. Only options for configured ingestors
      * are available.
      *
-     * @param $sectionName The name of the section to examine.
+     * @param string $sectionName The name of the section to examine.
      *
-     * @return An array of option objects, or FALSE if the section name was not found
+     * @return array An array of option objects, or FALSE if the section name was not found
      * ------------------------------------------------------------------------------------------
      */
 
@@ -999,9 +999,9 @@ class EtlConfiguration extends Configuration
      * Get the list of option objects for the specified section. Only options for configured ingestors
      * are available.
      *
-     * @param $sectionName The name of the section to examine.
+     * @param string $sectionName The name of the section to examine.
      *
-     * @return An array of option objects, or FALSE if the section name was not found
+     * @return array An array of option objects, or FALSE if the section name was not found
      * ------------------------------------------------------------------------------------------
      */
 
@@ -1020,10 +1020,10 @@ class EtlConfiguration extends Configuration
      * is not provided it will be parsed from the action name. Action names have the format
      * module.section.action.
      *
-     * @param $actionName The name of the action to examine.
-     * @param $sectionName The name of the section to examine.
+     * @param string $actionName The name of the action to examine.
+     * @param string $sectionName The name of the section to examine.
      *
-     * @return An option object
+     * @return object An option object
      *
      * @throw Exception If the section is provided and does not exist, or the name does not exist in
      *   the provided section.
@@ -1093,9 +1093,9 @@ class EtlConfiguration extends Configuration
     /** -----------------------------------------------------------------------------------------
      * Get a globally defined endpoint, or FALSE if it is not defined.
      *
-     * @param $name The name of the global endpoint (e.g., utility, source, destination)
+     * @param string $name The name of the global endpoint (e.g., utility, source, destination)
      *
-     * @return An object implementing the iDataEndpoint interface or FALSE if the key was not found
+     * @return object An object implementing the iDataEndpoint interface or FALSE if the key was not found
      * ------------------------------------------------------------------------------------------
      */
 
