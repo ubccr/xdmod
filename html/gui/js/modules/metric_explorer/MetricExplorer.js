@@ -1439,11 +1439,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     // so that the chartTitleField has the correct value.
                     var decoded = Ext.util.Format.htmlDecode(text);
                     instance.chartTitleField.setValue(decoded);
-                    event.target.setTitle({
-                        text: instance.plotlyPanel.plotlyChartsTextEncode(decoded)
-                    });
-                    event.target.setSize(event.target.chartWidth, event.target.chartHeight);
-
                     instance.saveQuery();
                 }
                 menu.hide();
@@ -1491,10 +1486,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var axisIndex = axis.options.index,
-            axisTitle = axis.options.title.text,
-            originalTitle = axis.options.otitle,
-            defaultTitle = axis.options.dtitle,
+        var axisIndex = 0,
+            axisTitle = axis.title,
+            originalTitle = axis.otitle,
+            defaultTitle = axis.dtitle,
             durationSelector = instance.getDurationSelector(),
             startDate = durationSelector.getStartDate(),
             endDate = durationSelector.getEndDate(),
@@ -1635,9 +1630,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var originalTitle = axis.options.otitle;
-        var axisTitle = axis.options.title.text;
-        var axisIndex = axis.options.index;
+        var originalTitle = axis.otitle;
+        var axisTitle = axis.title;
+        var axisIndex = axis.index;
         var menu = instance.getTextEditMenu(
             axisTitle,
             'Y Axis [' + (axisIndex + 1) + '] Title',
@@ -1662,17 +1657,17 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         menu.showAt(Ext.EventObject.getXY());
     },
 
-    yAxisContextMenu: function(axis, instance) {
+    yAxisContextMenu: function(axis, series, instance) {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
         var handler;
-        var axisIndex = axis.options.index;
-        var axisTitle = axis.options.title.text;
-        var originalTitle = axis.options.otitle;
-        var defaultTitle = axis.options.dtitle;
+        var axisIndex = axis.index;
+        var axisTitle = axis.title;
+        var originalTitle = axis.otitle;
+        var defaultTitle = axis.dtitle;
         var minField = new Ext.form.NumberField({
-            value: axis.options.min,
+            value: axis.autorangeoptions.minallowed,
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -1685,7 +1680,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         });
         var maxField = new Ext.form.NumberField({
-            value: axis.options.max,
+            value: axis.autorangeoptions.maxallowed,
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -1696,10 +1691,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         });
 
         var yAxisDatasetIds = [];
-        for (var s = 0; s < axis.chart.series.length; s++) {
-            var se = axis.chart.series[s];
-            if (se.userOptions.yAxis === axisIndex) {
-                yAxisDatasetIds.push(se.userOptions.datasetId);
+        for (var s = 0; s < series.length; s++) {
+            var se = series[s];
+            let yAxisIndex = Number(se.yaxis.slice(-1));
+            if (yAxisIndex === axisIndex) {
+                yAxisDatasetIds.push(se.datasetId);
             }
         }
 
@@ -1711,6 +1707,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
             }
         });
+
+        if (axis.type === 'log') {
+            allLogScale = true;
+        }
 
         var setLog = new Ext.form.Checkbox({
             checked: allLogScale === true,
@@ -1797,7 +1797,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             // Calculate best min and max for log plot
             if (allLog) {
 
-                axisType = 'logarithmic';
+                axisType = 'log';
 
                 /* This is only pre-defined until we decide to either
                  * update the tick-value for log-axis charts, or give
@@ -1838,21 +1838,15 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 if (instance.yAxis['original' + axisIndex]) {
                     instance.yAxis['original' + axisIndex].min = newMin;
                     instance.yAxis['original' + axisIndex].max = newMax;
+                    instance.yAxis['original' + axisIndex].chartType = axisType;
                 } else {
                     instance.yAxis['original' + axisIndex] = {
                         title: axisTitle,
                         min: newMin,
-                        max: newMax
+                        max: newMax,
+                        chartType: axisType
                     };
                 }
-
-                axis.target.yAxis[axisIndex].update({
-                    min: newMin,
-                    max: newMax,
-                    type: axisType,
-                    startOnTick: newMin == null,
-                    endOnTick: newMax == null
-                }, true);
 
                 instance.saveQuery();
             }
@@ -2484,14 +2478,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         this.saveQuery();
     },
     resetYAxisTitle: function(axis) {
-        var originalTitle = axis.options && axis.options.otitle ? axis.options.otitle : '';
-        var defaultTitle = axis.options && axis.options.dtitle ? axis.options.dtitle : '';
+        var originalTitle = axis && axis.otitle ? axis.otitle : '';
+        var defaultTitle = axis && axis.dtitle ? axis.dtitle : '';
 
         var newTitle = originalTitle === defaultTitle ? '' : originalTitle;
         this.setYAxisTitle(axis, newTitle);
     },
     setYAxisTitle: function(axis, newTitle) {
-        var axisIndex = axis.options.index;
+        var axisIndex = axis.index;
 
         //find old mapping, if one.
         if (this.yAxis['original' + axisIndex]) {
@@ -2501,9 +2495,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 title: newTitle
             };
         }
-        axis.target.yAxis[axisIndex].setTitle({
-            text: newTitle
-        });
 
         this.saveQuery();
     },

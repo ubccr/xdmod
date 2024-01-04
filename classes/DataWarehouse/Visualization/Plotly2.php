@@ -164,6 +164,7 @@ class Plotly2
                 ),
                 //'bargap' => 0.15,
                 //'bargroupgap' => 0.1,
+                'barmode' => 'group',
                 'images' => array(),
             ),
             'data' => array(),
@@ -891,6 +892,7 @@ class Plotly2
 
             $yAxisMin = $first_data_description->log_scale?null:0;
             $yAxisMax = null;
+            $yIndex = $yAxisIndex + 1;
             $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
             if($config !== null)
             {
@@ -938,6 +940,7 @@ class Plotly2
                     'color' => '#606060',
                 ),
                 'ticksuffix' => ' ',
+                'index' => $yAxisIndex,
                 'type' => $yAxisObject->log_scale ? 'log' : 'linear',
                 'rangemode' => 'tozero',
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 6),
@@ -947,7 +950,6 @@ class Plotly2
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            $yIndex = $yAxisIndex + 1;
             $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
@@ -1205,7 +1207,6 @@ class Plotly2
                     $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
                                              . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>'; 
                     $trace['textangle'] = 0;
-                    //$this->_chart['layout']['xaxis']['type'] = $this->_chart['layout']["yaxis{$yIndex}"]['type'];
                     $this->_chart['layout']["yaxis{$yIndex}"]['type'] = null; 
                     $tmp = $this->_chart['layout']['xaxis'];
                     $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];

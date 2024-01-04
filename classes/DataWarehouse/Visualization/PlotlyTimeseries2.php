@@ -242,6 +242,7 @@ class PlotlyTimeseries2 extends Plotly2
                 $originalYAxisLabel = $yAxisLabel;
                 $yAxisMin = $data_description->log_scale?null:0;
                 $yAxisMax = null;
+                $yAxisType = null;
                 $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
                 if($config !== null)
                 {
@@ -256,6 +257,10 @@ class PlotlyTimeseries2 extends Plotly2
                     if(isset($config->max))
                     {
                         $yAxisMax = $config->max;
+                    }
+                    if(isset($config->chartType))
+                    {
+                        $yAxisType = $config->chartType;
                     }
                 }
                 if($yAxisLabel == $defaultYAxisLabel)
@@ -274,6 +279,7 @@ class PlotlyTimeseries2 extends Plotly2
                     $yAxisLeftBoundStart = 0.175;
                     $yAxisRightBoundStart = 0.825;
                     $yAxisStep = 0.175;
+                    $yIndex = $yAxisIndex + 1;
 
                     $yAxis = array(
                         'automargin' => true,
@@ -295,8 +301,10 @@ class PlotlyTimeseries2 extends Plotly2
                             'size' => (11 + $font_size),
                             'color' => '#606060',
                         ),
-                        'type' => $data_description->log_scale? 'log' : 'linear',
+                        'type' => ($data_description->log_scale || $yAxisType == 'log') ? 'log' : 'linear',
                         'rangemode' => 'tozero',
+                        'range' => [$yAxisMin, $yAxisMax],
+                        'index' => $yAxisIndex,
                         'separatethousands' => true,
                         'overlaying' => $yAxisIndex == 0 ? null : 'y',
                         'linewidth' => 2 + $font_size / 4,
@@ -321,7 +329,6 @@ class PlotlyTimeseries2 extends Plotly2
                         }
                     } 
 
-                    $yIndex = $yAxisIndex + 1;
                     $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
                 } // if($yAxis == null)
 
@@ -586,7 +593,8 @@ class PlotlyTimeseries2 extends Plotly2
                             'line' => array(
                                 'color' => $data_description->display_type == 'pie'? null: $color,
                                 'dash' => $data_description->line_type,
-                                'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0
+                                'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
+                                'shape' => ($data_description->display_type == 'spline') ? 'spline' : 'linear' 
                             ),
                             'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                             'hoveron' => $data_description->display_type == 'area' ||
@@ -613,14 +621,36 @@ class PlotlyTimeseries2 extends Plotly2
                             'isRestrictedByRoles' => $data_description->restrictedByRoles,
                         ); // $data_series_desc
 
-                        // Check type to adjust plot for current settings
-                        //if (
+                        if ($data_description->display_type == 'areaspline') {
+                            $trace['type'] = 'area';
+                        }
 
+                        if ($this->_swapXY && $data_description->display_type!='pie') {
+                            if ($trace['type'] == 'bar') {
+                                $trace = array_merge($trace, array('orientation' => 'h'));
+                                $tmp = $trace['x'];
+                                $trace['x'] = $trace['y'];
+                                $trace['y'] = $tmp;
+                                $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
+                                                         . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                                $trace['textangle'] = 0;
+                            } else {
+                                $tmp = $trace['x'];
+                                $trace['x'] = $trace['y'];
+                                $trace['y'] = $tmp;
+                                $this->_chart['layout']["yaxis{$yIndex}"]['type'] = '-';
+                            }
+                            $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                            $xAxis['autorange'] = 'reversed';
+                            $this->_chart['layout']['xaxis'] = $yAxis;
+                            $this->_chart['layout']['xaxis']['type'] = $xAxis['type'];
+                            $this->_chart['layout']["yaxis{$yIndex}"] = $xAxis;
+                        }
 
                         if($data_description->display_type!=='line')
                         {
 
-                            if ($data_description->display_type=='area' && $traceIndex == 0) {
+                            if ($trace['type']=='area' && $traceIndex == 0) {
                                 $hidden_trace = array(
                                     'x' => $xValues,
                                     'y' => array_fill(0, count($xValues) , 0),
@@ -634,8 +664,9 @@ class PlotlyTimeseries2 extends Plotly2
                                     'hoverinfo' => 'skip',
                                     'type' => 'scatter',
                                 );
-
-                                $this->_chart['data'][] = $hidden_trace;
+                                if (!$this->_swapXY) {
+                                    $this->_chart['data'][] = $hidden_trace;
+                                }
 
                             }
 
@@ -644,7 +675,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $trace['textangle'] = -90;
                             }
 
-                            if ($data_description->combine_type=='side' && $data_description->display_type=='area'){
+                            if ($data_description->combine_type=='side' && $trace['type']=='area'){
                                 $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tonexty';
                             }
                             elseif($data_description->combine_type=='stack')

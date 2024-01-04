@@ -264,7 +264,7 @@ function getClickedPoint(evt) {
                         }
                     }
                     else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
-                             evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
+                             evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
                         if (evt.points.length == 2) {
                             point = evt.points[0];
                         } else {

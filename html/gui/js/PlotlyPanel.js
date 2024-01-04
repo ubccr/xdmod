@@ -77,32 +77,79 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 
                     if (this.chartOptions.metricExplorer) {
                         const chartDiv = document.getElementById(this.chartOptions.renderTo);
+                        let pointClick = false;
                         // Point Menu
                         chartDiv.on('plotly_click', (evt) => {
                             const point = getClickedPoint(evt);
-                            XDMoD.Module.MetricExplorer.pointContextMenu(point, point.data.datasetId, undefined);
+                            if (point) {
+                                pointClick = true;
+                                XDMoD.Module.MetricExplorer.pointContextMenu(point, point.data.datasetId, undefined);
+                            } else {
+                                pointClick = false;
+                            }
                         });
                         // Context Menu
                         const plotAreaDiv = document.getElementsByClassName('xy')[0];
-                        if (plotAreaDiv) {
-                            plotAreaDiv.addEventListener('click', (event) => {
+                        if (plotAreaDiv.firstChild) {
+                            plotAreaDiv.firstChild.addEventListener('click', (event) => {
                                 let hoverDiv = document.getElementsByClassName('hoverlayer')[0];
-                                if (hoverDiv && hoverDiv.children.length === 0) {
+                                if (!pointClick || (hoverDiv && hoverDiv.children.length === 0)) {
                                     XDMoD.Module.MetricExplorer.chartContextMenu.call(event, false, undefined);
                                 }
                             });
                         }
-                        // Series Menu
+                        // Legend Menu
                         chartDiv.on('plotly_legendclick', (evt) => {
                             const series = evt.data[evt.curveNumber];
                             XDMoD.Module.MetricExplorer.seriesContextMenu(series, true, series.datasetId);
                             return false;
                         });
-                        // Axis Menu
-                        //
                         // Title Menu
-                        //
-                        // Legend Menu
+                        const infoDiv = document.getElementsByClassName('infolayer')[0];
+                        if (infoDiv) {
+                            if (infoDiv.children.length != 0) {
+                                infoDiv.setAttribute("pointer-events", "all");
+                                const mainTitleDiv = document.getElementsByClassName('g-gtitle')[0];
+                                mainTitleDiv.addEventListener('click', (event) => {
+                                    XDMoD.Module.MetricExplorer.titleContextMenu(event);
+                                });
+                                // Axis Menu
+                                const yAxisDiv = document.getElementsByClassName('g-ytitle')[0];
+                                yAxisDiv.addEventListener('click', (event) => {
+                                    XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(this.chartOptions.layout.yaxis1);
+                                    });
+                                const xAxisDiv = document.getElementsByClassName('g-xtitle')[0];
+                                xAxisDiv.addEventListener('click', (event) => {
+                                    XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(this.chartOptions.layout.xaxis);
+                                });
+                            }
+                        }
+                        // yAxis Ticks
+                        const yAxisTickDiv = document.getElementsByClassName('yaxislayer-below')[0];
+                        if (yAxisTickDiv) {
+                            yAxisTickDiv.setAttribute("pointer-events", "all");
+                            if (yAxisTickDiv.children && yAxisTickDiv.children.length != 0) {
+                                for (let i = 0; i < yAxisTickDiv.children.length; i++) {
+                                    yAxisTickDiv.children[i].setAttribute("pointer-events", "all");
+                                    yAxisTickDiv.children[i].addEventListener('click', (event) => {
+                                        XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout.yaxis1, this.chartOptions.data);
+                                    });
+                                }
+                            }
+                        }
+                        // xAxis Ticks
+                        const xAxisTickDiv = document.getElementsByClassName('xaxislayer-below')[0];
+                        if (xAxisTickDiv) {
+                            xAxisTickDiv.setAttribute("pointer-events", "all");
+                            if (xAxisTickDiv.children && xAxisTickDiv.children.length != 0) {
+                                for (let i = 0; i < xAxisTickDiv.children.length; i++) {
+                                    xAxisTickDiv.children[i].setAttribute("pointer-events", "all");
+                                    xAxisTickDiv.children[i].addEventListener('click', (event) => {
+                                        XDMoD.Module.MetricExplorer.xAxisContextMenu(this.chartOptions.layout.xaxis);
+                                    });
+                                }
+                            }
+                        }
                     }
 
                 }, this);
