@@ -477,7 +477,6 @@ class PlotlyTimeseries2 extends Plotly2
 
                         // --- set up $dataLabelsConfig, $seriesValues, $tooltipConfig ---
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                        //throw new \Exception('hi');
                         $tooltipConfig = array();
                         $xValues = array();
                         $yValues = array();
@@ -505,7 +504,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $yValues[] = $v;
                                 $text[] = number_format($v, 2, '.', ','); 
                                 $seriesValue = array(
-                                    'x' => date('m-d-Y', $start_ts_array[$i]),
+                                    'x' => $start_ts_array[$i]*1000,
                                     'y' => $v,
                                 );
 
@@ -566,7 +565,7 @@ class PlotlyTimeseries2 extends Plotly2
                             . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
 
                         $this->_chart['layout']['xaxis']['hoverformat'] = $tooltip;
-                        $tooltip = $formattedDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
+                        $tooltip = $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
                         if ($traceIndex == 0) {
                             $this->_chart['layout']['hoverlabel']['bordercolor'] = $color;
                         }
@@ -615,7 +614,7 @@ class PlotlyTimeseries2 extends Plotly2
                             //'width' => 0.4,
                             //'offset' => 0.1 * $traceIndex,
                             'offsetgroup' => "group{$traceIndex}",
-                            'seriesPoints' => $seriesValues,
+                            'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
                             'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -639,11 +638,17 @@ class PlotlyTimeseries2 extends Plotly2
                                 $trace['x'] = $trace['y'];
                                 $trace['y'] = $tmp;
                                 $this->_chart['layout']["yaxis{$yIndex}"]['type'] = '-';
+                                $trace['hovertemplate'] = null;
+                                //$trace['hovertext'] = $xValues;
+                                $trace['hoverinfo'] = 'text';
+                                //$trace['hovertext'] = $formattedDataSeriesName . $;
+                                //$trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                                //$yAxis['hoverformat'] = '<extra></extra>';
                             }
+
                             $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
                             $xAxis['autorange'] = 'reversed';
                             $this->_chart['layout']['xaxis'] = $yAxis;
-                            $this->_chart['layout']['xaxis']['type'] = $xAxis['type'];
                             $this->_chart['layout']["yaxis{$yIndex}"] = $xAxis;
                         }
 
@@ -698,6 +703,28 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
                             }
                         }
+
+                        /*if(!($data_description->display_type == 'pie')) {
+                            $categoryLabels = array();
+                            for ($i = 0; $i < count($xValues); $i++) {
+                                if ($data_description->display_type == 'h_bar') {
+                                    $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');
+                                } else {
+                                    $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                                }
+                            }
+                            if ($data_description->display_type == 'h_bar' || $this->_swapXY) {
+                                $this->_chart['layout']['yaxis1']['tickmode'] = 'array';
+                                $this->_chart['layout']['yaxis1']['tickvals'] = $xValues;
+                                $this->_chart['layout']['yaxis1']['ticktext'] = $categoryLabels;
+                            } else {
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'array';
+                                $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
+                                $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
+                            }
+                            $this->_chart['layout']['xaxis']['hoverformat'] = '%{y}';
+                    }*/
+
 
                         $this->_chart['data'][] = $trace;
 

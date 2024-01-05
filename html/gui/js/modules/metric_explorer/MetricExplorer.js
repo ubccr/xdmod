@@ -496,9 +496,21 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             (series && series.isRemainder);
 
         if (!isRemainder) {
-            let drillInfo = series.drilldown;
-            drillId = drillInfo.id;
-            label = drillInfo.label;
+            if (point) {
+                let drillInfo = point.data.drilldown;
+                if (drillInfo[0]) {
+                    drillId = drillInfo[point.pointNumber].id;
+                    drillLabel = drillInfo[point.pointNumber].label;
+                }
+                else {
+                    drillId = drillInfo.id;
+                    drillLabel = drillInfo.label;
+                }
+            } else {
+                let drillInfo = series.drilldown;
+                drillId = drillInfo.id;
+                drillLabel = drillInfo.label;
+            }
         }
         var isPie = instance.isPie();
 
@@ -905,6 +917,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             var visible = true;
             if (visibility[originalTitle] !== undefined && visibility[originalTitle] !== null) {
                 visible = visibility[originalTitle];
+                if (visible === 'legendonly') {
+                    visible = false;
+                }
             }
             menu.addItem({
                 text: 'Show',
@@ -915,11 +930,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Hide Series option in data series context menu', Ext.encode({
                             checked: check
                         }));
-                        series.setVisible(check);
+                        let visible = check ? true : 'legendonly';
                         if (check) {
                             delete visibility[originalTitle];
                         } else {
-                            visibility[originalTitle] = false;
+                            visibility[originalTitle] = visible;
                         }
                         record.set('visibility', visibility);
                     }
@@ -945,6 +960,13 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 }
                 var store = Ext.StoreMgr.lookup('hchart_store_metric_explorer');
+                
+                let pontSelected;
+                point.data.seriesData.forEach((seriesObj) => {
+                    if (seriesObj.y === point.y) {
+                        pointSelected = seriesObj.x;
+                    }
+                });
 
                 menu.addItem({
                     text: 'Show raw data',
@@ -956,7 +978,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             format: 'jsonstore',
                             operation: 'get_rawdata',
                             inline: 'n',
-                            datapoint: point.x,
+                            datapoint: Number(pointSelected),
                             datasetId: datasetId,
                             limit: 20,
                             start: 0
@@ -1345,9 +1367,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                 delete instance.legend[originalTitle];
 
-                series.chart.series[series.index].update({
-                    name: originalTitle
-                });
+                series.name = originalTitle;
 
                 instance.saveQuery();
             };
@@ -1380,9 +1400,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                     };
                                 }
 
-                                series.chart.series[series.index].update({
-                                    name: text
-                                });
+                                series.name = text;
 
                                 instance.saveQuery();
                             }
